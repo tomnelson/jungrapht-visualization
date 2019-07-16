@@ -17,7 +17,9 @@ import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jungrapht.samples.util.BalloonLayoutRings;
 import org.jungrapht.samples.util.LayoutHelper;
+import org.jungrapht.samples.util.RadialLayoutRings;
 import org.jungrapht.samples.util.SpanningTreeAdapter;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationViewer;
@@ -55,6 +57,9 @@ public class ShowLayouts extends JPanel {
     "Trivial (disconnected) graph",
     "Little Graph"
   };
+
+  BalloonLayoutRings balloonLayoutRings;
+  RadialLayoutRings radialLayoutRings;
 
   public ShowLayouts() {
 
@@ -121,6 +126,7 @@ public class ShowLayouts extends JPanel {
         ((DefaultModalGraphMouse<Integer, Number>) vv.getGraphMouse()).getModeListener());
 
     vv.setBackground(Color.WHITE);
+
     setLayout(new BorderLayout());
     add(vv, BorderLayout.CENTER);
     LayoutHelper.Layouts[] combos = LayoutHelper.getCombos();
@@ -133,14 +139,12 @@ public class ShowLayouts extends JPanel {
                 () -> {
                   LayoutHelper.Layouts layoutType = (LayoutHelper.Layouts) jcb.getSelectedItem();
                   LayoutAlgorithm layoutAlgorithm = LayoutHelper.createLayout(layoutType);
-                  if (layoutAlgorithm instanceof TreeLayoutAlgorithm
-                      || layoutAlgorithm instanceof BalloonLayoutAlgorithm
-                      || layoutAlgorithm instanceof RadialTreeLayoutAlgorithm) {
-                    Collection roots = null;
-                    //                      if (vv.getModel().getNetwork().getType().isDirected()) {
-                    //                          roots = getRoots(vv.getModel().getNetwork());
-                    //                          layoutAlgorithm = TreeLayoutAlgorithm.builder().roots(roots).build();
-                    //                      }
+                  vv.removePreRenderPaintable(balloonLayoutRings);
+                  vv.removePreRenderPaintable(radialLayoutRings);
+                  if ((layoutAlgorithm instanceof TreeLayoutAlgorithm
+                          || layoutAlgorithm instanceof BalloonLayoutAlgorithm
+                          || layoutAlgorithm instanceof RadialTreeLayoutAlgorithm)
+                      && vv.getModel().getNetwork().getType().isUndirected()) {
                     Graph tree = SpanningTreeAdapter.getSpanningTree(vv.getModel().getNetwork());
                     LayoutModel positionModel =
                         this.getTreeLayoutPositions(
@@ -149,27 +153,21 @@ public class ShowLayouts extends JPanel {
                             layoutAlgorithm);
                     vv.getModel().getLayoutModel().setInitializer(positionModel);
                     layoutAlgorithm = new StaticLayoutAlgorithm();
-
-                    //                    System.err.println("incoming for 'k'" +tree.incomingEdgesOf("k"));
-                    //                    Graph graph = vv.getModel().getNetwork();
-                    //                    Set roots = new HashSet<>();
-                    //                    for (Object v : graph.vertexSet()) {
-                    //                      if (Graphs.predecessorListOf(graph, v).isEmpty()) {
-                    //                        roots.add(v);
-                    //                      }
-                    //                    }
-                    //                      Set roots =
-                    //                              graph.vertexSet()
-                    //                                      .stream()
-                    ////                .filter(node -> layoutModel.getGraph().incomingEdgesOf(node).isEmpty())
-                    //                                      .filter(node -> Graphs.predecessorListOf(graph, node).isEmpty())
-                    //                                      .collect(ImmutableSet.toImmutableSet());
-                    System.err.println("roots from incoming graph for 'k'" + roots);
                   }
                   if (animateLayoutTransition.isSelected()) {
                     LayoutAlgorithmTransition.animate(vv, layoutAlgorithm);
                   } else {
                     LayoutAlgorithmTransition.apply(vv, layoutAlgorithm);
+                  }
+                  if (layoutAlgorithm instanceof BalloonLayoutAlgorithm) {
+                    balloonLayoutRings =
+                        new BalloonLayoutRings(vv, (BalloonLayoutAlgorithm) layoutAlgorithm);
+                    vv.addPreRenderPaintable(balloonLayoutRings);
+                  }
+                  if (layoutAlgorithm instanceof RadialTreeLayoutAlgorithm) {
+                    radialLayoutRings =
+                        new RadialLayoutRings(vv, (RadialTreeLayoutAlgorithm) layoutAlgorithm);
+                    vv.addPreRenderPaintable(radialLayoutRings);
                   }
                 }));
 

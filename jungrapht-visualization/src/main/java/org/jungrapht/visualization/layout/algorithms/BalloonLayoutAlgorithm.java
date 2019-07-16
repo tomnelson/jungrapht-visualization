@@ -85,7 +85,7 @@ public class BalloonLayoutAlgorithm<N> extends TreeLayoutAlgorithm<N> {
             .stream()
             .filter(node -> Graphs.predecessorListOf(graph, node).isEmpty())
             .collect(toImmutableSet());
-    //            TreeUtils.roots(graph);
+    log.info("roots: {}", roots);
     int width = layoutModel.getWidth();
     if (roots.size() == 1) {
       // its a Tree
