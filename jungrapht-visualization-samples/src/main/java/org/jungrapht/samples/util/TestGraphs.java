@@ -144,7 +144,7 @@ public class TestGraphs {
   public static Graph<String, Number> getOneComponentGraph() {
 
     Graph<String, Number> graph =
-        GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.multigraph()).buildGraph();
+        GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.simple()).buildGraph();
 
     // let's throw in a clique, too
     for (int i = 1; i <= 10; i++) {

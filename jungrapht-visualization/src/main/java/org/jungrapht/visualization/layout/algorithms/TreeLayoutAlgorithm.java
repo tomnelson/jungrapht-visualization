@@ -17,8 +17,10 @@ import com.google.common.collect.Sets;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
@@ -122,7 +124,7 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
         Math.max(layoutModel.getHeight(), overallHeight));
     roots.forEach(
         node -> {
-          calculateWidth(layoutModel, node);
+          calculateWidth(layoutModel, node, new HashSet<>());
           currentX += (this.basePositions.get(node) / 2 + this.horizontalNodeSpacing);
           log.debug("currentX after node {} is now {}", node, currentX);
           buildTree(layoutModel, node, (int) currentX);
@@ -157,15 +159,31 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
     }
   }
 
-  private int calculateWidth(LayoutModel<N> layoutModel, N node) {
+  private int calculateWidth(LayoutModel<N> layoutModel, N node, Set<N> seen) {
+
+    Graph<N, ?> graph = layoutModel.getGraph();
+    log.trace("graph is {}", graph);
+    List<N> successors = Graphs.successorListOf(graph, node);
+    log.trace("successors of {} are {}", node, successors);
+    successors.removeIf(n -> seen.contains(n));
+    log.trace("filtered successors of {} are {}", node, successors);
+
+    seen.addAll(successors);
 
     int size =
-        Graphs.successorListOf(layoutModel.getGraph(), node)
-            //            .getGraph()
-            //            .successors(node)
+        successors
             .stream()
-            .mapToInt(element -> calculateWidth(layoutModel, element) + horizontalNodeSpacing)
+            .mapToInt(element -> calculateWidth(layoutModel, element, seen) + horizontalNodeSpacing)
             .sum();
+
+    //    while (graph.)
+    //    int size =
+    //        Graphs.successorListOf(layoutModel.getGraph(), node)
+    //            //            .getGraph()
+    //            //            .successors(node)
+    //            .stream()
+    //            .mapToInt(element -> calculateWidth(layoutModel, element) + horizontalNodeSpacing)
+    //            .sum();
     size = Math.max(0, size - horizontalNodeSpacing);
     log.debug("calcWidth basePositions put {} {}", node, size);
     basePositions.put(node, size);
@@ -173,31 +191,69 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
     return size;
   }
 
+  //  private int calculateWidth(LayoutModel<N> layoutModel, N node) {
+  //
+  //    int size =
+  //        Graphs.successorListOf(layoutModel.getGraph(), node)
+  //            //            .getGraph()
+  //            //            .successors(node)
+  //            .stream()
+  //            .mapToInt(element -> calculateWidth(layoutModel, element) + horizontalNodeSpacing)
+  //            .sum();
+  //    size = Math.max(0, size - horizontalNodeSpacing);
+  //    log.debug("calcWidth basePositions put {} {}", node, size);
+  //    basePositions.put(node, size);
+  //
+  //    return size;
+  //  }
+
   private int calculateWidth(LayoutModel<N> layoutModel, Collection<N> roots) {
 
-    return roots.stream().mapToInt(node -> calculateWidth(layoutModel, node)).sum();
+    return roots
+        .stream()
+        .mapToInt(node -> calculateWidth(layoutModel, node, new HashSet<>()))
+        .sum();
   }
 
-  private int calculateHeight(LayoutModel<N> layoutModel, N node) {
+  //  private int calculateHeight(LayoutModel<N> layoutModel, N node) {
+  //
+  //    return Graphs.successorListOf(layoutModel.getGraph(), node)
+  //        .stream()
+  //        .mapToInt(element -> calculateHeight(layoutModel, element) + verticalNodeSpacing)
+  //        .max()
+  //        .orElse(0);
+  //  }
 
-    //    int size = 0;
-    //    for (N element : layoutModel.getGraph().successors(node)) {
-    //      size = Math.max(size, calculateHeight(layoutModel, element) + verticalNodeSpacing);
-    //    }
-    //    return size;
-    return Graphs.successorListOf(layoutModel.getGraph(), node)
-        //            layoutModel
-        //        .getGraph()
-        //        .successors(node)
+  private int calculateHeight(LayoutModel<N> layoutModel, N node, Set<N> seen) {
+
+    Graph<N, ?> graph = layoutModel.getGraph();
+    List<N> successors = Graphs.successorListOf(graph, node);
+    log.trace("graph is {}", graph);
+    log.trace("h successors of {} are {}", node, successors);
+    successors.removeIf(n -> seen.contains(n));
+    log.trace("filtered h successors of {} are {}", node, successors);
+
+    seen.addAll(successors);
+
+    return successors
         .stream()
-        .mapToInt(element -> calculateHeight(layoutModel, element) + verticalNodeSpacing)
+        .mapToInt(element -> calculateHeight(layoutModel, element, seen) + verticalNodeSpacing)
         .max()
         .orElse(0);
+
+    //    return Graphs.successorListOf(layoutModel.getGraph(), node)
+    //            .stream()
+    //            .mapToInt(element -> calculateHeight(layoutModel, element) + verticalNodeSpacing)
+    //            .max()
+    //            .orElse(0);
   }
 
   private int calculateHeight(LayoutModel<N> layoutModel, Collection<N> roots) {
 
-    return roots.stream().mapToInt(node -> calculateHeight(layoutModel, node)).sum();
+    return roots
+        .stream()
+        .mapToInt(node -> calculateHeight(layoutModel, node, new HashSet<N>()))
+        .sum();
   }
 
   /** @return the center of this layout's area. */

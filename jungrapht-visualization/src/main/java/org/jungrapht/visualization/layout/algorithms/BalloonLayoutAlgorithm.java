@@ -18,6 +18,8 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.jgrapht.Graph;
@@ -90,10 +92,15 @@ public class BalloonLayoutAlgorithm<N> extends TreeLayoutAlgorithm<N> {
       N root = Iterables.getOnlyElement(roots);
       setRootPolar(layoutModel, root);
       setPolars(
-          layoutModel, Graphs.successorListOf(graph, root), getCenter(layoutModel), 0, width / 2);
+          layoutModel,
+          Graphs.successorListOf(graph, root),
+          getCenter(layoutModel),
+          0,
+          width / 2,
+          new HashSet<>());
     } else if (roots.size() > 1) {
       // its a Network
-      setPolars(layoutModel, roots, getCenter(layoutModel), 0, width / 2);
+      setPolars(layoutModel, roots, getCenter(layoutModel), 0, width / 2, new HashSet<>());
     }
   }
 
@@ -109,7 +116,8 @@ public class BalloonLayoutAlgorithm<N> extends TreeLayoutAlgorithm<N> {
       Collection<N> kids,
       Point parentLocation,
       double angleToParent,
-      double parentRadius) {
+      double parentRadius,
+      Set<N> seen) {
 
     int childCount = kids.size();
     if (childCount == 0) {
@@ -150,12 +158,10 @@ public class BalloonLayoutAlgorithm<N> extends TreeLayoutAlgorithm<N> {
       // compute the angle from p to the parent and pass to function
       // so that sub tree node positions can be bisected by it.
       double newAngleToParent = Math.atan2(p.y - parentLocation.y, parentLocation.x - p.x);
-      setPolars(
-          layoutModel,
-          Graphs.successorListOf(layoutModel.getGraph(), child),
-          p,
-          newAngleToParent,
-          childRadius);
+      List<N> successors = Graphs.successorListOf(layoutModel.getGraph(), child);
+      successors.removeIf(n -> seen.contains(n));
+      seen.addAll(successors);
+      setPolars(layoutModel, successors, p, newAngleToParent, childRadius, seen);
     }
   }
 
