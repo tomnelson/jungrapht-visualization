@@ -35,6 +35,8 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
 
   private static final Logger log = LoggerFactory.getLogger(TreeLayoutAlgorithm.class);
 
+  protected Collection<N> roots = new HashSet<>();
+
   public static class Builder<N> {
     private int horizontalNodeSpacing = DEFAULT_HORIZONTAL_NODE_SPACING;
     private int verticalNodeSpacing = DEFAULT_VERTICAL_NODE_SPACING;
@@ -111,6 +113,7 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
             .stream()
             .filter(node -> Graphs.predecessorListOf(layoutModel.getGraph(), node).isEmpty())
             .collect(toImmutableSet());
+    this.roots = roots;
     //            TreeUtils.roots(layoutModel.getGraph());
     Preconditions.checkArgument(roots.size() > 0);
     // the width of the tree under 'roots'. Includes one 'horizontalNodeSpacing' per child node
