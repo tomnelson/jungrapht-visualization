@@ -138,7 +138,6 @@ public class NodeImageShaperDemo extends JPanel {
     vv.getRenderContext().setNodeLabelRenderer(new DefaultNodeLabelRenderer(Color.cyan));
     vv.getRenderContext().setEdgeLabelRenderer(new DefaultEdgeLabelRenderer(Color.cyan));
     vv.getRenderContext().setComplexRendering(true);
-    vv.getRenderContext().setComplexRendering(true);
 
     // For this demo only, I use a special class that lets me turn various
     // features on and off. For a real application, use NodeIconShapeTransformer instead.

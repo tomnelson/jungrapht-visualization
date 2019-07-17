@@ -480,6 +480,9 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
       ((Caching) model).clear();
     }
 
+    // use simple rendering when the view scale is small, and normal rendersing otherwise
+    simplifyRenderer(smallScale());
+    
     renderer.render(renderContext, model, nodeSpatial, edgeSpatial);
 
     // if there are postRenderers set, do it
@@ -494,6 +497,14 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
       }
     }
     g2d.setTransform(oldXform);
+  }
+
+  private boolean smallScale() {
+    return getRenderContext()
+            .getMultiLayerTransformer()
+            .getTransformer(MultiLayerTransformer.Layer.VIEW)
+            .getScale()
+        < 0.5;
   }
 
   /** a LayoutChange.Event from the LayoutModel will trigger a repaint of the visualization */
