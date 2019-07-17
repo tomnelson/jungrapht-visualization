@@ -17,9 +17,7 @@ import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
-import org.jungrapht.samples.util.BalloonLayoutRings;
 import org.jungrapht.samples.util.LayoutHelper;
-import org.jungrapht.samples.util.RadialLayoutRings;
 import org.jungrapht.samples.util.SpanningTreeAdapter;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationViewer;
@@ -34,6 +32,8 @@ import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.LoadingCacheLayoutModel;
+import org.jungrapht.visualization.util.BalloonLayoutRings;
+import org.jungrapht.visualization.util.RadialLayoutRings;
 
 /**
  * Demonstrates several of the graph layout algorithms. Allows the user to interactively select one

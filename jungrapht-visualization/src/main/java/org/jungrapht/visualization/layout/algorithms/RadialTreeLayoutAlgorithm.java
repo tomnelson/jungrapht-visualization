@@ -55,7 +55,7 @@ public class RadialTreeLayoutAlgorithm<N> extends TreeLayoutAlgorithm<N> {
 
   private void putRadialPointsInModel(LayoutModel<N> layoutModel) {
     for (Map.Entry<N, PolarPoint> entry : polarLocations.entrySet()) {
-//      PolarPoint polar = entry.getValue();
+      //      PolarPoint polar = entry.getValue();
       layoutModel.set(entry.getKey(), getCartesian(layoutModel, entry.getKey()));
     }
   }

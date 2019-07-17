@@ -1,4 +1,4 @@
-package org.jungrapht.samples.util;
+package org.jungrapht.visualization.util;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;

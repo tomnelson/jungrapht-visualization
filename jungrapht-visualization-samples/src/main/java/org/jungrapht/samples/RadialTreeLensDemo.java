@@ -10,31 +10,22 @@ package org.jungrapht.samples;
 
 import java.awt.*;
 import java.awt.event.ItemEvent;
-import java.awt.geom.Ellipse2D;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.DemoTreeSupplier;
+import org.jungrapht.samples.util.TreeLayoutSelector;
 import org.jungrapht.visualization.BaseVisualizationModel;
 import org.jungrapht.visualization.GraphZoomScrollPane;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationModel;
-import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.ModalLensGraphMouse;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
-import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
-import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.jungrapht.visualization.layout.model.Point;
-import org.jungrapht.visualization.layout.model.PolarPoint;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 import org.jungrapht.visualization.transform.HyperbolicTransformer;
 import org.jungrapht.visualization.transform.LayoutLensSupport;
@@ -54,12 +45,6 @@ public class RadialTreeLensDemo extends JPanel {
 
   Graph<String, Integer> graph;
 
-  VisualizationServer.Paintable rings;
-
-  TreeLayoutAlgorithm<String> treeLayoutAlgorithm;
-
-  RadialTreeLayoutAlgorithm<String> radialLayoutAlgorithm;
-
   /** the visual component and renderer for the graph */
   VisualizationViewer<String, Integer> vv;
 
@@ -75,13 +60,10 @@ public class RadialTreeLensDemo extends JPanel {
     // create a simple graph for the demo
     graph = DemoTreeSupplier.createTreeTwo();
 
-    radialLayoutAlgorithm = RadialTreeLayoutAlgorithm.builder().build();
-    treeLayoutAlgorithm = TreeLayoutAlgorithm.builder().build();
-
     Dimension preferredSize = new Dimension(600, 600);
 
     final VisualizationModel<String, Integer> visualizationModel =
-        new BaseVisualizationModel<>(graph, radialLayoutAlgorithm, preferredSize);
+        new BaseVisualizationModel<>(graph, new StaticLayoutAlgorithm(), preferredSize);
     vv = new VisualizationViewer<>(visualizationModel, preferredSize);
 
     MutableSelectedState<String> ps = vv.getSelectedNodeState();
@@ -106,44 +88,6 @@ public class RadialTreeLensDemo extends JPanel {
 
     vv.setGraphMouse(graphMouse);
     vv.addKeyListener(graphMouse.getModeKeyListener());
-    rings = new Rings(vv.getModel().getLayoutModel());
-    vv.addPreRenderPaintable(rings);
-
-    JToggleButton radial = new JToggleButton("Tree");
-    final JRadioButton animateTransition = new JRadioButton("Animate Transition");
-
-    radial.addItemListener(
-        e -> {
-          if (e.getStateChange() == ItemEvent.SELECTED) {
-            ((JToggleButton) e.getSource()).setText("Radial");
-            if (animateTransition.isSelected()) {
-              LayoutAlgorithmTransition.animate(vv, treeLayoutAlgorithm);
-            } else {
-              LayoutAlgorithmTransition.apply(vv, treeLayoutAlgorithm);
-            }
-
-            vv.getRenderContext()
-                .getMultiLayerTransformer()
-                .getTransformer(Layer.LAYOUT)
-                .setToIdentity();
-            vv.removePreRenderPaintable(rings);
-
-          } else {
-            ((JToggleButton) e.getSource()).setText("Tree");
-            if (animateTransition.isSelected()) {
-              LayoutAlgorithmTransition.animate(vv, radialLayoutAlgorithm);
-            } else {
-              LayoutAlgorithmTransition.apply(vv, radialLayoutAlgorithm);
-            }
-
-            vv.getRenderContext()
-                .getMultiLayerTransformer()
-                .getTransformer(Layer.LAYOUT)
-                .setToIdentity();
-            vv.addPreRenderPaintable(rings);
-          }
-          vv.repaint();
-        });
     LayoutModel<String> layoutModel = vv.getModel().getLayoutModel();
     Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
 
@@ -198,50 +142,9 @@ public class RadialTreeLensDemo extends JPanel {
     controls.add(modeControls);
     JPanel layoutControls = new JPanel(new GridLayout(0, 1));
     layoutControls.setBorder(BorderFactory.createTitledBorder("Layouts"));
-    JPanel radialPanel = new JPanel();
-    radialPanel.add(radial);
-    layoutControls.add(radialPanel);
-    layoutControls.add(animateTransition);
+    layoutControls.add(new TreeLayoutSelector<>(vv, 2));
     controls.add(layoutControls);
     add(controls, BorderLayout.SOUTH);
-  }
-
-  class Rings implements VisualizationServer.Paintable {
-
-    Collection<Double> depths;
-    LayoutModel<String> layoutModel;
-
-    public Rings(LayoutModel<String> layoutModel) {
-      this.layoutModel = layoutModel;
-      depths = getDepths();
-    }
-
-    private Collection<Double> getDepths() {
-      Set<Double> depths = new HashSet<>();
-      Map<String, PolarPoint> polarLocations = radialLayoutAlgorithm.getPolarLocations();
-      for (String v : graph.vertexSet()) {
-        PolarPoint pp = polarLocations.get(v);
-        depths.add(pp.radius);
-      }
-      return depths;
-    }
-
-    public void paint(Graphics g) {
-      g.setColor(Color.gray);
-      Graphics2D g2d = (Graphics2D) g;
-      Point center = radialLayoutAlgorithm.getCenter(layoutModel);
-
-      Ellipse2D ellipse = new Ellipse2D.Double();
-      for (double d : depths) {
-        ellipse.setFrameFromDiagonal(center.x - d, center.y - d, center.x + d, center.y + d);
-        Shape shape = vv.getTransformSupport().transform(vv, ellipse, Layer.LAYOUT);
-        g2d.draw(shape);
-      }
-    }
-
-    public boolean useTransform() {
-      return true;
-    }
   }
 
   public static void main(String[] args) {
