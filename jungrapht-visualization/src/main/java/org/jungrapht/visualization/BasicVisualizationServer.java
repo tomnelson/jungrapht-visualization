@@ -168,6 +168,10 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
 
   protected Spatial<E> edgeSpatial;
 
+  protected boolean smallScaleOverride;
+
+  protected Timer timer;
+
   /**
    * @param network the network to render
    * @param layoutAlgorithm the algorithm to apply
@@ -215,6 +219,21 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
     if (edgeSpatial != null) {
       setEdgeSpatial(edgeSpatial);
     }
+
+    MultiLayerTransformer multiLayerTransformer = getRenderContext().getMultiLayerTransformer();
+    multiLayerTransformer.addChangeListener(
+        new ChangeListener() {
+          @Override
+          public void stateChanged(ChangeEvent e) {
+            System.err.println("got " + e);
+            if (timer == null || timer.done) {
+              timer = new Timer(BasicVisualizationServer.this);
+              timer.start();
+            } else {
+              timer.incrementValue();
+            }
+          }
+        });
   }
 
   private void createSpatialStuctures(VisualizationModel model, RenderContext renderContext) {
@@ -480,9 +499,8 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
       ((Caching) model).clear();
     }
 
-    // use simple rendering when the view scale is small, and normal rendersing otherwise
-    simplifyRenderer(smallScale());
-    
+    this.smallScaleOverride = smallScale();
+
     renderer.render(renderContext, model, nodeSpatial, edgeSpatial);
 
     // if there are postRenderers set, do it
@@ -522,7 +540,11 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
     //    simplifyRenderer(evt.active);
   }
 
+  @Override
   public void simplifyRenderer(boolean simplify) {
+    if (smallScaleOverride) {
+      simplify = true;
+    }
     if (renderContext.isComplexRendering()) {
       return;
     }
@@ -534,6 +556,36 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
       this.getRenderingHints()
           .put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
       repaint();
+    }
+  }
+
+  static class Timer extends Thread {
+    long value = 10;
+    boolean done;
+    VisualizationServer vv;
+
+    public Timer(VisualizationServer vv) {
+      this.vv = vv;
+      vv.simplifyRenderer(true);
+    }
+
+    public void incrementValue() {
+      value = 10;
+    }
+
+    public void run() {
+      done = false;
+      while (value > 0) {
+        value--;
+        try {
+          Thread.sleep(50);
+        } catch (InterruptedException ex) {
+          ex.printStackTrace();
+        }
+      }
+      vv.simplifyRenderer(false);
+      done = true;
+      vv.repaint();
     }
   }
 

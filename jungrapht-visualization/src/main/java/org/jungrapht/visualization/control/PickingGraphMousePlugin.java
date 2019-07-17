@@ -210,7 +210,6 @@ public class PickingGraphMousePlugin<N, E> extends AbstractGraphMousePlugin
     Point2D out = e.getPoint();
 
     VisualizationViewer<N, E> vv = (VisualizationViewer<N, E>) e.getSource();
-    vv.simplifyRenderer(false);
     // if the nodeSpatial was active at mousePress (and deactivated during drag) reactivate it now
     if (nodeSpatialActiveInitialState) {
       vv.getNodeSpatial().setActive(nodeSpatialActiveInitialState);
@@ -292,7 +291,6 @@ public class PickingGraphMousePlugin<N, E> extends AbstractGraphMousePlugin
       log.trace("view p for drag event is {}", p);
       log.trace("down is {}", down);
       if (node != null) {
-        vv.simplifyRenderer(true);
         // dragging points and changing their layout locations
         Point2D graphPoint = multiLayerTransformer.inverseTransform(p);
         log.trace("p in graph coords is {}", graphPoint);

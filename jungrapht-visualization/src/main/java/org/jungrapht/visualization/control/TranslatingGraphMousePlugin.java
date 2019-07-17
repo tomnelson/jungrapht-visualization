@@ -53,7 +53,6 @@ public class TranslatingGraphMousePlugin extends AbstractGraphMousePlugin
    */
   public void mousePressed(MouseEvent e) {
     VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
-    vv.simplifyRenderer(true);
     boolean accepted = checkModifiers(e);
     down = e.getPoint();
     if (accepted) {
@@ -66,7 +65,6 @@ public class TranslatingGraphMousePlugin extends AbstractGraphMousePlugin
     VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
     down = null;
     vv.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-    vv.simplifyRenderer(false);
   }
 
   /**

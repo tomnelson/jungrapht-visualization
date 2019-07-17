@@ -38,8 +38,6 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
   /** controls scaling operations */
   protected ScalingControl scaler;
 
-  protected Timer timer;
-
   public ScalingGraphMousePlugin(ScalingControl scaler, int modifiers) {
     this(scaler, modifiers, 1.1f, 1 / 1.1f);
   }
@@ -59,46 +57,11 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
     return e.getModifiers() == modifiers || (e.getModifiers() & modifiers) != 0;
   }
 
-  static class Timer extends Thread {
-    long value = 10;
-    boolean done;
-    VisualizationViewer vv;
-
-    public Timer(VisualizationViewer vv) {
-      this.vv = vv;
-      vv.simplifyRenderer(true);
-    }
-
-    public void incrementValue() {
-      value = 10;
-    }
-
-    public void run() {
-      done = false;
-      while (value > 0) {
-        value--;
-        try {
-          Thread.sleep(50);
-        } catch (InterruptedException ex) {
-          ex.printStackTrace();
-        }
-      }
-      vv.simplifyRenderer(false);
-      done = true;
-      vv.repaint();
-    }
-  }
   /** zoom the display in or out, depending on the direction of the mouse wheel motion. */
   public void mouseWheelMoved(MouseWheelEvent e) {
     boolean accepted = checkModifiers(e);
     if (accepted == true) {
       VisualizationViewer vv = (VisualizationViewer) e.getSource();
-      if (timer == null || timer.done) {
-        timer = new Timer(vv);
-        timer.start();
-      } else {
-        timer.incrementValue();
-      }
       Point2D mouse = e.getPoint();
       Point2D center = vv.getCenter();
       int amount = e.getWheelRotation();
@@ -117,7 +80,6 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
       }
       e.consume();
       vv.repaint();
-      //      vv.simplifyRenderer(false);
     }
   }
 

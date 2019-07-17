@@ -170,4 +170,6 @@ public interface VisualizationServer<N, E>
 
     boolean useTransform();
   }
+
+  void simplifyRenderer(boolean simplify);
 }
