@@ -67,7 +67,7 @@ public class DAGLayoutAlgorithm<N> extends SpringLayoutAlgorithm<N> {
 
   public static class Builder<N> extends SpringLayoutAlgorithm.Builder<N> {}
 
-  protected DAGLayoutAlgorithm(Builder builder) {
+  protected DAGLayoutAlgorithm(Builder<N> builder) {
     super(builder);
   }
 

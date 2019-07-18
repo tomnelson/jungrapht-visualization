@@ -34,7 +34,7 @@ public class SpringLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N
 
   private static final Logger log = LoggerFactory.getLogger(SpringLayoutAlgorithm.class);
   protected double stretch = 0.70;
-  protected Function<? super Object, Integer> lengthFunction;
+  protected Function<Object, Integer> lengthFunction;
   protected int repulsion_range_sq = 100 * 100;
   protected double force_multiplier = 1.0 / 3.0;
   boolean done = false;
@@ -49,7 +49,7 @@ public class SpringLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N
       extends AbstractIterativeLayoutAlgorithm.Builder<N, SpringLayoutAlgorithm<N>, Builder<N>> {
     private StandardSpringRepulsion.Builder repulsionContractBuilder =
         StandardSpringRepulsion.standardBuilder();
-    private Function<? super Object, Integer> lengthFunction = n -> 30;
+    private Function<Object, Integer> lengthFunction = n -> 30;
 
     public Builder<N> repulsionContractBuilder(
         StandardSpringRepulsion.Builder repulsionContractBuilder) {
@@ -57,7 +57,7 @@ public class SpringLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N
       return this;
     }
 
-    public Builder<N> withLengthFunction(Function<? super Object, Integer> lengthFunction) {
+    public Builder<N> withLengthFunction(Function<Object, Integer> lengthFunction) {
       this.lengthFunction = lengthFunction;
       return this;
     }

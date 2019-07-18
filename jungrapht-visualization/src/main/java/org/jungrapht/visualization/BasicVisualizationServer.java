@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -38,6 +39,7 @@ import org.jgrapht.Graph;
 import org.jungrapht.visualization.annotations.AnnotationPaintable;
 import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.control.TransformSupport;
+import org.jungrapht.visualization.decorators.EllipseNodeShapeFunction;
 import org.jungrapht.visualization.layout.BoundingRectangleCollector;
 import org.jungrapht.visualization.layout.NetworkElementAccessor;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -225,7 +227,6 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
         new ChangeListener() {
           @Override
           public void stateChanged(ChangeEvent e) {
-            System.err.println("got " + e);
             if (timer == null || timer.done) {
               timer = new Timer(BasicVisualizationServer.this);
               timer.start();
@@ -578,7 +579,7 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
       while (value > 0) {
         value--;
         try {
-          Thread.sleep(50);
+          Thread.sleep(10);
         } catch (InterruptedException ex) {
           ex.printStackTrace();
         }
@@ -819,6 +820,9 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
         VisualizationModel<N, E> visualizationModel,
         Spatial<N> nodeSpatial,
         Spatial<E> edgeSpatial) {
+      Function<N, Shape> savedNodeShapeFunction = renderContext.getNodeShapeFunction();
+      Function<N, Shape> nodeShapeFunction = new EllipseNodeShapeFunction<>();
+      renderContext.setNodeShapeFunction(n -> nodeShapeFunction.apply(n));
       if (nodeSpatial == null) {
         render(renderContext, visualizationModel);
         return;
@@ -871,8 +875,6 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
 
         for (N v : visibleNodes) {
           renderNode(renderContext, visualizationModel, v);
-          //        if (v instanceof String)
-          //          renderNodeLabel(renderContext, visualizationModel, v);
         }
       } catch (ConcurrentModificationException cme) {
         renderContext.getScreenDevice().repaint();
@@ -883,6 +885,8 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
     public void render(
         RenderContext<N, E> renderContext, VisualizationModel<N, E> visualizationModel) {
       Graph<N, E> network = visualizationModel.getNetwork();
+      Function<N, Shape> nodeShapeFunction = new EllipseNodeShapeFunction<>();
+      renderContext.setNodeShapeFunction(n -> nodeShapeFunction.apply(n));
       // paint all the edges
       try {
         for (E e : network.edgeSet()) {

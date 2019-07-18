@@ -16,14 +16,13 @@ import org.jungrapht.visualization.util.NodeShapeFactory;
 
 /** @author Joshua O'Madadhain */
 public abstract class AbstractNodeShapeFunction<N> implements SettableNodeShapeFunction<N> {
-  protected Function<? super N, Integer> vsf;
-  protected Function<? super N, Float> varf;
+  protected Function<N, Integer> vsf;
+  protected Function<N, Float> varf;
   protected NodeShapeFactory<N> factory;
   public static final int DEFAULT_SIZE = 8;
   public static final float DEFAULT_ASPECT_RATIO = 1.0f;
 
-  public AbstractNodeShapeFunction(
-      Function<? super N, Integer> vsf, Function<? super N, Float> varf) {
+  public AbstractNodeShapeFunction(Function<N, Integer> vsf, Function<N, Float> varf) {
     this.vsf = vsf;
     this.varf = varf;
     factory = new NodeShapeFactory<N>(vsf, varf);

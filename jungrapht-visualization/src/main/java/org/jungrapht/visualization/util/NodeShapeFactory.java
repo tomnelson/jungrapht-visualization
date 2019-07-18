@@ -25,18 +25,18 @@ import org.slf4j.LoggerFactory;
  * A utility class for generating <code>Shape</code>s for drawing nodes. The available shapes
  * include rectangles, rounded rectangles, ellipses, regular polygons, and regular stars. The
  * dimensions of the requested shapes are defined by the specified node layoutSize function
- * (specified by a {@code Function<? super N, Integer>}) and node aspect ratio function (specified
- * by a {@code Function<? super N, Float>}) implementations: the width of the bounding box of the
- * shape is given by the node layoutSize, and the height is given by the layoutSize multiplied by
- * the node's aspect ratio.
+ * (specified by a {@code Function<N, Integer>}) and node aspect ratio function (specified by a
+ * {@code Function<N, Float>}) implementations: the width of the bounding box of the shape is given
+ * by the node layoutSize, and the height is given by the layoutSize multiplied by the node's aspect
+ * ratio.
  *
  * @author Joshua O'Madadhain
  */
 public class NodeShapeFactory<N> {
 
   private static final Logger log = LoggerFactory.getLogger(NodeShapeFactory.class);
-  protected Function<? super N, Integer> vsf;
-  protected Function<? super N, Float> varf;
+  protected Function<N, Integer> vsf;
+  protected Function<N, Float> varf;
 
   /**
    * Creates an instance with the specified node layoutSize and aspect ratio functions.
@@ -44,7 +44,7 @@ public class NodeShapeFactory<N> {
    * @param vsf provides a layoutSize (width) for each node
    * @param varf provides a height/width ratio for each node
    */
-  public NodeShapeFactory(Function<? super N, Integer> vsf, Function<? super N, Float> varf) {
+  public NodeShapeFactory(Function<N, Integer> vsf, Function<N, Float> varf) {
     this.vsf = vsf;
     this.varf = varf;
   }

@@ -76,11 +76,11 @@ public class LabelEditingGraphMousePlugin<N, E> extends AbstractGraphMousePlugin
       LayoutModel<N> layoutModel = vv.getModel().getLayoutModel();
       NetworkElementAccessor<N, E> pickSupport = vv.getPickSupport();
       if (pickSupport != null) {
-        Function<? super N, String> vs = vv.getRenderContext().getNodeLabelFunction();
+        Function<N, String> vs = vv.getRenderContext().getNodeLabelFunction();
         System.err.println("vs is a " + vs);
         //        if (vs instanceof MapSettableTransformer) {
-        //          MapSettableTransformer<? super N, String> mst =
-        //              (MapSettableTransformer<? super N, String>) vs;
+        //          MapSettableTransformer<N, String> mst =
+        //              (MapSettableTransformer<N, String>) vs;
         //    				Layout<N, Point2D> layout = vv.getGraphLayout();
         // p is the screen point for the mouse event
         Point2D p = e.getPoint();
@@ -96,10 +96,10 @@ public class LabelEditingGraphMousePlugin<N, E> extends AbstractGraphMousePlugin
           return;
         }
         //        }
-        Function<? super E, String> es = vv.getRenderContext().getEdgeLabelFunction();
+        Function<E, String> es = vv.getRenderContext().getEdgeLabelFunction();
         //        if (es instanceof MapSettableTransformer) {
-        //          MapSettableTransformer<? super E, String> mst =
-        //              (MapSettableTransformer<? super E, String>) es;
+        //          MapSettableTransformer<E, String> mst =
+        //              (MapSettableTransformer<E, String>) es;
         //    				Layout<N> layout = vv.getGraphLayout();
         // p is the screen point for the mouse event
         p = e.getPoint();

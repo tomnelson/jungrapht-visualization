@@ -85,12 +85,12 @@ public class DefaultRenderContext<N, E> implements RenderContext<N, E> {
 
   // node functions
   protected Predicate<N> nodeIncludePredicate = n -> true;
-  protected Function<? super N, Stroke> nodeStrokeFunction =
+  protected Function<N, Stroke> nodeStrokeFunction =
       n -> new BasicStroke(Float.parseFloat(System.getProperty(NODE_STROKE_WIDTH, "1.0")));
-  protected Function<? super N, Shape> nodeShapeFunction = n -> nodeShape;
+  protected Function<N, Shape> nodeShapeFunction = n -> nodeShape;
 
-  protected Function<? super N, Paint> nodeDrawPaintFunction = n -> nodeDrawPaint;
-  protected Function<? super N, Paint> nodeFillPaintFunction =
+  protected Function<N, Paint> nodeDrawPaintFunction = n -> nodeDrawPaint;
+  protected Function<N, Paint> nodeFillPaintFunction =
       n ->
           pickedNodeState != null && pickedNodeState.isSelected(n)
               ? pickedNodeFillPaint
@@ -103,8 +103,8 @@ public class DefaultRenderContext<N, E> implements RenderContext<N, E> {
       getPosition(System.getProperty(NODE_LABEL_POSITION));
 
   // node label functions
-  protected Function<? super N, Font> nodeFontFunction = n -> nodeFont;
-  protected Function<? super N, Paint> nodeLabelDrawPaintFunction = n -> nodeLabelDrawPaint;
+  protected Function<N, Font> nodeFontFunction = n -> nodeFont;
+  protected Function<N, Paint> nodeLabelDrawPaintFunction = n -> nodeLabelDrawPaint;
 
   // edge properties
   private Stroke edgeStroke =
@@ -113,17 +113,17 @@ public class DefaultRenderContext<N, E> implements RenderContext<N, E> {
   private Color edgePaint = Color.getColor(EDGE_COLOR, Color.BLACK);
 
   // edge functions
-  protected Function<? super E, Stroke> edgeStrokeFunction = e -> edgeStroke;
-  protected Function<? super E, Paint> edgeFillPaintFunction = n -> null;
-  protected Function<? super E, Paint> edgeDrawPaintFunction =
+  protected Function<E, Stroke> edgeStrokeFunction = e -> edgeStroke;
+  protected Function<E, Paint> edgeFillPaintFunction = n -> null;
+  protected Function<E, Paint> edgeDrawPaintFunction =
       e -> pickedEdgeState != null && pickedEdgeState.isSelected(e) ? pickedEdgePaint : edgePaint;
 
   // edge label properties
   private Font edgeLabelFont = Font.getFont(EDGE_LABEL_FONT, new Font("Helvetica", Font.PLAIN, 12));
 
   // edge label functions
-  protected Function<? super E, Font> edgeFontFunction = n -> edgeLabelFont;
-  protected Function<? super E, String> edgeLabelFunction = e -> null;
+  protected Function<E, Font> edgeFontFunction = n -> edgeLabelFont;
+  protected Function<E, String> edgeLabelFunction = e -> null;
 
   // edge arrow properties
   private int edgeArrowLength = Integer.getInteger(EDGE_ARROW_LENGTH, 10);
@@ -136,15 +136,15 @@ public class DefaultRenderContext<N, E> implements RenderContext<N, E> {
       new BasicStroke(Float.parseFloat(System.getProperty(EDGE_ARROW_STROKE, "1.0")));
 
   // edge arrow functions
-  protected Function<? super E, Stroke> edgeArrowStrokeFunction = e -> edgeArrowStroke;
-  protected Function<? super E, Paint> arrowFillPaintFunction =
+  protected Function<E, Stroke> edgeArrowStrokeFunction = e -> edgeArrowStroke;
+  protected Function<E, Paint> arrowFillPaintFunction =
       e -> pickedEdgeState != null && pickedEdgeState.isSelected(e) ? pickedEdgePaint : edgePaint;
-  protected Function<? super E, Paint> arrowDrawPaintFunction =
+  protected Function<E, Paint> arrowDrawPaintFunction =
       e -> pickedEdgeState != null && pickedEdgeState.isSelected(e) ? pickedEdgePaint : edgePaint;
 
   protected boolean complexRendering = Boolean.getBoolean(COMPLEX_RENDERING);
 
-  protected Function<? super N, String> nodeLabelFunction = n -> null;
+  protected Function<N, String> nodeLabelFunction = n -> null;
   protected Function<N, Icon> nodeIconFunction;
 
   protected boolean renderEdgeArrow;
@@ -206,22 +206,22 @@ public class DefaultRenderContext<N, E> implements RenderContext<N, E> {
   }
 
   /** @return the nodeShapeFunction */
-  public Function<? super N, Shape> getNodeShapeFunction() {
+  public Function<N, Shape> getNodeShapeFunction() {
     return nodeShapeFunction;
   }
 
   /** @param nodeShapeFunction the nodeShapeFunction to set */
-  public void setNodeShapeFunction(Function<? super N, Shape> nodeShapeFunction) {
+  public void setNodeShapeFunction(Function<N, Shape> nodeShapeFunction) {
     this.nodeShapeFunction = nodeShapeFunction;
   }
 
   /** @return the nodeStrokeFunction */
-  public Function<? super N, Stroke> getNodeStrokeFunction() {
+  public Function<N, Stroke> getNodeStrokeFunction() {
     return nodeStrokeFunction;
   }
 
   /** @param nodeStrokeFunction the nodeStrokeFunction to set */
-  public void setNodeStrokeFunction(Function<? super N, Stroke> nodeStrokeFunction) {
+  public void setNodeStrokeFunction(Function<N, Stroke> nodeStrokeFunction) {
     this.nodeStrokeFunction = nodeStrokeFunction;
   }
 
@@ -257,11 +257,11 @@ public class DefaultRenderContext<N, E> implements RenderContext<N, E> {
     this.renderEdgeArrow = render;
   }
 
-  public Function<? super E, Font> getEdgeFontFunction() {
+  public Function<E, Font> getEdgeFontFunction() {
     return edgeFontFunction;
   }
 
-  public void setEdgeFontFunction(Function<? super E, Font> edgeFontFunction) {
+  public void setEdgeFontFunction(Function<E, Font> edgeFontFunction) {
     this.edgeFontFunction = edgeFontFunction;
   }
 
@@ -289,19 +289,19 @@ public class DefaultRenderContext<N, E> implements RenderContext<N, E> {
     this.edgeLabelRenderer = edgeLabelRenderer;
   }
 
-  public Function<? super E, Paint> getEdgeFillPaintFunction() {
+  public Function<E, Paint> getEdgeFillPaintFunction() {
     return edgeFillPaintFunction;
   }
 
-  public void setEdgeDrawPaintFunction(Function<? super E, Paint> edgeDrawPaintFunction) {
+  public void setEdgeDrawPaintFunction(Function<E, Paint> edgeDrawPaintFunction) {
     this.edgeDrawPaintFunction = edgeDrawPaintFunction;
   }
 
-  public Function<? super E, Paint> getEdgeDrawPaintFunction() {
+  public Function<E, Paint> getEdgeDrawPaintFunction() {
     return edgeDrawPaintFunction;
   }
 
-  public void setEdgeFillPaintFunction(Function<? super E, Paint> edgeFillPaintFunction) {
+  public void setEdgeFillPaintFunction(Function<E, Paint> edgeFillPaintFunction) {
     this.edgeFillPaintFunction = edgeFillPaintFunction;
   }
 
@@ -327,27 +327,27 @@ public class DefaultRenderContext<N, E> implements RenderContext<N, E> {
     this.nodeLabelPosition = nodeLabelPosition;
   }
 
-  public Function<? super E, String> getEdgeLabelFunction() {
+  public Function<E, String> getEdgeLabelFunction() {
     return edgeLabelFunction;
   }
 
-  public void setEdgeLabelFunction(Function<? super E, String> edgeLabelFunction) {
+  public void setEdgeLabelFunction(Function<E, String> edgeLabelFunction) {
     this.edgeLabelFunction = edgeLabelFunction;
   }
 
-  public Function<? super E, Stroke> edgeStrokeFunction() {
+  public Function<E, Stroke> edgeStrokeFunction() {
     return edgeStrokeFunction;
   }
 
-  public void setEdgeStrokeFunction(Function<? super E, Stroke> edgeStrokeFunction) {
+  public void setEdgeStrokeFunction(Function<E, Stroke> edgeStrokeFunction) {
     this.edgeStrokeFunction = edgeStrokeFunction;
   }
 
-  public Function<? super E, Stroke> getEdgeArrowStrokeFunction() {
+  public Function<E, Stroke> getEdgeArrowStrokeFunction() {
     return edgeArrowStrokeFunction;
   }
 
-  public void setEdgeArrowStrokeFunction(Function<? super E, Stroke> edgeArrowStrokeFunction) {
+  public void setEdgeArrowStrokeFunction(Function<E, Stroke> edgeArrowStrokeFunction) {
     this.edgeArrowStrokeFunction = edgeArrowStrokeFunction;
   }
 
@@ -411,11 +411,11 @@ public class DefaultRenderContext<N, E> implements RenderContext<N, E> {
     screenDevice.add(rendererPane);
   }
 
-  public Function<? super N, Font> getNodeFontFunction() {
+  public Function<N, Font> getNodeFontFunction() {
     return nodeFontFunction;
   }
 
-  public void setNodeFontFunction(Function<? super N, Font> nodeFontFunction) {
+  public void setNodeFontFunction(Function<N, Font> nodeFontFunction) {
     this.nodeFontFunction = nodeFontFunction;
   }
 
@@ -443,35 +443,35 @@ public class DefaultRenderContext<N, E> implements RenderContext<N, E> {
     this.nodeLabelRenderer = nodeLabelRenderer;
   }
 
-  public Function<? super N, Paint> getNodeFillPaintFunction() {
+  public Function<N, Paint> getNodeFillPaintFunction() {
     return nodeFillPaintFunction;
   }
 
-  public void setNodeFillPaintFunction(Function<? super N, Paint> nodeFillPaintFunction) {
+  public void setNodeFillPaintFunction(Function<N, Paint> nodeFillPaintFunction) {
     this.nodeFillPaintFunction = nodeFillPaintFunction;
   }
 
-  public Function<? super N, Paint> getNodeDrawPaintFunction() {
+  public Function<N, Paint> getNodeDrawPaintFunction() {
     return nodeDrawPaintFunction;
   }
 
-  public void setNodeDrawPaintFunction(Function<? super N, Paint> nodeDrawPaintFunction) {
+  public void setNodeDrawPaintFunction(Function<N, Paint> nodeDrawPaintFunction) {
     this.nodeDrawPaintFunction = nodeDrawPaintFunction;
   }
 
-  public Function<? super N, String> getNodeLabelFunction() {
+  public Function<N, String> getNodeLabelFunction() {
     return nodeLabelFunction;
   }
 
-  public void setNodeLabelFunction(Function<? super N, String> nodeLabelFunction) {
+  public void setNodeLabelFunction(Function<N, String> nodeLabelFunction) {
     this.nodeLabelFunction = nodeLabelFunction;
   }
 
-  public void setNodeLabelDrawPaintFunction(Function<? super N, Paint> nodeLabelDrawPaintFunction) {
+  public void setNodeLabelDrawPaintFunction(Function<N, Paint> nodeLabelDrawPaintFunction) {
     this.nodeLabelDrawPaintFunction = nodeLabelDrawPaintFunction;
   }
 
-  public Function<? super N, Paint> getNodeLabelDrawPaintFunction() {
+  public Function<N, Paint> getNodeLabelDrawPaintFunction() {
     return nodeLabelDrawPaintFunction;
   }
 
@@ -491,19 +491,19 @@ public class DefaultRenderContext<N, E> implements RenderContext<N, E> {
     this.multiLayerTransformer = basicTransformer;
   }
 
-  public Function<? super E, Paint> getArrowDrawPaintFunction() {
+  public Function<E, Paint> getArrowDrawPaintFunction() {
     return arrowDrawPaintFunction;
   }
 
-  public Function<? super E, Paint> getArrowFillPaintFunction() {
+  public Function<E, Paint> getArrowFillPaintFunction() {
     return arrowFillPaintFunction;
   }
 
-  public void setArrowDrawPaintFunction(Function<? super E, Paint> arrowDrawPaintFunction) {
+  public void setArrowDrawPaintFunction(Function<E, Paint> arrowDrawPaintFunction) {
     this.arrowDrawPaintFunction = arrowDrawPaintFunction;
   }
 
-  public void setArrowFillPaintFunction(Function<? super E, Paint> arrowFillPaintFunction) {
+  public void setArrowFillPaintFunction(Function<E, Paint> arrowFillPaintFunction) {
     this.arrowFillPaintFunction = arrowFillPaintFunction;
   }
 

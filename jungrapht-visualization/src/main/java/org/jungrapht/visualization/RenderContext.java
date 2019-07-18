@@ -62,9 +62,9 @@ public interface RenderContext<N, E> {
 
   void setRenderEdgeArrow(boolean render);
 
-  Function<? super E, Font> getEdgeFontFunction();
+  Function<E, Font> getEdgeFontFunction();
 
-  void setEdgeFontFunction(Function<? super E, Font> edgeFontFunction);
+  void setEdgeFontFunction(Function<E, Font> edgeFontFunction);
 
   Predicate<E> getEdgeIncludePredicate();
 
@@ -78,37 +78,37 @@ public interface RenderContext<N, E> {
 
   void setEdgeLabelRenderer(EdgeLabelRenderer edgeLabelRenderer);
 
-  Function<? super E, Paint> getEdgeFillPaintFunction();
+  Function<E, Paint> getEdgeFillPaintFunction();
 
-  void setEdgeFillPaintFunction(Function<? super E, Paint> edgePaintFunction);
+  void setEdgeFillPaintFunction(Function<E, Paint> edgePaintFunction);
 
-  Function<? super E, Paint> getEdgeDrawPaintFunction();
+  Function<E, Paint> getEdgeDrawPaintFunction();
 
-  void setEdgeDrawPaintFunction(Function<? super E, Paint> edgeDrawPaintFunction);
+  void setEdgeDrawPaintFunction(Function<E, Paint> edgeDrawPaintFunction);
 
-  Function<? super E, Paint> getArrowDrawPaintFunction();
+  Function<E, Paint> getArrowDrawPaintFunction();
 
-  void setArrowDrawPaintFunction(Function<? super E, Paint> arrowDrawPaintFunction);
+  void setArrowDrawPaintFunction(Function<E, Paint> arrowDrawPaintFunction);
 
-  Function<? super E, Paint> getArrowFillPaintFunction();
+  Function<E, Paint> getArrowFillPaintFunction();
 
-  void setArrowFillPaintFunction(Function<? super E, Paint> arrowFillPaintFunction);
+  void setArrowFillPaintFunction(Function<E, Paint> arrowFillPaintFunction);
 
   Function<Context<Graph<N, E>, E>, Shape> getEdgeShapeFunction();
 
   void setEdgeShapeFunction(Function<Context<Graph<N, E>, E>, Shape> edgeShapeFunction);
 
-  Function<? super E, String> getEdgeLabelFunction();
+  Function<E, String> getEdgeLabelFunction();
 
-  void setEdgeLabelFunction(Function<? super E, String> edgeStringer);
+  void setEdgeLabelFunction(Function<E, String> edgeStringer);
 
-  Function<? super E, Stroke> edgeStrokeFunction();
+  Function<E, Stroke> edgeStrokeFunction();
 
-  void setEdgeStrokeFunction(Function<? super E, Stroke> edgeStrokeFunction);
+  void setEdgeStrokeFunction(Function<E, Stroke> edgeStrokeFunction);
 
-  Function<? super E, Stroke> getEdgeArrowStrokeFunction();
+  Function<E, Stroke> getEdgeArrowStrokeFunction();
 
-  void setEdgeArrowStrokeFunction(Function<? super E, Stroke> edgeArrowStrokeFunction);
+  void setEdgeArrowStrokeFunction(Function<E, Stroke> edgeArrowStrokeFunction);
 
   GraphicsDecorator getGraphicsContext();
 
@@ -134,9 +134,9 @@ public interface RenderContext<N, E> {
 
   void setScreenDevice(JComponent screenDevice);
 
-  Function<? super N, Font> getNodeFontFunction();
+  Function<N, Font> getNodeFontFunction();
 
-  void setNodeFontFunction(Function<? super N, Font> nodeFontFunction);
+  void setNodeFontFunction(Function<N, Font> nodeFontFunction);
 
   Function<N, Icon> getNodeIconFunction();
 
@@ -150,29 +150,29 @@ public interface RenderContext<N, E> {
 
   void setNodeLabelRenderer(NodeLabelRenderer nodeLabelRenderer);
 
-  Function<? super N, Paint> getNodeFillPaintFunction();
+  Function<N, Paint> getNodeFillPaintFunction();
 
-  void setNodeFillPaintFunction(Function<? super N, Paint> nodeFillPaintFunction);
+  void setNodeFillPaintFunction(Function<N, Paint> nodeFillPaintFunction);
 
-  Function<? super N, Paint> getNodeDrawPaintFunction();
+  Function<N, Paint> getNodeDrawPaintFunction();
 
-  void setNodeDrawPaintFunction(Function<? super N, Paint> nodeDrawPaintFunction);
+  void setNodeDrawPaintFunction(Function<N, Paint> nodeDrawPaintFunction);
 
-  Function<? super N, Shape> getNodeShapeFunction();
+  Function<N, Shape> getNodeShapeFunction();
 
-  void setNodeShapeFunction(Function<? super N, Shape> nodeShapeFunction);
+  void setNodeShapeFunction(Function<N, Shape> nodeShapeFunction);
 
-  Function<? super N, String> getNodeLabelFunction();
+  Function<N, String> getNodeLabelFunction();
 
-  void setNodeLabelFunction(Function<? super N, String> nodeStringer);
+  void setNodeLabelFunction(Function<N, String> nodeStringer);
 
-  Function<? super N, Paint> getNodeLabelDrawPaintFunction();
+  Function<N, Paint> getNodeLabelDrawPaintFunction();
 
-  void setNodeLabelDrawPaintFunction(Function<? super N, Paint> nodeLabelDrawPaintFunction);
+  void setNodeLabelDrawPaintFunction(Function<N, Paint> nodeLabelDrawPaintFunction);
 
-  Function<? super N, Stroke> getNodeStrokeFunction();
+  Function<N, Stroke> getNodeStrokeFunction();
 
-  void setNodeStrokeFunction(Function<? super N, Stroke> nodeStrokeFunction);
+  void setNodeStrokeFunction(Function<N, Stroke> nodeStrokeFunction);
 
   class DirectedEdgeArrowPredicate implements Predicate<Graph<?, ?>> {
 

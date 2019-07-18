@@ -35,8 +35,8 @@ import org.jungrapht.visualization.layout.model.LayoutModel;
 @SuppressWarnings("serial")
 public class VisualizationViewer<N, E> extends BasicVisualizationServer<N, E> {
 
-  protected Function<? super N, String> nodeToolTipFunction;
-  protected Function<? super E, String> edgeToolTipFunction;
+  protected Function<N, String> nodeToolTipFunction;
+  protected Function<E, String> edgeToolTipFunction;
   protected Function<MouseEvent, String> mouseEventToolTipFunction;
 
   /** provides MouseListener, MouseMotionListener, and MouseWheelListener events to the graph */
@@ -157,7 +157,7 @@ public class VisualizationViewer<N, E> extends BasicVisualizationServer<N, E> {
   }
 
   /** @param edgeToolTipFunction the edgeToolTipFunction to set */
-  public void setEdgeToolTipFunction(Function<? super E, String> edgeToolTipFunction) {
+  public void setEdgeToolTipFunction(Function<E, String> edgeToolTipFunction) {
     this.edgeToolTipFunction = edgeToolTipFunction;
     ToolTipManager.sharedInstance().registerComponent(this);
   }
@@ -169,7 +169,7 @@ public class VisualizationViewer<N, E> extends BasicVisualizationServer<N, E> {
   }
 
   /** @param nodeToolTipFunction the nodeToolTipFunction to set */
-  public void setNodeToolTipFunction(Function<? super N, String> nodeToolTipFunction) {
+  public void setNodeToolTipFunction(Function<N, String> nodeToolTipFunction) {
     this.nodeToolTipFunction = nodeToolTipFunction;
     ToolTipManager.sharedInstance().registerComponent(this);
   }

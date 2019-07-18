@@ -114,8 +114,8 @@ public class LensDemo extends JPanel {
 
     vv.getRenderContext().setNodeLabelFunction(Object::toString);
 
-    final Function<? super String, Shape> ovals = vv.getRenderContext().getNodeShapeFunction();
-    final Function<? super String, Shape> squares = n -> new Rectangle2D.Float(-10, -10, 20, 20);
+    final Function<String, Shape> ovals = vv.getRenderContext().getNodeShapeFunction();
+    final Function<String, Shape> squares = n -> new Rectangle2D.Float(-10, -10, 20, 20);
 
     // add a listener for ToolTips
     vv.setNodeToolTipFunction(n -> n); //Object::toString);
