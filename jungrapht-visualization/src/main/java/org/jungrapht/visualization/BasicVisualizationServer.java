@@ -52,10 +52,10 @@ import org.jungrapht.visualization.layout.spatial.SpatialQuadTree;
 import org.jungrapht.visualization.layout.spatial.SpatialRTree;
 import org.jungrapht.visualization.layout.util.Caching;
 import org.jungrapht.visualization.renderers.BasicNodeLabelRenderer;
-import org.jungrapht.visualization.renderers.BasicNodeRenderer;
 import org.jungrapht.visualization.renderers.BasicRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.renderers.SimpleEdgeRenderer;
+import org.jungrapht.visualization.renderers.SimpleNodeRenderer;
 import org.jungrapht.visualization.selection.MultiMutableSelectedState;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 import org.jungrapht.visualization.selection.ShapePickSupport;
@@ -809,7 +809,7 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
   private static class SimpleRenderer<N, E> implements Renderer<N, E> {
 
     private static final Logger log = LoggerFactory.getLogger(SimpleRenderer.class);
-    protected Node<N, E> nodeRenderer = new BasicNodeRenderer<>();
+    protected Node<N, E> nodeRenderer = new SimpleNodeRenderer<>();
     protected NodeLabel<N, E> nodeLabelRenderer = new BasicNodeLabelRenderer<>();
     protected Renderer.Edge<N, E> edgeRenderer = new SimpleEdgeRenderer<>();
     //    protected Renderer.EdgeLabel<N, E> edgeLabelRenderer = new BasicEdgeLabelRenderer<>();
@@ -820,9 +820,6 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
         VisualizationModel<N, E> visualizationModel,
         Spatial<N> nodeSpatial,
         Spatial<E> edgeSpatial) {
-      Function<N, Shape> savedNodeShapeFunction = renderContext.getNodeShapeFunction();
-      Function<N, Shape> nodeShapeFunction = new EllipseNodeShapeFunction<>();
-      renderContext.setNodeShapeFunction(n -> nodeShapeFunction.apply(n));
       if (nodeSpatial == null) {
         render(renderContext, visualizationModel);
         return;
