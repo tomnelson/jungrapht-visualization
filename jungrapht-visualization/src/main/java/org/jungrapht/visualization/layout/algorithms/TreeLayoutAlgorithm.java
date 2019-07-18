@@ -114,14 +114,25 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
             .filter(node -> Graphs.predecessorListOf(layoutModel.getGraph(), node).isEmpty())
             .collect(toImmutableSet());
     this.roots = roots;
-    //            TreeUtils.roots(layoutModel.getGraph());
+
     Preconditions.checkArgument(roots.size() > 0);
     // the width of the tree under 'roots'. Includes one 'horizontalNodeSpacing' per child node
-    int overallWidth = calculateWidth(layoutModel, roots);
+    int overallWidth = calculateWidth(layoutModel, roots, new HashSet<>());
     // add one additional 'horizontalNodeSpacing' for each tree (each root)
     overallWidth += (roots.size() + 1) * horizontalNodeSpacing;
     int overallHeight = calculateHeight(layoutModel, roots);
     overallHeight += 2 * verticalNodeSpacing;
+    System.err.println("roots.size() = " + roots.size());
+    System.err.println("overallWidth = " + overallWidth);
+    System.err.println("overallHeight was = " + overallHeight);
+
+    if (overallWidth > overallHeight) {
+      verticalNodeSpacing *= (float) overallWidth / (float) overallHeight / 4.0;
+      overallHeight = overallWidth / 4;
+    }
+    System.err.println("overallHeight now = " + overallHeight);
+    System.err.println("horizontalNodeSpacing = " + horizontalNodeSpacing);
+    System.err.println("verticalNodeSpacing = " + verticalNodeSpacing);
     layoutModel.setSize(
         Math.max(layoutModel.getWidth(), overallWidth),
         Math.max(layoutModel.getHeight(), overallHeight));
@@ -169,11 +180,6 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
     log.trace("graph is {}", graph);
     List<N> successors = Graphs.successorListOf(graph, node);
     log.trace("successors of {} are {}", node, successors);
-    //    for (N n : successors) {
-    //      if (seen.contains(n)) {
-    //        graph.removeEdge(node, n);
-    //      }
-    //    }
     successors.removeIf(n -> seen.contains(n));
     log.trace("filtered successors of {} are {}", node, successors);
     seen.addAll(successors);
@@ -190,12 +196,9 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
     return size;
   }
 
-  private int calculateWidth(LayoutModel<N> layoutModel, Collection<N> roots) {
+  private int calculateWidth(LayoutModel<N> layoutModel, Collection<N> roots, Set<N> seen) {
 
-    return roots
-        .stream()
-        .mapToInt(node -> calculateWidth(layoutModel, node, new HashSet<>()))
-        .sum();
+    return roots.stream().mapToInt(node -> calculateWidth(layoutModel, node, seen)).sum();
   }
 
   private int calculateHeight(LayoutModel<N> layoutModel, N node, Set<N> seen) {
@@ -219,9 +222,11 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
   private int calculateHeight(LayoutModel<N> layoutModel, Collection<N> roots) {
 
     return roots
-        .stream()
-        .mapToInt(node -> calculateHeight(layoutModel, node, new HashSet<N>()))
-        .sum();
+            .stream()
+            .mapToInt(node -> calculateHeight(layoutModel, node, new HashSet<N>()))
+            .max()
+            .orElse(verticalNodeSpacing)
+        + verticalNodeSpacing;
   }
 
   /** @return the center of this layout's area. */

@@ -172,8 +172,6 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
 
   protected boolean smallScaleOverride;
 
-  protected Timer timer;
-
   /**
    * @param network the network to render
    * @param layoutAlgorithm the algorithm to apply
@@ -193,6 +191,7 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
   public BasicVisualizationServer(VisualizationModel<N, E> model, Dimension preferredSize) {
     this.model = model;
     renderContext = new DefaultRenderContext<>(model.getNetwork());
+    renderContext.setScreenDevice(this);
     renderer = complexRenderer = new BasicRenderer<>();
     createSpatialStuctures(model, renderContext);
     model
@@ -221,20 +220,6 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
     if (edgeSpatial != null) {
       setEdgeSpatial(edgeSpatial);
     }
-
-    MultiLayerTransformer multiLayerTransformer = getRenderContext().getMultiLayerTransformer();
-    multiLayerTransformer.addChangeListener(
-        new ChangeListener() {
-          @Override
-          public void stateChanged(ChangeEvent e) {
-            if (timer == null || timer.done) {
-              timer = new Timer(BasicVisualizationServer.this);
-              timer.start();
-            } else {
-              timer.incrementValue();
-            }
-          }
-        });
   }
 
   private void createSpatialStuctures(VisualizationModel model, RenderContext renderContext) {
@@ -403,11 +388,15 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
 
   public void scaleToLayout(ScalingControl scaler) {
     Dimension vd = getPreferredSize();
+    log.info("preferredSize: {}", vd);
     if (this.isShowing()) {
       vd = getSize();
+      log.info("showing getSize: {}", vd);
     }
     Dimension ld = model.getLayoutSize();
+    log.info("layout size: {}", ld);
     if (vd.equals(ld) == false) {
+      log.info("will scale by: {}", (float) (vd.getWidth() / ld.getWidth()));
       scaler.scale(this, (float) (vd.getWidth() / ld.getWidth()), new Point2D.Double());
     }
   }
@@ -523,7 +512,7 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
             .getMultiLayerTransformer()
             .getTransformer(MultiLayerTransformer.Layer.VIEW)
             .getScale()
-        < 0.5;
+        < 0.25;
   }
 
   /** a LayoutChange.Event from the LayoutModel will trigger a repaint of the visualization */
@@ -546,9 +535,6 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
     if (smallScaleOverride) {
       simplify = true;
     }
-    if (renderContext.isComplexRendering()) {
-      return;
-    }
     if (simplify) {
       this.renderer = simpleRenderer;
       this.getRenderingHints().remove(RenderingHints.KEY_ANTIALIASING);
@@ -557,36 +543,6 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
       this.getRenderingHints()
           .put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
       repaint();
-    }
-  }
-
-  static class Timer extends Thread {
-    long value = 10;
-    boolean done;
-    VisualizationServer vv;
-
-    public Timer(VisualizationServer vv) {
-      this.vv = vv;
-      vv.simplifyRenderer(true);
-    }
-
-    public void incrementValue() {
-      value = 10;
-    }
-
-    public void run() {
-      done = false;
-      while (value > 0) {
-        value--;
-        try {
-          Thread.sleep(10);
-        } catch (InterruptedException ex) {
-          ex.printStackTrace();
-        }
-      }
-      vv.simplifyRenderer(false);
-      done = true;
-      vv.repaint();
     }
   }
 

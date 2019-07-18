@@ -70,8 +70,6 @@ public class DefaultRenderContext<N, E> implements RenderContext<N, E> {
   private static final String EDGE_ARROW_STROKE = PREFIX + "edgeArrowStroke";
   private static final String ARROW_PLACEMENT_TOLERANCE = PREFIX + "arrowPlacementTolerance";
 
-  private static final String COMPLEX_RENDERING = PREFIX + "complexRendering";
-
   protected MutableSelectedState<N> pickedNodeState;
   protected MutableSelectedState<E> pickedEdgeState;
 
@@ -142,8 +140,6 @@ public class DefaultRenderContext<N, E> implements RenderContext<N, E> {
   protected Function<E, Paint> arrowDrawPaintFunction =
       e -> pickedEdgeState != null && pickedEdgeState.isSelected(e) ? pickedEdgePaint : edgePaint;
 
-  protected boolean complexRendering = Boolean.getBoolean(COMPLEX_RENDERING);
-
   protected Function<N, String> nodeLabelFunction = n -> null;
   protected Function<N, Icon> nodeIconFunction;
 
@@ -184,7 +180,7 @@ public class DefaultRenderContext<N, E> implements RenderContext<N, E> {
 
   protected GraphicsDecorator graphicsContext;
 
-  private EdgeShape edgeShape;
+  //  private EdgeShape edgeShape;
 
   DefaultRenderContext(Graph<N, E> graph) {
     this.parallelEdgeIndexFunction = new ParallelEdgeIndexFunction<>();
@@ -505,14 +501,6 @@ public class DefaultRenderContext<N, E> implements RenderContext<N, E> {
 
   public void setArrowFillPaintFunction(Function<E, Paint> arrowFillPaintFunction) {
     this.arrowFillPaintFunction = arrowFillPaintFunction;
-  }
-
-  public boolean isComplexRendering() {
-    return complexRendering;
-  }
-
-  public void setComplexRendering(boolean complexRendering) {
-    this.complexRendering = complexRendering;
   }
 
   private Shape getNodeShape(String shape, int size) {

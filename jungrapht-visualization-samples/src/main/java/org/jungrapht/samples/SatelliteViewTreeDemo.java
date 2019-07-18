@@ -14,7 +14,7 @@ import java.awt.geom.GeneralPath;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.ControlHelpers;
-import org.jungrapht.samples.util.TestGraphs;
+import org.jungrapht.samples.util.DemoTreeSupplier;
 import org.jungrapht.visualization.BaseVisualizationModel;
 import org.jungrapht.visualization.GraphZoomScrollPane;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
@@ -24,8 +24,9 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.SatelliteVisualizationViewer;
+import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
-import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.GradientNodeRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.transform.shape.ShapeTransformer;
@@ -41,7 +42,7 @@ import org.jungrapht.visualization.util.LightweightRenderingChangeListener;
  * @author Tom Nelson
  */
 @SuppressWarnings("serial")
-public class SatelliteViewDemo extends JPanel {
+public class SatelliteViewTreeDemo extends JPanel {
 
   static final String instructions =
       "<html>"
@@ -75,31 +76,30 @@ public class SatelliteViewDemo extends JPanel {
   VisualizationServer.Paintable viewGrid;
 
   /** create an instance of a simple graph in two views with controls to demo the features. */
-  public SatelliteViewDemo() {
+  public SatelliteViewTreeDemo() {
 
     setLayout(new BorderLayout());
     // create a simple graph for the demo
-    Graph<String, Number> graph = TestGraphs.getOneComponentGraph();
+    Graph<String, Integer> graph = DemoTreeSupplier.createForest();
 
     // the preferred sizes for the two views
     Dimension preferredSize1 = new Dimension(1000, 1000);
     Dimension preferredSize2 = new Dimension(250, 250);
-    Dimension layoutSize = new Dimension(5000, 5000);
+    Dimension layoutSize = new Dimension(500, 500);
 
     // create one layout for the graph
-    FRLayoutAlgorithm<String> layoutAlgorithm = FRLayoutAlgorithm.<String>builder().build();
+    TreeLayoutAlgorithm<String> layoutAlgorithm = TreeLayoutAlgorithm.<String>builder().build();
     // not used, for testing only
     //    CircleLayoutAlgorithm<String, Point2D> clayout = new CircleLayoutAlgorithm<>();
-    layoutAlgorithm.setMaxIterations(500);
 
     // create one model that both views will share
-    VisualizationModel<String, Number> vm =
+    VisualizationModel<String, Integer> vm =
         new BaseVisualizationModel<>(graph, layoutAlgorithm, layoutSize);
 
     // create 2 views that share the same model
-    final VisualizationViewer<String, Number> mainVisualizationViewer =
+    final VisualizationViewer<String, Integer> mainVisualizationViewer =
         new VisualizationViewer<>(vm, preferredSize1);
-    final SatelliteVisualizationViewer<String, Number> satelliteVisualizationViewer =
+    final SatelliteVisualizationViewer<String, Integer> satelliteVisualizationViewer =
         new SatelliteVisualizationViewer<>(mainVisualizationViewer, preferredSize2);
     mainVisualizationViewer.addChangeListener(
         new LightweightRenderingChangeListener(mainVisualizationViewer));
@@ -134,6 +134,8 @@ public class SatelliteViewDemo extends JPanel {
     mainVisualizationViewer
         .getRenderContext()
         .setNodeLabelPosition(Renderer.NodeLabel.Position.CNTR);
+    mainVisualizationViewer.getRenderContext().setEdgeShapeFunction(e -> EdgeShape.LINE);
+    satelliteVisualizationViewer.getRenderContext().setEdgeShapeFunction(e -> EdgeShape.LINE);
 
     mainVisualizationViewer.scaleToLayout(new CrossoverScalingControl());
     satelliteVisualizationViewer.scaleToLayout(new CrossoverScalingControl());
@@ -163,7 +165,7 @@ public class SatelliteViewDemo extends JPanel {
     helpDialog.getContentPane().add(new JLabel(instructions));
 
     // create a GraphMouse for the main view
-    final DefaultModalGraphMouse<String, Number> graphMouse = new DefaultModalGraphMouse<>();
+    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
     mainVisualizationViewer.setGraphMouse(graphMouse);
 
     JComboBox<?> modeBox = graphMouse.getModeComboBox();
@@ -273,7 +275,7 @@ public class SatelliteViewDemo extends JPanel {
   public static void main(String[] args) {
     JFrame f = new JFrame();
     f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-    f.getContentPane().add(new SatelliteViewDemo());
+    f.getContentPane().add(new SatelliteViewTreeDemo());
     f.pack();
     f.setVisible(true);
   }

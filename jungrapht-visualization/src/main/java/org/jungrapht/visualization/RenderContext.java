@@ -201,8 +201,4 @@ public interface RenderContext<N, E> {
   Renderer.NodeLabel.Position getNodeLabelPosition();
 
   void setNodeLabelPosition(Renderer.NodeLabel.Position position);
-
-  boolean isComplexRendering();
-
-  void setComplexRendering(boolean complexRendering);
 }

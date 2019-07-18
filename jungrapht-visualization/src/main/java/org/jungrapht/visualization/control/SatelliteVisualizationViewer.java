@@ -187,7 +187,13 @@ public class SatelliteVisualizationViewer<N, E> extends VisualizationViewer<N, E
       Graphics2D g2d = (Graphics2D) g;
       Color old = g.getColor();
       Color lensColor = master.getBackground();
-      vv.setBackground(lensColor.darker());
+      Color darker =
+          new Color(
+              Math.max((int) (lensColor.getRed() * .95), 0),
+              Math.max((int) (lensColor.getGreen() * .95), 0),
+              Math.max((int) (lensColor.getBlue() * .95), 0),
+              lensColor.getAlpha());
+      vv.setBackground(darker);
       g.setColor(lensColor);
       g2d.fill(lens);
       g.setColor(Color.gray);

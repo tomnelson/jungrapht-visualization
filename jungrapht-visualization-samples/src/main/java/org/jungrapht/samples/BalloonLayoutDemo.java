@@ -23,6 +23,7 @@ import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.control.ModalLensGraphMouse;
 import org.jungrapht.visualization.control.ScalingControl;
+import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.transform.HyperbolicTransformer;
@@ -66,7 +67,7 @@ public class BalloonLayoutDemo extends JPanel {
         new VisualizationViewer<>(
             graph, new StaticLayoutAlgorithm(), new Dimension(900, 900), new Dimension(600, 600));
     vv.setBackground(Color.white);
-    //    vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
+    vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
     vv.getRenderContext().setNodeLabelFunction(Object::toString);
     // add a listener for ToolTips
     vv.setNodeToolTipFunction(Object::toString);

@@ -58,7 +58,7 @@ public class NodeIconShapeFunction<N> implements Function<N, Shape> {
     Icon icon = iconMap.get(v);
     if (icon != null && icon instanceof ImageIcon) {
       Image image = ((ImageIcon) icon).getImage();
-      Shape shape = (Shape) shapeMap.get(image);
+      Shape shape = shapeMap.get(image);
       if (shape == null) {
         shape = ImageShapeUtils.getShape(image, 30);
         if (shape.getBounds().getWidth() > 0 && shape.getBounds().getHeight() > 0) {
