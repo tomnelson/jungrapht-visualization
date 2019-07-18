@@ -146,11 +146,7 @@ public class ShowLayouts extends JPanel {
                           || layoutAlgorithm instanceof RadialTreeLayoutAlgorithm)
                       && vv.getModel().getNetwork().getType().isUndirected()) {
                     Graph tree = SpanningTreeAdapter.getSpanningTree(vv.getModel().getNetwork());
-                    LayoutModel positionModel =
-                        this.getTreeLayoutPositions(
-                            tree,
-                            //                            SpanningTreeAdapter.getSpanningTree(vv.getModel().getNetwork()),
-                            layoutAlgorithm);
+                    LayoutModel positionModel = this.getTreeLayoutPositions(tree, layoutAlgorithm);
                     vv.getModel().getLayoutModel().setInitializer(positionModel);
                     layoutAlgorithm = new StaticLayoutAlgorithm();
                   }

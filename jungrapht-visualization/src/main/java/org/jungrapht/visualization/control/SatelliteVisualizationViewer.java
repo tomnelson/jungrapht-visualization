@@ -19,7 +19,7 @@ import java.awt.geom.AffineTransform;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.jungrapht.visualization.layout.spatial.Spatial;
+import org.jungrapht.visualization.spatial.Spatial;
 import org.jungrapht.visualization.transform.MutableAffineTransformer;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.transform.shape.ShapeTransformer;

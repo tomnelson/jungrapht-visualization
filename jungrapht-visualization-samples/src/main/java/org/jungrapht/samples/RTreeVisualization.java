@@ -45,9 +45,9 @@ import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.PolarPoint;
-import org.jungrapht.visualization.layout.spatial.Spatial;
-import org.jungrapht.visualization.layout.spatial.SpatialRTree;
 import org.jungrapht.visualization.selection.MutableSelectedState;
+import org.jungrapht.visualization.spatial.Spatial;
+import org.jungrapht.visualization.spatial.SpatialRTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

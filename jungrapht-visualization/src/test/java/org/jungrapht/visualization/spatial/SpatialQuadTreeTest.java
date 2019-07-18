@@ -1,4 +1,4 @@
-package org.jungrapht.visualization.layout.spatial;
+package org.jungrapht.visualization.spatial;
 
 import java.util.stream.IntStream;
 import org.jgrapht.Graph;

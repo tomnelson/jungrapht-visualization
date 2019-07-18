@@ -4,12 +4,16 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.jungrapht.visualization.VisualizationServer;
 
-public class LightweightRenderingChangeListener implements ChangeListener {
+public class LightweightRenderingVisitor implements ChangeListener {
 
   private VisualizationServer visualizationServer;
   private Timer timer;
 
-  public LightweightRenderingChangeListener(VisualizationServer visualizationServer) {
+  public static void visit(VisualizationServer visualizationServer) {
+    visualizationServer.addChangeListener(new LightweightRenderingVisitor(visualizationServer));
+  }
+
+  private LightweightRenderingVisitor(VisualizationServer visualizationServer) {
     this.visualizationServer = visualizationServer;
   }
 

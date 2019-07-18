@@ -12,7 +12,7 @@ package org.jungrapht.visualization.renderers;
 import java.awt.Dimension;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationModel;
-import org.jungrapht.visualization.layout.spatial.Spatial;
+import org.jungrapht.visualization.spatial.Spatial;
 
 /**
  * The interface for drawing nodes, edges, and their labels. Implementations of this class can set

@@ -20,7 +20,7 @@ public class IconCache<N> extends HashMap<N, Icon> {
     this.nodeLabelFunction = nodeLabelFunction;
     renderingHints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     Border border = stamp.getBorder();
-    Border margin = new EmptyBorder(10, 10, 10, 10);
+    Border margin = new EmptyBorder(2, 2, 2, 2);
     stamp.setBorder(new CompoundBorder(border, margin));
   }
 

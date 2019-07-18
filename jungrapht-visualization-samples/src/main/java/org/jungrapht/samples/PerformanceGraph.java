@@ -12,16 +12,11 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFRRepulsion;
+import org.jungrapht.visualization.util.LightweightRenderingVisitor;
 
 public class PerformanceGraph {
   public static void main(String[] args) {
-    SwingUtilities.invokeLater(
-        new Runnable() {
-          @Override
-          public void run() {
-            createAndShowGUI();
-          }
-        });
+    SwingUtilities.invokeLater(() -> createAndShowGUI());
   }
 
   private static void createAndShowGUI() {
@@ -39,13 +34,11 @@ public class PerformanceGraph {
                 .build(),
             size,
             size);
-    //                new VisualizationViewer<String, String>(
-    //                        new FRLayout<String, String>(g, size));
-    DefaultModalGraphMouse<String, Double> graphMouse =
-        new DefaultModalGraphMouse<String, Double>();
-    vv.setGraphMouse(graphMouse);
 
-    //        improvePerformance(vv);
+    LightweightRenderingVisitor.visit(vv);
+
+    DefaultModalGraphMouse<String, Double> graphMouse = new DefaultModalGraphMouse<>();
+    vv.setGraphMouse(graphMouse);
 
     f.getContentPane().add(vv);
     f.setSize(size);

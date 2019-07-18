@@ -1,4 +1,4 @@
-package org.jungrapht.visualization.layout.spatial;
+package org.jungrapht.visualization.spatial;
 
 import java.awt.Rectangle;
 import java.util.Arrays;

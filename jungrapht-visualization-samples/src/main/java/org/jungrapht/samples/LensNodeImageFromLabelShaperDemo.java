@@ -91,8 +91,8 @@ public class LensNodeImageFromLabelShaperDemo extends JPanel {
             new PickableElementPaintFunction<>(vv.getSelectedEdgeState(), Color.black, Color.cyan));
 
     vv.setBackground(Color.white);
-    //    vv.getRenderContext().setNodeLabelFunction(n -> "<html>This<br>is a<br>multiline<br>label");
-    IconCache<Number> iconCache = new IconCache(n -> "<html>This<br>is a<br>multiline<br>label");
+    IconCache<Number> iconCache =
+        new IconCache(n -> "<html>This<br>is a<br>multiline<br>label " + n);
 
     vv.getRenderContext().setNodeLabelRenderer(new DefaultNodeLabelRenderer(Color.cyan));
     vv.getRenderContext().setEdgeLabelRenderer(new DefaultEdgeLabelRenderer(Color.cyan));

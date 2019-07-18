@@ -12,7 +12,7 @@ import org.jgrapht.Graph;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationServer;
-import org.jungrapht.visualization.layout.spatial.Spatial;
+import org.jungrapht.visualization.spatial.Spatial;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

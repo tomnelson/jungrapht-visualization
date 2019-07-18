@@ -1,4 +1,4 @@
-package org.jungrapht.visualization.layout.spatial;
+package org.jungrapht.visualization.spatial;
 
 import com.google.common.collect.Sets;
 import com.tom.rtree.TreeNode;

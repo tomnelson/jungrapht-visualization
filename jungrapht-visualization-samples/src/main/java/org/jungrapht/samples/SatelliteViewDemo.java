@@ -29,7 +29,7 @@ import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.GradientNodeRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.transform.shape.ShapeTransformer;
-import org.jungrapht.visualization.util.LightweightRenderingChangeListener;
+import org.jungrapht.visualization.util.LightweightRenderingVisitor;
 
 /**
  * Demonstrates the construction of a graph visualization with a main and a satellite view. The
@@ -101,10 +101,8 @@ public class SatelliteViewDemo extends JPanel {
         new VisualizationViewer<>(vm, preferredSize1);
     final SatelliteVisualizationViewer<String, Number> satelliteVisualizationViewer =
         new SatelliteVisualizationViewer<>(mainVisualizationViewer, preferredSize2);
-    mainVisualizationViewer.addChangeListener(
-        new LightweightRenderingChangeListener(mainVisualizationViewer));
-    satelliteVisualizationViewer.addChangeListener(
-        new LightweightRenderingChangeListener(satelliteVisualizationViewer));
+    LightweightRenderingVisitor.visit(mainVisualizationViewer);
+    LightweightRenderingVisitor.visit(satelliteVisualizationViewer);
     mainVisualizationViewer.setBackground(Color.white);
     mainVisualizationViewer
         .getRenderContext()

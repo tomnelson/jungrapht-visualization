@@ -46,10 +46,6 @@ import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.event.LayoutNodePositionChange;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
 import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.jungrapht.visualization.layout.spatial.Spatial;
-import org.jungrapht.visualization.layout.spatial.SpatialGrid;
-import org.jungrapht.visualization.layout.spatial.SpatialQuadTree;
-import org.jungrapht.visualization.layout.spatial.SpatialRTree;
 import org.jungrapht.visualization.layout.util.Caching;
 import org.jungrapht.visualization.renderers.BasicNodeLabelRenderer;
 import org.jungrapht.visualization.renderers.BasicRenderer;
@@ -59,6 +55,10 @@ import org.jungrapht.visualization.renderers.SimpleNodeRenderer;
 import org.jungrapht.visualization.selection.MultiMutableSelectedState;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 import org.jungrapht.visualization.selection.ShapePickSupport;
+import org.jungrapht.visualization.spatial.Spatial;
+import org.jungrapht.visualization.spatial.SpatialGrid;
+import org.jungrapht.visualization.spatial.SpatialQuadTree;
+import org.jungrapht.visualization.spatial.SpatialRTree;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.util.ChangeEventSupport;
 import org.jungrapht.visualization.util.DefaultChangeEventSupport;
@@ -977,7 +977,7 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
         return new SpatialQuadTree<>(visualizationServer.getModel().getLayoutModel());
       case NONE:
       default:
-        return new Spatial.NoOp.Node<N>(visualizationServer.getModel().getLayoutModel());
+        return new Spatial.NoOp.Node<>(visualizationServer.getModel().getLayoutModel());
     }
   }
 
@@ -995,7 +995,7 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
             .build();
       case NONE:
       default:
-        return new Spatial.NoOp.Edge<E, N>(visualizationServer.getModel());
+        return new Spatial.NoOp.Edge<>(visualizationServer.getModel());
     }
   }
 }

@@ -1,6 +1,6 @@
-package org.jungrapht.visualization.layout.spatial;
+package org.jungrapht.visualization.spatial;
 
-import static org.jungrapht.visualization.layout.spatial.SpatialQuadTree.Quadrant.*;
+import static org.jungrapht.visualization.spatial.SpatialQuadTree.Quadrant.*;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;

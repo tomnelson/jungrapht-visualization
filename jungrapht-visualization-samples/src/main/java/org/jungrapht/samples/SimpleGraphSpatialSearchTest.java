@@ -32,11 +32,11 @@ import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.jungrapht.visualization.layout.spatial.Spatial;
 import org.jungrapht.visualization.layout.util.NetworkNodeAccessor;
 import org.jungrapht.visualization.layout.util.RadiusNetworkNodeAccessor;
 import org.jungrapht.visualization.layout.util.RandomLocationTransformer;
 import org.jungrapht.visualization.renderers.Renderer;
+import org.jungrapht.visualization.spatial.Spatial;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

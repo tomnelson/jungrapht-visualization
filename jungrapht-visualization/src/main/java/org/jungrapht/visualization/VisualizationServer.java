@@ -20,9 +20,9 @@ import org.jungrapht.visualization.control.TransformSupport;
 import org.jungrapht.visualization.layout.NetworkElementAccessor;
 import org.jungrapht.visualization.layout.event.LayoutChange;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
-import org.jungrapht.visualization.layout.spatial.Spatial;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.selection.MutableSelectedState;
+import org.jungrapht.visualization.spatial.Spatial;
 
 /**
  * @author Tom Nelson
