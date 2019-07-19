@@ -9,6 +9,7 @@
 package org.jungrapht.visualization.transform.shape;
 
 import java.awt.*;
+import java.awt.geom.Point2D;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationViewer;
@@ -21,6 +22,8 @@ import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.transform.AbstractLensSupport;
 import org.jungrapht.visualization.transform.LensSupport;
 import org.jungrapht.visualization.transform.LensTransformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Uses a LensTransformer to use in the view transform. This one will distort Node shapes.
@@ -28,6 +31,8 @@ import org.jungrapht.visualization.transform.LensTransformer;
  * @author Tom Nelson
  */
 public class ViewLensSupport<N, E> extends AbstractLensSupport<N, E> implements LensSupport {
+
+  private static final Logger log = LoggerFactory.getLogger(ViewLensSupport.class);
 
   protected RenderContext<N, E> renderContext;
   protected GraphicsDecorator lensGraphicsDecorator;
@@ -64,6 +69,45 @@ public class ViewLensSupport<N, E> extends AbstractLensSupport<N, E> implements 
     if (lensControls == null) {
       lensControls = new LensControls(lensTransformer);
     }
+
+    Point2D viewCenter = vv.getCenter();
+    MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
+    log.trace("raw view center is {}", viewCenter);
+    log.trace("transformed view center is {}", multiLayerTransformer.transform(viewCenter));
+    log.trace(
+        "inverseTransformed view center is {}", multiLayerTransformer.inverseTransform(viewCenter));
+    log.trace(
+        "view transformed view center is {}",
+        multiLayerTransformer
+            .getTransformer(MultiLayerTransformer.Layer.VIEW)
+            .transform(viewCenter));
+    log.trace(
+        "view inverseTransformed view center is {}",
+        multiLayerTransformer
+            .getTransformer(MultiLayerTransformer.Layer.VIEW)
+            .inverseTransform(viewCenter));
+    log.trace(
+        "layout transformed view center is {}",
+        multiLayerTransformer
+            .getTransformer(MultiLayerTransformer.Layer.LAYOUT)
+            .transform(viewCenter));
+    log.trace(
+        "layout inverseTransformed view center is {}",
+        multiLayerTransformer
+            .getTransformer(MultiLayerTransformer.Layer.LAYOUT)
+            .inverseTransform(viewCenter));
+    lensTransformer
+        .getLens()
+        .setCenter(
+            multiLayerTransformer
+                .getTransformer(MultiLayerTransformer.Layer.VIEW)
+                .inverseTransform(viewCenter));
+
+    double scale =
+        multiLayerTransformer.getTransformer(MultiLayerTransformer.Layer.VIEW).getScale();
+    log.trace("view scale is {}", scale);
+    lensTransformer.getLens().setRadius(Math.min(vv.getWidth(), vv.getHeight()) / scale / 2.2);
+
     vv.getRenderContext()
         .getMultiLayerTransformer()
         .setTransformer(MultiLayerTransformer.Layer.VIEW, lensTransformer);

@@ -67,6 +67,7 @@ public class Lens {
     double height = lensShape.getHeight();
     lensShape.setFrame(
         viewCenter.getX() - width / 2, viewCenter.getY() - height / 2, width, height);
+    log.trace("setCenter of lens {} to {}", lensShape, viewCenter);
   }
 
   public double getRadius() {
@@ -79,6 +80,7 @@ public class Lens {
     double viewRatio = getRatio();
     lensShape.setFrame(
         x - viewRadius / viewRatio, y - viewRadius, 2 * viewRadius / viewRatio, 2 * viewRadius);
+    log.trace("setRadius of lens {} to {}", this, viewRadius);
   }
 
   /** @return the ratio between the lens height and lens width */
@@ -87,6 +89,7 @@ public class Lens {
   }
 
   public void setLensShape(RectangularShape ellipse) {
+    log.trace("setLensShape to {}", ellipse);
     this.lensShape = ellipse;
   }
 

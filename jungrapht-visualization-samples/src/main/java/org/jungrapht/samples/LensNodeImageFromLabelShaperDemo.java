@@ -75,13 +75,16 @@ public class LensNodeImageFromLabelShaperDemo extends JPanel {
   /** create an instance of a simple graph with controls to demo the zoom features. */
   public LensNodeImageFromLabelShaperDemo() {
 
+    Dimension layoutSize = new Dimension(2000, 2000);
+    Dimension viewSize = new Dimension(600, 600);
+
     setLayout(new BorderLayout());
     // create a simple graph for the demo
     graph = createGraph();
 
     FRLayoutAlgorithm<Number> layoutAlgorithm = FRLayoutAlgorithm.<Number>builder().build();
     layoutAlgorithm.setMaxIterations(100);
-    vv = new VisualizationViewer<>(graph, layoutAlgorithm, new Dimension(600, 600));
+    vv = new VisualizationViewer<>(graph, layoutAlgorithm, layoutSize, viewSize);
 
     Function<Number, Paint> vpf =
         new PickableElementPaintFunction<>(vv.getSelectedNodeState(), Color.white, Color.yellow);
@@ -119,7 +122,7 @@ public class LensNodeImageFromLabelShaperDemo extends JPanel {
     vv.setGraphMouse(graphMouse);
 
     final ScalingControl scaler = new CrossoverScalingControl();
-
+    vv.scaleToLayout(scaler);
     JButton plus = new JButton("+");
     plus.addActionListener(e -> scaler.scale(vv, 1.1f, vv.getCenter()));
 
@@ -152,6 +155,8 @@ public class LensNodeImageFromLabelShaperDemo extends JPanel {
             new MagnifyShapeTransformer(
                 lens, vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW)),
             new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)));
+    lens = new Lens(d);
+    lens.setMagnification(2.f);
     magnifyLayoutSupport =
         new LayoutLensSupport<>(
             vv,
@@ -179,11 +184,18 @@ public class LensNodeImageFromLabelShaperDemo extends JPanel {
 
     final JRadioButton magnifyView = new JRadioButton("Magnified View");
     magnifyView.addItemListener(
-        e -> magnifyViewSupport.activate(e.getStateChange() == ItemEvent.SELECTED));
+        e -> {
+          SwingUtilities.invokeLater(
+              () -> magnifyViewSupport.activate(e.getStateChange() == ItemEvent.SELECTED));
+        });
 
     final JRadioButton magnifyModel = new JRadioButton("Magnified Layout");
     magnifyModel.addItemListener(
-        e -> magnifyLayoutSupport.activate(e.getStateChange() == ItemEvent.SELECTED));
+        e -> {
+          SwingUtilities.invokeLater(
+              () -> magnifyLayoutSupport.activate(e.getStateChange() == ItemEvent.SELECTED));
+        });
+    //        e -> magnifyLayoutSupport.activate(e.getStateChange() == ItemEvent.SELECTED));
 
     radio.add(none);
     radio.add(magnifyView);

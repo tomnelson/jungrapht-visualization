@@ -10,6 +10,8 @@
 
 package org.jungrapht.visualization.transform;
 
+import java.awt.*;
+import java.awt.geom.Point2D;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.LensTransformSupport;
@@ -76,6 +78,46 @@ public class LayoutLensSupport<N, E> extends AbstractLensSupport<N, E> implement
     if (lensControls == null) {
       lensControls = new LensControls(lensTransformer);
     }
+
+    Point2D viewCenter = vv.getCenter();
+    MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
+
+    log.trace("raw view center is {}", viewCenter);
+    log.trace("transformed view center is {}", multiLayerTransformer.transform(viewCenter));
+    log.trace(
+        "inverseTransformed view center is {}", multiLayerTransformer.inverseTransform(viewCenter));
+    log.trace(
+        "view transformed view center is {}",
+        multiLayerTransformer
+            .getTransformer(MultiLayerTransformer.Layer.VIEW)
+            .transform(viewCenter));
+    log.trace(
+        "view inverseTransformed view center is {}",
+        multiLayerTransformer
+            .getTransformer(MultiLayerTransformer.Layer.VIEW)
+            .inverseTransform(viewCenter));
+    log.trace(
+        "layout transformed view center is {}",
+        multiLayerTransformer
+            .getTransformer(MultiLayerTransformer.Layer.LAYOUT)
+            .transform(viewCenter));
+    log.trace(
+        "layout inverseTransformed view center is {}",
+        multiLayerTransformer
+            .getTransformer(MultiLayerTransformer.Layer.LAYOUT)
+            .inverseTransform(viewCenter));
+    lensTransformer
+        .getLens()
+        .setCenter(
+            multiLayerTransformer
+                .getTransformer(MultiLayerTransformer.Layer.VIEW)
+                .inverseTransform(viewCenter));
+
+    double scale =
+        multiLayerTransformer.getTransformer(MultiLayerTransformer.Layer.VIEW).getScale();
+    log.trace("view scale is {}", scale);
+    lensTransformer.getLens().setRadius(Math.min(vv.getWidth(), vv.getHeight()) / scale / 2.2);
+
     vv.getRenderContext()
         .getMultiLayerTransformer()
         .setTransformer(MultiLayerTransformer.Layer.LAYOUT, lensTransformer);

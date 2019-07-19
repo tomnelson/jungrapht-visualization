@@ -12,15 +12,21 @@ import javax.swing.border.EmptyBorder;
 
 public class IconCache<N> extends HashMap<N, Icon> {
 
-  Function<N, String> nodeLabelFunction;
-  JLabel stamp = new JLabel();
-  Map<RenderingHints.Key, Object> renderingHints = new HashMap<>();
+  protected Function<N, String> nodeLabelFunction;
+  protected JLabel stamp = new JLabel();
+  protected Map<RenderingHints.Key, Object> renderingHints = new HashMap<>();
+  protected Function<N, Paint> colorFunction;
 
   public IconCache(Function<N, String> nodeLabelFunction) {
+    this(nodeLabelFunction, n -> Color.black);
+  }
+
+  public IconCache(Function<N, String> nodeLabelFunction, Function<N, Paint> colorFunction) {
     this.nodeLabelFunction = nodeLabelFunction;
+    this.colorFunction = colorFunction;
     renderingHints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     Border border = stamp.getBorder();
-    Border margin = new EmptyBorder(2, 2, 2, 2);
+    Border margin = new EmptyBorder(4, 4, 4, 4);
     stamp.setBorder(new CompoundBorder(border, margin));
   }
 
@@ -32,7 +38,7 @@ public class IconCache<N> extends HashMap<N, Icon> {
     return super.get(n);
   }
 
-  private void cacheIconFor(N node) {
+  protected void cacheIconFor(N node) {
     stamp.setText(nodeLabelFunction.apply(node));
     stamp.setForeground(Color.black);
     stamp.setBackground(Color.white);
@@ -44,7 +50,8 @@ public class IconCache<N> extends HashMap<N, Icon> {
     Graphics2D graphics = bi.createGraphics();
     graphics.setRenderingHints(renderingHints);
     stamp.paint(graphics);
-    graphics.setPaint(Color.black);
+    graphics.setPaint(colorFunction.apply(node));
+    graphics.setStroke(new BasicStroke(2.0f));
     graphics.drawRect(0, 0, stamp.getWidth() - 1, stamp.getHeight() - 1);
     graphics.dispose();
     Icon icon = new ImageIcon(bi);
