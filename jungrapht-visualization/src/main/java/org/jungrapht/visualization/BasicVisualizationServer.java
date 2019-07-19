@@ -388,15 +388,11 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
 
   public void scaleToLayout(ScalingControl scaler) {
     Dimension vd = getPreferredSize();
-    log.info("preferredSize: {}", vd);
     if (this.isShowing()) {
       vd = getSize();
-      log.info("showing getSize: {}", vd);
     }
     Dimension ld = model.getLayoutSize();
-    log.info("layout size: {}", ld);
     if (vd.equals(ld) == false) {
-      log.info("will scale by: {}", (float) (vd.getWidth() / ld.getWidth()));
       scaler.scale(this, (float) (vd.getWidth() / ld.getWidth()), new Point2D.Double());
     }
   }
