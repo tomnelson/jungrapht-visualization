@@ -84,7 +84,7 @@ public class SatelliteViewDemo extends JPanel {
     // the preferred sizes for the two views
     Dimension preferredSize1 = new Dimension(1000, 1000);
     Dimension preferredSize2 = new Dimension(250, 250);
-    Dimension layoutSize = new Dimension(5000, 5000);
+    Dimension layoutSize = new Dimension(1000, 1000);
 
     // create one layout for the graph
     FRLayoutAlgorithm<String> layoutAlgorithm = FRLayoutAlgorithm.<String>builder().build();

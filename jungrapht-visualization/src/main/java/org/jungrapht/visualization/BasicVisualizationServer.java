@@ -512,7 +512,7 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
             .getMultiLayerTransformer()
             .getTransformer(MultiLayerTransformer.Layer.VIEW)
             .getScale()
-        < 0.25;
+        < 0.5;
   }
 
   /** a LayoutChange.Event from the LayoutModel will trigger a repaint of the visualization */
