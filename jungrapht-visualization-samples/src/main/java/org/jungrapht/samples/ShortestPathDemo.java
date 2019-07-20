@@ -7,7 +7,6 @@ import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import javax.swing.*;
 import org.jgrapht.Graph;
@@ -23,12 +22,7 @@ import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.renderers.Renderer;
 
-/**
- * Demonstrates use of the shortest path algorithm and visualization of the results.
- *
- * @author danyelf
- * @autor tom nelson
- */
+/** Demonstrates use of the JGrapht shortest path algorithm and visualization of the results. */
 public class ShortestPathDemo extends JPanel {
 
   /** */
@@ -43,7 +37,10 @@ public class ShortestPathDemo extends JPanel {
   private Graph<String, Number> network;
   private Set<String> path = new HashSet<>();
 
-  public ShortestPathDemo() {
+  private final Stroke THIN = new BasicStroke(1);
+  private final Stroke THICK = new BasicStroke(1);
+
+  private ShortestPathDemo() {
 
     this.network = getNetwork();
     setBackground(Color.WHITE);
@@ -53,10 +50,51 @@ public class ShortestPathDemo extends JPanel {
         new VisualizationViewer<>(network, layoutAlgorithm, new Dimension(1000, 1000));
     vv.setBackground(Color.WHITE);
 
-    vv.getRenderContext().setNodeDrawPaintFunction(new MyNodeDrawPaintFunction<>());
-    vv.getRenderContext().setNodeFillPaintFunction(new MyNodeFillPaintFunction<>());
-    vv.getRenderContext().setEdgeDrawPaintFunction(new MyEdgePaintFunction());
-    vv.getRenderContext().setEdgeStrokeFunction(new MyEdgeStrokeFunction());
+    vv.getRenderContext().setNodeDrawPaintFunction(n -> Color.black);
+    vv.getRenderContext()
+        .setNodeFillPaintFunction(
+            n -> {
+              if (n.equals(fromNode)) {
+                return Color.BLUE;
+              }
+              if (n.equals(toNode)) {
+                return Color.BLUE;
+              }
+              if (path == null) {
+                return Color.LIGHT_GRAY;
+              } else {
+                if (path.contains(n)) {
+                  return Color.RED;
+                } else {
+                  return Color.LIGHT_GRAY;
+                }
+              }
+            });
+    vv.getRenderContext()
+        .setEdgeDrawPaintFunction(
+            e -> {
+              if (path == null || path.size() == 0) {
+                return Color.BLACK;
+              }
+              if (onShortestPath(e)) {
+                return new Color(0.0f, 0.0f, 1.0f, 0.5f); //Color.BLUE;
+              } else {
+                return Color.LIGHT_GRAY;
+              }
+            });
+
+    vv.getRenderContext()
+        .setEdgeStrokeFunction(
+            e -> {
+              if (path == null || path.size() == 0) {
+                return THIN;
+              }
+              if (onShortestPath(e)) {
+                return THICK;
+              } else {
+                return THIN;
+              }
+            });
     vv.getRenderContext().setNodeLabelFunction(Object::toString);
     final AbstractModalGraphMouse graphMouse = new DefaultModalGraphMouse<Integer, Number>();
     vv.setGraphMouse(graphMouse);
@@ -79,7 +117,7 @@ public class ShortestPathDemo extends JPanel {
                   toNode = item;
                 }
               }
-              drawShortest();
+              drawShortestPath();
             });
 
     vv.addPostRenderPaintable(
@@ -96,7 +134,7 @@ public class ShortestPathDemo extends JPanel {
 
             // for all edges, paint edges that are in shortest path
             for (Number e : network.edgeSet()) {
-              if (isBlessed(e)) {
+              if (onShortestPath(e)) {
                 Renderer<String, Number> renderer = vv.getRenderer();
                 renderer.renderEdge(vv.getRenderContext(), vv.getModel(), e);
               }
@@ -116,84 +154,21 @@ public class ShortestPathDemo extends JPanel {
     add(instructions, BorderLayout.SOUTH);
   }
 
-  boolean isBlessed(Number e) {
+  private boolean onShortestPath(Number e) {
     String v1 = network.getEdgeSource(e);
     String v2 = network.getEdgeTarget(e);
-    return v1.equals(v2) == false && path.contains(v1) && path.contains(v2);
-  }
-
-  /** @author danyelf */
-  public class MyEdgePaintFunction implements Function<Number, Paint> {
-
-    public Paint apply(Number e) {
-      if (path == null || path.size() == 0) {
-        return Color.BLACK;
-      }
-      if (isBlessed(e)) {
-        return new Color(0.0f, 0.0f, 1.0f, 0.5f); //Color.BLUE;
-      } else {
-        return Color.LIGHT_GRAY;
-      }
-    }
-  }
-
-  public class MyEdgeStrokeFunction implements Function<Number, Stroke> {
-    protected final Stroke THIN = new BasicStroke(1);
-    protected final Stroke THICK = new BasicStroke(1);
-
-    public Stroke apply(Number e) {
-      if (path == null || path.size() == 0) {
-        return THIN;
-      }
-      if (isBlessed(e)) {
-        return THICK;
-      } else {
-        return THIN;
-      }
-    }
-  }
-
-  /** @author danyelf */
-  public class MyNodeDrawPaintFunction<N> implements Function<N, Paint> {
-
-    public Paint apply(N v) {
-      return Color.black;
-    }
-  }
-
-  public class MyNodeFillPaintFunction<N> implements Function<N, Paint> {
-
-    public Paint apply(N v) {
-      if (v == fromNode) {
-        return Color.BLUE;
-      }
-      if (v == toNode) {
-        return Color.BLUE;
-      }
-      if (path == null) {
-        return Color.LIGHT_GRAY;
-      } else {
-        if (path.contains(v)) {
-          return Color.RED;
-        } else {
-          return Color.LIGHT_GRAY;
-        }
-      }
-    }
+    return !v1.equals(v2) && path.contains(v1) && path.contains(v2);
   }
 
   /** */
-  protected void drawShortest() {
+  private void drawShortestPath() {
 
     if (fromNode == null || toNode == null) {
       path.clear();
       return;
     }
     path.clear();
-    // wrap the network in a jgrapht network
     BFSShortestPath<String, Number> bfsShortestPath = new BFSShortestPath<>(this.network);
-
-    //            new MutableNetworkAdapter<String, Number>((Graph) this.network));
     GraphPath<String, Number> path = bfsShortestPath.getPath(fromNode, toNode);
     this.path.addAll(path.getVertexList());
     repaint();
@@ -208,7 +183,7 @@ public class ShortestPathDemo extends JPanel {
   }
 
   /** @return the network for this demo */
-  Graph<String, Number> getNetwork() {
+  private Graph<String, Number> getNetwork() {
     Graph<String, Number> network =
         GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.pseudograph())
             .vertexSupplier(new NodeSupplier())

@@ -177,7 +177,7 @@ public class GraphZoomScrollPaneDemo {
         GraphTypeBuilder.<Integer, Number>forGraphType(DefaultGraphType.directedMultigraph())
             .buildGraph();
 
-    IntStream.rangeClosed(0, 10).forEach(i -> graph.addVertex(i));
+    IntStream.rangeClosed(0, 10).forEach(graph::addVertex);
     graph.addEdge(0, 1, Math.random());
     graph.addEdge(3, 0, Math.random());
     graph.addEdge(0, 4, Math.random());

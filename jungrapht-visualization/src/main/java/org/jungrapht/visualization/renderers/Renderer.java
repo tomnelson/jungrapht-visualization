@@ -64,7 +64,7 @@ public interface Renderer<N, E> {
     class NOOP<N, E> implements Node<N, E> {
       public void paintNode(
           RenderContext<N, E> renderContext, VisualizationModel<N, E> visualizationModel, N v) {}
-    };
+    }
   }
 
   interface Edge<N, E> {
@@ -115,11 +115,7 @@ public interface Renderer<N, E> {
       public void setPosition(Position position) {}
 
       public Positioner getPositioner() {
-        return new Positioner() {
-          public Position getPosition(float x, float y, Dimension d) {
-            return Position.CNTR;
-          }
-        };
+        return (x, y, d) -> Position.CNTR;
       }
 
       public void setPositioner(Positioner positioner) {}

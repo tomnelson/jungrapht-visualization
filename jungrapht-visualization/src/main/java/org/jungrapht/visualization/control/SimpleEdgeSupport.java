@@ -15,7 +15,7 @@ public class SimpleEdgeSupport<N, E> implements EdgeSupport<N, E> {
 
   public SimpleEdgeSupport(Supplier<E> edgeFactory) {
     this.edgeFactory = edgeFactory;
-    this.edgeEffects = new CubicCurveEdgeEffects<N, E>();
+    this.edgeEffects = new CubicCurveEdgeEffects<>();
   }
 
   @Override

@@ -80,7 +80,7 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
 
   protected Map<N, Integer> basePositions = new HashMap<>();
 
-  protected transient Set<N> alreadyDone = new HashSet<N>();
+  protected transient Set<N> alreadyDone = new HashSet<>();
 
   /** The default horizontal node spacing. Initialized to 50. */
   protected static final int DEFAULT_HORIZONTAL_NODE_SPACING = 50;
@@ -180,7 +180,7 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
     log.trace("graph is {}", graph);
     List<N> successors = Graphs.successorListOf(graph, node);
     log.trace("successors of {} are {}", node, successors);
-    successors.removeIf(n -> seen.contains(n));
+    successors.removeIf(seen::contains);
     log.trace("filtered successors of {} are {}", node, successors);
     seen.addAll(successors);
 
@@ -207,7 +207,7 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
     List<N> successors = Graphs.successorListOf(graph, node);
     log.trace("graph is {}", graph);
     log.trace("h successors of {} are {}", node, successors);
-    successors.removeIf(n -> seen.contains(n));
+    successors.removeIf(seen::contains);
     log.trace("filtered h successors of {} are {}", node, successors);
 
     seen.addAll(successors);

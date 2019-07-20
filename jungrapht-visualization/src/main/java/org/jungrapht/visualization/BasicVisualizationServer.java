@@ -121,7 +121,7 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
   protected Renderer<N, E> complexRenderer;
 
   /** rendering hints used in drawing. Anti-aliasing is on by default */
-  protected Map<Key, Object> renderingHints = new HashMap<Key, Object>();
+  protected Map<Key, Object> renderingHints = new HashMap<>();
 
   /** holds the state of which nodes of the graph are currently 'selected' */
   protected MutableSelectedState<N> selectedNodeState;
@@ -172,7 +172,7 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
    */
   public BasicVisualizationServer(
       Graph<N, E> network, LayoutAlgorithm<N> layoutAlgorithm, Dimension preferredSize) {
-    this(new BaseVisualizationModel<N, E>(network, layoutAlgorithm, preferredSize), preferredSize);
+    this(new BaseVisualizationModel<>(network, layoutAlgorithm, preferredSize), preferredSize);
   }
 
   /**
@@ -385,7 +385,7 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
       vd = getSize();
     }
     Dimension ld = model.getLayoutSize();
-    if (vd.equals(ld) == false) {
+    if (!vd.equals(ld)) {
       scaler.scale(this, (float) (vd.getWidth() / ld.getWidth()), new Point2D.Double());
     }
   }

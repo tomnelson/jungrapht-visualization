@@ -16,11 +16,11 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
@@ -96,7 +96,7 @@ public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
     g_array[4] = TestGraphs.createChainPlusIsolates(0, 20);
     Graph network =
         GraphTypeBuilder.forGraphType(DefaultGraphType.directedMultigraph()).buildGraph();
-    Arrays.asList("A", "B", "C").stream().forEach(v -> network.addVertex(v));
+    Stream.of("A", "B", "C").forEach(network::addVertex);
     network.addEdge("A", "B", 1);
     network.addEdge("A", "C", 2);
 

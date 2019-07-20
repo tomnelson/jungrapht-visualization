@@ -74,8 +74,8 @@ public class LabelWrapper implements Function<String, String> {
       "short line"
     };
     LabelWrapper w = new LabelWrapper(10);
-    for (int i = 0; i < lines.length; i++) {
-      System.err.println("from " + lines[i] + " to " + w.wrap(lines[i]));
+    for (String line : lines) {
+      System.err.println("from " + line + " to " + w.wrap(line));
     }
   }
 }

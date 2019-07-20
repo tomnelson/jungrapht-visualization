@@ -6,7 +6,6 @@ import java.awt.Dimension;
 import java.awt.ItemSelectable;
 import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
@@ -103,10 +102,10 @@ public class EditingModalGraphMouse<N, E> extends AbstractModalGraphMouse
     scalingPlugin = new ScalingGraphMousePlugin(new CrossoverScalingControl(), 0, in, out);
     rotatingPlugin = new RotatingGraphMousePlugin();
     shearingPlugin = new ShearingGraphMousePlugin();
-    editingPlugin = new EditingGraphMousePlugin<N, E>(nodeFactory, edgeFactory);
+    editingPlugin = new EditingGraphMousePlugin<>(nodeFactory, edgeFactory);
     labelEditingPlugin = new LabelEditingGraphMousePlugin<>(nodeLabelMap, edgeLabelMap);
     annotatingPlugin = new AnnotatingGraphMousePlugin<>(rc);
-    popupEditingPlugin = new EditingPopupGraphMousePlugin<N, E>(nodeFactory, edgeFactory);
+    popupEditingPlugin = new EditingPopupGraphMousePlugin<>(nodeFactory, edgeFactory);
     add(scalingPlugin);
     setMode(Mode.EDITING);
   }
@@ -190,7 +189,7 @@ public class EditingModalGraphMouse<N, E> extends AbstractModalGraphMouse
   public JComboBox<Mode> getModeComboBox() {
     if (modeBox == null) {
       modeBox =
-          new JComboBox<Mode>(
+          new JComboBox<>(
               new Mode[] {Mode.TRANSFORMING, Mode.PICKING, Mode.EDITING, Mode.ANNOTATING});
       modeBox.addItemListener(getModeListener());
     }
@@ -246,16 +245,14 @@ public class EditingModalGraphMouse<N, E> extends AbstractModalGraphMouse
       modeMenu.add(editingButton);
       modeMenu.setToolTipText("Menu for setting Mouse Mode");
       addItemListener(
-          new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-              if (e.getStateChange() == ItemEvent.SELECTED) {
-                if (e.getItem() == Mode.TRANSFORMING) {
-                  transformingButton.setSelected(true);
-                } else if (e.getItem() == Mode.PICKING) {
-                  pickingButton.setSelected(true);
-                } else if (e.getItem() == Mode.EDITING) {
-                  editingButton.setSelected(true);
-                }
+          e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+              if (e.getItem() == Mode.TRANSFORMING) {
+                transformingButton.setSelected(true);
+              } else if (e.getItem() == Mode.PICKING) {
+                pickingButton.setSelected(true);
+              } else if (e.getItem() == Mode.EDITING) {
+                editingButton.setSelected(true);
               }
             }
           });

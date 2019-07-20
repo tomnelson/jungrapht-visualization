@@ -132,7 +132,7 @@ public class AnnotatingGraphMousePlugin<N, E> extends AbstractGraphMousePlugin
     VisualizationViewer<N, E> vv = (VisualizationViewer<N, E>) e.getSource();
     down = e.getPoint();
 
-    if (added == false) {
+    if (!added) {
       vv.addPreRenderPaintable(annotationManager.getLowerAnnotationPaintable());
       vv.addPostRenderPaintable(annotationManager.getUpperAnnotationPaintable());
       added = true;
@@ -165,7 +165,7 @@ public class AnnotatingGraphMousePlugin<N, E> extends AbstractGraphMousePlugin
       if (annotationString != null && annotationString.length() > 0) {
         Point2D p = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(down);
         Annotation<String> annotation =
-            new Annotation<String>(annotationString, layer, annotationColor, fill, p);
+            new Annotation<>(annotationString, layer, annotationColor, fill, p);
         annotationManager.add(layer, annotation);
       }
     } else if (e.getModifiers() == modifiers) {

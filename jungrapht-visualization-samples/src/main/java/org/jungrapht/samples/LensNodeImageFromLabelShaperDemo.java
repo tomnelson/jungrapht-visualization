@@ -184,18 +184,15 @@ public class LensNodeImageFromLabelShaperDemo extends JPanel {
 
     final JRadioButton magnifyView = new JRadioButton("Magnified View");
     magnifyView.addItemListener(
-        e -> {
-          SwingUtilities.invokeLater(
-              () -> magnifyViewSupport.activate(e.getStateChange() == ItemEvent.SELECTED));
-        });
+        e ->
+            SwingUtilities.invokeLater(
+                () -> magnifyViewSupport.activate(e.getStateChange() == ItemEvent.SELECTED)));
 
     final JRadioButton magnifyModel = new JRadioButton("Magnified Layout");
     magnifyModel.addItemListener(
-        e -> {
-          SwingUtilities.invokeLater(
-              () -> magnifyLayoutSupport.activate(e.getStateChange() == ItemEvent.SELECTED));
-        });
-    //        e -> magnifyLayoutSupport.activate(e.getStateChange() == ItemEvent.SELECTED));
+        e ->
+            SwingUtilities.invokeLater(
+                () -> magnifyLayoutSupport.activate(e.getStateChange() == ItemEvent.SELECTED)));
 
     radio.add(none);
     radio.add(magnifyView);
@@ -217,7 +214,7 @@ public class LensNodeImageFromLabelShaperDemo extends JPanel {
     Graph<Number, Number> graph =
         GraphTypeBuilder.<Number, Number>forGraphType(DefaultGraphType.dag()).buildGraph();
 
-    IntStream.rangeClosed(0, 10).forEach(i -> graph.addVertex(i));
+    IntStream.rangeClosed(0, 10).forEach(graph::addVertex);
     graph.addEdge(0, 1, Math.random());
     graph.addEdge(3, 0, Math.random());
     graph.addEdge(0, 4, Math.random());
@@ -252,7 +249,7 @@ public class LensNodeImageFromLabelShaperDemo extends JPanel {
 
     public void itemStateChanged(ItemEvent e) {
       Icon icon = imager.apply((Number) e.getItem());
-      if (icon != null && icon instanceof LayeredIcon) {
+      if (icon instanceof LayeredIcon) {
         if (e.getStateChange() == ItemEvent.SELECTED) {
           ((LayeredIcon) icon).add(checked);
         } else {

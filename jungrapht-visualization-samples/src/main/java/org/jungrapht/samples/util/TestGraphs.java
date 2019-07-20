@@ -56,8 +56,7 @@ public class TestGraphs {
           GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.multigraph()).buildGraph();
     }
 
-    for (int i = 0; i < pairs.length; i++) {
-      String[] pair = pairs[i];
+    for (String[] pair : pairs) {
       graph.addVertex(pair[0]);
       graph.addVertex(pair[1]);
       graph.addEdge(pair[0], pair[1], Integer.parseInt(pair[2]));
@@ -82,7 +81,7 @@ public class TestGraphs {
       for (int i = 1; i < chain_length; i++) {
         v[i] = "v" + i;
         graph.addVertex(v[i]);
-        graph.addEdge(v[i], v[i - 1], new Double(Math.random()));
+        graph.addEdge(v[i], v[i - 1], Math.random());
       }
     }
     for (int i = 0; i < isolate_count; i++) {
@@ -122,7 +121,7 @@ public class TestGraphs {
         // for each previous node...
         for (String v2 : previousLayers) {
           if (Math.random() < linkprob) {
-            Double de = new Double(Math.random());
+            Double de = Math.random();
             graph.addEdge(v, v2, de);
           }
         }
@@ -177,7 +176,7 @@ public class TestGraphs {
       String next = nodeIt.next();
       graph.addVertex(current);
       graph.addVertex(next);
-      graph.addEdge(current, next, new Integer(i++));
+      graph.addEdge(current, next, i++);
     }
 
     return graph;
@@ -192,8 +191,7 @@ public class TestGraphs {
     Graph<String, Number> graph =
         GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.multigraph()).buildGraph();
 
-    for (int i = 0; i < pairs.length; i++) {
-      String[] pair = pairs[i];
+    for (String[] pair : pairs) {
       graph.addVertex(pair[0]);
       graph.addVertex(pair[1]);
       graph.addEdge(pair[0], pair[1], Integer.parseInt(pair[2]));

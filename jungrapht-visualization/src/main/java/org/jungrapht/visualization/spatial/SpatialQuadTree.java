@@ -46,7 +46,7 @@ public class SpatialQuadTree<N> extends AbstractSpatial<N, N>
     NE,
     NW,
     SW,
-    SE;
+    SE
   }
 
   /** how many nodes per cell */

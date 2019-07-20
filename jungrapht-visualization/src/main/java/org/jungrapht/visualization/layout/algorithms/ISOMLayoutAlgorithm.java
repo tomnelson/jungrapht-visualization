@@ -77,7 +77,7 @@ public class ISOMLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
 
   protected double coolingFactor;
 
-  protected List<N> queue = new ArrayList<N>();
+  protected List<N> queue = new ArrayList<>();
   protected String status = null;
 
   /** @return the current number of epochs and execution status, as a string. */
@@ -98,7 +98,7 @@ public class ISOMLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
 
   public void initialize() {
     layoutModel.setInitializer(
-        new RandomLocationTransformer<N>(layoutModel.getWidth(), layoutModel.getHeight()));
+        new RandomLocationTransformer<>(layoutModel.getWidth(), layoutModel.getHeight()));
 
     maxEpoch = 2000;
     epoch = 1;

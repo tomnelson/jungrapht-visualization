@@ -66,7 +66,7 @@ public class ShapePickSupport<N, E> implements NetworkElementAccessor<N, E> {
     LOWEST,
     CENTERED,
     HIGHEST
-  };
+  }
 
   protected float pickSize;
 
@@ -436,7 +436,7 @@ public class ShapePickSupport<N, E> implements NetworkElementAccessor<N, E> {
     Point2D pickPoint = new Point2D.Double(x, y);
 
     Spatial<E> edgeSpatial = vv.getEdgeSpatial();
-    if (edgeSpatial != null && edgeSpatial instanceof SpatialRTree.Edges) {
+    if (edgeSpatial instanceof SpatialRTree.Edges) {
       return getEdge(
           (SpatialRTree.Edges<E, N>) edgeSpatial, layoutModel, pickPoint.getX(), pickPoint.getY());
     }
@@ -457,12 +457,12 @@ public class ShapePickSupport<N, E> implements NetworkElementAccessor<N, E> {
             float cy = 0;
             float[] f = new float[6];
             PathIterator pi = new GeneralPath(edgeShape).getPathIterator(null);
-            if (pi.isDone() == false) {
+            if (!pi.isDone()) {
               pi.next();
               pi.currentSegment(f);
               cx = f[0];
               cy = f[1];
-              if (pi.isDone() == false) {
+              if (!pi.isDone()) {
                 pi.currentSegment(f);
                 cx = f[0];
                 cy = f[1];
@@ -561,12 +561,12 @@ public class ShapePickSupport<N, E> implements NetworkElementAccessor<N, E> {
         float cy = 0;
         float[] f = new float[6];
         PathIterator pi = new GeneralPath(edgeShape).getPathIterator(null);
-        if (pi.isDone() == false) {
+        if (!pi.isDone()) {
           pi.next();
           pi.currentSegment(f);
           cx = f[0];
           cy = f[1];
-          if (pi.isDone() == false) {
+          if (!pi.isDone()) {
             pi.currentSegment(f);
             cx = f[0];
             cy = f[1];

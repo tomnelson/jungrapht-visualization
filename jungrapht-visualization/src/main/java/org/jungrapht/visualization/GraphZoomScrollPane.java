@@ -22,8 +22,6 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Set;
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import org.jungrapht.visualization.transform.BidirectionalTransformer;
 import org.jungrapht.visualization.transform.shape.Intersector;
 
@@ -70,11 +68,9 @@ public class GraphZoomScrollPane extends JPanel {
     // respond to changes in the VisualizationViewer's transform
     // and set the scroll bar parameters appropriately
     vv.addChangeListener(
-        new ChangeListener() {
-          public void stateChanged(ChangeEvent evt) {
-            VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) evt.getSource();
-            setScrollBars(vv);
-          }
+        evt -> {
+          VisualizationViewer<?, ?> vv1 = (VisualizationViewer<?, ?>) evt.getSource();
+          setScrollBars(vv1);
         });
     add(vv);
     add(verticalScrollBar, BorderLayout.EAST);
@@ -203,7 +199,7 @@ public class GraphZoomScrollPane extends JPanel {
     Point2D first = null;
     Point2D second = null;
 
-    Point2D[] pointArray = (Point2D[]) points.toArray(new Point2D[points.size()]);
+    Point2D[] pointArray = points.toArray(new Point2D[0]);
     if (pointArray.length > 1) {
       first = pointArray[0];
       second = pointArray[1];
@@ -248,7 +244,7 @@ public class GraphZoomScrollPane extends JPanel {
     intersector.intersectLine(new Line2D.Double(v0, v1));
     points = intersector.getPoints();
 
-    pointArray = (Point2D[]) points.toArray(new Point2D[points.size()]);
+    pointArray = points.toArray(new Point2D[0]);
     if (pointArray.length > 1) {
       first = pointArray[0];
       second = pointArray[1];

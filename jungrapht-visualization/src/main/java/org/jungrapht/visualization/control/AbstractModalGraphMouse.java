@@ -152,7 +152,7 @@ public abstract class AbstractModalGraphMouse extends PluggableGraphMouse
   /** @return Returns the modeBox. */
   public JComboBox<Mode> getModeComboBox() {
     if (modeBox == null) {
-      modeBox = new JComboBox<Mode>(new Mode[] {Mode.TRANSFORMING, Mode.PICKING});
+      modeBox = new JComboBox<>(new Mode[] {Mode.TRANSFORMING, Mode.PICKING});
       modeBox.addItemListener(getModeListener());
     }
     modeBox.setSelectedItem(mode);
@@ -174,21 +174,17 @@ public abstract class AbstractModalGraphMouse extends PluggableGraphMouse
       final JRadioButtonMenuItem transformingButton =
           new JRadioButtonMenuItem(Mode.TRANSFORMING.toString());
       transformingButton.addItemListener(
-          new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-              if (e.getStateChange() == ItemEvent.SELECTED) {
-                setMode(Mode.TRANSFORMING);
-              }
+          e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+              setMode(Mode.TRANSFORMING);
             }
           });
 
       final JRadioButtonMenuItem pickingButton = new JRadioButtonMenuItem(Mode.PICKING.toString());
       pickingButton.addItemListener(
-          new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-              if (e.getStateChange() == ItemEvent.SELECTED) {
-                setMode(Mode.PICKING);
-              }
+          e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+              setMode(Mode.PICKING);
             }
           });
       ButtonGroup radio = new ButtonGroup();
@@ -199,14 +195,12 @@ public abstract class AbstractModalGraphMouse extends PluggableGraphMouse
       modeMenu.add(pickingButton);
       modeMenu.setToolTipText("Menu for setting Mouse Mode");
       addItemListener(
-          new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-              if (e.getStateChange() == ItemEvent.SELECTED) {
-                if (e.getItem() == Mode.TRANSFORMING) {
-                  transformingButton.setSelected(true);
-                } else if (e.getItem() == Mode.PICKING) {
-                  pickingButton.setSelected(true);
-                }
+          e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+              if (e.getItem() == Mode.TRANSFORMING) {
+                transformingButton.setSelected(true);
+              } else if (e.getItem() == Mode.PICKING) {
+                pickingButton.setSelected(true);
               }
             }
           });

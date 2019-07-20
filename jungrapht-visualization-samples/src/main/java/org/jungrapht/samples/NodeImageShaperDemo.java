@@ -269,7 +269,7 @@ public class NodeImageShaperDemo extends JPanel {
     public void itemStateChanged(ItemEvent e) {
       @SuppressWarnings("unchecked")
       Icon icon = imager.apply((N) e.getItem());
-      if (icon != null && icon instanceof LayeredIcon) {
+      if (icon instanceof LayeredIcon) {
         if (e.getStateChange() == ItemEvent.SELECTED) {
           ((LayeredIcon) icon).add(checked);
         } else {
@@ -405,7 +405,7 @@ public class NodeImageShaperDemo extends JPanel {
     public Shape apply(N v) {
       Icon icon = iconMap.get(v);
 
-      if (icon != null && icon instanceof ImageIcon) {
+      if (icon instanceof ImageIcon) {
 
         Image image = ((ImageIcon) icon).getImage();
 

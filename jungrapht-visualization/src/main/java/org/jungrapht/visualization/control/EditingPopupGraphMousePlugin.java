@@ -34,7 +34,7 @@ public class EditingPopupGraphMousePlugin<N, E> extends AbstractPopupGraphMouseP
     final VisualizationViewer<N, E> vv = (VisualizationViewer<N, E>) e.getSource();
     final LayoutModel<N> layoutModel = vv.getModel().getLayoutModel();
 
-    final Graph<N, E> graph = (Graph<N, E>) vv.getModel().getNetwork();
+    final Graph<N, E> graph = vv.getModel().getNetwork();
     final Point2D p = e.getPoint();
     NetworkElementAccessor<N, E> pickSupport = vv.getPickSupport();
     if (pickSupport != null) {

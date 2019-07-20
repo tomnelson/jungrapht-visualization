@@ -12,10 +12,7 @@ package org.jungrapht.visualization.annotations;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Shape;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
@@ -75,15 +72,12 @@ public class AnnotationControls<N, E> {
     final JButton colorChooser = new JButton("Color");
     colorChooser.setForeground(annotatingPlugin.getAnnotationColor());
     colorChooser.addActionListener(
-        new ActionListener() {
-
-          public void actionPerformed(ActionEvent e) {
-            Color color =
-                JColorChooser.showDialog(
-                    colorChooser, "Annotation Color", colorChooser.getForeground());
-            annotatingPlugin.setAnnotationColor(color);
-            colorChooser.setForeground(color);
-          }
+        e -> {
+          Color color =
+              JColorChooser.showDialog(
+                  colorChooser, "Annotation Color", colorChooser.getForeground());
+          annotatingPlugin.setAnnotationColor(color);
+          colorChooser.setForeground(color);
         });
     return colorChooser;
   }
@@ -92,12 +86,9 @@ public class AnnotationControls<N, E> {
     final JComboBox<Annotation.Layer> layerBox =
         new JComboBox<>(new Annotation.Layer[] {Annotation.Layer.LOWER, Annotation.Layer.UPPER});
     layerBox.addItemListener(
-        new ItemListener() {
-
-          public void itemStateChanged(ItemEvent e) {
-            if (e.getStateChange() == ItemEvent.SELECTED) {
-              annotatingPlugin.setLayer((Annotation.Layer) e.getItem());
-            }
+        e -> {
+          if (e.getStateChange() == ItemEvent.SELECTED) {
+            annotatingPlugin.setLayer((Annotation.Layer) e.getItem());
           }
         });
 
@@ -107,12 +98,7 @@ public class AnnotationControls<N, E> {
   public JToggleButton getFillButton() {
     JToggleButton fillButton = new JToggleButton("Fill");
     fillButton.addItemListener(
-        new ItemListener() {
-
-          public void itemStateChanged(ItemEvent e) {
-            annotatingPlugin.setFill(e.getStateChange() == ItemEvent.SELECTED);
-          }
-        });
+        e -> annotatingPlugin.setFill(e.getStateChange() == ItemEvent.SELECTED));
     return fillButton;
   }
 

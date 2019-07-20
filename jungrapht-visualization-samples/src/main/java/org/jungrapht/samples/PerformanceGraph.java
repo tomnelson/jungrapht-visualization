@@ -16,7 +16,7 @@ import org.jungrapht.visualization.util.LightweightRenderingVisitor;
 
 public class PerformanceGraph {
   public static void main(String[] args) {
-    SwingUtilities.invokeLater(() -> createAndShowGUI());
+    SwingUtilities.invokeLater(PerformanceGraph::createAndShowGUI);
   }
 
   private static void createAndShowGUI() {

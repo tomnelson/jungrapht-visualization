@@ -70,9 +70,9 @@ public interface RenderContext<N, E> {
 
   void setEdgeIncludePredicate(Predicate<E> edgeIncludePredicate);
 
-  public float getEdgeLabelCloseness();
+  float getEdgeLabelCloseness();
 
-  public void setEdgeLabelCloseness(float closeness);
+  void setEdgeLabelCloseness(float closeness);
 
   EdgeLabelRenderer getEdgeLabelRenderer();
 

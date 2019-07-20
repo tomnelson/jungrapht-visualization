@@ -64,7 +64,7 @@ public class LoadingCacheLayoutModel<N> extends AbstractLayoutModel<N>
      */
     public T build() {
       return (T) new LoadingCacheLayoutModel<>(this);
-    };
+    }
   }
 
   public static <N> Builder<N, ?, ?> builder() {

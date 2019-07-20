@@ -5,6 +5,7 @@ import com.tom.quadtree.BarnesHutQuadTree;
 import com.tom.quadtree.ForceObject;
 import com.tom.quadtree.Node;
 import java.util.ConcurrentModificationException;
+import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
@@ -87,7 +88,7 @@ public class BarnesHutSpringRepulsion<N>
             .stream()
             .collect(
                 Collectors.toMap(
-                    entry -> entry.getKey(),
+                    Map.Entry::getKey,
                     entry -> com.tom.quadtree.Point.of(entry.getValue().x, entry.getValue().y))));
   }
 

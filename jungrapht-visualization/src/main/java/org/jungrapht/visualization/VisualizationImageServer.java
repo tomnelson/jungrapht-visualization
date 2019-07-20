@@ -31,7 +31,7 @@ import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 @SuppressWarnings("serial")
 public class VisualizationImageServer<N, E> extends BasicVisualizationServer<N, E> {
 
-  Map<RenderingHints.Key, Object> renderingHints = new HashMap<RenderingHints.Key, Object>();
+  Map<RenderingHints.Key, Object> renderingHints = new HashMap<>();
 
   /**
    * Creates a new instance with the specified layout and preferred layoutSize.

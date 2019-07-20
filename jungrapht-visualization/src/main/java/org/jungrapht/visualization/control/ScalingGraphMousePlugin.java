@@ -60,7 +60,7 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
   /** zoom the display in or out, depending on the direction of the mouse wheel motion. */
   public void mouseWheelMoved(MouseWheelEvent e) {
     boolean accepted = checkModifiers(e);
-    if (accepted == true) {
+    if (accepted) {
       VisualizationViewer vv = (VisualizationViewer) e.getSource();
       Point2D mouse = e.getPoint();
       Point2D center = vv.getCenter();

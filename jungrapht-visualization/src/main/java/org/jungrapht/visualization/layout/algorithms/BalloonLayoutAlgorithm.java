@@ -159,7 +159,7 @@ public class BalloonLayoutAlgorithm<N> extends TreeLayoutAlgorithm<N> {
       // so that sub tree node positions can be bisected by it.
       double newAngleToParent = Math.atan2(p.y - parentLocation.y, parentLocation.x - p.x);
       List<N> successors = Graphs.successorListOf(layoutModel.getGraph(), child);
-      successors.removeIf(n -> seen.contains(n));
+      successors.removeIf(seen::contains);
       seen.addAll(successors);
       setPolars(layoutModel, successors, p, newAngleToParent, childRadius, seen);
     }

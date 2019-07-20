@@ -52,7 +52,7 @@ public class SatelliteVisualizationViewer<N, E> extends VisualizationViewer<N, E
     setGraphMouse(gm);
 
     // this adds the Lens to the satellite view
-    addPreRenderPaintable(new ViewLens<N, E>(this, master));
+    addPreRenderPaintable(new ViewLens<>(this, master));
 
     // get a copy of the current layout transform
     // it may have been scaled to fit the graph

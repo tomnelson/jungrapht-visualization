@@ -28,20 +28,20 @@ import java.util.Set;
 public class MultiMutableSelectedState<T> extends AbstractMutableSelectedState<T>
     implements MutableSelectedState<T> {
   /** the 'picked' nodes */
-  protected Set<T> picked = new LinkedHashSet<T>();
+  protected Set<T> picked = new LinkedHashSet<>();
 
   public boolean pick(T v, boolean state) {
     boolean prior_state = this.picked.contains(v);
     if (state) {
       picked.add(v);
-      if (prior_state == false) {
+      if (!prior_state) {
         fireItemStateChanged(
             new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, v, ItemEvent.SELECTED));
       }
 
     } else {
       picked.remove(v);
-      if (prior_state == true) {
+      if (prior_state) {
         fireItemStateChanged(
             new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, v, ItemEvent.DESELECTED));
       }
@@ -50,7 +50,7 @@ public class MultiMutableSelectedState<T> extends AbstractMutableSelectedState<T
   }
 
   public void clear() {
-    Collection<T> unpicks = new ArrayList<T>(picked);
+    Collection<T> unpicks = new ArrayList<>(picked);
     for (T v : unpicks) {
       pick(v, false);
     }
@@ -68,7 +68,7 @@ public class MultiMutableSelectedState<T> extends AbstractMutableSelectedState<T
   /** for the ItemSelectable interface contract */
   @SuppressWarnings("unchecked")
   public T[] getSelectedObjects() {
-    List<T> list = new ArrayList<T>(picked);
+    List<T> list = new ArrayList<>(picked);
     return (T[]) list.toArray();
   }
 }

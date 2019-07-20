@@ -1,6 +1,5 @@
 package org.jungrapht.visualization.renderers;
 
-import java.awt.*;
 import java.util.ConcurrentModificationException;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.RenderContext;

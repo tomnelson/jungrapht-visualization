@@ -25,7 +25,7 @@ public abstract class AbstractNodeShapeFunction<N> implements SettableNodeShapeF
   public AbstractNodeShapeFunction(Function<N, Integer> vsf, Function<N, Float> varf) {
     this.vsf = vsf;
     this.varf = varf;
-    factory = new NodeShapeFactory<N>(vsf, varf);
+    factory = new NodeShapeFactory<>(vsf, varf);
   }
 
   public AbstractNodeShapeFunction() {

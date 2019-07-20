@@ -26,7 +26,7 @@ public class Annotation<T> {
   protected Layer layer;
   protected boolean fill;
 
-  public static enum Layer {
+  public enum Layer {
     LOWER,
     UPPER
   }

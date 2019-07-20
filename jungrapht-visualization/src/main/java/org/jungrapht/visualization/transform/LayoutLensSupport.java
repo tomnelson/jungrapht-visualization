@@ -10,7 +10,6 @@
 
 package org.jungrapht.visualization.transform;
 
-import java.awt.*;
 import java.awt.geom.Point2D;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationViewer;

@@ -282,7 +282,7 @@ public class SpatialLensLargeGraphDemo extends JPanel {
     controls.add(hyperControls);
     controls.add(modeLabel);
     add(controls, BorderLayout.SOUTH);
-    vv.setNodeToolTipFunction(n -> n.toString());
+    vv.setNodeToolTipFunction(n -> n);
   }
 
   static class VerticalLabelUI extends BasicLabelUI {
@@ -392,8 +392,7 @@ public class SpatialLensLargeGraphDemo extends JPanel {
         GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.multigraph())
             .buildGraphBuilder();
 
-    for (int i = 0; i < pairs.length; i++) {
-      String[] pair = pairs[i];
+    for (String[] pair : pairs) {
       createEdge(g, pair[0], pair[1], Integer.parseInt(pair[2]));
     }
     Integer edge = 10;

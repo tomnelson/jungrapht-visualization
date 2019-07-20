@@ -43,7 +43,7 @@ public class DAGLayoutAlgorithm<N> extends SpringLayoutAlgorithm<N> {
    * is used. We will modify the SpringLayout calculations so that nodes cannot move above their
    * assigned minimumLevel.
    */
-  private Map<N, Number> minLevels = new HashMap<N, Number>();
+  private Map<N, Number> minLevels = new HashMap<>();
   // Simpler than the "pair" technique.
   static int graphHeight;
   static int numRoots;
@@ -98,7 +98,7 @@ public class DAGLayoutAlgorithm<N> extends SpringLayoutAlgorithm<N> {
    * @param node the node to set as root
    */
   public void setRoot(N node) {
-    minLevels.put(node, new Integer(0));
+    minLevels.put(node, 0);
     // set all the levels.
     propagateMinimumLevel(node);
   }
@@ -121,7 +121,7 @@ public class DAGLayoutAlgorithm<N> extends SpringLayoutAlgorithm<N> {
         oldLevel = 0;
       }
       newLevel = Math.max(oldLevel, level + 1);
-      minLevels.put(child, new Integer(newLevel));
+      minLevels.put(child, newLevel);
 
       if (newLevel > graphHeight) {
         graphHeight = newLevel;
@@ -231,11 +231,7 @@ public class DAGLayoutAlgorithm<N> extends SpringLayoutAlgorithm<N> {
   /** Override incrementsAreDone so that we can eventually stop. */
   @Override
   public boolean done() {
-    if (stoppingIncrements && incrementsLeft == 0) {
-      return true;
-    } else {
-      return false;
-    }
+    return stoppingIncrements && incrementsLeft == 0;
   }
 
   /**

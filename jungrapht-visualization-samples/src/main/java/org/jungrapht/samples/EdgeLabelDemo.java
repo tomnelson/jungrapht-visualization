@@ -234,7 +234,7 @@ public class EdgeLabelDemo extends JPanel {
     Graph<Integer, Number> graph =
         GraphTypeBuilder.<Integer, Number>forGraphType(DefaultGraphType.directedMultigraph())
             .buildGraph();
-    IntStream.rangeClosed(0, 2).forEach(i -> graph.addVertex(i));
+    IntStream.rangeClosed(0, 2).forEach(graph::addVertex);
     graph.addEdge(0, 1, Math.random());
     graph.addEdge(0, 1, Math.random());
     graph.addEdge(0, 1, Math.random());

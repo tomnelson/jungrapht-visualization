@@ -256,11 +256,11 @@ public class FRLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
 
     double dx = (xDelta / deltaLength) * force;
     double dy = (yDelta / deltaLength) * force;
-    if (v1_locked == false) {
+    if (!v1_locked) {
       Point fvd1 = getFRData(node1);
       frNodeData.put(node1, fvd1.add(-dx, -dy));
     }
-    if (v2_locked == false) {
+    if (!v2_locked) {
       Point fvd2 = getFRData(node2);
       frNodeData.put(node2, fvd2.add(dx, dy));
     }
@@ -286,9 +286,6 @@ public class FRLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
   /** @return true once the current iteration has passed the maximum count. */
   @Override
   public boolean done() {
-    if (currentIteration > mMaxIterations || temperature < 1.0 / max_dimension) {
-      return true;
-    }
-    return false;
+    return currentIteration > mMaxIterations || temperature < 1.0 / max_dimension;
   }
 }

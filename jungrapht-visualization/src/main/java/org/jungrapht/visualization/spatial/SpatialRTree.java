@@ -186,10 +186,7 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
       for (T element : elements) {
         rtree =
             RTree.add(
-                rtree,
-                splitterContext,
-                (T) element,
-                boundingRectangleCollector.getForElement((T) element));
+                rtree, splitterContext, element, boundingRectangleCollector.getForElement(element));
         log.trace("added {} got {} nodes in {}", element, rtree.count(), rtree);
       }
       if (reinsert) {
@@ -213,7 +210,7 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
       for (T element : elements) {
         entryList.add(
             new AbstractMap.SimpleEntry(
-                element, boundingRectangleCollector.getForElement((T) element)));
+                element, boundingRectangleCollector.getForElement(element)));
       }
       rtree = RTree.bulkAdd(rtree, splitterContext, entryList);
 

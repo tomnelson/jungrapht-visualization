@@ -14,6 +14,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Rectangle;
 import java.io.Serializable;
+import java.util.Objects;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.border.Border;
@@ -148,7 +149,7 @@ public class AnnotationRenderer extends JLabel implements Serializable {
   @Override
   protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
     // Strings get interned...
-    if (propertyName == "text") {
+    if (Objects.equals(propertyName, "text")) {
       super.firePropertyChange(propertyName, oldValue, newValue);
     }
   }

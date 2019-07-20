@@ -14,7 +14,6 @@ package org.jungrapht.visualization.layout.algorithms;
 
 import com.google.common.base.Preconditions;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -31,7 +30,7 @@ public class CircleLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
 
   private static final Logger log = LoggerFactory.getLogger(CircleLayoutAlgorithm.class);
   private double radius;
-  private List<N> node_ordered_list;
+  private List<N> nodeOrderedList;
 
   public static class Builder<N> {
     protected int radius;
@@ -81,10 +80,10 @@ public class CircleLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
    * @param comparator the comparator to use to order the nodes
    */
   public void setNodeOrder(LayoutModel<N> layoutModel, Comparator<N> comparator) {
-    if (node_ordered_list == null) {
-      node_ordered_list = new ArrayList<N>(layoutModel.getGraph().vertexSet());
+    if (nodeOrderedList == null) {
+      nodeOrderedList = new ArrayList<>(layoutModel.getGraph().vertexSet());
     }
-    Collections.sort(node_ordered_list, comparator);
+    nodeOrderedList.sort(comparator);
   }
 
   /**
@@ -96,13 +95,13 @@ public class CircleLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
     Preconditions.checkArgument(
         node_list.containsAll(layoutModel.getGraph().vertexSet()),
         "Supplied list must include all nodes of the graph");
-    this.node_ordered_list = node_list;
+    this.nodeOrderedList = node_list;
   }
 
   @Override
   public void visit(LayoutModel<N> layoutModel) {
     if (layoutModel != null) {
-      setNodeOrder(layoutModel, new ArrayList<N>(layoutModel.getGraph().vertexSet()));
+      setNodeOrder(layoutModel, new ArrayList<>(layoutModel.getGraph().vertexSet()));
 
       double height = layoutModel.getHeight();
       double width = layoutModel.getWidth();
@@ -112,9 +111,9 @@ public class CircleLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
       }
 
       int i = 0;
-      for (N node : node_ordered_list) {
+      for (N node : nodeOrderedList) {
 
-        double angle = (2 * Math.PI * i) / node_ordered_list.size();
+        double angle = (2 * Math.PI * i) / nodeOrderedList.size();
 
         double posX = Math.cos(angle) * radius + width / 2;
         double posY = Math.sin(angle) * radius + height / 2;

@@ -27,7 +27,7 @@ import org.jungrapht.visualization.util.ImageShapeUtils;
  * @author Tom Nelson
  */
 public class NodeIconShapeFunction<N> implements Function<N, Shape> {
-  protected Map<Image, Shape> shapeMap = new HashMap<Image, Shape>();
+  protected Map<Image, Shape> shapeMap = new HashMap<>();
   protected Map<N, Icon> iconMap;
   protected Function<N, Shape> delegate;
 
@@ -56,7 +56,7 @@ public class NodeIconShapeFunction<N> implements Function<N, Shape> {
    */
   public Shape apply(N v) {
     Icon icon = iconMap.get(v);
-    if (icon != null && icon instanceof ImageIcon) {
+    if (icon instanceof ImageIcon) {
       Image image = ((ImageIcon) icon).getImage();
       Shape shape = shapeMap.get(image);
       if (shape == null) {

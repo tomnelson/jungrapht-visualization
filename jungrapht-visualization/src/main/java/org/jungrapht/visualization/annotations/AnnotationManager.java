@@ -87,8 +87,7 @@ public class AnnotationManager {
 
   public Annotation<?> getAnnotation(Point2D p) {
     @SuppressWarnings("rawtypes")
-    Set<Annotation> annotations =
-        new HashSet<Annotation>(lowerAnnotationPaintable.getAnnotations());
+    Set<Annotation> annotations = new HashSet<>(lowerAnnotationPaintable.getAnnotations());
     annotations.addAll(upperAnnotationPaintable.getAnnotations());
     return getAnnotation(p, annotations);
   }

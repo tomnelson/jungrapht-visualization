@@ -18,7 +18,7 @@ public class Intersector {
 
   protected Rectangle rectangle;
   Line2D line;
-  Set<Point2D> points = new HashSet<Point2D>();
+  Set<Point2D> points = new HashSet<>();
 
   public Intersector(Rectangle rectangle) {
     this.rectangle = rectangle;

@@ -70,7 +70,7 @@ public class AnimatedPickingGraphMousePlugin<N, E> extends AbstractGraphMousePlu
         Point2D p = e.getPoint();
         node = pickSupport.getNode(layoutModel, p.getX(), p.getY());
         if (node != null) {
-          if (pickedNodeState.isSelected(node) == false) {
+          if (!pickedNodeState.isSelected(node)) {
             pickedNodeState.clear();
             pickedNodeState.pick(node, true);
           }
@@ -107,18 +107,15 @@ public class AnimatedPickingGraphMousePlugin<N, E> extends AbstractGraphMousePlu
       final double dy = (lvc.getY() - newCenter.y) / 10;
 
       Runnable animator =
-          new Runnable() {
-
-            public void run() {
-              for (int i = 0; i < 10; i++) {
-                vv.getRenderContext()
-                    .getMultiLayerTransformer()
-                    .getTransformer(MultiLayerTransformer.Layer.LAYOUT)
-                    .translate(dx, dy);
-                try {
-                  Thread.sleep(100);
-                } catch (InterruptedException ex) {
-                }
+          () -> {
+            for (int i = 0; i < 10; i++) {
+              vv.getRenderContext()
+                  .getMultiLayerTransformer()
+                  .getTransformer(MultiLayerTransformer.Layer.LAYOUT)
+                  .translate(dx, dy);
+              try {
+                Thread.sleep(100);
+              } catch (InterruptedException ex) {
               }
             }
           };

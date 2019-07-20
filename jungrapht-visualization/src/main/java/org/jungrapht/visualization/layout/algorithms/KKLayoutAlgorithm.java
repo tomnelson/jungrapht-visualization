@@ -195,10 +195,7 @@ public class KKLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
 
   /** @return true if the current iteration has passed the maximum count. */
   public boolean done() {
-    if (currentIteration > maxIterations) {
-      return true;
-    }
-    return false;
+    return currentIteration > maxIterations;
   }
 
   @SuppressWarnings("unchecked")
@@ -207,7 +204,7 @@ public class KKLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
     Graph<N, ?> graph = layoutModel.getGraph();
     // KKLayoutAlgorithm will fail if all nodes start at the same location
     layoutModel.setInitializer(
-        new RandomLocationTransformer<N>(
+        new RandomLocationTransformer<>(
             layoutModel.getWidth(), layoutModel.getHeight(), graph.vertexSet().size()));
     if (graph != null && layoutModel != null) {
 
@@ -344,9 +341,9 @@ public class KKLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
     double width = layoutModel.getWidth();
     double gx = 0;
     double gy = 0;
-    for (int i = 0; i < xydata.length; i++) {
-      gx += xydata[i].x;
-      gy += xydata[i].y;
+    for (Point aXydata : xydata) {
+      gx += aXydata.x;
+      gy += aXydata.y;
     }
     gx /= xydata.length;
     gy /= xydata.length;

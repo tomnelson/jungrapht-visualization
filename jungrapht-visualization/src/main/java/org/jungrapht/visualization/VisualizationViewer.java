@@ -77,7 +77,7 @@ public class VisualizationViewer<N, E> extends BasicVisualizationServer<N, E> {
       LayoutAlgorithm<N> layoutAlgorithm,
       Dimension layoutSize,
       Dimension viewSize) {
-    this(new BaseVisualizationModel<N, E>(network, layoutAlgorithm, layoutSize), viewSize);
+    this(new BaseVisualizationModel<>(network, layoutAlgorithm, layoutSize), viewSize);
   }
 
   /**
@@ -87,7 +87,7 @@ public class VisualizationViewer<N, E> extends BasicVisualizationServer<N, E> {
    */
   public VisualizationViewer(
       Graph<N, E> network, LayoutAlgorithm<N> layoutAlgorithm, Dimension preferredSize) {
-    this(new BaseVisualizationModel<N, E>(network, layoutAlgorithm, preferredSize), preferredSize);
+    this(new BaseVisualizationModel<>(network, layoutAlgorithm, preferredSize), preferredSize);
   }
 
   /**
@@ -109,21 +109,21 @@ public class VisualizationViewer<N, E> extends BasicVisualizationServer<N, E> {
   public void setGraphMouse(GraphMouse graphMouse) {
     this.graphMouse = graphMouse;
     MouseListener[] ml = getMouseListeners();
-    for (int i = 0; i < ml.length; i++) {
-      if (ml[i] instanceof GraphMouse) {
-        removeMouseListener(ml[i]);
+    for (MouseListener aMl : ml) {
+      if (aMl instanceof GraphMouse) {
+        removeMouseListener(aMl);
       }
     }
     MouseMotionListener[] mml = getMouseMotionListeners();
-    for (int i = 0; i < mml.length; i++) {
-      if (mml[i] instanceof GraphMouse) {
-        removeMouseMotionListener(mml[i]);
+    for (MouseMotionListener aMml : mml) {
+      if (aMml instanceof GraphMouse) {
+        removeMouseMotionListener(aMml);
       }
     }
     MouseWheelListener[] mwl = getMouseWheelListeners();
-    for (int i = 0; i < mwl.length; i++) {
-      if (mwl[i] instanceof GraphMouse) {
-        removeMouseWheelListener(mwl[i]);
+    for (MouseWheelListener aMwl : mwl) {
+      if (aMwl instanceof GraphMouse) {
+        removeMouseWheelListener(aMwl);
       }
     }
     addMouseListener(graphMouse);
@@ -143,7 +143,7 @@ public class VisualizationViewer<N, E> extends BasicVisualizationServer<N, E> {
    * @param gel the mouse listener to add
    */
   public void addGraphMouseListener(GraphMouseListener<N> gel) {
-    addMouseListener(new MouseListenerTranslator<N, E>(gel, this));
+    addMouseListener(new MouseListenerTranslator<>(gel, this));
   }
 
   /**

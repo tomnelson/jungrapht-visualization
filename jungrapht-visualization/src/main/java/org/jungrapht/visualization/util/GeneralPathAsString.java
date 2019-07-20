@@ -10,7 +10,7 @@ public class GeneralPathAsString {
     StringBuilder sb = new StringBuilder();
     float[] coords = new float[6];
     for (PathIterator iterator = newPath.getPathIterator(null);
-        iterator.isDone() == false;
+        !iterator.isDone();
         iterator.next()) {
       int type = iterator.currentSegment(coords);
       switch (type) {

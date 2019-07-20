@@ -121,7 +121,7 @@ public class KKLayoutAlgorithmWithDijkstra<N> extends AbstractIterativeLayoutAlg
     Graph<N, ?> graph = layoutModel.getGraph();
     if (graph != null) {
       //      Distance distance = new UnweightedShortestPath<N>(graph);
-      this.distance = new Dijkstra<N>(graph).getAllDistances();
+      this.distance = new Dijkstra<>(graph).getAllDistances();
       //(x, y) -> distance.getDistance(x, y);
       log.info("distances: {}", this.distance);
     }
@@ -155,10 +155,7 @@ public class KKLayoutAlgorithmWithDijkstra<N> extends AbstractIterativeLayoutAlg
 
   /** @return true if the current iteration has passed the maximum count. */
   public boolean done() {
-    if (currentIteration > maxIterations) {
-      return true;
-    }
-    return false;
+    return currentIteration > maxIterations;
   }
 
   @SuppressWarnings("unchecked")
@@ -304,9 +301,9 @@ public class KKLayoutAlgorithmWithDijkstra<N> extends AbstractIterativeLayoutAlg
     double width = layoutModel.getWidth();
     double gx = 0;
     double gy = 0;
-    for (int i = 0; i < xydata.length; i++) {
-      gx += xydata[i].x;
-      gy += xydata[i].y;
+    for (Point aXydata : xydata) {
+      gx += aXydata.x;
+      gy += aXydata.y;
     }
     gx /= xydata.length;
     gy /= xydata.length;

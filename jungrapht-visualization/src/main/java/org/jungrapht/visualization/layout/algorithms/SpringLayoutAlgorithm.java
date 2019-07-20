@@ -40,7 +40,7 @@ public class SpringLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N
   boolean done = false;
 
   protected LoadingCache<N, SpringNodeData> springNodeData =
-      CacheBuilder.newBuilder().build(CacheLoader.from(() -> new SpringNodeData()));
+      CacheBuilder.newBuilder().build(CacheLoader.from(SpringNodeData::new));
 
   protected StandardSpringRepulsion.Builder repulsionContractBuilder;
   protected StandardSpringRepulsion repulsionContract;

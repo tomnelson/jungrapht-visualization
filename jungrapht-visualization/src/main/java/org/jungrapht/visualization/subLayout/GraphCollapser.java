@@ -42,7 +42,7 @@ public class GraphCollapser {
     // add all nodes in the delegate, unless the node is in the
     // cluster.
     for (Object v : inGraph.vertexSet()) {
-      if (cluster.contains(v) == false) {
+      if (!cluster.contains(v)) {
         graph.addVertex(v);
       }
     }
@@ -92,7 +92,7 @@ public class GraphCollapser {
       dontWantThis |=
           fromNode.equals(clusterGraphNode) || this.contains(clusterGraphNode, fromNode);
       dontWantThis |= toNode.equals(clusterGraphNode) || this.contains(clusterGraphNode, toNode);
-      if (dontWantThis == false) {
+      if (!dontWantThis) {
         newGraph.addEdge(fromNode, toNode, edge);
       }
     }

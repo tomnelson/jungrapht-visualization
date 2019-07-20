@@ -62,19 +62,16 @@ public class SatelliteAnimatedPickingGraphMousePlugin<N, E>
           final double dy = (lvc.getY() - q.y) / 10;
 
           Runnable animator =
-              new Runnable() {
-
-                public void run() {
-                  for (int i = 0; i < 10; i++) {
-                    vvMaster
-                        .getRenderContext()
-                        .getMultiLayerTransformer()
-                        .getTransformer(MultiLayerTransformer.Layer.LAYOUT)
-                        .translate(dx, dy);
-                    try {
-                      Thread.sleep(100);
-                    } catch (InterruptedException ex) {
-                    }
+              () -> {
+                for (int i = 0; i < 10; i++) {
+                  vvMaster
+                      .getRenderContext()
+                      .getMultiLayerTransformer()
+                      .getTransformer(MultiLayerTransformer.Layer.LAYOUT)
+                      .translate(dx, dy);
+                  try {
+                    Thread.sleep(100);
+                  } catch (InterruptedException ex) {
                   }
                 }
               };

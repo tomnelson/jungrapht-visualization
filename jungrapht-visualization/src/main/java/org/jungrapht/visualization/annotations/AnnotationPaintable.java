@@ -37,7 +37,7 @@ import org.jungrapht.visualization.transform.MutableTransformer;
 public class AnnotationPaintable implements VisualizationServer.Paintable {
 
   @SuppressWarnings("rawtypes")
-  protected Set<Annotation> annotations = new HashSet<Annotation>();
+  protected Set<Annotation> annotations = new HashSet<>();
 
   protected AnnotationRenderer annotationRenderer;
 

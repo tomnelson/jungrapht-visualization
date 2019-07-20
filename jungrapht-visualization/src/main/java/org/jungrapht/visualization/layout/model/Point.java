@@ -93,8 +93,7 @@ public class Point {
     if (x < minX) return false;
     if (x > maxX) return false;
     if (y < minY) return false;
-    if (y > maxY) return false;
-    return true;
+    return !(y > maxY);
   }
 
   /** @return the distance between this Point and the origin. */

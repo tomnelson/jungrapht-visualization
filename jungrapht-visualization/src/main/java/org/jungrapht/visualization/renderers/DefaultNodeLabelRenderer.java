@@ -15,6 +15,7 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.io.Serializable;
+import java.util.Objects;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.border.Border;
@@ -165,7 +166,7 @@ public class DefaultNodeLabelRenderer extends JLabel implements NodeLabelRendere
   @Override
   protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
     // Strings get interned...
-    if (propertyName == "text") {
+    if (Objects.equals(propertyName, "text")) {
       super.firePropertyChange(propertyName, oldValue, newValue);
     }
   }

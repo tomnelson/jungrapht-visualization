@@ -163,7 +163,7 @@ public class PickingGraphMousePlugin<N, E> extends AbstractGraphMousePlugin
         log.trace("mousePressed set the node to {}", node);
         if (node != null) {
           // picked a node
-          if (pickedNodeState.isSelected(node) == false) {
+          if (!pickedNodeState.isSelected(node)) {
             pickedNodeState.clear();
             pickedNodeState.pick(node, true);
           }
@@ -223,14 +223,14 @@ public class PickingGraphMousePlugin<N, E> extends AbstractGraphMousePlugin
     if (e.getModifiers() == modifiers) {
       if (down != null) {
 
-        if (node == null && heyThatsTooClose(down, out, 5) == false) {
+        if (node == null && !heyThatsTooClose(down, out, 5)) {
           pickContainedNodes(vv, layoutTargetShape, true);
         }
       }
     } else if (e.getModifiers() == this.addToSelectionModifiers) {
       if (down != null) {
 
-        if (node == null && heyThatsTooClose(down, out, 5) == false) {
+        if (node == null && !heyThatsTooClose(down, out, 5)) {
           pickContainedNodes(vv, layoutTargetShape, false);
         }
       }
@@ -283,7 +283,7 @@ public class PickingGraphMousePlugin<N, E> extends AbstractGraphMousePlugin
     if (edgeSpatialActiveInitialState) {
       vv.getEdgeSpatial().setActive(false);
     }
-    if (locked == false) {
+    if (!locked) {
 
       MultiLayerTransformer multiLayerTransformer =
           vv.getRenderContext().getMultiLayerTransformer();

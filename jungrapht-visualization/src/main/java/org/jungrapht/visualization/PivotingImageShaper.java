@@ -95,7 +95,7 @@ public class PivotingImageShaper {
           break;
         }
       }
-      if (aPointExistsOnThisLine == false) {
+      if (!aPointExistsOnThisLine) {
         break;
       }
     }
@@ -127,7 +127,7 @@ public class PivotingImageShaper {
           break;
         }
       }
-      if (aPointExistsOnThisLine == false) {
+      if (!aPointExistsOnThisLine) {
         break;
       }
     }
@@ -160,7 +160,7 @@ public class PivotingImageShaper {
           break;
         }
       }
-      if (aPointExistsOnThisLine == false) {
+      if (!aPointExistsOnThisLine) {
         break;
       }
     }
@@ -190,7 +190,7 @@ public class PivotingImageShaper {
           break;
         }
       }
-      if (aPointExistsOnThisLine == false) {
+      if (!aPointExistsOnThisLine) {
         break;
       }
     }

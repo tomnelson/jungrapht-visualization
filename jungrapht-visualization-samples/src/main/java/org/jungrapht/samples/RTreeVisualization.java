@@ -349,7 +349,7 @@ public class RTreeVisualization<N> extends JPanel {
         Field rtreeField = mySpatial.getClass().getSuperclass().getDeclaredField("rtree");
         rtreeField.setAccessible(true);
         RTree rtree = (RTree) rtreeField.get(spatial);
-        content.add(new RTreeVisualization<Object>(rtree, vv));
+        content.add(new RTreeVisualization<>(rtree, vv));
         frame.pack();
         frame.setVisible(true);
 

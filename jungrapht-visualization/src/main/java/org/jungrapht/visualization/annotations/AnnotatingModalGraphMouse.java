@@ -15,7 +15,6 @@ import java.awt.Dimension;
 import java.awt.ItemSelectable;
 import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import javax.swing.ButtonGroup;
@@ -159,7 +158,7 @@ public class AnnotatingModalGraphMouse<N, E> extends AbstractModalGraphMouse
   @Override
   public JComboBox<Mode> getModeComboBox() {
     if (modeBox == null) {
-      modeBox = new JComboBox<Mode>(new Mode[] {Mode.TRANSFORMING, Mode.PICKING, Mode.ANNOTATING});
+      modeBox = new JComboBox<>(new Mode[] {Mode.TRANSFORMING, Mode.PICKING, Mode.ANNOTATING});
       modeBox.addItemListener(getModeListener());
     }
     modeBox.setSelectedItem(mode);
@@ -182,21 +181,17 @@ public class AnnotatingModalGraphMouse<N, E> extends AbstractModalGraphMouse
       final JRadioButtonMenuItem transformingButton =
           new JRadioButtonMenuItem(Mode.TRANSFORMING.toString());
       transformingButton.addItemListener(
-          new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-              if (e.getStateChange() == ItemEvent.SELECTED) {
-                setMode(Mode.TRANSFORMING);
-              }
+          e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+              setMode(Mode.TRANSFORMING);
             }
           });
 
       final JRadioButtonMenuItem pickingButton = new JRadioButtonMenuItem(Mode.PICKING.toString());
       pickingButton.addItemListener(
-          new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-              if (e.getStateChange() == ItemEvent.SELECTED) {
-                setMode(Mode.PICKING);
-              }
+          e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+              setMode(Mode.PICKING);
             }
           });
 
@@ -208,14 +203,12 @@ public class AnnotatingModalGraphMouse<N, E> extends AbstractModalGraphMouse
       modeMenu.add(pickingButton);
       modeMenu.setToolTipText("Menu for setting Mouse Mode");
       addItemListener(
-          new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-              if (e.getStateChange() == ItemEvent.SELECTED) {
-                if (e.getItem() == Mode.TRANSFORMING) {
-                  transformingButton.setSelected(true);
-                } else if (e.getItem() == Mode.PICKING) {
-                  pickingButton.setSelected(true);
-                }
+          e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+              if (e.getItem() == Mode.TRANSFORMING) {
+                transformingButton.setSelected(true);
+              } else if (e.getItem() == Mode.PICKING) {
+                pickingButton.setSelected(true);
               }
             }
           });

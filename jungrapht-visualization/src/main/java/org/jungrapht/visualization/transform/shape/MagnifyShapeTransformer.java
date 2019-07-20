@@ -71,7 +71,7 @@ public class MagnifyShapeTransformer extends MagnifyTransformer
     } else {
       iterator = shape.getPathIterator(null, flatness);
     }
-    for (; iterator.isDone() == false; iterator.next()) {
+    for (; !iterator.isDone(); iterator.next()) {
       int type = iterator.currentSegment(coords);
       switch (type) {
         case PathIterator.SEG_MOVETO:
@@ -117,9 +117,7 @@ public class MagnifyShapeTransformer extends MagnifyTransformer
     }
     GeneralPath newPath = new GeneralPath();
     float[] coords = new float[6];
-    for (PathIterator iterator = shape.getPathIterator(null);
-        iterator.isDone() == false;
-        iterator.next()) {
+    for (PathIterator iterator = shape.getPathIterator(null); !iterator.isDone(); iterator.next()) {
       int type = iterator.currentSegment(coords);
       switch (type) {
         case PathIterator.SEG_MOVETO:
@@ -251,7 +249,7 @@ public class MagnifyShapeTransformer extends MagnifyTransformer
     } else {
       iterator = shape.getPathIterator(null, flatness);
     }
-    for (; iterator.isDone() == false; iterator.next()) {
+    for (; !iterator.isDone(); iterator.next()) {
       int type = iterator.currentSegment(coords);
       switch (type) {
         case PathIterator.SEG_MOVETO:
