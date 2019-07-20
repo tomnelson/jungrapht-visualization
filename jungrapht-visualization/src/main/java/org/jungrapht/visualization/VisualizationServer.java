@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.RenderingHints.Key;
 import java.awt.geom.Point2D;
 import java.util.Map;
+import java.util.function.Predicate;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
@@ -172,4 +173,6 @@ public interface VisualizationServer<N, E>
   }
 
   void simplifyRenderer(boolean simplify);
+
+  void setSmallScaleOverridePredicate(Predicate<Double> smallScaleOverridePredicate);
 }

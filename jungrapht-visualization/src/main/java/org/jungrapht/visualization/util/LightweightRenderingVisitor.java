@@ -15,6 +15,7 @@ public class LightweightRenderingVisitor implements ChangeListener {
 
   private LightweightRenderingVisitor(VisualizationServer visualizationServer) {
     this.visualizationServer = visualizationServer;
+    visualizationServer.setSmallScaleOverridePredicate(scale -> (double) scale < 0.5);
   }
 
   @Override

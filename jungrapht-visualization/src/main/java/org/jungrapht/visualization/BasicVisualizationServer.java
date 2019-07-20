@@ -9,7 +9,6 @@
 */
 package org.jungrapht.visualization;
 
-import com.google.common.collect.Lists;
 import com.tom.rtree.QuadraticLeafSplitter;
 import com.tom.rtree.QuadraticSplitter;
 import com.tom.rtree.RStarLeafSplitter;
@@ -26,20 +25,16 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.Predicate;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.jgrapht.Graph;
-import org.jungrapht.visualization.annotations.AnnotationPaintable;
 import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.control.TransformSupport;
-import org.jungrapht.visualization.decorators.EllipseNodeShapeFunction;
 import org.jungrapht.visualization.layout.BoundingRectangleCollector;
 import org.jungrapht.visualization.layout.NetworkElementAccessor;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -47,11 +42,9 @@ import org.jungrapht.visualization.layout.event.LayoutNodePositionChange;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.util.Caching;
-import org.jungrapht.visualization.renderers.BasicNodeLabelRenderer;
 import org.jungrapht.visualization.renderers.BasicRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
-import org.jungrapht.visualization.renderers.SimpleEdgeRenderer;
-import org.jungrapht.visualization.renderers.SimpleNodeRenderer;
+import org.jungrapht.visualization.renderers.SimpleRenderer;
 import org.jungrapht.visualization.selection.MultiMutableSelectedState;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 import org.jungrapht.visualization.selection.ShapePickSupport;
@@ -170,7 +163,7 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
 
   protected Spatial<E> edgeSpatial;
 
-  protected boolean smallScaleOverride;
+  protected Predicate<Double> smallScaleOverridePredicate = e -> false;
 
   /**
    * @param network the network to render
@@ -456,8 +449,6 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
 
     g2d.setTransform(newXform);
 
-    AnnotationPaintable lowerAnnotationPaintable = null;
-
     if (log.isTraceEnabled()) {
       // when logging is set to trace, the grid will be drawn on the graph visualization
       addSpatialAnnotations(this.nodeSpatial, Color.blue);
@@ -477,15 +468,10 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
         g2d.setTransform(newXform);
       }
     }
-    if (lowerAnnotationPaintable != null) {
-      this.removePreRenderPaintable(lowerAnnotationPaintable);
-    }
 
     if (model instanceof Caching) {
       ((Caching) model).clear();
     }
-
-    this.smallScaleOverride = smallScale();
 
     renderer.render(renderContext, model, nodeSpatial, edgeSpatial);
 
@@ -503,12 +489,16 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
     g2d.setTransform(oldXform);
   }
 
+  public void setSmallScaleOverridePredicate(Predicate<Double> smallScaleOverridePredicate) {
+    this.smallScaleOverridePredicate = smallScaleOverridePredicate;
+  }
+
   private boolean smallScale() {
-    return getRenderContext()
+    return smallScaleOverridePredicate.test(
+        getRenderContext()
             .getMultiLayerTransformer()
             .getTransformer(MultiLayerTransformer.Layer.VIEW)
-            .getScale()
-        < 0.5;
+            .getScale());
   }
 
   /** a LayoutChange.Event from the LayoutModel will trigger a repaint of the visualization */
@@ -520,18 +510,13 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
     repaint();
   }
 
-  @Override
   public void layoutStateChanged(LayoutStateChange.Event evt) {
-    //    System.err.println("got " + evt);
-    //    simplifyRenderer(evt.active);
+    //    no op
   }
 
   @Override
   public void simplifyRenderer(boolean simplify) {
-    if (smallScaleOverride) {
-      simplify = true;
-    }
-    if (simplify) {
+    if (smallScale() || simplify) {
       this.renderer = simpleRenderer;
       this.getRenderingHints().remove(RenderingHints.KEY_ANTIALIASING);
     } else {
@@ -700,12 +685,8 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
   }
 
   private void removeSpatialAnnotations() {
-    for (Iterator<Paintable> iterator = preRenderers.iterator(); iterator.hasNext(); ) {
-      Paintable paintable = iterator.next();
-      if (paintable instanceof BasicVisualizationServer.SpatialPaintable) {
-        iterator.remove();
-      }
-    }
+    preRenderers.removeIf(
+        paintable -> paintable instanceof BasicVisualizationServer.SpatialPaintable);
   }
 
   @Override
@@ -737,8 +718,7 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
       Graphics2D g2d = (Graphics2D) g;
       Color oldColor = g2d.getColor();
       //gather all the grid shapes
-      List<Shape> grid = Lists.newArrayList();
-      grid = quadTree.getGrid();
+      List<Shape> grid = quadTree.getGrid();
 
       g2d.setColor(color);
       for (Shape r : grid) {
@@ -755,178 +735,6 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
         }
       }
       g2d.setColor(oldColor);
-    }
-  }
-
-  private static class SimpleRenderer<N, E> implements Renderer<N, E> {
-
-    private static final Logger log = LoggerFactory.getLogger(SimpleRenderer.class);
-    protected Node<N, E> nodeRenderer = new SimpleNodeRenderer<>();
-    protected NodeLabel<N, E> nodeLabelRenderer = new BasicNodeLabelRenderer<>();
-    protected Renderer.Edge<N, E> edgeRenderer = new SimpleEdgeRenderer<>();
-    //    protected Renderer.EdgeLabel<N, E> edgeLabelRenderer = new BasicEdgeLabelRenderer<>();
-
-    @Override
-    public void render(
-        RenderContext<N, E> renderContext,
-        VisualizationModel<N, E> visualizationModel,
-        Spatial<N> nodeSpatial,
-        Spatial<E> edgeSpatial) {
-      if (nodeSpatial == null) {
-        render(renderContext, visualizationModel);
-        return;
-      }
-      Iterable<N> visibleNodes = null;
-      Iterable<E> visibleEdges = null;
-
-      try {
-        visibleNodes =
-            nodeSpatial.getVisibleElements(
-                ((VisualizationServer) renderContext.getScreenDevice()).viewOnLayout());
-
-        if (edgeSpatial != null) {
-          visibleEdges =
-              edgeSpatial.getVisibleElements(
-                  ((VisualizationServer) renderContext.getScreenDevice()).viewOnLayout());
-        } else {
-          visibleEdges = visualizationModel.getNetwork().edgeSet();
-        }
-      } catch (ConcurrentModificationException ex) {
-        // skip rendering until graph node index is stable,
-        // this can happen if the layout relax thread is changing locations while the
-        // visualization is rendering
-        log.info("got {} so returning", ex.toString());
-        log.info(
-            "layoutMode active: {}, edgeSpatial active {}, nodeSpatial active: {}",
-            visualizationModel.getLayoutModel().isRelaxing(),
-            edgeSpatial.isActive(),
-            nodeSpatial.isActive());
-        return;
-      }
-
-      try {
-        Graph<N, E> network = visualizationModel.getNetwork();
-        // paint all the edges
-        log.trace("the visibleEdges are {}", visibleEdges);
-        for (E e : visibleEdges) {
-          if (network.edgeSet().contains(e)) {
-            renderEdge(renderContext, visualizationModel, e);
-            //            renderEdgeLabel(renderContext, visualizationModel, e);
-          }
-        }
-      } catch (ConcurrentModificationException cme) {
-        renderContext.getScreenDevice().repaint();
-      }
-
-      // paint all the nodes
-      try {
-        log.trace("the visibleNodes are {}", visibleNodes);
-
-        for (N v : visibleNodes) {
-          renderNode(renderContext, visualizationModel, v);
-        }
-      } catch (ConcurrentModificationException cme) {
-        renderContext.getScreenDevice().repaint();
-      }
-    }
-
-    @Override
-    public void render(
-        RenderContext<N, E> renderContext, VisualizationModel<N, E> visualizationModel) {
-      Graph<N, E> network = visualizationModel.getNetwork();
-      Function<N, Shape> nodeShapeFunction = new EllipseNodeShapeFunction<>();
-      renderContext.setNodeShapeFunction(n -> nodeShapeFunction.apply(n));
-      // paint all the edges
-      try {
-        for (E e : network.edgeSet()) {
-          renderEdge(renderContext, visualizationModel, e);
-          //          renderEdgeLabel(renderContext, visualizationModel, e);
-        }
-      } catch (ConcurrentModificationException cme) {
-        renderContext.getScreenDevice().repaint();
-      }
-
-      // paint all the nodes
-      try {
-        for (N v : network.vertexSet()) {
-          renderNode(renderContext, visualizationModel, v);
-          //          renderNodeLabel(renderContext, visualizationModel, v);
-        }
-      } catch (ConcurrentModificationException cme) {
-        renderContext.getScreenDevice().repaint();
-      }
-    }
-
-    @Override
-    public void renderNode(
-        RenderContext<N, E> renderContext, VisualizationModel<N, E> visualizationModel, N v) {
-      nodeRenderer.paintNode(renderContext, visualizationModel, v);
-    }
-
-    @Override
-    public void renderNodeLabel(
-        RenderContext<N, E> renderContext, VisualizationModel<N, E> visualizationModel, N v) {
-      nodeLabelRenderer.labelNode(
-          renderContext, visualizationModel, v, renderContext.getNodeLabelFunction().apply(v));
-    }
-
-    @Override
-    public void renderEdge(
-        RenderContext<N, E> renderContext, VisualizationModel<N, E> visualizationModel, E e) {
-      edgeRenderer.paintEdge(renderContext, visualizationModel, e);
-    }
-
-    @Override
-    public void renderEdgeLabel(
-        RenderContext<N, E> renderContext, VisualizationModel<N, E> visualizationModel, E e) {
-      //      edgeLabelRenderer.labelEdge(
-      //              renderContext, visualizationModel, e, renderContext.getEdgeLabelFunction().apply(e));
-    }
-
-    @Override
-    public void setNodeRenderer(Node<N, E> r) {
-      this.nodeRenderer = r;
-    }
-
-    @Override
-    public void setEdgeRenderer(Renderer.Edge<N, E> r) {
-      this.edgeRenderer = r;
-    }
-
-    /** @return the edgeLabelRenderer */
-    @Override
-    public Renderer.EdgeLabel<N, E> getEdgeLabelRenderer() {
-      return null;
-    }
-
-    /** @param edgeLabelRenderer the edgeLabelRenderer to set */
-    @Override
-    public void setEdgeLabelRenderer(Renderer.EdgeLabel<N, E> edgeLabelRenderer) {
-      //      this.edgeLabelRenderer = edgeLabelRenderer;
-    }
-
-    /** @return the nodeLabelRenderer */
-    @Override
-    public NodeLabel<N, E> getNodeLabelRenderer() {
-      return null;
-    }
-
-    /** @param nodeLabelRenderer the nodeLabelRenderer to set */
-    @Override
-    public void setNodeLabelRenderer(NodeLabel<N, E> nodeLabelRenderer) {
-      //      this.nodeLabelRenderer = nodeLabelRenderer;
-    }
-
-    /** @return the edgeRenderer */
-    @Override
-    public Renderer.Edge<N, E> getEdgeRenderer() {
-      return edgeRenderer;
-    }
-
-    /** @return the nodeRenderer */
-    @Override
-    public Node<N, E> getNodeRenderer() {
-      return nodeRenderer;
     }
   }
 

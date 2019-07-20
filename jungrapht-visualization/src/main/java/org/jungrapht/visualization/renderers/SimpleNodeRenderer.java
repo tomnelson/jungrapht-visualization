@@ -11,13 +11,13 @@ package org.jungrapht.visualization.renderers;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.util.function.Function;
 import javax.swing.*;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationModel;
-import org.jungrapht.visualization.decorators.EllipseNodeShapeFunction;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ public class SimpleNodeRenderer<N, E> implements Renderer.Node<N, E> {
 
   private static final Logger log = LoggerFactory.getLogger(SimpleNodeRenderer.class);
 
-  private Function<N, Shape> simpleNodeShapeFunction = new EllipseNodeShapeFunction<>();
+  private Function<N, Shape> simpleNodeShapeFunction = n -> new Ellipse2D.Float(-6.f, -6.f, 12, 12);
 
   public void paintNode(
       RenderContext<N, E> renderContext, VisualizationModel<N, E> visualizationModel, N v) {

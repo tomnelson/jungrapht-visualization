@@ -77,7 +77,7 @@ public class BaseVisualizationModel<N, E> implements VisualizationModel<N, E> {
             .graph(network)
             .size(layoutSize.width, layoutSize.height)
             .initializer(
-                new RandomLocationTransformer<N>(
+                new RandomLocationTransformer<>(
                     layoutSize.width, layoutSize.height, System.currentTimeMillis()))
             .build();
 
