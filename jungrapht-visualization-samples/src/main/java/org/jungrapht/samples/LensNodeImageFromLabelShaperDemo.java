@@ -8,12 +8,6 @@
  */
 package org.jungrapht.samples;
 
-import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.function.Function;
-import java.util.stream.IntStream;
-import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
@@ -43,6 +37,15 @@ import org.jungrapht.visualization.transform.MagnifyTransformer;
 import org.jungrapht.visualization.transform.shape.MagnifyImageLensSupport;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
 import org.jungrapht.visualization.util.IconCache;
+import org.jungrapht.visualization.util.LightweightRenderingVisitor;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.IntStream;
 
 /**
  * Demonstrates the use of images to represent graph nodes. The images are added to the
@@ -95,7 +98,12 @@ public class LensNodeImageFromLabelShaperDemo extends JPanel {
 
     vv.setBackground(Color.white);
     IconCache<Number> iconCache =
-        new IconCache(n -> "<html>This<br>is a<br>multiline<br>label " + n);
+        new IconCache(n -> "<html>This<br>is a<br>multiline<br>label " + n,
+                (Function<Number, Paint>) n -> {
+                 if (graph.incomingEdgesOf(n).isEmpty()) return Color.red;
+                 if (graph.outgoingEdgesOf(n).isEmpty()) return Color.green;
+                 return Color.black;
+                });
 
     vv.getRenderContext().setNodeLabelRenderer(new DefaultNodeLabelRenderer(Color.cyan));
     vv.getRenderContext().setEdgeLabelRenderer(new DefaultEdgeLabelRenderer(Color.cyan));
@@ -128,6 +136,8 @@ public class LensNodeImageFromLabelShaperDemo extends JPanel {
 
     JButton minus = new JButton("-");
     minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
+
+    LightweightRenderingVisitor.visit(vv);
 
     JComboBox<Mode> modeBox = graphMouse.getModeComboBox();
     JPanel modePanel = new JPanel();
@@ -210,30 +220,33 @@ public class LensNodeImageFromLabelShaperDemo extends JPanel {
     controls.add(lensPanel);
   }
 
+  Integer n = 0;
   Graph<Number, Number> createGraph() {
     Graph<Number, Number> graph =
-        GraphTypeBuilder.<Number, Number>forGraphType(DefaultGraphType.dag()).buildGraph();
+        GraphTypeBuilder.<Number, Number>forGraphType(DefaultGraphType.dag())
+                .edgeSupplier((Supplier<Number>) () -> n++)
+                .buildGraph();
 
     IntStream.rangeClosed(0, 10).forEach(graph::addVertex);
-    graph.addEdge(0, 1, Math.random());
-    graph.addEdge(3, 0, Math.random());
-    graph.addEdge(0, 4, Math.random());
-    graph.addEdge(4, 5, Math.random());
-    graph.addEdge(5, 3, Math.random());
-    graph.addEdge(2, 1, Math.random());
-    graph.addEdge(4, 1, Math.random());
-    graph.addEdge(8, 2, Math.random());
-    graph.addEdge(3, 8, Math.random());
-    graph.addEdge(6, 7, Math.random());
-    graph.addEdge(7, 5, Math.random());
-    graph.addEdge(0, 9, Math.random());
-    graph.addEdge(9, 8, Math.random());
-    graph.addEdge(7, 6, Math.random());
-    graph.addEdge(6, 5, Math.random());
-    graph.addEdge(4, 2, Math.random());
-    graph.addEdge(5, 4, Math.random());
-    graph.addEdge(4, 10, Math.random());
-    graph.addEdge(10, 4, Math.random());
+    graph.addEdge(0, 1);
+    graph.addEdge(3, 0);
+    graph.addEdge(0, 4);
+    graph.addEdge(4, 5);
+    graph.addEdge(5, 3);
+    graph.addEdge(2, 1);
+    graph.addEdge(4, 1);
+    graph.addEdge(8, 2);
+    graph.addEdge(3, 8);
+    graph.addEdge(6, 7);
+    graph.addEdge(7, 5);
+    graph.addEdge(0, 9);
+    graph.addEdge(9, 8);
+    graph.addEdge(7, 6);
+    graph.addEdge(6, 5);
+    graph.addEdge(4, 2);
+    graph.addEdge(5, 4);
+    graph.addEdge(4, 10);
+    graph.addEdge(10, 4);
 
     return graph;
   }
