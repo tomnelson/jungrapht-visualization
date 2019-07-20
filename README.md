@@ -8,7 +8,7 @@
 
 ### Latest Release
 
-The most recent version of JUNG is [version 2.1.1](https://github.com/tomnelson/jungrapht/releases/tag/jungrapht-1.0), released 7 August 2019.
+The most recent version of JUNG is [version 1.0](https://github.com/tomnelson/jungrapht/releases/tag/jungrapht-1.0), released 7 August 2019.
 *   [Javadoc](http://tomnelson.github.io/jungrapht/javadoc/index.html)
 *   [Maven Search Repository](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.tomnelson%22%20AND%20v%3A%221.0-SNAPSHOT%22%20AND%20(a%3A%22jungrapht-visualization%22%20OR%20a%3A%22jungraph-visualization-samples%22))
     *   `jungrapht-visualization`: [jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization/1.0-SNAPSHOT/jungrapht-visualization-1.0-SNAPSHOT.jar), [source jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization/1.0-SNAPSHOT/jungrapht-visualization-1.0-SNAPSHOT-sources.jar), [documentation jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization/1.0-SNAPSHOT/jungrapht-visualization-1.0-SNAPSHOT-javadoc.jar)
