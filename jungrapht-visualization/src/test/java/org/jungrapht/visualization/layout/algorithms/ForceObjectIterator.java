@@ -1,12 +1,12 @@
 package org.jungrapht.visualization.layout.algorithms;
 
 import com.google.common.collect.Sets;
-import com.tom.quadtree.BarnesHutQuadTree;
-import com.tom.quadtree.ForceObject;
-import com.tom.quadtree.Node;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
+import org.jungrapht.visualization.layout.quadtree.BarnesHutQuadTree;
+import org.jungrapht.visualization.layout.quadtree.ForceObject;
+import org.jungrapht.visualization.layout.quadtree.Node;
 
 /**
  * An iterator over the (logn) force objects to apply to the passed target This approach is slower

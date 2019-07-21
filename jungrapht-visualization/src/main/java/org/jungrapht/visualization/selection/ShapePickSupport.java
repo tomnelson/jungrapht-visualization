@@ -12,8 +12,6 @@
 package org.jungrapht.visualization.selection;
 
 import com.google.common.collect.Sets;
-import com.tom.rtree.LeafNode;
-import com.tom.rtree.TreeNode;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
@@ -35,6 +33,8 @@ import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.spatial.Spatial;
 import org.jungrapht.visualization.spatial.SpatialRTree;
+import org.jungrapht.visualization.spatial.rtree.LeafNode;
+import org.jungrapht.visualization.spatial.rtree.TreeNode;
 import org.jungrapht.visualization.util.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

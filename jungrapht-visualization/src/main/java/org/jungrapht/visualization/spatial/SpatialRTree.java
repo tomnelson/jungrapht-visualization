@@ -2,10 +2,6 @@ package org.jungrapht.visualization.spatial;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.tom.rtree.LeafNode;
-import com.tom.rtree.Node;
-import com.tom.rtree.RTree;
-import com.tom.rtree.SplitterContext;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
@@ -26,6 +22,10 @@ import org.jungrapht.visualization.layout.RadiusNetworkElementAccessor;
 import org.jungrapht.visualization.layout.event.LayoutNodePositionChange;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
+import org.jungrapht.visualization.spatial.rtree.LeafNode;
+import org.jungrapht.visualization.spatial.rtree.Node;
+import org.jungrapht.visualization.spatial.rtree.RTree;
+import org.jungrapht.visualization.spatial.rtree.SplitterContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

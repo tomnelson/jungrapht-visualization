@@ -1,6 +1,5 @@
 package org.jungrapht.visualization;
 
-import com.tom.rtree.TreeNode;
 import java.awt.*;
 import java.util.Collection;
 import java.util.stream.IntStream;
@@ -12,6 +11,7 @@ import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.util.NetworkNodeAccessor;
 import org.jungrapht.visualization.layout.util.RadiusNetworkNodeAccessor;
 import org.jungrapht.visualization.spatial.Spatial;
+import org.jungrapht.visualization.spatial.rtree.TreeNode;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

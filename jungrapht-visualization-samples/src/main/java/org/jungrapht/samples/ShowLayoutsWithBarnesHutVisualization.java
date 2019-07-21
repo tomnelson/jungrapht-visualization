@@ -7,9 +7,6 @@
  */
 package org.jungrapht.samples;
 
-import com.tom.quadtree.BarnesHutQuadTree;
-import com.tom.quadtree.ForceObject;
-import com.tom.quadtree.Node;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
@@ -44,6 +41,9 @@ import org.jungrapht.visualization.layout.algorithms.repulsion.StandardRepulsion
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.LoadingCacheLayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
+import org.jungrapht.visualization.layout.quadtree.BarnesHutQuadTree;
+import org.jungrapht.visualization.layout.quadtree.ForceObject;
+import org.jungrapht.visualization.layout.quadtree.Node;
 
 /**
  * This demo is adapted from ShowLayouts, but when a LayoutAlgorithm that uses the BarnesHutOctTree
@@ -228,7 +228,7 @@ public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
   }
 
   private void getShapes(Collection<Shape> shapes, Node node) {
-    com.tom.quadtree.Rectangle bounds = node.getBounds();
+    org.jungrapht.visualization.layout.quadtree.Rectangle bounds = node.getBounds();
     Rectangle2D r = new Rectangle2D.Double(bounds.x, bounds.y, bounds.width, bounds.height);
     shapes.add(r);
     ForceObject forceObject = node.getForceObject();

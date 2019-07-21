@@ -1,14 +1,14 @@
 package org.jungrapht.visualization.layout.algorithms.repulsion;
 
 import com.google.common.cache.LoadingCache;
-import com.tom.quadtree.BarnesHutQuadTree;
-import com.tom.quadtree.ForceObject;
-import com.tom.quadtree.Node;
 import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
+import org.jungrapht.visualization.layout.quadtree.BarnesHutQuadTree;
+import org.jungrapht.visualization.layout.quadtree.ForceObject;
+import org.jungrapht.visualization.layout.quadtree.Node;
 
 /**
  * @author Tom Nelson
@@ -85,7 +85,9 @@ public class BarnesHutFRRepulsion<N>
             .collect(
                 Collectors.toMap(
                     Map.Entry::getKey,
-                    entry -> com.tom.quadtree.Point.of(entry.getValue().x, entry.getValue().y))));
+                    entry ->
+                        org.jungrapht.visualization.layout.quadtree.Point.of(
+                            entry.getValue().x, entry.getValue().y))));
   }
 
   @Override

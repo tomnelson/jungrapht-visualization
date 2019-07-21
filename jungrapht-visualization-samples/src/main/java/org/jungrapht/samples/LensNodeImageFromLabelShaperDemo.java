@@ -8,6 +8,13 @@
  */
 package org.jungrapht.samples;
 
+import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.IntStream;
+import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
@@ -38,14 +45,6 @@ import org.jungrapht.visualization.transform.shape.MagnifyImageLensSupport;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
 import org.jungrapht.visualization.util.IconCache;
 import org.jungrapht.visualization.util.LightweightRenderingVisitor;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.IntStream;
 
 /**
  * Demonstrates the use of images to represent graph nodes. The images are added to the
@@ -98,11 +97,13 @@ public class LensNodeImageFromLabelShaperDemo extends JPanel {
 
     vv.setBackground(Color.white);
     IconCache<Number> iconCache =
-        new IconCache(n -> "<html>This<br>is a<br>multiline<br>label " + n,
-                (Function<Number, Paint>) n -> {
-                 if (graph.incomingEdgesOf(n).isEmpty()) return Color.red;
-                 if (graph.outgoingEdgesOf(n).isEmpty()) return Color.green;
-                 return Color.black;
+        new IconCache(
+            n -> "<html>This<br>is a<br>multiline<br>label " + n,
+            (Function<Number, Paint>)
+                n -> {
+                  if (graph.incomingEdgesOf(n).isEmpty()) return Color.red;
+                  if (graph.outgoingEdgesOf(n).isEmpty()) return Color.green;
+                  return Color.black;
                 });
 
     vv.getRenderContext().setNodeLabelRenderer(new DefaultNodeLabelRenderer(Color.cyan));
@@ -221,11 +222,12 @@ public class LensNodeImageFromLabelShaperDemo extends JPanel {
   }
 
   Integer n = 0;
+
   Graph<Number, Number> createGraph() {
     Graph<Number, Number> graph =
         GraphTypeBuilder.<Number, Number>forGraphType(DefaultGraphType.dag())
-                .edgeSupplier((Supplier<Number>) () -> n++)
-                .buildGraph();
+            .edgeSupplier((Supplier<Number>) () -> n++)
+            .buildGraph();
 
     IntStream.rangeClosed(0, 10).forEach(graph::addVertex);
     graph.addEdge(0, 1);

@@ -1,7 +1,6 @@
 package org.jungrapht.visualization.spatial;
 
 import com.google.common.collect.Sets;
-import com.tom.rtree.TreeNode;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -16,6 +15,7 @@ import org.jungrapht.visualization.layout.event.LayoutStateChange;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.util.RadiusNetworkNodeAccessor;
+import org.jungrapht.visualization.spatial.rtree.TreeNode;
 
 /**
  * Basic interface for Spatial data

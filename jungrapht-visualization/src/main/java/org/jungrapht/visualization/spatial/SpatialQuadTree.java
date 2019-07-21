@@ -5,7 +5,6 @@ import static org.jungrapht.visualization.spatial.SpatialQuadTree.Quadrant.*;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.tom.rtree.TreeNode;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
@@ -15,6 +14,7 @@ import java.util.List;
 import org.jungrapht.visualization.layout.event.LayoutNodePositionChange;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
+import org.jungrapht.visualization.spatial.rtree.TreeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

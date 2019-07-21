@@ -9,11 +9,6 @@
 */
 package org.jungrapht.visualization;
 
-import com.tom.rtree.QuadraticLeafSplitter;
-import com.tom.rtree.QuadraticSplitter;
-import com.tom.rtree.RStarLeafSplitter;
-import com.tom.rtree.RStarSplitter;
-import com.tom.rtree.SplitterContext;
 import java.awt.*;
 import java.awt.RenderingHints.Key;
 import java.awt.event.ComponentAdapter;
@@ -52,6 +47,11 @@ import org.jungrapht.visualization.spatial.Spatial;
 import org.jungrapht.visualization.spatial.SpatialGrid;
 import org.jungrapht.visualization.spatial.SpatialQuadTree;
 import org.jungrapht.visualization.spatial.SpatialRTree;
+import org.jungrapht.visualization.spatial.rtree.QuadraticLeafSplitter;
+import org.jungrapht.visualization.spatial.rtree.QuadraticSplitter;
+import org.jungrapht.visualization.spatial.rtree.RStarLeafSplitter;
+import org.jungrapht.visualization.spatial.rtree.RStarSplitter;
+import org.jungrapht.visualization.spatial.rtree.SplitterContext;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.util.ChangeEventSupport;
 import org.jungrapht.visualization.util.DefaultChangeEventSupport;

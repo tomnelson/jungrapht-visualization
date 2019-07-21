@@ -8,10 +8,6 @@
  */
 package org.jungrapht.samples;
 
-import com.tom.rtree.InnerNode;
-import com.tom.rtree.LeafNode;
-import com.tom.rtree.Node;
-import com.tom.rtree.RTree;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.geom.AffineTransform;
@@ -48,6 +44,10 @@ import org.jungrapht.visualization.layout.model.PolarPoint;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 import org.jungrapht.visualization.spatial.Spatial;
 import org.jungrapht.visualization.spatial.SpatialRTree;
+import org.jungrapht.visualization.spatial.rtree.InnerNode;
+import org.jungrapht.visualization.spatial.rtree.LeafNode;
+import org.jungrapht.visualization.spatial.rtree.Node;
+import org.jungrapht.visualization.spatial.rtree.RTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
