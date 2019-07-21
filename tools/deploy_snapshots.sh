@@ -1,6 +1,6 @@
 # see https://coderwall.com/p/9b_lfq
 
-if [ "$TRAVIS_REPO_SLUG" == "tomnelson/jungrapht" ] && \
+if [ "$TRAVIS_REPO_SLUG" == "tomnelson/jungrapht-visualization" ] && \
    [ "$TRAVIS_JDK_VERSION" == "openjdk11" ] && \
    [ "$TRAVIS_PULL_REQUEST" == "false" ] && \
    [ "$TRAVIS_BRANCH" == "master" ]; then
