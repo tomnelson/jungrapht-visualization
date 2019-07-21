@@ -1,10 +1,12 @@
-## JUNGRAPHT: The Java Universal Network/Graph Framework visualization and sample code ported to use JGraphT graphs and algorithms
+## JUNGRAPHT: The [JUNG](http://jung.sourceforge.net) visualization and sample code ported to use [JGraphT](https://jgrapht.org) graphs and algorithms
 
 [![Build Status](https://travis-ci.org/tomnelson/jungrapht-visualization.svg?branch=master)](https://travis-ci.org/tomnelson/jungrapht-visualization)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.tomnelson/jungrapht-visualization/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.tomnelson/jungrapht-visualization)
 
 
 [**JUNGRAPHT Website**](http://tomnelson.github.io/jungrapht-visualization/)
+
+JUNGRAPHT includes new performance enhancements for visualization of large networks, including R*Tree for visualization, Barnes-Hut Quad Tree for force-directed layouts, and a lightweight rendering layer that can swap in while graphs are being animated or when they are zoomed out to a point where details are very small.
 
 ### Latest Release
 
