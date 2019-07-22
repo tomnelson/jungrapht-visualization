@@ -25,7 +25,7 @@ public class SimpleRenderer<N, E> implements Renderer<N, E> {
       Spatial<E> edgeSpatial) {
     // simple rendering does not use spatial structures
     render(renderContext, visualizationModel);
-    log.info("simpleRendering ignoring {}", nodeSpatial);
+    log.trace("simpleRendering ignoring {}", nodeSpatial);
     //        if (nodeSpatial == null) {
     //            render(renderContext, visualizationModel);
     //            return;

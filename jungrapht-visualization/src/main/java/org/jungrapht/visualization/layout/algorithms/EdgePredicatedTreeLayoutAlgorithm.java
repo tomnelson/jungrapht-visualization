@@ -13,13 +13,15 @@ package org.jungrapht.visualization.layout.algorithms;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 
 import com.google.common.base.Preconditions;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Sets;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
@@ -28,21 +30,19 @@ import org.jungrapht.visualization.layout.model.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author Karlheinz Toni
- * @author Tom Nelson - converted to jung2, refactored into Algorithm/Visitor
- */
-public class EdgePrioritizedTreeLayoutAlgorithm<N, E> implements LayoutAlgorithm<N> {
+/** @author Tom Nelson */
+public class EdgePredicatedTreeLayoutAlgorithm<N, E> implements LayoutAlgorithm<N> {
 
   private static final Logger log =
-      LoggerFactory.getLogger(EdgePrioritizedTreeLayoutAlgorithm.class);
+      LoggerFactory.getLogger(EdgePredicatedTreeLayoutAlgorithm.class);
 
   protected Collection<N> roots = new HashSet<>();
 
   public static class Builder<N, E> {
     private int horizontalNodeSpacing = DEFAULT_HORIZONTAL_NODE_SPACING;
     private int verticalNodeSpacing = DEFAULT_VERTICAL_NODE_SPACING;
-    private List<Set<E>> edgePriorityList;
+    private Predicate<E>
+        edgePredicate; // edges that do not satisfy this predicate will not expand the tree width/height
 
     public Builder horizontalNodeSpacing(int horizontalNodeSpacing) {
       Preconditions.checkArgument(
@@ -57,13 +57,13 @@ public class EdgePrioritizedTreeLayoutAlgorithm<N, E> implements LayoutAlgorithm
       return this;
     }
 
-    public Builder edgePriorityList(List<Set<E>> edgePriorityList) {
-      this.edgePriorityList = edgePriorityList;
+    public Builder edgePredicate(Predicate<E> edgePredicate) {
+      this.edgePredicate = edgePredicate;
       return this;
     }
 
-    public EdgePrioritizedTreeLayoutAlgorithm<N, E> build() {
-      return new EdgePrioritizedTreeLayoutAlgorithm(this);
+    public EdgePredicatedTreeLayoutAlgorithm<N, E> build() {
+      return new EdgePredicatedTreeLayoutAlgorithm(this);
     }
   }
 
@@ -71,8 +71,8 @@ public class EdgePrioritizedTreeLayoutAlgorithm<N, E> implements LayoutAlgorithm
     return new Builder<>();
   }
 
-  protected EdgePrioritizedTreeLayoutAlgorithm(Builder<N, E> builder) {
-    this(builder.horizontalNodeSpacing, builder.verticalNodeSpacing, builder.edgePriorityList);
+  protected EdgePredicatedTreeLayoutAlgorithm(Builder<N, E> builder) {
+    this(builder.horizontalNodeSpacing, builder.verticalNodeSpacing, builder.edgePredicate);
   }
 
   /**
@@ -81,14 +81,15 @@ public class EdgePrioritizedTreeLayoutAlgorithm<N, E> implements LayoutAlgorithm
    * @param horizontalNodeSpacing the horizontal spacing between adjacent siblings
    * @param verticalNodeSpacing the vertical spacing between adjacent siblings
    */
-  private EdgePrioritizedTreeLayoutAlgorithm(
-      int horizontalNodeSpacing, int verticalNodeSpacing, List<Set<E>> edgePriorityList) {
+  private EdgePredicatedTreeLayoutAlgorithm(
+      int horizontalNodeSpacing, int verticalNodeSpacing, Predicate<E> edgePredicate) {
     this.horizontalNodeSpacing = horizontalNodeSpacing;
     this.verticalNodeSpacing = verticalNodeSpacing;
-    this.edgePriorityList = edgePriorityList;
+    this.edgePredicate = edgePredicate;
   }
 
-  protected Map<N, Integer> basePositions = new HashMap<>();
+  protected LoadingCache<N, Integer> basePositions =
+      CacheBuilder.newBuilder().build(CacheLoader.from(() -> 0));
 
   protected transient Set<N> alreadyDone = new HashSet<>();
 
@@ -107,7 +108,7 @@ public class EdgePrioritizedTreeLayoutAlgorithm<N, E> implements LayoutAlgorithm
   protected double currentX;
   protected double currentY;
 
-  protected List<Set<E>> edgePriorityList;
+  protected Predicate<E> edgePredicate;
 
   @Override
   public void visit(LayoutModel<N> layoutModel) {
@@ -118,16 +119,6 @@ public class EdgePrioritizedTreeLayoutAlgorithm<N, E> implements LayoutAlgorithm
     alreadyDone = Sets.newHashSet();
     this.currentX = 0;
     this.currentY = 0;
-    Graph<N, E> graph = (Graph<N, E>) layoutModel.getGraph();
-    Set<E> edgeSet = graph.edgeSet();
-    Set<E> losers =
-        edgeSet
-            .stream()
-            .filter(e -> !edgePriorityList.get(0).contains(e))
-            .collect(Collectors.toSet());
-    for (E loser : losers) {
-      graph.removeEdge(loser);
-    }
     Set<N> roots =
         layoutModel
             .getGraph()
@@ -144,17 +135,12 @@ public class EdgePrioritizedTreeLayoutAlgorithm<N, E> implements LayoutAlgorithm
     overallWidth += (roots.size() + 1) * horizontalNodeSpacing;
     int overallHeight = calculateHeight(layoutModel, roots);
     overallHeight += 2 * verticalNodeSpacing;
-    System.err.println("roots.size() = " + roots.size());
-    System.err.println("overallWidth = " + overallWidth);
-    System.err.println("overallHeight was = " + overallHeight);
 
     if (overallWidth > overallHeight) {
       verticalNodeSpacing *= (float) overallWidth / (float) overallHeight / 4.0;
       overallHeight = overallWidth / 4;
     }
-    System.err.println("overallHeight now = " + overallHeight);
-    System.err.println("horizontalNodeSpacing = " + horizontalNodeSpacing);
-    System.err.println("verticalNodeSpacing = " + verticalNodeSpacing);
+
     layoutModel.setSize(
         Math.max(layoutModel.getWidth(), overallWidth),
         Math.max(layoutModel.getHeight(), overallHeight));
@@ -162,23 +148,17 @@ public class EdgePrioritizedTreeLayoutAlgorithm<N, E> implements LayoutAlgorithm
     roots.forEach(
         node -> {
           calculateWidth(layoutModel, node, seen); //new HashSet<>());
-          currentX += (this.basePositions.get(node) / 2 + this.horizontalNodeSpacing);
+          currentX += (this.basePositions.getUnchecked(node) / 2 + this.horizontalNodeSpacing);
           log.debug("currentX after node {} is now {}", node, currentX);
           buildTree(layoutModel, node, (int) currentX);
         });
   }
 
   private Set<E> filteredEdges(Graph<N, E> graph, N source) {
-    // sanity
-    Set<E> outs = graph.outgoingEdgesOf(source);
-    Set<E> set = edgePriorityList.get(0);
-    Set<E> filtered =
-        outs.stream().filter(e -> edgePriorityList.get(0).contains(e)).collect(Collectors.toSet());
-    edgePriorityList.get(0);
     return graph
         .outgoingEdgesOf(source)
         .stream()
-        .filter(e -> edgePriorityList.get(0).contains(e))
+        .filter(e -> edgePredicate.test(e))
         .collect(Collectors.toSet());
   }
 
@@ -190,6 +170,7 @@ public class EdgePrioritizedTreeLayoutAlgorithm<N, E> implements LayoutAlgorithm
   }
 
   protected void buildTree(LayoutModel<N> layoutModel, N node, int x) {
+    Graph<N, E> graph = (Graph<N, E>) layoutModel.getGraph();
     if (alreadyDone.add(node)) {
       //go one level further down
       double newY = this.currentY + this.verticalNodeSpacing;
@@ -198,73 +179,72 @@ public class EdgePrioritizedTreeLayoutAlgorithm<N, E> implements LayoutAlgorithm
       log.debug("Set node {} to {}", node, Point.of(currentX, currentY));
       layoutModel.set(node, currentX, currentY);
 
-      int sizeXofCurrent = basePositions.get(node);
+      int sizeXofCurrent = basePositions.getUnchecked(node);
 
       int lastX = x - sizeXofCurrent / 2;
 
       int sizeXofChild;
       int startXofChild;
-      //      Graph<N, E> graph = (Graph<N, E>)layoutModel.getGraph();
-      // the outgoing edges that are in the set i care about
-      //      Set<E> outgoingEdges = graph.outgoingEdgesOf(node).stream().filter(e -> edgePriorityList.get(0).contains(e)).collect(Collectors.toSet());
-      //      for (E edge : outgoingEdges) {
-      //        N element = graph.getEdgeTarget(edge);
-      //      }
-      for (N element : filteredTargets((Graph<N, E>) layoutModel.getGraph(), node)) {
-        //      for (N element : Graphs.successorListOf(layoutModel.getGraph(), node)) {
-        sizeXofChild = this.basePositions.get(element);
+
+      for (E edgeElement : graph.outgoingEdgesOf(node)) {
+        N element = graph.getEdgeTarget(edgeElement);
+        log.trace("get base position of {} from {}", element, basePositions);
+        sizeXofChild = this.basePositions.getUnchecked(element);
         startXofChild = lastX + sizeXofChild / 2;
         buildTree(layoutModel, element, startXofChild);
 
-        lastX = lastX + sizeXofChild + horizontalNodeSpacing;
+        lastX =
+            lastX + sizeXofChild + (edgePredicate.test(edgeElement) ? horizontalNodeSpacing : 0);
       }
-
       this.currentY -= this.verticalNodeSpacing;
     }
   }
 
   private int calculateWidth(LayoutModel<N> layoutModel, N node, Set<N> seen) {
-
-    Graph<N, ?> graph = layoutModel.getGraph();
+    Graph<N, E> graph = (Graph<N, E>) layoutModel.getGraph();
     log.trace("graph is {}", graph);
-    List<N> successors = filteredTargets((Graph<N, E>) graph, node);
-    //Graphs.successorListOf(graph, node);
+    List<N> successors = Graphs.successorListOf(graph, node);
     log.trace("successors of {} are {}", node, successors);
     successors.removeIf(seen::contains);
     log.trace("filtered successors of {} are {}", node, successors);
     seen.addAll(successors);
 
     int size =
-        successors
+        graph
+            .outgoingEdgesOf(node)
             .stream()
+            .filter(e -> edgePredicate.test(e)) // retain if the edgePredicate tests true
+            .map(graph::getEdgeTarget) // get the edge target nodes
+            .filter(
+                successors::contains) // retain if the successors (filtered above) contain the node
             .mapToInt(element -> calculateWidth(layoutModel, element, seen) + horizontalNodeSpacing)
             .sum();
     size = Math.max(0, size - horizontalNodeSpacing);
-    log.debug("calcWidth basePositions put {} {}", node, size);
+    log.trace("calcWidth basePositions put {} {}", node, size);
     basePositions.put(node, size);
 
     return size;
   }
 
   private int calculateWidth(LayoutModel<N> layoutModel, Collection<N> roots, Set<N> seen) {
-
     return roots.stream().mapToInt(node -> calculateWidth(layoutModel, node, seen)).sum();
   }
 
   private int calculateHeight(LayoutModel<N> layoutModel, N node, Set<N> seen) {
-
     Graph<N, E> graph = (Graph<N, E>) layoutModel.getGraph();
-    List<N> successors = filteredTargets(graph, node);
-    //Graphs.successorListOf(graph, node);
+    List<N> successors = Graphs.successorListOf(graph, node);
     log.trace("graph is {}", graph);
     log.trace("h successors of {} are {}", node, successors);
     successors.removeIf(seen::contains);
     log.trace("filtered h successors of {} are {}", node, successors);
-
     seen.addAll(successors);
 
-    return successors
+    return graph
+        .outgoingEdgesOf(node)
         .stream()
+        .filter(e -> edgePredicate.test(e)) // retain if the edgePredicate tests true
+        .map(graph::getEdgeTarget) // get the edge target nodes
+        .filter(successors::contains) // retain if the successors (filtered above) contain the node
         .mapToInt(element -> calculateHeight(layoutModel, element, seen) + verticalNodeSpacing)
         .max()
         .orElse(0);

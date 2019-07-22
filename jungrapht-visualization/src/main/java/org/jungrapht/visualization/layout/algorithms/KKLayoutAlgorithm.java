@@ -232,7 +232,7 @@ public class KKLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
       }
 
       diameter = diameter(graph, distance, true);
-      log.info("using diameter {}", diameter);
+      log.trace("using diameter {}", diameter);
       //      if (diameter == 0) diameter = 2;
 
       double L0 = Math.min(height, width);

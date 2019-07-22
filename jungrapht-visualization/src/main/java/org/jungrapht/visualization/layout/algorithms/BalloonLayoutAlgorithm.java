@@ -41,10 +41,11 @@ public class BalloonLayoutAlgorithm<N> extends TreeLayoutAlgorithm<N> {
 
   private static final Logger log = LoggerFactory.getLogger(BalloonLayoutAlgorithm.class);
 
-  public static class Builder<N> extends TreeLayoutAlgorithm.Builder<N> {
+  public static class Builder<N, T extends BalloonLayoutAlgorithm<N>, B extends Builder<N, T, B>>
+      extends TreeLayoutAlgorithm.Builder<N, T, B> {
 
-    public BalloonLayoutAlgorithm<N> build() {
-      return new BalloonLayoutAlgorithm(this);
+    public T build() {
+      return (T) new BalloonLayoutAlgorithm(this);
     }
   }
 
@@ -59,11 +60,14 @@ public class BalloonLayoutAlgorithm<N> extends TreeLayoutAlgorithm<N> {
 
   protected Map<N, Double> radii = new HashMap<>();
 
-  public static Builder builder() {
+  //  public static Builder builder() {
+  //    return new Builder<>();
+  //  }
+  public static <N> Builder<N, ?, ?> builder() {
     return new Builder<>();
   }
 
-  protected BalloonLayoutAlgorithm(Builder<N> builder) {
+  protected BalloonLayoutAlgorithm(Builder<N, ?, ?> builder) {
     super(builder);
   }
 
@@ -85,7 +89,7 @@ public class BalloonLayoutAlgorithm<N> extends TreeLayoutAlgorithm<N> {
             .stream()
             .filter(node -> Graphs.predecessorListOf(graph, node).isEmpty())
             .collect(toImmutableSet());
-    log.info("roots: {}", roots);
+    log.trace("roots: {}", roots);
     int width = layoutModel.getWidth();
     if (roots.size() == 1) {
       // its a Tree

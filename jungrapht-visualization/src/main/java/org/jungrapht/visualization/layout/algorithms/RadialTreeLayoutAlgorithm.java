@@ -31,18 +31,22 @@ public class RadialTreeLayoutAlgorithm<N> extends TreeLayoutAlgorithm<N> {
 
   protected Map<N, PolarPoint> polarLocations = new HashMap<>();
 
-  public static class Builder<N> extends TreeLayoutAlgorithm.Builder<N> {
+  public static class Builder<N, T extends RadialTreeLayoutAlgorithm<N>, B extends Builder<N, T, B>>
+      extends TreeLayoutAlgorithm.Builder<N, T, B> {
 
-    public RadialTreeLayoutAlgorithm<N> build() {
-      return new RadialTreeLayoutAlgorithm<>(this);
+    public T build() {
+      return (T) new RadialTreeLayoutAlgorithm<>(this);
     }
   }
 
-  public static Builder builder() {
+  //  public static Builder builder() {
+  //    return new Builder<>();
+  //  }
+  public static <N> Builder<N, ?, ?> builder() {
     return new Builder<>();
   }
 
-  protected RadialTreeLayoutAlgorithm(Builder<N> builder) {
+  protected RadialTreeLayoutAlgorithm(Builder<N, ?, ?> builder) {
     super(builder);
   }
 

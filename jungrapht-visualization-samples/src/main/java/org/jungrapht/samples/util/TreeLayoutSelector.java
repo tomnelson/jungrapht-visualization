@@ -16,12 +16,12 @@ public class TreeLayoutSelector<N, E> extends JPanel {
   VisualizationServer.Paintable balloonPaintable;
   VisualizationServer.Paintable radialPaintable;
 
-  TreeLayoutAlgorithm<N> treeLayoutAlgorithm = TreeLayoutAlgorithm.builder().build();
+  TreeLayoutAlgorithm<N> treeLayoutAlgorithm = TreeLayoutAlgorithm.<N>builder().build();
 
-  BalloonLayoutAlgorithm<N> balloonLayoutAlgorithm = BalloonLayoutAlgorithm.builder().build();
+  BalloonLayoutAlgorithm<N> balloonLayoutAlgorithm = BalloonLayoutAlgorithm.<N>builder().build();
 
   RadialTreeLayoutAlgorithm<N> radialTreeLayoutAlgorithm =
-      RadialTreeLayoutAlgorithm.builder().build();
+      RadialTreeLayoutAlgorithm.<N>builder().build();
 
   VisualizationServer<N, E> vv;
 

@@ -10,8 +10,6 @@ package org.jungrapht.samples;
 
 import com.google.common.collect.Sets;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import javax.swing.*;
@@ -25,7 +23,7 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.ModalGraphMouse.Mode;
 import org.jungrapht.visualization.decorators.EdgeShape;
-import org.jungrapht.visualization.layout.algorithms.EdgePrioritizedTreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.EdgePredicatedTreeLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,10 +52,8 @@ public class EdgePrioritizedTreeDAGLayoutDemo extends JPanel {
 
     // get some edges to prioritize
     Set<Integer> prioritySet = Sets.newHashSet(0, 2, 6, 8);
-    List<Set<Integer>> priorityList = new ArrayList<>();
-    priorityList.add(prioritySet);
-    EdgePrioritizedTreeLayoutAlgorithm layoutAlgorithm =
-        EdgePrioritizedTreeLayoutAlgorithm.builder().edgePriorityList(priorityList).build();
+    EdgePredicatedTreeLayoutAlgorithm layoutAlgorithm =
+        EdgePredicatedTreeLayoutAlgorithm.builder().edgePredicate(prioritySet::contains).build();
 
     vv = new VisualizationViewer<>(graph, layoutAlgorithm, new Dimension(600, 600));
     vv.setBackground(Color.white);

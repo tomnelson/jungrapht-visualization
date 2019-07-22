@@ -114,7 +114,6 @@ public class Dijkstra<N> {
       //      visitedMap.put(u, true);
       queue.remove(u);
       if (u == null) {
-        log.info("what is there now?");
         break;
       }
       for (N v : Graphs.neighborListOf(graph, u)) {

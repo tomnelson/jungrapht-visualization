@@ -71,6 +71,11 @@ public class LayoutHelper {
             .build();
       case TREE:
         return TreeLayoutAlgorithm.builder().build();
+        //        return EdgeSortingTreeLayoutAlgorithm.builder()
+        //                .horizontalNodeSpacing(1).
+        //                .edgeComparator(null)
+        //                .build();
+
       case BALLOON:
         return BalloonLayoutAlgorithm.builder().build();
       case RADIAL:

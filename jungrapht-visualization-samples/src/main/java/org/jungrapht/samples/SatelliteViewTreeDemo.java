@@ -89,8 +89,6 @@ public class SatelliteViewTreeDemo extends JPanel {
 
     // create one layout for the graph
     TreeLayoutAlgorithm<String> layoutAlgorithm = TreeLayoutAlgorithm.<String>builder().build();
-    // not used, for testing only
-    //    CircleLayoutAlgorithm<String, Point2D> clayout = new CircleLayoutAlgorithm<>();
 
     // create one model that both views will share
     VisualizationModel<String, Integer> vm =

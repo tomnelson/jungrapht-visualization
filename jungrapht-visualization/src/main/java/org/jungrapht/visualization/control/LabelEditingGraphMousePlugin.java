@@ -69,15 +69,15 @@ public class LabelEditingGraphMousePlugin<N, E> extends AbstractGraphMousePlugin
    */
   @SuppressWarnings("unchecked")
   public void mouseClicked(MouseEvent e) {
-    System.err.println(
-        "e.getModifiers() = " + e.getModifiers() + " and e.getClickCount() = " + e.getClickCount());
+    //    System.err.println(
+    //        "e.getModifiers() = " + e.getModifiers() + " and e.getClickCount() = " + e.getClickCount());
     if (e.getModifiers() == modifiers && e.getClickCount() == 2) {
       VisualizationViewer<N, E> vv = (VisualizationViewer<N, E>) e.getSource();
       LayoutModel<N> layoutModel = vv.getModel().getLayoutModel();
       NetworkElementAccessor<N, E> pickSupport = vv.getPickSupport();
       if (pickSupport != null) {
         Function<N, String> vs = vv.getRenderContext().getNodeLabelFunction();
-        System.err.println("vs is a " + vs);
+        //        System.err.println("vs is a " + vs);
         //        if (vs instanceof MapSettableTransformer) {
         //          MapSettableTransformer<N, String> mst =
         //              (MapSettableTransformer<N, String>) vs;

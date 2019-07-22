@@ -37,33 +37,37 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
 
   protected Collection<N> roots = new HashSet<>();
 
-  public static class Builder<N> {
-    private int horizontalNodeSpacing = DEFAULT_HORIZONTAL_NODE_SPACING;
-    private int verticalNodeSpacing = DEFAULT_VERTICAL_NODE_SPACING;
+  public static class Builder<N, T extends TreeLayoutAlgorithm<N>, B extends Builder<N, T, B>> {
+    protected int horizontalNodeSpacing = DEFAULT_HORIZONTAL_NODE_SPACING;
+    protected int verticalNodeSpacing = DEFAULT_VERTICAL_NODE_SPACING;
 
-    public Builder horizontalNodeSpacing(int horizontalNodeSpacing) {
+    protected B self() {
+      return (B) this;
+    }
+
+    public B horizontalNodeSpacing(int horizontalNodeSpacing) {
       Preconditions.checkArgument(
           horizontalNodeSpacing > 0, "horizontalNodeSpacing must be positive");
       this.horizontalNodeSpacing = horizontalNodeSpacing;
-      return this;
+      return self();
     }
 
-    public Builder verticalNodeSpacing(int verticalNodeSpacing) {
+    public B verticalNodeSpacing(int verticalNodeSpacing) {
       Preconditions.checkArgument(verticalNodeSpacing > 0, "verticalNodeSpacing must be positive");
       this.verticalNodeSpacing = verticalNodeSpacing;
-      return this;
+      return self();
     }
 
-    public TreeLayoutAlgorithm<N> build() {
-      return new TreeLayoutAlgorithm(this);
+    public T build() {
+      return (T) new TreeLayoutAlgorithm<>(this);
     }
   }
 
-  public static Builder builder() {
+  public static <N> Builder<N, ?, ?> builder() {
     return new Builder<>();
   }
 
-  protected TreeLayoutAlgorithm(Builder<N> builder) {
+  protected TreeLayoutAlgorithm(Builder<N, ?, ?> builder) {
     this(builder.horizontalNodeSpacing, builder.verticalNodeSpacing);
   }
 
@@ -73,7 +77,7 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
    * @param horizontalNodeSpacing the horizontal spacing between adjacent siblings
    * @param verticalNodeSpacing the vertical spacing between adjacent siblings
    */
-  private TreeLayoutAlgorithm(int horizontalNodeSpacing, int verticalNodeSpacing) {
+  protected TreeLayoutAlgorithm(int horizontalNodeSpacing, int verticalNodeSpacing) {
     this.horizontalNodeSpacing = horizontalNodeSpacing;
     this.verticalNodeSpacing = verticalNodeSpacing;
   }
@@ -122,26 +126,21 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
     overallWidth += (roots.size() + 1) * horizontalNodeSpacing;
     int overallHeight = calculateHeight(layoutModel, roots);
     overallHeight += 2 * verticalNodeSpacing;
-    System.err.println("roots.size() = " + roots.size());
-    System.err.println("overallWidth = " + overallWidth);
-    System.err.println("overallHeight was = " + overallHeight);
 
     if (overallWidth > overallHeight) {
       verticalNodeSpacing *= (float) overallWidth / (float) overallHeight / 4.0;
       overallHeight = overallWidth / 4;
     }
-    System.err.println("overallHeight now = " + overallHeight);
-    System.err.println("horizontalNodeSpacing = " + horizontalNodeSpacing);
-    System.err.println("verticalNodeSpacing = " + verticalNodeSpacing);
+
     layoutModel.setSize(
         Math.max(layoutModel.getWidth(), overallWidth),
         Math.max(layoutModel.getHeight(), overallHeight));
     Set<N> seen = new HashSet<>();
     roots.forEach(
         node -> {
-          calculateWidth(layoutModel, node, seen); //new HashSet<>());
+          calculateWidth(layoutModel, node, seen);
           currentX += (this.basePositions.get(node) / 2 + this.horizontalNodeSpacing);
-          log.debug("currentX after node {} is now {}", node, currentX);
+          log.trace("currentX after node {} is now {}", node, currentX);
           buildTree(layoutModel, node, (int) currentX);
         });
   }
@@ -152,7 +151,7 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
       double newY = this.currentY + this.verticalNodeSpacing;
       this.currentX = x;
       this.currentY = newY;
-      log.debug("Set node {} to {}", node, Point.of(currentX, currentY));
+      log.trace("Set node {} to {}", node, Point.of(currentX, currentY));
       layoutModel.set(node, currentX, currentY);
 
       int sizeXofCurrent = basePositions.get(node);
@@ -174,7 +173,7 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
     }
   }
 
-  private int calculateWidth(LayoutModel<N> layoutModel, N node, Set<N> seen) {
+  protected int calculateWidth(LayoutModel<N> layoutModel, N node, Set<N> seen) {
 
     Graph<N, ?> graph = layoutModel.getGraph();
     log.trace("graph is {}", graph);
@@ -190,18 +189,18 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
             .mapToInt(element -> calculateWidth(layoutModel, element, seen) + horizontalNodeSpacing)
             .sum();
     size = Math.max(0, size - horizontalNodeSpacing);
-    log.debug("calcWidth basePositions put {} {}", node, size);
+    log.trace("calcWidth basePositions put {} {}", node, size);
     basePositions.put(node, size);
 
     return size;
   }
 
-  private int calculateWidth(LayoutModel<N> layoutModel, Collection<N> roots, Set<N> seen) {
+  protected int calculateWidth(LayoutModel<N> layoutModel, Collection<N> roots, Set<N> seen) {
 
     return roots.stream().mapToInt(node -> calculateWidth(layoutModel, node, seen)).sum();
   }
 
-  private int calculateHeight(LayoutModel<N> layoutModel, N node, Set<N> seen) {
+  protected int calculateHeight(LayoutModel<N> layoutModel, N node, Set<N> seen) {
 
     Graph<N, ?> graph = layoutModel.getGraph();
     List<N> successors = Graphs.successorListOf(graph, node);
@@ -219,7 +218,7 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
         .orElse(0);
   }
 
-  private int calculateHeight(LayoutModel<N> layoutModel, Collection<N> roots) {
+  protected int calculateHeight(LayoutModel<N> layoutModel, Collection<N> roots) {
 
     return roots
             .stream()
