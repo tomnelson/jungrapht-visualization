@@ -55,7 +55,7 @@ public class BarnesHutQuadTree<T> {
   /**
    * the bounds of this quad tree
    *
-   * @return
+   * @return the bounds of the entire quadtree
    */
   public Rectangle getBounds() {
     return root.getBounds();
@@ -66,7 +66,7 @@ public class BarnesHutQuadTree<T> {
     return root;
   }
 
-  private Object lock = new Object();
+  private final Object lock = new Object();
 
   private BarnesHutQuadTree(Builder<T> builder) {
     this.root = Node.<T>builder().withArea(builder.bounds).withTheta(builder.theta).build();
@@ -80,9 +80,8 @@ public class BarnesHutQuadTree<T> {
   }
 
   /**
-   * passed {@code ForceObject} will visit nodes in the quad tree and accumulate their forces
-   *
-   * @param visitor
+   * @param visitor passed {@code ForceObject} will visit nodes in the quad tree and accumulate
+   *     their forces
    */
   public void applyForcesTo(ForceObject<T> visitor) {
     Preconditions.checkArgument(visitor != null, "Cannot apply forces to a null ForceObject");
@@ -94,6 +93,7 @@ public class BarnesHutQuadTree<T> {
   /*
    * Insert the object into the quadtree. If the node exceeds the capacity, it
    * will split and add all objects to their corresponding nodes.
+   * @param node the {@code ForceObject} to insert
    */
   protected void insert(ForceObject node) {
     synchronized (lock) {

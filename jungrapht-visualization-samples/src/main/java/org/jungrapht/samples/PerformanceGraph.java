@@ -3,8 +3,7 @@ package org.jungrapht.samples;
 import java.awt.*;
 import java.util.Random;
 import java.util.stream.IntStream;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
@@ -21,7 +20,7 @@ public class PerformanceGraph {
 
   private static void createAndShowGUI() {
     JFrame f = new JFrame();
-    f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
     Graph<String, String> g = createGraph();
 

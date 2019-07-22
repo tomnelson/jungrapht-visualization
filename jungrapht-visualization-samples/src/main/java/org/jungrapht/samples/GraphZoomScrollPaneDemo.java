@@ -112,7 +112,8 @@ public class GraphZoomScrollPaneDemo {
     vv.addGraphMouseListener(new TestGraphMouseListener<>());
     vv.getRenderer()
         .setNodeRenderer(
-            new GradientNodeRenderer<>(vv, Color.white, Color.red, Color.white, Color.blue, false));
+            new GradientNodeRenderer<>(
+                vv.getSelectedNodeState(), Color.white, Color.red, Color.white, Color.blue, false));
     vv.getRenderContext().setEdgeDrawPaintFunction(e -> Color.lightGray);
     vv.getRenderContext().setArrowFillPaintFunction(a -> Color.lightGray);
     vv.getRenderContext().setArrowDrawPaintFunction(a -> Color.lightGray);

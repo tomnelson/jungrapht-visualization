@@ -159,7 +159,7 @@ public class FRLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
     Graph<N, ?> graph = layoutModel.getGraph();
     currentIteration++;
 
-    /** Calculate repulsion */
+    // Calculate repulsion
     while (true) {
 
       try {
@@ -169,7 +169,7 @@ public class FRLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
       }
     }
 
-    /** Calculate attraction */
+    // Calculate attraction
     while (true) {
       try {
         for (Object edge : graph.edgeSet()) {

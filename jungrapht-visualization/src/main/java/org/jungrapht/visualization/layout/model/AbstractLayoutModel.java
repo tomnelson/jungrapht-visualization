@@ -99,7 +99,7 @@ public abstract class AbstractLayoutModel<N> implements LayoutModel<N> {
    * accept the visit of a LayoutAlgorithm. If it is an IterativeContext, create a VisRunner to run
    * its relaxer in a new Thread. If there is a current VisRunner, stop it first.
    *
-   * @param layoutAlgorithm
+   * @param layoutAlgorithm the algorithm to apply to the model node locations
    */
   @Override
   public void accept(LayoutAlgorithm<N> layoutAlgorithm) {
@@ -150,7 +150,7 @@ public abstract class AbstractLayoutModel<N> implements LayoutModel<N> {
   /**
    * create and start a new VisRunner for the passed IterativeContext
    *
-   * @param iterativeContext
+   * @param iterativeContext the algorithm to run in a thread
    */
   protected void setupVisRunner(IterativeLayoutAlgorithm iterativeContext) {
     log.trace("this {} is setting up a visRunnable with {}", this, iterativeContext);
@@ -225,7 +225,7 @@ public abstract class AbstractLayoutModel<N> implements LayoutModel<N> {
   /**
    * lock the entire model (all nodes)
    *
-   * @param locked
+   * @param locked will prevent the nodes from being moved
    */
   @Override
   public void lock(boolean locked) {
@@ -270,10 +270,10 @@ public abstract class AbstractLayoutModel<N> implements LayoutModel<N> {
   /**
    * mode all the nodes to the new center of the layout domain
    *
-   * @param oldWidth
-   * @param oldHeight
-   * @param width
-   * @param height
+   * @param oldWidth previous width
+   * @param oldHeight revious height
+   * @param width new width
+   * @param height new height
    */
   private void adjustLocations(int oldWidth, int oldHeight, int width, int height) {
     if (oldWidth == width && oldHeight == height) {

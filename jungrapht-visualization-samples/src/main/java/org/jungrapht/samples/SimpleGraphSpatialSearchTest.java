@@ -15,7 +15,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
-import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -181,7 +180,7 @@ public class SimpleGraphSpatialSearchTest extends JPanel {
     }
   }
 
-  public static void main(String[] args) throws IOException {
+  public static void main(String[] args) {
 
     JFrame jf = new JFrame();
 

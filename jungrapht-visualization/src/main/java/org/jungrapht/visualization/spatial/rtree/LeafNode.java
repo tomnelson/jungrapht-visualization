@@ -269,9 +269,7 @@ public class LeafNode<T> extends RTreeNode<T> implements Node<T> {
    */
   public Collection<Shape> collectGrids(Collection<Shape> list) {
     list.add(getBounds());
-    for (Rectangle2D r : map.values()) {
-      list.add(r);
-    }
+    list.addAll(map.values());
     log.trace("in leaf {}, added {} so list size now {}", this.hashCode(), map.size(), list.size());
     return list;
   }

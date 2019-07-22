@@ -145,14 +145,14 @@ public class GraphCollapser {
    * @return
    */
   public Object findNode(Graph inGraph, Object inNode) {
-    /** if the inNode is in the inGraph, return the inNode */
+    // if the inNode is in the inGraph, return the inNode
     if (inGraph.vertexSet().contains(inNode)) {
       return inNode;
     }
 
-    /**
-     * if the inNode is part of a node that is a Network, return the Network that contains inNode
-     */
+    /*
+     if the inNode is part of a node that is a Network, return the Network that contains inNode
+    */
     for (Object node : inGraph.vertexSet()) {
       if ((node instanceof Graph) && contains((Graph) node, inNode)) {
         // return the node that is a Network containing inNode

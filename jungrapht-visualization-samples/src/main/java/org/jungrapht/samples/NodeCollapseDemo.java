@@ -117,7 +117,7 @@ public class NodeCollapseDemo extends JPanel {
           return v;
         });
 
-    /** the regular graph mouse for the normal view */
+    // the regular graph mouse for the normal view
     final DefaultModalGraphMouse graphMouse = new DefaultModalGraphMouse();
 
     vv.setGraphMouse(graphMouse);

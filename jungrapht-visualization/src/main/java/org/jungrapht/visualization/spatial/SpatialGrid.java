@@ -50,7 +50,8 @@ public class SpatialGrid<N> extends AbstractSpatial<N, N>
   private Dimension size;
 
   /** A mapping of grid cell identified to a collection of contained nodes */
-  private Multimap<Integer, N> map = Multimaps.synchronizedListMultimap(ArrayListMultimap.create());
+  private final Multimap<Integer, N> map =
+      Multimaps.synchronizedListMultimap(ArrayListMultimap.create());
 
   /** the width of a grid cell */
   private double boxWidth;

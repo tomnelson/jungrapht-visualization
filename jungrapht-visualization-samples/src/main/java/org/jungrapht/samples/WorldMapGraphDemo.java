@@ -115,7 +115,8 @@ public class WorldMapGraphDemo extends JPanel {
 
     vv.getRenderer()
         .setNodeRenderer(
-            new GradientNodeRenderer<>(vv, Color.white, Color.red, Color.white, Color.blue, false));
+            new GradientNodeRenderer<>(
+                vv.getSelectedNodeState(), Color.white, Color.red, Color.white, Color.blue, false));
 
     // add my listeners for ToolTips
     vv.setNodeToolTipFunction(n -> n);

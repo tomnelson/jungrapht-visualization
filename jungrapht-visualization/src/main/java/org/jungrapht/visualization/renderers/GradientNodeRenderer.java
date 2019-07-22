@@ -9,18 +9,12 @@
  */
 package org.jungrapht.visualization.renderers;
 
-import java.awt.Color;
-import java.awt.GradientPaint;
-import java.awt.Paint;
-import java.awt.Rectangle;
-import java.awt.Shape;
-import java.awt.Stroke;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationModel;
-import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.selection.MutableSelectedState;
@@ -33,7 +27,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  * @param <N> the node type
- * @param <N> the edge type
+ * @param <E> the edge type
  */
 public class GradientNodeRenderer<N, E> implements Renderer.Node<N, E> {
 
@@ -46,25 +40,24 @@ public class GradientNodeRenderer<N, E> implements Renderer.Node<N, E> {
   MutableSelectedState<N> mutablePickedState;
   boolean cyclic;
 
-  public GradientNodeRenderer(
-      VisualizationServer<N, ?> vv, Color colorOne, Color colorTwo, boolean cyclic) {
+  public GradientNodeRenderer(Color colorOne, Color colorTwo, boolean cyclic) {
     this.colorOne = colorOne;
     this.colorTwo = colorTwo;
     this.cyclic = cyclic;
   }
 
   public GradientNodeRenderer(
-      VisualizationServer<N, ?> vv,
+      MutableSelectedState<N> mutableSelectedState,
       Color colorOne,
       Color colorTwo,
       Color pickedColorOne,
       Color pickedColorTwo,
       boolean cyclic) {
+    this.mutablePickedState = mutableSelectedState;
     this.colorOne = colorOne;
     this.colorTwo = colorTwo;
     this.pickedColorOne = pickedColorOne;
     this.pickedColorTwo = pickedColorTwo;
-    this.mutablePickedState = vv.getSelectedNodeState();
     this.cyclic = cyclic;
   }
 
@@ -103,7 +96,7 @@ public class GradientNodeRenderer<N, E> implements Renderer.Node<N, E> {
       y2 = (float) (r.getMinY() + r.getHeight() / 2);
     }
 
-    Paint fillPaint = null;
+    Paint fillPaint;
     if (mutablePickedState != null && mutablePickedState.isSelected(v)) {
       fillPaint =
           new GradientPaint(

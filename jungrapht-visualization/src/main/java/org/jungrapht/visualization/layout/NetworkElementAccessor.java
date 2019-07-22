@@ -21,13 +21,8 @@ import org.jungrapht.visualization.layout.util.NetworkNodeAccessor;
  *
  * @author Tom Nelson
  * @author Joshua O'Madadhain
- */
-
-/**
- * interface for support for node information about Networks (nodes and edges).
- *
- * @param <N>
- * @param <E>
+ * @param <N> the node type
+ * @param <E> the edge type
  */
 public interface NetworkElementAccessor<N, E> extends NetworkNodeAccessor<N> {
 

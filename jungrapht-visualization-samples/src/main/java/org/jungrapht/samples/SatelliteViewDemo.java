@@ -126,8 +126,7 @@ public class SatelliteViewDemo extends JPanel {
                 satelliteVisualizationViewer.getSelectedNodeState(), Color.red, Color.yellow));
     mainVisualizationViewer
         .getRenderer()
-        .setNodeRenderer(
-            new GradientNodeRenderer<>(mainVisualizationViewer, Color.red, Color.white, true));
+        .setNodeRenderer(new GradientNodeRenderer<>(Color.red, Color.white, true));
     mainVisualizationViewer.getRenderContext().setNodeLabelFunction(Object::toString);
     mainVisualizationViewer
         .getRenderContext()

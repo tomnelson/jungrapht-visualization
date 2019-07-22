@@ -12,7 +12,7 @@ public interface Bounded {
   /**
    * return the Rectangle of the bounding box
    *
-   * @return
+   * @return the rectangular bounds of the implementation
    */
   Rectangle2D getBounds();
 }

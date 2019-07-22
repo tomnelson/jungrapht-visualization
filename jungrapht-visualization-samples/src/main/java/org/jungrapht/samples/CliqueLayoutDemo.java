@@ -117,7 +117,7 @@ public class CliqueLayoutDemo extends JPanel {
     // add a listener for ToolTips
     vv.setNodeToolTipFunction(Object::toString);
 
-    /** the regular graph mouse for the normal view */
+    // the regular graph mouse for the normal view
     final DefaultModalGraphMouse<?, ?> graphMouse = new DefaultModalGraphMouse<>();
 
     vv.setGraphMouse(graphMouse);

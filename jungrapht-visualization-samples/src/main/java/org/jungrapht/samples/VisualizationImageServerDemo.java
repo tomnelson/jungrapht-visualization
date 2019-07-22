@@ -46,7 +46,8 @@ public class VisualizationImageServerDemo {
 
     vv.getRenderer()
         .setNodeRenderer(
-            new GradientNodeRenderer<>(vv, Color.white, Color.red, Color.white, Color.blue, false));
+            new GradientNodeRenderer<>(
+                vv.getSelectedNodeState(), Color.white, Color.red, Color.white, Color.blue, false));
     vv.getRenderContext().setEdgeDrawPaintFunction(e -> Color.lightGray);
     vv.getRenderContext().setArrowFillPaintFunction(e -> Color.lightGray);
     vv.getRenderContext().setArrowDrawPaintFunction(e -> Color.lightGray);

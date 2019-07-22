@@ -282,7 +282,7 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
    * hook up events so that when the VisualizationModel gets an event from the LayoutModel and fires
    * it, the Spatial will get the same event and know to update or recalculate its space
    *
-   * @param spatial
+   * @param spatial will listen for events
    */
   private void connectListeners(Spatial spatial) {
     LayoutModel<N> layoutModel = model.getLayoutModel();
@@ -297,7 +297,7 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
   /**
    * disconnect listeners that will no longer be used
    *
-   * @param spatial
+   * @param spatial will no longer receive events
    */
   private void disconnectListeners(Spatial spatial) {
 

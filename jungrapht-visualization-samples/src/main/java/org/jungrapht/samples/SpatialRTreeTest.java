@@ -12,7 +12,6 @@ import ch.qos.logback.classic.LoggerContext;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
-import java.io.IOException;
 import java.util.function.Supplier;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -273,7 +272,7 @@ public class SpatialRTreeTest extends JPanel {
     }
   }
 
-  public static void main(String[] args) throws IOException {
+  public static void main(String[] args) {
 
     JFrame jf = new JFrame();
 

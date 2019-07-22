@@ -73,7 +73,7 @@ public class NodeLabelAsShapeDemo extends JPanel {
     vv.getRenderContext().setEdgeStrokeFunction(e -> new BasicStroke(2.5f));
 
     // customize the renderer
-    vv.getRenderer().setNodeRenderer(new GradientNodeRenderer<>(vv, Color.gray, Color.white, true));
+    vv.getRenderer().setNodeRenderer(new GradientNodeRenderer<>(Color.gray, Color.white, true));
     vv.getRenderer().setNodeLabelRenderer(vlasr);
 
     vv.setBackground(Color.black);

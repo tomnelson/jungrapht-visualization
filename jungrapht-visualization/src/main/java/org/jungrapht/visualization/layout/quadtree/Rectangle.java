@@ -72,8 +72,7 @@ public class Rectangle {
     if (ox < x) return false;
     if (ox > maxX) return false;
     if (oy < y) return false;
-    if (oy > maxY) return false;
-    return true;
+    return !(oy > maxY);
   }
 
   public Rectangle add(double newX, double newY) {

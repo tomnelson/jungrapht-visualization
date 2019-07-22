@@ -12,7 +12,7 @@ import org.junit.Test;
 public class LayoutAlgorithmTransitionTest {
 
   @Test
-  public void testTransition() throws Exception {
+  public void testTransition() {
     Graph<String, Number> graph =
         GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.simple()).buildGraph();
     graph.addVertex("A");

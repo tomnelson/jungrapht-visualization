@@ -81,14 +81,14 @@ public interface Node<T> extends TreeNode, Bounded {
   }
 
   static <T> String asString(Node<T> node, String margin) {
-    StringBuilder s = new StringBuilder();
-    s.append(margin);
-    s.append("bounds=");
-    s.append(asString(node.getBounds()));
-    s.append('\n');
 
-    s.append(node.asString(margin + marginIncrement));
-    return s.toString();
+    String s =
+        margin
+            + "bounds="
+            + asString(node.getBounds())
+            + '\n'
+            + node.asString(margin + marginIncrement);
+    return s;
   }
 
   String marginIncrement = "   ";

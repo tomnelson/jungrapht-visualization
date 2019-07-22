@@ -12,7 +12,6 @@ import ch.qos.logback.classic.LoggerContext;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.io.IOException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
@@ -69,7 +68,7 @@ public class SimpleGraphSpatialTest extends JPanel {
     this.add(vv);
   }
 
-  public static void main(String[] args) throws IOException {
+  public static void main(String[] args) {
 
     // programmatically set the log level so that the spatial grid is drawn for this demo and the SpatialGrid logging is output
     ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) log;

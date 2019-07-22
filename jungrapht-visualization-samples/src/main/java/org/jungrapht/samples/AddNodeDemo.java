@@ -92,7 +92,7 @@ public class AddNodeDemo extends JPanel {
           /**
            * Invoked when the component's size changes.
            *
-           * @param e
+           * @param e the event payload
            */
           @Override
           public void componentResized(ComponentEvent e) {

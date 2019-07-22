@@ -192,8 +192,8 @@ public class GraphEditorDemo extends JPanel implements Printable {
     }
   }
 
-  public int print(java.awt.Graphics graphics, java.awt.print.PageFormat pageFormat, int pageIndex)
-      throws java.awt.print.PrinterException {
+  public int print(
+      java.awt.Graphics graphics, java.awt.print.PageFormat pageFormat, int pageIndex) {
     if (pageIndex > 0) {
       return (Printable.NO_SUCH_PAGE);
     } else {

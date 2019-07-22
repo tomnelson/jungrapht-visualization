@@ -206,7 +206,7 @@ public class KKLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
     layoutModel.setInitializer(
         new RandomLocationTransformer<>(
             layoutModel.getWidth(), layoutModel.getHeight(), graph.vertexSet().size()));
-    if (graph != null && layoutModel != null) {
+    if (layoutModel != null) {
 
       double height = layoutModel.getHeight();
       double width = layoutModel.getWidth();

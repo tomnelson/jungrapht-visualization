@@ -126,8 +126,7 @@ public class RTree<T> {
       SplitterContext<T> splitterContext,
       Collection<Map.Entry<T, Rectangle2D>> items) {
     // sort the items
-    List<Map.Entry<T, Rectangle2D>> sortedList = new ArrayList<>();
-    sortedList.addAll(items);
+    List<Map.Entry<T, Rectangle2D>> sortedList = new ArrayList<>(items);
     sortedList.sort(new HorizontalCenterNodeComparator<T>());
     for (Map.Entry<T, Rectangle2D> entry : sortedList) {
       rtree = RTree.add(rtree, splitterContext, entry.getKey(), entry.getValue());
@@ -201,9 +200,8 @@ public class RTree<T> {
         LeafNode leafNode = (LeafNode) node;
         NodeMap<T> nodeMap = leafNode.map;
         List<Map.Entry<T, Rectangle2D>> entryList = new ArrayList<>();
-        for (Map.Entry<T, Rectangle2D> entry : nodeMap.entrySet()) {
-          entryList.add(entry); // will be sorted at the end
-        }
+        // will be sorted at the end
+        entryList.addAll(nodeMap.entrySet());
         entryList.sort(new DistanceComparator(centerOfLeafNode));
 
         // now take 30% from the beginning of the sortedList, remove them all from the tree, then re-insert them all

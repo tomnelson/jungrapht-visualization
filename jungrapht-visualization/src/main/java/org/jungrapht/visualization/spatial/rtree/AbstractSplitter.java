@@ -24,7 +24,7 @@ public abstract class AbstractSplitter<T> {
    *
    * @param nodeToSplit the node to split
    * @param incoming the bounds of the new element
-   * @return
+   * @return the node to split
    */
   protected Optional<Node<T>> leastEnlargementThenAreaThenKids(
       InnerNode<T> nodeToSplit, Rectangle2D incoming) {
@@ -83,8 +83,9 @@ public abstract class AbstractSplitter<T> {
   /**
    * least overlap then least area enlargement followed by smallest area followed by fewest kids
    *
-   * @param bounds
-   * @return
+   * @param nodeToSplit the node to split
+   * @param bounds the rectangular bounds to split
+   * @return the node that was selected to split
    */
   protected Optional<Node<T>> leastOverlapThenEnlargementThenAreaThenKids(
       InnerNode<T> nodeToSplit, Rectangle2D bounds) {

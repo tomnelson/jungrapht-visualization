@@ -1,6 +1,13 @@
-package org.jungrapht.visualization.spatial.rtree;
+package org.jungrapht.visualization.spatial;
 
 import java.awt.geom.Rectangle2D;
+import org.jungrapht.visualization.spatial.rtree.LeafNode;
+import org.jungrapht.visualization.spatial.rtree.Node;
+import org.jungrapht.visualization.spatial.rtree.RStarLeafSplitter;
+import org.jungrapht.visualization.spatial.rtree.RStarSplitter;
+import org.jungrapht.visualization.spatial.rtree.RTree;
+import org.jungrapht.visualization.spatial.rtree.SplitterContext;
+import org.jungrapht.visualization.spatial.rtree.TreeNode;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;

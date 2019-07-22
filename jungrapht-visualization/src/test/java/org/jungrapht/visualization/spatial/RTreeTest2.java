@@ -1,4 +1,4 @@
-package org.jungrapht.visualization.spatial.rtree;
+package org.jungrapht.visualization.spatial;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -12,6 +12,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
+import org.jungrapht.visualization.spatial.rtree.InnerNode;
+import org.jungrapht.visualization.spatial.rtree.LeafNode;
+import org.jungrapht.visualization.spatial.rtree.Node;
+import org.jungrapht.visualization.spatial.rtree.RStarLeafSplitter;
+import org.jungrapht.visualization.spatial.rtree.RStarSplitter;
+import org.jungrapht.visualization.spatial.rtree.RTree;
+import org.jungrapht.visualization.spatial.rtree.SplitterContext;
+import org.jungrapht.visualization.spatial.rtree.TreeNode;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -89,7 +97,7 @@ public class RTreeTest2 {
 
     for (int i = 0; i < 100; i++) {
       String element = "N" + i;
-      rTree = rTree.remove(rTree, element);
+      rTree = RTree.remove(rTree, element);
       log.trace("tree size:{}", rTree.count());
     }
     log.info(
