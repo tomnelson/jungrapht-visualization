@@ -3,7 +3,7 @@
  * All rights reserved.
  *
  * This software is open-source under the BSD license; see either "license.txt"
- * or https://github.com/jrtom/jung/blob/master/LICENSE for a description.
+ * or https://github.com/tomnelson/jungrapht-visualization/blob/master/LICENSE for a description.
  *
  * Created on March 10, 2005
  */
