@@ -35,8 +35,6 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
 
   private static final Logger log = LoggerFactory.getLogger(TreeLayoutAlgorithm.class);
 
-  protected Collection<N> roots = new HashSet<>();
-
   public static class Builder<N, T extends TreeLayoutAlgorithm<N>, B extends Builder<N, T, B>> {
     protected int horizontalNodeSpacing = DEFAULT_HORIZONTAL_NODE_SPACING;
     protected int verticalNodeSpacing = DEFAULT_VERTICAL_NODE_SPACING;
@@ -106,7 +104,11 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
     buildTree(layoutModel);
   }
 
-  protected void buildTree(LayoutModel<N> layoutModel) {
+  /**
+   * @param layoutModel the model to hold node positions
+   * @return the roots nodes of the tree
+   */
+  protected Set<N> buildTree(LayoutModel<N> layoutModel) {
     alreadyDone = Sets.newHashSet();
     this.currentX = 0;
     this.currentY = 0;
@@ -117,7 +119,6 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
             .stream()
             .filter(node -> Graphs.predecessorListOf(layoutModel.getGraph(), node).isEmpty())
             .collect(toImmutableSet());
-    this.roots = roots;
 
     Preconditions.checkArgument(roots.size() > 0);
     // the width of the tree under 'roots'. Includes one 'horizontalNodeSpacing' per child node
@@ -143,6 +144,7 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
           log.trace("currentX after node {} is now {}", node, currentX);
           buildTree(layoutModel, node, (int) currentX);
         });
+    return roots;
   }
 
   protected void buildTree(LayoutModel<N> layoutModel, N node, int x) {

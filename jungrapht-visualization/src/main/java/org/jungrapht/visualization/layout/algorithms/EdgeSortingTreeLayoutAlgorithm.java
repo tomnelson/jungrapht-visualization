@@ -10,9 +10,7 @@
 
 package org.jungrapht.visualization.layout.algorithms;
 
-import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -28,8 +26,6 @@ public class EdgeSortingTreeLayoutAlgorithm<N, E> extends TreeLayoutAlgorithm<N>
     implements LayoutAlgorithm<N> {
 
   private static final Logger log = LoggerFactory.getLogger(EdgeSortingTreeLayoutAlgorithm.class);
-
-  protected Collection<N> roots = new HashSet<>();
 
   public static class Builder<
           N, E, T extends EdgeSortingTreeLayoutAlgorithm<N, E>, B extends Builder<N, E, T, B>>
@@ -47,7 +43,7 @@ public class EdgeSortingTreeLayoutAlgorithm<N, E> extends TreeLayoutAlgorithm<N>
     }
 
     public T build() {
-      return (T) new EdgeSortingTreeLayoutAlgorithm(this);
+      return (T) new EdgeSortingTreeLayoutAlgorithm<>(this);
     }
   }
 

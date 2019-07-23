@@ -13,6 +13,7 @@ package org.jungrapht.visualization.layout.algorithms;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.PolarPoint;
@@ -51,17 +52,15 @@ public class RadialTreeLayoutAlgorithm<N> extends TreeLayoutAlgorithm<N> {
   }
 
   @Override
-  protected void buildTree(LayoutModel<N> layoutModel) {
-    super.buildTree(layoutModel);
-    setRadialLocations(layoutModel);
+  protected Set<N> buildTree(LayoutModel<N> layoutModel) {
+    Set<N> roots = super.buildTree(layoutModel);
+    setRadialLocations(roots, layoutModel);
     putRadialPointsInModel(layoutModel);
+    return roots;
   }
 
   private void putRadialPointsInModel(LayoutModel<N> layoutModel) {
-    for (Map.Entry<N, PolarPoint> entry : polarLocations.entrySet()) {
-      //      PolarPoint polar = entry.getValue();
-      layoutModel.set(entry.getKey(), getCartesian(layoutModel, entry.getKey()));
-    }
+    polarLocations.forEach((key, value) -> layoutModel.set(key, getCartesian(layoutModel, key)));
   }
 
   /** @return a map from nodes to their locations in polar coordinates. */
@@ -90,7 +89,7 @@ public class RadialTreeLayoutAlgorithm<N> extends TreeLayoutAlgorithm<N> {
     return Point.of(maxx, maxy);
   }
 
-  private void setRadialLocations(LayoutModel<N> layoutModel) {
+  private void setRadialLocations(Set<N> roots, LayoutModel<N> layoutModel) {
     int width = layoutModel.getWidth();
     Point max = getMaxXY(layoutModel);
     double maxx = max.x;
