@@ -11,8 +11,8 @@ install:
 - mvn -v
 - mvn -B install -U -DskipTests=true
 
-#after_success:
-#  - tools/deploy_snapshots.sh
+after_success:
+  - tools/deploy_snapshots.sh
 
 cache:
   directories:
