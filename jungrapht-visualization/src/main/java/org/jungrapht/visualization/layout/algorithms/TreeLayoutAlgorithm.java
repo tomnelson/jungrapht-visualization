@@ -27,10 +27,7 @@ import org.jungrapht.visualization.layout.model.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author Karlheinz Toni
- * @author Tom Nelson - converted to jung2, refactored into Algorithm/Visitor
- */
+/** @author Tom Nelson */
 public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
 
   private static final Logger log = LoggerFactory.getLogger(TreeLayoutAlgorithm.class);
@@ -96,9 +93,6 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
   /** The vertical node spacing. Defaults to {@code DEFAULT_VERTICAL_NODE_SPACING}. */
   protected int verticalNodeSpacing = DEFAULT_VERTICAL_NODE_SPACING;
 
-  protected double currentX;
-  protected double currentY;
-
   @Override
   public void visit(LayoutModel<N> layoutModel) {
     buildTree(layoutModel);
@@ -110,8 +104,6 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
    */
   protected Set<N> buildTree(LayoutModel<N> layoutModel) {
     alreadyDone = Sets.newHashSet();
-    this.currentX = 0;
-    this.currentY = 0;
     Set<N> roots =
         layoutModel
             .getGraph()
@@ -136,42 +128,40 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
     layoutModel.setSize(
         Math.max(layoutModel.getWidth(), overallWidth),
         Math.max(layoutModel.getHeight(), overallHeight));
+    int x = 0;
+    int y = getInitialY(layoutModel.getHeight() / 2 - overallHeight / 2);
     Set<N> seen = new HashSet<>();
-    roots.forEach(
-        node -> {
-          calculateWidth(layoutModel, node, seen);
-          currentX += (this.basePositions.get(node) / 2 + this.horizontalNodeSpacing);
-          log.trace("currentX after node {} is now {}", node, currentX);
-          buildTree(layoutModel, node, (int) currentX);
-        });
+    for (N node : roots) {
+      calculateWidth(layoutModel, node, seen);
+      x += (this.basePositions.get(node) / 2 + this.horizontalNodeSpacing);
+      log.trace("currentX after node {} is now {}", node, x);
+      buildTree(layoutModel, node, x, y);
+    }
     return roots;
   }
 
-  protected void buildTree(LayoutModel<N> layoutModel, N node, int x) {
+  protected int getInitialY(int initialY) {
+    return initialY;
+  }
+
+  protected void buildTree(LayoutModel<N> layoutModel, N node, int x, int y) {
     if (alreadyDone.add(node)) {
       //go one level further down
-      double newY = this.currentY + this.verticalNodeSpacing;
-      this.currentX = x;
-      this.currentY = newY;
-      log.trace("Set node {} to {}", node, Point.of(currentX, currentY));
-      layoutModel.set(node, currentX, currentY);
+      y += this.verticalNodeSpacing;
+      log.trace("Set node {} to {}", node, Point.of(x, y));
+      layoutModel.set(node, x, y);
 
       int sizeXofCurrent = basePositions.get(node);
-
-      int lastX = x - sizeXofCurrent / 2;
+      x -= sizeXofCurrent / 2;
 
       int sizeXofChild;
-      int startXofChild;
 
       for (N element : Graphs.successorListOf(layoutModel.getGraph(), node)) {
         sizeXofChild = this.basePositions.get(element);
-        startXofChild = lastX + sizeXofChild / 2;
-        buildTree(layoutModel, element, startXofChild);
-
-        lastX = lastX + sizeXofChild + horizontalNodeSpacing;
+        x += sizeXofChild / 2;
+        buildTree(layoutModel, element, x, y);
+        x += sizeXofChild + horizontalNodeSpacing;
       }
-
-      this.currentY -= this.verticalNodeSpacing;
     }
   }
 

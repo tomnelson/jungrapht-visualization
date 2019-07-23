@@ -40,9 +40,6 @@ public class RadialTreeLayoutAlgorithm<N> extends TreeLayoutAlgorithm<N> {
     }
   }
 
-  //  public static Builder builder() {
-  //    return new Builder<>();
-  //  }
   public static <N> Builder<N, ?, ?> builder() {
     return new Builder<>();
   }
@@ -57,6 +54,17 @@ public class RadialTreeLayoutAlgorithm<N> extends TreeLayoutAlgorithm<N> {
     setRadialLocations(roots, layoutModel);
     putRadialPointsInModel(layoutModel);
     return roots;
+  }
+
+  /**
+   * override for to always start at zero
+   *
+   * @param initialY
+   * @return
+   */
+  @Override
+  protected int getInitialY(int initialY) {
+    return 0;
   }
 
   private void putRadialPointsInModel(LayoutModel<N> layoutModel) {

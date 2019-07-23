@@ -60,9 +60,6 @@ public class BalloonLayoutAlgorithm<N> extends TreeLayoutAlgorithm<N> {
 
   protected Map<N, Double> radii = new HashMap<>();
 
-  //  public static Builder builder() {
-  //    return new Builder<>();
-  //  }
   public static <N> Builder<N, ?, ?> builder() {
     return new Builder<>();
   }
@@ -143,11 +140,6 @@ public class BalloonLayoutAlgorithm<N> extends TreeLayoutAlgorithm<N> {
       // increment for each child. include the offset to space edge to parent
       // in between 2 edges to children
       double theta = i++ * angleBetweenKids + offset;
-
-      // if there's only one child, offset for more pleasing effect (undecided about this)
-      //      if (kids.size() == 1) {
-      //        theta += Math.PI / 4;
-      //      }
 
       radii.put(child, childRadius);
 

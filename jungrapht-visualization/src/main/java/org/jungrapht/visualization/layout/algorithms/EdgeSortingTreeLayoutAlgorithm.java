@@ -21,32 +21,71 @@ import org.jungrapht.visualization.layout.model.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** @author Tom Nelson */
+/**
+ * An extension of {@code TreeLayoutAlgorithm} that allows a {@code Comparator<E>} for edges so that
+ * the children of each node are accessed in a supplied order.
+ *
+ * @param <N> the node type
+ * @param <E> the edge type
+ * @author Tom Nelson
+ */
 public class EdgeSortingTreeLayoutAlgorithm<N, E> extends TreeLayoutAlgorithm<N>
     implements LayoutAlgorithm<N> {
 
   private static final Logger log = LoggerFactory.getLogger(EdgeSortingTreeLayoutAlgorithm.class);
 
+  /**
+   * a builder to create an instance of a {@code} EdgeSortingTreeLayoutAlgorithm.
+   *
+   * @param <N> the node type
+   * @param <E> the edge type
+   * @param <T> the type that will be created
+   * @param <B> the builder type
+   */
   public static class Builder<
           N, E, T extends EdgeSortingTreeLayoutAlgorithm<N, E>, B extends Builder<N, E, T, B>>
       extends TreeLayoutAlgorithm.Builder<N, T, B> {
 
+    /**
+     * a comparator to sort edges
+     *
+     * @param <E> the edge type
+     */
     private Comparator<E> edgeComparator;
 
+    /**
+     * self reference with typecase
+     *
+     * @return this builder cast to B
+     */
     protected B self() {
       return (B) this;
     }
 
+    /**
+     * use the supplied comparator to sort edges
+     *
+     * @param edgeComparator supplied edge Comparator
+     * @return the builder
+     */
     public B edgeComparator(Comparator<E> edgeComparator) {
       this.edgeComparator = edgeComparator;
       return self();
     }
 
+    /** @return the instance */
     public T build() {
       return (T) new EdgeSortingTreeLayoutAlgorithm<>(this);
     }
   }
 
+  /**
+   * create a new {@code EdgeSortingTreeLayoutAlgorithm.Builder}
+   *
+   * @param <N> the node type
+   * @param <E> the edge type
+   * @return a new {@code EdgeSortingTreeLayoutAlgorithm.Builder}
+   */
   public static <N, E> Builder<N, E, ?, ?> sortingBuilder() {
     return new Builder<>();
   }
@@ -73,22 +112,19 @@ public class EdgeSortingTreeLayoutAlgorithm<N, E> extends TreeLayoutAlgorithm<N>
   }
 
   @Override
-  protected void buildTree(LayoutModel<N> layoutModel, N node, int x) {
+  protected void buildTree(LayoutModel<N> layoutModel, N node, int x, int y) {
     Graph<N, E> graph = (Graph<N, E>) layoutModel.getGraph();
     if (alreadyDone.add(node)) {
       //go one level further down
-      double newY = this.currentY + this.verticalNodeSpacing;
-      this.currentX = x;
-      this.currentY = newY;
-      log.trace("Set node {} to {}", node, Point.of(currentX, currentY));
-      layoutModel.set(node, currentX, currentY);
+      y += this.verticalNodeSpacing;
+      log.trace("Set node {} to {}", node, Point.of(x, y));
+      layoutModel.set(node, x, y);
 
       int sizeXofCurrent = basePositions.get(node);
 
       int lastX = x - sizeXofCurrent / 2;
 
       int sizeXofChild;
-      int startXofChild;
 
       for (E edgeElement :
           graph
@@ -99,13 +135,11 @@ public class EdgeSortingTreeLayoutAlgorithm<N, E> extends TreeLayoutAlgorithm<N>
         N element = graph.getEdgeTarget(edgeElement);
         log.trace("get base position of {} from {}", element, basePositions);
         sizeXofChild = this.basePositions.get(element);
-        startXofChild = lastX + sizeXofChild / 2;
-        buildTree(layoutModel, element, startXofChild);
+        x += sizeXofChild / 2;
+        buildTree(layoutModel, element, x, y);
 
         lastX = lastX + sizeXofChild + horizontalNodeSpacing;
       }
-
-      this.currentY -= this.verticalNodeSpacing;
     }
   }
 
@@ -124,7 +158,6 @@ public class EdgeSortingTreeLayoutAlgorithm<N, E> extends TreeLayoutAlgorithm<N>
             .outgoingEdgesOf(node)
             .stream()
             .sorted(edgeComparator)
-            //            .filter(e -> edgePredicate.test(e)) // retain if the edgePredicate tests true
             .map(graph::getEdgeTarget) // get the edge target nodes
             .filter(
                 successors::contains) // retain if the successors (filtered above) contain the node
