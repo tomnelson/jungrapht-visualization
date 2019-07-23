@@ -11,11 +11,8 @@
 package org.jungrapht.visualization.layout.algorithms;
 
 import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
-import org.jgrapht.Graphs;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.slf4j.Logger;
@@ -51,7 +48,7 @@ public class EdgeSortingTreeLayoutAlgorithm<N, E> extends TreeLayoutAlgorithm<N>
      *
      * @param <E> the edge type
      */
-    private Comparator<E> edgeComparator;
+    private Comparator<E> edgeComparator = (e1, e2) -> 0;
 
     /**
      * self reference with typecase
@@ -121,8 +118,7 @@ public class EdgeSortingTreeLayoutAlgorithm<N, E> extends TreeLayoutAlgorithm<N>
       layoutModel.set(node, x, y);
 
       int sizeXofCurrent = basePositions.get(node);
-
-      int lastX = x - sizeXofCurrent / 2;
+      x -= sizeXofCurrent / 2;
 
       int sizeXofChild;
 
@@ -138,56 +134,8 @@ public class EdgeSortingTreeLayoutAlgorithm<N, E> extends TreeLayoutAlgorithm<N>
         x += sizeXofChild / 2;
         buildTree(layoutModel, element, x, y);
 
-        lastX = lastX + sizeXofChild + horizontalNodeSpacing;
+        x += sizeXofChild + horizontalNodeSpacing;
       }
     }
-  }
-
-  @Override
-  protected int calculateWidth(LayoutModel<N> layoutModel, N node, Set<N> seen) {
-    Graph<N, E> graph = (Graph<N, E>) layoutModel.getGraph();
-    log.trace("graph is {}", graph);
-    List<N> successors = Graphs.successorListOf(graph, node);
-    log.trace("successors of {} are {}", node, successors);
-    successors.removeIf(seen::contains);
-    log.trace("filtered successors of {} are {}", node, successors);
-    seen.addAll(successors);
-
-    int size =
-        graph
-            .outgoingEdgesOf(node)
-            .stream()
-            .sorted(edgeComparator)
-            .map(graph::getEdgeTarget) // get the edge target nodes
-            .filter(
-                successors::contains) // retain if the successors (filtered above) contain the node
-            .mapToInt(element -> calculateWidth(layoutModel, element, seen) + horizontalNodeSpacing)
-            .sum();
-    size = Math.max(0, size - horizontalNodeSpacing);
-    log.trace("calcWidth basePositions put {} {}", node, size);
-    basePositions.put(node, size);
-
-    return size;
-  }
-
-  @Override
-  protected int calculateHeight(LayoutModel<N> layoutModel, N node, Set<N> seen) {
-    Graph<N, E> graph = (Graph<N, E>) layoutModel.getGraph();
-    List<N> successors = Graphs.successorListOf(graph, node);
-    log.trace("graph is {}", graph);
-    log.trace("h successors of {} are {}", node, successors);
-    successors.removeIf(seen::contains);
-    log.trace("filtered h successors of {} are {}", node, successors);
-    seen.addAll(successors);
-
-    return graph
-        .outgoingEdgesOf(node)
-        .stream()
-        .sorted(edgeComparator)
-        .map(graph::getEdgeTarget) // get the edge target nodes
-        .filter(successors::contains) // retain if the successors (filtered above) contain the node
-        .mapToInt(element -> calculateHeight(layoutModel, element, seen) + verticalNodeSpacing)
-        .max()
-        .orElse(0);
   }
 }

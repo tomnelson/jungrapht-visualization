@@ -44,6 +44,53 @@ public class CrossoverScalingControl implements ScalingControl {
     return crossover;
   }
 
+  public void scale(
+      VisualizationServer<?, ?> vv, float horizontalAmount, float verticalAmount, Point2D at) {
+    MutableTransformer layoutTransformer =
+        vv.getRenderContext()
+            .getMultiLayerTransformer()
+            .getTransformer(MultiLayerTransformer.Layer.LAYOUT);
+    MutableTransformer viewTransformer =
+        vv.getRenderContext()
+            .getMultiLayerTransformer()
+            .getTransformer(MultiLayerTransformer.Layer.VIEW);
+    double modelScaleX = layoutTransformer.getScaleX();
+    double modelScaleY = layoutTransformer.getScaleY();
+    double viewScaleX = viewTransformer.getScaleX();
+    //Math.min(viewTransformer.getScaleX(), viewTransformer.getScaleY());
+    double viewScaleY =
+        //            viewScaleX;
+        viewTransformer.getScaleY();
+    double inverseModelScaleX = Math.sqrt(crossover) / modelScaleX;
+    double inverseModelScaleY = Math.sqrt(crossover) / modelScaleY;
+    double inverseViewScaleX = Math.sqrt(crossover) / viewScaleX;
+    double inverseViewScaleY = Math.sqrt(crossover) / viewScaleY;
+    double scaleX = modelScaleX * viewScaleX;
+    double scaleY = modelScaleY * viewScaleY;
+
+    Point2D transformedAt =
+        vv.getRenderContext()
+            .getMultiLayerTransformer()
+            .inverseTransform(MultiLayerTransformer.Layer.VIEW, at);
+
+    if ((scaleX * horizontalAmount - crossover) * (scaleX * horizontalAmount - crossover) < 0.001
+        || (scaleY * verticalAmount - crossover) * (scaleY * verticalAmount - crossover) < 0.001) {
+      // close to the control point, return both Functions to a scale of sqrt crossover value
+      layoutTransformer.scale(inverseModelScaleX, inverseModelScaleY, transformedAt);
+      viewTransformer.scale(inverseViewScaleX, inverseViewScaleY, at);
+    } else if (scaleX * horizontalAmount < crossover || scaleY * verticalAmount < crossover) {
+      // scale the viewTransformer, return the layoutTransformer to sqrt crossover value
+      double amount = Math.min(horizontalAmount, verticalAmount);
+      viewTransformer.scale(amount, amount, at);
+      layoutTransformer.scale(inverseModelScaleX, inverseModelScaleY, transformedAt);
+    } else {
+      // scale the layoutTransformer, return the viewTransformer to crossover value
+      layoutTransformer.scale(horizontalAmount, verticalAmount, transformedAt);
+      viewTransformer.scale(inverseViewScaleX, inverseViewScaleY, at);
+    }
+    vv.repaint();
+  }
+
   public void scale(VisualizationServer<?, ?> vv, float amount, Point2D at) {
 
     MutableTransformer layoutTransformer =

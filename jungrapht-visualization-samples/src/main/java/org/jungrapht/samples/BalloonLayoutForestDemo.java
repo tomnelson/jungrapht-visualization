@@ -59,14 +59,15 @@ public class BalloonLayoutForestDemo extends JPanel {
 
   LensSupport hyperbolicSupport;
 
+  Dimension layoutSize = new Dimension(900, 900);
+  Dimension viewSize = new Dimension(600, 600);
+
   public BalloonLayoutForestDemo() {
     setLayout(new BorderLayout());
     // create a simple graph for the demo
     graph = DemoTreeSupplier.createForest();
 
-    vv =
-        new VisualizationViewer<>(
-            graph, new StaticLayoutAlgorithm<>(), new Dimension(900, 900), new Dimension(600, 600));
+    vv = new VisualizationViewer<>(graph, new StaticLayoutAlgorithm<>(), layoutSize, viewSize);
     vv.setBackground(Color.white);
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
     vv.getRenderContext().setNodeLabelFunction(Object::toString);

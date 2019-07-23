@@ -59,11 +59,12 @@ public class RadialTreeLayoutAlgorithm<N> extends TreeLayoutAlgorithm<N> {
   /**
    * override for to always start at zero
    *
-   * @param initialY
-   * @return
+   * @param layoutHeight
+   * @param treeHeight
+   * @return 0 for any supplied values
    */
   @Override
-  protected int getInitialY(int initialY) {
+  protected int getInitialY(int layoutHeight, int treeHeight) {
     return 0;
   }
 

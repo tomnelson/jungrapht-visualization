@@ -120,16 +120,21 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
     int overallHeight = calculateHeight(layoutModel, roots);
     overallHeight += 2 * verticalNodeSpacing;
 
-    if (overallWidth > overallHeight) {
-      verticalNodeSpacing *= (float) overallWidth / (float) overallHeight / 4.0;
-      overallHeight = overallWidth / 4;
-    }
+    //    if (overallWidth > overallHeight) {
+    //      verticalNodeSpacing *= (float) overallWidth / (float) overallHeight / 4.0;
+    //      overallHeight = overallWidth / 4;
+    //    }
 
     layoutModel.setSize(
         Math.max(layoutModel.getWidth(), overallWidth),
         Math.max(layoutModel.getHeight(), overallHeight));
+    log.info("layoutModel.getHeight() {}", layoutModel.getHeight());
+    log.info("overallHeight {}", overallHeight);
+
     int x = 0;
-    int y = getInitialY(layoutModel.getHeight() / 2 - overallHeight / 2);
+    int y = getInitialY(layoutModel.getHeight(), overallHeight);
+    log.info("got initial y of {}", y);
+
     Set<N> seen = new HashSet<>();
     for (N node : roots) {
       calculateWidth(layoutModel, node, seen);
@@ -140,8 +145,11 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
     return roots;
   }
 
-  protected int getInitialY(int initialY) {
-    return initialY;
+  protected int getInitialY(int layoutHeight, int treeHeight) {
+    if (layoutHeight == treeHeight) {
+      return this.verticalNodeSpacing;
+    }
+    return layoutHeight / 2 - treeHeight / 2;
   }
 
   protected void buildTree(LayoutModel<N> layoutModel, N node, int x, int y) {

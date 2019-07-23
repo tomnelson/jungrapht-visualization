@@ -35,4 +35,15 @@ public class ViewScalingControl implements ScalingControl {
     viewTransformer.scale(amount, amount, from);
     vv.repaint();
   }
+
+  @Override
+  public void scale(
+      VisualizationServer<?, ?> vv, float horizontalAmount, float verticalAmount, Point2D from) {
+    MutableTransformer viewTransformer =
+        vv.getRenderContext()
+            .getMultiLayerTransformer()
+            .getTransformer(MultiLayerTransformer.Layer.VIEW);
+    viewTransformer.scale(horizontalAmount, verticalAmount, from);
+    vv.repaint();
+  }
 }
