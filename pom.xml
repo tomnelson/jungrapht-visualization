@@ -236,7 +236,7 @@
                 <goals>
                   <goal>jar</goal>
                 </goals>
-                <configuration> <!-- add this to disable checking -->
+                <configuration>>
                   <additionalparam>-Xdoclint:none</additionalparam>
                 </configuration>
               </execution>
