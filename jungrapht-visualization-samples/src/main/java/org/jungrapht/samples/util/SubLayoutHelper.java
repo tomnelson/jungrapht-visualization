@@ -2,19 +2,16 @@ package org.jungrapht.samples.util;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.CircleLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.ISOMLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.SpringLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFRRepulsion;
 import org.jungrapht.visualization.layout.algorithms.repulsion.StandardSpringRepulsion;
 
-public class LayoutHelper {
+public class SubLayoutHelper {
 
   public enum Layouts {
     KK("Kamada Kawai", KKLayoutAlgorithm.builder().build()),
@@ -31,10 +28,7 @@ public class LayoutHelper {
         "Spring (BH Optimized)",
         SpringLayoutAlgorithm.builder()
             .repulsionContractBuilder(StandardSpringRepulsion.standardBuilder())
-            .build()),
-    TREE("Tree", TreeLayoutAlgorithm.builder().build()),
-    BALLOON("Balloon", BalloonLayoutAlgorithm.builder().build()),
-    RADIAL("Radial", RadialTreeLayoutAlgorithm.builder().build());
+            .build());
 
     private static final Map<String, Layouts> BY_NAME = new HashMap<>();
 

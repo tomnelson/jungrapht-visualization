@@ -141,9 +141,7 @@ public class ShowLayouts extends JPanel {
                   LayoutAlgorithm layoutAlgorithm = layoutType.getLayoutAlgorithm();
                   vv.removePreRenderPaintable(balloonLayoutRings);
                   vv.removePreRenderPaintable(radialLayoutRings);
-                  if ((layoutAlgorithm instanceof TreeLayoutAlgorithm
-                          || layoutAlgorithm instanceof BalloonLayoutAlgorithm
-                          || layoutAlgorithm instanceof RadialTreeLayoutAlgorithm)
+                  if ((layoutAlgorithm instanceof TreeLayoutAlgorithm)
                       && vv.getModel().getNetwork().getType().isUndirected()) {
                     Graph tree = SpanningTreeAdapter.getSpanningTree(vv.getModel().getNetwork());
                     LayoutModel positionModel = this.getTreeLayoutPositions(tree, layoutAlgorithm);

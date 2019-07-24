@@ -31,10 +31,8 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.ScalingControl;
-import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
-import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.repulsion.StandardRepulsion;
@@ -153,9 +151,7 @@ public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
                 () -> {
                   LayoutHelper.Layouts layoutType = (LayoutHelper.Layouts) jcb.getSelectedItem();
                   LayoutAlgorithm layoutAlgorithm = layoutType.getLayoutAlgorithm();
-                  if (layoutAlgorithm instanceof TreeLayoutAlgorithm
-                      || layoutAlgorithm instanceof BalloonLayoutAlgorithm
-                      || layoutAlgorithm instanceof RadialTreeLayoutAlgorithm) {
+                  if (layoutAlgorithm instanceof TreeLayoutAlgorithm) {
                     LayoutModel positionModel =
                         this.getTreeLayoutPositions(
                             SpanningTreeAdapter.getSpanningTree(vv.getModel().getNetwork()),

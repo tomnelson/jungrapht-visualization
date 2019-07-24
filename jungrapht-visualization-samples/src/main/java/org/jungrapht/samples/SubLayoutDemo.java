@@ -8,8 +8,8 @@
  */
 package org.jungrapht.samples;
 
-import static org.jungrapht.samples.util.LayoutHelper.Layouts;
-import static org.jungrapht.samples.util.LayoutHelper.getCombos;
+import static org.jungrapht.samples.util.SubLayoutHelper.Layouts;
+import static org.jungrapht.samples.util.SubLayoutHelper.getCombos;
 
 import java.awt.*;
 import java.awt.event.ItemEvent;
@@ -28,11 +28,9 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
-import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.CircleLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.AggregateLayoutModel;
@@ -312,7 +310,6 @@ public class SubLayoutDemo extends JPanel {
 
           LayoutAlgorithm<String> subLayoutAlgorithm = subLayoutType;
 
-
           LayoutModel<String> newLayoutModel =
               LoadingCacheLayoutModel.<String>builder()
                   .graph(subGraph)
@@ -321,13 +318,11 @@ public class SubLayoutDemo extends JPanel {
                       new RandomLocationTransformer<>(subLayoutSize.width, subLayoutSize.height, 0))
                   .build();
 
-          if (subLayoutAlgorithm instanceof TreeLayoutAlgorithm
-                  || subLayoutAlgorithm instanceof BalloonLayoutAlgorithm
-                  || subLayoutAlgorithm instanceof RadialTreeLayoutAlgorithm) {
+          if (subLayoutAlgorithm instanceof TreeLayoutAlgorithm) {
             LayoutModel positionModel =
-                    this.getTreeLayoutPositions(
-                            SpanningTreeAdapter.getSpanningTree(vv.getModel().getNetwork()),
-                            subLayoutAlgorithm);
+                this.getTreeLayoutPositions(
+                    SpanningTreeAdapter.getSpanningTree(vv.getModel().getNetwork()),
+                    subLayoutAlgorithm);
             newLayoutModel.setInitializer(positionModel);
             subLayoutAlgorithm = new StaticLayoutAlgorithm();
           }
@@ -352,7 +347,6 @@ public class SubLayoutDemo extends JPanel {
     model.accept(treeLayout);
     return model;
   }
-
 
   public static void main(String[] args) {
     JFrame f = new JFrame();
