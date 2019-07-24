@@ -149,7 +149,7 @@ public class NodeCollapseDemoWithLayouts extends JPanel {
     jcb.addActionListener(
         e -> {
           LayoutHelper.Layouts layoutType = (LayoutHelper.Layouts) jcb.getSelectedItem();
-          LayoutAlgorithm layoutAlgorithm = LayoutHelper.createLayout(layoutType);
+          LayoutAlgorithm layoutAlgorithm = layoutType.getLayoutAlgorithm();
           //              if (animateLayoutTransition.isSelected()) {
           LayoutAlgorithmTransition.animate(vv, layoutAlgorithm);
           //              } else {
@@ -246,7 +246,7 @@ public class NodeCollapseDemoWithLayouts extends JPanel {
     JButton reset = new JButton("Reset");
     reset.addActionListener(
         e -> {
-          layoutAlgorithm = LayoutHelper.createLayout((LayoutHelper.Layouts) jcb.getSelectedItem());
+          layoutAlgorithm = ((LayoutHelper.Layouts) jcb.getSelectedItem()).getLayoutAlgorithm();
           LayoutAlgorithmTransition.animate(vv, layoutAlgorithm);
           exclusions.clear();
           vv.repaint();

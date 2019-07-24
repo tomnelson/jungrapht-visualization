@@ -120,14 +120,9 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
     int overallHeight = calculateHeight(layoutModel, roots);
     overallHeight += 2 * verticalNodeSpacing;
 
-    //    if (overallWidth > overallHeight) {
-    //      verticalNodeSpacing *= (float) overallWidth / (float) overallHeight / 4.0;
-    //      overallHeight = overallWidth / 4;
-    //    }
-
-    layoutModel.setSize(
-        Math.max(layoutModel.getWidth(), overallWidth),
-        Math.max(layoutModel.getHeight(), overallHeight));
+    int largerWidth = Math.max(layoutModel.getWidth(), overallWidth);
+    int largerHeight = Math.max(layoutModel.getHeight(), overallHeight);
+    layoutModel.setSize(largerWidth, largerHeight);
     log.info("layoutModel.getHeight() {}", layoutModel.getHeight());
     log.info("overallHeight {}", overallHeight);
 

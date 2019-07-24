@@ -138,7 +138,7 @@ public class ShowLayouts extends JPanel {
             SwingUtilities.invokeLater(
                 () -> {
                   LayoutHelper.Layouts layoutType = (LayoutHelper.Layouts) jcb.getSelectedItem();
-                  LayoutAlgorithm layoutAlgorithm = LayoutHelper.createLayout(layoutType);
+                  LayoutAlgorithm layoutAlgorithm = layoutType.getLayoutAlgorithm();
                   vv.removePreRenderPaintable(balloonLayoutRings);
                   vv.removePreRenderPaintable(radialLayoutRings);
                   if ((layoutAlgorithm instanceof TreeLayoutAlgorithm

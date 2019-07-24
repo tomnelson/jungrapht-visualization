@@ -150,7 +150,7 @@ public class CliqueLayoutDemo extends JPanel {
     layoutTypeComboBox.addItemListener(
         e -> {
           if (e.getStateChange() == ItemEvent.SELECTED) {
-            vv.getModel().getLayoutModel().accept(createLayout((Layouts) e.getItem()));
+            vv.getModel().getLayoutModel().accept(((Layouts) e.getItem()).getLayoutAlgorithm());
           }
         });
 

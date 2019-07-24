@@ -9,7 +9,6 @@
 package org.jungrapht.samples;
 
 import static org.jungrapht.samples.util.LayoutHelper.Layouts;
-import static org.jungrapht.samples.util.LayoutHelper.createLayout;
 import static org.jungrapht.samples.util.LayoutHelper.getCombos;
 
 import java.awt.*;
@@ -151,7 +150,7 @@ public class SubLayoutDemo extends JPanel {
     layoutTypeComboBox.addItemListener(
         e -> {
           if (e.getStateChange() == ItemEvent.SELECTED) {
-            vv.getModel().getLayoutModel().accept(createLayout((Layouts) e.getItem()));
+            vv.getModel().getLayoutModel().accept(((Layouts) e.getItem()).getLayoutAlgorithm());
           }
         });
 
@@ -170,7 +169,7 @@ public class SubLayoutDemo extends JPanel {
     subLayoutTypeComboBox.addItemListener(
         e -> {
           if (e.getStateChange() == ItemEvent.SELECTED) {
-            subLayoutType = (createLayout((Layouts) e.getItem()));
+            subLayoutType = (((Layouts) e.getItem()).getLayoutAlgorithm());
             uncluster();
             clusterPicked();
           }

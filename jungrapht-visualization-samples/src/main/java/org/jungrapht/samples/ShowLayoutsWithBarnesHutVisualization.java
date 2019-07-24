@@ -152,7 +152,7 @@ public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
             SwingUtilities.invokeLater(
                 () -> {
                   LayoutHelper.Layouts layoutType = (LayoutHelper.Layouts) jcb.getSelectedItem();
-                  LayoutAlgorithm layoutAlgorithm = LayoutHelper.createLayout(layoutType);
+                  LayoutAlgorithm layoutAlgorithm = layoutType.getLayoutAlgorithm();
                   if (layoutAlgorithm instanceof TreeLayoutAlgorithm
                       || layoutAlgorithm instanceof BalloonLayoutAlgorithm
                       || layoutAlgorithm instanceof RadialTreeLayoutAlgorithm) {
