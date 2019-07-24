@@ -19,6 +19,7 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.samples.util.ControlHelpers;
+import org.jungrapht.samples.util.SpanningTreeAdapter;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.BaseVisualizationModel;
 import org.jungrapht.visualization.GraphZoomScrollPane;
@@ -27,9 +28,13 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
+import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.CircleLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.AggregateLayoutModel;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.LoadingCacheLayoutModel;
@@ -297,6 +302,8 @@ public class SubLayoutDemo extends JPanel {
               String nodeU = graph.getEdgeSource(edge);
               String nodeV = graph.getEdgeTarget(edge);
               if (picked.contains(nodeU) && picked.contains(nodeV)) {
+                subGraph.addVertex(nodeU);
+                subGraph.addVertex(nodeV);
                 // put this edge into the subgraph
                 subGraph.addEdge(nodeU, nodeV, edge);
               }
@@ -305,6 +312,7 @@ public class SubLayoutDemo extends JPanel {
 
           LayoutAlgorithm<String> subLayoutAlgorithm = subLayoutType;
 
+
           LayoutModel<String> newLayoutModel =
               LoadingCacheLayoutModel.<String>builder()
                   .graph(subGraph)
@@ -312,6 +320,17 @@ public class SubLayoutDemo extends JPanel {
                   .initializer(
                       new RandomLocationTransformer<>(subLayoutSize.width, subLayoutSize.height, 0))
                   .build();
+
+          if (subLayoutAlgorithm instanceof TreeLayoutAlgorithm
+                  || subLayoutAlgorithm instanceof BalloonLayoutAlgorithm
+                  || subLayoutAlgorithm instanceof RadialTreeLayoutAlgorithm) {
+            LayoutModel positionModel =
+                    this.getTreeLayoutPositions(
+                            SpanningTreeAdapter.getSpanningTree(vv.getModel().getNetwork()),
+                            subLayoutAlgorithm);
+            newLayoutModel.setInitializer(positionModel);
+            subLayoutAlgorithm = new StaticLayoutAlgorithm();
+          }
 
           clusteringLayoutModel.put(newLayoutModel, Point.of(center.getX(), center.getY()));
           newLayoutModel.accept(subLayoutAlgorithm);
@@ -327,6 +346,13 @@ public class SubLayoutDemo extends JPanel {
       vv.repaint();
     }
   }
+
+  LayoutModel getTreeLayoutPositions(Graph tree, LayoutAlgorithm treeLayout) {
+    LayoutModel model = LoadingCacheLayoutModel.builder().size(600, 600).graph(tree).build();
+    model.accept(treeLayout);
+    return model;
+  }
+
 
   public static void main(String[] args) {
     JFrame f = new JFrame();

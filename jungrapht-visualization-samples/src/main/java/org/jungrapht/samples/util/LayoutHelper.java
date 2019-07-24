@@ -17,7 +17,7 @@ import org.jungrapht.visualization.layout.algorithms.repulsion.StandardSpringRep
 public class LayoutHelper {
 
   public enum Layouts {
-    KK("Kamada Kawai", KKLayoutAlgorithm.builder().preRelaxDuration(1000).build()),
+    KK("Kamada Kawai", KKLayoutAlgorithm.builder().build()),
     CIRCLE("Circle", CircleLayoutAlgorithm.builder().build()),
     SELF_ORGANIZING_MAP("Self Organizing Map", ISOMLayoutAlgorithm.builder().build()),
     FR("Fruchterman Reingold (FR)", FRLayoutAlgorithm.builder().build()),
@@ -34,7 +34,7 @@ public class LayoutHelper {
             .build()),
     TREE(
         "Tree",
-        TreeLayoutAlgorithm.builder().horizontalNodeSpacing(100).verticalNodeSpacing(100).build()),
+        TreeLayoutAlgorithm.builder().build()),
     BALLOON("Balloon", BalloonLayoutAlgorithm.builder().build()),
     RADIAL("Radial", RadialTreeLayoutAlgorithm.builder().build());
 
