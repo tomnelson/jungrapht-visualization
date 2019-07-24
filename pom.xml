@@ -52,6 +52,20 @@
     <surefire.plugin.version>2.19.1</surefire.plugin.version>
     <source.plugin.version>3.0.1</source.plugin.version>    
   </properties>
+  <developers>
+    <developer>
+      <id>tomnelson</id>
+      <name>Tom</name>
+      <email>tomnelson@users.noreply.github.com</email>
+      <organization>WrenchIO</organization>
+      <organizationUrl>https://wrench.io/</organizationUrl>
+      <timezone>-5</timezone>
+      <roles>
+        <role>Owner</role>
+        <role>Developer</role>
+      </roles>
+    </developer>
+  </developers>
   <dependencyManagement>
     <dependencies>
       <dependency>
