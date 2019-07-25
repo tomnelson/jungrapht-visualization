@@ -238,6 +238,19 @@ public class TestGraphs {
     return graph;
   }
 
+  public static Graph<String, Number> getGeneratedNetwork2() {
+
+    Graph<String, Number> graph =
+            GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.directedPseudograph())
+                    .vertexSupplier(new NodeSupplier())
+                    .edgeSupplier(new EdgeSupplier())
+                    .buildGraph();
+    BarabasiAlbertGraphGenerator<String, Number> gen = new BarabasiAlbertGraphGenerator<>(2, 2, 800);
+    gen.generateGraph(graph, null);
+    return graph;
+  }
+
+
   static class NodeSupplier implements Supplier<String> {
     char a = 'a';
 

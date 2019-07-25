@@ -1,17 +1,16 @@
 package org.jungrapht.samples;
 
-import java.awt.*;
-import java.util.Random;
-import java.util.stream.IntStream;
-import javax.swing.*;
 import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultGraphType;
-import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationViewer;
+import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
-import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFRRepulsion;
+import org.jungrapht.visualization.layout.algorithms.SpringLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutSpringRepulsion;
 import org.jungrapht.visualization.util.LightweightRenderingVisitor;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class PerformanceGraph {
   public static void main(String[] args) {
@@ -22,45 +21,31 @@ public class PerformanceGraph {
     JFrame f = new JFrame();
     f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-    Graph<String, String> g = createGraph();
+    Graph<String, Number> g = TestGraphs.getGeneratedNetwork2();
 
-    Dimension size = new Dimension(800, 800);
-    VisualizationViewer<String, String> vv =
+    Dimension layoutSize = new Dimension(2000, 2000);
+    Dimension viewSize = new Dimension(800, 800);
+    VisualizationViewer<String, Number> vv =
         new VisualizationViewer<>(
             g,
-            FRLayoutAlgorithm.<String>builder()
-                .repulsionContractBuilder(BarnesHutFRRepulsion.barnesHutBuilder())
-                .build(),
-            size,
-            size);
+                SpringLayoutAlgorithm.<String>builder()
+                        .repulsionContractBuilder(BarnesHutSpringRepulsion.barnesHutBuilder())
+                        .build(),
+            layoutSize,
+            viewSize);
+
 
     LightweightRenderingVisitor.visit(vv);
+    vv.scaleToLayout(new CrossoverScalingControl());
+
 
     DefaultModalGraphMouse<String, Double> graphMouse = new DefaultModalGraphMouse<>();
     vv.setGraphMouse(graphMouse);
+    vv.addKeyListener(graphMouse.getModeKeyListener());
+
 
     f.getContentPane().add(vv);
-    f.setSize(size);
-    f.setLocationRelativeTo(null);
+    f.setSize(viewSize);
     f.setVisible(true);
-  }
-
-  // This method summarizes several options
-  public static Graph<String, String> createGraph() {
-    Random random = new Random(0);
-    int numVertices = 2500;
-    int numEdges = 5000;
-    Graph<String, String> g =
-        GraphTypeBuilder.<String, String>forGraphType(DefaultGraphType.directedPseudograph())
-            .buildGraph();
-    IntStream.range(0, numVertices).forEach(i -> g.addVertex("v" + i));
-
-    for (int i = 0; i < numEdges; i++) {
-      int v0 = random.nextInt(numVertices);
-      int v1 = random.nextInt(numVertices);
-
-      g.addEdge("v" + v0, "v" + v1, "e" + i);
-    }
-    return g;
   }
 }
