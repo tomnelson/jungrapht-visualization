@@ -58,7 +58,7 @@ public class LayoutLensSupport<N, E> extends AbstractLensSupport<N, E> implement
    * Create an instance with the specified parameters.
    *
    * @param vv the visualization viewer used for rendering
-   * @param lensTransformer the lens transformer to use
+   * @param lensTransformer the lens layoutTransformer to use
    * @param lensGraphMouse the lens input handler
    */
   public LayoutLensSupport(

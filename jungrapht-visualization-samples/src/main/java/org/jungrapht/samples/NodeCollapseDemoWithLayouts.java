@@ -16,8 +16,10 @@ import java.util.Set;
 import java.util.function.Function;
 import javax.swing.*;
 import org.jgrapht.Graph;
+import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.LayoutHelper;
+import org.jungrapht.samples.util.SpanningTreeAdapter;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.BaseVisualizationModel;
 import org.jungrapht.visualization.GraphZoomScrollPane;
@@ -29,8 +31,12 @@ import org.jungrapht.visualization.decorators.EllipseNodeShapeFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
+import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
+import org.jungrapht.visualization.layout.model.LoadingCacheLayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
+import org.jungrapht.visualization.subLayout.Collapsable;
 import org.jungrapht.visualization.subLayout.GraphCollapser;
 import org.jungrapht.visualization.util.PredicatedParallelEdgeIndexFunction;
 import org.slf4j.Logger;
@@ -70,23 +76,12 @@ public class NodeCollapseDemoWithLayouts extends JPanel {
           + "<p>Use the 'Picking'/'Transforming' combo-box to switch"
           + "<p>between picking and transforming mode.</html>";
   /** the graph */
-  @SuppressWarnings("rawtypes")
-  Graph graph;
-
-  //  enum Layouts {
-  //    KAMADA_KAWAI,
-  //    FRUCHTERMAN_REINGOLD,
-  //    CIRCLE,
-  //    SPRING,
-  //    SELF_ORGANIZING_MAP
-  //  };
+  Graph<Collapsable<?>, Number> graph;
 
   /** the visual component and renderer for the graph */
-  @SuppressWarnings("rawtypes")
-  VisualizationViewer vv;
+  VisualizationViewer<Collapsable<?>, Number> vv;
 
-  @SuppressWarnings("rawtypes")
-  LayoutAlgorithm layoutAlgorithm;
+  LayoutAlgorithm<Collapsable<?>> layoutAlgorithm;
 
   GraphCollapser collapser;
 
@@ -94,16 +89,30 @@ public class NodeCollapseDemoWithLayouts extends JPanel {
   public NodeCollapseDemoWithLayouts() {
     setLayout(new BorderLayout());
     // create a simple graph for the demo
-    graph = TestGraphs.getOneComponentGraph();
+    Graph<String, Number> generatedGraph = TestGraphs.getOneComponentGraph();
 
-    collapser = new GraphCollapser(graph);
+    // make a graph of the same type but with Collapsable node types
+    this.graph =
+        GraphTypeBuilder.<Collapsable<?>, Number>forGraphType(generatedGraph.getType())
+            .buildGraph();
 
-    layoutAlgorithm = FRLayoutAlgorithm.builder().build();
+    for (Number edge : generatedGraph.edgeSet()) {
+      Collapsable<?> source = Collapsable.of(generatedGraph.getEdgeSource(edge));
+      Collapsable<?> target = Collapsable.of(generatedGraph.getEdgeTarget(edge));
+      this.graph.addVertex(source);
+      this.graph.addVertex(target);
+      this.graph.addEdge(source, target, edge);
+    }
 
-    Dimension preferredSize = new Dimension(600, 600);
-    final VisualizationModel visualizationModel =
-        new BaseVisualizationModel(graph, layoutAlgorithm, preferredSize);
-    vv = new VisualizationViewer(visualizationModel, preferredSize);
+    collapser = new GraphCollapser<>(graph);
+
+    layoutAlgorithm = FRLayoutAlgorithm.<Collapsable<?>>builder().build();
+
+    Dimension preferredSize = new Dimension(400, 400);
+
+    final VisualizationModel<Collapsable<?>, Number> visualizationModel =
+        new BaseVisualizationModel<>(graph, layoutAlgorithm, preferredSize);
+    vv = new VisualizationViewer<>(visualizationModel, preferredSize);
 
     vv.getRenderContext().setNodeShapeFunction(new ClusterNodeShapeFunction());
 
@@ -115,16 +124,10 @@ public class NodeCollapseDemoWithLayouts extends JPanel {
     vv.setBackground(Color.white);
 
     // add a listener for ToolTips
-    vv.setNodeToolTipFunction(
-        v -> {
-          if (v instanceof Graph) {
-            return ((Graph) v).vertexSet().toString();
-          }
-          return v;
-        });
+    vv.setNodeToolTipFunction(Object::toString);
 
     // the regular graph mouse for the normal view
-    final DefaultModalGraphMouse graphMouse = new DefaultModalGraphMouse();
+    final DefaultModalGraphMouse<Collapsable<?>, Number> graphMouse = new DefaultModalGraphMouse();
 
     vv.setGraphMouse(graphMouse);
 
@@ -136,80 +139,100 @@ public class NodeCollapseDemoWithLayouts extends JPanel {
     graphMouse.setMode(ModalGraphMouse.Mode.PICKING);
 
     LayoutHelper.Layouts[] combos = LayoutHelper.getCombos();
+    final JRadioButton animateLayoutTransition = new JRadioButton("Animate Layout Transition");
+
     final JComboBox jcb = new JComboBox(combos);
-    // use a renderer to shorten the layout name presentation
-    //        jcb.setRenderer(new DefaultListCellRenderer() {
-    //            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-    //                String valueString = value.toString();
-    //                valueString = valueString.substring(valueString.lastIndexOf('.')+1);
-    //                return super.getListCellRendererComponent(list, valueString, index, isSelected,
-    //                        cellHasFocus);
-    //            }
-    //        });
     jcb.addActionListener(
-        e -> {
-          LayoutHelper.Layouts layoutType = (LayoutHelper.Layouts) jcb.getSelectedItem();
-          LayoutAlgorithm layoutAlgorithm = layoutType.getLayoutAlgorithm();
-          //              if (animateLayoutTransition.isSelected()) {
-          LayoutAlgorithmTransition.animate(vv, layoutAlgorithm);
-          //              } else {
-          //                LayoutAlgorithmTransition.apply(vv, layoutAlgorithm);
-          //              }
-        });
+        e ->
+            SwingUtilities.invokeLater(
+                () -> {
+                  LayoutHelper.Layouts layoutType = (LayoutHelper.Layouts) jcb.getSelectedItem();
+                  LayoutAlgorithm layoutAlgorithm = layoutType.getLayoutAlgorithm();
+                  log.info("got a {}", layoutAlgorithm);
+                  if ((layoutAlgorithm instanceof TreeLayoutAlgorithm)
+                      && vv.getModel().getNetwork().getType().isUndirected()) {
+                    Graph tree = SpanningTreeAdapter.getSpanningTree(vv.getModel().getNetwork());
+                    LayoutModel positionModel = this.getTreeLayoutPositions(tree, layoutAlgorithm);
+                    vv.getModel().getLayoutModel().setInitializer(positionModel);
+                    layoutAlgorithm = new StaticLayoutAlgorithm();
+                  }
+                  if (animateLayoutTransition.isSelected()) {
+                    LayoutAlgorithmTransition.animate(vv, layoutAlgorithm);
+                  } else {
+                    LayoutAlgorithmTransition.apply(vv, layoutAlgorithm);
+                  }
+                }));
 
     jcb.setSelectedItem(LayoutHelper.Layouts.FR);
-
-    //    jcb.addActionListener(new LayoutChooser(jcb, vv));
 
     jcb.setSelectedItem(LayoutHelper.Layouts.FR);
 
     JButton collapse = new JButton("Collapse");
     collapse.addActionListener(
-        e -> {
-          Collection picked = new HashSet(vv.getSelectedNodeState().getSelected());
-          if (picked.size() > 1) {
-            LayoutModel layoutModel = vv.getModel().getLayoutModel();
-            Graph inGraph = vv.getModel().getNetwork();
-            Graph clusterGraph = collapser.getClusterGraph(inGraph, picked);
-            Graph g = collapser.collapse(inGraph, clusterGraph);
-            double sumx = 0;
-            double sumy = 0;
-            for (Object v : picked) {
-              Point p = (Point) layoutModel.apply(v);
-              sumx += p.x;
-              sumy += p.y;
-            }
-            Point cp = Point.of(sumx / picked.size(), sumy / picked.size());
-            layoutModel.lock(false);
-            layoutModel.set(clusterGraph, cp);
-            log.trace("put the cluster at " + cp);
-            layoutModel.lock(clusterGraph, true);
-            vv.getModel().setNetwork(g);
-            layoutModel.lock(clusterGraph, false);
+        e ->
+            SwingUtilities.invokeLater(
+                () -> {
+                  Collection<Collapsable<?>> picked =
+                      new HashSet(vv.getSelectedNodeState().getSelected());
+                  if (picked.size() > 1) {
+                    Graph<Collapsable<?>, Number> inGraph = vv.getModel().getNetwork();
+                    LayoutModel<Collapsable<?>> layoutModel = vv.getModel().getLayoutModel();
+                    Graph<Collapsable<?>, Number> clusterGraph =
+                        collapser.getClusterGraph(inGraph, picked);
+                    log.info("clusterGraph:" + clusterGraph);
+                    Graph<Collapsable<?>, Number> g = collapser.collapse(inGraph, clusterGraph);
+                    log.info("g:" + g);
 
-            vv.getRenderContext().getParallelEdgeIndexFunction().reset();
-            vv.repaint();
-          }
-        });
+                    double sumx = 0;
+                    double sumy = 0;
+                    for (Collapsable<?> v : picked) {
+                      Point p = layoutModel.apply(v);
+                      sumx += p.x;
+                      sumy += p.y;
+                    }
+                    Point cp = Point.of(sumx / picked.size(), sumy / picked.size());
+                    layoutModel
+                        .getLayoutStateChangeSupport()
+                        .fireLayoutStateChanged(layoutModel, true);
+                    layoutModel.lock(false);
+                    layoutModel.set(Collapsable.of(clusterGraph), cp);
+                    log.info("put the cluster at " + cp);
+                    layoutModel.lock(Collapsable.of(clusterGraph), true);
+                    layoutModel.lock(true);
+                    vv.getModel().setNetwork(g);
+
+                    vv.getRenderContext().getParallelEdgeIndexFunction().reset();
+                    layoutModel.accept(vv.getModel().getLayoutAlgorithm());
+                    vv.getSelectedNodeState().clear();
+
+                    vv.repaint();
+                  }
+                }));
 
     JButton expand = new JButton("Expand");
     expand.addActionListener(
-        e -> {
-          Collection picked = new HashSet(vv.getSelectedNodeState().getSelected());
-          for (Object v : picked) {
-            if (v instanceof Graph) {
-              Graph inGraph = vv.getModel().getNetwork();
-              LayoutModel layoutModel = vv.getModel().getLayoutModel();
+        e ->
+            SwingUtilities.invokeLater(
+                () -> {
+                  Collection<Collapsable<?>> picked =
+                      new HashSet(vv.getSelectedNodeState().getSelected());
+                  for (Collapsable<?> v : picked) {
+                    if (v.get() instanceof Graph) {
+                      Graph<Collapsable<?>, Number> inGraph = vv.getModel().getNetwork();
+                      LayoutModel<Collapsable<?>> layoutModel = vv.getModel().getLayoutModel();
+                      Graph<Collapsable<?>, Number> g =
+                          collapser.expand(
+                              graph, inGraph, (Collapsable<Graph<Collapsable<?>, Number>>) v);
 
-              Graph g = collapser.expand(graph, inGraph, (Graph) v);
+                      layoutModel.lock(false);
+                      vv.getModel().setNetwork(g);
 
-              vv.getModel().setNetwork(g);
-
-              vv.getRenderContext().getParallelEdgeIndexFunction().reset();
-            }
-            vv.repaint();
-          }
-        });
+                      vv.getRenderContext().getParallelEdgeIndexFunction().reset();
+                    }
+                    vv.getSelectedNodeState().clear();
+                    vv.repaint();
+                  }
+                }));
 
     JButton compressEdges = new JButton("Compress Edges");
     compressEdges.addActionListener(
@@ -246,8 +269,7 @@ public class NodeCollapseDemoWithLayouts extends JPanel {
     JButton reset = new JButton("Reset");
     reset.addActionListener(
         e -> {
-          layoutAlgorithm = ((LayoutHelper.Layouts) jcb.getSelectedItem()).getLayoutAlgorithm();
-          LayoutAlgorithmTransition.animate(vv, layoutAlgorithm);
+          vv.getModel().setNetwork(graph);
           exclusions.clear();
           vv.repaint();
         });
@@ -274,30 +296,33 @@ public class NodeCollapseDemoWithLayouts extends JPanel {
     controls.add(modePanel);
     JPanel jcbPanel = new JPanel();
     jcbPanel.add(jcb);
+    jcbPanel.add(animateLayoutTransition);
     controls.add(jcbPanel);
     controls.add(help);
     add(controls, BorderLayout.EAST);
+  }
+
+  LayoutModel getTreeLayoutPositions(Graph tree, LayoutAlgorithm treeLayout) {
+    LayoutModel model = LoadingCacheLayoutModel.builder().size(600, 600).graph(tree).build();
+    model.accept(treeLayout);
+    return model;
   }
 
   /**
    * a demo class that will create a node shape that is either a polygon or star. The number of
    * sides corresponds to the number of nodes that were collapsed into the node represented by this
    * shape.
-   *
-   * @author Tom Nelson
-   * @param <N> the node type
    */
-  class ClusterNodeShapeFunction<N> extends EllipseNodeShapeFunction<N> {
+  class ClusterNodeShapeFunction extends EllipseNodeShapeFunction<Collapsable<?>> {
 
     ClusterNodeShapeFunction() {
-      setSizeTransformer(new ClusterNodeSizeFunction<>(20));
+      setSizeTransformer(new ClusterNodeSizeFunction(20));
     }
 
     @Override
-    public Shape apply(N v) {
-      if (v instanceof Graph) {
-        @SuppressWarnings("rawtypes")
-        int size = ((Graph) v).vertexSet().size();
+    public Shape apply(Collapsable<?> v) {
+      if (v.get() instanceof Graph) {
+        int size = ((Graph) v.get()).vertexSet().size();
         if (size < 8) {
           int sides = Math.max(size, 3);
           return factory.getRegularPolygon(v, sides);
@@ -312,56 +337,21 @@ public class NodeCollapseDemoWithLayouts extends JPanel {
   /**
    * A demo class that will make nodes larger if they represent a collapsed collection of original
    * nodes
-   *
-   * @author Tom Nelson
-   * @param <N> the node type
    */
-  class ClusterNodeSizeFunction<N> implements Function<N, Integer> {
+  class ClusterNodeSizeFunction implements Function<Collapsable<?>, Integer> {
     int size;
 
     public ClusterNodeSizeFunction(Integer size) {
       this.size = size;
     }
 
-    public Integer apply(N v) {
-      if (v instanceof Graph) {
+    public Integer apply(Collapsable<?> v) {
+      if (v.get() instanceof Graph) {
         return 30;
       }
       return size;
     }
   }
-
-  //  private class LayoutChooser implements ActionListener {
-  //    private final JComboBox<?> jcb;
-  //
-  //    @SuppressWarnings("rawtypes")
-  //    private final VisualizationViewer vv;
-  //
-  //    private LayoutChooser(JComboBox<?> jcb, VisualizationViewer<Object, ?> vv) {
-  //      super();
-  //      this.jcb = jcb;
-  //      this.vv = vv;
-  //    }
-  //
-  //    @SuppressWarnings({"unchecked", "rawtypes"})
-  //    public void actionPerformed(ActionEvent arg0) {
-  //      Layouts layoutType = (Layouts) jcb.getSelectedItem();
-  //
-  //      try {
-  //        layoutAlgorithm = createLayout(layoutType);
-  //        LayoutAlgorithmTransition.animate(vv, layoutAlgorithm);
-  //        vv.getRenderContext().getMultiLayerTransformer().setToIdentity();
-  //        vv.repaint();
-  //
-  //      } catch (Exception e) {
-  //        e.printStackTrace();
-  //      }
-  //    }
-  //  }
-
-  //  private Layouts[] getCombos() {
-  //    return Layouts.values();
-  //  }
 
   public static void main(String[] args) {
     JFrame f = new JFrame();

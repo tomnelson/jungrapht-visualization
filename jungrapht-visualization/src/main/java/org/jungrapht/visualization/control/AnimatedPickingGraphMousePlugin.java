@@ -45,7 +45,6 @@ public class AnimatedPickingGraphMousePlugin<N, E> extends AbstractGraphMousePlu
 
   /**
    * Creates an instance with the specified mouse event modifiers.
-   *
    * @param selectionModifiers the mouse event modifiers to use.
    */
   public AnimatedPickingGraphMousePlugin(int selectionModifiers) {

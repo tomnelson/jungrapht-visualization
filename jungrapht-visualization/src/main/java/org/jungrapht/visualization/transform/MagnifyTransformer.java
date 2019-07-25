@@ -47,7 +47,7 @@ public class MagnifyTransformer extends LensTransformer implements MutableTransf
    * Create an instance with a possibly shared transform.
    *
    * @param d the size used for the lens
-   * @param delegate the transformer to use
+   * @param delegate the layoutTransformer to use
    */
   public MagnifyTransformer(Dimension d, MutableTransformer delegate) {
     super(d, delegate);

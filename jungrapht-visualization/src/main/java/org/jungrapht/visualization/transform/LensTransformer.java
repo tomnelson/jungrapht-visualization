@@ -46,7 +46,7 @@ public abstract class LensTransformer extends MutableTransformerDecorator
 
   /**
    * @param d the size used for the lens
-   * @param delegate the transformer to use
+   * @param delegate the layoutTransformer to use
    */
   public LensTransformer(Dimension d, MutableTransformer delegate) {
     this(new Lens(d), delegate);
@@ -54,7 +54,7 @@ public abstract class LensTransformer extends MutableTransformerDecorator
 
   /**
    * @param lens
-   * @param delegate the transformer to use
+   * @param delegate the layoutTransformer to use
    */
   public LensTransformer(Lens lens, MutableTransformer delegate) {
     super(delegate);

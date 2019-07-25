@@ -38,7 +38,7 @@ public class MagnifyShapeTransformer extends MagnifyTransformer
 
   /**
    * @param d the size used for the lens
-   * @param delegate the transformer to use
+   * @param delegate the layoutTransformer to use
    */
   public MagnifyShapeTransformer(Dimension d, MutableTransformer delegate) {
     super(d, delegate);

@@ -47,7 +47,7 @@ public class HyperbolicShapeTransformer extends HyperbolicTransformer
    * layoutSize changes on the component, with a possibly shared transform <code>delegate</code>.
    *
    * @param d the size for the lens
-   * @param delegate the transformer to use
+   * @param delegate the layoutTransformer to use
    */
   public HyperbolicShapeTransformer(Dimension d, MutableTransformer delegate) {
     super(d, delegate);

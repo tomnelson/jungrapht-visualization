@@ -225,6 +225,27 @@ public class TestGraphs {
     return graph;
   }
 
+  public static Graph<String, Number> createSmallGraph(boolean directed) {
+    Graph<String, Number> graph;
+    if (directed) {
+      graph =
+          GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.directedMultigraph())
+              .buildGraph();
+    } else {
+      graph =
+          GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.multigraph()).buildGraph();
+    }
+
+    graph.addVertex("A");
+    graph.addVertex("B");
+    graph.addVertex("C");
+    graph.addEdge("A", "B", 1);
+    graph.addEdge("A", "C", 2);
+    graph.addEdge("B", "C", 3);
+
+    return graph;
+  }
+
   /** @return the network for this demo */
   public static Graph<String, Number> getGeneratedNetwork() {
 
@@ -241,15 +262,15 @@ public class TestGraphs {
   public static Graph<String, Number> getGeneratedNetwork2() {
 
     Graph<String, Number> graph =
-            GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.directedPseudograph())
-                    .vertexSupplier(new NodeSupplier())
-                    .edgeSupplier(new EdgeSupplier())
-                    .buildGraph();
-    BarabasiAlbertGraphGenerator<String, Number> gen = new BarabasiAlbertGraphGenerator<>(2, 2, 800);
+        GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.directedPseudograph())
+            .vertexSupplier(new NodeSupplier())
+            .edgeSupplier(new EdgeSupplier())
+            .buildGraph();
+    BarabasiAlbertGraphGenerator<String, Number> gen =
+        new BarabasiAlbertGraphGenerator<>(2, 2, 800);
     gen.generateGraph(graph, null);
     return graph;
   }
-
 
   static class NodeSupplier implements Supplier<String> {
     char a = 'a';

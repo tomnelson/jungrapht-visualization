@@ -42,7 +42,7 @@ public class AnnotationPaintable implements VisualizationServer.Paintable {
   protected AnnotationRenderer annotationRenderer;
 
   protected RenderContext<?, ?> rc;
-  protected AffineTransformer transformer;
+  protected AffineTransformer layoutTransformer;
 
   public AnnotationPaintable(RenderContext<?, ?> rc, AnnotationRenderer annotationRenderer) {
     this.rc = rc;
@@ -50,9 +50,9 @@ public class AnnotationPaintable implements VisualizationServer.Paintable {
     MutableTransformer mt =
         rc.getMultiLayerTransformer().getTransformer(MultiLayerTransformer.Layer.LAYOUT);
     if (mt instanceof AffineTransformer) {
-      transformer = (AffineTransformer) mt;
+      layoutTransformer = (AffineTransformer) mt;
     } else if (mt instanceof LensTransformer) {
-      transformer = (AffineTransformer) ((LensTransformer) mt).getDelegate();
+      layoutTransformer = (AffineTransformer) ((LensTransformer) mt).getDelegate();
     }
   }
 
@@ -78,7 +78,7 @@ public class AnnotationPaintable implements VisualizationServer.Paintable {
       if (ann instanceof Shape) {
         Shape shape = (Shape) ann;
         Paint paint = annotation.getPaint();
-        Shape s = transformer.transform(shape);
+        Shape s = layoutTransformer.transform(shape);
         g2d.setPaint(paint);
         if (annotation.isFill()) {
           g2d.fill(s);
@@ -98,9 +98,9 @@ public class AnnotationPaintable implements VisualizationServer.Paintable {
         Dimension d = component.getPreferredSize();
         AffineTransform old = g2d.getTransform();
         AffineTransform base = new AffineTransform(old);
-        AffineTransform xform = transformer.getTransform();
+        AffineTransform xform = layoutTransformer.getTransform();
 
-        double rotation = transformer.getRotation();
+        double rotation = layoutTransformer.getRotation();
         // unrotate the annotation
         AffineTransform unrotate = AffineTransform.getRotateInstance(-rotation, p.getX(), p.getY());
         base.concatenate(xform);
