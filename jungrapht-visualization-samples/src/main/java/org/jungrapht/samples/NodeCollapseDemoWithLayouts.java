@@ -148,7 +148,7 @@ public class NodeCollapseDemoWithLayouts extends JPanel {
                 () -> {
                   LayoutHelper.Layouts layoutType = (LayoutHelper.Layouts) jcb.getSelectedItem();
                   LayoutAlgorithm layoutAlgorithm = layoutType.getLayoutAlgorithm();
-                  log.info("got a {}", layoutAlgorithm);
+                  log.trace("got a {}", layoutAlgorithm);
                   if ((layoutAlgorithm instanceof TreeLayoutAlgorithm)
                       && vv.getModel().getNetwork().getType().isUndirected()) {
                     Graph tree = SpanningTreeAdapter.getSpanningTree(vv.getModel().getNetwork());
@@ -179,9 +179,9 @@ public class NodeCollapseDemoWithLayouts extends JPanel {
                     LayoutModel<Collapsable<?>> layoutModel = vv.getModel().getLayoutModel();
                     Graph<Collapsable<?>, Number> clusterGraph =
                         collapser.getClusterGraph(inGraph, picked);
-                    log.info("clusterGraph:" + clusterGraph);
+                    log.trace("clusterGraph:" + clusterGraph);
                     Graph<Collapsable<?>, Number> g = collapser.collapse(inGraph, clusterGraph);
-                    log.info("g:" + g);
+                    log.trace("g:" + g);
 
                     double sumx = 0;
                     double sumy = 0;
@@ -196,7 +196,7 @@ public class NodeCollapseDemoWithLayouts extends JPanel {
                         .fireLayoutStateChanged(layoutModel, true);
                     layoutModel.lock(false);
                     layoutModel.set(Collapsable.of(clusterGraph), cp);
-                    log.info("put the cluster at " + cp);
+                    log.trace("put the cluster at " + cp);
                     layoutModel.lock(Collapsable.of(clusterGraph), true);
                     layoutModel.lock(true);
                     vv.getModel().setNetwork(g);

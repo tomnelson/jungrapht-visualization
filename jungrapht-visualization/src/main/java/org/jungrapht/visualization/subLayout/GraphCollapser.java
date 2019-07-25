@@ -54,6 +54,7 @@ public class GraphCollapser<E> {
 
     // add all edges from the inGraph, unless both endpoints of
     // the edge are in the cluster
+    log.trace("edgeSet {}", inGraph.edgeSet());
     for (E e : inGraph.edgeSet()) {
 
       Collapsable<?> u = inGraph.getEdgeSource(e);
@@ -61,6 +62,7 @@ public class GraphCollapser<E> {
 
       // only add edges whose endpoints are not both in the cluster
       if (cluster.contains(u) && cluster.contains(v)) {
+        log.trace("leaving out {} from {} to {}", e, u, v);
         continue;
       }
 
@@ -72,7 +74,7 @@ public class GraphCollapser<E> {
         graph.addEdge(u, v, e);
       }
     }
-    log.info("collapsed graph is {}" + graph);
+    log.trace("collapsed graph is {}" + graph);
     return graph;
   }
 
@@ -152,10 +154,10 @@ public class GraphCollapser<E> {
   }
 
   public boolean contains(Collapsable<Graph<Collapsable<?>, E>> inGraph, Collapsable<?> inNode) {
-    log.info("inGraph is {}", inGraph);
-    log.info("looking for {}", inNode);
+    log.trace("inGraph is {}", inGraph);
+    log.trace("looking for {}", inNode);
     boolean contained = false;
-    log.info(
+    log.trace(
         "check inGraph.vertexSet {} contains {} is {}",
         inGraph.get().vertexSet(),
         inNode,
@@ -167,7 +169,7 @@ public class GraphCollapser<E> {
     }
 
     for (Collapsable<?> node : inGraph.get().vertexSet()) {
-      log.info("node.get() {} instanceof Graph is {}", node.get(), node.get() instanceof Graph);
+      log.trace("node.get() {} instanceof Graph is {}", node.get(), node.get() instanceof Graph);
       contained |=
           (node.get() instanceof Graph)
               && contains((Collapsable<Graph<Collapsable<?>, E>>) node, inNode);

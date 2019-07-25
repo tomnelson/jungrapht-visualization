@@ -84,9 +84,7 @@ public class NodeCollapseDemo extends JPanel {
     setLayout(new BorderLayout());
 
     // create a simple graph for the demo
-    Graph<String, Number> generatedGraph = TestGraphs.createSmallGraph(false);
-
-    //        TestGraphs.getOneComponentGraph();
+    Graph<String, Number> generatedGraph = TestGraphs.getOneComponentGraph();
     // make a graph of the same type but with Collapsable node types
     this.graph =
         GraphTypeBuilder.<Collapsable<?>, Number>forGraphType(generatedGraph.getType())
@@ -120,11 +118,9 @@ public class NodeCollapseDemo extends JPanel {
 
     vv.setBackground(Color.white);
 
-    vv.getRenderContext().setNodeLabelFunction(Object::toString);
-    vv.getRenderContext().setEdgeLabelFunction(Object::toString);
-
     // add a listener for ToolTips
     vv.setNodeToolTipFunction(Object::toString);
+    vv.setEdgeToolTipFunction(Object::toString);
 
     // the regular graph mouse for the normal view
     final DefaultModalGraphMouse<Collapsable<?>, Number> graphMouse = new DefaultModalGraphMouse();
@@ -150,9 +146,9 @@ public class NodeCollapseDemo extends JPanel {
                     LayoutModel<Collapsable<?>> layoutModel = vv.getModel().getLayoutModel();
                     Graph<Collapsable<?>, Number> clusterGraph =
                         collapser.getClusterGraph(inGraph, picked);
-                    log.info("clusterGraph:" + clusterGraph);
+                    log.trace("clusterGraph:" + clusterGraph);
                     Graph<Collapsable<?>, Number> g = collapser.collapse(inGraph, clusterGraph);
-                    log.info("g:" + g);
+                    log.trace("g:" + g);
 
                     double sumx = 0;
                     double sumy = 0;
@@ -167,7 +163,7 @@ public class NodeCollapseDemo extends JPanel {
                         .fireLayoutStateChanged(layoutModel, true);
                     layoutModel.lock(false);
                     layoutModel.set(Collapsable.of(clusterGraph), cp);
-                    log.info("put the cluster at " + cp);
+                    log.trace("put the cluster at " + cp);
                     layoutModel.lock(Collapsable.of(clusterGraph), true);
                     layoutModel.lock(true);
                     vv.getModel().setNetwork(g);

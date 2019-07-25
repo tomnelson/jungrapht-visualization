@@ -142,8 +142,9 @@ public class TestGraphs {
    */
   public static Graph<String, Number> getOneComponentGraph() {
 
+    Integer n = 0;
     Graph<String, Number> graph =
-        GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.simple()).buildGraph();
+        GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.pseudograph()).buildGraph();
 
     // let's throw in a clique, too
     for (int i = 1; i <= 10; i++) {
@@ -152,7 +153,7 @@ public class TestGraphs {
         String i2 = "" + j;
         graph.addVertex(i1);
         graph.addVertex(i2);
-        graph.addEdge(i1, i2, Math.pow(i + 2, j));
+        graph.addEdge(i1, i2, n++);
       }
     }
 
@@ -166,17 +167,16 @@ public class TestGraphs {
         String i2 = "" + j;
         graph.addVertex(i1);
         graph.addVertex(i2);
-        graph.addEdge(i1, i2, Math.pow(i + 2, j));
+        graph.addEdge(i1, i2, n++);
       }
     }
     Iterator<String> nodeIt = graph.vertexSet().iterator();
     String current = nodeIt.next();
-    int i = 0;
     while (nodeIt.hasNext()) {
       String next = nodeIt.next();
       graph.addVertex(current);
       graph.addVertex(next);
-      graph.addEdge(current, next, i++);
+      graph.addEdge(current, next, n++);
     }
 
     return graph;
