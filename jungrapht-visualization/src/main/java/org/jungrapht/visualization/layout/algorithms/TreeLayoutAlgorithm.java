@@ -123,12 +123,14 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
     int largerWidth = Math.max(layoutModel.getWidth(), overallWidth);
     int largerHeight = Math.max(layoutModel.getHeight(), overallHeight);
     layoutModel.setSize(largerWidth, largerHeight);
-    log.info("layoutModel.getHeight() {}", layoutModel.getHeight());
-    log.info("overallHeight {}", overallHeight);
+    log.trace("layoutModel.getWidth() {}", layoutModel.getWidth());
+    log.trace("overallWidth {}", overallWidth);
+    log.trace("layoutModel.getHeight() {}", layoutModel.getHeight());
+    log.trace("overallHeight {}", overallHeight);
 
     int x = 0;
     int y = getInitialY(layoutModel.getHeight(), overallHeight);
-    log.info("got initial y of {}", y);
+    log.trace("got initial y of {}", y);
 
     Set<N> seen = new HashSet<>();
     for (N node : roots) {
@@ -163,7 +165,7 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
         sizeXofChild = this.basePositions.get(element);
         x += sizeXofChild / 2;
         buildTree(layoutModel, element, x, y);
-        x += sizeXofChild + horizontalNodeSpacing;
+        x += sizeXofChild / 2 + horizontalNodeSpacing;
       }
     }
   }

@@ -134,7 +134,7 @@ public class EdgeSortingTreeLayoutAlgorithm<N, E> extends TreeLayoutAlgorithm<N>
         x += sizeXofChild / 2;
         buildTree(layoutModel, element, x, y);
 
-        x += sizeXofChild + horizontalNodeSpacing;
+        x += sizeXofChild / 2 + horizontalNodeSpacing;
       }
     }
   }
