@@ -22,6 +22,7 @@ import org.jungrapht.visualization.GraphZoomScrollPane;
 import org.jungrapht.visualization.LayeredIcon;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationViewer;
+import org.jungrapht.visualization.annotations.SelectedNodePaintable;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.LensMagnificationGraphMousePlugin;
@@ -46,21 +47,7 @@ import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
 import org.jungrapht.visualization.util.IconCache;
 import org.jungrapht.visualization.util.LightweightRenderingVisitor;
 
-/**
- * Demonstrates the use of images to represent graph nodes. The images are added to the
- * DefaultGraphLabelRenderer and can either be offset from the node, or centered on the node.
- * Additionally, the relative positioning of the label and image is controlled by subclassing the
- * DefaultGraphLabelRenderer and setting the appropriate properties on its JLabel superclass
- * FancyGraphLabelRenderer
- *
- * <p>The images used in this demo (courtesy of slashdot.org) are rectangular but with a transparent
- * background. When nodes are represented by these images, it looks better if the actual shape of
- * the opaque part of the image is computed so that the edge arrowheads follow the visual shape of
- * the image. This demo uses the FourPassImageShaper class to compute the Shape from an image with
- * transparent background.
- *
- * @author Tom Nelson
- */
+/** @author Tom Nelson */
 public class LensNodeImageFromLabelShaperDemo extends JPanel {
 
   /** */
@@ -116,6 +103,7 @@ public class LensNodeImageFromLabelShaperDemo extends JPanel {
     vv.getRenderContext().setNodeShapeFunction(nodeImageShapeFunction);
     vv.getRenderContext().setNodeIconFunction(iconCache::get);
 
+    vv.addPostRenderPaintable(SelectedNodePaintable.builder(vv).build());
     // Get the pickedState and add a listener that will decorate the
     //Node images with a checkmark icon when they are picked
     MutableSelectedState<Number> ps = vv.getSelectedNodeState();
@@ -129,6 +117,7 @@ public class LensNodeImageFromLabelShaperDemo extends JPanel {
 
     final DefaultModalGraphMouse<Number, Number> graphMouse = new DefaultModalGraphMouse<>();
     vv.setGraphMouse(graphMouse);
+    vv.addKeyListener(graphMouse.getModeKeyListener());
 
     final ScalingControl scaler = new CrossoverScalingControl();
     vv.scaleToLayout(scaler);
