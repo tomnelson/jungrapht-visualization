@@ -14,7 +14,8 @@ public class LightweightRenderingVisitor implements ChangeListener {
   }
 
   public static void visit(VisualizationServer visualizationServer, double scaleLimit) {
-    visualizationServer.addChangeListener(new LightweightRenderingVisitor(visualizationServer, scaleLimit));
+    visualizationServer.addChangeListener(
+        new LightweightRenderingVisitor(visualizationServer, scaleLimit));
   }
 
   private LightweightRenderingVisitor(VisualizationServer visualizationServer) {

@@ -383,6 +383,7 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
   public void scaleToLayout() {
     SwingUtilities.invokeLater(() -> scaleToLayout(new CrossoverScalingControl()));
   }
+
   public void scaleToLayout(ScalingControl scaler) {
     Dimension vd = getPreferredSize();
     log.info("pref vd {}", vd);
@@ -395,7 +396,7 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
       log.info("vd.getWidth() {} ld.getWidth() {} ", vd.getWidth(), ld.getWidth());
       getRenderContext().getMultiLayerTransformer().setToIdentity();
       scaler.scale(this, (float) (vd.getWidth() / ld.getWidth()), new Point2D.Double());
-      log.info("scaled by {}",vd.getWidth() / ld.getWidth() );
+      log.info("scaled by {}", vd.getWidth() / ld.getWidth());
     }
   }
 

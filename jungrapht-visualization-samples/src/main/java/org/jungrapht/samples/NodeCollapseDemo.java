@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.function.Function;
 import javax.swing.*;
 import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.TestGraphs;
@@ -85,11 +86,13 @@ public class NodeCollapseDemo extends JPanel {
 
     // create a simple graph for the demo
     Graph<String, Number> generatedGraph = TestGraphs.getOneComponentGraph();
-    // make a graph of the same type but with Collapsable node types
+    // make a pseudograph with Collapsable node types
+    // the graph has to allow self loops and parallel edges in order to
+    // be collapsed and expanded without losing edges
     this.graph =
-        GraphTypeBuilder.<Collapsable<?>, Number>forGraphType(generatedGraph.getType())
+        GraphTypeBuilder.<Collapsable<?>, Number>forGraphType(DefaultGraphType.pseudograph())
             .buildGraph();
-
+    // add nodes and edges to the new graph
     for (Number edge : generatedGraph.edgeSet()) {
       Collapsable<?> source = Collapsable.of(generatedGraph.getEdgeSource(edge));
       Collapsable<?> target = Collapsable.of(generatedGraph.getEdgeTarget(edge));

@@ -17,7 +17,6 @@ import java.util.function.Predicate;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
-
 import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.control.TransformSupport;
 import org.jungrapht.visualization.layout.NetworkElementAccessor;
@@ -179,5 +178,6 @@ public interface VisualizationServer<N, E>
   void setSmallScaleOverridePredicate(Predicate<Double> smallScaleOverridePredicate);
 
   void scaleToLayout(ScalingControl scaler);
+
   void scaleToLayout();
 }

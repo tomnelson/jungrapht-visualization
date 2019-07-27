@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +31,8 @@ public class GraphCollapser<E> {
 
   public GraphCollapser(Graph<Collapsable<?>, E> originalGraph) {
     this.originalGraph = originalGraph;
-    this.graphBuilder = GraphTypeBuilder.forGraphType(originalGraph.getType());
+    this.graphBuilder =
+        GraphTypeBuilder.forGraphType(DefaultGraphType.<Collapsable<?>, E>pseudograph());
   }
 
   public Graph<Collapsable<?>, E> collapse(

@@ -83,26 +83,27 @@ public class BalloonLayoutForestDemo extends JPanel {
 
     vv.setGraphMouse(graphMouse);
     vv.addKeyListener(graphMouse.getModeKeyListener());
-    vv.addPreRenderPaintable(new VisualizationServer.Paintable() {
+    vv.addPreRenderPaintable(
+        new VisualizationServer.Paintable() {
 
-      @Override
-      public void paint(Graphics g) {
-        Graphics2D g2d = (Graphics2D) g;
-        // get the layout dimensions:
-        Dimension layoutSize = vv.getModel().getLayoutSize();
-        g.setColor(Color.cyan);
-        Shape layoutRectangle =
+          @Override
+          public void paint(Graphics g) {
+            Graphics2D g2d = (Graphics2D) g;
+            // get the layout dimensions:
+            Dimension layoutSize = vv.getModel().getLayoutSize();
+            g.setColor(Color.cyan);
+            Shape layoutRectangle =
                 new Rectangle2D.Double(0, 0, layoutSize.width, layoutSize.height);
-        layoutRectangle =
+            layoutRectangle =
                 vv.getRenderContext().getMultiLayerTransformer().transform(layoutRectangle);
-        g2d.draw(layoutRectangle);
-      }
+            g2d.draw(layoutRectangle);
+          }
 
-      @Override
-      public boolean useTransform() {
-        return false;
-      }
-    });
+          @Override
+          public boolean useTransform() {
+            return false;
+          }
+        });
 
     LayoutModel layoutModel = vv.getModel().getLayoutModel();
     Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
@@ -129,7 +130,7 @@ public class BalloonLayoutForestDemo extends JPanel {
     graphMouse.setMode(ModalGraphMouse.Mode.TRANSFORMING);
 
     final ScalingControl scaler = new CrossoverScalingControl();
-//    vv.scaleToLayout(new CrossoverScalingControl());
+    //    vv.scaleToLayout(new CrossoverScalingControl());
 
     JButton plus = new JButton("+");
     plus.addActionListener(e -> scaler.scale(vv, 1.1f, vv.getCenter()));

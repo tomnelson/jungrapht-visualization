@@ -5,11 +5,9 @@ import java.awt.event.ItemEvent;
 import javax.swing.*;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.EdgeSortingTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
 import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
-import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.util.BalloonLayoutRings;
 import org.jungrapht.visualization.util.RadialLayoutRings;
 
@@ -70,7 +68,7 @@ public class TreeLayoutSelector<N, E> extends JPanel {
     radialButton.addItemListener(
         e -> {
           if (e.getStateChange() == ItemEvent.SELECTED) {
-              if (animateTransition.isSelected()) {
+            if (animateTransition.isSelected()) {
               LayoutAlgorithmTransition.animate(vv, radialTreeLayoutAlgorithm);
             } else {
               LayoutAlgorithmTransition.apply(vv, radialTreeLayoutAlgorithm);

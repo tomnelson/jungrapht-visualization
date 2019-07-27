@@ -136,10 +136,10 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
     for (N node : roots) {
       int w = this.basePositions.get(node);
       log.trace("w is {} and basePositions.get(node) = {}", w, basePositions.get(node));
-      x += w/2;
+      x += w / 2;
       log.trace("currentX after node {} is now {}", node, x);
       buildTree(layoutModel, node, x, y);
-      x += w/2 + horizontalNodeSpacing;
+      x += w / 2 + horizontalNodeSpacing;
     }
     return roots;
   }
@@ -193,10 +193,9 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
   }
 
   protected int calculateWidth(LayoutModel<N> layoutModel, Collection<N> roots, Set<N> seen) {
-    int width =
-     roots.stream().mapToInt(node -> calculateWidth(layoutModel, node, seen)).sum();
+    int width = roots.stream().mapToInt(node -> calculateWidth(layoutModel, node, seen)).sum();
     log.trace("entire width from {} is {}", roots, width);
-//    log.info("basePositions {}", basePositions);
+    //    log.info("basePositions {}", basePositions);
     return width;
   }
 

@@ -8,6 +8,25 @@ import org.jgrapht.graph.builder.GraphTypeBuilder;
 /** @author Tom Nelson */
 public class DemoTreeSupplier {
 
+  public static Graph<String, Integer> createSmallTree() {
+    GraphBuilder<String, Integer, ?> treeBuilder =
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.directedSimple())
+            .buildGraphBuilder();
+
+    treeBuilder.addVertex("root");
+
+    Integer edgeId = 0;
+    // root gets 3 children
+    treeBuilder.addEdge("root", "V0", edgeId++);
+    treeBuilder.addEdge("root", "V1", edgeId++);
+    treeBuilder.addEdge("root", "V2", edgeId++);
+
+    // V2 gets 2 children
+    treeBuilder.addEdge("V2", "C0", edgeId++);
+    treeBuilder.addEdge("V2", "C1", edgeId++);
+    return treeBuilder.build();
+  }
+
   public static Graph<String, Number> createGenericTreeOne() {
     GraphBuilder<String, Number, ?> tree =
         GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.directedMultigraph())
