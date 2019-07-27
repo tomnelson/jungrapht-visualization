@@ -10,6 +10,7 @@ package org.jungrapht.samples;
 
 import java.awt.*;
 import java.awt.event.ItemEvent;
+import java.awt.geom.Rectangle2D;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.DemoTreeSupplier;
@@ -59,7 +60,7 @@ public class BalloonLayoutForestDemo extends JPanel {
 
   LensSupport hyperbolicSupport;
 
-  Dimension layoutSize = new Dimension(900, 900);
+  Dimension layoutSize = new Dimension(600, 600);
   Dimension viewSize = new Dimension(600, 600);
 
   public BalloonLayoutForestDemo() {
@@ -82,6 +83,27 @@ public class BalloonLayoutForestDemo extends JPanel {
 
     vv.setGraphMouse(graphMouse);
     vv.addKeyListener(graphMouse.getModeKeyListener());
+    vv.addPreRenderPaintable(new VisualizationServer.Paintable() {
+
+      @Override
+      public void paint(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
+        // get the layout dimensions:
+        Dimension layoutSize = vv.getModel().getLayoutSize();
+        g.setColor(Color.cyan);
+        Shape layoutRectangle =
+                new Rectangle2D.Double(0, 0, layoutSize.width, layoutSize.height);
+        layoutRectangle =
+                vv.getRenderContext().getMultiLayerTransformer().transform(layoutRectangle);
+        g2d.draw(layoutRectangle);
+      }
+
+      @Override
+      public boolean useTransform() {
+        return false;
+      }
+    });
+
     LayoutModel layoutModel = vv.getModel().getLayoutModel();
     Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
     Lens lens = new Lens(d);
@@ -107,8 +129,7 @@ public class BalloonLayoutForestDemo extends JPanel {
     graphMouse.setMode(ModalGraphMouse.Mode.TRANSFORMING);
 
     final ScalingControl scaler = new CrossoverScalingControl();
-
-    vv.scaleToLayout(scaler);
+//    vv.scaleToLayout(new CrossoverScalingControl());
 
     JButton plus = new JButton("+");
     plus.addActionListener(e -> scaler.scale(vv, 1.1f, vv.getCenter()));
@@ -138,7 +159,7 @@ public class BalloonLayoutForestDemo extends JPanel {
     scaleGrid.add(plus);
     scaleGrid.add(minus);
     JPanel layoutControls = new JPanel();
-    layoutControls.add(new TreeLayoutSelector(vv));
+    layoutControls.add(new TreeLayoutSelector(vv, 1));
     controls.add(layoutControls);
     controls.add(scaleGrid);
     controls.add(modeBox);

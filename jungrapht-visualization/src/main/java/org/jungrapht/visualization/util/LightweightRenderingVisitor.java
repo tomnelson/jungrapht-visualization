@@ -10,12 +10,20 @@ public class LightweightRenderingVisitor implements ChangeListener {
   private Timer timer;
 
   public static void visit(VisualizationServer visualizationServer) {
-    visualizationServer.addChangeListener(new LightweightRenderingVisitor(visualizationServer));
+    visit(visualizationServer, 0.5);
+  }
+
+  public static void visit(VisualizationServer visualizationServer, double scaleLimit) {
+    visualizationServer.addChangeListener(new LightweightRenderingVisitor(visualizationServer, scaleLimit));
   }
 
   private LightweightRenderingVisitor(VisualizationServer visualizationServer) {
+    this(visualizationServer, 0.5);
+  }
+
+  private LightweightRenderingVisitor(VisualizationServer visualizationServer, double scaleLimit) {
     this.visualizationServer = visualizationServer;
-    visualizationServer.setSmallScaleOverridePredicate(scale -> (double) scale < 0.5);
+    visualizationServer.setSmallScaleOverridePredicate(scale -> (double) scale < scaleLimit);
   }
 
   @Override

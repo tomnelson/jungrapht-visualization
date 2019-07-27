@@ -9,6 +9,7 @@ import org.jungrapht.visualization.layout.algorithms.EdgeSortingTreeLayoutAlgori
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
 import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.util.BalloonLayoutRings;
 import org.jungrapht.visualization.util.RadialLayoutRings;
 
@@ -24,9 +25,6 @@ public class TreeLayoutSelector<N, E> extends JPanel {
   RadialTreeLayoutAlgorithm<N> radialTreeLayoutAlgorithm =
       RadialTreeLayoutAlgorithm.<N>builder().build();
 
-  EdgeSortingTreeLayoutAlgorithm<N, E> edgeSortingTreeLayoutAlgorithm =
-      EdgeSortingTreeLayoutAlgorithm.<N, E>sortingBuilder().build();
-
   VisualizationServer<N, E> vv;
 
   final JRadioButton animateTransition = new JRadioButton("Animate Transition", true);
@@ -36,9 +34,9 @@ public class TreeLayoutSelector<N, E> extends JPanel {
   }
 
   public TreeLayoutSelector(VisualizationServer<N, E> vv, int initialSelection) {
-    super(new GridLayout(4, 1));
+    super(new GridLayout(0, 1));
     this.vv = vv;
-    JRadioButton treeButton = new JRadioButton("Tree Layout"); //, initialSelection == 0);
+    JRadioButton treeButton = new JRadioButton("Tree");
     treeButton.addItemListener(
         e -> {
           if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -51,7 +49,7 @@ public class TreeLayoutSelector<N, E> extends JPanel {
           vv.repaint();
         });
     treeButton.setSelected(initialSelection == 0);
-    JRadioButton balloonButton = new JRadioButton("Balloon Layout"); //, initialSelection == 1);
+    JRadioButton balloonButton = new JRadioButton("Balloon");
     balloonButton.addItemListener(
         e -> {
           if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -68,11 +66,11 @@ public class TreeLayoutSelector<N, E> extends JPanel {
           vv.repaint();
         });
     balloonButton.setSelected(initialSelection == 1);
-    JRadioButton radialButton = new JRadioButton("Radial Layout"); //, initialSelection == 2);
+    JRadioButton radialButton = new JRadioButton("Radial");
     radialButton.addItemListener(
         e -> {
           if (e.getStateChange() == ItemEvent.SELECTED) {
-            if (animateTransition.isSelected()) {
+              if (animateTransition.isSelected()) {
               LayoutAlgorithmTransition.animate(vv, radialTreeLayoutAlgorithm);
             } else {
               LayoutAlgorithmTransition.apply(vv, radialTreeLayoutAlgorithm);
@@ -86,30 +84,14 @@ public class TreeLayoutSelector<N, E> extends JPanel {
         });
     radialButton.setSelected(initialSelection == 2);
 
-    JRadioButton edgeSortingTreeButton = new JRadioButton("Edge Sorting Tree Layout");
-    edgeSortingTreeButton.addItemListener(
-        e -> {
-          if (e.getStateChange() == ItemEvent.SELECTED) {
-            if (animateTransition.isSelected()) {
-              LayoutAlgorithmTransition.animate(vv, edgeSortingTreeLayoutAlgorithm);
-            } else {
-              LayoutAlgorithmTransition.apply(vv, edgeSortingTreeLayoutAlgorithm);
-            }
-          }
-          vv.repaint();
-        });
-    treeButton.setSelected(initialSelection == 3);
-
     ButtonGroup layoutRadio = new ButtonGroup();
     layoutRadio.add(treeButton);
     layoutRadio.add(balloonButton);
     layoutRadio.add(radialButton);
-    layoutRadio.add(edgeSortingTreeButton);
 
     this.add(treeButton);
     this.add(balloonButton);
     this.add(radialButton);
-    this.add(edgeSortingTreeButton);
     this.add(animateTransition);
   }
 }

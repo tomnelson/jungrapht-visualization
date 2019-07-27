@@ -22,7 +22,7 @@ public class PerformanceGraph {
 
     Graph<String, Number> g = TestGraphs.getGeneratedNetwork2();
 
-    Dimension layoutSize = new Dimension(2000, 2000);
+    Dimension layoutSize = new Dimension(1600, 1600);
     Dimension viewSize = new Dimension(800, 800);
     VisualizationViewer<String, Number> vv =
         new VisualizationViewer<>(
@@ -33,7 +33,7 @@ public class PerformanceGraph {
             layoutSize,
             viewSize);
 
-    LightweightRenderingVisitor.visit(vv);
+    LightweightRenderingVisitor.visit(vv, 1.1);
     vv.scaleToLayout(new CrossoverScalingControl());
 
     DefaultModalGraphMouse<String, Double> graphMouse = new DefaultModalGraphMouse<>();

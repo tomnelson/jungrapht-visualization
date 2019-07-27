@@ -28,6 +28,7 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.jgrapht.Graph;
+import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.control.TransformSupport;
 import org.jungrapht.visualization.layout.BoundingRectangleCollector;
@@ -379,14 +380,22 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
     return renderer;
   }
 
+  public void scaleToLayout() {
+    SwingUtilities.invokeLater(() -> scaleToLayout(new CrossoverScalingControl()));
+  }
   public void scaleToLayout(ScalingControl scaler) {
     Dimension vd = getPreferredSize();
+    log.info("pref vd {}", vd);
     if (this.isShowing()) {
       vd = getSize();
+      log.info("actual vd {}", vd);
     }
     Dimension ld = model.getLayoutSize();
     if (!vd.equals(ld)) {
+      log.info("vd.getWidth() {} ld.getWidth() {} ", vd.getWidth(), ld.getWidth());
+      getRenderContext().getMultiLayerTransformer().setToIdentity();
       scaler.scale(this, (float) (vd.getWidth() / ld.getWidth()), new Point2D.Double());
+      log.info("scaled by {}",vd.getWidth() / ld.getWidth() );
     }
   }
 

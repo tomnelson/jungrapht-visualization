@@ -115,29 +115,31 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
     Preconditions.checkArgument(roots.size() > 0);
     // the width of the tree under 'roots'. Includes one 'horizontalNodeSpacing' per child node
     int overallWidth = calculateWidth(layoutModel, roots, new HashSet<>());
-    // add one additional 'horizontalNodeSpacing' for each tree (each root)
+    // add one additional 'horizontalNodeSpacing' for each tree (each root) + 1
     overallWidth += (roots.size() + 1) * horizontalNodeSpacing;
     int overallHeight = calculateHeight(layoutModel, roots);
     overallHeight += 2 * verticalNodeSpacing;
 
+    log.trace("layoutModel.getWidth() {}", layoutModel.getWidth());
+    log.trace("overallWidth {}", overallWidth);
     int largerWidth = Math.max(layoutModel.getWidth(), overallWidth);
     int largerHeight = Math.max(layoutModel.getHeight(), overallHeight);
     layoutModel.setSize(largerWidth, largerHeight);
-    log.trace("layoutModel.getWidth() {}", layoutModel.getWidth());
-    log.trace("overallWidth {}", overallWidth);
     log.trace("layoutModel.getHeight() {}", layoutModel.getHeight());
     log.trace("overallHeight {}", overallHeight);
 
-    int x = 0;
+    int x = horizontalNodeSpacing;
     int y = getInitialY(layoutModel.getHeight(), overallHeight);
     log.trace("got initial y of {}", y);
 
     Set<N> seen = new HashSet<>();
     for (N node : roots) {
-      calculateWidth(layoutModel, node, seen);
-      x += (this.basePositions.get(node) / 2 + this.horizontalNodeSpacing);
+      int w = this.basePositions.get(node);
+      log.trace("w is {} and basePositions.get(node) = {}", w, basePositions.get(node));
+      x += w/2;
       log.trace("currentX after node {} is now {}", node, x);
       buildTree(layoutModel, node, x, y);
+      x += w/2 + horizontalNodeSpacing;
     }
     return roots;
   }
@@ -159,10 +161,8 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
       int sizeXofCurrent = basePositions.get(node);
       x -= sizeXofCurrent / 2;
 
-      int sizeXofChild;
-
       for (N element : Graphs.successorListOf(layoutModel.getGraph(), node)) {
-        sizeXofChild = this.basePositions.get(element);
+        int sizeXofChild = this.basePositions.get(element);
         x += sizeXofChild / 2;
         buildTree(layoutModel, element, x, y);
         x += sizeXofChild / 2 + horizontalNodeSpacing;
@@ -193,8 +193,11 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
   }
 
   protected int calculateWidth(LayoutModel<N> layoutModel, Collection<N> roots, Set<N> seen) {
-
-    return roots.stream().mapToInt(node -> calculateWidth(layoutModel, node, seen)).sum();
+    int width =
+     roots.stream().mapToInt(node -> calculateWidth(layoutModel, node, seen)).sum();
+    log.trace("entire width from {} is {}", roots, width);
+//    log.info("basePositions {}", basePositions);
+    return width;
   }
 
   protected int calculateHeight(LayoutModel<N> layoutModel, N node, Set<N> seen) {
