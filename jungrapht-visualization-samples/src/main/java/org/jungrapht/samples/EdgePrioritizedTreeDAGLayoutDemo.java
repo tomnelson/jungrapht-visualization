@@ -52,10 +52,15 @@ public class EdgePrioritizedTreeDAGLayoutDemo extends JPanel {
 
     // get some edges to prioritize
     Set<Integer> prioritySet = Sets.newHashSet(0, 2, 6, 8);
-    EdgePredicatedTreeLayoutAlgorithm layoutAlgorithm =
+    EdgePredicatedTreeLayoutAlgorithm<String, Number> layoutAlgorithm =
         EdgePredicatedTreeLayoutAlgorithm.builder().edgePredicate(prioritySet::contains).build();
 
-    vv = new VisualizationViewer<>(graph, layoutAlgorithm, new Dimension(600, 600));
+    vv =
+        VisualizationViewer.builder(graph)
+            .layoutAlgorithm(layoutAlgorithm)
+            .viewSize(new Dimension(600, 600))
+            .build();
+
     vv.setBackground(Color.white);
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
     vv.getRenderContext().setVertexLabelFunction(Object::toString);

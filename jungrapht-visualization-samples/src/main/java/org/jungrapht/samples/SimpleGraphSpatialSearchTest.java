@@ -67,12 +67,14 @@ public class SimpleGraphSpatialSearchTest extends JPanel {
 
     ScalingControl scaler = new CrossoverScalingControl();
     VisualizationModel model =
-        new BaseVisualizationModel(
-            g,
-            layoutAlgorithm,
-            new RandomLocationTransformer(600, 600, System.currentTimeMillis()),
-            layoutPreferredSize);
-    VisualizationViewer vv = new VisualizationViewer(model, viewPreferredSize);
+        BaseVisualizationModel.builder(g)
+            .layoutAlgorithm(layoutAlgorithm)
+            .initializer(new RandomLocationTransformer(600, 600, System.currentTimeMillis()))
+            .layoutSize(layoutPreferredSize)
+            .build();
+    VisualizationViewer vv =
+        (VisualizationViewer)
+            VisualizationViewer.builder(model).viewSize(viewPreferredSize).build();
 
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);

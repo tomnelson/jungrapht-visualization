@@ -49,8 +49,10 @@ public class UnicodeLabelDemo {
     Map<Integer, Icon> iconMap = new HashMap<>();
 
     vv =
-        new VisualizationViewer<>(
-            graph, FRLayoutAlgorithm.<Integer>builder().build(), new Dimension(700, 700));
+        VisualizationViewer.builder(graph)
+            .layoutAlgorithm(FRLayoutAlgorithm.<Integer>builder().build())
+            .viewSize(new Dimension(700, 700))
+            .build();
     vv.getRenderContext().setVertexLabelFunction(new UnicodeVertexStringer());
     vv.getRenderContext().setVertexLabelRenderer(new DefaultVertexLabelRenderer(Color.cyan));
     vv.getRenderContext().setEdgeLabelRenderer(new DefaultEdgeLabelRenderer(Color.cyan));

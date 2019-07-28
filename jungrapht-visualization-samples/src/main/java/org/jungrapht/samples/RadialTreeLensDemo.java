@@ -63,8 +63,11 @@ public class RadialTreeLensDemo extends JPanel {
     Dimension preferredSize = new Dimension(600, 600);
 
     final VisualizationModel<String, Integer> visualizationModel =
-        new BaseVisualizationModel<>(graph, new StaticLayoutAlgorithm(), preferredSize);
-    vv = new VisualizationViewer<>(visualizationModel, preferredSize);
+        BaseVisualizationModel.builder(graph)
+            .layoutAlgorithm(new StaticLayoutAlgorithm())
+            .layoutSize(preferredSize)
+            .build();
+    vv = VisualizationViewer.builder(visualizationModel).viewSize(preferredSize).build();
 
     MutableSelectedState<String> ps = vv.getSelectedVertexState();
     MutableSelectedState<Integer> pes = vv.getSelectedEdgeState();

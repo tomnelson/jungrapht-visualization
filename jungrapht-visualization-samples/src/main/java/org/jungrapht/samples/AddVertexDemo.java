@@ -42,11 +42,11 @@ public class AddVertexDemo extends JPanel {
 
   private static final long serialVersionUID = -5345319851341875800L;
 
-  private Graph<Number, Number> g = null;
+  private Graph<Number, Number> graph;
 
-  private VisualizationViewer<Number, Number> vv = null;
+  private VisualizationViewer<Number, Number> vv;
 
-  private LayoutAlgorithm<Number> layoutAlgorithm = null;
+  private LayoutAlgorithm<Number> layoutAlgorithm;
 
   Timer timer;
 
@@ -58,19 +58,19 @@ public class AddVertexDemo extends JPanel {
 
   public AddVertexDemo() {
 
-    Graph<Number, Number> original =
+    this.graph =
         GraphTypeBuilder.<Number, Number>forGraphType(DefaultGraphType.directedPseudograph())
             .buildGraph();
-
-    Graph<Number, Number> ig = original;
-
-    this.g = ig;
 
     layoutAlgorithm = FRLayoutAlgorithm.<Number>builder().build();
 
     LayoutAlgorithm<Number> staticLayoutAlgorithm = new StaticLayoutAlgorithm<>();
 
-    vv = new VisualizationViewer<>(ig, staticLayoutAlgorithm, new Dimension(600, 600));
+    vv =
+        VisualizationViewer.builder(graph)
+            .layoutAlgorithm(staticLayoutAlgorithm)
+            .viewSize(new Dimension(600, 600))
+            .build();
 
     this.setLayout(new BorderLayout());
     this.setBackground(java.awt.Color.lightGray);
@@ -145,23 +145,23 @@ public class AddVertexDemo extends JPanel {
     vv.getRenderContext().getSelectedEdgeState().clear();
     try {
 
-      if (g.vertexSet().size() < 100) {
+      if (graph.vertexSet().size() < 100) {
         //add a vertex
-        Integer v1 = g.vertexSet().size();
+        Integer v1 = graph.vertexSet().size();
 
-        g.addVertex(v1);
+        graph.addVertex(v1);
         vv.getRenderContext().getSelectedVertexState().pick(v1, true);
 
         // wire it to some edges
         if (v_prev != null) {
-          Integer edge = g.edgeSet().size();
+          Integer edge = graph.edgeSet().size();
           vv.getRenderContext().getSelectedEdgeState().pick(edge, true);
-          g.addEdge(v_prev, v1, edge);
+          graph.addEdge(v_prev, v1, edge);
           // let's connect to a random vertex, too!
-          int rand = (int) (Math.random() * g.vertexSet().size());
-          edge = g.edgeSet().size();
+          int rand = (int) (Math.random() * graph.vertexSet().size());
+          edge = graph.edgeSet().size();
           vv.getRenderContext().getSelectedEdgeState().pick(edge, true);
-          g.addEdge(v1, rand, edge);
+          graph.addEdge(v1, rand, edge);
         }
 
         v_prev = v1;

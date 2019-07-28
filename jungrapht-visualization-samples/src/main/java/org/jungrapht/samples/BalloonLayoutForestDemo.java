@@ -68,7 +68,12 @@ public class BalloonLayoutForestDemo extends JPanel {
     // create a simple graph for the demo
     graph = DemoTreeSupplier.createForest();
 
-    vv = new VisualizationViewer<>(graph, new StaticLayoutAlgorithm<>(), layoutSize, viewSize);
+    vv =
+        VisualizationViewer.builder(graph)
+            .layoutAlgorithm(new StaticLayoutAlgorithm<>())
+            .layoutSize(layoutSize)
+            .viewSize(viewSize)
+            .build();
     vv.setBackground(Color.white);
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
     vv.getRenderContext().setVertexLabelFunction(Object::toString);

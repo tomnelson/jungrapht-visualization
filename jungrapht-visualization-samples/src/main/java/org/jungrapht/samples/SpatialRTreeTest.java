@@ -69,9 +69,13 @@ public class SpatialRTreeTest extends JPanel {
     LayoutAlgorithm layoutAlgorithm = new StaticLayoutAlgorithm();
 
     ScalingControl scaler = new CrossoverScalingControl();
-    VisualizationModel model =
-        new BaseVisualizationModel(g, layoutAlgorithm, null, layoutPreferredSize);
-    VisualizationViewer vv = new VisualizationViewer(model, viewPreferredSize);
+    VisualizationModel<String, Number> model =
+        BaseVisualizationModel.builder(g)
+            .layoutAlgorithm(layoutAlgorithm)
+            .layoutSize(layoutPreferredSize)
+            .build();
+    VisualizationViewer<String, Number> vv =
+        VisualizationViewer.builder(model).viewSize(viewPreferredSize).build();
 
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
@@ -151,7 +155,7 @@ public class SpatialRTreeTest extends JPanel {
   }
 
   public void testClosestVertices(
-      VisualizationViewer<String, String> vv,
+      VisualizationViewer<String, Number> vv,
       Graph<String, Number> graph,
       LayoutModel<String> layoutModel,
       SpatialQuadTree<String> tree) {
@@ -209,7 +213,7 @@ public class SpatialRTreeTest extends JPanel {
   }
 
   public void testClosestVertices(
-      VisualizationViewer<String, String> vv,
+      VisualizationViewer<String, Number> vv,
       Graph<String, Number> graph,
       LayoutModel<String> layoutModel,
       SpatialRTree.Vertices<String> tree) {

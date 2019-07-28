@@ -115,7 +115,11 @@ public class LensVertexImageShaperDemo extends JPanel {
 
     FRLayoutAlgorithm<Number> layoutAlgorithm = FRLayoutAlgorithm.<Number>builder().build();
     layoutAlgorithm.setMaxIterations(100);
-    vv = new VisualizationViewer<>(graph, layoutAlgorithm, new Dimension(600, 600));
+    vv =
+        VisualizationViewer.builder(graph)
+            .layoutAlgorithm(layoutAlgorithm)
+            .viewSize(new Dimension(600, 600))
+            .build();
 
     Function<Number, Paint> vpf =
         new PickableElementPaintFunction<>(vv.getSelectedVertexState(), Color.white, Color.yellow);

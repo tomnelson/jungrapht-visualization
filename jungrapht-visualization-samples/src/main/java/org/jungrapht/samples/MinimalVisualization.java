@@ -15,90 +15,38 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.samples.util.ControlHelpers;
-import org.jungrapht.visualization.GraphZoomScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
-import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
-import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
-import org.jungrapht.visualization.renderers.DefaultEdgeLabelRenderer;
-import org.jungrapht.visualization.renderers.DefaultVertexLabelRenderer;
+import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
 
 /**
- * A demo that shows drawn Icons as vertices
+ * A demo that shows a minimal visualization
  *
  * @author Tom Nelson
  */
-public class DrawnIconVertexDemo {
+public class MinimalVisualization {
 
-  /** the graph */
   Graph<Integer, Number> graph;
 
-  /** the visual component and renderer for the graph */
   VisualizationViewer<Integer, Number> vv;
 
-  public DrawnIconVertexDemo() {
+  public MinimalVisualization() {
 
     // create a simple graph for the demo
     graph = createGraph();
 
     vv =
         VisualizationViewer.builder(graph)
-            .layoutAlgorithm(FRLayoutAlgorithm.<Integer>builder().build())
             .viewSize(new Dimension(700, 700))
+            .layoutAlgorithm(KKLayoutAlgorithm.<Integer>builder().build())
             .build();
-    vv.getRenderContext().setVertexLabelFunction(v -> "Vertex " + v);
-
-    vv.getRenderContext().setVertexLabelRenderer(new DefaultVertexLabelRenderer(Color.cyan));
-    vv.getRenderContext().setEdgeLabelRenderer(new DefaultEdgeLabelRenderer(Color.cyan));
-
-    vv.getRenderContext()
-        .setVertexIconFunction(
-            v ->
-                new Icon() {
-
-                  public int getIconHeight() {
-                    return 20;
-                  }
-
-                  public int getIconWidth() {
-                    return 20;
-                  }
-
-                  public void paintIcon(Component c, Graphics g, int x, int y) {
-                    if (vv.getSelectedVertexState().isSelected(v)) {
-                      g.setColor(Color.yellow);
-                    } else {
-                      g.setColor(Color.red);
-                    }
-                    g.fillOval(x, y, 20, 20);
-                    if (vv.getSelectedVertexState().isSelected(v)) {
-                      g.setColor(Color.black);
-                    } else {
-                      g.setColor(Color.white);
-                    }
-                    g.drawString("" + v, x + 6, y + 15);
-                  }
-                });
-
-    vv.getRenderContext()
-        .setVertexFillPaintFunction(
-            new PickableElementPaintFunction<>(
-                vv.getSelectedVertexState(), Color.white, Color.yellow));
-    vv.getRenderContext()
-        .setEdgeDrawPaintFunction(
-            new PickableElementPaintFunction<>(
-                vv.getSelectedEdgeState(), Color.black, Color.lightGray));
 
     vv.setBackground(Color.white);
 
-    // add my listener for ToolTips
-    vv.setVertexToolTipFunction(Object::toString);
-
-    // create a frome to hold the graph
+    // create a frame to hold the graph
     final JFrame frame = new JFrame();
     Container content = frame.getContentPane();
-    final GraphZoomScrollPane panel = new GraphZoomScrollPane(vv);
-    content.add(panel);
+    content.add(vv);
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
     final DefaultModalGraphMouse<Integer, Number> gm = new DefaultModalGraphMouse<>();
@@ -142,6 +90,6 @@ public class DrawnIconVertexDemo {
   }
 
   public static void main(String[] args) {
-    new DrawnIconVertexDemo();
+    new MinimalVisualization();
   }
 }

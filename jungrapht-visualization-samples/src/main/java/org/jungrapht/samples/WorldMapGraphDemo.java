@@ -77,10 +77,13 @@ public class WorldMapGraphDemo extends JPanel {
     Function<String, Point> initializer =
         new CityTransformer(map).andThen(new LatLonPixelTransformer(new Dimension(2000, 1000)));
     VisualizationModel<String, Number> model =
-        new BaseVisualizationModel<>(
-            graph, layoutAlgorithm, initializer, new Dimension(2000, 1000));
+        BaseVisualizationModel.builder(graph)
+            .layoutAlgorithm(layoutAlgorithm)
+            .initializer(initializer)
+            .layoutSize(new Dimension(2000, 1000))
+            .build();
 
-    vv = new VisualizationViewer<>(model, new Dimension(800, 400));
+    vv = VisualizationViewer.builder(model).viewSize(new Dimension(800, 400)).build();
 
     if (icon != null) {
       vv.addPreRenderPaintable(

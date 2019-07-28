@@ -187,6 +187,11 @@ public class SpringLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V
     }
   }
 
+  @Override
+  public String toString() {
+    return "SpringLayoutAlgorithm{" + "repulsionContract=" + repulsionContract + '}';
+  }
+
   protected void moveVertices() {
     Graph<V, ?> graph = layoutModel.getGraph();
 

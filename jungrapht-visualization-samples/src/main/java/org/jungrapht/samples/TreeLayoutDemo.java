@@ -48,8 +48,10 @@ public class TreeLayoutDemo extends JPanel {
     graph = DemoTreeSupplier.createTreeTwo();
 
     vv =
-        new VisualizationViewer<>(
-            graph, TreeLayoutAlgorithm.<String>builder().build(), new Dimension(600, 600));
+        VisualizationViewer.builder(graph)
+            .layoutAlgorithm(TreeLayoutAlgorithm.<String>builder().build())
+            .viewSize(new Dimension(600, 600))
+            .build();
     vv.setBackground(Color.white);
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
     vv.getRenderContext().setVertexLabelFunction(Object::toString);

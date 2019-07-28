@@ -75,7 +75,11 @@ public class InternalFrameSatelliteViewDemo {
 
     LayoutAlgorithm<String> layout = ISOMLayoutAlgorithm.builder().build();
 
-    vv = new VisualizationViewer<>(graph, layout, new Dimension(600, 600));
+    vv =
+        VisualizationViewer.builder(graph)
+            .layoutAlgorithm(layout)
+            .viewSize(new Dimension(600, 600))
+            .build();
     vv.getRenderContext()
         .setEdgeDrawPaintFunction(
             new PickableElementPaintFunction<>(vv.getSelectedEdgeState(), Color.black, Color.cyan));
@@ -89,7 +93,7 @@ public class InternalFrameSatelliteViewDemo {
     final DefaultModalGraphMouse<String, Number> graphMouse = new DefaultModalGraphMouse<>();
     vv.setGraphMouse(graphMouse);
 
-    satellite = new SatelliteVisualizationViewer<>(vv, new Dimension(200, 200));
+    satellite = SatelliteVisualizationViewer.builder(vv).viewSize(new Dimension(200, 200)).build();
     satellite
         .getRenderContext()
         .setEdgeDrawPaintFunction(

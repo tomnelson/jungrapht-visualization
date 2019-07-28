@@ -110,15 +110,16 @@ public class VertexImageShaperDemo extends JPanel {
     FRLayoutAlgorithm<Number> layoutAlgorithm = FRLayoutAlgorithm.<Number>builder().build();
     layoutAlgorithm.setMaxIterations(100);
     //    treeLayoutAlgorithm.setInitializer(new RandomLocationTransformer<>(new Dimension(400, 400), 0));
-
     vv =
-        new VisualizationViewer<>(
-            new BaseVisualizationModel(
-                graph,
-                layoutAlgorithm,
-                new RandomLocationTransformer<>(400, 400, 0),
-                new Dimension(400, 400)),
-            new Dimension(400, 400));
+        VisualizationViewer.builder(
+                (VisualizationModel<Number, Number>)
+                    BaseVisualizationModel.<Number, Number>builder(graph)
+                        .layoutAlgorithm(layoutAlgorithm)
+                        .initializer(new RandomLocationTransformer<>(400, 400, 0))
+                        .layoutSize(new Dimension(400, 400))
+                        .build())
+            .viewSize(new Dimension(400, 400))
+            .build();
 
     // This demo uses a special renderer to turn outlines on and off.
     // you do not need to do this in a real application.

@@ -74,10 +74,14 @@ public class AnnotationsDemo extends JPanel {
     layoutAlgorithm.setMaxIterations(500);
 
     VisualizationModel<String, Number> vm =
-        new BaseVisualizationModel<>(graph, layoutAlgorithm, preferredSize1);
+        BaseVisualizationModel.builder(graph)
+            .layoutAlgorithm(layoutAlgorithm)
+            .layoutSize(preferredSize1)
+            .build();
 
-    // create 2 views that share the same model
-    final VisualizationViewer<String, Number> vv = new VisualizationViewer<>(vm, preferredSize1);
+    final VisualizationViewer<String, Number> vv =
+        VisualizationViewer.builder(vm).viewSize(preferredSize1).build();
+
     vv.setBackground(Color.white);
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
@@ -96,8 +100,7 @@ public class AnnotationsDemo extends JPanel {
     RenderContext<String, Number> rc = vv.getRenderContext();
     AnnotatingGraphMousePlugin<String, Number> annotatingPlugin =
         new AnnotatingGraphMousePlugin<>(rc);
-    // create a GraphMouse for the main view
-    //
+
     final AnnotatingModalGraphMouse<String, Number> graphMouse =
         new AnnotatingModalGraphMouse<>(rc, annotatingPlugin);
     vv.setGraphMouse(graphMouse);

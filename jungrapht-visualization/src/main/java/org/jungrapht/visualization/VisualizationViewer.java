@@ -35,6 +35,36 @@ import org.jungrapht.visualization.layout.model.LayoutModel;
 @SuppressWarnings("serial")
 public class VisualizationViewer<V, E> extends BasicVisualizationServer<V, E> {
 
+  public static class Builder<
+          V, E, T extends VisualizationViewer<V, E>, B extends Builder<V, E, T, B>>
+      extends BasicVisualizationServer.Builder<V, E, T, B> {
+
+    protected Builder(Graph<V, E> graph) {
+      super(graph);
+    }
+
+    protected Builder(VisualizationModel<V, E> visualizationModel) {
+      super(visualizationModel);
+    }
+
+    public T build() {
+      super.build();
+      return (T) new VisualizationViewer<>(visualizationModel, viewSize);
+    }
+  }
+
+  public static <V, E> Builder<V, E, ?, ?> builder(Graph<V, E> graph) {
+    return new Builder(graph);
+  }
+
+  public static <V, E> Builder<V, E, ?, ?> builder(VisualizationModel<V, E> visualizationModel) {
+    return new Builder(visualizationModel);
+  }
+
+  protected VisualizationViewer(Builder<V, E, ?, ?> builder) {
+    this(builder.graph, builder.viewSize);
+  }
+
   protected Function<V, String> vertexToolTipFunction;
   protected Function<E, String> edgeToolTipFunction;
   protected Function<MouseEvent, String> mouseEventToolTipFunction;
@@ -50,55 +80,57 @@ public class VisualizationViewer<V, E> extends BasicVisualizationServer<V, E> {
       };
 
   /**
-   * @param network the graph to render
+   * @param graph the graph to render
    * @param size the size for the layout and for the view
    */
-  public VisualizationViewer(Graph<V, E> network, Dimension size) {
-    this(network, size, size);
+  protected VisualizationViewer(Graph<V, E> graph, Dimension size) {
+    this(graph, size, size);
   }
 
   /**
-   * @param network the graph to visualize
+   * @param graph the graph to visualize
    * @param layoutSize the size of the layout area
    * @param viewSize the size of the view area
    */
-  public VisualizationViewer(Graph<V, E> network, Dimension layoutSize, Dimension viewSize) {
-    this(network, null, layoutSize, viewSize);
+  protected VisualizationViewer(Graph<V, E> graph, Dimension layoutSize, Dimension viewSize) {
+    this(graph, null, layoutSize, viewSize);
   }
 
   /**
-   * @param network the graph to visualize
+   * @param graph the graph to visualize
    * @param layoutAlgorithm the algorithm to apply
    * @param layoutSize the size for the layout area
    * @param viewSize the size of the window to display the graph
    */
-  public VisualizationViewer(
-      Graph<V, E> network,
+  protected VisualizationViewer(
+      Graph<V, E> graph,
       LayoutAlgorithm<V> layoutAlgorithm,
       Dimension layoutSize,
       Dimension viewSize) {
-    this(new BaseVisualizationModel<>(network, layoutAlgorithm, layoutSize), viewSize);
+    this(new BaseVisualizationModel<>(graph, layoutAlgorithm, layoutSize), viewSize);
   }
 
   /**
-   * @param network the graph to render
+   * @param graph the graph to render
    * @param layoutAlgorithm the algorithm to apply
    * @param preferredSize the size to use for both the layout and the screen display
    */
-  public VisualizationViewer(
-      Graph<V, E> network, LayoutAlgorithm<V> layoutAlgorithm, Dimension preferredSize) {
-    this(new BaseVisualizationModel<>(network, layoutAlgorithm, preferredSize), preferredSize);
+  protected VisualizationViewer(
+      Graph<V, E> graph, LayoutAlgorithm<V> layoutAlgorithm, Dimension preferredSize) {
+    this(new BaseVisualizationModel<>(graph, layoutAlgorithm, preferredSize), preferredSize);
   }
 
   /**
    * @param model the model for the view
    * @param preferredSize the initial size of the window to display the graph
    */
-  public VisualizationViewer(VisualizationModel<V, E> model, Dimension preferredSize) {
+  protected VisualizationViewer(VisualizationModel<V, E> model, Dimension preferredSize) {
     super(model, preferredSize);
     setFocusable(true);
     addMouseListener(requestFocusListener);
   }
+
+  //  protected VisualizationViewer(Vis)
 
   /**
    * a setter for the GraphMouse. This will remove any previous GraphMouse (including the one that

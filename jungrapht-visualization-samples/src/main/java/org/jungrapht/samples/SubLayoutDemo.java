@@ -104,9 +104,12 @@ public class SubLayoutDemo extends JPanel {
     clusteringLayoutModel.accept(layoutAlgorithm);
 
     final VisualizationModel<String, Number> visualizationModel =
-        new BaseVisualizationModel<>(graph, clusteringLayoutModel, layoutAlgorithm);
+        BaseVisualizationModel.builder(graph)
+            .layoutModel(clusteringLayoutModel)
+            .layoutAlgorithm(layoutAlgorithm)
+            .build();
 
-    vv = new VisualizationViewer<>(visualizationModel, preferredSize);
+    vv = VisualizationViewer.builder(visualizationModel).viewSize(preferredSize).build();
 
     ps = vv.getSelectedVertexState();
     vv.getRenderContext()

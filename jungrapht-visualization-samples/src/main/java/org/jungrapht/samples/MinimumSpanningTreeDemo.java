@@ -76,20 +76,29 @@ public class MinimumSpanningTreeDemo extends JPanel {
 
     // create the two models, each with a different layout
     VisualizationModel<String, Number> vm0 =
-        new BaseVisualizationModel<>(network, kkLayoutAlgorithm, preferredSize);
+        BaseVisualizationModel.builder(network)
+            .layoutAlgorithm(kkLayoutAlgorithm)
+            .layoutSize(preferredSize)
+            .build();
     VisualizationModel<String, Number> vm1 =
-        new BaseVisualizationModel<>(tree, treeLayoutAlgorithm, preferredSizeRect);
+        BaseVisualizationModel.builder(tree)
+            .layoutAlgorithm(treeLayoutAlgorithm)
+            .layoutSize(preferredSizeRect)
+            .build();
     // initializer is the layout model for vm1
     // and the size is also set to the same size required for the Tree in treeLayoutAlgorithm
     VisualizationModel<String, Number> vm2 =
-        new BaseVisualizationModel<>(
-            network, staticLayoutAlgorithm, vm1.getLayoutModel(), vm1.getLayoutSize());
+        BaseVisualizationModel.builder(network)
+            .layoutAlgorithm(staticLayoutAlgorithm)
+            .layoutModel(vm1.getLayoutModel())
+            .layoutSize(vm1.getLayoutSize())
+            .build();
 
     // create the two views, one for each model
     // they share the same renderer
-    vv0 = new VisualizationViewer<>(vm0, preferredSize);
-    vv1 = new VisualizationViewer<>(vm1, viewSizeRect);
-    vv2 = new VisualizationViewer<>(vm2, viewSizeRect);
+    vv0 = VisualizationViewer.builder(vm0).viewSize(preferredSize).build();
+    vv1 = VisualizationViewer.builder(vm1).viewSize(viewSizeRect).build();
+    vv2 = VisualizationViewer.builder(vm2).viewSize(viewSizeRect).build();
 
     vv1.getRenderContext()
         .setMultiLayerTransformer(vv0.getRenderContext().getMultiLayerTransformer());

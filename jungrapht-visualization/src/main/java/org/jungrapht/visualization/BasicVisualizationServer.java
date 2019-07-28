@@ -9,6 +9,7 @@
 */
 package org.jungrapht.visualization;
 
+import com.google.common.base.Preconditions;
 import java.awt.*;
 import java.awt.RenderingHints.Key;
 import java.awt.event.ComponentAdapter;
@@ -73,11 +74,62 @@ public class BasicVisualizationServer<V, E> extends JPanel implements Visualizat
 
   static Logger log = LoggerFactory.getLogger(BasicVisualizationServer.class);
 
-  public class Builder<V, E, T extends BasicVisualizationServer, B extends Builder<V, E, T, B>> {
-    private Graph<V, E> graph;
-    private LayoutAlgorithm<V> layoutAlgorithm;
-    private VisualizationModel<V, E> visualizationModel;
-    private Dimension preferredSize;
+  public static class Builder<
+      V, E, T extends BasicVisualizationServer<V, E>, B extends Builder<V, E, T, B>> {
+    protected Graph<V, E> graph;
+    protected Dimension layoutSize;
+    protected Dimension viewSize;
+    protected LayoutAlgorithm<V> layoutAlgorithm;
+    protected VisualizationModel<V, E> visualizationModel;
+
+    protected Builder(Graph<V, E> graph) {
+      this.graph = graph;
+    }
+
+    protected Builder(VisualizationModel<V, E> visualizationModel) {
+      this.visualizationModel = visualizationModel;
+    }
+
+    protected B self() {
+      return (B) this;
+    }
+
+    public B layoutSize(Dimension layoutSize) {
+      this.layoutSize = layoutSize;
+      return self();
+    }
+
+    public B viewSize(Dimension viewSize) {
+      this.viewSize = viewSize;
+      return self();
+    }
+
+    public B layoutAlgorithm(LayoutAlgorithm<V> layoutAlgorithm) {
+      this.layoutAlgorithm = layoutAlgorithm;
+      return self();
+    }
+
+    public T build() {
+      if (visualizationModel == null) {
+        Preconditions.checkNotNull(graph);
+        Preconditions.checkNotNull(viewSize);
+        if (layoutSize == null) {
+          layoutSize = viewSize;
+        }
+        Preconditions.checkArgument(layoutSize.width > 0, "width must be > 0");
+        Preconditions.checkArgument(layoutSize.height > 0, "height must be > 0");
+        visualizationModel = new BaseVisualizationModel<>(graph, layoutAlgorithm, layoutSize);
+      }
+      return (T) new BasicVisualizationServer<>(visualizationModel, viewSize);
+    }
+  }
+
+  public static <V, E> Builder<V, E, ?, ?> builder(Graph<V, E> graph) {
+    return new Builder(graph);
+  }
+
+  public static <V, E> Builder<V, E, ?, ?> builder(VisualizationModel<V, E> visualizationModel) {
+    return new Builder(visualizationModel);
   }
 
   private static final String PREFIX = "jungrapht.";
@@ -178,7 +230,7 @@ public class BasicVisualizationServer<V, E> extends JPanel implements Visualizat
    * @param layoutAlgorithm the algorithm to apply
    * @param preferredSize the size of the graph area
    */
-  public BasicVisualizationServer(
+  protected BasicVisualizationServer(
       Graph<V, E> network, LayoutAlgorithm<V> layoutAlgorithm, Dimension preferredSize) {
     this(new BaseVisualizationModel<>(network, layoutAlgorithm, preferredSize), preferredSize);
   }
@@ -187,9 +239,9 @@ public class BasicVisualizationServer<V, E> extends JPanel implements Visualizat
    * Create an instance with the specified model and view dimension.
    *
    * @param model the model to use
-   * @param preferredSize initial preferred layoutSize of the view
+   * @param viewSize initial preferred layoutSize of the view
    */
-  public BasicVisualizationServer(VisualizationModel<V, E> model, Dimension preferredSize) {
+  protected BasicVisualizationServer(VisualizationModel<V, E> model, Dimension viewSize) {
     this.model = model;
     renderContext = new DefaultRenderContext<>(model.getGraph());
     renderContext.setScreenDevice(this);
@@ -207,7 +259,7 @@ public class BasicVisualizationServer<V, E> extends JPanel implements Visualizat
     setSelectedVertexState(new MultiMutableSelectedState<>());
     setSelectedEdgeState(new MultiMutableSelectedState<>());
 
-    setPreferredSize(preferredSize);
+    setPreferredSize(viewSize);
     renderingHints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
     renderContext.getMultiLayerTransformer().addChangeListener(this);

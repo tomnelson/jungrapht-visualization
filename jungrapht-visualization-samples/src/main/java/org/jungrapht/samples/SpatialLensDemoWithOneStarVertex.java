@@ -92,8 +92,11 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
     Map<String, Point2D> map = new HashMap<>();
 
     final VisualizationModel<String, Number> visualizationModel =
-        new BaseVisualizationModel<>(graph, graphLayoutAlgorithm, preferredSize);
-    vv = new VisualizationViewer<>(visualizationModel, preferredSize);
+        BaseVisualizationModel.builder(graph)
+            .layoutAlgorithm(graphLayoutAlgorithm)
+            .layoutSize(preferredSize)
+            .build();
+    vv = VisualizationViewer.builder(visualizationModel).viewSize(preferredSize).build();
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.setBackground(Color.white);
 

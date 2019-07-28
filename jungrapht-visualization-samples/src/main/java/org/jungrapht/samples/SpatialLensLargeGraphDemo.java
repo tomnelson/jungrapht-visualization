@@ -90,8 +90,11 @@ public class SpatialLensLargeGraphDemo extends JPanel {
     Dimension viewPreferredSize = new Dimension(800, 800);
 
     final VisualizationModel<String, Number> visualizationModel =
-        new BaseVisualizationModel<>(graph, graphLayoutAlgorithm, preferredSize);
-    vv = new VisualizationViewer<>(visualizationModel, viewPreferredSize);
+        BaseVisualizationModel.builder(graph)
+            .layoutAlgorithm(graphLayoutAlgorithm)
+            .layoutSize(preferredSize)
+            .build();
+    vv = VisualizationViewer.builder(visualizationModel).viewSize(viewPreferredSize).build();
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.getRenderContext().setVertexShapeFunction(n -> new Rectangle2D.Float(-8, -8, 16, 16));
     vv.setBackground(Color.white);

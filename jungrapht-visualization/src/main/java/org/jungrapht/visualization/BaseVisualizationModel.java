@@ -28,23 +28,76 @@ public class BaseVisualizationModel<V, E> implements VisualizationModel<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(BaseVisualizationModel.class);
 
-  //  public class Builder<V, E, T extends VisualizationModel, B extends Builder<V, E, T, B>> {
-  //    private Graph<V,E> graph;
-  //    private LayoutAlgorithm<V> layoutAlgorithm;
-  //    private LayoutModel<V> layoutModel;
-  //    private Dimension layoutSize;
-  //    private Function<V, Point> initializer;
-  //
-  //
-  //    public B builder() {
-  //      return new Builder<V,E,T,B>();
-  //
-  //    }
-  //    public T build() {
-  //      return (T) new BaseVisualizationModel<>(this);
-  //    }
-  //
-  //  }
+  public static class Builder<V, E, T extends VisualizationModel, B extends Builder<V, E, T, B>> {
+    protected Graph<V, E> graph;
+    protected LayoutAlgorithm<V> layoutAlgorithm;
+    protected LayoutModel<V> layoutModel;
+    protected Dimension layoutSize;
+    protected Function<V, Point> initializer;
+
+    protected B self() {
+      return (B) this;
+    }
+
+    protected Builder(Graph<V, E> graph) {
+      this.graph = graph;
+    }
+
+    protected Builder(LayoutModel<V> layoutModel) {
+      this.layoutModel = layoutModel;
+    }
+
+    public B layoutAlgorithm(LayoutAlgorithm<V> layoutAlgorithm) {
+      this.layoutAlgorithm = layoutAlgorithm;
+      return self();
+    }
+
+    public B layoutModel(LayoutModel<V> layoutModel) {
+      this.layoutModel = layoutModel;
+      return self();
+    }
+
+    public B layoutSize(Dimension layoutSize) {
+      this.layoutSize = layoutSize;
+      return self();
+    }
+
+    public B initializer(Function<V, Point> initializer) {
+      this.initializer = initializer;
+      return self();
+    }
+
+    public T build() {
+      if (layoutModel == null) {
+        Preconditions.checkNotNull(graph);
+        Preconditions.checkNotNull(layoutSize);
+        Preconditions.checkArgument(layoutSize.width > 0, "width must be > 0");
+        Preconditions.checkArgument(layoutSize.height > 0, "height must be > 0");
+        this.layoutModel =
+            LoadingCacheLayoutModel.<V>builder()
+                .graph(graph)
+                .size(layoutSize.width, layoutSize.height)
+                .initializer(
+                    new RandomLocationTransformer<>(
+                        layoutSize.width, layoutSize.height, System.currentTimeMillis()))
+                .build();
+      }
+
+      return (T) new BaseVisualizationModel<>(this);
+    }
+  }
+
+  public static <V, E> Builder<V, E, ?, ?> builder(Graph<V, E> graph) {
+    return new Builder(graph);
+  }
+
+  public static <V, E> Builder<V, E, ?, ?> builder(LayoutModel<V> layoutModel) {
+    return new Builder(layoutModel);
+  }
+
+  private BaseVisualizationModel(Builder<V, E, ?, ?> builder) {
+    this(builder.layoutModel, builder.layoutAlgorithm);
+  }
 
   protected LayoutModel<V> layoutModel;
 
@@ -52,15 +105,11 @@ public class BaseVisualizationModel<V, E> implements VisualizationModel<V, E> {
 
   protected LayoutChange.Support changeSupport = LayoutChange.Support.create();
 
-  public BaseVisualizationModel(VisualizationModel<V, E> other) {
+  protected BaseVisualizationModel(VisualizationModel<V, E> other) {
     this(other.getGraph(), other.getLayoutAlgorithm(), null, other.getLayoutSize());
   }
 
-  //  private BaseVisualizationModel(Builder<V, E, ?, ?> builder) {
-  //    return new BaseVisualizationModel<>(builder.graph, builder.layoutAlgorithm, builder.layoutSize, builder)
-  //
-  //  }
-  public BaseVisualizationModel(VisualizationModel<V, E> other, Dimension layoutSize) {
+  protected BaseVisualizationModel(VisualizationModel<V, E> other, Dimension layoutSize) {
     this(other.getGraph(), other.getLayoutAlgorithm(), null, layoutSize);
   }
 
@@ -69,7 +118,7 @@ public class BaseVisualizationModel<V, E> implements VisualizationModel<V, E> {
    * @param layoutAlgorithm the algorithm to apply
    * @param layoutSize the size of the layout area
    */
-  public BaseVisualizationModel(
+  protected BaseVisualizationModel(
       Graph<V, E> graph, LayoutAlgorithm<V> layoutAlgorithm, Dimension layoutSize) {
     this(graph, layoutAlgorithm, null, layoutSize);
   }
@@ -83,7 +132,7 @@ public class BaseVisualizationModel<V, E> implements VisualizationModel<V, E> {
    * @param layoutSize the dimensions of the region in which the layout algorithm will place
    *     vertices
    */
-  public BaseVisualizationModel(
+  protected BaseVisualizationModel(
       Graph<V, E> graph,
       LayoutAlgorithm<V> layoutAlgorithm,
       Function<V, Point> initializer,
@@ -109,9 +158,20 @@ public class BaseVisualizationModel<V, E> implements VisualizationModel<V, E> {
     this.layoutModel.accept(layoutAlgorithm);
   }
 
-  public BaseVisualizationModel(
+  protected BaseVisualizationModel(
       Graph<V, E> graph, LayoutModel<V> layoutModel, LayoutAlgorithm<V> layoutAlgorithm) {
     Preconditions.checkNotNull(graph);
+    Preconditions.checkNotNull(layoutModel);
+    this.layoutModel = layoutModel;
+    if (this.layoutModel instanceof LayoutChange.Support) {
+      ((LayoutChange.Support) layoutModel).addLayoutChangeListener(this);
+    }
+    this.layoutModel.accept(layoutAlgorithm);
+    this.layoutAlgorithm = layoutAlgorithm;
+  }
+
+  protected BaseVisualizationModel(LayoutModel<V> layoutModel, LayoutAlgorithm<V> layoutAlgorithm) {
+    //    Preconditions.checkNotNull(graph);
     Preconditions.checkNotNull(layoutModel);
     this.layoutModel = layoutModel;
     if (this.layoutModel instanceof LayoutChange.Support) {

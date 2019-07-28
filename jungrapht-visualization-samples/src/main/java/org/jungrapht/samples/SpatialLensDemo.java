@@ -21,9 +21,6 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ItemEvent;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
-import java.util.HashMap;
-import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
@@ -106,11 +103,14 @@ public class SpatialLensDemo extends JPanel {
     graphLayoutAlgorithm = FRLayoutAlgorithm.<String>builder().build();
 
     Dimension preferredSize = new Dimension(600, 600);
-    Map<String, Point2D> map = new HashMap<>();
+    //    Map<String, Point2D> map = new HashMap<>();
 
     final VisualizationModel<String, Number> visualizationModel =
-        new BaseVisualizationModel<>(graph, graphLayoutAlgorithm, preferredSize);
-    vv = new VisualizationViewer<>(visualizationModel, preferredSize);
+        BaseVisualizationModel.builder(graph)
+            .layoutAlgorithm(graphLayoutAlgorithm)
+            .layoutSize(preferredSize)
+            .build();
+    vv = VisualizationViewer.builder(visualizationModel).viewSize(preferredSize).build();
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.setBackground(Color.white);
 

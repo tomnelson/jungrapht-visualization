@@ -11,6 +11,10 @@ import org.jungrapht.visualization.layout.algorithms.SpringLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutSpringRepulsion;
 import org.jungrapht.visualization.util.LightweightRenderingVisitor;
 
+/**
+ * demonstrates a large graph with animated layout lightweight rendering is enabled for better
+ * performance
+ */
 public class PerformanceGraph {
   public static void main(String[] args) {
     SwingUtilities.invokeLater(PerformanceGraph::createAndShowGUI);
@@ -20,18 +24,19 @@ public class PerformanceGraph {
     JFrame f = new JFrame();
     f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-    Graph<String, Number> g = TestGraphs.getGeneratedNetwork2();
+    Graph<String, Number> graph = TestGraphs.getGeneratedNetwork2();
 
     Dimension layoutSize = new Dimension(1600, 1600);
     Dimension viewSize = new Dimension(800, 800);
     VisualizationViewer<String, Number> vv =
-        new VisualizationViewer<>(
-            g,
-            SpringLayoutAlgorithm.<String>builder()
-                .repulsionContractBuilder(BarnesHutSpringRepulsion.barnesHutBuilder())
-                .build(),
-            layoutSize,
-            viewSize);
+        VisualizationViewer.builder(graph)
+            .layoutAlgorithm(
+                SpringLayoutAlgorithm.<String>builder()
+                    .repulsionContractBuilder(BarnesHutSpringRepulsion.barnesHutBuilder())
+                    .build())
+            .layoutSize(layoutSize)
+            .viewSize(viewSize)
+            .build();
 
     LightweightRenderingVisitor.visit(vv, 1.1);
     vv.scaleToLayout(new CrossoverScalingControl());

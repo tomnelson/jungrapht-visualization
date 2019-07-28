@@ -55,8 +55,11 @@ public class VertexLabelAsShapeDemo extends JPanel {
 
     Dimension preferredSize = new Dimension(400, 400);
     final VisualizationModel<String, Number> visualizationModel =
-        new BaseVisualizationModel<>(graph, layoutAlgorithm, preferredSize);
-    vv = new VisualizationViewer<>(visualizationModel, preferredSize);
+        BaseVisualizationModel.builder(graph)
+            .layoutAlgorithm(layoutAlgorithm)
+            .layoutSize(preferredSize)
+            .build();
+    vv = VisualizationViewer.builder(visualizationModel).viewSize(preferredSize).build();
 
     // this class will provide both label drawing and vertex shapes
     VertexLabelAsShapeRenderer<String, Number> vlasr =

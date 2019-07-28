@@ -58,8 +58,11 @@ public class VertexLabelPositionDemo extends JPanel {
     Dimension preferredSize = new Dimension(600, 600);
 
     final VisualizationModel<String, Number> visualizationModel =
-        new BaseVisualizationModel<>(graph, graphLayoutAlgorithm, preferredSize);
-    vv = new VisualizationViewer<>(visualizationModel, preferredSize);
+        BaseVisualizationModel.builder(graph)
+            .layoutAlgorithm(graphLayoutAlgorithm)
+            .layoutSize(preferredSize)
+            .build();
+    vv = VisualizationViewer.builder(visualizationModel).viewSize(preferredSize).build();
 
     MutableSelectedState<String> ps = vv.getSelectedVertexState();
     MutableSelectedState<Number> pes = vv.getSelectedEdgeState();

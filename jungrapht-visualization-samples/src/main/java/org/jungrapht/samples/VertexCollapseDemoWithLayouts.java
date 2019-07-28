@@ -113,8 +113,11 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
     Dimension preferredSize = new Dimension(400, 400);
 
     final VisualizationModel<Collapsable<?>, Number> visualizationModel =
-        new BaseVisualizationModel<>(graph, layoutAlgorithm, preferredSize);
-    vv = new VisualizationViewer<>(visualizationModel, preferredSize);
+        BaseVisualizationModel.builder(graph)
+            .layoutAlgorithm(layoutAlgorithm)
+            .layoutSize(preferredSize)
+            .build();
+    vv = VisualizationViewer.builder(visualizationModel).viewSize(preferredSize).build();
 
     vv.getRenderContext().setVertexShapeFunction(new ClusterVertexShapeFunction());
 

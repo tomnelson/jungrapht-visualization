@@ -31,6 +31,28 @@ import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 @SuppressWarnings("serial")
 public class VisualizationImageServer<V, E> extends BasicVisualizationServer<V, E> {
 
+  public static class Builder<
+          V, E, T extends VisualizationImageServer<V, E>, B extends Builder<V, E, T, B>>
+      extends BasicVisualizationServer.Builder<V, E, T, B> {
+
+    protected Builder(Graph<V, E> graph) {
+      super(graph);
+    }
+
+    public T build() {
+      super.build();
+      return (T) new VisualizationImageServer<>(this);
+    }
+  }
+
+  public static <V, E> Builder<V, E, ?, ?> builder(Graph<V, E> graph) {
+    return new Builder(graph);
+  }
+
+  protected VisualizationImageServer(Builder<V, E, ?, ?> builder) {
+    this(builder.graph, builder.layoutAlgorithm, builder.viewSize);
+  }
+
   Map<RenderingHints.Key, Object> renderingHints = new HashMap<>();
 
   /**
@@ -39,7 +61,7 @@ public class VisualizationImageServer<V, E> extends BasicVisualizationServer<V, 
    * @param layoutAlgorithm the Layout instance; provides the vertex locations
    * @param preferredSize the preferred layoutSize of the image
    */
-  public VisualizationImageServer(
+  protected VisualizationImageServer(
       Graph<V, E> network, LayoutAlgorithm<V> layoutAlgorithm, Dimension preferredSize) {
     super(network, layoutAlgorithm, preferredSize);
     setSize(preferredSize);

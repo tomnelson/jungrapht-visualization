@@ -41,8 +41,10 @@ public class VisualizationImageServerDemo {
     graph = createGraph();
 
     vv =
-        new VisualizationImageServer<>(
-            graph, KKLayoutAlgorithm.<Integer>builder().build(), new Dimension(600, 600));
+        VisualizationImageServer.builder(graph)
+            .layoutAlgorithm(KKLayoutAlgorithm.<Integer>builder().build())
+            .viewSize(new Dimension(600, 600))
+            .build();
 
     vv.getRenderer()
         .setVertexRenderer(

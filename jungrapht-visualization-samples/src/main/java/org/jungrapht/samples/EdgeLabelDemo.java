@@ -61,7 +61,11 @@ public class EdgeLabelDemo extends JPanel {
     graph = buildGraph();
 
     LayoutAlgorithm<Integer> layoutAlgorithm = CircleLayoutAlgorithm.builder().build();
-    vv = new VisualizationViewer<>(graph, layoutAlgorithm, new Dimension(600, 400));
+    vv =
+        VisualizationViewer.builder(graph)
+            .layoutAlgorithm(layoutAlgorithm)
+            .viewSize(new Dimension(600, 400))
+            .build();
     vv.setBackground(Color.white);
 
     vertexLabelRenderer = vv.getRenderContext().getVertexLabelRenderer();

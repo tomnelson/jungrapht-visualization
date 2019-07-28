@@ -90,7 +90,11 @@ public class RTreeVisualization<V> extends JPanel {
     radialLayoutAlgorithm = RadialTreeLayoutAlgorithm.builder().build();
     balloonLayoutAlgorithm = BalloonLayoutAlgorithm.builder().build();
 
-    vv = new VisualizationViewer<>(graph, treeLayoutAlgorithm, new Dimension(600, 600));
+    vv =
+        VisualizationViewer.builder(graph)
+            .layoutAlgorithm(treeLayoutAlgorithm)
+            .viewSize(new Dimension(600, 600))
+            .build();
     vv.setBackground(Color.white);
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.orthogonal());
 

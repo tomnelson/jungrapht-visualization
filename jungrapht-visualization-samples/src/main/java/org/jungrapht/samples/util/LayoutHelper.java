@@ -12,7 +12,7 @@ import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.SpringLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFRRepulsion;
-import org.jungrapht.visualization.layout.algorithms.repulsion.StandardSpringRepulsion;
+import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutSpringRepulsion;
 
 public class LayoutHelper {
 
@@ -20,9 +20,9 @@ public class LayoutHelper {
     KK("Kamada Kawai", KKLayoutAlgorithm.builder().build()),
     CIRCLE("Circle", CircleLayoutAlgorithm.builder().build()),
     SELF_ORGANIZING_MAP("Self Organizing Map", ISOMLayoutAlgorithm.builder().build()),
-    FR("Fruchterman Reingold (FR)", FRLayoutAlgorithm.builder().build()),
+    FR("Fruchterman Reingold", FRLayoutAlgorithm.builder().build()),
     FR_BH_VISITOR(
-        "Fruchterman Reingold",
+        "Fruchterman Reingold (BH Optimized)",
         FRLayoutAlgorithm.builder()
             .repulsionContractBuilder(BarnesHutFRRepulsion.barnesHutBuilder())
             .build()),
@@ -30,7 +30,7 @@ public class LayoutHelper {
     SPRING_BH_VISITOR(
         "Spring (BH Optimized)",
         SpringLayoutAlgorithm.builder()
-            .repulsionContractBuilder(StandardSpringRepulsion.standardBuilder())
+            .repulsionContractBuilder(BarnesHutSpringRepulsion.standardBuilder())
             .build()),
     TREE("Tree", TreeLayoutAlgorithm.builder().build()),
     BALLOON("Balloon", BalloonLayoutAlgorithm.builder().build()),
@@ -47,6 +47,7 @@ public class LayoutHelper {
     Layouts(String name, LayoutAlgorithm layoutAlgorithm) {
       this.name = name;
       this.layoutAlgorithm = layoutAlgorithm;
+      System.err.println(name + " got " + layoutAlgorithm);
     }
 
     private final String name;

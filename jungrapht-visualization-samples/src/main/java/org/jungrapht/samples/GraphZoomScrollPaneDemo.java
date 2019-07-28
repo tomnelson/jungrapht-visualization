@@ -61,8 +61,10 @@ public class GraphZoomScrollPaneDemo {
     }
     final ImageIcon icon = sandstoneIcon;
     vv =
-        new VisualizationViewer<>(
-            graph, KKLayoutAlgorithm.<Integer>builder().build(), new Dimension(700, 700));
+        VisualizationViewer.builder(graph)
+            .layoutAlgorithm(KKLayoutAlgorithm.<Integer>builder().build())
+            .viewSize(new Dimension(700, 700))
+            .build();
 
     if (icon != null) {
       vv.addPreRenderPaintable(

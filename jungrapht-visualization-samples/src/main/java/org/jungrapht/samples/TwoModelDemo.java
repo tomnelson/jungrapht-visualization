@@ -58,14 +58,20 @@ public class TwoModelDemo extends JPanel {
 
     // create the two models, each with a different layout
     VisualizationModel<String, Number> vm1 =
-        new BaseVisualizationModel<>(graph, layoutAlgorithm1, preferredSize);
+        BaseVisualizationModel.builder(graph)
+            .layoutAlgorithm(layoutAlgorithm1)
+            .layoutSize(preferredSize)
+            .build();
     VisualizationModel<String, Number> vm2 =
-        new BaseVisualizationModel<>(graph, layoutAlgorithm2, preferredSize);
+        BaseVisualizationModel.builder(graph)
+            .layoutAlgorithm(layoutAlgorithm2)
+            .layoutSize(preferredSize)
+            .build();
 
     // create the two views, one for each model
     // they share the same renderer
-    vv1 = new VisualizationViewer<>(vm1, preferredSize);
-    vv2 = new VisualizationViewer<>(vm2, preferredSize);
+    vv1 = VisualizationViewer.builder(vm1).viewSize(preferredSize).build();
+    vv2 = VisualizationViewer.builder(vm2).viewSize(preferredSize).build();
     vv1.setRenderContext(vv2.getRenderContext());
 
     // share the model Function between the two models

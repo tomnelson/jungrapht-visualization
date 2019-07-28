@@ -101,7 +101,9 @@ public class ShowLayouts extends JPanel {
 
     Graph g = g_array[3]; // initial graph
 
-    final VisualizationViewer vv = new VisualizationViewer<>(g, new Dimension(600, 600));
+    final VisualizationViewer vv =
+        (VisualizationViewer)
+            VisualizationViewer.builder(g).viewSize(new Dimension(600, 600)).build();
 
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
 

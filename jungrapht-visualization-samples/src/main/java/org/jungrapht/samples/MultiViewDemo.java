@@ -88,12 +88,15 @@ public class MultiViewDemo extends JPanel {
 
     // create one model that all 3 views will share
     VisualizationModel<String, Number> visualizationModel =
-        new BaseVisualizationModel<>(graph, layoutAlgorithm, preferredSize);
+        BaseVisualizationModel.builder(graph)
+            .layoutAlgorithm(layoutAlgorithm)
+            .layoutSize(preferredSize)
+            .build();
 
     // create 3 views that share the same model
-    vv1 = new VisualizationViewer<>(visualizationModel, preferredSize);
-    vv2 = new VisualizationViewer<>(visualizationModel, preferredSize);
-    vv3 = new VisualizationViewer<>(visualizationModel, preferredSize);
+    vv1 = VisualizationViewer.builder(visualizationModel).viewSize(preferredSize).build();
+    vv2 = VisualizationViewer.builder(visualizationModel).viewSize(preferredSize).build();
+    vv3 = VisualizationViewer.builder(visualizationModel).viewSize(preferredSize).build();
 
     vv1.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
     vv2.getRenderContext().setVertexShapeFunction(n -> new Rectangle2D.Float(-6, -6, 12, 12));

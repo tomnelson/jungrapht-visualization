@@ -8,6 +8,7 @@
 package org.jungrapht.samples;
 
 import java.awt.*;
+import java.awt.event.ItemEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
@@ -42,6 +43,8 @@ import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.quadtree.BarnesHutQuadTree;
 import org.jungrapht.visualization.layout.quadtree.ForceObject;
 import org.jungrapht.visualization.layout.quadtree.Node;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This demo is adapted from ShowLayouts, but when a LayoutAlgorithm that uses the BarnesHutOctTree
@@ -54,6 +57,8 @@ import org.jungrapht.visualization.layout.quadtree.Node;
 @SuppressWarnings("serial")
 public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
 
+  private static final Logger log =
+      LoggerFactory.getLogger(ShowLayoutsWithBarnesHutVisualization.class);
   protected static Graph[] g_array;
   protected static int graph_index;
   protected static String[] graph_names = {
@@ -102,15 +107,48 @@ public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
 
     Graph g = g_array[2]; // initial graph
 
-    VisualizationViewer vv =
-        new VisualizationViewer(g, new Dimension(600, 600)) {
+    final VisualizationViewer vv =
+        (VisualizationViewer)
+            VisualizationViewer.builder(g).viewSize(new Dimension(600, 600)).build();
+    //    {
+    //
+    //          @Override
+    //          public void paint(Graphics g) {
+    //            updatePaintables(this);
+    //            super.paint(g);
+    //          }
+    //        };
 
+    VisualizationServer.Paintable paintable =
+        new VisualizationServer.Paintable() {
           @Override
           public void paint(Graphics g) {
-            updatePaintables(this);
-            super.paint(g);
+            //        log.info("paint");
+            BarnesHutQuadTree tree = getBarnesHutQuadTreeFrom(vv.getModel().getLayoutAlgorithm());
+            //        log.info("tree: {}", tree);
+            log.info("layoutAlgorithm is {}", vv.getModel().getLayoutAlgorithm());
+
+            if (tree != null) {
+              Set<Shape> shapes = new HashSet<>();
+              getShapes(shapes, tree.getRoot());
+
+              for (Shape shape : shapes) {
+                shape = vv.getTransformSupport().transform(vv, shape);
+
+                g.setColor(Color.blue);
+                ((Graphics2D) g).draw(shape);
+                //            log.info("drew {}", shape);
+              }
+            }
+          }
+
+          @Override
+          public boolean useTransform() {
+            return false;
           }
         };
+
+    vv.addPreRenderPaintable(paintable);
 
     vv.setBackground(Color.white);
 
@@ -145,24 +183,29 @@ public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
     final JRadioButton animateLayoutTransition = new JRadioButton("Animate Layout Transition");
 
     final JComboBox jcb = new JComboBox(combos);
-    jcb.addActionListener(
+    jcb.addItemListener(
         e ->
             SwingUtilities.invokeLater(
                 () -> {
-                  LayoutHelper.Layouts layoutType = (LayoutHelper.Layouts) jcb.getSelectedItem();
-                  LayoutAlgorithm layoutAlgorithm = layoutType.getLayoutAlgorithm();
-                  if (layoutAlgorithm instanceof TreeLayoutAlgorithm) {
-                    LayoutModel positionModel =
-                        this.getTreeLayoutPositions(
-                            SpanningTreeAdapter.getSpanningTree(vv.getModel().getGraph()),
-                            layoutAlgorithm);
-                    vv.getModel().getLayoutModel().setInitializer(positionModel);
-                    layoutAlgorithm = new StaticLayoutAlgorithm();
-                  }
-                  if (animateLayoutTransition.isSelected()) {
-                    LayoutAlgorithmTransition.animate(vv, layoutAlgorithm);
-                  } else {
-                    LayoutAlgorithmTransition.apply(vv, layoutAlgorithm);
+                  if (e.getStateChange() == ItemEvent.SELECTED) {
+                    log.info("item was {}", e.getItem());
+                    LayoutHelper.Layouts layoutType = (LayoutHelper.Layouts) e.getItem();
+                    log.info("selected layout type is {}", layoutType);
+                    LayoutAlgorithm layoutAlgorithm = layoutType.getLayoutAlgorithm();
+                    log.info("selected layout alg {}", layoutAlgorithm);
+                    if (layoutAlgorithm instanceof TreeLayoutAlgorithm) {
+                      LayoutModel positionModel =
+                          this.getTreeLayoutPositions(
+                              SpanningTreeAdapter.getSpanningTree(vv.getModel().getGraph()),
+                              layoutAlgorithm);
+                      vv.getModel().getLayoutModel().setInitializer(positionModel);
+                      layoutAlgorithm = new StaticLayoutAlgorithm();
+                    }
+                    if (animateLayoutTransition.isSelected()) {
+                      LayoutAlgorithmTransition.animate(vv, layoutAlgorithm);
+                    } else {
+                      LayoutAlgorithmTransition.apply(vv, layoutAlgorithm);
+                    }
                   }
                 }));
 
@@ -251,36 +294,36 @@ public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
   }
 
   // save off the paintable so I can remove and re-create it each time
-  VisualizationServer.Paintable paintable = null;
-
-  private void updatePaintables(VisualizationViewer vv) {
-    vv.removePreRenderPaintable(paintable);
-    BarnesHutQuadTree tree = getBarnesHutQuadTreeFrom(vv.getModel().getLayoutAlgorithm());
-    if (tree != null) {
-      Set<Shape> shapes = new HashSet<>();
-      getShapes(shapes, tree.getRoot());
-
-      paintable =
-          new VisualizationServer.Paintable() {
-
-            @Override
-            public void paint(Graphics g) {
-              for (Shape shape : shapes) {
-                shape = vv.getTransformSupport().transform(vv, shape);
-
-                g.setColor(Color.blue);
-                ((Graphics2D) g).draw(shape);
-              }
-            }
-
-            @Override
-            public boolean useTransform() {
-              return false;
-            }
-          };
-      vv.addPreRenderPaintable(paintable);
-    }
-  }
+  //  VisualizationServer.Paintable paintable = null;
+  //
+  //  private void updatePaintables(VisualizationViewer vv) {
+  //    vv.removePreRenderPaintable(paintable);
+  //    BarnesHutQuadTree tree = getBarnesHutQuadTreeFrom(vv.getModel().getLayoutAlgorithm());
+  //    if (tree != null) {
+  //      Set<Shape> shapes = new HashSet<>();
+  //      getShapes(shapes, tree.getRoot());
+  //
+  //      paintable =
+  //          new VisualizationServer.Paintable() {
+  //
+  //            @Override
+  //            public void paint(Graphics g) {
+  //              for (Shape shape : shapes) {
+  //                shape = vv.getTransformSupport().transform(vv, shape);
+  //
+  //                g.setColor(Color.blue);
+  //                ((Graphics2D) g).draw(shape);
+  //              }
+  //            }
+  //
+  //            @Override
+  //            public boolean useTransform() {
+  //              return false;
+  //            }
+  //          };
+  //      vv.addPreRenderPaintable(paintable);
+  //    }
+  //  }
 
   public static void main(String[] args) {
     JPanel jp = new ShowLayoutsWithBarnesHutVisualization();

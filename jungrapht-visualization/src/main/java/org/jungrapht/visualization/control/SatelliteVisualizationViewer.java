@@ -36,6 +36,31 @@ import org.jungrapht.visualization.transform.shape.ShapeTransformer;
 @SuppressWarnings("serial")
 public class SatelliteVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 
+  public static class Builder<
+          V, E, T extends SatelliteVisualizationViewer<V, E>, B extends Builder<V, E, T, B>>
+      extends VisualizationViewer.Builder<V, E, T, B> {
+
+    protected VisualizationViewer<V, E> master;
+
+    protected Builder(VisualizationViewer<V, E> master) {
+      super(master.getModel());
+      this.master = master;
+    }
+
+    public T build() {
+      super.build();
+      return (T) new SatelliteVisualizationViewer<>(master, viewSize);
+    }
+  }
+
+  public static <V, E> Builder<V, E, ?, ?> builder(VisualizationViewer<V, E> master) {
+    return new Builder(master);
+  }
+
+  //  protected SatelliteVisualizationViewer(Builder<V, E, ?, ?> builder) {
+  //    this(builder.master, builder.viewSize);
+  //  }
+
   /** the master VisualizationViewer that this is a satellite view for */
   protected VisualizationViewer<V, E> master;
 
@@ -43,7 +68,8 @@ public class SatelliteVisualizationViewer<V, E> extends VisualizationViewer<V, E
    * @param master the master VisualizationViewer for which this is a satellite view
    * @param preferredSize the specified layoutSize of the component
    */
-  public SatelliteVisualizationViewer(VisualizationViewer<V, E> master, Dimension preferredSize) {
+  protected SatelliteVisualizationViewer(
+      VisualizationViewer<V, E> master, Dimension preferredSize) {
     super(master.getModel(), preferredSize);
     this.master = master;
 

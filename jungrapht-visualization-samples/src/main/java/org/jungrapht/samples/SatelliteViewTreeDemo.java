@@ -92,13 +92,18 @@ public class SatelliteViewTreeDemo extends JPanel {
 
     // create one model that both views will share
     VisualizationModel<String, Integer> vm =
-        new BaseVisualizationModel<>(graph, layoutAlgorithm, layoutSize);
+        BaseVisualizationModel.builder(graph)
+            .layoutAlgorithm(layoutAlgorithm)
+            .layoutSize(layoutSize)
+            .build();
 
     // create 2 views that share the same model
     final VisualizationViewer<String, Integer> mainVisualizationViewer =
-        new VisualizationViewer<>(vm, preferredSize1);
+        VisualizationViewer.builder(vm).viewSize(preferredSize1).build();
     final SatelliteVisualizationViewer<String, Integer> satelliteVisualizationViewer =
-        new SatelliteVisualizationViewer<>(mainVisualizationViewer, preferredSize2);
+        SatelliteVisualizationViewer.builder(mainVisualizationViewer)
+            .viewSize(preferredSize2)
+            .build();
     LightweightRenderingVisitor.visit(mainVisualizationViewer);
     LightweightRenderingVisitor.visit(satelliteVisualizationViewer);
     mainVisualizationViewer.setBackground(Color.white);

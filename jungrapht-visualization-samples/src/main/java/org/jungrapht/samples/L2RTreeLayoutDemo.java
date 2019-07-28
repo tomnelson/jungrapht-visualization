@@ -65,7 +65,11 @@ public class L2RTreeLayoutDemo extends JPanel {
 
     treeLayoutAlgorithm = TreeLayoutAlgorithm.<String>builder().build();
     radialLayoutAlgorithm = RadialTreeLayoutAlgorithm.<String>builder().build();
-    vv = new VisualizationViewer<>(graph, treeLayoutAlgorithm, new Dimension(600, 600));
+    vv =
+        VisualizationViewer.builder(graph)
+            .layoutAlgorithm(treeLayoutAlgorithm)
+            .viewSize(new Dimension(600, 600))
+            .build();
     vv.setBackground(Color.white);
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
     vv.getRenderContext().setVertexLabelFunction(Object::toString);

@@ -118,7 +118,11 @@ public class GraphEditorDemo extends JPanel implements Printable {
 
     this.layoutAlgorithm = new StaticLayoutAlgorithm<>(); //, new Dimension(600, 600));
 
-    vv = new VisualizationViewer<>(graph, layoutAlgorithm, new Dimension(600, 600));
+    vv =
+        VisualizationViewer.builder(graph)
+            .layoutAlgorithm(layoutAlgorithm)
+            .viewSize(new Dimension(600, 600))
+            .build();
     vv.setBackground(Color.white);
 
     vv.getRenderContext().setParallelEdgeIndexFunction(new ParallelEdgeIndexFunction<>());

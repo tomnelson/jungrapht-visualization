@@ -50,7 +50,11 @@ public class TreeDAGLayoutDemo extends JPanel {
     // create a simple graph for the demo
     graph = createDAG();
 
-    vv = new VisualizationViewer<>(graph, new StaticLayoutAlgorithm<>(), new Dimension(600, 600));
+    vv =
+        VisualizationViewer.builder(graph)
+            .layoutAlgorithm(new StaticLayoutAlgorithm<>())
+            .viewSize(new Dimension(600, 600))
+            .build();
     vv.setBackground(Color.white);
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
     vv.getRenderContext().setVertexLabelFunction(Object::toString);

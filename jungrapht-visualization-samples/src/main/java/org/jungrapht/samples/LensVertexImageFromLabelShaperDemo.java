@@ -73,7 +73,12 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
 
     FRLayoutAlgorithm<Number> layoutAlgorithm = FRLayoutAlgorithm.<Number>builder().build();
     layoutAlgorithm.setMaxIterations(100);
-    vv = new VisualizationViewer<>(graph, layoutAlgorithm, layoutSize, viewSize);
+    vv =
+        VisualizationViewer.builder(graph)
+            .layoutAlgorithm(layoutAlgorithm)
+            .layoutSize(layoutSize)
+            .viewSize(viewSize)
+            .build();
 
     Function<Number, Paint> vpf =
         new PickableElementPaintFunction<>(vv.getSelectedVertexState(), Color.white, Color.yellow);
