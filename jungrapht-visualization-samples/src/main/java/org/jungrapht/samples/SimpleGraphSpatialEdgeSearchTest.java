@@ -67,15 +67,14 @@ public class SimpleGraphSpatialEdgeSearchTest extends JPanel {
     LayoutAlgorithm layoutAlgorithm = new StaticLayoutAlgorithm();
 
     ScalingControl scaler = new CrossoverScalingControl();
-    VisualizationModel model =
+    VisualizationModel<String, Number> model =
         BaseVisualizationModel.builder(g)
             .layoutAlgorithm(layoutAlgorithm)
             .initializer(new RandomLocationTransformer(600, 600, System.currentTimeMillis()))
             .layoutSize(layoutPreferredSize)
             .build();
-    VisualizationViewer vv =
-        (VisualizationViewer)
-            VisualizationViewer.builder(model).viewSize(viewPreferredSize).build();
+    VisualizationViewer<String, Number> vv =
+        VisualizationViewer.builder(model).viewSize(viewPreferredSize).build();
 
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
@@ -91,7 +90,7 @@ public class SimpleGraphSpatialEdgeSearchTest extends JPanel {
             MultiLayerTransformer multiLayerTransformer =
                 vv.getRenderContext().getMultiLayerTransformer();
             Point2D layoutPoint = multiLayerTransformer.inverseTransform(e.getX(), e.getY());
-            Object edge = vv.getEdgeSpatial().getClosestElement(layoutPoint);
+            Number edge = vv.getEdgeSpatial().getClosestElement(layoutPoint);
             if (edge != null) {
               vv.getSelectedEdgeState().clear();
               vv.getSelectedEdgeState().pick(edge, true);
@@ -142,7 +141,7 @@ public class SimpleGraphSpatialEdgeSearchTest extends JPanel {
   }
 
   public void testClosestVertices(
-      VisualizationViewer<String, String> vv,
+      VisualizationViewer<String, Number> vv,
       Graph<String, Number> graph,
       LayoutModel<String> layoutModel,
       Spatial<String> tree) {

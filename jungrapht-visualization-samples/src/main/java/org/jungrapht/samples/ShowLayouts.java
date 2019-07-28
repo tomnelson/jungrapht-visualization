@@ -46,7 +46,7 @@ import org.jungrapht.visualization.util.RadialLayoutRings;
 @SuppressWarnings("serial")
 public class ShowLayouts extends JPanel {
 
-  protected static Graph[] g_array;
+  protected static Graph<String, Number>[] g_array;
   protected static int graph_index;
   protected static String[] graph_names = {
     "Two component graph",
@@ -88,8 +88,9 @@ public class ShowLayouts extends JPanel {
     g_array[3] = TestGraphs.getOneComponentGraph();
     g_array[4] = TestGraphs.createChainPlusIsolates(18, 5);
     g_array[5] = TestGraphs.createChainPlusIsolates(0, 20);
-    Graph network =
-        GraphTypeBuilder.forGraphType(DefaultGraphType.directedMultigraph()).buildGraph();
+    Graph<String, Number> network =
+        GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.directedMultigraph())
+            .buildGraph();
 
     network.addVertex("A");
     network.addVertex("B");
@@ -99,11 +100,10 @@ public class ShowLayouts extends JPanel {
 
     g_array[6] = network;
 
-    Graph g = g_array[3]; // initial graph
+    Graph<String, Number> g = g_array[3]; // initial graph
 
-    final VisualizationViewer vv =
-        (VisualizationViewer)
-            VisualizationViewer.builder(g).viewSize(new Dimension(600, 600)).build();
+    final VisualizationViewer<String, Number> vv =
+        VisualizationViewer.builder(g).viewSize(new Dimension(600, 600)).build();
 
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
 

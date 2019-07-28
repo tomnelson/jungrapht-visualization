@@ -152,6 +152,14 @@ public class TreeUtils {
     }
   }
 
+  /**
+   * removes a vertex and all descendants from a tree
+   *
+   * @param tree the tree to mutate
+   * @param subRoot the vertex to remove
+   * @param <V> the vertex type
+   * @param <E> the edge type
+   */
   public static <V, E> void removeTreeVertex(Graph<V, E> tree, V subRoot) {
     Iterator<V> iterator = new BreadthFirstIterator<>(tree, subRoot);
     // remove all the children

@@ -30,7 +30,7 @@ public class LayoutHelper {
     SPRING_BH_VISITOR(
         "Spring (BH Optimized)",
         SpringLayoutAlgorithm.builder()
-            .repulsionContractBuilder(BarnesHutSpringRepulsion.standardBuilder())
+            .repulsionContractBuilder(BarnesHutSpringRepulsion.barnesHutBuilder())
             .build()),
     TREE("Tree", TreeLayoutAlgorithm.builder().build()),
     BALLOON("Balloon", BalloonLayoutAlgorithm.builder().build()),
