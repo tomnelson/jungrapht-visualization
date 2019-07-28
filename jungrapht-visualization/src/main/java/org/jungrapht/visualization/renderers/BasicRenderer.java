@@ -17,36 +17,36 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The default implementation of the Renderer used by the VisualizationViewer. Default Node and Edge
- * Renderers are supplied, or the user may set custom values. The Node and Edge renderers are used
- * in the renderNode and renderEdge methods, which are called in the render loop of the
+ * The default implementation of the Renderer used by the VisualizationViewer. Default Vertex and
+ * Edge Renderers are supplied, or the user may set custom values. The Vertex and Edge renderers are
+ * used in the renderVertex and renderEdge methods, which are called in the render loop of the
  * VisualizationViewer.
  *
  * @author Tom Nelson
  */
-public class BasicRenderer<N, E> implements Renderer<N, E> {
+public class BasicRenderer<V, E> implements Renderer<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(BasicRenderer.class);
-  protected Node<N, E> nodeRenderer = new BasicNodeRenderer<>();
-  protected NodeLabel<N, E> nodeLabelRenderer = new BasicNodeLabelRenderer<>();
-  protected Renderer.Edge<N, E> edgeRenderer = new BasicEdgeRenderer<>();
-  protected Renderer.EdgeLabel<N, E> edgeLabelRenderer = new BasicEdgeLabelRenderer<>();
+  protected Vertex<V, E> vertexRenderer = new BasicVertexRenderer<>();
+  protected VertexLabel<V, E> vertexLabelRenderer = new BasicVertexLabelRenderer<>();
+  protected Renderer.Edge<V, E> edgeRenderer = new BasicEdgeRenderer<>();
+  protected Renderer.EdgeLabel<V, E> edgeLabelRenderer = new BasicEdgeLabelRenderer<>();
 
   public void render(
-      RenderContext<N, E> renderContext,
-      VisualizationModel<N, E> visualizationModel,
-      Spatial<N> nodeSpatial,
+      RenderContext<V, E> renderContext,
+      VisualizationModel<V, E> visualizationModel,
+      Spatial<V> vertexSpatial,
       Spatial<E> edgeSpatial) {
-    if (nodeSpatial == null) {
+    if (vertexSpatial == null) {
       render(renderContext, visualizationModel);
       return;
     }
-    Iterable<N> visibleNodes = null;
+    Iterable<V> visibleVertices = null;
     Iterable<E> visibleEdges = null;
 
     try {
-      visibleNodes =
-          nodeSpatial.getVisibleElements(
+      visibleVertices =
+          vertexSpatial.getVisibleElements(
               ((VisualizationServer) renderContext.getScreenDevice()).viewOnLayout());
 
       if (edgeSpatial != null) {
@@ -54,23 +54,23 @@ public class BasicRenderer<N, E> implements Renderer<N, E> {
             edgeSpatial.getVisibleElements(
                 ((VisualizationServer) renderContext.getScreenDevice()).viewOnLayout());
       } else {
-        visibleEdges = visualizationModel.getNetwork().edgeSet();
+        visibleEdges = visualizationModel.getGraph().edgeSet();
       }
     } catch (ConcurrentModificationException ex) {
-      // skip rendering until graph node index is stable,
+      // skip rendering until graph vertex index is stable,
       // this can happen if the layout relax thread is changing locations while the
       // visualization is rendering
       log.info("got {} so returning", ex.toString());
       log.info(
-          "layoutMode active: {}, edgeSpatial active {}, nodeSpatial active: {}",
+          "layoutMode active: {}, edgeSpatial active {}, vertexSpatial active: {}",
           visualizationModel.getLayoutModel().isRelaxing(),
           edgeSpatial != null && edgeSpatial.isActive(),
-          nodeSpatial != null && nodeSpatial.isActive());
+          vertexSpatial != null && vertexSpatial.isActive());
       return;
     }
 
     try {
-      Graph<N, E> network = visualizationModel.getNetwork();
+      Graph<V, E> network = visualizationModel.getGraph();
       // paint all the edges
       log.trace("the visibleEdges are {}", visibleEdges);
       for (E e : visibleEdges) {
@@ -83,13 +83,13 @@ public class BasicRenderer<N, E> implements Renderer<N, E> {
       renderContext.getScreenDevice().repaint();
     }
 
-    // paint all the nodes
+    // paint all the vertices
     try {
-      log.trace("the visibleNodes are {}", visibleNodes);
+      log.trace("the visibleVertices are {}", visibleVertices);
 
-      for (N v : visibleNodes) {
-        renderNode(renderContext, visualizationModel, v);
-        renderNodeLabel(renderContext, visualizationModel, v);
+      for (V v : visibleVertices) {
+        renderVertex(renderContext, visualizationModel, v);
+        renderVertexLabel(renderContext, visualizationModel, v);
       }
     } catch (ConcurrentModificationException cme) {
       renderContext.getScreenDevice().repaint();
@@ -98,8 +98,8 @@ public class BasicRenderer<N, E> implements Renderer<N, E> {
 
   @Override
   public void render(
-      RenderContext<N, E> renderContext, VisualizationModel<N, E> visualizationModel) {
-    Graph<N, E> network = visualizationModel.getNetwork();
+      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel) {
+    Graph<V, E> network = visualizationModel.getGraph();
     // paint all the edges
     try {
       for (E e : network.edgeSet()) {
@@ -110,74 +110,74 @@ public class BasicRenderer<N, E> implements Renderer<N, E> {
       renderContext.getScreenDevice().repaint();
     }
 
-    // paint all the nodes
+    // paint all the vertices
     try {
-      for (N v : network.vertexSet()) {
-        renderNode(renderContext, visualizationModel, v);
-        renderNodeLabel(renderContext, visualizationModel, v);
+      for (V v : network.vertexSet()) {
+        renderVertex(renderContext, visualizationModel, v);
+        renderVertexLabel(renderContext, visualizationModel, v);
       }
     } catch (ConcurrentModificationException cme) {
       renderContext.getScreenDevice().repaint();
     }
   }
 
-  public void renderNode(
-      RenderContext<N, E> renderContext, VisualizationModel<N, E> visualizationModel, N v) {
-    nodeRenderer.paintNode(renderContext, visualizationModel, v);
+  public void renderVertex(
+      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {
+    vertexRenderer.paintVertex(renderContext, visualizationModel, v);
   }
 
-  public void renderNodeLabel(
-      RenderContext<N, E> renderContext, VisualizationModel<N, E> visualizationModel, N v) {
-    nodeLabelRenderer.labelNode(
-        renderContext, visualizationModel, v, renderContext.getNodeLabelFunction().apply(v));
+  public void renderVertexLabel(
+      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {
+    vertexLabelRenderer.labelVertex(
+        renderContext, visualizationModel, v, renderContext.getVertexLabelFunction().apply(v));
   }
 
   public void renderEdge(
-      RenderContext<N, E> renderContext, VisualizationModel<N, E> visualizationModel, E e) {
+      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e) {
     edgeRenderer.paintEdge(renderContext, visualizationModel, e);
   }
 
   public void renderEdgeLabel(
-      RenderContext<N, E> renderContext, VisualizationModel<N, E> visualizationModel, E e) {
+      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e) {
     edgeLabelRenderer.labelEdge(
         renderContext, visualizationModel, e, renderContext.getEdgeLabelFunction().apply(e));
   }
 
-  public void setNodeRenderer(Node<N, E> r) {
-    this.nodeRenderer = r;
+  public void setVertexRenderer(Vertex<V, E> r) {
+    this.vertexRenderer = r;
   }
 
-  public void setEdgeRenderer(Renderer.Edge<N, E> r) {
+  public void setEdgeRenderer(Renderer.Edge<V, E> r) {
     this.edgeRenderer = r;
   }
 
   /** @return the edgeLabelRenderer */
-  public Renderer.EdgeLabel<N, E> getEdgeLabelRenderer() {
+  public Renderer.EdgeLabel<V, E> getEdgeLabelRenderer() {
     return edgeLabelRenderer;
   }
 
   /** @param edgeLabelRenderer the edgeLabelRenderer to set */
-  public void setEdgeLabelRenderer(Renderer.EdgeLabel<N, E> edgeLabelRenderer) {
+  public void setEdgeLabelRenderer(Renderer.EdgeLabel<V, E> edgeLabelRenderer) {
     this.edgeLabelRenderer = edgeLabelRenderer;
   }
 
-  /** @return the nodeLabelRenderer */
-  public NodeLabel<N, E> getNodeLabelRenderer() {
-    return nodeLabelRenderer;
+  /** @return the vertexLabelRenderer */
+  public VertexLabel<V, E> getVertexLabelRenderer() {
+    return vertexLabelRenderer;
   }
 
-  /** @param nodeLabelRenderer the nodeLabelRenderer to set */
-  public void setNodeLabelRenderer(NodeLabel<N, E> nodeLabelRenderer) {
-    this.nodeLabelRenderer = nodeLabelRenderer;
+  /** @param vertexLabelRenderer the vertexLabelRenderer to set */
+  public void setVertexLabelRenderer(VertexLabel<V, E> vertexLabelRenderer) {
+    this.vertexLabelRenderer = vertexLabelRenderer;
   }
 
   /** @return the edgeRenderer */
-  public Renderer.Edge<N, E> getEdgeRenderer() {
+  public Renderer.Edge<V, E> getEdgeRenderer() {
     return edgeRenderer;
   }
 
-  /** @return the nodeRenderer */
-  public Node<N, E> getNodeRenderer() {
-    return nodeRenderer;
+  /** @return the vertexRenderer */
+  public Vertex<V, E> getVertexRenderer() {
+    return vertexRenderer;
   }
 }

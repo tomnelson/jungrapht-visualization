@@ -22,21 +22,21 @@ import org.jungrapht.visualization.GraphZoomScrollPane;
 import org.jungrapht.visualization.LayeredIcon;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.annotations.SelectedNodePaintable;
+import org.jungrapht.visualization.annotations.SelectedVertexPaintable;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.LensMagnificationGraphMousePlugin;
 import org.jungrapht.visualization.control.ModalGraphMouse.Mode;
 import org.jungrapht.visualization.control.ModalLensGraphMouse;
 import org.jungrapht.visualization.control.ScalingControl;
-import org.jungrapht.visualization.decorators.EllipseNodeShapeFunction;
-import org.jungrapht.visualization.decorators.NodeIconShapeFunction;
+import org.jungrapht.visualization.decorators.EllipseVertexShapeFunction;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
+import org.jungrapht.visualization.decorators.VertexIconShapeFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.renderers.Checkmark;
 import org.jungrapht.visualization.renderers.DefaultEdgeLabelRenderer;
-import org.jungrapht.visualization.renderers.DefaultNodeLabelRenderer;
+import org.jungrapht.visualization.renderers.DefaultVertexLabelRenderer;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 import org.jungrapht.visualization.transform.LayoutLensSupport;
 import org.jungrapht.visualization.transform.Lens;
@@ -48,7 +48,7 @@ import org.jungrapht.visualization.util.IconCache;
 import org.jungrapht.visualization.util.LightweightRenderingVisitor;
 
 /** @author Tom Nelson */
-public class LensNodeImageFromLabelShaperDemo extends JPanel {
+public class LensVertexImageFromLabelShaperDemo extends JPanel {
 
   /** */
   private static final long serialVersionUID = 5432239991020505763L;
@@ -62,7 +62,7 @@ public class LensNodeImageFromLabelShaperDemo extends JPanel {
   LensSupport magnifyLayoutSupport;
   LensSupport magnifyViewSupport;
   /** create an instance of a simple graph with controls to demo the zoom features. */
-  public LensNodeImageFromLabelShaperDemo() {
+  public LensVertexImageFromLabelShaperDemo() {
 
     Dimension layoutSize = new Dimension(2000, 2000);
     Dimension viewSize = new Dimension(600, 600);
@@ -76,8 +76,8 @@ public class LensNodeImageFromLabelShaperDemo extends JPanel {
     vv = new VisualizationViewer<>(graph, layoutAlgorithm, layoutSize, viewSize);
 
     Function<Number, Paint> vpf =
-        new PickableElementPaintFunction<>(vv.getSelectedNodeState(), Color.white, Color.yellow);
-    vv.getRenderContext().setNodeFillPaintFunction(vpf);
+        new PickableElementPaintFunction<>(vv.getSelectedVertexState(), Color.white, Color.yellow);
+    vv.getRenderContext().setVertexFillPaintFunction(vpf);
     vv.getRenderContext()
         .setEdgeDrawPaintFunction(
             new PickableElementPaintFunction<>(vv.getSelectedEdgeState(), Color.black, Color.cyan));
@@ -93,24 +93,24 @@ public class LensNodeImageFromLabelShaperDemo extends JPanel {
                   return Color.black;
                 });
 
-    vv.getRenderContext().setNodeLabelRenderer(new DefaultNodeLabelRenderer(Color.cyan));
+    vv.getRenderContext().setVertexLabelRenderer(new DefaultVertexLabelRenderer(Color.cyan));
     vv.getRenderContext().setEdgeLabelRenderer(new DefaultEdgeLabelRenderer(Color.cyan));
 
-    final NodeIconShapeFunction<Number> nodeImageShapeFunction =
-        new NodeIconShapeFunction<>(new EllipseNodeShapeFunction<>());
-    nodeImageShapeFunction.setIconMap(iconCache);
+    final VertexIconShapeFunction<Number> vertexImageShapeFunction =
+        new VertexIconShapeFunction<>(new EllipseVertexShapeFunction<>());
+    vertexImageShapeFunction.setIconMap(iconCache);
 
-    vv.getRenderContext().setNodeShapeFunction(nodeImageShapeFunction);
-    vv.getRenderContext().setNodeIconFunction(iconCache::get);
+    vv.getRenderContext().setVertexShapeFunction(vertexImageShapeFunction);
+    vv.getRenderContext().setVertexIconFunction(iconCache::get);
 
-    vv.addPostRenderPaintable(SelectedNodePaintable.builder(vv).build());
+    vv.addPostRenderPaintable(SelectedVertexPaintable.builder(vv).build());
     // Get the pickedState and add a listener that will decorate the
-    //Node images with a checkmark icon when they are picked
-    MutableSelectedState<Number> ps = vv.getSelectedNodeState();
+    //Vertex images with a checkmark icon when they are picked
+    MutableSelectedState<Number> ps = vv.getSelectedVertexState();
     ps.addItemListener(new PickWithIconListener(iconCache::get));
 
     // add a listener for ToolTips
-    vv.setNodeToolTipFunction(Object::toString);
+    vv.setVertexToolTipFunction(Object::toString);
 
     final GraphZoomScrollPane panel = new GraphZoomScrollPane(vv);
     add(panel);
@@ -268,7 +268,7 @@ public class LensNodeImageFromLabelShaperDemo extends JPanel {
     Container content = frame.getContentPane();
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-    content.add(new LensNodeImageFromLabelShaperDemo());
+    content.add(new LensVertexImageFromLabelShaperDemo());
     frame.pack();
     frame.setVisible(true);
   }

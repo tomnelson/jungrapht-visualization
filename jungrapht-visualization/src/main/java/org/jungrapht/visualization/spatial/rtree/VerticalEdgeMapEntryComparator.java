@@ -37,11 +37,11 @@ public class VerticalEdgeMapEntryComparator<T> implements Comparator<Map.Entry<T
   }
 
   @Override
-  public int compare(Map.Entry<T, Rectangle2D> leftNode, Map.Entry<T, Rectangle2D> rightNode) {
-    return compare(leftNode.getValue(), rightNode.getValue());
+  public int compare(Map.Entry<T, Rectangle2D> leftVertex, Map.Entry<T, Rectangle2D> rightVertex) {
+    return compare(leftVertex.getValue(), rightVertex.getValue());
   }
 
-  public int compare(Node<?> leftNode, Node<?> rightNode) {
-    return compare(leftNode.getBounds(), rightNode.getBounds());
+  public int compare(Node<?> leftVertex, Node<?> rightVertex) {
+    return compare(leftVertex.getBounds(), rightVertex.getBounds());
   }
 }

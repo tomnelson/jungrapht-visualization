@@ -15,15 +15,15 @@ import java.awt.Shape;
 import java.util.function.Function;
 
 /** @author Joshua O'Madadhain */
-public class EllipseNodeShapeFunction<N> extends AbstractNodeShapeFunction<N>
-    implements Function<N, Shape> {
-  public EllipseNodeShapeFunction() {}
+public class EllipseVertexShapeFunction<V> extends AbstractVertexShapeFunction<V>
+    implements Function<V, Shape> {
+  public EllipseVertexShapeFunction() {}
 
-  public EllipseNodeShapeFunction(Function<N, Integer> vsf, Function<N, Float> varf) {
+  public EllipseVertexShapeFunction(Function<V, Integer> vsf, Function<V, Float> varf) {
     super(vsf, varf);
   }
 
-  public Shape apply(N v) {
+  public Shape apply(V v) {
     return factory.getEllipse(v);
   }
 }

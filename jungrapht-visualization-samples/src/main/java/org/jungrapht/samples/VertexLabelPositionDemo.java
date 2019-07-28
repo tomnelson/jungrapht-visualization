@@ -23,17 +23,17 @@ import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.Renderer;
-import org.jungrapht.visualization.renderers.Renderer.NodeLabel.Position;
+import org.jungrapht.visualization.renderers.Renderer.VertexLabel.Position;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 
 /**
- * Demonstrates node label positioning controlled by the user. In the AUTO setting, labels are
- * placed according to which quadrant the node is in
+ * Demonstrates vertex label positioning controlled by the user. In the AUTO setting, labels are
+ * placed according to which quadrant the vertex is in
  *
  * @author Tom Nelson
  */
 @SuppressWarnings("serial")
-public class NodeLabelPositionDemo extends JPanel {
+public class VertexLabelPositionDemo extends JPanel {
 
   /** the graph */
   Graph<String, Number> graph;
@@ -46,7 +46,7 @@ public class NodeLabelPositionDemo extends JPanel {
   ScalingControl scaler;
 
   /** create an instance of a simple graph with controls to demo the zoomand hyperbolic features. */
-  public NodeLabelPositionDemo() {
+  public VertexLabelPositionDemo() {
 
     setLayout(new BorderLayout());
     // create a simple graph for the demo
@@ -61,19 +61,20 @@ public class NodeLabelPositionDemo extends JPanel {
         new BaseVisualizationModel<>(graph, graphLayoutAlgorithm, preferredSize);
     vv = new VisualizationViewer<>(visualizationModel, preferredSize);
 
-    MutableSelectedState<String> ps = vv.getSelectedNodeState();
+    MutableSelectedState<String> ps = vv.getSelectedVertexState();
     MutableSelectedState<Number> pes = vv.getSelectedEdgeState();
     vv.getRenderContext()
-        .setNodeFillPaintFunction(new PickableElementPaintFunction<>(ps, Color.red, Color.yellow));
+        .setVertexFillPaintFunction(
+            new PickableElementPaintFunction<>(ps, Color.red, Color.yellow));
     vv.getRenderContext()
         .setEdgeDrawPaintFunction(new PickableElementPaintFunction<>(pes, Color.black, Color.cyan));
     vv.setBackground(Color.white);
-    vv.getRenderContext().setNodeLabelPosition(Renderer.NodeLabel.Position.W);
+    vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.W);
 
-    vv.getRenderContext().setNodeLabelFunction(n -> n);
+    vv.getRenderContext().setVertexLabelFunction(n -> n);
 
     // add a listener for ToolTips
-    vv.setNodeToolTipFunction(n -> n);
+    vv.setVertexToolTipFunction(n -> n);
 
     GraphZoomScrollPane gzsp = new GraphZoomScrollPane(vv);
     add(gzsp);
@@ -98,25 +99,25 @@ public class NodeLabelPositionDemo extends JPanel {
     menubar.add(graphMouse.getModeMenu());
     gzsp.setCorner(menubar);
     JComboBox<Position> cb = new JComboBox<>();
-    cb.addItem(Renderer.NodeLabel.Position.N);
-    cb.addItem(Renderer.NodeLabel.Position.NE);
-    cb.addItem(Renderer.NodeLabel.Position.E);
-    cb.addItem(Renderer.NodeLabel.Position.SE);
-    cb.addItem(Renderer.NodeLabel.Position.S);
-    cb.addItem(Renderer.NodeLabel.Position.SW);
-    cb.addItem(Renderer.NodeLabel.Position.W);
-    cb.addItem(Renderer.NodeLabel.Position.NW);
-    cb.addItem(Renderer.NodeLabel.Position.N);
-    cb.addItem(Renderer.NodeLabel.Position.CNTR);
-    cb.addItem(Renderer.NodeLabel.Position.AUTO);
+    cb.addItem(Renderer.VertexLabel.Position.N);
+    cb.addItem(Renderer.VertexLabel.Position.NE);
+    cb.addItem(Renderer.VertexLabel.Position.E);
+    cb.addItem(Renderer.VertexLabel.Position.SE);
+    cb.addItem(Renderer.VertexLabel.Position.S);
+    cb.addItem(Renderer.VertexLabel.Position.SW);
+    cb.addItem(Renderer.VertexLabel.Position.W);
+    cb.addItem(Renderer.VertexLabel.Position.NW);
+    cb.addItem(Renderer.VertexLabel.Position.N);
+    cb.addItem(Renderer.VertexLabel.Position.CNTR);
+    cb.addItem(Renderer.VertexLabel.Position.AUTO);
     cb.addItemListener(
         e -> {
-          Renderer.NodeLabel.Position position = (Renderer.NodeLabel.Position) e.getItem();
-          vv.getRenderContext().setNodeLabelPosition(position);
+          Renderer.VertexLabel.Position position = (Renderer.VertexLabel.Position) e.getItem();
+          vv.getRenderContext().setVertexLabelPosition(position);
           vv.repaint();
         });
 
-    cb.setSelectedItem(Renderer.NodeLabel.Position.SE);
+    cb.setSelectedItem(Renderer.VertexLabel.Position.SE);
     positionPanel.add(cb);
     JPanel controls = new JPanel();
     JPanel zoomControls = new JPanel(new GridLayout(2, 1));
@@ -132,7 +133,7 @@ public class NodeLabelPositionDemo extends JPanel {
   public static void main(String[] args) {
     JFrame f = new JFrame();
     f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-    f.getContentPane().add(new NodeLabelPositionDemo());
+    f.getContentPane().add(new VertexLabelPositionDemo());
     f.pack();
     f.setVisible(true);
   }

@@ -64,26 +64,26 @@ public interface EdgeShape {
     return new Orthogonal();
   }
 
-  /** An edge shape that renders as a straight line between the node endpoints. */
-  class Line<N, E> implements Function<Context<Graph<N, E>, E>, Shape> {
+  /** An edge shape that renders as a straight line between the vertex endpoints. */
+  class Line<V, E> implements Function<Context<Graph<V, E>, E>, Shape> {
     public Line() {}
 
-    public Shape apply(Context<Graph<N, E>, E> context) {
+    public Shape apply(Context<Graph<V, E>, E> context) {
       Graph graph = context.graph;
       E e = context.element;
       return isLoop(graph, e) ? ELLIPSE : LINE;
     }
   }
 
-  static <N, E> int getIndex(
-      Context<Graph<N, E>, E> context, EdgeIndexFunction<N, E> edgeIndexFunction) {
+  static <V, E> int getIndex(
+      Context<Graph<V, E>, E> context, EdgeIndexFunction<V, E> edgeIndexFunction) {
     return edgeIndexFunction == null ? 1 : edgeIndexFunction.getIndex(context);
   }
 
-  /** An edge shape that renders as a QuadCurve between node endpoints. */
-  class QuadCurve<N, E> extends ParallelEdgeShapeFunction<N, E> {
+  /** An edge shape that renders as a QuadCurve between vertex endpoints. */
+  class QuadCurve<V, E> extends ParallelEdgeShapeFunction<V, E> {
     @Override
-    public void setEdgeIndexFunction(EdgeIndexFunction<N, E> parallelEdgeIndexFunction) {
+    public void setEdgeIndexFunction(EdgeIndexFunction<V, E> parallelEdgeIndexFunction) {
       this.edgeIndexFunction = parallelEdgeIndexFunction;
       loop.setEdgeIndexFunction(parallelEdgeIndexFunction);
     }
@@ -92,7 +92,7 @@ public interface EdgeShape {
      * Get the shape for this edge, returning either the shared instance or, in the case of
      * self-loop edges, the Loop shared instance.
      */
-    public Shape apply(Context<Graph<N, E>, E> context) {
+    public Shape apply(Context<Graph<V, E>, E> context) {
       Graph graph = context.graph;
       E e = context.element;
       if (isLoop(graph, e)) {
@@ -108,11 +108,11 @@ public interface EdgeShape {
   }
 
   /**
-   * An edge shape that renders as a CubicCurve between node endpoints. The two control points are
+   * An edge shape that renders as a CubicCurve between vertex endpoints. The two control points are
    * at (1/3*length, 2*controlY) and (2/3*length, controlY) giving a 'spiral' effect.
    */
-  class CubicCurve<N, E> extends ParallelEdgeShapeFunction<N, E> {
-    public void setEdgeIndexFunction(EdgeIndexFunction<N, E> edgeIndexFunction) {
+  class CubicCurve<V, E> extends ParallelEdgeShapeFunction<V, E> {
+    public void setEdgeIndexFunction(EdgeIndexFunction<V, E> edgeIndexFunction) {
       this.edgeIndexFunction = edgeIndexFunction;
       loop.setEdgeIndexFunction(edgeIndexFunction);
     }
@@ -121,7 +121,7 @@ public interface EdgeShape {
      * Get the shape for this edge, returning either the shared instance or, in the case of
      * self-loop edges, the Loop shared instance.
      */
-    public Shape apply(Context<Graph<N, E>, E> context) {
+    public Shape apply(Context<Graph<V, E>, E> context) {
       Graph graph = context.graph;
       E e = context.element;
       if (isLoop(graph, e)) {
@@ -137,7 +137,7 @@ public interface EdgeShape {
   }
 
   /**
-   * An edge shape that renders as a loop with its nadir at the center of the node. Parallel
+   * An edge shape that renders as a loop with its nadir at the center of the vertex. Parallel
    * instances will overlap.
    *
    * @author Tom Nelson
@@ -162,11 +162,11 @@ public interface EdgeShape {
   }
 
   /**
-   * An edge shape that renders as a loop with its nadir at the center of the node. Parallel
+   * An edge shape that renders as a loop with its nadir at the center of the vertex. Parallel
    * instances will not overlap.
    */
-  class Loop<N, E> extends ParallelEdgeShapeFunction<N, E> {
-    public Shape apply(Context<Graph<N, E>, E> context) {
+  class Loop<V, E> extends ParallelEdgeShapeFunction<V, E> {
+    public Shape apply(Context<Graph<V, E>, E> context) {
       Graph graph = context.graph;
       E e = context.element;
       return buildFrame(ELLIPSE, getIndex(context, edgeIndexFunction));
@@ -174,26 +174,26 @@ public interface EdgeShape {
   }
 
   /**
-   * An edge shape that renders as a diamond with its nadir at the center of the node. Parallel
+   * An edge shape that renders as a diamond with its nadir at the center of the vertex. Parallel
    * instances will not overlap.
    */
-  class Box<N, E> extends ParallelEdgeShapeFunction<N, E> {
-    public Shape apply(Context<Graph<N, E>, E> context) {
+  class Box<V, E> extends ParallelEdgeShapeFunction<V, E> {
+    public Shape apply(Context<Graph<V, E>, E> context) {
       Graph graph = context.graph;
       E e = context.element;
       return buildFrame(BOX, getIndex(context, edgeIndexFunction));
     }
   }
 
-  /** An edge shape that renders as a bent-line between the node endpoints. */
-  class Orthogonal<N, E> extends ParallelEdgeShapeFunction<N, E> {
+  /** An edge shape that renders as a bent-line between the vertex endpoints. */
+  class Orthogonal<V, E> extends ParallelEdgeShapeFunction<V, E> {
     Box box;
 
     public Orthogonal() {
       this.box = new Box();
     }
 
-    public Shape apply(Context<Graph<N, E>, E> context) {
+    public Shape apply(Context<Graph<V, E>, E> context) {
       Graph graph = context.graph;
       E e = context.element;
       return isLoop(graph, e) ? box.apply(context) : LINE;

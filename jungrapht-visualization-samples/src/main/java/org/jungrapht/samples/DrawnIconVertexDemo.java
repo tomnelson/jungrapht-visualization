@@ -21,14 +21,14 @@ import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.DefaultEdgeLabelRenderer;
-import org.jungrapht.visualization.renderers.DefaultNodeLabelRenderer;
+import org.jungrapht.visualization.renderers.DefaultVertexLabelRenderer;
 
 /**
- * A demo that shows drawn Icons as nodes
+ * A demo that shows drawn Icons as vertices
  *
  * @author Tom Nelson
  */
-public class DrawnIconNodeDemo {
+public class DrawnIconVertexDemo {
 
   /** the graph */
   Graph<Integer, Number> graph;
@@ -36,7 +36,7 @@ public class DrawnIconNodeDemo {
   /** the visual component and renderer for the graph */
   VisualizationViewer<Integer, Number> vv;
 
-  public DrawnIconNodeDemo() {
+  public DrawnIconVertexDemo() {
 
     // create a simple graph for the demo
     graph = createGraph();
@@ -44,13 +44,13 @@ public class DrawnIconNodeDemo {
     vv =
         new VisualizationViewer<>(
             graph, FRLayoutAlgorithm.<Integer>builder().build(), new Dimension(700, 700));
-    vv.getRenderContext().setNodeLabelFunction(v -> "Node " + v);
+    vv.getRenderContext().setVertexLabelFunction(v -> "Vertex " + v);
 
-    vv.getRenderContext().setNodeLabelRenderer(new DefaultNodeLabelRenderer(Color.cyan));
+    vv.getRenderContext().setVertexLabelRenderer(new DefaultVertexLabelRenderer(Color.cyan));
     vv.getRenderContext().setEdgeLabelRenderer(new DefaultEdgeLabelRenderer(Color.cyan));
 
     vv.getRenderContext()
-        .setNodeIconFunction(
+        .setVertexIconFunction(
             v ->
                 new Icon() {
 
@@ -63,13 +63,13 @@ public class DrawnIconNodeDemo {
                   }
 
                   public void paintIcon(Component c, Graphics g, int x, int y) {
-                    if (vv.getSelectedNodeState().isSelected(v)) {
+                    if (vv.getSelectedVertexState().isSelected(v)) {
                       g.setColor(Color.yellow);
                     } else {
                       g.setColor(Color.red);
                     }
                     g.fillOval(x, y, 20, 20);
-                    if (vv.getSelectedNodeState().isSelected(v)) {
+                    if (vv.getSelectedVertexState().isSelected(v)) {
                       g.setColor(Color.black);
                     } else {
                       g.setColor(Color.white);
@@ -79,9 +79,9 @@ public class DrawnIconNodeDemo {
                 });
 
     vv.getRenderContext()
-        .setNodeFillPaintFunction(
+        .setVertexFillPaintFunction(
             new PickableElementPaintFunction<>(
-                vv.getSelectedNodeState(), Color.white, Color.yellow));
+                vv.getSelectedVertexState(), Color.white, Color.yellow));
     vv.getRenderContext()
         .setEdgeDrawPaintFunction(
             new PickableElementPaintFunction<>(
@@ -90,7 +90,7 @@ public class DrawnIconNodeDemo {
     vv.setBackground(Color.white);
 
     // add my listener for ToolTips
-    vv.setNodeToolTipFunction(Object::toString);
+    vv.setVertexToolTipFunction(Object::toString);
 
     // create a frome to hold the graph
     final JFrame frame = new JFrame();
@@ -140,6 +140,6 @@ public class DrawnIconNodeDemo {
   }
 
   public static void main(String[] args) {
-    new DrawnIconNodeDemo();
+    new DrawnIconVertexDemo();
   }
 }

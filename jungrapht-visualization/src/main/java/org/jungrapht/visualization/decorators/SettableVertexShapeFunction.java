@@ -15,8 +15,8 @@ import java.awt.Shape;
 import java.util.function.Function;
 
 /** @author Joshua O'Madadhain */
-public interface SettableNodeShapeFunction<N> extends Function<N, Shape> {
-  void setSizeTransformer(Function<N, Integer> vsf);
+public interface SettableVertexShapeFunction<V> extends Function<V, Shape> {
+  void setSizeTransformer(Function<V, Integer> vsf);
 
-  void setAspectRatioTransformer(Function<N, Float> varf);
+  void setAspectRatioTransformer(Function<V, Float> varf);
 }

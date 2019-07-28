@@ -26,7 +26,7 @@ public abstract class BoundingRectangleCollector<T> {
     compute();
   }
 
-  public static class Points<N> extends BoundingRectangleCollector<N> {
+  public static class Points<V> extends BoundingRectangleCollector<V> {
     private static final Logger log =
         LoggerFactory.getLogger(BoundingRectangleCollector.Points.class);
 
@@ -34,31 +34,31 @@ public abstract class BoundingRectangleCollector<T> {
       super(rc, visualizationModel);
     }
 
-    public Rectangle2D getForElement(N node) {
+    public Rectangle2D getForElement(V vertex) {
       Shape shape = new Rectangle2D.Double();
-      Point p = (Point) visualizationModel.getLayoutModel().apply(node);
+      Point p = (Point) visualizationModel.getLayoutModel().apply(vertex);
 
       float x = (float) p.x;
       float y = (float) p.y;
       AffineTransform xform = AffineTransform.getTranslateInstance(x, y);
       Rectangle2D xfs = xform.createTransformedShape(shape).getBounds2D();
-      log.trace("node {} with shape bounds {} is at {}", node, xfs, p);
+      log.trace("vertex {} with shape bounds {} is at {}", vertex, xfs, p);
       return xfs;
     }
 
     /**
-     * @param node
+     * @param vertex
      * @param p1
-     * @param p2 ignored for Nodes
+     * @param p2 ignored for Vertices
      * @return
      */
-    public Rectangle2D getForElement(N node, Point p1, Point p2) {
-      return getForElement(node, p1);
+    public Rectangle2D getForElement(V vertex, Point p1, Point p2) {
+      return getForElement(vertex, p1);
     }
 
-    public Rectangle2D getForElement(N node, Point p) {
-      Shape shape = (Shape) rc.getNodeShapeFunction().apply(node);
-      log.trace("node is at {}", p);
+    public Rectangle2D getForElement(V vertex, Point p) {
+      Shape shape = (Shape) rc.getVertexShapeFunction().apply(vertex);
+      log.trace("vertex is at {}", p);
 
       float x = (float) p.x;
       float y = (float) p.y;
@@ -66,11 +66,11 @@ public abstract class BoundingRectangleCollector<T> {
       return xform.createTransformedShape(shape).getBounds2D();
     }
 
-    public void compute(Collection nodes) {
+    public void compute(Collection vertices) {
       super.compute();
 
-      for (Object v : nodes) {
-        Shape shape = (Shape) rc.getNodeShapeFunction().apply(v);
+      for (Object v : vertices) {
+        Shape shape = (Shape) rc.getVertexShapeFunction().apply(v);
         Point2D p = (Point2D) visualizationModel.getLayoutModel().apply(v);
         //			p = rc.getMultiLayerTransformer().transform(Layer.LAYOUT, p);
         float x = (float) p.getX();
@@ -84,8 +84,8 @@ public abstract class BoundingRectangleCollector<T> {
     public void compute() {
       super.compute();
 
-      for (Object v : visualizationModel.getNetwork().vertexSet()) {
-        Shape shape = (Shape) rc.getNodeShapeFunction().apply(v);
+      for (Object v : visualizationModel.getGraph().vertexSet()) {
+        Shape shape = (Shape) rc.getVertexShapeFunction().apply(v);
         Point2D p = (Point2D) visualizationModel.getLayoutModel().apply(v);
         //			p = rc.getMultiLayerTransformer().transform(Layer.LAYOUT, p);
         float x = (float) p.getX();
@@ -97,39 +97,39 @@ public abstract class BoundingRectangleCollector<T> {
     }
   }
 
-  public static class Nodes<N> extends BoundingRectangleCollector<N> {
-    private static final Logger log = LoggerFactory.getLogger(Nodes.class);
+  public static class Vertices<V> extends BoundingRectangleCollector<V> {
+    private static final Logger log = LoggerFactory.getLogger(Vertices.class);
 
-    public Nodes(RenderContext rc, VisualizationModel visualizationModel) {
+    public Vertices(RenderContext rc, VisualizationModel visualizationModel) {
       super(rc, visualizationModel);
     }
 
-    public Rectangle2D getForElement(N node) {
-      Shape shape = (Shape) rc.getNodeShapeFunction().apply(node);
-      Point p = (Point) visualizationModel.getLayoutModel().apply(node);
+    public Rectangle2D getForElement(V vertex) {
+      Shape shape = (Shape) rc.getVertexShapeFunction().apply(vertex);
+      Point p = (Point) visualizationModel.getLayoutModel().apply(vertex);
 
       float x = (float) p.x;
       float y = (float) p.y;
       AffineTransform xform = AffineTransform.getTranslateInstance(x, y);
       Rectangle2D xfs = xform.createTransformedShape(shape).getBounds2D();
-      log.trace("node {} with shape bounds {} is at {}", node, xfs, p);
+      log.trace("vertex {} with shape bounds {} is at {}", vertex, xfs, p);
       return xfs;
     }
 
     /**
-     * @param node
+     * @param vertex
      * @param p1
-     * @param p2 ignored for Nodes
+     * @param p2 ignored for Vertices
      * @return
      */
-    public Rectangle2D getForElement(N node, Point p1, Point p2) {
-      return getForElement(node, p1);
+    public Rectangle2D getForElement(V vertex, Point p1, Point p2) {
+      return getForElement(vertex, p1);
     }
 
-    public Rectangle2D getForElement(N node, Point p) {
-      Shape shape = (Shape) rc.getNodeShapeFunction().apply(node);
-      //      Point2D p = (Point2D) layoutModel.apply(node);
-      log.trace("node is at {}", p);
+    public Rectangle2D getForElement(V vertex, Point p) {
+      Shape shape = (Shape) rc.getVertexShapeFunction().apply(vertex);
+      //      Point2D p = (Point2D) layoutModel.apply(vertex);
+      log.trace("vertex is at {}", p);
 
       float x = (float) p.x;
       float y = (float) p.y;
@@ -137,11 +137,11 @@ public abstract class BoundingRectangleCollector<T> {
       return xform.createTransformedShape(shape).getBounds2D();
     }
 
-    public void compute(Collection nodes) {
+    public void compute(Collection vertices) {
       super.compute();
 
-      for (Object v : nodes) {
-        Shape shape = (Shape) rc.getNodeShapeFunction().apply(v);
+      for (Object v : vertices) {
+        Shape shape = (Shape) rc.getVertexShapeFunction().apply(v);
         Point p = (Point) visualizationModel.getLayoutModel().apply(v);
         //			p = rc.getMultiLayerTransformer().transform(Layer.LAYOUT, p);
         float x = (float) p.x;
@@ -155,8 +155,8 @@ public abstract class BoundingRectangleCollector<T> {
     public void compute() {
       super.compute();
 
-      for (Object v : visualizationModel.getNetwork().vertexSet()) {
-        Shape shape = (Shape) rc.getNodeShapeFunction().apply(v);
+      for (Object v : visualizationModel.getGraph().vertexSet()) {
+        Shape shape = (Shape) rc.getVertexShapeFunction().apply(v);
         Point p = (Point) visualizationModel.getLayoutModel().apply(v);
         //			p = rc.getMultiLayerTransformer().transform(Layer.LAYOUT, p);
         float x = (float) p.x;
@@ -177,8 +177,8 @@ public abstract class BoundingRectangleCollector<T> {
     }
 
     public Rectangle2D getForElement(E edge) {
-      Object v1 = visualizationModel.getNetwork().getEdgeSource(edge);
-      Object v2 = visualizationModel.getNetwork().getEdgeTarget(edge);
+      Object v1 = visualizationModel.getGraph().getEdgeSource(edge);
+      Object v2 = visualizationModel.getGraph().getEdgeTarget(edge);
       Point p1 = (Point) visualizationModel.getLayoutModel().apply(v1);
       Point p2 = (Point) visualizationModel.getLayoutModel().apply(v2);
       float x1 = (float) p1.x;
@@ -187,11 +187,11 @@ public abstract class BoundingRectangleCollector<T> {
       float y2 = (float) p2.y;
 
       boolean isLoop = v1.equals(v2);
-      Shape s2 = (Shape) rc.getNodeShapeFunction().apply(v2);
+      Shape s2 = (Shape) rc.getVertexShapeFunction().apply(v2);
       Shape edgeShape =
           (Shape)
               rc.getEdgeShapeFunction()
-                  .apply(Context.getInstance(visualizationModel.getNetwork(), edge));
+                  .apply(Context.getInstance(visualizationModel.getGraph(), edge));
 
       AffineTransform xform = AffineTransform.getTranslateInstance(x1, y1);
 
@@ -217,19 +217,19 @@ public abstract class BoundingRectangleCollector<T> {
     }
 
     public Rectangle2D getForElement(E edge, Point p1, Point p2) {
-      Object v1 = visualizationModel.getNetwork().getEdgeSource(edge);
-      Object v2 = visualizationModel.getNetwork().getEdgeTarget(edge);
+      Object v1 = visualizationModel.getGraph().getEdgeSource(edge);
+      Object v2 = visualizationModel.getGraph().getEdgeTarget(edge);
       float x1 = (float) p1.x;
       float y1 = (float) p1.y;
       float x2 = (float) p2.x;
       float y2 = (float) p2.y;
 
       boolean isLoop = v1.equals(v2);
-      Shape s2 = (Shape) rc.getNodeShapeFunction().apply(v2);
+      Shape s2 = (Shape) rc.getVertexShapeFunction().apply(v2);
       Shape edgeShape =
           (Shape)
               rc.getEdgeShapeFunction()
-                  .apply(Context.getInstance(visualizationModel.getNetwork(), edge));
+                  .apply(Context.getInstance(visualizationModel.getGraph(), edge));
 
       AffineTransform xform = AffineTransform.getTranslateInstance(x1, y1);
 
@@ -252,9 +252,9 @@ public abstract class BoundingRectangleCollector<T> {
     public void compute() {
       super.compute();
 
-      for (Object e : visualizationModel.getNetwork().edgeSet()) {
-        Object v1 = visualizationModel.getNetwork().getEdgeSource(e);
-        Object v2 = visualizationModel.getNetwork().getEdgeTarget(e);
+      for (Object e : visualizationModel.getGraph().edgeSet()) {
+        Object v1 = visualizationModel.getGraph().getEdgeSource(e);
+        Object v2 = visualizationModel.getGraph().getEdgeTarget(e);
         Point p1 = (Point) visualizationModel.getLayoutModel().apply(v1);
         Point p2 = (Point) visualizationModel.getLayoutModel().apply(v2);
         float x1 = (float) p1.x;
@@ -263,11 +263,11 @@ public abstract class BoundingRectangleCollector<T> {
         float y2 = (float) p2.y;
 
         boolean isLoop = v1.equals(v2);
-        Shape s2 = (Shape) rc.getNodeShapeFunction().apply(v2);
+        Shape s2 = (Shape) rc.getVertexShapeFunction().apply(v2);
         Shape edgeShape =
             (Shape)
                 rc.getEdgeShapeFunction()
-                    .apply(Context.getInstance(visualizationModel.getNetwork(), e));
+                    .apply(Context.getInstance(visualizationModel.getGraph(), e));
 
         AffineTransform xform = AffineTransform.getTranslateInstance(x1, y1);
 

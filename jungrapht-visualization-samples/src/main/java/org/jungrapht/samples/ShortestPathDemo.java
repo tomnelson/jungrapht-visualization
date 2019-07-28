@@ -28,11 +28,11 @@ public class ShortestPathDemo extends JPanel {
   /** */
   private static final long serialVersionUID = 7526217664458188502L;
 
-  /** Starting node */
-  private String fromNode;
+  /** Starting vertex */
+  private String fromVertex;
 
-  /** Ending node */
-  private String toNode;
+  /** Ending vertex */
+  private String toVertex;
 
   private Graph<String, Number> network;
   private Set<String> path = new HashSet<>();
@@ -50,14 +50,14 @@ public class ShortestPathDemo extends JPanel {
         new VisualizationViewer<>(network, layoutAlgorithm, new Dimension(1000, 1000));
     vv.setBackground(Color.WHITE);
 
-    vv.getRenderContext().setNodeDrawPaintFunction(n -> Color.black);
+    vv.getRenderContext().setVertexDrawPaintFunction(n -> Color.black);
     vv.getRenderContext()
-        .setNodeFillPaintFunction(
+        .setVertexFillPaintFunction(
             n -> {
-              if (n.equals(fromNode)) {
+              if (n.equals(fromVertex)) {
                 return Color.BLUE;
               }
-              if (n.equals(toNode)) {
+              if (n.equals(toVertex)) {
                 return Color.BLUE;
               }
               if (path == null) {
@@ -95,26 +95,26 @@ public class ShortestPathDemo extends JPanel {
                 return THIN;
               }
             });
-    vv.getRenderContext().setNodeLabelFunction(Object::toString);
+    vv.getRenderContext().setVertexLabelFunction(Object::toString);
     final AbstractModalGraphMouse graphMouse = new DefaultModalGraphMouse<Integer, Number>();
     vv.setGraphMouse(graphMouse);
     vv.addKeyListener(graphMouse.getModeKeyListener());
 
-    vv.getSelectedNodeState()
+    vv.getSelectedVertexState()
         .addItemListener(
             e -> {
               if (e.getStateChange() == ItemEvent.DESELECTED) {
-                if (e.getItem().equals(fromNode)) {
-                  fromNode = null;
-                } else if (e.getItem().equals(toNode)) {
-                  toNode = null;
+                if (e.getItem().equals(fromVertex)) {
+                  fromVertex = null;
+                } else if (e.getItem().equals(toVertex)) {
+                  toVertex = null;
                 }
               } else if (e.getStateChange() == ItemEvent.SELECTED) {
                 String item = (String) e.getItem();
-                if (fromNode == null) {
-                  fromNode = item;
+                if (fromVertex == null) {
+                  fromVertex = item;
                 } else {
-                  toNode = item;
+                  toVertex = item;
                 }
               }
               drawShortestPath();
@@ -147,8 +147,8 @@ public class ShortestPathDemo extends JPanel {
 
     String labelString =
         "<html><ul><li>Type 'p' to enter picking mode"
-            + "<li>pick the first node by clicking on it"
-            + "<li>pick the second node by Shift-clicking on it"
+            + "<li>pick the first vertex by clicking on it"
+            + "<li>pick the second vertex by Shift-clicking on it"
             + "<li>Type 't' to return to transforming mode";
     JLabel instructions = new JLabel(labelString);
     add(instructions, BorderLayout.SOUTH);
@@ -163,13 +163,13 @@ public class ShortestPathDemo extends JPanel {
   /** */
   private void drawShortestPath() {
 
-    if (fromNode == null || toNode == null) {
+    if (fromVertex == null || toVertex == null) {
       path.clear();
       return;
     }
     path.clear();
     BFSShortestPath<String, Number> bfsShortestPath = new BFSShortestPath<>(this.network);
-    GraphPath<String, Number> path = bfsShortestPath.getPath(fromNode, toNode);
+    GraphPath<String, Number> path = bfsShortestPath.getPath(fromVertex, toVertex);
     this.path.addAll(path.getVertexList());
     repaint();
   }
@@ -182,11 +182,11 @@ public class ShortestPathDemo extends JPanel {
     jf.setVisible(true);
   }
 
-  /** @return the network for this demo */
+  /** @return the graph for this demo */
   private Graph<String, Number> getNetwork() {
     Graph<String, Number> network =
         GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.pseudograph())
-            .vertexSupplier(new NodeSupplier())
+            .vertexSupplier(new VertexSupplier())
             .edgeSupplier(new EdgeSupplier())
             .buildGraph();
 
@@ -195,7 +195,7 @@ public class ShortestPathDemo extends JPanel {
     return network;
   }
 
-  static class NodeSupplier implements Supplier<String> {
+  static class VertexSupplier implements Supplier<String> {
     char a = 'a';
 
     public String get() {

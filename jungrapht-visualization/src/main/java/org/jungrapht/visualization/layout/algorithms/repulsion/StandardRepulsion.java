@@ -5,16 +5,16 @@ import org.jungrapht.visualization.layout.model.LayoutModel;
 
 /**
  * @author Tom Nelson
- * @param <N> the node type
+ * @param <V> the vertex type
  * @param <R> the Repulsion type
  * @param <B> the Repulsion Builder type
  */
 public interface StandardRepulsion<
-    N, R extends StandardRepulsion<N, R, B>, B extends StandardRepulsion.Builder<N, R, B>> {
+    V, R extends StandardRepulsion<V, R, B>, B extends StandardRepulsion.Builder<V, R, B>> {
 
-  interface Builder<N, R extends StandardRepulsion<N, R, B>, B extends Builder<N, R, B>> {
+  interface Builder<V, R extends StandardRepulsion<V, R, B>, B extends Builder<V, R, B>> {
 
-    B layoutModel(LayoutModel<N> layoutModel);
+    B layoutModel(LayoutModel<V> layoutModel);
 
     B random(Random random);
 

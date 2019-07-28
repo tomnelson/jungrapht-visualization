@@ -20,61 +20,61 @@ public class LeafNode<T> extends RTreeNode<T> implements Node<T> {
 
   private static final Logger log = LoggerFactory.getLogger(LeafNode.class);
 
-  /** a map of child elements for this LeafNode */
+  /** a map of child elements for this LeafVertex */
   final NodeMap<T> map = new NodeMap<>();
 
   /**
-   * @param entry the child for the newly created LeafNode
+   * @param entry the child for the newly created LeafVertex
    * @param <T> the type of the element
-   * @return a newly created LeafNode that contains the passed entry as its only element
+   * @return a newly created LeafVertex that contains the passed entry as its only element
    */
   public static <T> LeafNode<T> create(Map.Entry<T, Rectangle2D> entry) {
     return new LeafNode(entry);
   }
 
   /**
-   * @param element the element child for the newly created LeafNode
-   * @param bounds the bounds for the child of the newly created LeafNode
+   * @param element the element child for the newly created LeafVertex
+   * @param bounds the bounds for the child of the newly created LeafVertex
    * @param <T> the type of the element
-   * @return the newly created LeafNode with one child element
+   * @return the newly created LeafVertex with one child element
    */
   public static <T> LeafNode<T> create(T element, Rectangle2D bounds) {
     return new LeafNode(element, bounds);
   }
 
   /**
-   * @param entries the elements for the newly created LeafNode
-   * @param <T> the type of the elements for this LeafNode
-   * @return the newly created LeadNode with the entries as children
+   * @param entries the elements for the newly created LeafVertex
+   * @param <T> the type of the elements for this LeafVertex
+   * @return the newly created LeadVertex with the entries as children
    */
   public static <T> LeafNode<T> create(Collection<Map.Entry<T, Rectangle2D>> entries) {
     return new LeafNode(entries);
   }
 
-  /** @param entries child elements for the new LeafNode */
+  /** @param entries child elements for the new LeafVertex */
   LeafNode(Collection<Map.Entry<T, Rectangle2D>> entries) {
     for (Map.Entry<T, Rectangle2D> entry : entries) {
       map.put(entry.getKey(), entry.getValue());
     }
   }
 
-  /** @param entry one child element for the new LeafNode */
+  /** @param entry one child element for the new LeafVertex */
   LeafNode(Map.Entry<T, Rectangle2D> entry) {
     map.put(entry.getKey(), entry.getValue());
   }
 
   /**
-   * @param element one child element for the new LeafNode
+   * @param element one child element for the new LeafVertex
    * @param bounds bounds for the child element
    */
   LeafNode(T element, Rectangle2D bounds) {
     map.put(element, bounds);
   }
 
-  /** a LeafNode with no children */
+  /** a LeafVertex with no children */
   public static LeafNode EMPTY = new LeafNode();
 
-  /** create an empty LeafNode; */
+  /** create an empty LeafVertex; */
   private LeafNode() {}
 
   public Point2D centerOfGravity() {
@@ -90,7 +90,7 @@ public class LeafNode<T> extends RTreeNode<T> implements Node<T> {
 
   /**
    * @param splitterContext how to split on overflow (R-Tree or R*-Tree)
-   * @param entries add to this LeafNode
+   * @param entries add to this LeafVertex
    * @return the last node added to
    */
   public Node<T> add(SplitterContext<T> splitterContext, Map.Entry<T, Rectangle2D>... entries) {
@@ -118,9 +118,9 @@ public class LeafNode<T> extends RTreeNode<T> implements Node<T> {
       if (parent.isPresent()) {
         // if there is a parent node, remove this node from it
         // and add the pair from the split
-        InnerNode<T> innerNodeParent = (InnerNode<T>) parent.get();
+        InnerNode<T> innerVertexParent = (InnerNode<T>) parent.get();
 
-        return innerNodeParent.replaceNode(this, splitterContext, pair.left, pair.right);
+        return innerVertexParent.replaceVertex(this, splitterContext, pair.left, pair.right);
 
       } else {
         // if there is no parent, create one then add the pair from the split
@@ -137,7 +137,7 @@ public class LeafNode<T> extends RTreeNode<T> implements Node<T> {
   }
 
   /**
-   * always false. children are elements, not LeafNodes
+   * always false. children are elements, not LeafVertices
    *
    * @return
    */
@@ -155,15 +155,15 @@ public class LeafNode<T> extends RTreeNode<T> implements Node<T> {
    */
   @Override
   public Node<T> remove(T element) {
-    log.trace("LeafNode wants to remove {}", element);
+    log.trace("LeafVertex wants to remove {}", element);
     if (map.containsKey(element)) {
       map.remove(element);
       if (parent.isPresent()) {
-        InnerNode<T> parentNode = (InnerNode<T>) parent.get();
+        InnerNode<T> parentVertex = (InnerNode<T>) parent.get();
         if (map.size() == 0) {
-          parentNode.removeNode(this);
+          parentVertex.removeVertex(this);
         }
-        return parentNode.recalculateBounds();
+        return parentVertex.recalculateBounds();
       } else {
         log.trace("no parent? return this {}", this);
         return this;
@@ -176,7 +176,7 @@ public class LeafNode<T> extends RTreeNode<T> implements Node<T> {
   /**
    * called after a removal. climb the tree to the root recalculating the bounds
    *
-   * @return this LeafNode
+   * @return this LeafVertex
    */
   public Node<T> recalculateBounds() {
     if (parent.isPresent()) {
@@ -228,7 +228,7 @@ public class LeafNode<T> extends RTreeNode<T> implements Node<T> {
 
   /**
    * @param element the element to find
-   * @return the LeafNode that contains the passed element
+   * @return the LeafVertex that contains the passed element
    */
   @Override
   public LeafNode<T> getContainingLeaf(T element) {
@@ -240,7 +240,7 @@ public class LeafNode<T> extends RTreeNode<T> implements Node<T> {
 
   /**
    * @param p the point to search for
-   * @return a Collection of LeafNodes that would contain the point
+   * @return a Collection of LeafVertices that would contain the point
    */
   @Override
   public Set<LeafNode<T>> getContainingLeafs(Set<LeafNode<T>> containingLeafs, Point2D p) {
@@ -250,7 +250,7 @@ public class LeafNode<T> extends RTreeNode<T> implements Node<T> {
   /**
    * @param x coordinate of the point to search for
    * @param y coordinate of the point to search for
-   * @return a Collection of LeafNodes that would contain the passed coordinates
+   * @return a Collection of LeafVertices that would contain the passed coordinates
    */
   @Override
   public Set<LeafNode<T>> getContainingLeafs(Set<LeafNode<T>> containingLeafs, double x, double y) {
@@ -314,7 +314,7 @@ public class LeafNode<T> extends RTreeNode<T> implements Node<T> {
         }
       }
     }
-    log.trace("visibleElements of LeafNode inside {} are {}", shape, visibleElements);
+    log.trace("visibleElements of LeafVertex inside {} are {}", shape, visibleElements);
     return visibleElements;
   }
 
@@ -328,7 +328,7 @@ public class LeafNode<T> extends RTreeNode<T> implements Node<T> {
   public String asString(String margin) {
     StringBuilder s = new StringBuilder();
     s.append(margin);
-    s.append("LeafNode:");
+    s.append("LeafVertex:");
     s.append("parent:");
     s.append(parent.isPresent() ? "yes" : "none");
     s.append(" bounds=");

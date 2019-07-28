@@ -43,13 +43,13 @@ public class InternalFrameSatelliteViewDemo {
           + "</ul>"
           + "<b>Picking Mode:</b>"
           + "<ul>"
-          + "<li>Mouse1 on a Node selects the node"
-          + "<li>Mouse1 elsewhere unselects all Nodes"
-          + "<li>Mouse1+Shift on a Node adds/removes Node selection"
-          + "<li>Mouse1+drag on a Node moves all selected Nodes"
-          + "<li>Mouse1+drag elsewhere selects Nodes in a region"
-          + "<li>Mouse1+Shift+drag adds selection of Nodes in a new region"
-          + "<li>Mouse1+CTRL on a Node selects the node and centers the display on it"
+          + "<li>Mouse1 on a Vertex selects the vertex"
+          + "<li>Mouse1 elsewhere unselects all Vertices"
+          + "<li>Mouse1+Shift on a Vertex adds/removes Vertex selection"
+          + "<li>Mouse1+drag on a Vertex moves all selected Vertices"
+          + "<li>Mouse1+drag elsewhere selects Vertices in a region"
+          + "<li>Mouse1+Shift+drag adds selection of Vertices in a new region"
+          + "<li>Mouse1+CTRL on a Vertex selects the vertex and centers the display on it"
           + "</ul>"
           + "<b>Both Modes:</b>"
           + "<ul>"
@@ -80,11 +80,12 @@ public class InternalFrameSatelliteViewDemo {
         .setEdgeDrawPaintFunction(
             new PickableElementPaintFunction<>(vv.getSelectedEdgeState(), Color.black, Color.cyan));
     vv.getRenderContext()
-        .setNodeFillPaintFunction(
-            new PickableElementPaintFunction<>(vv.getSelectedNodeState(), Color.red, Color.yellow));
+        .setVertexFillPaintFunction(
+            new PickableElementPaintFunction<>(
+                vv.getSelectedVertexState(), Color.red, Color.yellow));
 
     // add my listener for ToolTips
-    vv.setNodeToolTipFunction(Object::toString);
+    vv.setVertexToolTipFunction(Object::toString);
     final DefaultModalGraphMouse<String, Number> graphMouse = new DefaultModalGraphMouse<>();
     vv.setGraphMouse(graphMouse);
 
@@ -96,9 +97,9 @@ public class InternalFrameSatelliteViewDemo {
                 satellite.getSelectedEdgeState(), Color.black, Color.cyan));
     satellite
         .getRenderContext()
-        .setNodeFillPaintFunction(
+        .setVertexFillPaintFunction(
             new PickableElementPaintFunction<>(
-                satellite.getSelectedNodeState(), Color.red, Color.yellow));
+                satellite.getSelectedVertexState(), Color.red, Color.yellow));
 
     ScalingControl satelliteScaler = new CrossoverScalingControl();
     satellite.scaleToLayout(satelliteScaler);

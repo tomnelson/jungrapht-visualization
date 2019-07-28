@@ -22,15 +22,15 @@ import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.visualization.GraphZoomScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
-import org.jungrapht.visualization.decorators.EllipseNodeShapeFunction;
-import org.jungrapht.visualization.decorators.NodeIconShapeFunction;
+import org.jungrapht.visualization.decorators.EllipseVertexShapeFunction;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
+import org.jungrapht.visualization.decorators.VertexIconShapeFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.DefaultEdgeLabelRenderer;
-import org.jungrapht.visualization.renderers.DefaultNodeLabelRenderer;
+import org.jungrapht.visualization.renderers.DefaultVertexLabelRenderer;
 
 /**
- * A demo that shows flag images as nodes, and uses unicode to render node labels.
+ * A demo that shows flag images as vertices, and uses unicode to render vertex labels.
  *
  * @author Tom Nelson
  */
@@ -51,20 +51,20 @@ public class UnicodeLabelDemo {
     vv =
         new VisualizationViewer<>(
             graph, FRLayoutAlgorithm.<Integer>builder().build(), new Dimension(700, 700));
-    vv.getRenderContext().setNodeLabelFunction(new UnicodeNodeStringer());
-    vv.getRenderContext().setNodeLabelRenderer(new DefaultNodeLabelRenderer(Color.cyan));
+    vv.getRenderContext().setVertexLabelFunction(new UnicodeVertexStringer());
+    vv.getRenderContext().setVertexLabelRenderer(new DefaultVertexLabelRenderer(Color.cyan));
     vv.getRenderContext().setEdgeLabelRenderer(new DefaultEdgeLabelRenderer(Color.cyan));
-    NodeIconShapeFunction<Integer> nodeIconShapeFunction =
-        new NodeIconShapeFunction<>(new EllipseNodeShapeFunction<>());
-    Function<Integer, Icon> nodeIconFunction = iconMap::get;
-    vv.getRenderContext().setNodeShapeFunction(nodeIconShapeFunction);
-    vv.getRenderContext().setNodeIconFunction(nodeIconFunction);
+    VertexIconShapeFunction<Integer> vertexIconShapeFunction =
+        new VertexIconShapeFunction<>(new EllipseVertexShapeFunction<>());
+    Function<Integer, Icon> vertexIconFunction = iconMap::get;
+    vv.getRenderContext().setVertexShapeFunction(vertexIconShapeFunction);
+    vv.getRenderContext().setVertexIconFunction(vertexIconFunction);
     loadImages(iconMap);
-    nodeIconShapeFunction.setIconMap(iconMap);
+    vertexIconShapeFunction.setIconMap(iconMap);
     vv.getRenderContext()
-        .setNodeFillPaintFunction(
+        .setVertexFillPaintFunction(
             new PickableElementPaintFunction<>(
-                vv.getSelectedNodeState(), Color.white, Color.yellow));
+                vv.getSelectedVertexState(), Color.white, Color.yellow));
     vv.getRenderContext()
         .setEdgeDrawPaintFunction(
             new PickableElementPaintFunction<>(
@@ -73,7 +73,7 @@ public class UnicodeLabelDemo {
     vv.setBackground(Color.white);
 
     // add my listener for ToolTips
-    vv.setNodeToolTipFunction(Object::toString);
+    vv.setVertexToolTipFunction(Object::toString);
 
     // create a frome to hold the graph
     final JFrame frame = new JFrame();
@@ -103,7 +103,7 @@ public class UnicodeLabelDemo {
     frame.setVisible(true);
   }
 
-  class UnicodeNodeStringer implements Function<Integer, String> {
+  class UnicodeVertexStringer implements Function<Integer, String> {
 
     Map<Integer, String> map = new HashMap<>();
     String[] labels = {
@@ -117,9 +117,9 @@ public class UnicodeLabelDemo {
       "\u0042\u0069\u0065\u006E\u0076\u0065\u006E\u0069\u0064\u0061\u0020\u0061\u0020JUNG\u0021"
     };
 
-    public UnicodeNodeStringer() {
-      for (Integer node : graph.vertexSet()) {
-        map.put(node, labels[node % labels.length]);
+    public UnicodeVertexStringer() {
+      for (Integer vertex : graph.vertexSet()) {
+        map.put(vertex, labels[vertex % labels.length]);
       }
     }
 
@@ -181,9 +181,9 @@ public class UnicodeLabelDemo {
     } catch (Exception ex) {
       System.err.println("You need flags.jar in your classpath to see the flag icons.");
     }
-    for (Integer node : graph.vertexSet()) {
-      int i = node;
-      imageMap.put(node, icons[i % icons.length]);
+    for (Integer vertex : graph.vertexSet()) {
+      int i = vertex;
+      imageMap.put(vertex, icons[i % icons.length]);
     }
   }
 

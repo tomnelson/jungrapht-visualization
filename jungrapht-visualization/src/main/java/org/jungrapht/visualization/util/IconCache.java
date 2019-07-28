@@ -10,19 +10,19 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
-public class IconCache<N> extends HashMap<N, Icon> {
+public class IconCache<V> extends HashMap<V, Icon> {
 
-  protected Function<N, String> nodeLabelFunction;
+  protected Function<V, String> vertexLabelFunction;
   protected JLabel stamp = new JLabel();
   protected Map<RenderingHints.Key, Object> renderingHints = new HashMap<>();
-  protected Function<N, Paint> colorFunction;
+  protected Function<V, Paint> colorFunction;
 
-  public IconCache(Function<N, String> nodeLabelFunction) {
-    this(nodeLabelFunction, n -> Color.black);
+  public IconCache(Function<V, String> vertexLabelFunction) {
+    this(vertexLabelFunction, n -> Color.black);
   }
 
-  public IconCache(Function<N, String> nodeLabelFunction, Function<N, Paint> colorFunction) {
-    this.nodeLabelFunction = nodeLabelFunction;
+  public IconCache(Function<V, String> vertexLabelFunction, Function<V, Paint> colorFunction) {
+    this.vertexLabelFunction = vertexLabelFunction;
     this.colorFunction = colorFunction;
     renderingHints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     Border border = stamp.getBorder();
@@ -33,13 +33,13 @@ public class IconCache<N> extends HashMap<N, Icon> {
   @Override
   public Icon get(Object n) {
     if (!super.containsKey(n)) {
-      cacheIconFor((N) n);
+      cacheIconFor((V) n);
     }
     return super.get(n);
   }
 
-  protected void cacheIconFor(N node) {
-    stamp.setText(nodeLabelFunction.apply(node));
+  protected void cacheIconFor(V vertex) {
+    stamp.setText(vertexLabelFunction.apply(vertex));
     stamp.setForeground(Color.black);
     stamp.setBackground(Color.white);
     stamp.setOpaque(true);
@@ -50,11 +50,11 @@ public class IconCache<N> extends HashMap<N, Icon> {
     Graphics2D graphics = bi.createGraphics();
     graphics.setRenderingHints(renderingHints);
     stamp.paint(graphics);
-    graphics.setPaint(colorFunction.apply(node));
+    graphics.setPaint(colorFunction.apply(vertex));
     graphics.setStroke(new BasicStroke(2.0f));
     graphics.drawRect(0, 0, stamp.getWidth() - 1, stamp.getHeight() - 1);
     graphics.dispose();
     Icon icon = new ImageIcon(bi);
-    super.put(node, icon);
+    super.put(vertex, icon);
   }
 }

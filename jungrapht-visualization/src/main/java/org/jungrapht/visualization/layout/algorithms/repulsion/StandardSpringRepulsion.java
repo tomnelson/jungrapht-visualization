@@ -10,25 +10,25 @@ import org.jungrapht.visualization.layout.model.Point;
 
 /**
  * @author Tom Nelson
- * @param <N> the node type
+ * @param <V> the vertex type
  */
 public class StandardSpringRepulsion<
-        N,
-        R extends StandardSpringRepulsion<N, R, B>,
-        B extends StandardSpringRepulsion.Builder<N, R, B>>
-    implements StandardRepulsion<N, R, B> {
+        V,
+        R extends StandardSpringRepulsion<V, R, B>,
+        B extends StandardSpringRepulsion.Builder<V, R, B>>
+    implements StandardRepulsion<V, R, B> {
 
   public static class Builder<
-          N, R extends StandardSpringRepulsion<N, R, B>, B extends Builder<N, R, B>>
-      implements StandardRepulsion.Builder<N, R, B> {
+          V, R extends StandardSpringRepulsion<V, R, B>, B extends Builder<V, R, B>>
+      implements StandardRepulsion.Builder<V, R, B> {
 
-    protected LoadingCache<N, SpringLayoutAlgorithm.SpringNodeData> springNodeData;
+    protected LoadingCache<V, SpringLayoutAlgorithm.SpringVertexData> springVertexData;
     protected int repulsionRangeSquared = 100 * 100;
     protected Random random = new Random();
-    protected LayoutModel<N> layoutModel;
+    protected LayoutModel<V> layoutModel;
 
-    public B nodeData(LoadingCache<N, SpringLayoutAlgorithm.SpringNodeData> springNodeData) {
-      this.springNodeData = springNodeData;
+    public B nodeData(LoadingCache<V, SpringLayoutAlgorithm.SpringVertexData> springVertexData) {
+      this.springVertexData = springVertexData;
       return (B) this;
     }
 
@@ -38,7 +38,7 @@ public class StandardSpringRepulsion<
     }
 
     @Override
-    public B layoutModel(LayoutModel<N> layoutModel) {
+    public B layoutModel(LayoutModel<V> layoutModel) {
       this.layoutModel = layoutModel;
       return (B) this;
     }
@@ -54,45 +54,45 @@ public class StandardSpringRepulsion<
     }
   }
 
-  protected LoadingCache<N, SpringLayoutAlgorithm.SpringNodeData> springNodeData;
+  protected LoadingCache<V, SpringLayoutAlgorithm.SpringVertexData> springVertexData;
   protected int repulsionRangeSquared = 100 * 100;
   protected Random random = new Random();
-  protected LayoutModel<N> layoutModel;
+  protected LayoutModel<V> layoutModel;
 
   public static Builder standardBuilder() {
     return new Builder();
   }
 
-  protected StandardSpringRepulsion(Builder<N, R, B> builder) {
+  protected StandardSpringRepulsion(Builder<V, R, B> builder) {
     this.layoutModel = builder.layoutModel;
     this.random = builder.random;
-    this.springNodeData = builder.springNodeData;
+    this.springVertexData = builder.springVertexData;
     this.repulsionRangeSquared = builder.repulsionRangeSquared;
   }
 
   public void step() {}
 
   public void calculateRepulsion() {
-    Graph<N, ?> graph = layoutModel.getGraph();
+    Graph<V, ?> graph = layoutModel.getGraph();
 
     try {
-      for (N node : graph.vertexSet()) {
-        if (layoutModel.isLocked(node)) {
+      for (V vertex : graph.vertexSet()) {
+        if (layoutModel.isLocked(vertex)) {
           continue;
         }
 
-        SpringLayoutAlgorithm.SpringNodeData svd = springNodeData.getUnchecked(node);
+        SpringLayoutAlgorithm.SpringVertexData svd = springVertexData.getUnchecked(vertex);
         if (svd == null) {
           continue;
         }
         double dx = 0, dy = 0;
 
-        for (N node2 : graph.vertexSet()) {
-          if (node == node2) {
+        for (V vertex2 : graph.vertexSet()) {
+          if (vertex == vertex2) {
             continue;
           }
-          Point p = layoutModel.apply(node);
-          Point p2 = layoutModel.apply(node2);
+          Point p = layoutModel.apply(vertex);
+          Point p2 = layoutModel.apply(vertex2);
           if (p == null || p2 == null) {
             continue;
           }

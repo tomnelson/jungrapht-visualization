@@ -32,33 +32,33 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.ScalingControl;
-import org.jungrapht.visualization.decorators.EllipseNodeShapeFunction;
-import org.jungrapht.visualization.decorators.NodeIconShapeFunction;
+import org.jungrapht.visualization.decorators.EllipseVertexShapeFunction;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
+import org.jungrapht.visualization.decorators.VertexIconShapeFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.util.RandomLocationTransformer;
-import org.jungrapht.visualization.renderers.BasicNodeRenderer;
+import org.jungrapht.visualization.renderers.BasicVertexRenderer;
 import org.jungrapht.visualization.renderers.Checkmark;
 import org.jungrapht.visualization.renderers.DefaultEdgeLabelRenderer;
-import org.jungrapht.visualization.renderers.DefaultNodeLabelRenderer;
+import org.jungrapht.visualization.renderers.DefaultVertexLabelRenderer;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.util.ImageShapeUtils;
 
 /**
- * Demonstrates the use of images to represent graph nodes. The images are supplied via the
- * NodeShapeFunction so that both the image and its shape can be utilized.
+ * Demonstrates the use of images to represent graph vertices. The images are supplied via the
+ * VertexShapeFunction so that both the image and its shape can be utilized.
  *
  * <p>The images used in this demo (courtesy of slashdot.org) are rectangular but with a transparent
- * background. When nodes are represented by these images, it looks better if the actual shape of
+ * background. When vertices are represented by these images, it looks better if the actual shape of
  * the opaque part of the image is computed so that the edge arrowheads follow the visual shape of
  * the image. This demo uses the FourPassImageShaper class to compute the Shape from an image with
  * transparent background.
  *
  * @author Tom Nelson
  */
-public class NodeImageShaperDemo extends JPanel {
+public class VertexImageShaperDemo extends JPanel {
 
   /** */
   private static final long serialVersionUID = -4332663871914930864L;
@@ -84,7 +84,7 @@ public class NodeImageShaperDemo extends JPanel {
     "privacy"
   };
 
-  public NodeImageShaperDemo() {
+  public VertexImageShaperDemo() {
     setLayout(new BorderLayout());
     // create a simple graph for the demo
     graph = createGraph();
@@ -92,15 +92,16 @@ public class NodeImageShaperDemo extends JPanel {
     // Maps for the labels and icons
     Map<Number, String> map = new HashMap<>();
     Map<Number, Icon> iconMap = new HashMap<>();
-    for (Number node : graph.vertexSet()) {
-      int i = node.intValue();
-      map.put(node, iconNames[i % iconNames.length]);
+    for (Number vertex : graph.vertexSet()) {
+      int i = vertex.intValue();
+      map.put(vertex, iconNames[i % iconNames.length]);
 
       String name = "/images/topic" + iconNames[i] + ".gif";
       try {
         Icon icon =
-            new LayeredIcon(new ImageIcon(NodeImageShaperDemo.class.getResource(name)).getImage());
-        iconMap.put(node, icon);
+            new LayeredIcon(
+                new ImageIcon(VertexImageShaperDemo.class.getResource(name)).getImage());
+        iconMap.put(vertex, icon);
       } catch (Exception ex) {
         System.err.println("You need slashdoticons.jar in your classpath to see the image " + name);
       }
@@ -122,38 +123,38 @@ public class NodeImageShaperDemo extends JPanel {
     // This demo uses a special renderer to turn outlines on and off.
     // you do not need to do this in a real application.
     // Instead, just let vv use the Renderer it already has
-    vv.getRenderer().setNodeRenderer(new DemoRenderer<>());
+    vv.getRenderer().setVertexRenderer(new DemoRenderer<>());
 
     Function<Number, Paint> vpf =
-        new PickableElementPaintFunction<>(vv.getSelectedNodeState(), Color.white, Color.yellow);
-    vv.getRenderContext().setNodeFillPaintFunction(vpf);
+        new PickableElementPaintFunction<>(vv.getSelectedVertexState(), Color.white, Color.yellow);
+    vv.getRenderContext().setVertexFillPaintFunction(vpf);
     vv.getRenderContext()
         .setEdgeDrawPaintFunction(
             new PickableElementPaintFunction<>(vv.getSelectedEdgeState(), Color.black, Color.cyan));
 
     vv.setBackground(Color.white);
 
-    final Function<Number, String> nodeStringerImpl = new NodeStringerImpl<>(map);
-    vv.getRenderContext().setNodeLabelFunction(nodeStringerImpl);
-    vv.getRenderContext().setNodeLabelRenderer(new DefaultNodeLabelRenderer(Color.cyan));
+    final Function<Number, String> vertexStringerImpl = new VertexStringerImpl<>(map);
+    vv.getRenderContext().setVertexLabelFunction(vertexStringerImpl);
+    vv.getRenderContext().setVertexLabelRenderer(new DefaultVertexLabelRenderer(Color.cyan));
     vv.getRenderContext().setEdgeLabelRenderer(new DefaultEdgeLabelRenderer(Color.cyan));
 
     // For this demo only, I use a special class that lets me turn various
-    // features on and off. For a real application, use NodeIconShapeTransformer instead.
-    final DemoNodeIconShapeFunction<Number> nodeIconShapeTransformer =
-        new DemoNodeIconShapeFunction<>(new EllipseNodeShapeFunction<>());
-    nodeIconShapeTransformer.setIconMap(iconMap);
+    // features on and off. For a real application, use VertexIconShapeTransformer instead.
+    final DemoVertexIconShapeFunction<Number> vertexIconShapeTransformer =
+        new DemoVertexIconShapeFunction<>(new EllipseVertexShapeFunction<>());
+    vertexIconShapeTransformer.setIconMap(iconMap);
 
-    final DemoNodeIconTransformer<Number> nodeIconTransformer =
-        new DemoNodeIconTransformer<>(iconMap);
+    final DemoVertexIconTransformer<Number> vertexIconTransformer =
+        new DemoVertexIconTransformer<>(iconMap);
 
-    vv.getRenderContext().setNodeShapeFunction(nodeIconShapeTransformer);
-    vv.getRenderContext().setNodeIconFunction(nodeIconTransformer);
+    vv.getRenderContext().setVertexShapeFunction(vertexIconShapeTransformer);
+    vv.getRenderContext().setVertexIconFunction(vertexIconTransformer);
 
     // Get the selectedState and add a listener that will decorate the
-    // Node images with a checkmark icon when they are selected
-    MutableSelectedState<Number> ps = vv.getSelectedNodeState();
-    ps.addItemListener(new PickWithIconListener<>(nodeIconTransformer));
+    // Vertex images with a checkmark icon when they are selected
+    MutableSelectedState<Number> ps = vv.getSelectedVertexState();
+    ps.addItemListener(new PickWithIconListener<>(vertexIconTransformer));
 
     vv.addPostRenderPaintable(
         new VisualizationViewer.Paintable() {
@@ -188,7 +189,7 @@ public class NodeImageShaperDemo extends JPanel {
         });
 
     // add a listener for ToolTips
-    vv.setNodeToolTipFunction(Object::toString);
+    vv.setVertexToolTipFunction(Object::toString);
 
     final GraphZoomScrollPane panel = new GraphZoomScrollPane(vv);
     add(panel);
@@ -207,7 +208,7 @@ public class NodeImageShaperDemo extends JPanel {
     JCheckBox shape = new JCheckBox("Shape");
     shape.addItemListener(
         e -> {
-          nodeIconShapeTransformer.setShapeImages(e.getStateChange() == ItemEvent.SELECTED);
+          vertexIconShapeTransformer.setShapeImages(e.getStateChange() == ItemEvent.SELECTED);
           vv.repaint();
         });
 
@@ -216,7 +217,7 @@ public class NodeImageShaperDemo extends JPanel {
     JCheckBox fill = new JCheckBox("Fill");
     fill.addItemListener(
         e -> {
-          nodeIconTransformer.setFillImages(e.getStateChange() == ItemEvent.SELECTED);
+          vertexIconTransformer.setFillImages(e.getStateChange() == ItemEvent.SELECTED);
           vv.repaint();
         });
 
@@ -225,7 +226,7 @@ public class NodeImageShaperDemo extends JPanel {
     JCheckBox drawOutlines = new JCheckBox("Outline");
     drawOutlines.addItemListener(
         e -> {
-          nodeIconTransformer.setOutlineImages(e.getStateChange() == ItemEvent.SELECTED);
+          vertexIconTransformer.setOutlineImages(e.getStateChange() == ItemEvent.SELECTED);
           vv.repaint();
         });
 
@@ -252,23 +253,23 @@ public class NodeImageShaperDemo extends JPanel {
   }
 
   /**
-   * When Nodes are picked, add a checkmark icon to the imager. Remove the icon when a Node is
+   * When Vertices are picked, add a checkmark icon to the imager. Remove the icon when a Vertex is
    * unpicked
    *
    * @author Tom Nelson
    */
-  public static class PickWithIconListener<N> implements ItemListener {
-    Function<N, Icon> imager;
+  public static class PickWithIconListener<V> implements ItemListener {
+    Function<V, Icon> imager;
     Icon checked;
 
-    public PickWithIconListener(Function<N, Icon> imager) {
+    public PickWithIconListener(Function<V, Icon> imager) {
       this.imager = imager;
       checked = new Checkmark();
     }
 
     public void itemStateChanged(ItemEvent e) {
       @SuppressWarnings("unchecked")
-      Icon icon = imager.apply((N) e.getItem());
+      Icon icon = imager.apply((V) e.getItem());
       if (icon instanceof LayeredIcon) {
         if (e.getStateChange() == ItemEvent.SELECTED) {
           ((LayeredIcon) icon).add(checked);
@@ -279,21 +280,21 @@ public class NodeImageShaperDemo extends JPanel {
     }
   }
   /**
-   * A simple implementation of Function that gets Node labels from a Map
+   * A simple implementation of Function that gets Vertex labels from a Map
    *
    * @author Tom Nelson
    */
-  public static class NodeStringerImpl<N> implements Function<N, String> {
+  public static class VertexStringerImpl<V> implements Function<V, String> {
 
-    Map<N, String> map = new HashMap<>();
+    Map<V, String> map = new HashMap<>();
 
     boolean enabled = true;
 
-    public NodeStringerImpl(Map<N, String> map) {
+    public VertexStringerImpl(Map<V, String> map) {
       this.map = map;
     }
 
-    public String apply(N v) {
+    public String apply(V v) {
       if (isEnabled()) {
         return map.get(v);
       } else {
@@ -342,14 +343,14 @@ public class NodeImageShaperDemo extends JPanel {
    * This class exists only to provide settings to turn on/off shapes and image fill in this demo.
    *
    * <p>For a real application, just use {@code Functions.forMap(iconMap)} to provide a {@code
-   * Function<N, Icon>}.
+   * Function<V, Icon>}.
    */
-  public static class DemoNodeIconTransformer<N> implements Function<N, Icon> {
+  public static class DemoVertexIconTransformer<V> implements Function<V, Icon> {
     boolean fillImages = true;
     boolean outlineImages = false;
-    Map<N, Icon> iconMap = new HashMap<>();
+    Map<V, Icon> iconMap = new HashMap<>();
 
-    public DemoNodeIconTransformer(Map<N, Icon> iconMap) {
+    public DemoVertexIconTransformer(Map<V, Icon> iconMap) {
       this.iconMap = iconMap;
     }
 
@@ -370,7 +371,7 @@ public class NodeImageShaperDemo extends JPanel {
       this.outlineImages = outlineImages;
     }
 
-    public Icon apply(N v) {
+    public Icon apply(V v) {
       if (fillImages) {
         return iconMap.get(v);
       } else {
@@ -381,13 +382,13 @@ public class NodeImageShaperDemo extends JPanel {
 
   /**
    * this class exists only to provide settings to turn on/off shapes and image fill in this demo.
-   * In a real application, use NodeIconShapeTransformer instead.
+   * In a real application, use VertexIconShapeTransformer instead.
    */
-  public static class DemoNodeIconShapeFunction<N> extends NodeIconShapeFunction<N> {
+  public static class DemoVertexIconShapeFunction<V> extends VertexIconShapeFunction<V> {
 
     boolean shapeImages = true;
 
-    public DemoNodeIconShapeFunction(Function<N, Shape> delegate) {
+    public DemoVertexIconShapeFunction(Function<V, Shape> delegate) {
       super(delegate);
     }
 
@@ -402,7 +403,7 @@ public class NodeImageShaperDemo extends JPanel {
     }
 
     @Override
-    public Shape apply(N v) {
+    public Shape apply(V v) {
       Icon icon = iconMap.get(v);
 
       if (icon instanceof ImageIcon) {
@@ -434,15 +435,15 @@ public class NodeImageShaperDemo extends JPanel {
 
   /**
    * a special renderer that can turn outlines on and off in this demo. You won't need this for a
-   * real application. Use BasicNodeRenderer instead
+   * real application. Use BasicVertexRenderer instead
    *
    * @author Tom Nelson
    */
-  class DemoRenderer<N, E> extends BasicNodeRenderer<N, E> {
+  class DemoRenderer<V, E> extends BasicVertexRenderer<V, E> {
 
     @Override
-    public void paintIconForNode(
-        RenderContext<N, E> renderContext, VisualizationModel<N, E> model, N v) {
+    public void paintIconForVertex(
+        RenderContext<V, E> renderContext, VisualizationModel<V, E> model, V v) {
 
       Point p = model.getLayoutModel().apply(v);
       Point2D p2d =
@@ -454,18 +455,18 @@ public class NodeImageShaperDemo extends JPanel {
 
       GraphicsDecorator g = renderContext.getGraphicsContext();
       boolean outlineImages = false;
-      Function<N, Icon> nodeIconFunction = renderContext.getNodeIconFunction();
+      Function<V, Icon> vertexIconFunction = renderContext.getVertexIconFunction();
 
-      if (nodeIconFunction instanceof DemoNodeIconTransformer) {
-        outlineImages = ((DemoNodeIconTransformer<N>) nodeIconFunction).isOutlineImages();
+      if (vertexIconFunction instanceof DemoVertexIconTransformer) {
+        outlineImages = ((DemoVertexIconTransformer<V>) vertexIconFunction).isOutlineImages();
       }
-      Icon icon = nodeIconFunction.apply(v);
+      Icon icon = vertexIconFunction.apply(v);
       if (icon == null || outlineImages) {
 
         Shape s =
             AffineTransform.getTranslateInstance(x, y)
-                .createTransformedShape(renderContext.getNodeShapeFunction().apply(v));
-        paintShapeForNode(renderContext, model, v, s);
+                .createTransformedShape(renderContext.getVertexShapeFunction().apply(v));
+        paintShapeForVertex(renderContext, model, v, s);
       }
       if (icon != null) {
         int xLoc = (int) (x - icon.getIconWidth() / 2);
@@ -480,7 +481,7 @@ public class NodeImageShaperDemo extends JPanel {
     Container content = frame.getContentPane();
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-    content.add(new NodeImageShaperDemo());
+    content.add(new VertexImageShaperDemo());
     frame.pack();
     frame.setVisible(true);
   }

@@ -17,9 +17,9 @@ import java.util.Set;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.layout.BoundingRectangleCollector;
-import org.jungrapht.visualization.layout.NetworkElementAccessor;
-import org.jungrapht.visualization.layout.RadiusNetworkElementAccessor;
-import org.jungrapht.visualization.layout.event.LayoutNodePositionChange;
+import org.jungrapht.visualization.layout.GraphElementAccessor;
+import org.jungrapht.visualization.layout.RadiusGraphElementAccessor;
+import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.spatial.rtree.LeafNode;
@@ -30,8 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @param <T> The Type for the elements managed by the RTree, Nodes or Edges
- * @param <NT> The Type for the Nodes of the graph. May be the same as T
+ * @param <T> The Type for the elements managed by the RTree, Vertices or Edges
+ * @param <NT> The Type for the Vertices of the graph. May be the same as T
  * @author Tom Nelson
  */
 public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> implements Spatial<T> {
@@ -153,7 +153,7 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
   /**
    * @param x a point to search in the spatial structure
    * @param y a point to search in the spatial structure
-   * @return a collection of the RTree LeafNodes that would contain the passed point
+   * @return a collection of the RTree LeafVertices that would contain the passed point
    */
   @Override
   public Set<LeafNode<T>> getContainingLeafs(double x, double y) {
@@ -220,23 +220,23 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
     log.trace("end recalculate");
   }
 
-  public static class Nodes<N> extends SpatialRTree<N, N>
-      implements Spatial<N>, LayoutNodePositionChange.Listener<N> {
+  public static class Vertices<V> extends SpatialRTree<V, V>
+      implements Spatial<V>, LayoutVertexPositionChange.Listener<V> {
 
-    private static final Logger log = LoggerFactory.getLogger(Nodes.class);
+    private static final Logger log = LoggerFactory.getLogger(Vertices.class);
 
-    public static class Builder<N> extends SpatialRTree.Builder<N, N> {
+    public static class Builder<V> extends SpatialRTree.Builder<V, V> {
 
-      public Nodes<N> build() {
-        return new Nodes(this);
+      public Vertices<V> build() {
+        return new Vertices(this);
       }
     }
 
     public static Builder builder() {
-      return new Nodes.Builder<>();
+      return new Vertices.Builder<>();
     }
 
-    Nodes(Builder<N> builder) {
+    Vertices(Builder<V> builder) {
       this(
           builder.visualizationModel,
           builder.boundingRectangleCollector,
@@ -244,10 +244,10 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
           builder.reinsert);
     }
 
-    Nodes(
+    Vertices(
         VisualizationModel visualizationModel,
-        BoundingRectangleCollector<N> boundingRectangleCollector,
-        SplitterContext<N> splitterContext,
+        BoundingRectangleCollector<V> boundingRectangleCollector,
+        SplitterContext<V> splitterContext,
         boolean reinsert) {
       super(visualizationModel.getLayoutModel(), splitterContext, reinsert);
       this.boundingRectangleCollector = boundingRectangleCollector;
@@ -259,15 +259,15 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
      * @return all nodes that are contained within the passed Shape
      */
     @Override
-    public Set<N> getVisibleElements(Shape shape) {
+    public Set<V> getVisibleElements(Shape shape) {
       if (!isActive() || !rtree.getRoot().isPresent()) {
         return layoutModel.getGraph().vertexSet();
       }
       pickShapes.add(shape);
 
-      Node<N> root = rtree.getRoot().get();
+      Node<V> root = rtree.getRoot().get();
       log.trace("out of nodes {}", layoutModel.getGraph().vertexSet());
-      Set<N> visibleElements = Sets.newHashSet();
+      Set<V> visibleElements = Sets.newHashSet();
       return root.getVisibleElements(visibleElements, shape);
     }
 
@@ -278,28 +278,28 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
      * @param location the new location for the element
      */
     @Override
-    public void update(N element, org.jungrapht.visualization.layout.model.Point location) {
+    public void update(V element, org.jungrapht.visualization.layout.model.Point location) {
       gridCache = null;
       // do nothing if we are not active
       if (isActive() && rtree.getRoot().isPresent()) {
         //        TreeNode root = rtree.getRoot().get();
 
-        LeafNode<N> containingLeaf = getContainingLeaf(element);
+        LeafNode<V> containingLeaf = getContainingLeaf(element);
         Rectangle2D itsShape = boundingRectangleCollector.getForElement(element, location);
         // if the shape does not enlarge the containingRTree, then only update what is in elements
         // otherwise, remove this node and re-insert it
         if (containingLeaf != null) {
           if (containingLeaf.getBounds().contains(itsShape)) {
-            // the element did not move out of its LeafNode
+            // the element did not move out of its LeafVertex
             // no RTree update required, just re-add the element to the map
             // with the new Bounds value
             // remove it from the map (so there is no overflow when it is added
             containingLeaf.remove(element);
             containingLeaf.add(splitterContext, element, itsShape);
           } else {
-            // the element is outside of the previous containing LeafNode
+            // the element is outside of the previous containing LeafVertex
             // remmove the element from the tree and add it again so it will
-            // go to the correct LeafNode
+            // go to the correct LeafVertex
             rtree = RTree.remove(rtree, element);
             rtree = RTree.add(rtree, splitterContext, element, itsShape);
           }
@@ -312,7 +312,7 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
     }
 
     @Override
-    public N getClosestElement(Point2D p) {
+    public V getClosestElement(Point2D p) {
       return getClosestElement(p.getX(), p.getY());
     }
 
@@ -324,22 +324,22 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
      * @return the node closest to x,y
      */
     @Override
-    public N getClosestElement(double x, double y) {
+    public V getClosestElement(double x, double y) {
       if (!isActive() || !rtree.getRoot().isPresent()) {
-        // use the fallback NetworkNodeAccessor
-        return fallback.getNode(layoutModel, x, y);
+        // use the fallback VertexAccessor
+        return fallback.getVertex(layoutModel, x, y);
       }
 
       double radius = layoutModel.getWidth() / 20;
 
-      N closest = null;
+      V closest = null;
       while (closest == null) {
 
         double diameter = radius * 2;
 
         Ellipse2D searchArea = new Ellipse2D.Double(x - radius, y - radius, diameter, diameter);
 
-        Collection<N> nodes = getVisibleElements(searchArea);
+        Collection<V> nodes = getVisibleElements(searchArea);
         closest = getClosest(nodes, x, y, radius);
 
         // if i found a winner or
@@ -355,9 +355,9 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
       return closest;
     }
 
-    protected List<Shape> collectGrids(List<Shape> list, RTree<N> tree) {
+    protected List<Shape> collectGrids(List<Shape> list, RTree<V> tree) {
       if (tree.getRoot().isPresent()) {
-        Node<N> root = tree.getRoot().get();
+        Node<V> root = tree.getRoot().get();
         root.collectGrids(list);
       }
       return list;
@@ -384,29 +384,29 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
     }
 
     @Override
-    public void layoutNodePositionChanged(LayoutNodePositionChange.NetworkEvent<N> evt) {
-      update(evt.node, evt.location);
+    public void layoutVertexPositionChanged(LayoutVertexPositionChange.NetworkEvent<V> evt) {
+      update(evt.vertex, evt.location);
     }
 
     @Override
-    public void layoutNodePositionChanged(LayoutNodePositionChange.Event<N> evt) {
-      update(evt.node, evt.location);
+    public void layoutVertexPositionChanged(LayoutVertexPositionChange.Event<V> evt) {
+      update(evt.vertex, evt.location);
     }
   }
 
-  public static class Edges<E, N> extends SpatialRTree<E, N>
-      implements Spatial<E>, LayoutNodePositionChange.Listener<N> {
+  public static class Edges<E, V> extends SpatialRTree<E, V>
+      implements Spatial<E>, LayoutVertexPositionChange.Listener<V> {
 
     private static final Logger log = LoggerFactory.getLogger(Edges.class);
 
-    public static class Builder<E, N> extends SpatialRTree.Builder<E, N> {
+    public static class Builder<E, V> extends SpatialRTree.Builder<E, V> {
 
-      public Builder<E, N> visualizationModel(VisualizationModel visualizationModel) {
+      public Builder<E, V> visualizationModel(VisualizationModel visualizationModel) {
         this.visualizationModel = visualizationModel;
         return this;
       }
 
-      public Edges<E, N> build() {
+      public Edges<E, V> build() {
         return new Edges(this);
       }
     }
@@ -415,7 +415,7 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
       return new Builder<>();
     }
 
-    Edges(Builder<E, N> builder) {
+    Edges(Builder<E, V> builder) {
       this(
           builder.visualizationModel,
           builder.boundingRectangleCollector,
@@ -423,20 +423,20 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
           builder.reinsert);
     }
 
-    NetworkElementAccessor<N, E> networkElementAccessor;
+    GraphElementAccessor<V, E> graphElementAccessor;
 
     // Edges gets a VisualizationModel reference to access the Network and work with edges
-    VisualizationModel<N, E> visualizationModel;
+    VisualizationModel<V, E> visualizationModel;
 
     Edges(
-        VisualizationModel<N, E> visualizationModel,
+        VisualizationModel<V, E> visualizationModel,
         BoundingRectangleCollector<E> boundingRectangleCollector,
         SplitterContext<E> splitterContext,
         boolean reinsert) {
       super(visualizationModel.getLayoutModel(), splitterContext, reinsert);
       this.visualizationModel = visualizationModel;
       this.boundingRectangleCollector = boundingRectangleCollector;
-      networkElementAccessor = new RadiusNetworkElementAccessor(visualizationModel.getNetwork());
+      graphElementAccessor = new RadiusGraphElementAccessor(visualizationModel.getGraph());
       rtree = RTree.create();
       recalculate();
     }
@@ -448,8 +448,8 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
     @Override
     public Set<E> getVisibleElements(Shape shape) {
       if (!isActive() || !rtree.getRoot().isPresent()) {
-        log.trace("not relaxing so getting from the network");
-        return visualizationModel.getNetwork().edgeSet();
+        log.trace("not relaxing so getting from the graph");
+        return visualizationModel.getGraph().edgeSet();
       }
       pickShapes.add(shape);
       Node<E> root = rtree.getRoot().get();
@@ -470,8 +470,8 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
 
         // get the endpoints for this edge
         // there should be 2
-        N n1 = visualizationModel.getNetwork().getEdgeSource(element);
-        N n2 = visualizationModel.getNetwork().getEdgeTarget(element);
+        V n1 = visualizationModel.getGraph().getEdgeSource(element);
+        V n2 = visualizationModel.getGraph().getEdgeTarget(element);
 
         if (n2 == null) {
           n2 = n1;
@@ -503,11 +503,11 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
     }
 
     @Override
-    public void layoutNodePositionChanged(LayoutNodePositionChange.Event<N> evt) {
-      N node = evt.node;
+    public void layoutVertexPositionChanged(LayoutVertexPositionChange.Event<V> evt) {
+      V vertex = evt.vertex;
       org.jungrapht.visualization.layout.model.Point p = evt.location;
-      if (visualizationModel.getNetwork().vertexSet().contains(node)) {
-        Set<E> edges = visualizationModel.getNetwork().edgesOf(node);
+      if (visualizationModel.getGraph().vertexSet().contains(vertex)) {
+        Set<E> edges = visualizationModel.getGraph().edgesOf(vertex);
 
         for (E edge : edges) {
           update(edge, p);
@@ -516,11 +516,11 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
     }
 
     @Override
-    public void layoutNodePositionChanged(LayoutNodePositionChange.NetworkEvent<N> evt) {
-      N node = evt.node;
+    public void layoutVertexPositionChanged(LayoutVertexPositionChange.NetworkEvent<V> evt) {
+      V vertex = evt.vertex;
       org.jungrapht.visualization.layout.model.Point p = evt.location;
-      if (visualizationModel.getNetwork().vertexSet().contains(node)) {
-        Set<E> edges = visualizationModel.getNetwork().edgesOf(node);
+      if (visualizationModel.getGraph().vertexSet().contains(vertex)) {
+        Set<E> edges = visualizationModel.getGraph().edgesOf(vertex);
         for (E edge : edges) {
           update(edge, p);
         }
@@ -550,8 +550,8 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
 
       if (!isActive() || !rtree.getRoot().isPresent()) {
         // not active or empty
-        // use the fallback NetworkNodeAccessor
-        return networkElementAccessor.getEdge(layoutModel, x, y);
+        // use the fallback VertexAccessor
+        return graphElementAccessor.getEdge(layoutModel, x, y);
       }
       Node<E> root = rtree.getRoot().get();
       double radius = layoutModel.getWidth() / 20;
@@ -589,9 +589,9 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
         double winningDistance = -1;
         for (E edge : edges) {
           // get the 2 endpoints
-          Graph<N, E> network = visualizationModel.getNetwork();
-          N u = network.getEdgeSource(edge);
-          N v = network.getEdgeTarget(edge);
+          Graph<V, E> network = visualizationModel.getGraph();
+          V u = network.getEdgeSource(edge);
+          V v = network.getEdgeTarget(edge);
           org.jungrapht.visualization.layout.model.Point up = layoutModel.apply(u);
           Point vp = layoutModel.apply(v);
           // compute the distance between my point and a Line connecting u and v
@@ -632,8 +632,8 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
           isActive(),
           layoutModel.isRelaxing());
       if (isActive()) {
-        log.trace("recalculate for edges: {}", visualizationModel.getNetwork().edgeSet());
-        recalculate(visualizationModel.getNetwork().edgeSet());
+        log.trace("recalculate for edges: {}", visualizationModel.getGraph().edgeSet());
+        recalculate(visualizationModel.getGraph().edgeSet());
       }
     }
   }

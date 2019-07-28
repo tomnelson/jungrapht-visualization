@@ -19,7 +19,7 @@ public class Collapsable<T> {
   }
 
   public String toString() {
-    return "Collapsable.of(" + this.item + ")";
+    return Objects.toString(this.item, "null");
   }
 
   @Override

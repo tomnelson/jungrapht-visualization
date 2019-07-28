@@ -43,23 +43,23 @@ import org.jungrapht.visualization.transform.MagnifyTransformer;
 import org.jungrapht.visualization.transform.shape.HyperbolicShapeTransformer;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
 import org.jungrapht.visualization.transform.shape.ViewLensSupport;
-import org.jungrapht.visualization.util.NodeShapeFactory;
+import org.jungrapht.visualization.util.VertexShapeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The purpose of this demo is to test picking a single, irregularly shaped node in the presence of
- * Lens effects and spatial data structures. Correct operation is that the node should become
- * 'picked' when the mouse is clicked within the node star shape (i.e. not beyond its bounds and not
- * between the star points), or it should become 'picked' when a rectangular region is dragged that
- * contains the node's center.
+ * The purpose of this demo is to test picking a single, irregularly shaped vertex in the presence
+ * of Lens effects and spatial data structures. Correct operation is that the vertex should become
+ * 'picked' when the mouse is clicked within the vertex star shape (i.e. not beyond its bounds and
+ * not between the star points), or it should become 'picked' when a rectangular region is dragged
+ * that contains the vertex's center.
  *
  * @author Tom Nelson
  */
 @SuppressWarnings("serial")
-public class SpatialLensDemoWithOneStarNode extends JPanel {
+public class SpatialLensDemoWithOneStarVertex extends JPanel {
 
-  private static final Logger log = LoggerFactory.getLogger(SpatialLensDemoWithOneStarNode.class);
+  private static final Logger log = LoggerFactory.getLogger(SpatialLensDemoWithOneStarVertex.class);
   /** the graph */
   Graph<String, Number> graph;
 
@@ -81,9 +81,9 @@ public class SpatialLensDemoWithOneStarNode extends JPanel {
   ScalingControl scaler;
 
   /** create an instance of a simple graph with controls to demo the zoomand hyperbolic features. */
-  public SpatialLensDemoWithOneStarNode() {
+  public SpatialLensDemoWithOneStarVertex() {
     setLayout(new BorderLayout());
-    graph = buildOneNode();
+    graph = buildOneVertex();
     //        TestGraphs.getOneComponentGraph();
 
     graphLayoutAlgorithm = FRLayoutAlgorithm.<String>builder().build();
@@ -94,20 +94,20 @@ public class SpatialLensDemoWithOneStarNode extends JPanel {
     final VisualizationModel<String, Number> visualizationModel =
         new BaseVisualizationModel<>(graph, graphLayoutAlgorithm, preferredSize);
     vv = new VisualizationViewer<>(visualizationModel, preferredSize);
-    vv.getRenderContext().setNodeLabelFunction(Object::toString);
+    vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.setBackground(Color.white);
 
-    vv.getRenderContext().setNodeLabelFunction(Object::toString);
+    vv.getRenderContext().setVertexLabelFunction(Object::toString);
 
     vv.getRenderContext()
-        .setNodeShapeFunction(
+        .setVertexShapeFunction(
             new Function<String, Shape>() {
-              NodeShapeFactory<String> nodeShapeFactory =
-                  new NodeShapeFactory<>(n -> 30, n -> 1.0f);
+              VertexShapeFactory<String> vertexShapeFactory =
+                  new VertexShapeFactory<>(n -> 30, n -> 1.0f);
 
               @Override
               public Shape apply(String s) {
-                return nodeShapeFactory.getRegularStar(s, 5);
+                return vertexShapeFactory.getRegularStar(s, 5);
               }
             });
 
@@ -368,7 +368,7 @@ public class SpatialLensDemoWithOneStarNode extends JPanel {
     }
   }
 
-  Graph<String, Number> buildOneNode() {
+  Graph<String, Number> buildOneVertex() {
     Graph<String, Number> graph =
         GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.directedMultigraph())
             .buildGraph();
@@ -379,7 +379,7 @@ public class SpatialLensDemoWithOneStarNode extends JPanel {
   public static void main(String[] args) {
     JFrame f = new JFrame();
     f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-    f.getContentPane().add(new SpatialLensDemoWithOneStarNode());
+    f.getContentPane().add(new SpatialLensDemoWithOneStarVertex());
     f.pack();
     f.setVisible(true);
   }

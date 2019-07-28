@@ -5,7 +5,7 @@ import java.util.Comparator;
 import java.util.Map;
 
 /**
- * A comparator to compare along the x-axis, Nodes where the values are Rectangle2D are compared
+ * A comparator to compare along the x-axis, Vertices where the values are Rectangle2D are compared
  * with the center x values
  *
  * @author Tom Nelson
@@ -33,12 +33,12 @@ public class HorizontalCenterNodeComparator<T> implements Comparator<Map.Entry<T
   }
 
   @Override
-  public int compare(Map.Entry<T, Rectangle2D> leftNode, Map.Entry<T, Rectangle2D> rightNode) {
-    return compare(leftNode.getValue(), rightNode.getValue());
+  public int compare(Map.Entry<T, Rectangle2D> leftVertex, Map.Entry<T, Rectangle2D> rightVertex) {
+    return compare(leftVertex.getValue(), rightVertex.getValue());
   }
 
   //  @Override
-  //  public int compare(Node<T> leftNode, Node<T> rightNode) {
-  //    return compare(leftNode.getBounds(), rightNode.getBounds());
+  //  public int compare(Node<T> leftVertex, Node<T> rightVertex) {
+  //    return compare(leftVertex.getBounds(), rightVertex.getBounds());
   //  }
 }

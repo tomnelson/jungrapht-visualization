@@ -68,9 +68,9 @@ public class L2RTreeLayoutDemo extends JPanel {
     vv = new VisualizationViewer<>(graph, treeLayoutAlgorithm, new Dimension(600, 600));
     vv.setBackground(Color.white);
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
-    vv.getRenderContext().setNodeLabelFunction(Object::toString);
+    vv.getRenderContext().setVertexLabelFunction(Object::toString);
     // add a listener for ToolTips
-    vv.setNodeToolTipFunction(Object::toString);
+    vv.setVertexToolTipFunction(Object::toString);
     vv.getRenderContext().setArrowFillPaintFunction(a -> Color.lightGray);
 
     setLtoR(vv);

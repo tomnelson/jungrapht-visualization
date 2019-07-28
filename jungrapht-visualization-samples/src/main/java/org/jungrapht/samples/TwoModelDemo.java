@@ -84,8 +84,8 @@ public class TwoModelDemo extends JPanel {
 
     // share one MutableSelectedState between the two views
     MutableSelectedState<String> ps = new MultiMutableSelectedState<>();
-    vv1.setSelectedNodeState(ps);
-    vv2.setSelectedNodeState(ps);
+    vv1.setSelectedVertexState(ps);
+    vv2.setSelectedVertexState(ps);
     MutableSelectedState<Number> pes = new MultiMutableSelectedState<>();
     vv1.setSelectedEdgeState(pes);
     vv2.setSelectedEdgeState(pes);
@@ -95,12 +95,12 @@ public class TwoModelDemo extends JPanel {
         .setEdgeDrawPaintFunction(
             new PickableElementPaintFunction<>(vv1.getSelectedEdgeState(), Color.black, Color.red));
     vv1.getRenderContext()
-        .setNodeFillPaintFunction(
+        .setVertexFillPaintFunction(
             new PickableElementPaintFunction<>(
-                vv1.getSelectedNodeState(), Color.red, Color.yellow));
+                vv1.getSelectedVertexState(), Color.red, Color.yellow));
     // add default listeners for ToolTips
-    vv1.setNodeToolTipFunction(Object::toString);
-    vv2.setNodeToolTipFunction(Object::toString);
+    vv1.setVertexToolTipFunction(Object::toString);
+    vv2.setVertexToolTipFunction(Object::toString);
 
     JPanel panel = new JPanel(new GridLayout(1, 0));
     panel.add(new GraphZoomScrollPane(vv1));

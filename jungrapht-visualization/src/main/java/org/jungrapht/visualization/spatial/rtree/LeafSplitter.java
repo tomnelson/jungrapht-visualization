@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * Interface for splitting LeafNodes containing Map.Entries as children
+ * Interface for splitting LeafVertices containing Map.Entries as children
  *
  * @param <T> the type of the elements
  * @author Tom Nelson

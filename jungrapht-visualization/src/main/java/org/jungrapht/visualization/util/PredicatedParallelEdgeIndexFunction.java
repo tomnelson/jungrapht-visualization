@@ -20,7 +20,7 @@ import org.jgrapht.Graph;
  *
  * @author Tom Nelson
  */
-public class PredicatedParallelEdgeIndexFunction<N, E> extends ParallelEdgeIndexFunction<N, E> {
+public class PredicatedParallelEdgeIndexFunction<V, E> extends ParallelEdgeIndexFunction<V, E> {
   protected Predicate<E> predicate;
 
   public PredicatedParallelEdgeIndexFunction(Predicate<E> predicate) {
@@ -30,10 +30,10 @@ public class PredicatedParallelEdgeIndexFunction<N, E> extends ParallelEdgeIndex
   /**
    * Returns the index for the specified edge, or 0 if {@code edge} is accepted by the Predicate.
    *
-   * @param context the network and the edge whose index is to be calculated
+   * @param context the graph and the edge whose index is to be calculated
    */
   @Override
-  public int getIndex(Context<Graph<N, E>, E> context) {
+  public int getIndex(Context<Graph<V, E>, E> context) {
     return predicate.test(context.element) ? 0 : super.getIndex(context);
   }
 

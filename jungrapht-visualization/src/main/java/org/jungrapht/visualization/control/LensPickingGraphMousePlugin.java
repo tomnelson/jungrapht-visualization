@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-public class LensPickingGraphMousePlugin<N, E> extends PickingGraphMousePlugin<N, E> {
+public class LensPickingGraphMousePlugin<V, E> extends PickingGraphMousePlugin<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(LensPickingGraphMousePlugin.class);
 
@@ -27,7 +27,7 @@ public class LensPickingGraphMousePlugin<N, E> extends PickingGraphMousePlugin<N
    * @return
    */
   @Override
-  protected Point2D inverseTransform(VisualizationViewer<N, E> vv, Point2D p) {
+  protected Point2D inverseTransform(VisualizationViewer<V, E> vv, Point2D p) {
     return transformSupport.inverseTransform(vv, p);
   }
 
@@ -40,7 +40,7 @@ public class LensPickingGraphMousePlugin<N, E> extends PickingGraphMousePlugin<N
    * @return
    */
   @Override
-  protected Shape transform(VisualizationViewer<N, E> vv, Shape shape) {
+  protected Shape transform(VisualizationViewer<V, E> vv, Shape shape) {
     return transformSupport.transform(vv, shape);
   }
 

@@ -8,7 +8,7 @@ public class TestTreeBuilders {
   public void test() {
     LayoutAlgorithm es =
         EdgeSortingTreeLayoutAlgorithm.sortingBuilder()
-            .horizontalNodeSpacing(1)
+            .horizontalVertexSpacing(1)
             .edgeComparator(null)
             .build();
   }

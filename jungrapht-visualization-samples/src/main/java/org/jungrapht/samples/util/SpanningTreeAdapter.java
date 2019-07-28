@@ -9,7 +9,7 @@ import org.jgrapht.graph.builder.GraphTypeBuilder;
 
 public class SpanningTreeAdapter {
 
-  public static <N, E> Graph<N, E> getSpanningTree(Graph<N, E> network) {
+  public static <V, E> Graph<V, E> getSpanningTree(Graph<V, E> network) {
 
     if (network.getType().isDirected()) {
       // make a non-directed version
@@ -17,7 +17,7 @@ public class SpanningTreeAdapter {
     }
     SpanningTreeAlgorithm<E> prim = new PrimMinimumSpanningTree<>(network);
     SpanningTreeAlgorithm.SpanningTree<E> tree = prim.getSpanningTree();
-    Graph<N, E> graph = GraphTypeBuilder.<N, E>forGraphType(DefaultGraphType.dag()).buildGraph();
+    Graph<V, E> graph = GraphTypeBuilder.<V, E>forGraphType(DefaultGraphType.dag()).buildGraph();
 
     for (E edge : tree.getEdges()) {
       graph.addVertex(network.getEdgeSource(edge));

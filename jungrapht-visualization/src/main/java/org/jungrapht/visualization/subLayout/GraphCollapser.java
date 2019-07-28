@@ -44,14 +44,14 @@ public class GraphCollapser<E> {
     Graph<Collapsable<?>, E> graph = graphBuilder.buildGraph();
     Collection<Collapsable<?>> cluster = clusterGraph.vertexSet();
 
-    // add all nodes in the delegate, unless the node is in the
+    // add all vertices in the delegate, unless the vertex is in the
     // cluster.
     for (Collapsable<?> v : inGraph.vertexSet()) {
       if (!cluster.contains(v)) {
         graph.addVertex(v);
       }
     }
-    // add the clusterGraph as a node
+    // add the clusterGraph as a vertex
     graph.addVertex(Collapsable.of(clusterGraph));
 
     // add all edges from the inGraph, unless both endpoints of
@@ -83,48 +83,49 @@ public class GraphCollapser<E> {
   public Graph<Collapsable<?>, E> expand(
       Graph<Collapsable<?>, E> originalNetwork,
       Graph<Collapsable<?>, E> inGraph,
-      Collapsable<Graph<Collapsable<?>, E>> clusterGraphNode) {
+      Collapsable<Graph<Collapsable<?>, E>> clusterGraphVertex) {
 
     GraphTypeBuilder<Collapsable<?>, E> graphBuilder =
         GraphTypeBuilder.forGraphType(originalGraph.getType());
-    // build a new empty network
+    // build a new empty graph
     Graph<Collapsable<?>, E> newGraph = graphBuilder.buildGraph();
-    // add all the nodes from inGraph that are not clusterGraphNode and are not in clusterGraphNode
+    // add all the vertices from inGraph that are not clusterGraphVertex and are not in clusterGraphVertex
 
-    for (Collapsable<?> node : inGraph.vertexSet()) {
-      if (!node.equals(clusterGraphNode) && !this.contains(clusterGraphNode, node)) {
-        newGraph.addVertex(node);
+    for (Collapsable<?> vertex : inGraph.vertexSet()) {
+      if (!vertex.equals(clusterGraphVertex) && !this.contains(clusterGraphVertex, vertex)) {
+        newGraph.addVertex(vertex);
       }
     }
 
-    // add all edges that don't have an endpoint that either is clusterGraphNode or is in clusterGraphNode
+    // add all edges that don't have an endpoint that either is clusterGraphVertex or is in clusterGraphVertex
     for (E edge : inGraph.edgeSet()) {
-      Collapsable<?> fromNode = inGraph.getEdgeSource(edge);
-      Collapsable<?> toNode = inGraph.getEdgeTarget(edge);
+      Collapsable<?> fromVertex = inGraph.getEdgeSource(edge);
+      Collapsable<?> toVertex = inGraph.getEdgeTarget(edge);
       boolean dontWantThis = false;
       dontWantThis |=
-          fromNode.equals(clusterGraphNode) || this.contains(clusterGraphNode, fromNode);
-      dontWantThis |= toNode.equals(clusterGraphNode) || this.contains(clusterGraphNode, toNode);
+          fromVertex.equals(clusterGraphVertex) || this.contains(clusterGraphVertex, fromVertex);
+      dontWantThis |=
+          toVertex.equals(clusterGraphVertex) || this.contains(clusterGraphVertex, toVertex);
       if (!dontWantThis) {
-        newGraph.addEdge(fromNode, toNode, edge);
+        newGraph.addEdge(fromVertex, toVertex, edge);
       }
     }
 
-    // add all the nodes from the clusterGraphNode
-    for (Collapsable<?> node : clusterGraphNode.get().vertexSet()) {
-      newGraph.addVertex(node);
+    // add all the vertices from the clusterGraphVertex
+    for (Collapsable<?> vertex : clusterGraphVertex.get().vertexSet()) {
+      newGraph.addVertex(vertex);
     }
 
-    // add all the edges that are in the clusterGraphNode
-    for (E edge : clusterGraphNode.get().edgeSet()) {
+    // add all the edges that are in the clusterGraphVertex
+    for (E edge : clusterGraphVertex.get().edgeSet()) {
       newGraph.addEdge(
-          clusterGraphNode.get().getEdgeSource(edge),
-          clusterGraphNode.get().getEdgeTarget(edge),
+          clusterGraphVertex.get().getEdgeSource(edge),
+          clusterGraphVertex.get().getEdgeTarget(edge),
           edge);
     }
 
-    // add edges from ingraph where one endpoint is the clusterGraphNode
-    // it will now be connected to the node that was expanded from clusterGraphNode
+    // add edges from ingraph where one endpoint is the clusterGraphVertex
+    // it will now be connected to the vertex that was expanded from clusterGraphVertex
     for (E edge : inGraph.edgeSet()) {
       Set<Collapsable<?>> endpointsFromCollapsedGraph =
           Sets.newHashSet(inGraph.getEdgeSource(edge), inGraph.getEdgeTarget(edge));
@@ -133,16 +134,16 @@ public class GraphCollapser<E> {
           Sets.newHashSet(inGraph.getEdgeSource(edge), inGraph.getEdgeTarget(edge));
       for (Collapsable<?> endpoint : endpoints) {
 
-        if (endpoint.equals(clusterGraphNode)) {
+        if (endpoint.equals(clusterGraphVertex)) {
           // get the endpoints for this edge from the original graph
           Set<Collapsable<?>> endpointsFromOriginalGraph =
               Sets.newHashSet(
                   originalNetwork.getEdgeSource(edge), originalNetwork.getEdgeTarget(edge));
           // remove the endpoint that is the cluster i am expanding
           endpointsFromCollapsedGraph.remove(endpoint);
-          // put in the one that is in the collapsedGraphNode i am expanding
+          // put in the one that is in the collapsedGraphVertex i am expanding
           for (Collapsable<?> originalEndpoint : endpointsFromOriginalGraph) {
-            if (this.contains(clusterGraphNode, originalEndpoint)) {
+            if (this.contains(clusterGraphVertex, originalEndpoint)) {
               endpointsFromCollapsedGraph.add(originalEndpoint);
               break;
             }
@@ -155,26 +156,27 @@ public class GraphCollapser<E> {
     return newGraph;
   }
 
-  public boolean contains(Collapsable<Graph<Collapsable<?>, E>> inGraph, Collapsable<?> inNode) {
+  public boolean contains(Collapsable<Graph<Collapsable<?>, E>> inGraph, Collapsable<?> inVertex) {
     log.trace("inGraph is {}", inGraph);
-    log.trace("looking for {}", inNode);
+    log.trace("looking for {}", inVertex);
     boolean contained = false;
     log.trace(
         "check inGraph.vertexSet {} contains {} is {}",
         inGraph.get().vertexSet(),
-        inNode,
-        inGraph.get().vertexSet().contains(inNode));
+        inVertex,
+        inGraph.get().vertexSet().contains(inVertex));
 
-    if (inGraph.get().vertexSet().contains(inNode)) {
-      // inNode is one of the nodes in inGraph
+    if (inGraph.get().vertexSet().contains(inVertex)) {
+      // inVertex is one of the vertices in inGraph
       return true;
     }
 
-    for (Collapsable<?> node : inGraph.get().vertexSet()) {
-      log.trace("node.get() {} instanceof Graph is {}", node.get(), node.get() instanceof Graph);
+    for (Collapsable<?> vertex : inGraph.get().vertexSet()) {
+      log.trace(
+          "vertex.get() {} instanceof Graph is {}", vertex.get(), vertex.get() instanceof Graph);
       contained |=
-          (node.get() instanceof Graph)
-              && contains((Collapsable<Graph<Collapsable<?>, E>>) node, inNode);
+          (vertex.get() instanceof Graph)
+              && contains((Collapsable<Graph<Collapsable<?>, E>>) vertex, inVertex);
     }
     return contained;
   }
@@ -182,9 +184,9 @@ public class GraphCollapser<E> {
   public Graph<Collapsable<?>, E> getClusterGraph(
       Graph<Collapsable<?>, E> inGraph, Collection<Collapsable<?>> picked) {
     Graph<Collapsable<?>, E> clusterGraph = graphBuilder.buildGraph();
-    for (Collapsable<?> node : picked) {
-      clusterGraph.addVertex(node);
-      Set<E> edges = inGraph.edgesOf(node);
+    for (Collapsable<?> vertex : picked) {
+      clusterGraph.addVertex(vertex);
+      Set<E> edges = inGraph.edgesOf(vertex);
       for (E edge : edges) {
         Collapsable<?> u = inGraph.getEdgeSource(edge);
         Collapsable<?> v = inGraph.getEdgeTarget(edge);

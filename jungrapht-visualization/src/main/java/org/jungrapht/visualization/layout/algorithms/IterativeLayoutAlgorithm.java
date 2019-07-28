@@ -8,9 +8,9 @@ import org.jungrapht.visualization.layout.algorithms.util.IterativeContext;
  * preRelax()</code> is to rapidly reach an initial state before spawning a new Thread to perform a
  * more lengthy relax operation.
  *
- * @param <N> the Node type
+ * @param <V> the Vertex type
  */
-public interface IterativeLayoutAlgorithm<N> extends LayoutAlgorithm<N>, IterativeContext {
+public interface IterativeLayoutAlgorithm<V> extends LayoutAlgorithm<V>, IterativeContext {
   /**
    * may be a no-op depending on how the algorithm instance is created
    *

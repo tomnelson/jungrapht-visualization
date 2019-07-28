@@ -5,7 +5,7 @@ import java.util.Comparator;
 import java.util.Map;
 
 /**
- * A comparator to compare along the x-axis, Nodes where the values are Rectangle2D First compare
+ * A comparator to compare along the x-axis, Vertices where the values are Rectangle2D First compare
  * the min x values, then the max x values
  *
  * @author Tom Nelson
@@ -37,12 +37,12 @@ public class HorizontalEdgeNodeComparator<T> implements Comparator<Node<T>> {
     }
   }
 
-  public int compare(Map.Entry<?, Rectangle2D> leftNode, Map.Entry<?, Rectangle2D> rightNode) {
-    return compare(leftNode.getValue(), rightNode.getValue());
+  public int compare(Map.Entry<?, Rectangle2D> leftVertex, Map.Entry<?, Rectangle2D> rightVertex) {
+    return compare(leftVertex.getValue(), rightVertex.getValue());
   }
 
   @Override
-  public int compare(Node<T> leftNode, Node<T> rightNode) {
-    return compare(leftNode.getBounds(), rightNode.getBounds());
+  public int compare(Node<T> leftVertex, Node<T> rightVertex) {
+    return compare(leftVertex.getBounds(), rightVertex.getBounds());
   }
 }

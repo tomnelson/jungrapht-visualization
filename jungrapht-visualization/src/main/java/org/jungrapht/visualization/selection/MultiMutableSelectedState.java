@@ -27,7 +27,7 @@ import java.util.Set;
  */
 public class MultiMutableSelectedState<T> extends AbstractMutableSelectedState<T>
     implements MutableSelectedState<T> {
-  /** the 'picked' nodes */
+  /** the 'picked' vertices */
   protected Set<T> picked = new LinkedHashSet<>();
 
   public boolean pick(T v, boolean state) {

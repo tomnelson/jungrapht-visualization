@@ -9,19 +9,19 @@ import org.jgrapht.Graphs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Dijkstra<N> {
+public class Dijkstra<V> {
 
   private static final Logger log = LoggerFactory.getLogger(Dijkstra.class);
 
-  public static class Pair<N> {
-    final N first;
-    final N second;
+  public static class Pair<V> {
+    final V first;
+    final V second;
 
-    public static <N> Pair<N> of(N first, N second) {
+    public static <V> Pair<V> of(V first, V second) {
       return new Pair(first, second);
     }
 
-    private Pair(N first, N second) {
+    private Pair(V first, V second) {
       this.first = first;
       this.second = second;
     }
@@ -48,31 +48,31 @@ public class Dijkstra<N> {
     }
   }
 
-  protected Graph<N, ?> graph;
+  protected Graph<V, ?> graph;
 
-  protected Map<Pair<N>, Integer> distanceMap = Maps.newHashMap();
+  protected Map<Pair<V>, Integer> distanceMap = Maps.newHashMap();
 
-  public Dijkstra(Graph<N, ?> graph) {
+  public Dijkstra(Graph<V, ?> graph) {
     this.graph = graph;
   }
 
-  public Map<Pair<N>, Integer> getAllDistances() {
-    Map<Pair<N>, Integer> distanceMap = Maps.newHashMap();
-    for (N node : graph.vertexSet()) {
-      Map<N, Integer> distances = getDistances(node);
-      for (N n : distances.keySet()) {
-        Pair<N> pair = Pair.of(node, n);
+  public Map<Pair<V>, Integer> getAllDistances() {
+    Map<Pair<V>, Integer> distanceMap = Maps.newHashMap();
+    for (V vertex : graph.vertexSet()) {
+      Map<V, Integer> distances = getDistances(vertex);
+      for (V n : distances.keySet()) {
+        Pair<V> pair = Pair.of(vertex, n);
         if (distanceMap.containsKey(pair)) {
           log.trace(
               "about to replace {},{} with {},{},{}",
               pair,
               distanceMap.get(pair),
-              node,
+              vertex,
               n,
               distances.get(n));
         }
         if (distances.get(n) != null) {
-          distanceMap.put(Pair.of(node, n), distances.get(n));
+          distanceMap.put(Pair.of(vertex, n), distances.get(n));
         }
       }
     }
@@ -80,43 +80,43 @@ public class Dijkstra<N> {
     return distanceMap;
   }
 
-  public double getDistance(N from, N to) {
+  public double getDistance(V from, V to) {
     if (distanceMap.containsKey(Pair.of(from, to))) {
       return distanceMap.get(Pair.of(from, to));
     } else {
-      Map<N, Integer> map = getDistances(from);
-      for (N n : map.keySet()) {
+      Map<V, Integer> map = getDistances(from);
+      for (V n : map.keySet()) {
         distanceMap.put(Pair.of(from, n), map.get(n));
       }
       return distanceMap.get(Pair.of(from, to));
     }
   }
 
-  protected Map<N, Integer> getDistances(N source) {
+  protected Map<V, Integer> getDistances(V source) {
     // initialize everything
-    Queue<N> queue = new LinkedList<>();
-    Map<N, Integer> distances = Maps.newHashMap();
-    Map<N, N> previous = Maps.newLinkedHashMap();
-    //    Map<N, Boolean> visitedMap = Maps.newHashMap();
+    Queue<V> queue = new LinkedList<>();
+    Map<V, Integer> distances = Maps.newHashMap();
+    Map<V, V> previous = Maps.newLinkedHashMap();
+    //    Map<V, Boolean> visitedMap = Maps.newHashMap();
 
-    for (N node : graph.vertexSet()) {
-      distances.put(node, Integer.MAX_VALUE);
-      previous.put(node, null);
-      queue.add(node);
-      //        visitedMap.put(node, false);
+    for (V vertex : graph.vertexSet()) {
+      distances.put(vertex, Integer.MAX_VALUE);
+      previous.put(vertex, null);
+      queue.add(vertex);
+      //        visitedMap.put(vertex, false);
     }
 
     distances.put(source, 0);
 
     while (!queue.isEmpty()) {
-      N u = minFrom(queue, distances);
+      V u = minFrom(queue, distances);
       //minValueFrom(distances, visitedMap);
       //      visitedMap.put(u, true);
       queue.remove(u);
       if (u == null) {
         break;
       }
-      for (N v : Graphs.neighborListOf(graph, u)) {
+      for (V v : Graphs.neighborListOf(graph, u)) {
         if (queue.contains(v)) {
           //        if (!visitedMap.get(v)) {
           int dist = distances.get(u) + 1;
@@ -131,13 +131,13 @@ public class Dijkstra<N> {
     return distances;
   }
 
-  private N minFrom(Queue<N> queue, Map<N, Integer> distances) {
+  private V minFrom(Queue<V> queue, Map<V, Integer> distances) {
     double min = Double.POSITIVE_INFINITY;
-    N winner = null;
-    for (N node : queue) {
-      if (distances.get(node) < min) {
-        min = distances.get(node);
-        winner = node;
+    V winner = null;
+    for (V vertex : queue) {
+      if (distances.get(vertex) < min) {
+        min = distances.get(vertex);
+        winner = vertex;
       }
     }
     queue.remove(winner);
@@ -147,10 +147,10 @@ public class Dijkstra<N> {
     return winner;
   }
 
-  private N minValueFrom(Map<N, Integer> distances, Map<N, Boolean> visited) {
-    N minValue = null;
+  private V minValueFrom(Map<V, Integer> distances, Map<V, Boolean> visited) {
+    V minValue = null;
     int minDistance = Integer.MAX_VALUE;
-    for (Map.Entry<N, Integer> entry : distances.entrySet()) {
+    for (Map.Entry<V, Integer> entry : distances.entrySet()) {
       if (!visited.get(entry.getKey()) && entry.getValue() < minDistance) {
         minDistance = entry.getValue();
         minValue = entry.getKey();
@@ -159,7 +159,7 @@ public class Dijkstra<N> {
     return minValue;
   }
 
-  public Map<Pair<N>, Integer> getDistanceMap() {
+  public Map<Pair<V>, Integer> getDistanceMap() {
     if (distanceMap.isEmpty()) {
       getAllDistances();
     }

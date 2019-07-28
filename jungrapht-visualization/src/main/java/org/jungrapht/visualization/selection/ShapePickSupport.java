@@ -28,7 +28,7 @@ import java.util.function.Predicate;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.control.TransformSupport;
-import org.jungrapht.visualization.layout.NetworkElementAccessor;
+import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.spatial.Spatial;
@@ -40,12 +40,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A <code>NetworkElementAccessor</code> that returns elements whose <code>Shape</code> contains the
+ * A <code>GraphElementAccessor</code> that returns elements whose <code>Shape</code> contains the
  * specified pick point or region.
  *
  * @author Tom Nelson
  */
-public class ShapePickSupport<N, E> implements NetworkElementAccessor<N, E> {
+public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(ShapePickSupport.class);
   /**
@@ -72,10 +72,10 @@ public class ShapePickSupport<N, E> implements NetworkElementAccessor<N, E> {
 
   /**
    * The <code>VisualizationServer</code> in which the this instance is being used for picking. Used
-   * to retrieve properties such as the layout, renderer, node and edge shapes, and coordinate
+   * to retrieve properties such as the layout, renderer, vertex and edge shapes, and coordinate
    * transformations.
    */
-  protected VisualizationServer<N, E> vv;
+  protected VisualizationServer<V, E> vv;
 
   /** The current picking heuristic for this instance. Defaults to <code>CENTERED</code>. */
   protected Style style = Style.CENTERED;
@@ -84,12 +84,12 @@ public class ShapePickSupport<N, E> implements NetworkElementAccessor<N, E> {
    * Creates a <code>ShapePickSupport</code> for the <code>vv</code> VisualizationServer, with the
    * specified pick footprint and the default pick style. The <code>VisualizationServer</code> is
    * used to access properties of the current visualization (layout, renderer, coordinate
-   * transformations, node/edge shapes, etc.).
+   * transformations, vertex/edge shapes, etc.).
    *
    * @param vv source of the current <code>Layout</code>.
    * @param pickSize the layoutSize of the pick footprint for line edges
    */
-  public ShapePickSupport(VisualizationServer<N, E> vv, float pickSize) {
+  public ShapePickSupport(VisualizationServer<V, E> vv, float pickSize) {
     this.vv = vv;
     this.pickSize = pickSize;
   }
@@ -100,7 +100,7 @@ public class ShapePickSupport<N, E> implements NetworkElementAccessor<N, E> {
    *
    * @param vv the visualization server used for rendering
    */
-  public ShapePickSupport(VisualizationServer<N, E> vv) {
+  public ShapePickSupport(VisualizationServer<V, E> vv) {
     this.vv = vv;
     this.pickSize = 2;
   }
@@ -149,44 +149,44 @@ public class ShapePickSupport<N, E> implements NetworkElementAccessor<N, E> {
   }
 
   @Override
-  public N getNode(LayoutModel<N> layoutModel, org.jungrapht.visualization.layout.model.Point p) {
-    return getNode(layoutModel, p.x, p.y);
+  public V getVertex(LayoutModel<V> layoutModel, org.jungrapht.visualization.layout.model.Point p) {
+    return getVertex(layoutModel, p.x, p.y);
   }
 
   /**
-   * Returns the node, if any, whose shape contains (x, y). If (x,y) is contained in more than one
-   * node's shape, returns the node whose center is closest to the pick point.
+   * Returns the vertex, if any, whose shape contains (x, y). If (x,y) is contained in more than one
+   * vertex's shape, returns the vertex whose center is closest to the pick point.
    *
    * @param x the x coordinate of the pick point
    * @param y the y coordinate of the pick point
-   * @return the node whose shape contains (x,y), and whose center is closest to the pick point
+   * @return the vertex whose shape contains (x,y), and whose center is closest to the pick point
    */
   @Override
-  public N getNode(LayoutModel<N> layoutModel, double x, double y) {
-    log.trace("look for node at (layout coords) {},{}", x, y);
-    N closest = null;
+  public V getVertex(LayoutModel<V> layoutModel, double x, double y) {
+    log.trace("look for vertex at (layout coords) {},{}", x, y);
+    V closest = null;
     double minDistance = Double.MAX_VALUE;
     // x,y is in layout coordinate system.
     Point2D pickPoint = new Point2D.Double(x, y);
 
-    Spatial<N> nodeSpatial = vv.getNodeSpatial();
-    if (nodeSpatial.isActive()) {
-      return getNode(nodeSpatial, layoutModel, pickPoint.getX(), pickPoint.getY());
+    Spatial<V> vertexSpatial = vv.getVertexSpatial();
+    if (vertexSpatial.isActive()) {
+      return getVertex(vertexSpatial, layoutModel, pickPoint.getX(), pickPoint.getY());
     }
 
-    // fall back on checking every node
+    // fall back on checking every vertex
     while (true) {
       try {
-        for (N v : getFilteredNodes()) {
+        for (V v : getFilteredVertices()) {
 
-          // get the shape for the node (it is at the origin)
-          Shape shape = vv.getRenderContext().getNodeShapeFunction().apply(v);
-          // get the node location in layout coordinate system
+          // get the shape for the vertex (it is at the origin)
+          Shape shape = vv.getRenderContext().getVertexShapeFunction().apply(v);
+          // get the vertex location in layout coordinate system
           org.jungrapht.visualization.layout.model.Point p = layoutModel.apply(v);
           if (p == null) {
             continue;
           }
-          // translate the shape to the node location in layout coordinates
+          // translate the shape to the vertex location in layout coordinates
           AffineTransform xform = AffineTransform.getTranslateInstance(p.x, p.y);
           shape = xform.createTransformedShape(shape);
 
@@ -200,8 +200,8 @@ public class ShapePickSupport<N, E> implements NetworkElementAccessor<N, E> {
               closest = v;
             } else {
 
-              // return the node closest to the
-              // center of a node shape
+              // return the vertex closest to the
+              // center of a vertex shape
               Rectangle2D bounds = shape.getBounds2D();
               double dx = bounds.getCenterX() - pickPoint.getY();
               double dy = bounds.getCenterY() - pickPoint.getY();
@@ -221,27 +221,27 @@ public class ShapePickSupport<N, E> implements NetworkElementAccessor<N, E> {
   }
 
   /**
-   * uses the spatialRTree to find the closest node to the points
+   * uses the spatialRTree to find the closest vertex to the points
    *
    * @param spatial
    * @param layoutModel
    * @param x in the layout coordinate system
    * @param y in the layout coordinate system
-   * @return the picked node
+   * @return the picked vertex
    */
-  protected N getNode(Spatial<N> spatial, LayoutModel<N> layoutModel, double x, double y) {
+  protected V getVertex(Spatial<V> spatial, LayoutModel<V> layoutModel, double x, double y) {
 
-    TransformSupport<N, E> transformSupport = vv.getTransformSupport();
+    TransformSupport<V, E> transformSupport = vv.getTransformSupport();
 
-    // find the leaf node that would contain a point at x,y
+    // find the leaf vertex that would contain a point at x,y
     Collection<? extends TreeNode> containingLeafs =
         spatial.getContainingLeafs(new Point2D.Double(x, y));
     if (log.isTraceEnabled()) {
       log.trace("leaf for {},{} is {}", x, y, containingLeafs);
     }
     if (containingLeafs == null || containingLeafs.size() == 0) return null;
-    // make a target circle the same size as the leaf node
-    // leaf nodes are small when nodes are close and large when they are sparse
+    // make a target circle the same size as the leaf vertex
+    // leaf vertices are small when vertices are close and large when they are sparse
     // union up all the leafs then make a target
     Rectangle2D union = null;
     for (TreeNode r : containingLeafs) {
@@ -262,47 +262,47 @@ public class ShapePickSupport<N, E> implements NetworkElementAccessor<N, E> {
 
     double minDistance = Double.MAX_VALUE;
 
-    // will be the picked node
-    N closest = null;
+    // will be the picked vertex
+    V closest = null;
 
-    // get the all nodes from any leafs that intersect the target
-    Collection<N> nodes = spatial.getVisibleElements(target);
+    // get the all vertices from any leafs that intersect the target
+    Collection<V> vertices = spatial.getVisibleElements(target);
     if (log.isTraceEnabled()) {
-      log.trace("instead of checking all nodes: {}", getFilteredNodes());
-      log.trace("out of these candidates: {}...", nodes);
+      log.trace("instead of checking all vertices: {}", getFilteredVertices());
+      log.trace("out of these candidates: {}...", vertices);
     }
-    // Check the (smaller) set of eligible nodes
+    // Check the (smaller) set of eligible vertices
     // to return the one that contains the (x,y)
-    for (N node : nodes) {
-      // get the shape for the node (centered at the origin)
-      Shape shape = vv.getRenderContext().getNodeShapeFunction().apply(node);
-      // get the node location
-      org.jungrapht.visualization.layout.model.Point p = layoutModel.apply(node);
+    for (V vertex : vertices) {
+      // get the shape for the vertex (centered at the origin)
+      Shape shape = vv.getRenderContext().getVertexShapeFunction().apply(vertex);
+      // get the vertex location
+      org.jungrapht.visualization.layout.model.Point p = layoutModel.apply(vertex);
       if (p == null) {
         continue;
       }
-      // translate the node shape to its location in layout coordinates
+      // translate the vertex shape to its location in layout coordinates
       AffineTransform xform = AffineTransform.getTranslateInstance(p.x, p.y);
       shape = xform.createTransformedShape(shape);
 
       if (shape.contains(x, y)) {
         if (style == Style.LOWEST) {
           // return the first match
-          return node;
+          return vertex;
         } else if (style == Style.HIGHEST) {
           // will return the last match
-          closest = node;
+          closest = vertex;
         } else {
 
-          // return the node closest to the
-          // center of a node shape
+          // return the vertex closest to the
+          // center of a vertex shape
           Rectangle2D bounds = shape.getBounds2D();
           double dx = bounds.getCenterX() - x;
           double dy = bounds.getCenterY() - y;
           double dist = dx * dx + dy * dy;
           if (dist < minDistance) {
             minDistance = dist;
-            closest = node;
+            closest = vertex;
           }
         }
       }
@@ -314,64 +314,64 @@ public class ShapePickSupport<N, E> implements NetworkElementAccessor<N, E> {
   }
 
   /**
-   * Returns the nodes whose layout coordinates are contained in <code>Shape</code>. The shape is in
-   * screen coordinates, and the graph nodes are transformed to screen coordinates before they are
-   * tested for inclusion.
+   * Returns the vertices whose layout coordinates are contained in <code>Shape</code>. The shape is
+   * in screen coordinates, and the graph vertices are transformed to screen coordinates before they
+   * are tested for inclusion.
    *
-   * @return the <code>Collection</code> of nodes whose <code>layout</code> coordinates are
+   * @return the <code>Collection</code> of vertices whose <code>layout</code> coordinates are
    *     contained in <code>shape</code>.
    */
   @Override
-  public Collection<N> getNodes(LayoutModel<N> layoutModel, Shape shape) {
-    Set<N> pickedNodes = new HashSet<>();
+  public Collection<V> getVertices(LayoutModel<V> layoutModel, Shape shape) {
+    Set<V> pickedVertices = new HashSet<>();
 
     // the pick target shape is in layout coordinate system.
 
-    Spatial spatial = vv.getNodeSpatial();
+    Spatial spatial = vv.getVertexSpatial();
     if (spatial != null) {
       return getContained(spatial, layoutModel, shape);
     }
 
-    // fall back on checking every node
+    // fall back on checking every vertex
     while (true) {
       try {
-        for (N v : getFilteredNodes()) {
+        for (V v : getFilteredVertices()) {
           org.jungrapht.visualization.layout.model.Point p = layoutModel.apply(v);
           if (p == null) {
             continue;
           }
           if (shape.contains(p.x, p.y)) {
-            pickedNodes.add(v);
+            pickedVertices.add(v);
           }
         }
         break;
       } catch (ConcurrentModificationException cme) {
       }
     }
-    return pickedNodes;
+    return pickedVertices;
   }
 
   /**
-   * use the spatial structure to find nodes inside the passed shape
+   * use the spatial structure to find vertices inside the passed shape
    *
    * @param spatial
    * @param layoutModel
    * @param shape a target shape in layout coordinates
-   * @return the nodes contained in the target shape
+   * @return the vertices contained in the target shape
    */
-  protected Collection<N> getContained(Spatial spatial, LayoutModel<N> layoutModel, Shape shape) {
+  protected Collection<V> getContained(Spatial spatial, LayoutModel<V> layoutModel, Shape shape) {
 
-    Collection<N> visible = Sets.newHashSet(spatial.getVisibleElements(shape));
+    Collection<V> visible = Sets.newHashSet(spatial.getVisibleElements(shape));
     if (log.isTraceEnabled()) {
-      log.trace("your shape intersects tree cells with these nodes: {}", visible);
+      log.trace("your shape intersects tree cells with these vertices: {}", visible);
     }
 
-    // some of the nodes that the spatial tree considers visible may be outside
-    // of the pick target shape. Check this smaller set of nodes and return only
+    // some of the vertices that the spatial tree considers visible may be outside
+    // of the pick target shape. Check this smaller set of vertices and return only
     // those that are inside the shape
-    for (Iterator<N> iterator = visible.iterator(); iterator.hasNext(); ) {
-      N node = iterator.next();
-      org.jungrapht.visualization.layout.model.Point p = layoutModel.apply(node);
+    for (Iterator<V> iterator = visible.iterator(); iterator.hasNext(); ) {
+      V vertex = iterator.next();
+      org.jungrapht.visualization.layout.model.Point p = layoutModel.apply(vertex);
       if (p == null) {
         continue;
       }
@@ -390,17 +390,17 @@ public class ShapePickSupport<N, E> implements NetworkElementAccessor<N, E> {
    * @param spatial
    * @param layoutModel
    * @param shape a target shape in layout coordinates
-   * @return the nodes contained in the target shape
+   * @return the vertices contained in the target shape
    */
   protected Collection<E> getContained(
-      SpatialRTree.Edges<E, N> spatial, LayoutModel<N> layoutModel, Shape shape) {
+      SpatialRTree.Edges<E, V> spatial, LayoutModel<V> layoutModel, Shape shape) {
 
     Collection<E> visible = spatial.getVisibleElements(shape);
     if (log.isTraceEnabled()) {
-      log.trace("your shape intersects tree cells with these nodes: {}", visible);
+      log.trace("your shape intersects tree cells with these vertices: {}", visible);
     }
-    // some of the nodes that the spatial tree considers visible may be outside
-    // of the pick target shape. Check this smaller set of nodes and return only
+    // some of the vertices that the spatial tree considers visible may be outside
+    // of the pick target shape. Check this smaller set of vertices and return only
     // those that intersect the shape
     for (Iterator<E> iterator = visible.iterator(); iterator.hasNext(); ) {
       E edge = iterator.next();
@@ -423,7 +423,7 @@ public class ShapePickSupport<N, E> implements NetworkElementAccessor<N, E> {
    * @return an edge whose shape intersects the pick area centered on the location {@code (x,y)}
    */
   @Override
-  public E getEdge(LayoutModel<N> layoutModel, double x, double y) {
+  public E getEdge(LayoutModel<V> layoutModel, double x, double y) {
 
     // as a Line has no area, we can't always use edgeshape.contains(point) so we
     // make a small rectangular pickArea around the point and check if the
@@ -438,7 +438,7 @@ public class ShapePickSupport<N, E> implements NetworkElementAccessor<N, E> {
     Spatial<E> edgeSpatial = vv.getEdgeSpatial();
     if (edgeSpatial instanceof SpatialRTree.Edges) {
       return getEdge(
-          (SpatialRTree.Edges<E, N>) edgeSpatial, layoutModel, pickPoint.getX(), pickPoint.getY());
+          (SpatialRTree.Edges<E, V>) edgeSpatial, layoutModel, pickPoint.getX(), pickPoint.getY());
     }
     while (true) {
       try {
@@ -485,30 +485,30 @@ public class ShapePickSupport<N, E> implements NetworkElementAccessor<N, E> {
   }
 
   @Override
-  public E getEdge(LayoutModel<N> layoutModel, Point2D p) {
-    return getEdge(layoutModel, p.getX(), p.getY());
+  public E getEdge(LayoutModel<V> layoutModel, Point p) {
+    return getEdge(layoutModel, p.x, p.y);
   }
 
   /**
-   * uses the spatialRTree to find the closest node to the points
+   * uses the spatialRTree to find the closest vertex to the points
    *
    * @param spatial
    * @param layoutModel
    * @param x in the layout coordinate system
    * @param y in the layout coordinate system
-   * @return the picked node
+   * @return the picked vertex
    */
   protected E getEdge(
-      SpatialRTree.Edges<E, N> spatial, LayoutModel<N> layoutModel, double x, double y) {
+      SpatialRTree.Edges<E, V> spatial, LayoutModel<V> layoutModel, double x, double y) {
 
-    // find the leaf nodes that would contain a point at x,y
+    // find the leaf vertices that would contain a point at x,y
     Collection<LeafNode<E>> containingLeafs = spatial.getContainingLeafs(new Point2D.Double(x, y));
     if (log.isTraceEnabled()) {
       log.trace("leaf for {},{} is {}", x, y, containingLeafs);
     }
     if (containingLeafs == null || containingLeafs.size() == 0) return null;
-    // make a target circle the same size as the leaf node area union
-    // leaf nodes are small when nodes are close and large when they are sparse
+    // make a target circle the same size as the leaf vertex area union
+    // leaf vertices are small when vertices are close and large when they are sparse
     // union up all the leafs then make a target
     Rectangle2D union = null;
     for (LeafNode<E> r : containingLeafs) {
@@ -532,7 +532,7 @@ public class ShapePickSupport<N, E> implements NetworkElementAccessor<N, E> {
     // will be the picked edge
     E closest = null;
 
-    // get the all nodes from any leafs that intersect the target
+    // get the all vertices from any leafs that intersect the target
     Collection<E> edges = spatial.getVisibleElements(target);
     if (log.isTraceEnabled()) {
       log.trace(
@@ -545,7 +545,7 @@ public class ShapePickSupport<N, E> implements NetworkElementAccessor<N, E> {
             (float) x - pickSize / 2, (float) y - pickSize / 2, pickSize, pickSize);
     //    Point2D pickPoint = new Point2D.Double(x, y);
 
-    // Check the (smaller) set of eligible nodes
+    // Check the (smaller) set of eligible vertices
     // to return the one that contains the (x,y)
     for (E edge : edges) {
 
@@ -592,10 +592,10 @@ public class ShapePickSupport<N, E> implements NetworkElementAccessor<N, E> {
    * @return the transformed shape
    */
   private Shape getTransformedEdgeShape(E e) {
-    N v1 = vv.getModel().getNetwork().getEdgeSource(e);
-    N v2 = vv.getModel().getNetwork().getEdgeTarget(e);
+    V v1 = vv.getModel().getGraph().getEdgeSource(e);
+    V v2 = vv.getModel().getGraph().getEdgeTarget(e);
     boolean isLoop = v1.equals(v2);
-    LayoutModel<N> layoutModel = vv.getModel().getLayoutModel();
+    LayoutModel<V> layoutModel = vv.getModel().getLayoutModel();
     org.jungrapht.visualization.layout.model.Point p1 = layoutModel.apply(v1);
     Point p2 = layoutModel.apply(v2);
     if (p1 == null || p2 == null) {
@@ -606,27 +606,27 @@ public class ShapePickSupport<N, E> implements NetworkElementAccessor<N, E> {
     float x2 = (float) p2.x;
     float y2 = (float) p2.y;
 
-    // translate the edge to the starting node
+    // translate the edge to the starting vertex
     AffineTransform xform = AffineTransform.getTranslateInstance(x1, y1);
 
     Shape edgeShape =
         vv.getRenderContext()
             .getEdgeShapeFunction()
-            .apply(Context.getInstance(vv.getModel().getNetwork(), e));
+            .apply(Context.getInstance(vv.getModel().getGraph(), e));
     if (isLoop) {
-      // make the loops proportional to the layoutSize of the node
-      Shape s2 = vv.getRenderContext().getNodeShapeFunction().apply(v2);
+      // make the loops proportional to the layoutSize of the vertex
+      Shape s2 = vv.getRenderContext().getVertexShapeFunction().apply(v2);
       Rectangle2D s2Bounds = s2.getBounds2D();
       xform.scale(s2Bounds.getWidth(), s2Bounds.getHeight());
-      // move the loop so that the nadir is centered in the node
+      // move the loop so that the nadir is centered in the vertex
       xform.translate(0, -edgeShape.getBounds2D().getHeight() / 2);
     } else {
       float dx = x2 - x1;
       float dy = y2 - y1;
-      // rotate the edge to the angle between the nodes
+      // rotate the edge to the angle between the vertices
       double theta = Math.atan2(dy, dx);
       xform.rotate(theta);
-      // stretch the edge to span the distance between the nodes
+      // stretch the edge to span the distance between the vertices
       float dist = (float) Math.sqrt(dx * dx + dy * dy);
       xform.scale(dist, 1.0f);
     }
@@ -636,29 +636,30 @@ public class ShapePickSupport<N, E> implements NetworkElementAccessor<N, E> {
     return edgeShape;
   }
 
-  protected Collection<N> getFilteredNodes() {
-    Set<N> nodes = vv.getModel().getNetwork().vertexSet();
-    return nodesAreFiltered()
-        ? Sets.filter(nodes, vv.getRenderContext().getNodeIncludePredicate()::test)
-        : nodes;
+  protected Collection<V> getFilteredVertices() {
+    Set<V> vertices = vv.getModel().getGraph().vertexSet();
+    return verticesAreFiltered()
+        ? Sets.filter(vertices, vv.getRenderContext().getVertexIncludePredicate()::test)
+        : vertices;
   }
 
   protected Collection<E> getFilteredEdges() {
-    Set<E> edges = vv.getModel().getNetwork().edgeSet();
+    Set<E> edges = vv.getModel().getGraph().edgeSet();
     return edgesAreFiltered()
         ? Sets.filter(edges, vv.getRenderContext().getEdgeIncludePredicate()::test)
         : edges;
   }
 
   /**
-   * Quick test to allow optimization of <code>getFilteredNodes()</code>.
+   * Quick test to allow optimization of <code>getFilteredVertices()</code>.
    *
-   * @return <code>true</code> if there is an relaxing node filtering mechanism for this
+   * @return <code>true</code> if there is an relaxing vertex filtering mechanism for this
    *     visualization, <code>false</code> otherwise
    */
-  protected boolean nodesAreFiltered() {
-    Predicate<N> nodeIncludePredicate = vv.getRenderContext().getNodeIncludePredicate();
-    return nodeIncludePredicate != null && !nodeIncludePredicate.equals((Predicate<N>) (n -> true));
+  protected boolean verticesAreFiltered() {
+    Predicate<V> vertexIncludePredicate = vv.getRenderContext().getVertexIncludePredicate();
+    return vertexIncludePredicate != null
+        && !vertexIncludePredicate.equals((Predicate<V>) (n -> true));
   }
 
   /**
@@ -669,19 +670,19 @@ public class ShapePickSupport<N, E> implements NetworkElementAccessor<N, E> {
    */
   protected boolean edgesAreFiltered() {
     Predicate<E> edgeIncludePredicate = vv.getRenderContext().getEdgeIncludePredicate();
-    return edgeIncludePredicate != null && !edgeIncludePredicate.equals((Predicate<N>) (n -> true));
+    return edgeIncludePredicate != null && !edgeIncludePredicate.equals((Predicate<V>) (n -> true));
   }
 
   /**
-   * Returns <code>true</code> if this node in this graph is included in the collections of elements
-   * to be rendered, and <code>false</code> otherwise.
+   * Returns <code>true</code> if this vertex in this graph is included in the collections of
+   * elements to be rendered, and <code>false</code> otherwise.
    *
-   * @return <code>true</code> if this node is included in the collections of elements to be
+   * @return <code>true</code> if this vertex is included in the collections of elements to be
    *     rendered, <code>false</code> otherwise.
    */
-  protected boolean isNodeRendered(N node) {
-    Predicate<N> nodeIncludePredicate = vv.getRenderContext().getNodeIncludePredicate();
-    return nodeIncludePredicate == null || nodeIncludePredicate.test(node);
+  protected boolean isVertexRendered(V vertex) {
+    Predicate<V> vertexIncludePredicate = vv.getRenderContext().getVertexIncludePredicate();
+    return vertexIncludePredicate == null || vertexIncludePredicate.test(vertex);
   }
 
   /**
@@ -692,17 +693,17 @@ public class ShapePickSupport<N, E> implements NetworkElementAccessor<N, E> {
    *     elements to be rendered, <code>false</code> otherwise.
    */
   protected boolean isEdgeRendered(E edge) {
-    Predicate<N> nodeIncludePredicate = vv.getRenderContext().getNodeIncludePredicate();
+    Predicate<V> vertexIncludePredicate = vv.getRenderContext().getVertexIncludePredicate();
     Predicate<E> edgeIncludePredicate = vv.getRenderContext().getEdgeIncludePredicate();
-    Graph<N, E> g = vv.getModel().getNetwork();
+    Graph<V, E> g = vv.getModel().getGraph();
     if (edgeIncludePredicate != null && !edgeIncludePredicate.test(edge)) {
       return false;
     }
-    N v1 = g.getEdgeSource(edge);
-    N v2 = g.getEdgeTarget(edge);
+    V v1 = g.getEdgeSource(edge);
+    V v2 = g.getEdgeTarget(edge);
 
-    return nodeIncludePredicate == null
-        || (nodeIncludePredicate.test(v1) && nodeIncludePredicate.test(v2));
+    return vertexIncludePredicate == null
+        || (vertexIncludePredicate.test(v1) && vertexIncludePredicate.test(v2));
   }
 
   /**

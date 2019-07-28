@@ -18,10 +18,10 @@ import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import org.jungrapht.visualization.RenderContext;
 
-public class BasicEdgeArrowRenderingSupport<N, E> implements EdgeArrowRenderingSupport<N, E> {
+public class BasicEdgeArrowRenderingSupport<V, E> implements EdgeArrowRenderingSupport<V, E> {
 
   public AffineTransform getArrowTransform(
-      RenderContext<N, E> rc, Shape edgeShape, Shape nodeShape) {
+      RenderContext<V, E> rc, Shape edgeShape, Shape vertexShape) {
     GeneralPath path = new GeneralPath(edgeShape);
     float[] seg = new float[6];
     Point2D p2 = null;
@@ -35,8 +35,8 @@ public class BasicEdgeArrowRenderingSupport<N, E> implements EdgeArrowRenderingS
       } else if (ret == PathIterator.SEG_LINETO) {
         Point2D p1 = p2;
         p2 = new Point2D.Float(seg[0], seg[1]);
-        if (nodeShape.contains(p2)) {
-          at = getArrowTransform(rc, new Line2D.Float(p1, p2), nodeShape);
+        if (vertexShape.contains(p2)) {
+          at = getArrowTransform(rc, new Line2D.Float(p1, p2), vertexShape);
           break;
         }
       }
@@ -45,12 +45,12 @@ public class BasicEdgeArrowRenderingSupport<N, E> implements EdgeArrowRenderingS
   }
 
   public AffineTransform getReverseArrowTransform(
-      RenderContext<N, E> rc, Shape edgeShape, Shape nodeShape) {
-    return getReverseArrowTransform(rc, edgeShape, nodeShape, true);
+      RenderContext<V, E> rc, Shape edgeShape, Shape vertexShape) {
+    return getReverseArrowTransform(rc, edgeShape, vertexShape, true);
   }
 
   public AffineTransform getReverseArrowTransform(
-      RenderContext<N, E> rc, Shape edgeShape, Shape nodeShape, boolean passedGo) {
+      RenderContext<V, E> rc, Shape edgeShape, Shape vertexShape, boolean passedGo) {
     GeneralPath path = new GeneralPath(edgeShape);
     float[] seg = new float[6];
     Point2D p2 = null;
@@ -63,10 +63,10 @@ public class BasicEdgeArrowRenderingSupport<N, E> implements EdgeArrowRenderingS
       } else if (ret == PathIterator.SEG_LINETO) {
         Point2D p1 = p2;
         p2 = new Point2D.Float(seg[0], seg[1]);
-        if (!passedGo && nodeShape.contains(p2)) {
+        if (!passedGo && vertexShape.contains(p2)) {
           passedGo = true;
-        } else if (passedGo && !nodeShape.contains(p2)) {
-          at = getReverseArrowTransform(rc, new Line2D.Float(p1, p2), nodeShape);
+        } else if (passedGo && !vertexShape.contains(p2)) {
+          at = getReverseArrowTransform(rc, new Line2D.Float(p1, p2), vertexShape);
           break;
         }
       }
@@ -75,14 +75,14 @@ public class BasicEdgeArrowRenderingSupport<N, E> implements EdgeArrowRenderingS
   }
 
   public AffineTransform getArrowTransform(
-      RenderContext<N, E> rc, Line2D edgeShape, Shape nodeShape) {
+      RenderContext<V, E> rc, Line2D edgeShape, Shape vertexShape) {
     float dx = (float) (edgeShape.getX1() - edgeShape.getX2());
     float dy = (float) (edgeShape.getY1() - edgeShape.getY2());
     // iterate over the line until the edge shape will place the
-    // arrowhead closer than 'arrowGap' to the node shape boundary
+    // arrowhead closer than 'arrowGap' to the vertex shape boundary
     while ((dx * dx + dy * dy) > rc.getArrowPlacementTolerance()) {
       try {
-        edgeShape = getLastOutsideSegment(edgeShape, nodeShape);
+        edgeShape = getLastOutsideSegment(edgeShape, vertexShape);
       } catch (IllegalArgumentException e) {
         System.err.println(e.toString());
         return null;
@@ -97,14 +97,14 @@ public class BasicEdgeArrowRenderingSupport<N, E> implements EdgeArrowRenderingS
   }
 
   protected AffineTransform getReverseArrowTransform(
-      RenderContext<N, E> rc, Line2D edgeShape, Shape nodeShape) {
+      RenderContext<V, E> rc, Line2D edgeShape, Shape vertexShape) {
     float dx = (float) (edgeShape.getX1() - edgeShape.getX2());
     float dy = (float) (edgeShape.getY1() - edgeShape.getY2());
     // iterate over the line until the edge shape will place the
-    // arrowhead closer than 'arrowGap' to the node shape boundary
+    // arrowhead closer than 'arrowGap' to the vertex shape boundary
     while ((dx * dx + dy * dy) > rc.getArrowPlacementTolerance()) {
       try {
-        edgeShape = getFirstOutsideSegment(edgeShape, nodeShape);
+        edgeShape = getFirstOutsideSegment(edgeShape, vertexShape);
       } catch (IllegalArgumentException e) {
         System.err.println(e.toString());
         return null;

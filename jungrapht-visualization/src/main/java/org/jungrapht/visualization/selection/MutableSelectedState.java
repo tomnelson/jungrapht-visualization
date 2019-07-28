@@ -13,7 +13,7 @@ package org.jungrapht.visualization.selection;
 import java.awt.ItemSelectable;
 
 /**
- * An interface for classes that keep track of the "picked" state of edges or nodes.
+ * An interface for classes that keep track of the "picked" state of edges or vertices.
  *
  * @author Tom Nelson
  * @author Joshua O'Madadhain

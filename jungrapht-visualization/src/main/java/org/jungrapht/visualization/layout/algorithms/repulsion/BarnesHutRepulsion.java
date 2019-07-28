@@ -4,18 +4,18 @@ import org.jungrapht.visualization.layout.model.LayoutModel;
 
 /**
  * @author Tom Nelson
- * @param <N> the node type
+ * @param <V> the vertex type
  * @param <R> the Repulsion type
  * @param <B> the Repulsion Builder type
  */
 public interface BarnesHutRepulsion<
-        N, R extends BarnesHutRepulsion<N, R, B>, B extends BarnesHutRepulsion.Builder<N, R, B>>
-    extends StandardRepulsion<N, R, B> {
+        V, R extends BarnesHutRepulsion<V, R, B>, B extends BarnesHutRepulsion.Builder<V, R, B>>
+    extends StandardRepulsion<V, R, B> {
 
-  interface Builder<N, R extends BarnesHutRepulsion<N, R, B>, B extends Builder<N, R, B>>
-      extends StandardRepulsion.Builder<N, R, B> {
+  interface Builder<V, R extends BarnesHutRepulsion<V, R, B>, B extends Builder<V, R, B>>
+      extends StandardRepulsion.Builder<V, R, B> {
 
-    B layoutModel(LayoutModel<N> layoutModel);
+    B layoutModel(LayoutModel<V> layoutModel);
 
     B theta(double theta);
 

@@ -18,8 +18,8 @@ import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.event.LayoutChange;
-import org.jungrapht.visualization.layout.event.LayoutNodePositionChange;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
+import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,20 +28,20 @@ import org.slf4j.LoggerFactory;
  * manipulated as one layout. The relaxer thread will step each layout in sequence.
  *
  * @author Tom Nelson
- * @param <N> the node type
+ * @param <V> the vertex type
  */
-public class AggregateLayoutModel<N> implements LayoutModel<N> {
+public class AggregateLayoutModel<V> implements LayoutModel<V> {
 
   private static final Logger log = LoggerFactory.getLogger(AggregateLayoutModel.class);
-  protected final LayoutModel<N> delegate;
-  protected Map<LayoutModel<N>, Point> layouts = Maps.newHashMap();
+  protected final LayoutModel<V> delegate;
+  protected Map<LayoutModel<V>, Point> layouts = Maps.newHashMap();
 
   /**
    * Creates an instance backed by the specified {@code delegate}.
    *
    * @param delegate the layout to which this instance is delegating
    */
-  public AggregateLayoutModel(LayoutModel<N> delegate) {
+  public AggregateLayoutModel(LayoutModel<V> delegate) {
     this.delegate = delegate;
   }
 
@@ -52,7 +52,7 @@ public class AggregateLayoutModel<N> implements LayoutModel<N> {
    * @param layoutModel the layout model to use as a sublayout
    * @param center the center of the coordinates for the sublayout model
    */
-  public void put(LayoutModel<N> layoutModel, Point center) {
+  public void put(LayoutModel<V> layoutModel, Point center) {
     if (log.isTraceEnabled()) {
       log.trace("put layout: {} at {}", layoutModel, center);
     }
@@ -60,7 +60,7 @@ public class AggregateLayoutModel<N> implements LayoutModel<N> {
     connectListeners(layoutModel);
   }
 
-  private void connectListeners(LayoutModel<N> newLayoutModel) {
+  private void connectListeners(LayoutModel<V> newLayoutModel) {
     for (LayoutStateChange.Listener layoutStateChangeListener :
         delegate.getLayoutStateChangeSupport().getLayoutStateChangeListeners()) {
       newLayoutModel
@@ -74,7 +74,7 @@ public class AggregateLayoutModel<N> implements LayoutModel<N> {
     }
   }
 
-  private void disconnectListeners(LayoutModel<N> newLayoutModel) {
+  private void disconnectListeners(LayoutModel<V> newLayoutModel) {
     newLayoutModel.getLayoutStateChangeSupport().getLayoutStateChangeListeners().clear();
     newLayoutModel.getLayoutChangeSupport().getLayoutChangeListeners().clear();
   }
@@ -83,17 +83,17 @@ public class AggregateLayoutModel<N> implements LayoutModel<N> {
    * @param layout the layout whose center is to be returned
    * @return the center of the passed layout
    */
-  public Point get(LayoutModel<N> layout) {
+  public Point get(LayoutModel<V> layout) {
     return layouts.get(layout);
   }
 
   @Override
-  public void accept(LayoutAlgorithm<N> layoutAlgorithm) {
+  public void accept(LayoutAlgorithm<V> layoutAlgorithm) {
     delegate.accept(layoutAlgorithm);
   }
 
   @Override
-  public Map<N, Point> getLocations() {
+  public Map<V, Point> getLocations() {
     return delegate.getLocations();
   }
 
@@ -105,7 +105,7 @@ public class AggregateLayoutModel<N> implements LayoutModel<N> {
   @Override
   public void stopRelaxer() {
     delegate.stopRelaxer();
-    for (LayoutModel<N> childLayoutModel : layouts.keySet()) {
+    for (LayoutModel<V> childLayoutModel : layouts.keySet()) {
       childLayoutModel.stopRelaxer();
     }
   }
@@ -126,27 +126,27 @@ public class AggregateLayoutModel<N> implements LayoutModel<N> {
   }
 
   @Override
-  public void set(N node, Point location) {
-    delegate.set(node, location);
+  public void set(V vertex, Point location) {
+    delegate.set(vertex, location);
   }
 
   @Override
-  public void set(N node, double x, double y) {
-    delegate.set(node, Point.of(x, y));
+  public void set(V vertex, double x, double y) {
+    delegate.set(vertex, Point.of(x, y));
   }
 
   @Override
-  public Point get(N node) {
-    return delegate.get(node);
+  public Point get(V vertex) {
+    return delegate.get(vertex);
   }
 
   @Override
-  public Graph<N, ?> getGraph() {
+  public <E> Graph<V, E> getGraph() {
     return delegate.getGraph();
   }
 
   @Override
-  public void setGraph(Graph<N, ?> graph) {
+  public void setGraph(Graph<V, ?> graph) {
     delegate.setGraph(graph);
   }
 
@@ -155,7 +155,7 @@ public class AggregateLayoutModel<N> implements LayoutModel<N> {
    *
    * @param layout the layout to remove
    */
-  public void remove(LayoutModel<N> layout) {
+  public void remove(LayoutModel<V> layout) {
     layouts.remove(layout);
   }
 
@@ -175,31 +175,31 @@ public class AggregateLayoutModel<N> implements LayoutModel<N> {
   }
 
   /**
-   * @param node the node whose locked state is to be returned
+   * @param vertex the vertex whose locked state is to be returned
    * @return true if v is locked in any of the layouts, and false otherwise
    */
-  public boolean isLocked(N node) {
-    for (LayoutModel<N> layoutModel : layouts.keySet()) {
-      if (layoutModel.isLocked(node)) {
+  public boolean isLocked(V vertex) {
+    for (LayoutModel<V> layoutModel : layouts.keySet()) {
+      if (layoutModel.isLocked(vertex)) {
         return true;
       }
     }
-    return delegate.isLocked(node);
+    return delegate.isLocked(vertex);
   }
 
   /**
-   * Locks this node in the main layout and in any sublayouts whose graph contains this node.
+   * Locks this vertex in the main layout and in any sublayouts whose graph contains this vertex.
    *
-   * @param node the node whose locked state is to be set
-   * @param state {@code true} if the node is to be locked, and {@code false} if unlocked
+   * @param vertex the vertex whose locked state is to be set
+   * @param state {@code true} if the vertex is to be locked, and {@code false} if unlocked
    */
-  public void lock(N node, boolean state) {
-    for (LayoutModel<N> layoutModel : layouts.keySet()) {
-      if (layoutModel.getGraph().vertexSet().contains(node)) {
-        layoutModel.lock(node, state);
+  public void lock(V vertex, boolean state) {
+    for (LayoutModel<V> layoutModel : layouts.keySet()) {
+      if (layoutModel.getGraph().vertexSet().contains(vertex)) {
+        layoutModel.lock(vertex, state);
       }
     }
-    delegate.lock(node, state);
+    delegate.lock(vertex, state);
   }
 
   @Override
@@ -215,7 +215,7 @@ public class AggregateLayoutModel<N> implements LayoutModel<N> {
     return delegate.isLocked();
   }
 
-  public void setInitializer(Function<N, Point> initializer) {
+  public void setInitializer(Function<V, Point> initializer) {
     delegate.setInitializer(initializer);
   }
 
@@ -225,14 +225,14 @@ public class AggregateLayoutModel<N> implements LayoutModel<N> {
   }
 
   /**
-   * Returns the location of the node. The location is specified first by the sublayouts, and then
-   * by the base layout if no sublayouts operate on this node.
+   * Returns the location of the vertex. The location is specified first by the sublayouts, and then
+   * by the base layout if no sublayouts operate on this vertex.
    *
-   * @return the location of the node
+   * @return the location of the vertex
    */
-  public Point apply(N node) {
-    for (LayoutModel<N> layoutModel : layouts.keySet()) {
-      if (layoutModel.getGraph().vertexSet().contains(node)) {
+  public Point apply(V vertex) {
+    for (LayoutModel<V> layoutModel : layouts.keySet()) {
+      if (layoutModel.getGraph().vertexSet().contains(vertex)) {
         Point center = layouts.get(layoutModel);
         // transform by the layout itself, but offset to the
         // center of the sublayout
@@ -240,15 +240,15 @@ public class AggregateLayoutModel<N> implements LayoutModel<N> {
         int height = layoutModel.getHeight();
         AffineTransform at =
             AffineTransform.getTranslateInstance(center.x - width / 2, center.y - height / 2);
-        Point nodeCenter = layoutModel.apply(node);
-        log.trace("sublayout center is {}", nodeCenter);
-        double[] srcPoints = new double[] {nodeCenter.x, nodeCenter.y};
+        Point vertexCenter = layoutModel.apply(vertex);
+        log.trace("sublayout center is {}", vertexCenter);
+        double[] srcPoints = new double[] {vertexCenter.x, vertexCenter.y};
         double[] destPoints = new double[2];
         at.transform(srcPoints, 0, destPoints, 0, 1);
         return Point.of(destPoints[0], destPoints[1]);
       }
     }
-    return delegate.apply(node);
+    return delegate.apply(vertex);
   }
 
   @Override
@@ -257,13 +257,13 @@ public class AggregateLayoutModel<N> implements LayoutModel<N> {
   }
 
   @Override
-  public LayoutNodePositionChange.Support<N> getLayoutNodePositionSupport() {
-    return delegate.getLayoutNodePositionSupport();
+  public LayoutVertexPositionChange.Support<V> getLayoutVertexPositionSupport() {
+    return delegate.getLayoutVertexPositionSupport();
   }
 
   @Override
-  public void layoutNodePositionChanged(LayoutNodePositionChange.Event<N> evt) {}
+  public void layoutVertexPositionChanged(LayoutVertexPositionChange.Event<V> evt) {}
 
   @Override
-  public void layoutNodePositionChanged(LayoutNodePositionChange.NetworkEvent<N> evt) {}
+  public void layoutVertexPositionChanged(LayoutVertexPositionChange.NetworkEvent<V> evt) {}
 }

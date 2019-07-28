@@ -24,49 +24,49 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
 
   private Optional<Rectangle2D> bounds = Optional.empty();
 
-  /** child nodes of this InnerNode */
+  /** child nodes of this InnerVertex */
   private List<Node<T>> children;
 
-  /** true if the child nodes are LeafNodes. false otherwise */
+  /** true if the child nodes are LeafVertices. false otherwise */
   private final boolean leafChildren;
 
   /**
-   * create a new InnerNode with one child
+   * create a new InnerVertex with one child
    *
    * @param node the first child for the created Node
    * @param <T> the type of the node and children
-   * @return the newly created InnerNode
+   * @return the newly created InnerVertex
    */
   public static <T> InnerNode<T> create(Node<T> node) {
     return new InnerNode(node);
   }
 
   /**
-   * create a new InnerNode with one child
+   * create a new InnerVertex with one child
    *
    * @param node the first child of the created node
    * @param <T> the type of the Node
-   * @return the newly created InnerNode
+   * @return the newly created InnerVertex
    */
   public static <T> InnerNode<T> create(InnerNode<T> node) {
     return new InnerNode(node);
   }
 
   /**
-   * create a new InnerNode with the passed nodes as children
+   * create a new InnerVertex with the passed nodes as children
    *
-   * @param nodes the children for the new InnerNode
+   * @param nodes the children for the new InnerVertex
    * @param <T> the type of the Node
-   * @return the newly created InnerNode
+   * @return the newly created InnerVertex
    */
   public static <T> InnerNode<T> create(Collection<Node<T>> nodes) {
     return new InnerNode(nodes);
   }
 
   /**
-   * create an InnerNode with the passed Node as the first child
+   * create an InnerVertex with the passed Node as the first child
    *
-   * @param node the first child for the InnerNode
+   * @param node the first child for the InnerVertex
    */
   InnerNode(Node<T> node) {
     node.setParent(this);
@@ -78,7 +78,7 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
   /**
    * create an InnerNOde with the passed nodes as children
    *
-   * @param nodes the children for the new InnerNode
+   * @param nodes the children for the new InnerVertex
    */
   InnerNode(Collection<Node<T>> nodes) {
     children = Lists.newArrayList();
@@ -93,7 +93,7 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
   }
 
   /**
-   * true if the children are LeafNodes
+   * true if the children are LeafVertices
    *
    * @return
    */
@@ -118,8 +118,8 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
   }
 
   /**
-   * @return the bounding box of this InnerNode. A zero sized Rectangle is returned if this
-   *     InnerNode is empty
+   * @return the bounding box of this InnerVertex. A zero sized Rectangle is returned if this
+   *     InnerVertex is empty
    */
   @Override
   public Rectangle2D getBounds() {
@@ -139,7 +139,7 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
   }
 
   /**
-   * recompute the bounding box for this InnerNode, then the recompute for parent node Climbs the
+   * recompute the bounding box for this InnerVertex, then the recompute for parent node Climbs the
    * tree to the root as it recalcultes. This i required when a leaf node is removed.
    *
    * @return
@@ -201,7 +201,7 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
 
   /**
    * @param element the element to look for
-   * @return the LeafNode that contains the element
+   * @return the LeafVertex that contains the element
    */
   @Override
   public LeafNode<T> getContainingLeaf(T element) {
@@ -218,7 +218,7 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
 
   /**
    * @param element the element to look for
-   * @return the LeafNode that contains the element
+   * @return the LeafVertex that contains the element
    */
   LeafNode<T> getContainingLeaf(T element, Rectangle2D bounds) {
     LeafNode<T> containingLeaf = null;
@@ -237,7 +237,7 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
 
   /**
    * @param p the point to look for
-   * @return Collection of the LeafNodes that would contain the passed point
+   * @return Collection of the LeafVertices that would contain the passed point
    */
   @Override
   public Set<LeafNode<T>> getContainingLeafs(Set<LeafNode<T>> containingLeafs, Point2D p) {
@@ -247,7 +247,7 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
   /**
    * @param x coordinate of a point to look for
    * @param y coordinate of a point to look for
-   * @return Collection of the LeafNodes that would contain the passed coordinates
+   * @return Collection of the LeafVertices that would contain the passed coordinates
    */
   @Override
   public Set<LeafNode<T>> getContainingLeafs(Set<LeafNode<T>> containingLeafs, double x, double y) {
@@ -282,7 +282,7 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
   }
 
   /**
-   * add Nodes directly to the children list
+   * add Vertices directly to the children list
    *
    * @param collection
    */
@@ -325,8 +325,8 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
   }
 
   /**
-   * remove the passed element. Find the LeafNode that contains the element, remove the element from
-   * the LeafNode map
+   * remove the passed element. Find the LeafVertex that contains the element, remove the element
+   * from the LeafVertex map
    *
    * @param element the element to remove
    * @return the parent node or this node
@@ -345,7 +345,7 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
       log.trace("removed the last node, should remove this from parent now");
       Optional<Node<T>> parentOptional = getParent();
       if (parentOptional.isPresent()) {
-        ((InnerNode) parentOptional.get()).removeNode(this);
+        ((InnerNode) parentOptional.get()).removeVertex(this);
       } else {
         log.trace("no parent for this " + this);
       }
@@ -358,7 +358,7 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
    *
    * @param node
    */
-  void addNode(Node<T> node) {
+  void addVertex(Node<T> node) {
     Preconditions.checkArgument(node != this, "Attempt to add self as child");
     Preconditions.checkArgument(!children.contains(node), "Attempt to add duplicate child");
     node.setParent(this);
@@ -372,10 +372,10 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
    *
    * @param node
    */
-  void removeNode(Node<T> node) {
+  void removeVertex(Node<T> node) {
     children.remove(node);
     if (children.isEmpty() && parent.isPresent()) {
-      ((InnerNode<T>) parent.get()).removeNode(this);
+      ((InnerNode<T>) parent.get()).removeVertex(this);
     }
   }
 
@@ -387,7 +387,7 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
    * @param nodes
    * @return
    */
-  InnerNode<T> replaceNode(Node<T> goner, SplitterContext<T> splitterContext, Node<T>... nodes) {
+  InnerNode<T> replaceVertex(Node<T> goner, SplitterContext<T> splitterContext, Node<T>... nodes) {
     children.remove(goner); // no recalculation of size or parent remove, since we immediately add
     return add(splitterContext, nodes);
   }
@@ -403,7 +403,7 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
     return top;
   }
   /**
-   * adding either a LeafNode or an InnerNode
+   * adding either a LeafVertex or an InnerVertex
    *
    * @param node
    * @return the parent, if exists, or this
@@ -414,11 +414,11 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
     updateBounds(node.getBounds());
 
     if (size() > M) {
-      log.trace("splitting InnerNode {}", this);
+      log.trace("splitting InnerVertex {}", this);
       Pair<InnerNode<T>> pair = splitterContext.splitter.split(children, node);
 
       if (parent.isPresent()) {
-        InnerNode<T> innerNodeParent = (InnerNode<T>) parent.get();
+        InnerNode<T> innerVertexParent = (InnerNode<T>) parent.get();
         // sanity check
         Preconditions.checkArgument(
             this != pair.left && this != pair.right,
@@ -427,17 +427,17 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
             pair.right,
             this);
 
-        return innerNodeParent.replaceNode(this, splitterContext, pair.left, pair.right);
+        return innerVertexParent.replaceVertex(this, splitterContext, pair.left, pair.right);
 
       } else {
         // create a new parent
-        InnerNode<T> innerNodeParent = InnerNode.create(pair.left);
-        return innerNodeParent.add(splitterContext, pair.right);
+        InnerNode<T> innerVertexParent = InnerNode.create(pair.left);
+        return innerVertexParent.add(splitterContext, pair.right);
       }
 
     } else {
       // no split required
-      addNode(node);
+      addVertex(node);
       return (InnerNode<T>) parent.orElse(this);
     }
   }
@@ -454,7 +454,7 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
         children.get(i).getVisibleElements(visibleElements, shape);
       }
     }
-    log.trace("visibleElements of InnerNode inside {} are {}", shape, visibleElements);
+    log.trace("visibleElements of InnerVertex inside {} are {}", shape, visibleElements);
     return visibleElements;
   }
 
@@ -485,7 +485,7 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
   public String asString(String margin) {
     StringBuilder s = new StringBuilder();
     s.append(margin);
-    s.append("InnerNode:parent:").append(parent.isPresent() ? "yes" : "none");
+    s.append("InnerVertex:parent:").append(parent.isPresent() ? "yes" : "none");
     s.append(" bounds=");
     s.append(Node.asString(this.getBounds()));
     s.append('\n');

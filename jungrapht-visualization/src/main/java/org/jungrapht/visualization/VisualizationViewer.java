@@ -33,9 +33,9 @@ import org.jungrapht.visualization.layout.model.LayoutModel;
  * @author Tom Nelson
  */
 @SuppressWarnings("serial")
-public class VisualizationViewer<N, E> extends BasicVisualizationServer<N, E> {
+public class VisualizationViewer<V, E> extends BasicVisualizationServer<V, E> {
 
-  protected Function<N, String> nodeToolTipFunction;
+  protected Function<V, String> vertexToolTipFunction;
   protected Function<E, String> edgeToolTipFunction;
   protected Function<MouseEvent, String> mouseEventToolTipFunction;
 
@@ -50,51 +50,51 @@ public class VisualizationViewer<N, E> extends BasicVisualizationServer<N, E> {
       };
 
   /**
-   * @param network the network to render
+   * @param network the graph to render
    * @param size the size for the layout and for the view
    */
-  public VisualizationViewer(Graph<N, E> network, Dimension size) {
+  public VisualizationViewer(Graph<V, E> network, Dimension size) {
     this(network, size, size);
   }
 
   /**
-   * @param network the network to visualize
+   * @param network the graph to visualize
    * @param layoutSize the size of the layout area
    * @param viewSize the size of the view area
    */
-  public VisualizationViewer(Graph<N, E> network, Dimension layoutSize, Dimension viewSize) {
+  public VisualizationViewer(Graph<V, E> network, Dimension layoutSize, Dimension viewSize) {
     this(network, null, layoutSize, viewSize);
   }
 
   /**
-   * @param network the network to visualize
+   * @param network the graph to visualize
    * @param layoutAlgorithm the algorithm to apply
    * @param layoutSize the size for the layout area
-   * @param viewSize the size of the window to display the network
+   * @param viewSize the size of the window to display the graph
    */
   public VisualizationViewer(
-      Graph<N, E> network,
-      LayoutAlgorithm<N> layoutAlgorithm,
+      Graph<V, E> network,
+      LayoutAlgorithm<V> layoutAlgorithm,
       Dimension layoutSize,
       Dimension viewSize) {
     this(new BaseVisualizationModel<>(network, layoutAlgorithm, layoutSize), viewSize);
   }
 
   /**
-   * @param network the network to render
+   * @param network the graph to render
    * @param layoutAlgorithm the algorithm to apply
    * @param preferredSize the size to use for both the layout and the screen display
    */
   public VisualizationViewer(
-      Graph<N, E> network, LayoutAlgorithm<N> layoutAlgorithm, Dimension preferredSize) {
+      Graph<V, E> network, LayoutAlgorithm<V> layoutAlgorithm, Dimension preferredSize) {
     this(new BaseVisualizationModel<>(network, layoutAlgorithm, preferredSize), preferredSize);
   }
 
   /**
    * @param model the model for the view
-   * @param preferredSize the initial size of the window to display the network
+   * @param preferredSize the initial size of the window to display the graph
    */
-  public VisualizationViewer(VisualizationModel<N, E> model, Dimension preferredSize) {
+  public VisualizationViewer(VisualizationModel<V, E> model, Dimension preferredSize) {
     super(model, preferredSize);
     setFocusable(true);
     addMouseListener(requestFocusListener);
@@ -138,11 +138,11 @@ public class VisualizationViewer<N, E> extends BasicVisualizationServer<N, E> {
 
   /**
    * This is the interface for adding a mouse listener. The GEL will be called back with mouse
-   * clicks on nodes.
+   * clicks on vertices.
    *
    * @param gel the mouse listener to add
    */
-  public void addGraphMouseListener(GraphMouseListener<N> gel) {
+  public void addGraphMouseListener(GraphMouseListener<V> gel) {
     addMouseListener(new MouseListenerTranslator<>(gel, this));
   }
 
@@ -168,21 +168,21 @@ public class VisualizationViewer<N, E> extends BasicVisualizationServer<N, E> {
     ToolTipManager.sharedInstance().registerComponent(this);
   }
 
-  /** @param nodeToolTipFunction the nodeToolTipFunction to set */
-  public void setNodeToolTipFunction(Function<N, String> nodeToolTipFunction) {
-    this.nodeToolTipFunction = nodeToolTipFunction;
+  /** @param vertexToolTipFunction the vertexToolTipFunction to set */
+  public void setVertexToolTipFunction(Function<V, String> vertexToolTipFunction) {
+    this.vertexToolTipFunction = vertexToolTipFunction;
     ToolTipManager.sharedInstance().registerComponent(this);
   }
 
   /** called by the superclass to display tooltips */
   public String getToolTipText(MouseEvent event) {
-    LayoutModel<N> layoutModel = getModel().getLayoutModel();
+    LayoutModel<V> layoutModel = getModel().getLayoutModel();
     Point2D p = null;
-    if (nodeToolTipFunction != null) {
+    if (vertexToolTipFunction != null) {
       p = getTransformSupport().inverseTransform(this, event.getPoint());
-      N node = getPickSupport().getNode(layoutModel, p.getX(), p.getY());
-      if (node != null) {
-        return nodeToolTipFunction.apply(node);
+      V vertex = getPickSupport().getVertex(layoutModel, p.getX(), p.getY());
+      if (vertex != null) {
+        return vertexToolTipFunction.apply(vertex);
       }
     }
     if (edgeToolTipFunction != null) {

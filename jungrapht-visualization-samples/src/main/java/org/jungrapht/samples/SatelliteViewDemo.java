@@ -26,7 +26,7 @@ import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.SatelliteVisualizationViewer;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
-import org.jungrapht.visualization.renderers.GradientNodeRenderer;
+import org.jungrapht.visualization.renderers.GradientVertexRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.transform.shape.ShapeTransformer;
 import org.jungrapht.visualization.util.LightweightRenderingVisitor;
@@ -56,13 +56,13 @@ public class SatelliteViewDemo extends JPanel {
           + "</ul>"
           + "<b>Picking Mode:</b>"
           + "<ul>"
-          + "<li>Mouse1 on a Node selects the node"
-          + "<li>Mouse1 elsewhere unselects all Nodes"
-          + "<li>Mouse1+Shift on a Node adds/removes Node selection"
-          + "<li>Mouse1+drag on a Node moves all selected Nodes"
-          + "<li>Mouse1+drag elsewhere selects Nodes in a region"
-          + "<li>Mouse1+Shift+drag adds selection of Nodes in a new region"
-          + "<li>Mouse1+CTRL on a Node selects the node and centers the display on it"
+          + "<li>Mouse1 on a Vertex selects the vertex"
+          + "<li>Mouse1 elsewhere unselects all Vertices"
+          + "<li>Mouse1+Shift on a Vertex adds/removes Vertex selection"
+          + "<li>Mouse1+drag on a Vertex moves all selected Vertices"
+          + "<li>Mouse1+drag elsewhere selects Vertices in a region"
+          + "<li>Mouse1+Shift+drag adds selection of Vertices in a new region"
+          + "<li>Mouse1+CTRL on a Vertex selects the vertex and centers the display on it"
           + "</ul>"
           + "<b>Both Modes:</b>"
           + "<ul>"
@@ -111,9 +111,9 @@ public class SatelliteViewDemo extends JPanel {
                 mainVisualizationViewer.getSelectedEdgeState(), Color.black, Color.cyan));
     mainVisualizationViewer
         .getRenderContext()
-        .setNodeFillPaintFunction(
+        .setVertexFillPaintFunction(
             new PickableElementPaintFunction<>(
-                mainVisualizationViewer.getSelectedNodeState(), Color.red, Color.yellow));
+                mainVisualizationViewer.getSelectedVertexState(), Color.red, Color.yellow));
     satelliteVisualizationViewer
         .getRenderContext()
         .setEdgeDrawPaintFunction(
@@ -121,16 +121,16 @@ public class SatelliteViewDemo extends JPanel {
                 satelliteVisualizationViewer.getSelectedEdgeState(), Color.black, Color.cyan));
     satelliteVisualizationViewer
         .getRenderContext()
-        .setNodeFillPaintFunction(
+        .setVertexFillPaintFunction(
             new PickableElementPaintFunction<>(
-                satelliteVisualizationViewer.getSelectedNodeState(), Color.red, Color.yellow));
+                satelliteVisualizationViewer.getSelectedVertexState(), Color.red, Color.yellow));
     mainVisualizationViewer
         .getRenderer()
-        .setNodeRenderer(new GradientNodeRenderer<>(Color.red, Color.white, true));
-    mainVisualizationViewer.getRenderContext().setNodeLabelFunction(Object::toString);
+        .setVertexRenderer(new GradientVertexRenderer<>(Color.red, Color.white, true));
+    mainVisualizationViewer.getRenderContext().setVertexLabelFunction(Object::toString);
     mainVisualizationViewer
         .getRenderContext()
-        .setNodeLabelPosition(Renderer.NodeLabel.Position.CNTR);
+        .setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
 
     mainVisualizationViewer.scaleToLayout(new CrossoverScalingControl());
     satelliteVisualizationViewer.scaleToLayout(new CrossoverScalingControl());
@@ -138,12 +138,13 @@ public class SatelliteViewDemo extends JPanel {
     viewGrid = new ViewGrid(satelliteVisualizationViewer, mainVisualizationViewer);
 
     // add default listener for ToolTips
-    mainVisualizationViewer.setNodeToolTipFunction(Object::toString);
-    satelliteVisualizationViewer.setNodeToolTipFunction(Object::toString);
+    mainVisualizationViewer.setVertexToolTipFunction(Object::toString);
+    satelliteVisualizationViewer.setVertexToolTipFunction(Object::toString);
 
     satelliteVisualizationViewer
         .getRenderContext()
-        .setNodeLabelFunction(mainVisualizationViewer.getRenderContext().getNodeLabelFunction());
+        .setVertexLabelFunction(
+            mainVisualizationViewer.getRenderContext().getVertexLabelFunction());
 
     ToolTipManager.sharedInstance().setDismissDelay(10000);
 

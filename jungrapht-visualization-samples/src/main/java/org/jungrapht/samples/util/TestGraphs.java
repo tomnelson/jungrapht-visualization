@@ -25,7 +25,8 @@ public class TestGraphs {
 
   /**
    * A series of pairs that may be useful for generating graphs. The miniature graph consists of 8
-   * edges, 10 nodes, and is formed of two connected components, one of 8 nodes, the other of 2.
+   * edges, 10 vertices, and is formed of two connected components, one of 8 vertices, the other of
+   * 2.
    */
   public static String[][] pairs = {
     {"a", "b", "3"},
@@ -43,7 +44,7 @@ public class TestGraphs {
    * in the section on {@link #pairs pairs}.
    *
    * @param directed true iff the graph created is to have directed edges
-   * @return a graph consisting of eight edges and ten nodes.
+   * @return a graph consisting of eight edges and ten vertices.
    */
   public static Graph<String, Number> createTestGraph(boolean directed) {
     Graph<String, Number> graph;
@@ -65,10 +66,10 @@ public class TestGraphs {
   }
 
   /**
-   * @param chain_length the length of the chain of nodes to add to the returned graph
-   * @param isolate_count the number of isolated nodes to add to the returned graph
-   * @return a graph consisting of a chain of {@code chain_length} nodes and {@code isolate_count}
-   *     isolated nodes.
+   * @param chain_length the length of the chain of vertices to add to the returned graph
+   * @param isolate_count the number of isolated vertices to add to the returned graph
+   * @return a graph consisting of a chain of {@code chain_length} vertices and {@code
+   *     isolate_count} isolated vertices.
    */
   public static Graph<String, Number> createChainPlusIsolates(int chain_length, int isolate_count) {
     Graph<String, Number> graph =
@@ -92,18 +93,18 @@ public class TestGraphs {
   }
 
   /**
-   * Creates a sample directed acyclic graph by generating several "layers", and connecting nodes
-   * (randomly) to nodes in earlier (but never later) layers. The number of nodes in each layer is a
-   * random value in the range [1, maxNodesPerLayer].
+   * Creates a sample directed acyclic graph by generating several "layers", and connecting vertices
+   * (randomly) to vertices in earlier (but never later) layers. The number of vertices in each
+   * layer is a random value in the range [1, maxVerticesPerLayer].
    *
-   * @param layers the number of layers of nodes to create in the graph
-   * @param maxNodesPerLayer the maximum number of nodes to put in any layer
-   * @param linkprob the probability that this method will add an edge from a node in layer <i>k</i>
-   *     to a node in layer <i>k+1</i>
+   * @param layers the number of layers of vertices to create in the graph
+   * @param maxVerticesPerLayer the maximum number of vertices to put in any layer
+   * @param linkprob the probability that this method will add an edge from a vertex in layer
+   *     <i>k</i> to a vertex in layer <i>k+1</i>
    * @return the created graph
    */
   public static Graph<String, Number> createDirectedAcyclicGraph(
-      int layers, int maxNodesPerLayer, double linkprob) {
+      int layers, int maxVerticesPerLayer, double linkprob) {
 
     Graph<String, Number> graph =
         GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.directedMultigraph())
@@ -113,12 +114,12 @@ public class TestGraphs {
     Set<String> inThisLayer = new HashSet<>();
     for (int i = 0; i < layers; i++) {
 
-      int nodesThisLayer = (int) (Math.random() * maxNodesPerLayer) + 1;
-      for (int j = 0; j < nodesThisLayer; j++) {
+      int verticesThisLayer = (int) (Math.random() * maxVerticesPerLayer) + 1;
+      for (int j = 0; j < verticesThisLayer; j++) {
         String v = i + ":" + j;
         graph.addVertex(v);
         inThisLayer.add(v);
-        // for each previous node...
+        // for each previous vertex...
         for (String v2 : previousLayers) {
           if (Math.random() < linkprob) {
             Double de = Math.random();
@@ -136,7 +137,7 @@ public class TestGraphs {
   /**
    * Returns a bigger, undirected test graph with a just one component. This graph consists of a
    * clique of ten edges, a partial clique (randomly generated, with edges of 0.6 probability), and
-   * one series of edges running from the first node to the last.
+   * one series of edges running from the first vertex to the last.
    *
    * @return the testgraph
    */
@@ -170,10 +171,10 @@ public class TestGraphs {
         graph.addEdge(i1, i2, n++);
       }
     }
-    Iterator<String> nodeIt = graph.vertexSet().iterator();
-    String current = nodeIt.next();
-    while (nodeIt.hasNext()) {
-      String next = nodeIt.next();
+    Iterator<String> vertexIt = graph.vertexSet().iterator();
+    String current = vertexIt.next();
+    while (vertexIt.hasNext()) {
+      String next = vertexIt.next();
       graph.addVertex(current);
       graph.addVertex(next);
       graph.addEdge(current, next, n++);
@@ -185,7 +186,7 @@ public class TestGraphs {
   /**
    * Returns a bigger test graph with a clique, several components, and other parts.
    *
-   * @return a demonstration graph of type <tt>UndirectedSparseMultiNetwork</tt> with 28 nodes.
+   * @return a demonstration graph of type <tt>UndirectedSparseMultiNetwork</tt> with 28 vertices.
    */
   public static Graph<String, Number> getDemoGraph() {
     Graph<String, Number> graph =
@@ -246,12 +247,12 @@ public class TestGraphs {
     return graph;
   }
 
-  /** @return the network for this demo */
+  /** @return the graph for this demo */
   public static Graph<String, Number> getGeneratedNetwork() {
 
     Graph<String, Number> graph =
         GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.directedPseudograph())
-            .vertexSupplier(new NodeSupplier())
+            .vertexSupplier(new VertexSupplier())
             .edgeSupplier(new EdgeSupplier())
             .buildGraph();
     BarabasiAlbertGraphGenerator<String, Number> gen = new BarabasiAlbertGraphGenerator<>(4, 3, 20);
@@ -263,7 +264,7 @@ public class TestGraphs {
 
     Graph<String, Number> graph =
         GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.directedPseudograph())
-            .vertexSupplier(new NodeSupplier())
+            .vertexSupplier(new VertexSupplier())
             .edgeSupplier(new EdgeSupplier())
             .buildGraph();
     BarabasiAlbertGraphGenerator<String, Number> gen =
@@ -272,7 +273,7 @@ public class TestGraphs {
     return graph;
   }
 
-  static class NodeSupplier implements Supplier<String> {
+  static class VertexSupplier implements Supplier<String> {
     char a = 'a';
 
     public String get() {

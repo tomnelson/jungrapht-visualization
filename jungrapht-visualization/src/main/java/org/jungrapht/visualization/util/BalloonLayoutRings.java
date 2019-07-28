@@ -7,13 +7,13 @@ import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.Point;
 
-public class BalloonLayoutRings<N, E> implements VisualizationServer.Paintable {
+public class BalloonLayoutRings<V, E> implements VisualizationServer.Paintable {
 
-  BalloonLayoutAlgorithm<N> layoutAlgorithm;
-  VisualizationServer<N, E> vv;
+  BalloonLayoutAlgorithm<V> layoutAlgorithm;
+  VisualizationServer<V, E> vv;
 
   public BalloonLayoutRings(
-      VisualizationServer<N, E> vv, BalloonLayoutAlgorithm<N> layoutAlgorithm) {
+      VisualizationServer<V, E> vv, BalloonLayoutAlgorithm<V> layoutAlgorithm) {
     this.vv = vv;
     this.layoutAlgorithm = layoutAlgorithm;
   }
@@ -24,7 +24,7 @@ public class BalloonLayoutRings<N, E> implements VisualizationServer.Paintable {
     Graphics2D g2d = (Graphics2D) g;
 
     Ellipse2D ellipse = new Ellipse2D.Double();
-    for (N v : vv.getModel().getNetwork().vertexSet()) {
+    for (V v : vv.getModel().getGraph().vertexSet()) {
       Double radius = layoutAlgorithm.getRadii().get(v);
       if (radius == null) {
         continue;

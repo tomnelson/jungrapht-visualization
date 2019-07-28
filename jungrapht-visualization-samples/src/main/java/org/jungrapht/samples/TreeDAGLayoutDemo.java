@@ -53,13 +53,13 @@ public class TreeDAGLayoutDemo extends JPanel {
     vv = new VisualizationViewer<>(graph, new StaticLayoutAlgorithm<>(), new Dimension(600, 600));
     vv.setBackground(Color.white);
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
-    vv.getRenderContext().setNodeLabelFunction(Object::toString);
+    vv.getRenderContext().setVertexLabelFunction(Object::toString);
     // add a listener for ToolTips
-    vv.setNodeToolTipFunction(Object::toString);
+    vv.setVertexToolTipFunction(Object::toString);
     vv.getRenderContext().setArrowFillPaintFunction(n -> Color.lightGray);
 
-    vv.getRenderContext().setNodeLabelPosition(Renderer.NodeLabel.Position.CNTR);
-    vv.getRenderContext().setNodeLabelDrawPaintFunction(c -> Color.white);
+    vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
+    vv.getRenderContext().setVertexLabelDrawPaintFunction(c -> Color.white);
 
     final GraphZoomScrollPane panel = new GraphZoomScrollPane(vv);
     add(panel);

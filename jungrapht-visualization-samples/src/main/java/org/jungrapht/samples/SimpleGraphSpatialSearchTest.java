@@ -31,24 +31,25 @@ import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.jungrapht.visualization.layout.util.NetworkNodeAccessor;
-import org.jungrapht.visualization.layout.util.RadiusNetworkNodeAccessor;
+import org.jungrapht.visualization.layout.util.RadiusVertexAccessor;
 import org.jungrapht.visualization.layout.util.RandomLocationTransformer;
+import org.jungrapht.visualization.layout.util.VertexAccessor;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.spatial.Spatial;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A test that puts a lot of nodes on the screen with a visible R-Tree. When the button is pushed,
- * 1000 random points are generated in order to find the closest node for each point. The search is
- * done both with the R-Tree and with the RadiusNetworkElementAccessor. If they don't find the same
- * node, the testing halts after highlighting the problem nodes along with the search point.
+ * A test that puts a lot of vertices on the screen with a visible R-Tree. When the button is
+ * pushed, 1000 random points are generated in order to find the closest vertex for each point. The
+ * search is done both with the R-Tree and with the RadiusGraphElementAccessor. If they don't find
+ * the same vertex, the testing halts after highlighting the problem vertices along with the search
+ * point.
  *
- * <p>A mouse click at a location will highlight the closest node to the pick point.
+ * <p>A mouse click at a location will highlight the closest vertex to the pick point.
  *
  * <p>A toggle button will turn on/off the display of the R-Tree features, including the expansion
- * of the search target (red circle) in order to find the closest node.
+ * of the search target (red circle) in order to find the closest vertex.
  *
  * @author Tom Nelson
  */
@@ -73,8 +74,8 @@ public class SimpleGraphSpatialSearchTest extends JPanel {
             layoutPreferredSize);
     VisualizationViewer vv = new VisualizationViewer(model, viewPreferredSize);
 
-    vv.getRenderContext().setNodeLabelFunction(Object::toString);
-    vv.getRenderContext().setNodeLabelPosition(Renderer.NodeLabel.Position.CNTR);
+    vv.getRenderContext().setVertexLabelFunction(Object::toString);
+    vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
 
     vv.addMouseListener(
         new MouseAdapter() {
@@ -83,10 +84,10 @@ public class SimpleGraphSpatialSearchTest extends JPanel {
             MultiLayerTransformer multiLayerTransformer =
                 vv.getRenderContext().getMultiLayerTransformer();
             Point2D layoutPoint = multiLayerTransformer.inverseTransform(e.getX(), e.getY());
-            Object node = vv.getNodeSpatial().getClosestElement(layoutPoint);
-            if (node != null) {
-              vv.getSelectedNodeState().clear();
-              vv.getSelectedNodeState().pick(node, true);
+            Object vertex = vv.getVertexSpatial().getClosestElement(layoutPoint);
+            if (vertex != null) {
+              vv.getSelectedVertexState().clear();
+              vv.getSelectedVertexState().pick(vertex, true);
             }
           }
         });
@@ -128,24 +129,24 @@ public class SimpleGraphSpatialSearchTest extends JPanel {
     buttons.add(showSpatialEffects);
 
     search.addActionListener(
-        e -> testClosestNodes(vv, g, model.getLayoutModel(), vv.getNodeSpatial()));
+        e -> testClosestVertices(vv, g, model.getLayoutModel(), vv.getVertexSpatial()));
     this.add(buttons, BorderLayout.SOUTH);
   }
 
-  public void testClosestNodes(
+  public void testClosestVertices(
       VisualizationViewer<String, String> vv,
       Graph<String, Number> graph,
       LayoutModel<String> layoutModel,
       Spatial<String> tree) {
-    vv.getSelectedNodeState().clear();
-    NetworkNodeAccessor<String> slowWay = new RadiusNetworkNodeAccessor<>(Double.MAX_VALUE);
+    vv.getSelectedVertexState().clear();
+    VertexAccessor<String> slowWay = new RadiusVertexAccessor<>(Double.MAX_VALUE);
 
-    // look for nodes closest to 1000 random locations
+    // look for vertices closest to 1000 random locations
     for (int i = 0; i < 1000; i++) {
       double x = Math.random() * layoutModel.getWidth();
       double y = Math.random() * layoutModel.getHeight();
       // use the slowWay
-      String winnerOne = slowWay.getNode(layoutModel, x, y);
+      String winnerOne = slowWay.getVertex(layoutModel, x, y);
       // use the quadtree
       String winnerTwo = tree.getClosestElement(x, y);
 
@@ -170,11 +171,11 @@ public class SimpleGraphSpatialSearchTest extends JPanel {
         log.info("the cell for winnerOne {} is {}", winnerOne, tree.getContainingLeaf(winnerOne));
         log.info("the cell for winnerTwo {} is {}", winnerTwo, tree.getContainingLeaf(winnerTwo));
         log.info("the cell for the search point {},{} is {}", x, y, tree.getContainingLeafs(x, y));
-        vv.getSelectedNodeState().pick(winnerOne, true);
-        vv.getSelectedNodeState().pick(winnerTwo, true);
+        vv.getSelectedVertexState().pick(winnerOne, true);
+        vv.getSelectedVertexState().pick(winnerTwo, true);
         graph.addVertex("P");
         layoutModel.set("P", x, y);
-        vv.getRenderContext().getSelectedNodeState().pick("P", true);
+        vv.getRenderContext().getSelectedVertexState().pick("P", true);
         break;
       }
     }

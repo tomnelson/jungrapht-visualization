@@ -17,7 +17,7 @@ import org.jungrapht.visualization.control.LensTransformSupport;
 import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.control.ModalLensGraphMouse;
 import org.jungrapht.visualization.control.TransformSupport;
-import org.jungrapht.visualization.layout.NetworkElementAccessor;
+import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,12 +27,12 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-public class LayoutLensSupport<N, E> extends AbstractLensSupport<N, E> implements LensSupport {
+public class LayoutLensSupport<V, E> extends AbstractLensSupport<V, E> implements LensSupport {
 
   private static final Logger log = LoggerFactory.getLogger(LayoutLensSupport.class);
-  protected NetworkElementAccessor<N, E> pickSupport;
+  protected GraphElementAccessor<V, E> pickSupport;
 
-  public LayoutLensSupport(VisualizationViewer<N, E> vv) {
+  public LayoutLensSupport(VisualizationViewer<V, E> vv) {
     this(
         vv,
         new HyperbolicTransformer(
@@ -43,7 +43,7 @@ public class LayoutLensSupport<N, E> extends AbstractLensSupport<N, E> implement
         new ModalLensGraphMouse());
   }
 
-  public LayoutLensSupport(VisualizationViewer<N, E> vv, Lens lens) {
+  public LayoutLensSupport(VisualizationViewer<V, E> vv, Lens lens) {
     this(
         vv,
         new HyperbolicTransformer(
@@ -62,7 +62,7 @@ public class LayoutLensSupport<N, E> extends AbstractLensSupport<N, E> implement
    * @param lensGraphMouse the lens input handler
    */
   public LayoutLensSupport(
-      VisualizationViewer<N, E> vv,
+      VisualizationViewer<V, E> vv,
       LensTransformer lensTransformer,
       ModalGraphMouse lensGraphMouse) {
     super(vv, lensGraphMouse);

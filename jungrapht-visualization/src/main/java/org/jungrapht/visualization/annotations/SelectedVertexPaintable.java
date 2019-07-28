@@ -15,27 +15,27 @@ import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.util.ArrowFactory;
 
 /**
- * Paints a shape at the location of all selected nodes. The shape does not change size as the view
- * is scaled (zoomed in or out)
+ * Paints a shape at the location of all selected vertices. The shape does not change size as the
+ * view is scaled (zoomed in or out)
  *
  * @author Tom Nelson
- * @param <N> the node type
+ * @param <V> the vertex type
  */
-public class SelectedNodePaintable<N> implements VisualizationServer.Paintable {
+public class SelectedVertexPaintable<V> implements VisualizationServer.Paintable {
 
   /**
-   * builder for the {@code SelectedNodePaintable}
+   * builder for the {@code SelectedVertexPaintable}
    *
-   * @param <N> the node type
+   * @param <V> the vertex type
    */
-  public static class Builder<N> {
+  public static class Builder<V> {
 
-    private final VisualizationServer<N, ?> visualizationServer;
+    private final VisualizationServer<V, ?> visualizationServer;
     private Shape selectionShape = ArrowFactory.getNotchedArrow(20, 24, 8);
     private Paint selectionPaint = Color.red;
 
     /**
-     * @param selectionShape the shape to draw as an indicator for selected nodes
+     * @param selectionShape the shape to draw as an indicator for selected vertices
      * @return this builder
      */
     public Builder selectionShape(Shape selectionShape) {
@@ -44,7 +44,7 @@ public class SelectedNodePaintable<N> implements VisualizationServer.Paintable {
     }
 
     /**
-     * @param selectionPaint the color to draw the selected node indicator
+     * @param selectionPaint the color to draw the selected vertex indicator
      * @return this builder
      */
     public Builder selectionPaint(Paint selectionPaint) {
@@ -52,59 +52,59 @@ public class SelectedNodePaintable<N> implements VisualizationServer.Paintable {
       return this;
     }
 
-    /** @return a new instance of a {@code SelectedNodePaintable} */
-    public SelectedNodePaintable<N> build() {
-      return new SelectedNodePaintable<>(this);
+    /** @return a new instance of a {@code SelectedVertexPaintable} */
+    public SelectedVertexPaintable<V> build() {
+      return new SelectedVertexPaintable<>(this);
     }
 
     /** @param visualizationServer the (required) {@code VisualizationServer} parameter */
-    private Builder(VisualizationServer<N, ?> visualizationServer) {
+    private Builder(VisualizationServer<V, ?> visualizationServer) {
       this.visualizationServer = visualizationServer;
     }
   }
 
   /**
    * @param visualizationServer the (required) {@code VisualizationServer} parameter
-   * @param <N> the node type
-   * @return the {@code Builder} used to create the instance of a {@code SelectedNodePaintable}
+   * @param <V> the vertex type
+   * @return the {@code Builder} used to create the instance of a {@code SelectedVertexPaintable}
    */
-  public static <N> Builder<N> builder(VisualizationServer<N, ?> visualizationServer) {
+  public static <V> Builder<V> builder(VisualizationServer<V, ?> visualizationServer) {
     return new Builder<>(visualizationServer);
   }
 
   /** the (required) {@code VisualizationServer} */
-  private final VisualizationServer<N, ?> visualizationServer;
-  /** the {@code Shape} to paint to indicate selected nodes */
+  private final VisualizationServer<V, ?> visualizationServer;
+  /** the {@code Shape} to paint to indicate selected vertices */
   private Shape selectionShape;
-  /** the {@code Paint} to use to draw the selected node indicating {@code Shape} */
+  /** the {@code Paint} to use to draw the selected vertex indicating {@code Shape} */
   private Paint selectionPaint;
 
   /**
-   * Create an instance of a {@code SelectedNodePaintable}
+   * Create an instance of a {@code SelectedVertexPaintable}
    *
-   * @param builder the {@code Builder} to provide parameters to the {@code SelectedNodePaintable}
+   * @param builder the {@code Builder} to provide parameters to the {@code SelectedVertexPaintable}
    */
-  private SelectedNodePaintable(Builder<N> builder) {
+  private SelectedVertexPaintable(Builder<V> builder) {
     this(builder.visualizationServer, builder.selectionShape, builder.selectionPaint);
   }
 
   /**
-   * Create an instance of a {@code SelectedNodePaintable}
+   * Create an instance of a {@code SelectedVertexPaintable}
    *
    * @param visualizationServer the (required) {@code VisualizationServer}
-   * @param shape the {@code Shape} to paint to indicate selected nodes
-   * @param selectionPaint the {@code Paint} to use to draw the selected node indicating {@code
+   * @param shape the {@code Shape} to paint to indicate selected vertices
+   * @param selectionPaint the {@code Paint} to use to draw the selected vertex indicating {@code
    *     Shape}
    */
-  private SelectedNodePaintable(
-      VisualizationServer<N, ?> visualizationServer, Shape shape, Paint selectionPaint) {
+  private SelectedVertexPaintable(
+      VisualizationServer<V, ?> visualizationServer, Shape shape, Paint selectionPaint) {
     this.visualizationServer = visualizationServer;
     this.selectionShape = shape;
     this.selectionPaint = selectionPaint;
   }
 
   /**
-   * Draw shapes to indicate selected nodes
+   * Draw shapes to indicate selected vertices
    *
    * @param g the {@code Graphics} to draw with
    */
@@ -119,14 +119,14 @@ public class SelectedNodePaintable<N> implements VisualizationServer.Paintable {
     g2d.setPaint(selectionPaint);
     // set the transform to identity
     g2d.setTransform(new AffineTransform());
-    // get the currently currently selected nodes
-    Set<N> selectedNodes = visualizationServer.getSelectedNodeState().getSelected();
-    LayoutModel<N> layoutModel = visualizationServer.getModel().getLayoutModel();
+    // get the currently currently selected vertices
+    Set<V> selectedVertices = visualizationServer.getSelectedVertexState().getSelected();
+    LayoutModel<V> layoutModel = visualizationServer.getModel().getLayoutModel();
     MultiLayerTransformer multiLayerTransformer =
         visualizationServer.getRenderContext().getMultiLayerTransformer();
-    for (N node : selectedNodes) {
+    for (V vertex : selectedVertices) {
       // find the layout coords
-      Point location = layoutModel.apply(node);
+      Point location = layoutModel.apply(vertex);
       // translate to view coords
       Point2D viewLocation = multiLayerTransformer.transform(location.x, location.y);
       // get a 45 degree rotation (later)

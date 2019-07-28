@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-public class NodeMap<N> extends HashMap<N, Rectangle2D> implements BoundedMap<N>, Bounded {
+public class NodeMap<V> extends HashMap<V, Rectangle2D> implements BoundedMap<V>, Bounded {
 
   private static final Logger log = LoggerFactory.getLogger(NodeMap.class);
   private Rectangle2D bounds;
@@ -23,17 +23,17 @@ public class NodeMap<N> extends HashMap<N, Rectangle2D> implements BoundedMap<N>
     super(initialCapacity);
   }
 
-  public NodeMap(Map<N, Rectangle2D> map) {
+  public NodeMap(Map<V, Rectangle2D> map) {
     super(map);
     recalculateBounds();
   }
 
-  public void put(Entry<N, Rectangle2D> entry) {
+  public void put(Entry<V, Rectangle2D> entry) {
     put(entry.getKey(), entry.getValue());
   }
 
   @Override
-  public Rectangle2D put(N n, Rectangle2D b) {
+  public Rectangle2D put(V n, Rectangle2D b) {
     addBoundsFor(b);
     return super.put(n, b);
   }
@@ -59,8 +59,8 @@ public class NodeMap<N> extends HashMap<N, Rectangle2D> implements BoundedMap<N>
     return bounds;
   }
 
-  private void addBoundsFor(Map<? extends N, Rectangle2D> kids) {
-    for (Entry<? extends N, Rectangle2D> kid : kids.entrySet()) {
+  private void addBoundsFor(Map<? extends V, Rectangle2D> kids) {
+    for (Entry<? extends V, Rectangle2D> kid : kids.entrySet()) {
       addBoundsFor(kid.getValue());
     }
   }

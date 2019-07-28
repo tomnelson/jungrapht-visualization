@@ -23,14 +23,14 @@ import org.jungrapht.visualization.layout.model.Point;
 
 /**
  * A version of the AnimatedPickingGraphMousePlugin that is for the SatelliteVisualizationViewer.
- * The difference it that when you pick a Node in the Satellite View, the 'master view' is
- * translated to move that Node to the center.
+ * The difference it that when you pick a Vertex in the Satellite View, the 'master view' is
+ * translated to move that Vertex to the center.
  *
  * @see AnimatedPickingGraphMousePlugin
  * @author Tom Nelson
  */
-public class SatelliteAnimatedPickingGraphMousePlugin<N, E>
-    extends AnimatedPickingGraphMousePlugin<N, E> implements MouseListener, MouseMotionListener {
+public class SatelliteAnimatedPickingGraphMousePlugin<V, E>
+    extends AnimatedPickingGraphMousePlugin<V, E> implements MouseListener, MouseMotionListener {
 
   /** create an instance */
   public SatelliteAnimatedPickingGraphMousePlugin() {
@@ -45,14 +45,14 @@ public class SatelliteAnimatedPickingGraphMousePlugin<N, E>
   @SuppressWarnings("unchecked")
   public void mouseReleased(MouseEvent e) {
     if (e.getModifiers() == modifiers) {
-      final VisualizationViewer<N, E> vv = (VisualizationViewer<N, E>) e.getSource();
+      final VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
       if (vv instanceof SatelliteVisualizationViewer) {
-        final VisualizationViewer<N, E> vvMaster =
-            ((SatelliteVisualizationViewer<N, E>) vv).getMaster();
+        final VisualizationViewer<V, E> vvMaster =
+            ((SatelliteVisualizationViewer<V, E>) vv).getMaster();
 
-        if (node != null) {
-          LayoutModel<N> layoutModel = vvMaster.getModel().getLayoutModel();
-          Point q = layoutModel.apply(node);
+        if (vertex != null) {
+          LayoutModel<V> layoutModel = vvMaster.getModel().getLayoutModel();
+          Point q = layoutModel.apply(vertex);
           Point2D lvc =
               vvMaster
                   .getRenderContext()

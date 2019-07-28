@@ -8,34 +8,34 @@ import org.jungrapht.visualization.spatial.Spatial;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SimpleRenderer<N, E> implements Renderer<N, E> {
+public class SimpleRenderer<V, E> implements Renderer<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(SimpleRenderer.class);
-  protected Node<N, E> nodeRenderer = new SimpleNodeRenderer<>();
-  protected NodeLabel<N, E> nodeLabelRenderer = new BasicNodeLabelRenderer<>();
-  protected Renderer.Edge<N, E> edgeRenderer = new SimpleEdgeRenderer<>();
-  //    protected Function<N, Shape> simpleNodeShapeFunction = new EllipseNodeShapeFunction<>();
-  //    protected Renderer.EdgeLabel<N, E> edgeLabelRenderer = new BasicEdgeLabelRenderer<>();
+  protected Vertex<V, E> vertexRenderer = new SimpleVertexRenderer<>();
+  protected VertexLabel<V, E> vertexLabelRenderer = new BasicVertexLabelRenderer<>();
+  protected Renderer.Edge<V, E> edgeRenderer = new SimpleEdgeRenderer<>();
+  //    protected Function<V, Shape> simpleVertexShapeFunction = new EllipseVertexShapeFunction<>();
+  //    protected Renderer.EdgeLabel<V, E> edgeLabelRenderer = new BasicEdgeLabelRenderer<>();
 
   @Override
   public void render(
-      RenderContext<N, E> renderContext,
-      VisualizationModel<N, E> visualizationModel,
-      Spatial<N> nodeSpatial,
+      RenderContext<V, E> renderContext,
+      VisualizationModel<V, E> visualizationModel,
+      Spatial<V> vertexSpatial,
       Spatial<E> edgeSpatial) {
     // simple rendering does not use spatial structures
     render(renderContext, visualizationModel);
-    log.trace("simpleRendering ignoring {}", nodeSpatial);
-    //        if (nodeSpatial == null) {
+    log.trace("simpleRendering ignoring {}", vertexSpatial);
+    //        if (vertexSpatial == null) {
     //            render(renderContext, visualizationModel);
     //            return;
     //        }
-    //        Iterable<N> visibleNodes;
+    //        Iterable<V> visibleVertices;
     //        Iterable<E> visibleEdges;
     //
     //        try {
-    //            visibleNodes =
-    //                    nodeSpatial.getVisibleElements(
+    //            visibleVertices =
+    //                    vertexSpatial.getVisibleElements(
     //                            ((VisualizationServer) renderContext.getScreenDevice()).viewOnLayout());
     //
     //            if (edgeSpatial != null) {
@@ -43,27 +43,27 @@ public class SimpleRenderer<N, E> implements Renderer<N, E> {
     //                        edgeSpatial.getVisibleElements(
     //                                ((VisualizationServer) renderContext.getScreenDevice()).viewOnLayout());
     //            } else {
-    //                visibleEdges = visualizationModel.getNetwork().edgeSet();
+    //                visibleEdges = visualizationModel.getGraph().edgeSet();
     //            }
     //        } catch (ConcurrentModificationException ex) {
-    //            // skip rendering until graph node index is stable,
+    //            // skip rendering until graph vertex index is stable,
     //            // this can happen if the layout relax thread is changing locations while the
     //            // visualization is rendering
     //            log.info("got {} so returning", ex.toString());
     //            log.info(
-    //                    "layoutMode active: {}, edgeSpatial active {}, nodeSpatial active: {}",
+    //                    "layoutMode active: {}, edgeSpatial active {}, vertexSpatial active: {}",
     //                    visualizationModel.getLayoutModel().isRelaxing(),
     //                    edgeSpatial.isActive(),
-    //                    nodeSpatial.isActive());
+    //                    vertexSpatial.isActive());
     //            return;
     //        }
     //
     //        try {
-    //            Graph<N, E> network = visualizationModel.getNetwork();
+    //            Graph<V, E> graph = visualizationModel.getGraph();
     //            // paint all the edges
     //            log.trace("the visibleEdges are {}", visibleEdges);
     //            for (E e : visibleEdges) {
-    //                if (network.edgeSet().contains(e)) {
+    //                if (graph.edgeSet().contains(e)) {
     //                    renderEdge(renderContext, visualizationModel, e);
     //                    //            renderEdgeLabel(renderContext, visualizationModel, e);
     //                }
@@ -72,12 +72,12 @@ public class SimpleRenderer<N, E> implements Renderer<N, E> {
     //            renderContext.getScreenDevice().repaint();
     //        }
     //
-    //        // paint all the nodes
+    //        // paint all the vertices
     //        try {
-    //            log.trace("the visibleNodes are {}", visibleNodes);
+    //            log.trace("the visibleVertices are {}", visibleVertices);
     //
-    //            for (N v : visibleNodes) {
-    //                renderNode(renderContext, visualizationModel, v);
+    //            for (V v : visibleVertices) {
+    //                renderVertex(renderContext, visualizationModel, v);
     //            }
     //        } catch (ConcurrentModificationException cme) {
     //            renderContext.getScreenDevice().repaint();
@@ -86,9 +86,9 @@ public class SimpleRenderer<N, E> implements Renderer<N, E> {
 
   @Override
   public void render(
-      RenderContext<N, E> renderContext, VisualizationModel<N, E> visualizationModel) {
-    Graph<N, E> network = visualizationModel.getNetwork();
-    //        renderContext.setNodeShapeFunction(simpleNodeShapeFunction);
+      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel) {
+    Graph<V, E> network = visualizationModel.getGraph();
+    //        renderContext.setVertexShapeFunction(simpleVertexShapeFunction);
     // paint all the edges
     try {
       for (E e : network.edgeSet()) {
@@ -99,11 +99,11 @@ public class SimpleRenderer<N, E> implements Renderer<N, E> {
       renderContext.getScreenDevice().repaint();
     }
 
-    // paint all the nodes
+    // paint all the vertices
     try {
-      for (N v : network.vertexSet()) {
-        renderNode(renderContext, visualizationModel, v);
-        //          renderNodeLabel(renderContext, visualizationModel, v);
+      for (V v : network.vertexSet()) {
+        renderVertex(renderContext, visualizationModel, v);
+        //          renderVertexLabel(renderContext, visualizationModel, v);
       }
     } catch (ConcurrentModificationException cme) {
       renderContext.getScreenDevice().repaint();
@@ -111,74 +111,74 @@ public class SimpleRenderer<N, E> implements Renderer<N, E> {
   }
 
   @Override
-  public void renderNode(
-      RenderContext<N, E> renderContext, VisualizationModel<N, E> visualizationModel, N v) {
-    nodeRenderer.paintNode(renderContext, visualizationModel, v);
+  public void renderVertex(
+      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {
+    vertexRenderer.paintVertex(renderContext, visualizationModel, v);
   }
 
   @Override
-  public void renderNodeLabel(
-      RenderContext<N, E> renderContext, VisualizationModel<N, E> visualizationModel, N v) {
-    nodeLabelRenderer.labelNode(
-        renderContext, visualizationModel, v, renderContext.getNodeLabelFunction().apply(v));
+  public void renderVertexLabel(
+      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {
+    vertexLabelRenderer.labelVertex(
+        renderContext, visualizationModel, v, renderContext.getVertexLabelFunction().apply(v));
   }
 
   @Override
   public void renderEdge(
-      RenderContext<N, E> renderContext, VisualizationModel<N, E> visualizationModel, E e) {
+      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e) {
     edgeRenderer.paintEdge(renderContext, visualizationModel, e);
   }
 
   @Override
   public void renderEdgeLabel(
-      RenderContext<N, E> renderContext, VisualizationModel<N, E> visualizationModel, E e) {
+      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e) {
     //      edgeLabelRenderer.labelEdge(
     //              renderContext, visualizationModel, e, renderContext.getEdgeLabelFunction().apply(e));
   }
 
   @Override
-  public void setNodeRenderer(Node<N, E> r) {
-    this.nodeRenderer = r;
+  public void setVertexRenderer(Vertex<V, E> r) {
+    this.vertexRenderer = r;
   }
 
   @Override
-  public void setEdgeRenderer(Renderer.Edge<N, E> r) {
+  public void setEdgeRenderer(Renderer.Edge<V, E> r) {
     this.edgeRenderer = r;
   }
 
   /** @return the edgeLabelRenderer */
   @Override
-  public Renderer.EdgeLabel<N, E> getEdgeLabelRenderer() {
+  public Renderer.EdgeLabel<V, E> getEdgeLabelRenderer() {
     return null;
   }
 
   /** @param edgeLabelRenderer the edgeLabelRenderer to set */
   @Override
-  public void setEdgeLabelRenderer(Renderer.EdgeLabel<N, E> edgeLabelRenderer) {
+  public void setEdgeLabelRenderer(Renderer.EdgeLabel<V, E> edgeLabelRenderer) {
     //      this.edgeLabelRenderer = edgeLabelRenderer;
   }
 
-  /** @return the nodeLabelRenderer */
+  /** @return the vertexLabelRenderer */
   @Override
-  public NodeLabel<N, E> getNodeLabelRenderer() {
+  public VertexLabel<V, E> getVertexLabelRenderer() {
     return null;
   }
 
-  /** @param nodeLabelRenderer the nodeLabelRenderer to set */
+  /** @param vertexLabelRenderer the vertexLabelRenderer to set */
   @Override
-  public void setNodeLabelRenderer(NodeLabel<N, E> nodeLabelRenderer) {
-    //      this.nodeLabelRenderer = nodeLabelRenderer;
+  public void setVertexLabelRenderer(VertexLabel<V, E> vertexLabelRenderer) {
+    //      this.vertexLabelRenderer = vertexLabelRenderer;
   }
 
   /** @return the edgeRenderer */
   @Override
-  public Renderer.Edge<N, E> getEdgeRenderer() {
+  public Renderer.Edge<V, E> getEdgeRenderer() {
     return edgeRenderer;
   }
 
-  /** @return the nodeRenderer */
+  /** @return the vertexRenderer */
   @Override
-  public Node<N, E> getNodeRenderer() {
-    return nodeRenderer;
+  public Vertex<V, E> getVertexRenderer() {
+    return vertexRenderer;
   }
 }

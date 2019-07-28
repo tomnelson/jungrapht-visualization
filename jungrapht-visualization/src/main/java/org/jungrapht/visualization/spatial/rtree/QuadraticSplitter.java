@@ -21,11 +21,11 @@ public class QuadraticSplitter<T> extends AbstractSplitter<T> implements Splitte
   }
 
   private Pair<InnerNode<T>> quadraticSplit(List<Node<T>> children, Node<T> newEntry) {
-    // make a collection of kids from leafNode that also include the new element
+    // make a collection of kids from leafVertex that also include the new element
     // items will be removed from the entryList as they are distributed
     List<Node<T>> entryList = Lists.newArrayList(children);
     entryList.add(newEntry);
-    // get the best pair to split on trom the leafNode elements
+    // get the best pair to split on trom the leafVertex elements
     Pair<InnerNode<T>> pickedSeeds = pickSeeds(entryList);
     // these currently have no parent set....
     while (entryList.size() > 0
@@ -38,12 +38,12 @@ public class QuadraticSplitter<T> extends AbstractSplitter<T> implements Splitte
       if (pickedSeeds.left.size() >= M - m + 1) {
         // left side too big, give them to the right side
         for (Node<T> entry : entryList) {
-          pickedSeeds.right.addNode(entry);
+          pickedSeeds.right.addVertex(entry);
         }
       } else {
         // right side too big, give them to the left side
         for (Node<T> entry : entryList) {
-          pickedSeeds.left.addNode(entry);
+          pickedSeeds.left.addVertex(entry);
         }
       }
     }
@@ -70,19 +70,19 @@ public class QuadraticSplitter<T> extends AbstractSplitter<T> implements Splitte
           int leftKids = pickedSeeds.left.size();
           int rightKids = pickedSeeds.right.size();
           if (leftKids < rightKids) {
-            pickedSeeds.left.addNode(next);
+            pickedSeeds.left.addVertex(next);
           } else {
-            pickedSeeds.right.addNode(next);
+            pickedSeeds.right.addVertex(next);
           }
         } else if (leftArea < rightArea) {
-          pickedSeeds.left.addNode(next);
+          pickedSeeds.left.addVertex(next);
         } else {
-          pickedSeeds.right.addNode(next);
+          pickedSeeds.right.addVertex(next);
         }
       } else if (leftEnlargement < rightEnlargement) {
-        pickedSeeds.left.addNode(next);
+        pickedSeeds.left.addVertex(next);
       } else {
-        pickedSeeds.right.addNode(next);
+        pickedSeeds.right.addVertex(next);
       }
     }
   }
@@ -106,12 +106,12 @@ public class QuadraticSplitter<T> extends AbstractSplitter<T> implements Splitte
     }
     Preconditions.checkArgument(winningPair.isPresent(), "No winning pair returned");
     Node<T> leftEntry = winningPair.get().left;
-    InnerNode<T> leftNode = InnerNode.create(leftEntry);
+    InnerNode<T> leftVertex = InnerNode.create(leftEntry);
     Node<T> rightEntry = winningPair.get().right;
-    InnerNode<T> rightNode = InnerNode.create(rightEntry);
+    InnerNode<T> rightVertex = InnerNode.create(rightEntry);
     entryList.remove(leftEntry);
     entryList.remove(rightEntry);
-    return new Pair<>(leftNode, rightNode);
+    return new Pair<>(leftVertex, rightVertex);
   }
 
   private Optional<Node<T>> pickNext(List<Node<T>> entries, Pair<InnerNode<T>> pickedSeeds) {
@@ -125,12 +125,12 @@ public class QuadraticSplitter<T> extends AbstractSplitter<T> implements Splitte
       if (!pickedSeeds.left.getChildren().contains(entry)
           && !pickedSeeds.right.getChildren().contains(entry)) {
         // calculate area increase that would happen
-        InnerNode<T> leftNode = pickedSeeds.left;
-        InnerNode<T> rightNode = pickedSeeds.right;
-        double leftArea = area(leftNode.getBounds());
-        double rightArea = area(rightNode.getBounds());
-        Rectangle2D leftUnion = leftNode.getBounds().createUnion(entry.getBounds());
-        Rectangle2D rightUnion = rightNode.getBounds().createUnion(entry.getBounds());
+        InnerNode<T> leftVertex = pickedSeeds.left;
+        InnerNode<T> rightVertex = pickedSeeds.right;
+        double leftArea = area(leftVertex.getBounds());
+        double rightArea = area(rightVertex.getBounds());
+        Rectangle2D leftUnion = leftVertex.getBounds().createUnion(entry.getBounds());
+        Rectangle2D rightUnion = rightVertex.getBounds().createUnion(entry.getBounds());
         double leftAreaIncrease = area(leftUnion) - leftArea;
         double rightAreaIncrease = area(rightUnion) - rightArea;
         double difference = leftAreaIncrease - rightAreaIncrease;

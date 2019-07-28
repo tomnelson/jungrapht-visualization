@@ -23,7 +23,7 @@ public class GraphCollapserTest {
   public void testCollapser() {
 
     Graph<String, Number> generatedGraph = getDemoGraph();
-    // make a graph of the same type but with Collapsable node types
+    // make a graph of the same type but with Collapsable vertex types
     Graph<Collapsable<?>, Number> network =
         GraphTypeBuilder.<Collapsable<?>, Number>forGraphType(generatedGraph.getType())
             .buildGraph();
@@ -54,11 +54,11 @@ public class GraphCollapserTest {
     Graph<Collapsable<?>, Number> clusterGraph =
         collapser.getClusterGraph(network, picker.getSelected());
     Graph<Collapsable<?>, Number> collapsed = collapser.collapse(network, clusterGraph);
-    for (Collapsable<?> node : collapsed.vertexSet()) {
-      if (node.get() instanceof Graph) {
-        Assert.assertEquals(((Graph) node.get()).edgeSet(), Sets.newHashSet(2));
+    for (Collapsable<?> vertex : collapsed.vertexSet()) {
+      if (vertex.get() instanceof Graph) {
+        Assert.assertEquals(((Graph) vertex.get()).edgeSet(), Sets.newHashSet(2));
       } else {
-        Assert.assertEquals(node, Collapsable.of("A"));
+        Assert.assertEquals(vertex, Collapsable.of("A"));
       }
     }
 
@@ -68,11 +68,11 @@ public class GraphCollapserTest {
       Assert.assertTrue(collapsed.getEdgeTarget(edge).get() instanceof Graph);
     }
 
-    Collection<Collapsable<?>> nodes = collapsed.vertexSet();
+    Collection<Collapsable<?>> vertices = collapsed.vertexSet();
     picker.clear();
-    for (Collapsable<?> node : collapsed.vertexSet()) {
-      if (node.get() instanceof Graph) {
-        picker.pick(node, true);
+    for (Collapsable<?> vertex : collapsed.vertexSet()) {
+      if (vertex.get() instanceof Graph) {
+        picker.pick(vertex, true);
       }
     }
     Graph<Collapsable<?>, Number> expanded =
@@ -91,7 +91,7 @@ public class GraphCollapserTest {
   @Test
   public void testTwoConnectedClustersExpandOneThenTheOther() {
     Graph<String, Number> generatedGraph = getDemoGraph2();
-    // make a graph of the same type but with Collapsable node types
+    // make a graph of the same type but with Collapsable vertex types
     Graph<Collapsable<?>, Number> originalNetwork =
         GraphTypeBuilder.<Collapsable<?>, Number>forGraphType(generatedGraph.getType())
             .buildGraph();
@@ -112,10 +112,10 @@ public class GraphCollapserTest {
 
     log.debug("originalNetwork:" + originalNetwork);
 
-    Graph<Collapsable<?>, Number> clusterNodeOne =
+    Graph<Collapsable<?>, Number> clusterVertexOne =
         collapser.getClusterGraph(originalNetwork, picker.getSelected());
     Graph<Collapsable<?>, Number> collapsedGraphOne =
-        collapser.collapse(originalNetwork, clusterNodeOne);
+        collapser.collapse(originalNetwork, clusterVertexOne);
 
     log.debug("collapsedGraphOne:" + collapsedGraphOne);
 
@@ -124,20 +124,20 @@ public class GraphCollapserTest {
     picker.pick(Collapsable.of("E"), true);
     picker.pick(Collapsable.of("F"), true);
 
-    Graph clusterNodeTwo = collapser.getClusterGraph(collapsedGraphOne, picker.getSelected());
-    Graph collapsedGraphTwo = collapser.collapse(collapsedGraphOne, clusterNodeTwo);
+    Graph clusterVertexTwo = collapser.getClusterGraph(collapsedGraphOne, picker.getSelected());
+    Graph collapsedGraphTwo = collapser.collapse(collapsedGraphOne, clusterVertexTwo);
 
     log.debug("collapsedGraphTwo:" + collapsedGraphTwo);
 
     Graph<Collapsable<?>, Number> expanded =
-        collapser.expand(originalNetwork, collapsedGraphTwo, Collapsable.of(clusterNodeTwo));
+        collapser.expand(originalNetwork, collapsedGraphTwo, Collapsable.of(clusterVertexTwo));
 
     Assert.assertEquals(expanded.edgeSet(), collapsedGraphOne.edgeSet());
     Assert.assertEquals(expanded.vertexSet(), collapsedGraphOne.vertexSet());
     //    Assert.assertEquals(expanded, collapsedGraphOne);
 
     Graph expandedAgain =
-        collapser.expand(originalNetwork, expanded, Collapsable.of(clusterNodeOne));
+        collapser.expand(originalNetwork, expanded, Collapsable.of(clusterVertexOne));
 
     Assert.assertEquals(expandedAgain.edgeSet(), originalNetwork.edgeSet());
     Assert.assertEquals(expandedAgain.vertexSet(), originalNetwork.vertexSet());
@@ -181,7 +181,7 @@ public class GraphCollapserTest {
     return g;
   }
 
-  private static <N, E> Set<N> endpoints(Graph<N, E> graph, E edge) {
+  private static <V, E> Set<V> endpoints(Graph<V, E> graph, E edge) {
     return Sets.newHashSet(graph.getEdgeSource(edge), graph.getEdgeTarget(edge));
   }
 }

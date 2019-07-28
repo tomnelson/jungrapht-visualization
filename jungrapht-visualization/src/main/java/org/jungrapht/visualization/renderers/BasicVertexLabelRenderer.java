@@ -23,38 +23,38 @@ import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.transform.shape.ShapeTransformer;
 import org.jungrapht.visualization.transform.shape.TransformingGraphics;
 
-public class BasicNodeLabelRenderer<N, E> implements Renderer.NodeLabel<N, E> {
+public class BasicVertexLabelRenderer<V, E> implements Renderer.VertexLabel<V, E> {
 
   //  protected Position position = Position.SE;
   private Positioner positioner = new OutsidePositioner();
 
   public Component prepareRenderer(
-      RenderContext<N, E> renderContext, Object value, boolean isSelected, N node) {
+      RenderContext<V, E> renderContext, Object value, boolean isSelected, V vertex) {
     return renderContext
-        .getNodeLabelRenderer()
-        .getNodeLabelRendererComponent(
+        .getVertexLabelRenderer()
+        .getVertexLabelRendererComponent(
             renderContext.getScreenDevice(),
             value,
-            renderContext.getNodeFontFunction().apply(node),
+            renderContext.getVertexFontFunction().apply(vertex),
             isSelected,
-            node);
+            vertex);
   }
 
   /**
-   * Labels the specified node with the specified label. Uses the font specified by this instance's
-   * <code>NodeFontFunction</code>. (If the font is unspecified, the existing font for the graphics
-   * context is used.) If node label centering is active, the label is centered on the position of
-   * the node; otherwise the label is offset slightly.
+   * Labels the specified vertex with the specified label. Uses the font specified by this
+   * instance's <code>VertexFontFunction</code>. (If the font is unspecified, the existing font for
+   * the graphics context is used.) If vertex label centering is active, the label is centered on
+   * the position of the vertex; otherwise the label is offset slightly.
    */
-  public void labelNode(
-      RenderContext<N, E> renderContext,
-      VisualizationModel<N, E> visualizationModel,
-      N v,
+  public void labelVertex(
+      RenderContext<V, E> renderContext,
+      VisualizationModel<V, E> visualizationModel,
+      V v,
       String label) {
-    if (!renderContext.getNodeIncludePredicate().test(v)) {
+    if (!renderContext.getVertexIncludePredicate().test(v)) {
       return;
     }
-    LayoutModel<N> layoutModel = visualizationModel.getLayoutModel();
+    LayoutModel<V> layoutModel = visualizationModel.getLayoutModel();
     org.jungrapht.visualization.layout.model.Point pt = layoutModel.apply(v);
     Point2D pt2d =
         renderContext
@@ -66,12 +66,12 @@ public class BasicNodeLabelRenderer<N, E> implements Renderer.NodeLabel<N, E> {
 
     Component component =
         prepareRenderer(
-            renderContext, label, renderContext.getSelectedNodeState().isSelected(v), v);
+            renderContext, label, renderContext.getSelectedVertexState().isSelected(v), v);
     GraphicsDecorator g = renderContext.getGraphicsContext();
     Dimension d = component.getPreferredSize();
     AffineTransform xform = AffineTransform.getTranslateInstance(x, y);
 
-    Shape shape = renderContext.getNodeShapeFunction().apply(v);
+    Shape shape = renderContext.getVertexShapeFunction().apply(v);
     shape = xform.createTransformedShape(shape);
     if (renderContext.getGraphicsContext() instanceof TransformingGraphics) {
       BidirectionalTransformer transformer =
@@ -84,7 +84,7 @@ public class BasicNodeLabelRenderer<N, E> implements Renderer.NodeLabel<N, E> {
     Rectangle2D bounds = shape.getBounds2D();
 
     org.jungrapht.visualization.layout.model.Point p;
-    Position position = renderContext.getNodeLabelPosition();
+    Position position = renderContext.getVertexLabelPosition();
     if (position == Position.AUTO) {
       Dimension vvd = renderContext.getScreenDevice().getSize();
       if (vvd.width == 0 || vvd.height == 0) {
@@ -95,7 +95,7 @@ public class BasicNodeLabelRenderer<N, E> implements Renderer.NodeLabel<N, E> {
       p = getAnchorPoint(bounds, d, position);
     }
 
-    Paint fillPaint = renderContext.getNodeLabelDrawPaintFunction().apply(v);
+    Paint fillPaint = renderContext.getVertexLabelDrawPaintFunction().apply(v);
     if (fillPaint != null) {
       Color oldPaint = component.getForeground();
       component.setForeground((Color) fillPaint);
@@ -121,54 +121,54 @@ public class BasicNodeLabelRenderer<N, E> implements Renderer.NodeLabel<N, E> {
   }
 
   protected org.jungrapht.visualization.layout.model.Point getAnchorPoint(
-      Rectangle2D nodeBounds, Dimension labelSize, Position position) {
+      Rectangle2D vertexBounds, Dimension labelSize, Position position) {
     double x;
     double y;
     int offset = 5;
     switch (position) {
       case N:
-        x = nodeBounds.getCenterX() - labelSize.width / 2.;
-        y = nodeBounds.getMinY() - offset - labelSize.height;
+        x = vertexBounds.getCenterX() - labelSize.width / 2.;
+        y = vertexBounds.getMinY() - offset - labelSize.height;
         return org.jungrapht.visualization.layout.model.Point.of(x, y);
 
       case NE:
-        x = nodeBounds.getMaxX() + offset;
-        y = nodeBounds.getMinY() - offset - labelSize.height;
+        x = vertexBounds.getMaxX() + offset;
+        y = vertexBounds.getMinY() - offset - labelSize.height;
         return org.jungrapht.visualization.layout.model.Point.of(x, y);
 
       case E:
-        x = nodeBounds.getMaxX() + offset;
-        y = nodeBounds.getCenterY() - labelSize.height / 2.;
+        x = vertexBounds.getMaxX() + offset;
+        y = vertexBounds.getCenterY() - labelSize.height / 2.;
         return org.jungrapht.visualization.layout.model.Point.of(x, y);
 
       case SE:
-        x = nodeBounds.getMaxX() + offset;
-        y = nodeBounds.getMaxY() + offset;
+        x = vertexBounds.getMaxX() + offset;
+        y = vertexBounds.getMaxY() + offset;
         return org.jungrapht.visualization.layout.model.Point.of(x, y);
 
       case S:
-        x = nodeBounds.getCenterX() - labelSize.width / 2.;
-        y = nodeBounds.getMaxY() + offset;
+        x = vertexBounds.getCenterX() - labelSize.width / 2.;
+        y = vertexBounds.getMaxY() + offset;
         return org.jungrapht.visualization.layout.model.Point.of(x, y);
 
       case SW:
-        x = nodeBounds.getMinX() - offset - labelSize.width;
-        y = nodeBounds.getMaxY() + offset;
+        x = vertexBounds.getMinX() - offset - labelSize.width;
+        y = vertexBounds.getMaxY() + offset;
         return org.jungrapht.visualization.layout.model.Point.of(x, y);
 
       case W:
-        x = nodeBounds.getMinX() - offset - labelSize.width;
-        y = nodeBounds.getCenterY() - labelSize.height / 2.;
+        x = vertexBounds.getMinX() - offset - labelSize.width;
+        y = vertexBounds.getCenterY() - labelSize.height / 2.;
         return org.jungrapht.visualization.layout.model.Point.of(x, y);
 
       case NW:
-        x = nodeBounds.getMinX() - offset - labelSize.width;
-        y = nodeBounds.getMinY() - offset - labelSize.height;
+        x = vertexBounds.getMinX() - offset - labelSize.width;
+        y = vertexBounds.getMinY() - offset - labelSize.height;
         return org.jungrapht.visualization.layout.model.Point.of(x, y);
 
       case CNTR:
-        x = nodeBounds.getCenterX() - labelSize.width / 2.;
-        y = nodeBounds.getCenterY() - labelSize.height / 2.;
+        x = vertexBounds.getCenterX() - labelSize.width / 2.;
+        y = vertexBounds.getCenterY() - labelSize.height / 2.;
         return org.jungrapht.visualization.layout.model.Point.of(x, y);
 
       default:

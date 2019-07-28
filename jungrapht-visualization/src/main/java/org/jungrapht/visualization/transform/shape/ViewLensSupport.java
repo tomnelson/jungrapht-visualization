@@ -16,7 +16,7 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.LensTransformSupport;
 import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.control.TransformSupport;
-import org.jungrapht.visualization.layout.NetworkElementAccessor;
+import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.transform.AbstractLensSupport;
@@ -26,23 +26,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Uses a LensTransformer to use in the view transform. This one will distort Node shapes.
+ * Uses a LensTransformer to use in the view transform. This one will distort Vertex shapes.
  *
  * @author Tom Nelson
  */
-public class ViewLensSupport<N, E> extends AbstractLensSupport<N, E> implements LensSupport {
+public class ViewLensSupport<V, E> extends AbstractLensSupport<V, E> implements LensSupport {
 
   private static final Logger log = LoggerFactory.getLogger(ViewLensSupport.class);
 
-  protected RenderContext<N, E> renderContext;
+  protected RenderContext<V, E> renderContext;
   protected GraphicsDecorator lensGraphicsDecorator;
   protected GraphicsDecorator savedGraphicsDecorator;
-  protected NetworkElementAccessor<N, E> pickSupport;
-  protected Renderer.Edge<N, E> savedEdgeRenderer;
-  protected Renderer.Edge<N, E> reshapingEdgeRenderer;
+  protected GraphElementAccessor<V, E> pickSupport;
+  protected Renderer.Edge<V, E> savedEdgeRenderer;
+  protected Renderer.Edge<V, E> reshapingEdgeRenderer;
 
   public ViewLensSupport(
-      VisualizationViewer<N, E> vv,
+      VisualizationViewer<V, E> vv,
       LensTransformer lensTransformer,
       ModalGraphMouse lensGraphMouse) {
     super(vv, lensGraphMouse);

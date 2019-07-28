@@ -66,20 +66,21 @@ public class RadialTreeLensDemo extends JPanel {
         new BaseVisualizationModel<>(graph, new StaticLayoutAlgorithm(), preferredSize);
     vv = new VisualizationViewer<>(visualizationModel, preferredSize);
 
-    MutableSelectedState<String> ps = vv.getSelectedNodeState();
+    MutableSelectedState<String> ps = vv.getSelectedVertexState();
     MutableSelectedState<Integer> pes = vv.getSelectedEdgeState();
     vv.getRenderContext()
-        .setNodeFillPaintFunction(new PickableElementPaintFunction<>(ps, Color.red, Color.yellow));
-    vv.getRenderContext().setNodeLabelFunction(Object::toString);
+        .setVertexFillPaintFunction(
+            new PickableElementPaintFunction<>(ps, Color.red, Color.yellow));
+    vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.getRenderContext()
         .setEdgeDrawPaintFunction(new PickableElementPaintFunction<>(pes, Color.black, Color.cyan));
     vv.setBackground(Color.white);
 
-    vv.getRenderContext().setNodeLabelFunction(Object::toString);
+    vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
 
     // add a listener for ToolTips
-    vv.setNodeToolTipFunction(Object::toString);
+    vv.setVertexToolTipFunction(Object::toString);
 
     GraphZoomScrollPane gzsp = new GraphZoomScrollPane(vv);
     add(gzsp);

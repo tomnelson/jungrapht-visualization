@@ -15,67 +15,67 @@ import org.jungrapht.visualization.layout.quadtree.Node;
 
 /**
  * @author Tom Nelson
- * @param <N> the node type
+ * @param <V> the vertex type
  */
-public class BarnesHutSpringRepulsion<N>
+public class BarnesHutSpringRepulsion<V>
     extends StandardSpringRepulsion<
-        N, BarnesHutSpringRepulsion<N>, BarnesHutSpringRepulsion.Builder<N>>
+        V, BarnesHutSpringRepulsion<V>, BarnesHutSpringRepulsion.Builder<V>>
     implements BarnesHutRepulsion<
-        N, BarnesHutSpringRepulsion<N>, BarnesHutSpringRepulsion.Builder<N>> {
+        V, BarnesHutSpringRepulsion<V>, BarnesHutSpringRepulsion.Builder<V>> {
 
-  public static class Builder<N>
+  public static class Builder<V>
       extends StandardSpringRepulsion.Builder<
-          N, BarnesHutSpringRepulsion<N>, BarnesHutSpringRepulsion.Builder<N>>
+          V, BarnesHutSpringRepulsion<V>, BarnesHutSpringRepulsion.Builder<V>>
       implements BarnesHutRepulsion.Builder<
-          N, BarnesHutSpringRepulsion<N>, BarnesHutSpringRepulsion.Builder<N>> {
+          V, BarnesHutSpringRepulsion<V>, BarnesHutSpringRepulsion.Builder<V>> {
 
     private double theta = Node.DEFAULT_THETA;
-    private BarnesHutQuadTree<N> tree = BarnesHutQuadTree.<N>builder().build();
+    private BarnesHutQuadTree<V> tree = BarnesHutQuadTree.<V>builder().build();
 
-    public Builder<N> layoutModel(LayoutModel<N> layoutModel) {
+    public Builder<V> layoutModel(LayoutModel<V> layoutModel) {
       this.layoutModel = layoutModel;
       this.tree =
-          BarnesHutQuadTree.<N>builder()
+          BarnesHutQuadTree.<V>builder()
               .bounds(layoutModel.getWidth(), layoutModel.getHeight())
               .theta(theta)
               .build();
       return this;
     }
 
-    public Builder<N> theta(double theta) {
+    public Builder<V> theta(double theta) {
       this.theta = theta;
       return this;
     }
 
-    public Builder<N> nodeData(
-        LoadingCache<N, SpringLayoutAlgorithm.SpringNodeData> springNodeData) {
-      this.springNodeData = springNodeData;
+    public Builder<V> nodeData(
+        LoadingCache<V, SpringLayoutAlgorithm.SpringVertexData> springVertexData) {
+      this.springVertexData = springVertexData;
       return this;
     }
 
-    public Builder<N> repulsionRangeSquared(int repulsionRangeSquared) {
+    public Builder<V> repulsionRangeSquared(int repulsionRangeSquared) {
       this.repulsionRangeSquared = repulsionRangeSquared;
       return this;
     }
 
     @Override
-    public Builder<N> random(Random random) {
+    public Builder<V> random(Random random) {
       this.random = random;
       return this;
     }
 
-    public BarnesHutSpringRepulsion<N> build() {
+    public BarnesHutSpringRepulsion<V> build() {
       return new BarnesHutSpringRepulsion(this);
     }
   }
 
-  protected BarnesHutQuadTree<N> tree;
+  protected BarnesHutQuadTree<V> tree;
 
   public static Builder barnesHutBuilder() {
     return new Builder();
   }
 
-  protected BarnesHutSpringRepulsion(Builder<N> builder) {
+  protected BarnesHutSpringRepulsion(Builder<V> builder) {
     super(builder);
     this.tree = builder.tree;
   }
@@ -95,26 +95,26 @@ public class BarnesHutSpringRepulsion<N>
   }
 
   public void calculateRepulsion() {
-    Graph<N, ?> graph = layoutModel.getGraph();
+    Graph<V, ?> graph = layoutModel.getGraph();
 
     try {
-      for (N node : graph.vertexSet()) {
+      for (V vertex : graph.vertexSet()) {
 
-        if (layoutModel.isLocked(node)) {
+        if (layoutModel.isLocked(vertex)) {
           continue;
         }
 
-        SpringLayoutAlgorithm.SpringNodeData svd = springNodeData.getUnchecked(node);
+        SpringLayoutAlgorithm.SpringVertexData svd = springVertexData.getUnchecked(vertex);
         if (svd == null) {
           continue;
         }
-        Point forcePoint = layoutModel.apply(node);
-        ForceObject<N> nodeForceObject =
-            new ForceObject(node, forcePoint.x, forcePoint.y) {
+        Point forcePoint = layoutModel.apply(vertex);
+        ForceObject<V> nodeForceObject =
+            new ForceObject(vertex, forcePoint.x, forcePoint.y) {
               @Override
               protected void addForceFrom(ForceObject other) {
 
-                if (other == null || node == other.getElement()) {
+                if (other == null || vertex == other.getElement()) {
                   return;
                 }
                 org.jungrapht.visualization.layout.quadtree.Point p = this.p;

@@ -26,16 +26,16 @@ import org.jgrapht.Graph;
  * @author Joshua O'Madadhain
  * @author Tom Nelson
  */
-public class ParallelEdgeIndexFunction<N, E> implements EdgeIndexFunction<N, E> {
+public class ParallelEdgeIndexFunction<V, E> implements EdgeIndexFunction<V, E> {
   protected Map<E, Integer> edge_index = new HashMap<>();
 
-  public int getIndex(Context<Graph<N, E>, E> context) {
-    Graph<N, E> network = context.graph;
+  public int getIndex(Context<Graph<V, E>, E> context) {
+    Graph<V, E> network = context.graph;
     E edge = context.element;
     Integer index = edge_index.get(edge);
     if (index == null) {
-      N u = network.getEdgeSource(edge);
-      N v = network.getEdgeTarget(edge);
+      V u = network.getEdgeSource(edge);
+      V v = network.getEdgeTarget(edge);
       int count = 0;
       for (E connectingEdge : network.getAllEdges(u, v)) {
         edge_index.put(connectingEdge, count++);
@@ -45,7 +45,7 @@ public class ParallelEdgeIndexFunction<N, E> implements EdgeIndexFunction<N, E> 
     return index;
   }
 
-  public void reset(Context<Graph<N, E>, E> context) {
+  public void reset(Context<Graph<V, E>, E> context) {
     edge_index.remove(context.element);
   }
 

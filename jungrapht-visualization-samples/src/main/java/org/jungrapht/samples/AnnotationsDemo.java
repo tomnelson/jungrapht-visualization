@@ -79,11 +79,11 @@ public class AnnotationsDemo extends JPanel {
     // create 2 views that share the same model
     final VisualizationViewer<String, Number> vv = new VisualizationViewer<>(vm, preferredSize1);
     vv.setBackground(Color.white);
-    vv.getRenderContext().setNodeLabelFunction(Object::toString);
-    vv.getRenderContext().setNodeLabelPosition(Renderer.NodeLabel.Position.CNTR);
+    vv.getRenderContext().setVertexLabelFunction(Object::toString);
+    vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
 
     // add default listener for ToolTips
-    vv.setNodeToolTipFunction(n -> n);
+    vv.setVertexToolTipFunction(n -> n);
 
     Container panel = new JPanel(new BorderLayout());
 

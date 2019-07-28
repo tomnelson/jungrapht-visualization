@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** @author Tom Nelson */
-public class TransformSupport<N, E> extends MutableAffineTransformer {
+public class TransformSupport<V, E> extends MutableAffineTransformer {
 
   private static final Logger log = LoggerFactory.getLogger(TransformSupport.class);
 
@@ -20,7 +20,7 @@ public class TransformSupport<N, E> extends MutableAffineTransformer {
    * @param p
    * @return
    */
-  public Point2D inverseTransform(VisualizationServer<N, E> vv, Point2D p) {
+  public Point2D inverseTransform(VisualizationServer<V, E> vv, Point2D p) {
     MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
     return multiLayerTransformer.inverseTransform(p);
   }
@@ -33,7 +33,7 @@ public class TransformSupport<N, E> extends MutableAffineTransformer {
    * @param p
    * @return
    */
-  public Point2D transform(VisualizationServer<N, E> vv, Point2D p) {
+  public Point2D transform(VisualizationServer<V, E> vv, Point2D p) {
     MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
     return multiLayerTransformer.transform(p);
   }
@@ -47,7 +47,7 @@ public class TransformSupport<N, E> extends MutableAffineTransformer {
    * @return
    */
   public Point2D transform(
-      VisualizationServer<N, E> vv, Point2D p, MultiLayerTransformer.Layer layer) {
+      VisualizationServer<V, E> vv, Point2D p, MultiLayerTransformer.Layer layer) {
     MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
     return multiLayerTransformer.transform(layer, p);
   }
@@ -60,7 +60,7 @@ public class TransformSupport<N, E> extends MutableAffineTransformer {
    * @param shape
    * @return
    */
-  public Shape transform(VisualizationServer<N, E> vv, Shape shape) {
+  public Shape transform(VisualizationServer<V, E> vv, Shape shape) {
     MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
     return multiLayerTransformer.transform(shape);
   }
@@ -74,7 +74,7 @@ public class TransformSupport<N, E> extends MutableAffineTransformer {
    * @return
    */
   public Shape transform(
-      VisualizationServer<N, E> vv, Shape shape, MultiLayerTransformer.Layer layer) {
+      VisualizationServer<V, E> vv, Shape shape, MultiLayerTransformer.Layer layer) {
     MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
     return multiLayerTransformer.transform(layer, shape);
   }
@@ -86,7 +86,7 @@ public class TransformSupport<N, E> extends MutableAffineTransformer {
    * @param shape
    * @return
    */
-  public Shape inverseTransform(VisualizationServer<N, E> vv, Shape shape) {
+  public Shape inverseTransform(VisualizationServer<V, E> vv, Shape shape) {
     MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
     return multiLayerTransformer.inverseTransform(shape);
   }

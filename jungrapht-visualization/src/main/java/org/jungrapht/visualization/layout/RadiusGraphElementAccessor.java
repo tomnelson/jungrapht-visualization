@@ -11,17 +11,16 @@
 package org.jungrapht.visualization.layout;
 
 import java.awt.*;
-import java.awt.geom.Point2D;
 import java.util.ConcurrentModificationException;
 import java.util.HashSet;
 import java.util.Set;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
-import org.jungrapht.visualization.layout.util.RadiusNetworkNodeAccessor;
+import org.jungrapht.visualization.layout.util.RadiusVertexAccessor;
 
 /**
- * Simple implementation of PickSupport that returns the node or edge that is closest to the
+ * Simple implementation of PickSupport that returns the vertex or edge that is closest to the
  * specified location. This implementation provides the same picking options that were available in
  * previous versions of
  *
@@ -30,12 +29,12 @@ import org.jungrapht.visualization.layout.util.RadiusNetworkNodeAccessor;
  * @author Tom Nelson
  * @author Joshua O'Madadhain
  */
-public class RadiusNetworkElementAccessor<N, E> extends RadiusNetworkNodeAccessor<N>
-    implements NetworkElementAccessor<N, E> {
-  private final Graph<N, E> network;
+public class RadiusGraphElementAccessor<V, E> extends RadiusVertexAccessor<V>
+    implements GraphElementAccessor<V, E> {
+  private final Graph<V, E> network;
 
   /** Creates an instance with an effectively infinite default maximum distance. */
-  public RadiusNetworkElementAccessor(Graph<N, E> network) {
+  public RadiusGraphElementAccessor(Graph<V, E> network) {
     this(network, Math.sqrt(Double.MAX_VALUE - 1000));
   }
 
@@ -45,7 +44,7 @@ public class RadiusNetworkElementAccessor<N, E> extends RadiusNetworkNodeAccesso
    * @param maxDistance the maximum distance at which any element can be from a specified location
    *     and still be returned
    */
-  public RadiusNetworkElementAccessor(Graph<N, E> network, double maxDistance) {
+  public RadiusGraphElementAccessor(Graph<V, E> network, double maxDistance) {
     super(maxDistance);
     this.network = network;
   }
@@ -60,13 +59,13 @@ public class RadiusNetworkElementAccessor<N, E> extends RadiusNetworkNodeAccesso
    * @return
    */
   @Override
-  public E getEdge(LayoutModel<N> layoutModel, Point2D p) {
-    return getEdge(layoutModel, p.getX(), p.getY());
+  public E getEdge(LayoutModel<V> layoutModel, Point p) {
+    return getEdge(layoutModel, p.x, p.y);
   }
 
   /**
    * Gets the edge nearest to the location of the (x,y) location selected, whose endpoints are &lt;
-   * {@code maxDistance}. Iterates through all visible nodes and checks their distance from the
+   * {@code maxDistance}. Iterates through all visible vertices and checks their distance from the
    * location. Override this method to provide a more efficient implementation.
    *
    * <p>// * @param layout the context in which the location is defined
@@ -77,17 +76,17 @@ public class RadiusNetworkElementAccessor<N, E> extends RadiusNetworkNodeAccesso
    * @return an edge which is associated with the location {@code (x,y)} as given by {@code layout}
    */
   @Override
-  public E getEdge(LayoutModel<N> layoutModel, double x, double y) {
+  public E getEdge(LayoutModel<V> layoutModel, double x, double y) {
     double minDistance = maxDistance * maxDistance;
     E closest = null;
     while (true) {
       try {
         for (E edge : network.edgeSet()) {
-          N node1 = network.getEdgeSource(edge);
-          N node2 = network.getEdgeTarget(edge);
+          V vertex1 = network.getEdgeSource(edge);
+          V vertex2 = network.getEdgeTarget(edge);
           // Get coords
-          org.jungrapht.visualization.layout.model.Point p1 = layoutModel.apply(node1);
-          org.jungrapht.visualization.layout.model.Point p2 = layoutModel.apply(node2);
+          org.jungrapht.visualization.layout.model.Point p1 = layoutModel.apply(vertex1);
+          org.jungrapht.visualization.layout.model.Point p2 = layoutModel.apply(vertex2);
           double x1 = p1.x;
           double y1 = p1.y;
           double x2 = p2.x;
@@ -124,20 +123,20 @@ public class RadiusNetworkElementAccessor<N, E> extends RadiusNetworkNodeAccesso
     return closest;
   }
 
-  public Set<N> getNodes(LayoutModel<N> layoutModel, Shape rectangle) {
-    Set<N> pickednodes = new HashSet<>();
+  public Set<V> getVertices(LayoutModel<V> layoutModel, Shape rectangle) {
+    Set<V> pickedvertices = new HashSet<>();
     while (true) {
       try {
-        for (N node : layoutModel.getGraph().vertexSet()) {
-          Point p = layoutModel.apply(node);
+        for (V vertex : layoutModel.getGraph().vertexSet()) {
+          Point p = layoutModel.apply(vertex);
           if (rectangle.contains(p.x, p.y)) {
-            pickednodes.add(node);
+            pickedvertices.add(vertex);
           }
         }
         break;
       } catch (ConcurrentModificationException cme) {
       }
     }
-    return pickednodes;
+    return pickedvertices;
   }
 }

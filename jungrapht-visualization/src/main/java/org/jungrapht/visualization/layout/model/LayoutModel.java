@@ -17,21 +17,21 @@ import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.event.LayoutChange;
-import org.jungrapht.visualization.layout.event.LayoutNodePositionChange;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
+import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
 
 /**
- * two dimensional layout model. Acts as a Mediator between the Graph nodes and their locations in
- * the Cartesian coordinate system.
+ * two dimensional layout model. Acts as a Mediator between the Graph vertices and their locations
+ * in the Cartesian coordinate system.
  *
  * @author Tom Nelson
  */
-public interface LayoutModel<N>
-    extends Function<N, Point>,
+public interface LayoutModel<V>
+    extends Function<V, Point>,
         LayoutChange.Producer,
-        LayoutNodePositionChange.Producer<N>,
+        LayoutVertexPositionChange.Producer<V>,
         LayoutStateChange.Producer,
-        LayoutNodePositionChange.Listener<N> {
+        LayoutVertexPositionChange.Listener<V> {
 
   /** @return the width of the layout area */
   int getWidth();
@@ -44,10 +44,10 @@ public interface LayoutModel<N>
    *
    * @param layoutAlgorithm the algorithm to apply to this model's Points
    */
-  void accept(LayoutAlgorithm<N> layoutAlgorithm);
+  void accept(LayoutAlgorithm<V> layoutAlgorithm);
 
-  /** @return a mapping of Nodes to Point locations */
-  default Map<N, Point> getLocations() {
+  /** @return a mapping of Vertices to Point locations */
+  default Map<V, Point> getLocations() {
     return Collections.unmodifiableMap(Maps.asMap(getGraph().vertexSet(), this::apply));
   }
 
@@ -82,45 +82,45 @@ public interface LayoutModel<N>
   CompletableFuture getTheFuture();
 
   /**
-   * @param node the node whose locked state is being queried
-   * @return <code>true</code> if the position of node <code>v</code> is locked
+   * @param vertex the vertex whose locked state is being queried
+   * @return <code>true</code> if the position of vertex <code>v</code> is locked
    */
-  boolean isLocked(N node);
+  boolean isLocked(V vertex);
 
   /**
-   * Changes the layout coordinates of {@code node} to {@code location}.
+   * Changes the layout coordinates of {@code vertex} to {@code location}.
    *
-   * @param node the node whose location is to be specified
+   * @param vertex the vertex whose location is to be specified
    * @param location the coordinates of the specified location
    */
-  void set(N node, Point location);
+  void set(V vertex, Point location);
 
   /**
-   * Changes the layout coordinates of {@code node} to {@code x, y}.
+   * Changes the layout coordinates of {@code vertex} to {@code x, y}.
    *
-   * @param node the node to set location for
+   * @param vertex the vertex to set location for
    * @param x coordinate to set
    * @param y coordinate to set
    */
-  void set(N node, double x, double y);
+  void set(V vertex, double x, double y);
 
   /**
-   * @param node the node of interest
-   * @return the Point location for node
+   * @param vertex the vertex of interest
+   * @return the Point location for vertex
    */
-  Point get(N node);
+  Point get(V vertex);
 
   /** @return the {@code Graph} that this model is mediating */
-  Graph<N, ?> getGraph();
+  <E> Graph<V, E> getGraph();
 
   /** @param graph the {@code Graph} to set */
-  void setGraph(Graph<N, ?> graph);
+  void setGraph(Graph<V, ?> graph);
 
-  void lock(N node, boolean locked);
+  void lock(V vertex, boolean locked);
 
   void lock(boolean locked);
 
   boolean isLocked();
 
-  void setInitializer(Function<N, Point> initializer);
+  void setInitializer(Function<V, Point> initializer);
 }

@@ -25,9 +25,9 @@ import org.jungrapht.visualization.control.ModalGraphMouse;
  *
  * @author Tom Nelson
  */
-public abstract class AbstractLensSupport<N, E> implements LensSupport {
+public abstract class AbstractLensSupport<V, E> implements LensSupport {
 
-  protected VisualizationViewer<N, E> vv;
+  protected VisualizationViewer<V, E> vv;
   protected VisualizationViewer.GraphMouse graphMouse;
   protected LensTransformer lensTransformer;
   protected ModalGraphMouse lensGraphMouse;
@@ -46,7 +46,7 @@ public abstract class AbstractLensSupport<N, E> implements LensSupport {
    * @param vv the VisualizationViewer to work on
    * @param lensGraphMouse the GraphMouse instance to use for the lens
    */
-  public AbstractLensSupport(VisualizationViewer<N, E> vv, ModalGraphMouse lensGraphMouse) {
+  public AbstractLensSupport(VisualizationViewer<V, E> vv, ModalGraphMouse lensGraphMouse) {
     this.vv = vv;
     this.graphMouse = vv.getGraphMouse();
     this.defaultToolTipText = vv.getToolTipText();

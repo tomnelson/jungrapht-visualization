@@ -24,7 +24,7 @@ import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.DefaultEdgeLabelRenderer;
-import org.jungrapht.visualization.renderers.DefaultNodeLabelRenderer;
+import org.jungrapht.visualization.renderers.DefaultVertexLabelRenderer;
 
 /**
  * Demonstrates the use of images on graph edge labels.
@@ -36,7 +36,7 @@ public class ImageEdgeLabelDemo extends JPanel {
   /** */
   private static final long serialVersionUID = -4332663871914930864L;
 
-  private static final int NODE_COUNT = 11;
+  private static final int VERTEX_COUNT = 11;
 
   /** the graph */
   Graph<Number, Number> graph;
@@ -48,7 +48,7 @@ public class ImageEdgeLabelDemo extends JPanel {
 
     setLayout(new BorderLayout());
     // create a simple graph for the demo
-    graph = createGraph(NODE_COUNT);
+    graph = createGraph(VERTEX_COUNT);
 
     FRLayoutAlgorithm<Number> layoutAlgorithm = FRLayoutAlgorithm.<Number>builder().build();
     layoutAlgorithm.setMaxIterations(100);
@@ -60,7 +60,7 @@ public class ImageEdgeLabelDemo extends JPanel {
 
     vv.setBackground(Color.white);
 
-    vv.getRenderContext().setNodeLabelRenderer(new DefaultNodeLabelRenderer(Color.cyan));
+    vv.getRenderContext().setVertexLabelRenderer(new DefaultVertexLabelRenderer(Color.cyan));
     vv.getRenderContext().setEdgeLabelRenderer(new DefaultEdgeLabelRenderer(Color.cyan));
     vv.getRenderContext()
         .setEdgeLabelFunction(
@@ -73,7 +73,7 @@ public class ImageEdgeLabelDemo extends JPanel {
             });
 
     // add a listener for ToolTips
-    vv.setNodeToolTipFunction(Object::toString);
+    vv.setVertexToolTipFunction(Object::toString);
     vv.setEdgeToolTipFunction(Object::toString);
     final GraphZoomScrollPane panel = new GraphZoomScrollPane(vv);
     add(panel);
@@ -104,17 +104,17 @@ public class ImageEdgeLabelDemo extends JPanel {
   }
 
   /**
-   * create some nodes
+   * create some vertices
    *
-   * @param nodeCount how many to create
-   * @return the Nodes in an array
+   * @param vertexCount how many to create
+   * @return the Vertices in an array
    */
-  private Graph<Number, Number> createGraph(int nodeCount) {
+  private Graph<Number, Number> createGraph(int vertexCount) {
     Graph<Number, Number> graph =
         GraphTypeBuilder.<Number, Number>forGraphType(DefaultGraphType.directedMultigraph())
             .buildGraph();
 
-    for (int i = 0; i < nodeCount; i++) {
+    for (int i = 0; i < vertexCount; i++) {
       graph.addVertex(i);
     }
     int j = 0;

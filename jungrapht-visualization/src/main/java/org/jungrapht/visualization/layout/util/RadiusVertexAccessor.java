@@ -17,7 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Simple implementation of PickSupport that returns the node or edge that is closest to the
+ * Simple implementation of PickSupport that returns the vertex or edge that is closest to the
  * specified location. This implementation provides the same picking options that were available in
  * previous versions of
  *
@@ -26,12 +26,12 @@ import org.slf4j.LoggerFactory;
  * @author Tom Nelson
  * @author Joshua O'Madadhain
  */
-public class RadiusNetworkNodeAccessor<N> implements NetworkNodeAccessor<N> {
+public class RadiusVertexAccessor<V> implements VertexAccessor<V> {
 
-  private static final Logger log = LoggerFactory.getLogger(RadiusNetworkNodeAccessor.class);
+  private static final Logger log = LoggerFactory.getLogger(RadiusVertexAccessor.class);
   protected double maxDistance;
   /** Creates an instance with an effectively infinite default maximum distance. */
-  public RadiusNetworkNodeAccessor() {
+  public RadiusVertexAccessor() {
     this(Math.sqrt(Double.MAX_VALUE - 1000));
   }
 
@@ -41,45 +41,45 @@ public class RadiusNetworkNodeAccessor<N> implements NetworkNodeAccessor<N> {
    * @param maxDistance the maximum distance at which any element can be from a specified location
    *     and still be returned
    */
-  public RadiusNetworkNodeAccessor(double maxDistance) {
+  public RadiusVertexAccessor(double maxDistance) {
     this.maxDistance = maxDistance;
   }
 
   /**
    * @param layoutModel
    * @param p the pick point
-   * @return the node associated with location p
+   * @return the vertex associated with location p
    */
   @Override
-  public N getNode(LayoutModel<N> layoutModel, Point p) {
-    return getNode(layoutModel, p.x, p.y);
+  public V getVertex(LayoutModel<V> layoutModel, Point p) {
+    return getVertex(layoutModel, p.x, p.y);
   }
 
   /**
-   * Gets the node nearest to the location of the (x,y) location selected, within a distance of
-   * {@code this.maxDistance}. Iterates through all visible nodes and checks their distance from the
-   * location. Override this method to provide a more efficient implementation.
+   * Gets the vertex nearest to the location of the (x,y) location selected, within a distance of
+   * {@code this.maxDistance}. Iterates through all visible vertices and checks their distance from
+   * the location. Override this method to provide a more efficient implementation.
    *
    * @param x the x coordinate of the location
    * @param y the y coordinate of the location
-   * @return a node which is associated with the location {@code (x,y)} as given by {@code layout}
+   * @return a vertex which is associated with the location {@code (x,y)} as given by {@code layout}
    */
   @Override
-  public N getNode(LayoutModel<N> layoutModel, double x, double y) {
+  public V getVertex(LayoutModel<V> layoutModel, double x, double y) {
 
     double minDistance = maxDistance * maxDistance * maxDistance;
-    N closest = null;
+    V closest = null;
     while (true) {
       try {
-        for (N node : layoutModel.getLocations().keySet()) {
+        for (V vertex : layoutModel.getLocations().keySet()) {
 
-          Point p = layoutModel.apply(node);
+          Point p = layoutModel.apply(vertex);
           double dx = p.x - x;
           double dy = p.y - y;
           double dist = dx * dx + dy * dy;
           if (dist < minDistance) {
             minDistance = dist;
-            closest = node;
+            closest = vertex;
           }
         }
         break;

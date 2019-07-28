@@ -68,9 +68,9 @@ public class BalloonLayoutDemo extends JPanel {
             graph, new StaticLayoutAlgorithm(), new Dimension(900, 900), new Dimension(600, 600));
     vv.setBackground(Color.white);
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
-    vv.getRenderContext().setNodeLabelFunction(Object::toString);
+    vv.getRenderContext().setVertexLabelFunction(Object::toString);
     // add a listener for ToolTips
-    vv.setNodeToolTipFunction(Object::toString);
+    vv.setVertexToolTipFunction(Object::toString);
     vv.getRenderContext().setArrowFillPaintFunction(a -> Color.lightGray);
 
     final GraphZoomScrollPane panel = new GraphZoomScrollPane(vv);

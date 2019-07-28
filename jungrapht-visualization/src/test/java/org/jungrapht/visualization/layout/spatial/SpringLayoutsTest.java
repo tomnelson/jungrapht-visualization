@@ -24,8 +24,8 @@ import org.slf4j.LoggerFactory;
 //import org.jungrapht.visualization.layout.algorithms.SpringBHVisitorLayoutAlgorithm;
 
 /**
- * This test makes a very small graph, sets initial locations for each node, and each time, it runs
- * a version of FRLayout.
+ * This test makes a very small graph, sets initial locations for each vertex, and each time, it
+ * runs a version of FRLayout.
  *
  * <ul>
  *   <li>SpringLayoutAlgorithm - the JUNG legacy version
@@ -40,9 +40,9 @@ import org.slf4j.LoggerFactory;
  * compared. The end values should be very close. The standard FRLayoutAlgorithm will vary because
  * force comparisons are approximated in the BarnesHut versions
  *
- * <p>The Iterator version of BarnesHut uses storage space to cache collections of 'nodes' (or force
- * vectors) to compare with. The Visitor version does not use that additional storage space, so it
- * should be better.
+ * <p>The Iterator version of BarnesHut uses storage space to cache collections of 'vertices' (or
+ * force vectors) to compare with. The Visitor version does not use that additional storage space,
+ * so it should be better.
  *
  * @author Tom Nelson
  */
@@ -79,8 +79,8 @@ public class SpringLayoutsTest {
     layoutModel.set("B", Point.of(100, 200));
     layoutModel.set("C", Point.of(100, 100));
     layoutModel.set("D", Point.of(500, 100));
-    for (String node : graph.vertexSet()) {
-      log.debug("node {} starts at {}", node, layoutModel.apply(node));
+    for (String vertex : graph.vertexSet()) {
+      log.debug("vertex {} starts at {}", vertex, layoutModel.apply(vertex));
     }
   }
 
@@ -107,7 +107,7 @@ public class SpringLayoutsTest {
   }
 
   /**
-   * a BarnesHutOctTree with THETA = 0 will not use any inner node estimations in the force
+   * a BarnesHutOctTree with THETA = 0 will not use any inner vertex estimations in the force
    * calculations. The values should be the same as would be produced by the same layout algorithm
    * with no BarnesHut optimization.
    */
@@ -144,9 +144,9 @@ public class SpringLayoutsTest {
   private void doTest(LayoutAlgorithm<String> layoutAlgorithm, Map<String, Point> map) {
     log.debug("for {}", layoutAlgorithm.getClass());
     layoutModel.accept(layoutAlgorithm);
-    for (String node : graph.vertexSet()) {
-      map.put(node, layoutModel.apply(node));
-      log.debug("node {} placed at {}", node, layoutModel.apply(node));
+    for (String vertex : graph.vertexSet()) {
+      map.put(vertex, layoutModel.apply(vertex));
+      log.debug("vertex {} placed at {}", vertex, layoutModel.apply(vertex));
     }
   }
 

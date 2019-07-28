@@ -19,17 +19,17 @@ import java.util.function.Function;
 import org.jungrapht.visualization.layout.model.Point;
 
 /**
- * Provides a random node location within the bounds of the width and height. This provides a random
- * location for unmapped nodes the first time they are accessed.
+ * Provides a random vertex location within the bounds of the width and height. This provides a
+ * random location for unmapped vertices the first time they are accessed.
  *
  * <p><b>Note</b>: the generated values are not cached, so animate() will generate a new random
- * location for the passed node every time it is called. If you want a consistent value, wrap this
+ * location for the passed vertex every time it is called. If you want a consistent value, wrap this
  * // * layout's generated values in a instance.
  *
  * @author Tom Nelson
- * @param <N> the node type
+ * @param <V> the vertex type
  */
-public class RandomLocationTransformer<N> implements Function<N, Point> {
+public class RandomLocationTransformer<V> implements Function<V, Point> {
   protected double width;
   protected double height;
   protected Random random;
@@ -83,22 +83,22 @@ public class RandomLocationTransformer<N> implements Function<N, Point> {
     this.random = new Random(seed);
   }
 
-  private Point applyNE(N node) {
+  private Point applyNE(V vertex) {
     return Point.of(random.nextDouble() * width, random.nextDouble() * height);
   }
 
-  private Point applyCenter(N node) {
+  private Point applyCenter(V vertex) {
     double radiusX = width / 2;
     double radiusY = height / 2;
     return Point.of(random.nextDouble() * width - radiusX, random.nextDouble() * height - radiusY);
   }
 
   @Override
-  public Point apply(N node) {
+  public Point apply(V vertex) {
     if (this.origin == NE) {
-      return applyNE(node);
+      return applyNE(vertex);
     } else {
-      return applyCenter(node);
+      return applyCenter(vertex);
     }
   }
 }

@@ -21,13 +21,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Implements the Fruchterman-Reingold force-directed algorithm for node layout.
+ * Implements the Fruchterman-Reingold force-directed algorithm for vertex layout.
  *
  * <p>Behavior is determined by the following settable parameters:
  *
  * <ul>
- *   <li>attraction multiplier: how much edges try to keep their nodes together
- *   <li>repulsion multiplier: how much nodes try to push each other apart
+ *   <li>attraction multiplier: how much edges try to keep their vertices together
+ *   <li>repulsion multiplier: how much vertices try to push each other apart
  *   <li>maximum iterations: how many iterations this algorithm will use before stopping
  * </ul>
  *
@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  *     "http://i11www.ilkd.uni-karlsruhe.de/teaching/SS_04/visualisierung/papers/fruchterman91graph.pdf"
  * @author Scott White, Yan-Biao Boey, Danyel Fisher, Tom Nelson
  */
-public class FRLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
+public class FRLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
     implements IterativeContext {
 
   private static final Logger log = LoggerFactory.getLogger(FRLayoutAlgorithm.class);
@@ -51,11 +51,11 @@ public class FRLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
 
   private int mMaxIterations = 700;
 
-  protected LoadingCache<N, Point> frNodeData =
+  protected LoadingCache<V, Point> frVertexData =
       CacheBuilder.newBuilder()
           .build(
-              new CacheLoader<N, Point>() {
-                public Point load(N node) {
+              new CacheLoader<V, Point>() {
+                public Point load(V vertex) {
                   return Point.ORIGIN;
                 }
               });
@@ -75,33 +75,33 @@ public class FRLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
   protected StandardFRRepulsion.Builder repulsionContractBuilder;
   protected StandardFRRepulsion repulsionContract;
 
-  public static class Builder<N>
-      extends AbstractIterativeLayoutAlgorithm.Builder<N, FRLayoutAlgorithm<N>, Builder<N>> {
+  public static class Builder<V>
+      extends AbstractIterativeLayoutAlgorithm.Builder<V, FRLayoutAlgorithm<V>, Builder<V>> {
     private StandardFRRepulsion.Builder repulsionContractBuilder =
         new StandardFRRepulsion.Builder();
 
-    public Builder<N> repulsionContractBuilder(
+    public Builder<V> repulsionContractBuilder(
         StandardFRRepulsion.Builder repulsionContractBuilder) {
       this.repulsionContractBuilder = repulsionContractBuilder;
       return this;
     }
 
-    public FRLayoutAlgorithm<N> build() {
+    public FRLayoutAlgorithm<V> build() {
       return new FRLayoutAlgorithm(this);
     }
   }
 
-  public static <N> Builder<N> builder() {
+  public static <V> Builder<V> builder() {
     return new Builder<>();
   }
 
-  protected FRLayoutAlgorithm(Builder<N> builder) {
+  protected FRLayoutAlgorithm(Builder<V> builder) {
     super(builder);
     this.repulsionContractBuilder = builder.repulsionContractBuilder;
   }
 
   @Override
-  public void visit(LayoutModel<N> layoutModel) {
+  public void visit(LayoutModel<V> layoutModel) {
     if (log.isTraceEnabled()) {
       log.trace("visiting " + layoutModel);
     }
@@ -111,7 +111,7 @@ public class FRLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
     repulsionContract =
         repulsionContractBuilder
             .layoutModel(layoutModel)
-            .nodeData(frNodeData)
+            .nodeData(frVertexData)
             .repulsionConstant(repulsionConstant)
             .random(random)
             .build();
@@ -130,7 +130,7 @@ public class FRLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
   }
 
   private void doInit() {
-    Graph<N, ?> graph = layoutModel.getGraph();
+    Graph<V, ?> graph = layoutModel.getGraph();
     if (graph != null && graph.vertexSet().size() > 0) {
       currentIteration = 0;
       temperature = layoutModel.getWidth() / 10;
@@ -147,8 +147,8 @@ public class FRLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
   protected double EPSILON = 0.000001D;
 
   /**
-   * Moves the iteration forward one notch, calculation attraction and repulsion between nodes and
-   * edges and cooling the temperature.
+   * Moves the iteration forward one notch, calculation attraction and repulsion between vertices
+   * and edges and cooling the temperature.
    */
   @Override
   public synchronized void step() {
@@ -156,7 +156,7 @@ public class FRLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
     if (!initialized) {
       doInit();
     }
-    Graph<N, ?> graph = layoutModel.getGraph();
+    Graph<V, ?> graph = layoutModel.getGraph();
     currentIteration++;
 
     // Calculate repulsion
@@ -182,11 +182,11 @@ public class FRLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
 
     while (true) {
       try {
-        for (N node : graph.vertexSet()) {
-          if (layoutModel.isLocked(node)) {
+        for (V vertex : graph.vertexSet()) {
+          if (layoutModel.isLocked(vertex)) {
             continue;
           }
-          calcPositions(node);
+          calcPositions(vertex);
         }
         break;
       } catch (ConcurrentModificationException cme) {
@@ -195,13 +195,13 @@ public class FRLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
     cool();
   }
 
-  protected synchronized void calcPositions(N node) {
+  protected synchronized void calcPositions(V vertex) {
 
-    Point fvd = getFRData(node);
+    Point fvd = getFRData(vertex);
     if (fvd == null) {
       return;
     }
-    Point xyd = layoutModel.apply(node);
+    Point xyd = layoutModel.apply(vertex);
     double deltaLength = Math.max(EPSILON, fvd.length());
 
     double positionX = xyd.x;
@@ -225,22 +225,22 @@ public class FRLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
       positionY = layoutModel.getWidth() - borderWidth - random.nextDouble() * borderWidth * 2.0;
     }
 
-    layoutModel.set(node, positionX, positionY);
+    layoutModel.set(vertex, positionX, positionY);
   }
 
   protected void calcAttraction(Object edge) {
-    Graph<N, Object> graph = (Graph<N, Object>) layoutModel.getGraph();
-    N node1 = graph.getEdgeSource(edge);
-    N node2 = graph.getEdgeTarget(edge);
-    boolean v1_locked = layoutModel.isLocked(node1);
-    boolean v2_locked = layoutModel.isLocked(node2);
+    Graph<V, Object> graph = (Graph<V, Object>) layoutModel.getGraph();
+    V vertex1 = graph.getEdgeSource(edge);
+    V vertex2 = graph.getEdgeTarget(edge);
+    boolean v1_locked = layoutModel.isLocked(vertex1);
+    boolean v2_locked = layoutModel.isLocked(vertex2);
 
     if (v1_locked && v2_locked) {
       // both locked, do nothing
       return;
     }
-    Point p1 = layoutModel.apply(node1);
-    Point p2 = layoutModel.apply(node2);
+    Point p1 = layoutModel.apply(vertex1);
+    Point p2 = layoutModel.apply(vertex2);
     if (p1 == null || p2 == null) {
       return;
     }
@@ -257,12 +257,12 @@ public class FRLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
     double dx = (xDelta / deltaLength) * force;
     double dy = (yDelta / deltaLength) * force;
     if (!v1_locked) {
-      Point fvd1 = getFRData(node1);
-      frNodeData.put(node1, fvd1.add(-dx, -dy));
+      Point fvd1 = getFRData(vertex1);
+      frVertexData.put(vertex1, fvd1.add(-dx, -dy));
     }
     if (!v2_locked) {
-      Point fvd2 = getFRData(node2);
-      frNodeData.put(node2, fvd2.add(dx, dy));
+      Point fvd2 = getFRData(vertex2);
+      frVertexData.put(vertex2, fvd2.add(dx, dy));
     }
   }
 
@@ -274,8 +274,8 @@ public class FRLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
     mMaxIterations = maxIterations;
   }
 
-  protected Point getFRData(N node) {
-    return frNodeData.getUnchecked(node);
+  protected Point getFRData(V vertex) {
+    return frVertexData.getUnchecked(vertex);
   }
 
   @Override

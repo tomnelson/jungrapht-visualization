@@ -17,7 +17,7 @@ import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.jungrapht.visualization.layout.event.LayoutNodePositionChange;
+import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.spatial.rtree.TreeNode;
@@ -26,17 +26,17 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A Spatial Data Structure to optimize rendering performance. The SpatialGrid is used to determine
- * which graph nodes are actually visible for a given rendering situation. Only the visible nodes
- * are passed to the rendering pipeline. When used with Edges, only Edges with at least one visible
- * endpoint are passed to the rendering pipeline.
+ * which graph vertices are actually visible for a given rendering situation. Only the visible
+ * vertices are passed to the rendering pipeline. When used with Edges, only Edges with at least one
+ * visible endpoint are passed to the rendering pipeline.
  *
  * <p>See SimpleGraphSpatialTest (jung-samples) for a rendering that exposes the internals of the
  * SpatialGrid.
  *
  * @author Tom Nelson
  */
-public class SpatialGrid<N> extends AbstractSpatial<N, N>
-    implements Spatial<N>, TreeNode, LayoutNodePositionChange.Listener<N> {
+public class SpatialGrid<V> extends AbstractSpatial<V, V>
+    implements Spatial<V>, TreeNode, LayoutVertexPositionChange.Listener<V> {
 
   private static final Logger log = LoggerFactory.getLogger(SpatialGrid.class);
 
@@ -49,8 +49,8 @@ public class SpatialGrid<N> extends AbstractSpatial<N, N>
   /** the overall size of the area to be divided into a grid */
   private Dimension size;
 
-  /** A mapping of grid cell identified to a collection of contained nodes */
-  private final Multimap<Integer, N> map =
+  /** A mapping of grid cell identified to a collection of contained vertices */
+  private final Multimap<Integer, V> map =
       Multimaps.synchronizedListMultimap(ArrayListMultimap.create());
 
   /** the width of a grid cell */
@@ -69,7 +69,7 @@ public class SpatialGrid<N> extends AbstractSpatial<N, N>
    *
    * @param layoutModel
    */
-  public SpatialGrid(LayoutModel<N> layoutModel) {
+  public SpatialGrid(LayoutModel<V> layoutModel) {
     super(layoutModel);
     this.horizontalCount = 10;
     this.verticalCount = 10;
@@ -84,7 +84,7 @@ public class SpatialGrid<N> extends AbstractSpatial<N, N>
    * @param verticalCount how many tiles in a column
    */
   public SpatialGrid(
-      LayoutModel<N> layoutModel, Rectangle2D bounds, int horizontalCount, int verticalCount) {
+      LayoutModel<V> layoutModel, Rectangle2D bounds, int horizontalCount, int verticalCount) {
     super(layoutModel);
     this.horizontalCount = horizontalCount;
     this.verticalCount = verticalCount;
@@ -120,7 +120,7 @@ public class SpatialGrid<N> extends AbstractSpatial<N, N>
 
   @Override
   public TreeNode getContainingLeaf(Object element) {
-    for (Map.Entry<Integer, Collection<N>> entry : map.asMap().entrySet()) {
+    for (Map.Entry<Integer, Collection<V>> entry : map.asMap().entrySet()) {
       if (entry.getValue().contains(element)) {
         int index = entry.getKey();
         Rectangle2D r = (Rectangle2D) this.gridCache.get(index);
@@ -130,7 +130,7 @@ public class SpatialGrid<N> extends AbstractSpatial<N, N>
     return null;
   }
 
-  public static <N> List<Shape> getGrid(List<Shape> list, SpatialGrid<N> grid) {
+  public static <V> List<Shape> getGrid(List<Shape> list, SpatialGrid<V> grid) {
     list.addAll(grid.getGrid());
     return list;
   }
@@ -160,11 +160,11 @@ public class SpatialGrid<N> extends AbstractSpatial<N, N>
   }
 
   /**
-   * A Multimap of box number to Lists of nodes in that box
+   * A Multimap of box number to Lists of vertices in that box
    *
-   * @return the map of box numbers to contained nodes
+   * @return the map of box numbers to contained vertices
    */
-  public Multimap<Integer, N> getMap() {
+  public Multimap<Integer, V> getMap() {
     return map;
   }
 
@@ -286,16 +286,16 @@ public class SpatialGrid<N> extends AbstractSpatial<N, N>
   }
 
   /**
-   * Recalculate the contents of the Map of box number to contained Nodes
+   * Recalculate the contents of the Map of box number to contained Vertices
    *
-   * @param nodes the collection of nodes to update in the structure
+   * @param vertices the collection of vertices to update in the structure
    */
-  public void recalculate(Collection<N> nodes) {
+  public void recalculate(Collection<V> vertices) {
     clear();
     while (true) {
       try {
-        for (N node : nodes) {
-          this.map.put(this.getBoxNumberFromLocation(layoutModel.apply(node)), node);
+        for (V vertex : vertices) {
+          this.map.put(this.getBoxNumberFromLocation(layoutModel.apply(vertex)), vertex);
         }
         break;
       } catch (ConcurrentModificationException ex) {
@@ -305,12 +305,12 @@ public class SpatialGrid<N> extends AbstractSpatial<N, N>
   }
 
   /**
-   * update the location of a node in the map of box number to node lists
+   * update the location of a vertex in the map of box number to vertex lists
    *
-   * @param node the node to update in the structure
+   * @param vertex the vertex to update in the structure
    */
   @Override
-  public void update(N node, Point location) {
+  public void update(V vertex, Point location) {
     if (isActive()) {
       if (!this.getLayoutArea().contains(location.x, location.y)) {
         log.trace(location + " outside of spatial " + this.getLayoutArea());
@@ -318,40 +318,40 @@ public class SpatialGrid<N> extends AbstractSpatial<N, N>
         recalculate(layoutModel.getGraph().vertexSet());
       }
 
-      int rightBox = this.getBoxNumberFromLocation(layoutModel.apply(node));
-      // node should end up in box 'rightBox'
+      int rightBox = this.getBoxNumberFromLocation(layoutModel.apply(vertex));
+      // vertex should end up in box 'rightBox'
       // check to see if it is already there
-      if (map.get(rightBox).contains(node)) {
+      if (map.get(rightBox).contains(vertex)) {
         // nothing to do here, just return
         return;
       }
-      // remove node from the first (and only) wrong box it is found in
+      // remove vertex from the first (and only) wrong box it is found in
       Integer wrongBox = null;
       synchronized (map) {
         for (Integer box : map.keySet()) {
-          if (map.get(box).contains(node)) {
-            // remove it and stop, because node can be in only one box
+          if (map.get(box).contains(vertex)) {
+            // remove it and stop, because vertex can be in only one box
             wrongBox = box;
             break;
           }
         }
       }
       if (wrongBox != null) {
-        map.remove(wrongBox, node);
+        map.remove(wrongBox, vertex);
       }
-      map.put(rightBox, node);
+      map.put(rightBox, vertex);
     }
   }
 
   @Override
-  public N getClosestElement(Point2D p) {
+  public V getClosestElement(Point2D p) {
     return getClosestElement(p.getX(), p.getY());
   }
 
   @Override
-  public N getClosestElement(double x, double y) {
+  public V getClosestElement(double x, double y) {
     if (!isActive()) {
-      return fallback.getNode(layoutModel, x, y);
+      return fallback.getVertex(layoutModel, x, y);
     }
     Collection<TreeNode> leafs = getContainingLeafs(x, y);
     if (leafs.size() != 0) {
@@ -359,20 +359,20 @@ public class SpatialGrid<N> extends AbstractSpatial<N, N>
 
       Rectangle2D area = leaf.getBounds();
       double radius = area.getWidth();
-      N closest = null;
+      V closest = null;
       while (closest == null) {
 
         double diameter = radius * 2;
 
         Ellipse2D searchArea = new Ellipse2D.Double(x - radius, y - radius, diameter, diameter);
 
-        Collection<N> nodes = getVisibleElements(searchArea);
-        closest = getClosest(nodes, x, y, radius);
+        Collection<V> vertices = getVisibleElements(searchArea);
+        closest = getClosest(vertices, x, y, radius);
 
-        // if I have already considered all of the nodes in the graph
+        // if I have already considered all of the vertices in the graph
         // (in the spatialquadtree) there is no reason to enlarge the
         // area and try again
-        if (nodes.size() >= layoutModel.getGraph().vertexSet().size()) {
+        if (vertices.size() >= layoutModel.getGraph().vertexSet().size()) {
           break;
         }
         // double the search area size and try again
@@ -404,14 +404,14 @@ public class SpatialGrid<N> extends AbstractSpatial<N, N>
   }
 
   /**
-   * Given an area, return a collection of the nodes that are contained in it (the nodes that are
-   * contained in the boxes that intersect with the area)
+   * Given an area, return a collection of the vertices that are contained in it (the vertices that
+   * are contained in the boxes that intersect with the area)
    *
    * @param visibleArea a shape projected on the grid
-   * @return the nodes that should be visible
+   * @return the vertices that should be visible
    */
   @Override
-  public Set<N> getVisibleElements(Shape visibleArea) {
+  public Set<V> getVisibleElements(Shape visibleArea) {
     if (!isActive()) {
       log.trace("not active so getting from the graph");
       return layoutModel.getGraph().vertexSet();
@@ -423,21 +423,21 @@ public class SpatialGrid<N> extends AbstractSpatial<N, N>
     if (log.isTraceEnabled()) {
       log.trace("map is {}", map);
     }
-    Set<N> visibleNodes = Sets.newHashSet();
+    Set<V> visibleVertices = Sets.newHashSet();
     Collection<Integer> tiles = getVisibleTiles(area);
     for (Integer index : tiles) {
-      Collection<N> toAdd = this.map.get(index);
+      Collection<V> toAdd = this.map.get(index);
       if (toAdd.size() > 0) {
-        visibleNodes.addAll(toAdd);
+        visibleVertices.addAll(toAdd);
         if (log.isTraceEnabled()) {
-          log.trace("added all of: {} from index {} to visibleNodes", toAdd, index);
+          log.trace("added all of: {} from index {} to visibleVertices", toAdd, index);
         }
       }
     }
     if (log.isDebugEnabled()) {
-      log.debug("visibleNodes:{}", visibleNodes);
+      log.debug("visibleVertices:{}", visibleVertices);
     }
-    return visibleNodes;
+    return visibleVertices;
   }
 
   /** @return the layout area rectangle for this grid */
@@ -457,12 +457,12 @@ public class SpatialGrid<N> extends AbstractSpatial<N, N>
   }
 
   @Override
-  public void layoutNodePositionChanged(LayoutNodePositionChange.Event<N> evt) {
-    update(evt.node, evt.location);
+  public void layoutVertexPositionChanged(LayoutVertexPositionChange.Event<V> evt) {
+    update(evt.vertex, evt.location);
   }
 
   @Override
-  public void layoutNodePositionChanged(LayoutNodePositionChange.NetworkEvent<N> evt) {
-    update(evt.node, evt.location);
+  public void layoutVertexPositionChanged(LayoutVertexPositionChange.NetworkEvent<V> evt) {
+    update(evt.vertex, evt.location);
   }
 }

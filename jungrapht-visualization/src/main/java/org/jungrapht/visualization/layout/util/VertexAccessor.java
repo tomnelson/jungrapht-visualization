@@ -6,7 +6,6 @@
  * or https://github.com/tomnelson/jungrapht-visualization/blob/master/LICENSE for a description.
  *
  *
- * Created on Apr 12, 2005
  */
 package org.jungrapht.visualization.layout.util;
 
@@ -14,26 +13,25 @@ import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 
 /**
- * Interface for coordinate-based selection of graph nodes.
+ * Interface for coordinate-based selection of graph vertices.
  *
  * @author Tom Nelson
- * @author Joshua O'Madadhain
  */
-public interface NetworkNodeAccessor<N> {
+public interface VertexAccessor<V> {
 
   /**
    * @param layoutModel
    * @param p the pick point
-   * @return the node associated with the pick point
+   * @return the vertex associated with the pick point
    */
-  N getNode(LayoutModel<N> layoutModel, Point p);
+  V getVertex(LayoutModel<V> layoutModel, Point p);
 
   /**
-   * Returns the node, if any, associated with (x, y).
+   * Returns the vertex, if any, associated with (x, y).
    *
    * @param x the x coordinate of the pick point
    * @param y the y coordinate of the pick point
-   * @return the node associated with (x, y)
+   * @return the vertex associated with (x, y)
    */
-  N getNode(LayoutModel<N> layoutModel, double x, double y);
+  V getVertex(LayoutModel<V> layoutModel, double x, double y);
 }

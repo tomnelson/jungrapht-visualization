@@ -8,24 +8,24 @@ import org.jungrapht.visualization.layout.model.Point;
 
 /**
  * @author Tom Nelson
- * @param <N> the node type
+ * @param <V> the vertex type
  * @param <R> the Repulsion type
  * @param <B> the Repulsion Builder type
  */
 public class StandardFRRepulsion<
-        N, R extends StandardFRRepulsion<N, R, B>, B extends StandardFRRepulsion.Builder<N, R, B>>
-    implements StandardRepulsion<N, R, B> {
+        V, R extends StandardFRRepulsion<V, R, B>, B extends StandardFRRepulsion.Builder<V, R, B>>
+    implements StandardRepulsion<V, R, B> {
 
-  public static class Builder<N, R extends StandardFRRepulsion<N, R, B>, B extends Builder<N, R, B>>
-      implements StandardRepulsion.Builder<N, R, B> {
+  public static class Builder<V, R extends StandardFRRepulsion<V, R, B>, B extends Builder<V, R, B>>
+      implements StandardRepulsion.Builder<V, R, B> {
 
-    protected LoadingCache<N, Point> frNodeData;
+    protected LoadingCache<V, Point> frVertexData;
     protected double repulsionConstant;
     protected Random random = new Random();
-    protected LayoutModel<N> layoutModel;
+    protected LayoutModel<V> layoutModel;
 
-    public B nodeData(LoadingCache<N, Point> frNodeData) {
-      this.frNodeData = frNodeData;
+    public B nodeData(LoadingCache<V, Point> frVertexData) {
+      this.frVertexData = frVertexData;
       return (B) this;
     }
 
@@ -35,7 +35,7 @@ public class StandardFRRepulsion<
     }
 
     @Override
-    public B layoutModel(LayoutModel<N> layoutModel) {
+    public B layoutModel(LayoutModel<V> layoutModel) {
       this.layoutModel = layoutModel;
       return (B) this;
     }
@@ -51,20 +51,20 @@ public class StandardFRRepulsion<
     }
   }
 
-  protected LoadingCache<N, Point> frNodeData;
+  protected LoadingCache<V, Point> frVertexData;
   protected double repulsionConstant;
   protected double EPSILON = 0.000001D;
   protected Random random = new Random();
-  protected LayoutModel<N> layoutModel;
+  protected LayoutModel<V> layoutModel;
 
   public static Builder standardBuilder() {
     return new Builder();
   }
 
-  protected StandardFRRepulsion(Builder<N, R, B> builder) {
+  protected StandardFRRepulsion(Builder<V, R, B> builder) {
     this.layoutModel = builder.layoutModel;
     this.random = builder.random;
-    this.frNodeData = builder.frNodeData;
+    this.frVertexData = builder.frVertexData;
     this.repulsionConstant = builder.repulsionConstant;
   }
 
@@ -76,20 +76,20 @@ public class StandardFRRepulsion<
 
   @Override
   public void calculateRepulsion() {
-    for (N node1 : layoutModel.getGraph().vertexSet()) {
-      Point fvd1 = frNodeData.getUnchecked(node1);
+    for (V vertex1 : layoutModel.getGraph().vertexSet()) {
+      Point fvd1 = frVertexData.getUnchecked(vertex1);
       if (fvd1 == null) {
         return;
       }
-      frNodeData.put(node1, Point.ORIGIN);
+      frVertexData.put(vertex1, Point.ORIGIN);
 
       try {
-        for (N node2 : layoutModel.getGraph().vertexSet()) {
+        for (V vertex2 : layoutModel.getGraph().vertexSet()) {
 
-          if (node1 != node2) {
-            fvd1 = frNodeData.getUnchecked(node1);
-            Point p1 = layoutModel.apply(node1);
-            Point p2 = layoutModel.apply(node2);
+          if (vertex1 != vertex2) {
+            fvd1 = frVertexData.getUnchecked(vertex1);
+            Point p1 = layoutModel.apply(vertex1);
+            Point p2 = layoutModel.apply(vertex2);
             if (p1 == null || p2 == null) {
               continue;
             }
@@ -106,7 +106,7 @@ public class StandardFRRepulsion<
                   "Unexpected mathematical result in FRLayout:calcPositions [repulsion]");
             }
             fvd1 = fvd1.add((xDelta / deltaLength) * force, (yDelta / deltaLength) * force);
-            frNodeData.put(node1, fvd1);
+            frVertexData.put(vertex1, fvd1);
           }
         }
       } catch (ConcurrentModificationException cme) {

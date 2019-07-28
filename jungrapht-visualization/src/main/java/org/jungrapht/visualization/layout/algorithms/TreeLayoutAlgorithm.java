@@ -28,28 +28,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** @author Tom Nelson */
-public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
+public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
 
   private static final Logger log = LoggerFactory.getLogger(TreeLayoutAlgorithm.class);
 
-  public static class Builder<N, T extends TreeLayoutAlgorithm<N>, B extends Builder<N, T, B>> {
-    protected int horizontalNodeSpacing = DEFAULT_HORIZONTAL_NODE_SPACING;
-    protected int verticalNodeSpacing = DEFAULT_VERTICAL_NODE_SPACING;
+  public static class Builder<V, T extends TreeLayoutAlgorithm<V>, B extends Builder<V, T, B>> {
+    protected int horizontalVertexSpacing = DEFAULT_HORIZONTAL_VERTEX_SPACING;
+    protected int verticalVertexSpacing = DEFAULT_VERTICAL_VERTEX_SPACING;
 
     protected B self() {
       return (B) this;
     }
 
-    public B horizontalNodeSpacing(int horizontalNodeSpacing) {
+    public B horizontalVertexSpacing(int horizontalVertexSpacing) {
       Preconditions.checkArgument(
-          horizontalNodeSpacing > 0, "horizontalNodeSpacing must be positive");
-      this.horizontalNodeSpacing = horizontalNodeSpacing;
+          horizontalVertexSpacing > 0, "horizontalVertexSpacing must be positive");
+      this.horizontalVertexSpacing = horizontalVertexSpacing;
       return self();
     }
 
-    public B verticalNodeSpacing(int verticalNodeSpacing) {
-      Preconditions.checkArgument(verticalNodeSpacing > 0, "verticalNodeSpacing must be positive");
-      this.verticalNodeSpacing = verticalNodeSpacing;
+    public B verticalVertexSpacing(int verticalVertexSpacing) {
+      Preconditions.checkArgument(
+          verticalVertexSpacing > 0, "verticalVertexSpacing must be positive");
+      this.verticalVertexSpacing = verticalVertexSpacing;
       return self();
     }
 
@@ -58,67 +59,67 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
     }
   }
 
-  public static <N> Builder<N, ?, ?> builder() {
+  public static <V> Builder<V, ?, ?> builder() {
     return new Builder<>();
   }
 
-  protected TreeLayoutAlgorithm(Builder<N, ?, ?> builder) {
-    this(builder.horizontalNodeSpacing, builder.verticalNodeSpacing);
+  protected TreeLayoutAlgorithm(Builder<V, ?, ?> builder) {
+    this(builder.horizontalVertexSpacing, builder.verticalVertexSpacing);
   }
 
   /**
    * Creates an instance for the specified graph, X distance, and Y distance.
    *
-   * @param horizontalNodeSpacing the horizontal spacing between adjacent siblings
-   * @param verticalNodeSpacing the vertical spacing between adjacent siblings
+   * @param horizontalVertexSpacing the horizontal spacing between adjacent siblings
+   * @param verticalVertexSpacing the vertical spacing between adjacent siblings
    */
-  protected TreeLayoutAlgorithm(int horizontalNodeSpacing, int verticalNodeSpacing) {
-    this.horizontalNodeSpacing = horizontalNodeSpacing;
-    this.verticalNodeSpacing = verticalNodeSpacing;
+  protected TreeLayoutAlgorithm(int horizontalVertexSpacing, int verticalVertexSpacing) {
+    this.horizontalVertexSpacing = horizontalVertexSpacing;
+    this.verticalVertexSpacing = verticalVertexSpacing;
   }
 
-  protected Map<N, Integer> basePositions = new HashMap<>();
+  protected Map<V, Integer> basePositions = new HashMap<>();
 
-  protected transient Set<N> alreadyDone = new HashSet<>();
+  protected transient Set<V> alreadyDone = new HashSet<>();
 
-  /** The default horizontal node spacing. Initialized to 50. */
-  protected static final int DEFAULT_HORIZONTAL_NODE_SPACING = 50;
+  /** The default horizontal vertex spacing. Initialized to 50. */
+  protected static final int DEFAULT_HORIZONTAL_VERTEX_SPACING = 50;
 
-  /** The default vertical node spacing. Initialized to 50. */
-  protected static final int DEFAULT_VERTICAL_NODE_SPACING = 50;
+  /** The default vertical vertex spacing. Initialized to 50. */
+  protected static final int DEFAULT_VERTICAL_VERTEX_SPACING = 50;
 
-  /** The horizontal node spacing. Defaults to {@code DEFAULT_HORIZONTAL_NODE_SPACING}. */
-  protected int horizontalNodeSpacing = DEFAULT_HORIZONTAL_NODE_SPACING;
+  /** The horizontal vertex spacing. Defaults to {@code DEFAULT_HORIZONTAL_VERTEX_SPACING}. */
+  protected int horizontalVertexSpacing = DEFAULT_HORIZONTAL_VERTEX_SPACING;
 
-  /** The vertical node spacing. Defaults to {@code DEFAULT_VERTICAL_NODE_SPACING}. */
-  protected int verticalNodeSpacing = DEFAULT_VERTICAL_NODE_SPACING;
+  /** The vertical vertex spacing. Defaults to {@code DEFAULT_VERTICAL_VERTEX_SPACING}. */
+  protected int verticalVertexSpacing = DEFAULT_VERTICAL_VERTEX_SPACING;
 
   @Override
-  public void visit(LayoutModel<N> layoutModel) {
+  public void visit(LayoutModel<V> layoutModel) {
     buildTree(layoutModel);
   }
 
   /**
-   * @param layoutModel the model to hold node positions
-   * @return the roots nodes of the tree
+   * @param layoutModel the model to hold vertex positions
+   * @return the roots vertices of the tree
    */
-  protected Set<N> buildTree(LayoutModel<N> layoutModel) {
+  protected Set<V> buildTree(LayoutModel<V> layoutModel) {
     alreadyDone = Sets.newHashSet();
-    Set<N> roots =
+    Set<V> roots =
         layoutModel
             .getGraph()
             .vertexSet()
             .stream()
-            .filter(node -> Graphs.predecessorListOf(layoutModel.getGraph(), node).isEmpty())
+            .filter(vertex -> Graphs.predecessorListOf(layoutModel.getGraph(), vertex).isEmpty())
             .collect(toImmutableSet());
 
     Preconditions.checkArgument(roots.size() > 0);
-    // the width of the tree under 'roots'. Includes one 'horizontalNodeSpacing' per child node
+    // the width of the tree under 'roots'. Includes one 'horizontalVertexSpacing' per child vertex
     int overallWidth = calculateWidth(layoutModel, roots, new HashSet<>());
-    // add one additional 'horizontalNodeSpacing' for each tree (each root) + 1
-    overallWidth += (roots.size() + 1) * horizontalNodeSpacing;
+    // add one additional 'horizontalVertexSpacing' for each tree (each root) + 1
+    overallWidth += (roots.size() + 1) * horizontalVertexSpacing;
     int overallHeight = calculateHeight(layoutModel, roots);
-    overallHeight += 2 * verticalNodeSpacing;
+    overallHeight += 2 * verticalVertexSpacing;
 
     log.trace("layoutModel.getWidth() {}", layoutModel.getWidth());
     log.trace("overallWidth {}", overallWidth);
@@ -128,107 +129,108 @@ public class TreeLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
     log.trace("layoutModel.getHeight() {}", layoutModel.getHeight());
     log.trace("overallHeight {}", overallHeight);
 
-    int x = horizontalNodeSpacing;
+    int x = horizontalVertexSpacing;
     int y = getInitialY(layoutModel.getHeight(), overallHeight);
     log.trace("got initial y of {}", y);
 
-    Set<N> seen = new HashSet<>();
-    for (N node : roots) {
-      int w = this.basePositions.get(node);
-      log.trace("w is {} and basePositions.get(node) = {}", w, basePositions.get(node));
+    Set<V> seen = new HashSet<>();
+    for (V vertex : roots) {
+      int w = this.basePositions.get(vertex);
+      log.trace("w is {} and basePositions.get(vertex) = {}", w, basePositions.get(vertex));
       x += w / 2;
-      log.trace("currentX after node {} is now {}", node, x);
-      buildTree(layoutModel, node, x, y);
-      x += w / 2 + horizontalNodeSpacing;
+      log.trace("currentX after vertex {} is now {}", vertex, x);
+      buildTree(layoutModel, vertex, x, y);
+      x += w / 2 + horizontalVertexSpacing;
     }
     return roots;
   }
 
   protected int getInitialY(int layoutHeight, int treeHeight) {
     if (layoutHeight == treeHeight) {
-      return this.verticalNodeSpacing;
+      return this.verticalVertexSpacing;
     }
     return layoutHeight / 2 - treeHeight / 2;
   }
 
-  protected void buildTree(LayoutModel<N> layoutModel, N node, int x, int y) {
-    if (alreadyDone.add(node)) {
+  protected void buildTree(LayoutModel<V> layoutModel, V vertex, int x, int y) {
+    if (alreadyDone.add(vertex)) {
       //go one level further down
-      y += this.verticalNodeSpacing;
-      log.trace("Set node {} to {}", node, Point.of(x, y));
-      layoutModel.set(node, x, y);
+      y += this.verticalVertexSpacing;
+      log.trace("Set vertex {} to {}", vertex, Point.of(x, y));
+      layoutModel.set(vertex, x, y);
 
-      int sizeXofCurrent = basePositions.get(node);
+      int sizeXofCurrent = basePositions.get(vertex);
       x -= sizeXofCurrent / 2;
 
-      for (N element : Graphs.successorListOf(layoutModel.getGraph(), node)) {
+      for (V element : Graphs.successorListOf(layoutModel.getGraph(), vertex)) {
         int sizeXofChild = this.basePositions.get(element);
         x += sizeXofChild / 2;
         buildTree(layoutModel, element, x, y);
-        x += sizeXofChild / 2 + horizontalNodeSpacing;
+        x += sizeXofChild / 2 + horizontalVertexSpacing;
       }
     }
   }
 
-  protected int calculateWidth(LayoutModel<N> layoutModel, N node, Set<N> seen) {
+  protected int calculateWidth(LayoutModel<V> layoutModel, V vertex, Set<V> seen) {
 
-    Graph<N, ?> graph = layoutModel.getGraph();
+    Graph<V, ?> graph = layoutModel.getGraph();
     log.trace("graph is {}", graph);
-    List<N> successors = Graphs.successorListOf(graph, node);
-    log.trace("successors of {} are {}", node, successors);
+    List<V> successors = Graphs.successorListOf(graph, vertex);
+    log.trace("successors of {} are {}", vertex, successors);
     successors.removeIf(seen::contains);
-    log.trace("filtered successors of {} are {}", node, successors);
+    log.trace("filtered successors of {} are {}", vertex, successors);
     seen.addAll(successors);
 
     int size =
         successors
             .stream()
-            .mapToInt(element -> calculateWidth(layoutModel, element, seen) + horizontalNodeSpacing)
+            .mapToInt(
+                element -> calculateWidth(layoutModel, element, seen) + horizontalVertexSpacing)
             .sum();
-    size = Math.max(0, size - horizontalNodeSpacing);
-    log.trace("calcWidth basePositions put {} {}", node, size);
-    basePositions.put(node, size);
+    size = Math.max(0, size - horizontalVertexSpacing);
+    log.trace("calcWidth basePositions put {} {}", vertex, size);
+    basePositions.put(vertex, size);
 
     return size;
   }
 
-  protected int calculateWidth(LayoutModel<N> layoutModel, Collection<N> roots, Set<N> seen) {
-    int width = roots.stream().mapToInt(node -> calculateWidth(layoutModel, node, seen)).sum();
+  protected int calculateWidth(LayoutModel<V> layoutModel, Collection<V> roots, Set<V> seen) {
+    int width = roots.stream().mapToInt(vertex -> calculateWidth(layoutModel, vertex, seen)).sum();
     log.trace("entire width from {} is {}", roots, width);
     //    log.info("basePositions {}", basePositions);
     return width;
   }
 
-  protected int calculateHeight(LayoutModel<N> layoutModel, N node, Set<N> seen) {
+  protected int calculateHeight(LayoutModel<V> layoutModel, V vertex, Set<V> seen) {
 
-    Graph<N, ?> graph = layoutModel.getGraph();
-    List<N> successors = Graphs.successorListOf(graph, node);
+    Graph<V, ?> graph = layoutModel.getGraph();
+    List<V> successors = Graphs.successorListOf(graph, vertex);
     log.trace("graph is {}", graph);
-    log.trace("h successors of {} are {}", node, successors);
+    log.trace("h successors of {} are {}", vertex, successors);
     successors.removeIf(seen::contains);
-    log.trace("filtered h successors of {} are {}", node, successors);
+    log.trace("filtered h successors of {} are {}", vertex, successors);
 
     seen.addAll(successors);
 
     return successors
         .stream()
-        .mapToInt(element -> calculateHeight(layoutModel, element, seen) + verticalNodeSpacing)
+        .mapToInt(element -> calculateHeight(layoutModel, element, seen) + verticalVertexSpacing)
         .max()
         .orElse(0);
   }
 
-  protected int calculateHeight(LayoutModel<N> layoutModel, Collection<N> roots) {
+  protected int calculateHeight(LayoutModel<V> layoutModel, Collection<V> roots) {
 
     return roots
             .stream()
-            .mapToInt(node -> calculateHeight(layoutModel, node, new HashSet<N>()))
+            .mapToInt(vertex -> calculateHeight(layoutModel, vertex, new HashSet<V>()))
             .max()
-            .orElse(verticalNodeSpacing)
-        + verticalNodeSpacing;
+            .orElse(verticalVertexSpacing)
+        + verticalVertexSpacing;
   }
 
   /** @return the center of this layout's area. */
-  public Point getCenter(LayoutModel<N> layoutModel) {
+  public Point getCenter(LayoutModel<V> layoutModel) {
     return Point.of(layoutModel.getWidth() / 2, layoutModel.getHeight() / 2);
   }
 }

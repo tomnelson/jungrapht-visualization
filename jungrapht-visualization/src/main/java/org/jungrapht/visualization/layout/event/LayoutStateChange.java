@@ -97,7 +97,7 @@ public interface LayoutStateChange {
    * the event payload produced by this event model and consumed by its Listener consumers. Contains
    * a reference to the LayoutModel and a boolean flag indicating whether the LayoutModel is
    * currently active or not. The LayoutModel is considered active when a relaxer thread is applying
-   * a LayoutAlgorithm to change Node positions
+   * a LayoutAlgorithm to change Vertex positions
    */
   class Event {
     public final LayoutModel layoutModel;

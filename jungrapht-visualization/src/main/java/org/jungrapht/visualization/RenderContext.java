@@ -11,21 +11,21 @@ import javax.swing.CellRendererPane;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import org.jgrapht.Graph;
-import org.jungrapht.visualization.layout.NetworkElementAccessor;
+import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.renderers.EdgeLabelRenderer;
-import org.jungrapht.visualization.renderers.NodeLabelRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
+import org.jungrapht.visualization.renderers.VertexLabelRenderer;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.util.Context;
 import org.jungrapht.visualization.util.EdgeIndexFunction;
 
 /**
- * @param <N>
+ * @param <V>
  * @param <E>
  * @author Tom Nelson
  */
-public interface RenderContext<N, E> {
+public interface RenderContext<V, E> {
 
   float[] dotting = {1.0f, 3.0f};
   float[] dashing = {5.0f};
@@ -94,9 +94,9 @@ public interface RenderContext<N, E> {
 
   void setArrowFillPaintFunction(Function<E, Paint> arrowFillPaintFunction);
 
-  Function<Context<Graph<N, E>, E>, Shape> getEdgeShapeFunction();
+  Function<Context<Graph<V, E>, E>, Shape> getEdgeShapeFunction();
 
-  void setEdgeShapeFunction(Function<Context<Graph<N, E>, E>, Shape> edgeShapeFunction);
+  void setEdgeShapeFunction(Function<Context<Graph<V, E>, E>, Shape> edgeShapeFunction);
 
   Function<E, String> getEdgeLabelFunction();
 
@@ -114,17 +114,17 @@ public interface RenderContext<N, E> {
 
   void setGraphicsContext(GraphicsDecorator graphicsContext);
 
-  EdgeIndexFunction<N, E> getParallelEdgeIndexFunction();
+  EdgeIndexFunction<V, E> getParallelEdgeIndexFunction();
 
-  void setParallelEdgeIndexFunction(EdgeIndexFunction<N, E> parallelEdgeIndexFunction);
+  void setParallelEdgeIndexFunction(EdgeIndexFunction<V, E> parallelEdgeIndexFunction);
 
   MutableSelectedState<E> getSelectedEdgeState();
 
   void setSelectedEdgeState(MutableSelectedState<E> selectedEdgeState);
 
-  MutableSelectedState<N> getSelectedNodeState();
+  MutableSelectedState<V> getSelectedVertexState();
 
-  void setSelectedNodeState(MutableSelectedState<N> selectedNodeState);
+  void setSelectedVertexState(MutableSelectedState<V> selectedVertexState);
 
   CellRendererPane getRendererPane();
 
@@ -134,45 +134,45 @@ public interface RenderContext<N, E> {
 
   void setScreenDevice(JComponent screenDevice);
 
-  Function<N, Font> getNodeFontFunction();
+  Function<V, Font> getVertexFontFunction();
 
-  void setNodeFontFunction(Function<N, Font> nodeFontFunction);
+  void setVertexFontFunction(Function<V, Font> vertexFontFunction);
 
-  Function<N, Icon> getNodeIconFunction();
+  Function<V, Icon> getVertexIconFunction();
 
-  void setNodeIconFunction(Function<N, Icon> nodeIconFunction);
+  void setVertexIconFunction(Function<V, Icon> vertexIconFunction);
 
-  Predicate<N> getNodeIncludePredicate();
+  Predicate<V> getVertexIncludePredicate();
 
-  void setNodeIncludePredicate(Predicate<N> nodeIncludePredicate);
+  void setVertexIncludePredicate(Predicate<V> vertexIncludePredicate);
 
-  NodeLabelRenderer getNodeLabelRenderer();
+  VertexLabelRenderer getVertexLabelRenderer();
 
-  void setNodeLabelRenderer(NodeLabelRenderer nodeLabelRenderer);
+  void setVertexLabelRenderer(VertexLabelRenderer vertexLabelRenderer);
 
-  Function<N, Paint> getNodeFillPaintFunction();
+  Function<V, Paint> getVertexFillPaintFunction();
 
-  void setNodeFillPaintFunction(Function<N, Paint> nodeFillPaintFunction);
+  void setVertexFillPaintFunction(Function<V, Paint> vertexFillPaintFunction);
 
-  Function<N, Paint> getNodeDrawPaintFunction();
+  Function<V, Paint> getVertexDrawPaintFunction();
 
-  void setNodeDrawPaintFunction(Function<N, Paint> nodeDrawPaintFunction);
+  void setVertexDrawPaintFunction(Function<V, Paint> vertexDrawPaintFunction);
 
-  Function<N, Shape> getNodeShapeFunction();
+  Function<V, Shape> getVertexShapeFunction();
 
-  void setNodeShapeFunction(Function<N, Shape> nodeShapeFunction);
+  void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction);
 
-  Function<N, String> getNodeLabelFunction();
+  Function<V, String> getVertexLabelFunction();
 
-  void setNodeLabelFunction(Function<N, String> nodeStringer);
+  void setVertexLabelFunction(Function<V, String> vertexStringer);
 
-  Function<N, Paint> getNodeLabelDrawPaintFunction();
+  Function<V, Paint> getVertexLabelDrawPaintFunction();
 
-  void setNodeLabelDrawPaintFunction(Function<N, Paint> nodeLabelDrawPaintFunction);
+  void setVertexLabelDrawPaintFunction(Function<V, Paint> vertexLabelDrawPaintFunction);
 
-  Function<N, Stroke> getNodeStrokeFunction();
+  Function<V, Stroke> getVertexStrokeFunction();
 
-  void setNodeStrokeFunction(Function<N, Stroke> nodeStrokeFunction);
+  void setVertexStrokeFunction(Function<V, Stroke> vertexStrokeFunction);
 
   class DirectedEdgeArrowPredicate implements Predicate<Graph<?, ?>> {
 
@@ -193,12 +193,12 @@ public interface RenderContext<N, E> {
   void setMultiLayerTransformer(MultiLayerTransformer basicTransformer);
 
   /** @return the pickSupport */
-  NetworkElementAccessor<N, E> getPickSupport();
+  GraphElementAccessor<V, E> getPickSupport();
 
   /** @param pickSupport the pickSupport to set */
-  void setPickSupport(NetworkElementAccessor<N, E> pickSupport);
+  void setPickSupport(GraphElementAccessor<V, E> pickSupport);
 
-  Renderer.NodeLabel.Position getNodeLabelPosition();
+  Renderer.VertexLabel.Position getVertexLabelPosition();
 
-  void setNodeLabelPosition(Renderer.NodeLabel.Position position);
+  void setVertexLabelPosition(Renderer.VertexLabel.Position position);
 }

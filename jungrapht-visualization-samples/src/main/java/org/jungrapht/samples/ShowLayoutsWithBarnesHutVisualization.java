@@ -46,8 +46,8 @@ import org.jungrapht.visualization.layout.quadtree.Node;
 /**
  * This demo is adapted from ShowLayouts, but when a LayoutAlgorithm that uses the BarnesHutOctTree
  * is selected, the Barnes-Hut structure is drawn on the view under the Graph. For the most dramatic
- * effect, choose the SpringBHVisitorLayoutAlgorithm, then, in picking mode, drag a node or nodes
- * around to watch the Barnes Hut Tree rebuild itself.
+ * effect, choose the SpringBHVisitorLayoutAlgorithm, then, in picking mode, drag a vertex or
+ * vertices around to watch the Barnes Hut Tree rebuild itself.
  *
  * @author Tom Nelson
  */
@@ -70,7 +70,7 @@ public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
 
     g_array = new Graph[graph_names.length];
 
-    Supplier<Integer> nodeFactory =
+    Supplier<Integer> NodeFactory =
         new Supplier<Integer>() {
           int count;
 
@@ -114,18 +114,18 @@ public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
 
     vv.setBackground(Color.white);
 
-    vv.getRenderContext().setNodeLabelFunction(Object::toString);
-    //    vv.getRenderContext().setNodeLabelPosition(Renderer.NodeLabel.Position.CNTR);
+    vv.getRenderContext().setVertexLabelFunction(Object::toString);
+    //    vv.getRenderContext().setVertexLabelPosition(Renderer.NodeLabel.Position.CNTR);
 
     final DefaultModalGraphMouse<Integer, Number> graphMouse = new DefaultModalGraphMouse<>();
     vv.setGraphMouse(graphMouse);
 
     // this reinforces that the generics (or lack of) declarations are correct
-    vv.setNodeToolTipFunction(
-        node ->
-            node.toString()
+    vv.setVertexToolTipFunction(
+        vertex ->
+            vertex.toString()
                 + ". with neighbors:"
-                + Graphs.neighborListOf(vv.getModel().getNetwork(), node));
+                + Graphs.neighborListOf(vv.getModel().getGraph(), vertex));
 
     final ScalingControl scaler = new CrossoverScalingControl();
 
@@ -154,7 +154,7 @@ public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
                   if (layoutAlgorithm instanceof TreeLayoutAlgorithm) {
                     LayoutModel positionModel =
                         this.getTreeLayoutPositions(
-                            SpanningTreeAdapter.getSpanningTree(vv.getModel().getNetwork()),
+                            SpanningTreeAdapter.getSpanningTree(vv.getModel().getGraph()),
                             layoutAlgorithm);
                     vv.getModel().getLayoutModel().setInitializer(positionModel);
                     layoutAlgorithm = new StaticLayoutAlgorithm();
@@ -184,9 +184,9 @@ public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
             SwingUtilities.invokeLater(
                 () -> {
                   graph_index = graph_chooser.getSelectedIndex();
-                  vv.getNodeSpatial().clear();
+                  vv.getVertexSpatial().clear();
                   vv.getEdgeSpatial().clear();
-                  vv.getModel().setNetwork(g_array[graph_index]);
+                  vv.getModel().setGraph(g_array[graph_index]);
                 }));
 
     topControls.add(jcb);

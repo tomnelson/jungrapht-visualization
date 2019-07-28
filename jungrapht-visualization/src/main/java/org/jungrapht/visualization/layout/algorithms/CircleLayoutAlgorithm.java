@@ -21,18 +21,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@code Layout} implementation that positions nodes equally spaced on a regular circle.
+ * A {@code Layout} implementation that positions vertices equally spaced on a regular circle.
  *
  * @author Masanori Harada
  * @author Tom Nelson - adapted to an algorithm
  */
-public class CircleLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
+public class CircleLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
 
   private static final Logger log = LoggerFactory.getLogger(CircleLayoutAlgorithm.class);
   private double radius;
-  private List<N> nodeOrderedList;
+  private List<V> vertexOrderedList;
 
-  public static class Builder<N> {
+  public static class Builder<V> {
     protected int radius;
 
     public Builder radius(int radius) {
@@ -40,7 +40,7 @@ public class CircleLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
       return this;
     }
 
-    public CircleLayoutAlgorithm<N> build() {
+    public CircleLayoutAlgorithm<V> build() {
       return new CircleLayoutAlgorithm(this);
     }
   }
@@ -49,7 +49,7 @@ public class CircleLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
     return new Builder<>();
   }
 
-  protected CircleLayoutAlgorithm(Builder<N> builder) {
+  protected CircleLayoutAlgorithm(Builder<V> builder) {
     this(builder.radius);
   }
 
@@ -74,34 +74,34 @@ public class CircleLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
   }
 
   /**
-   * Sets the order of the nodes in the layout according to the ordering specified by {@code
+   * Sets the order of the vertices in the layout according to the ordering specified by {@code
    * comparator}.
    *
-   * @param comparator the comparator to use to order the nodes
+   * @param comparator the comparator to use to order the vertices
    */
-  public void setNodeOrder(LayoutModel<N> layoutModel, Comparator<N> comparator) {
-    if (nodeOrderedList == null) {
-      nodeOrderedList = new ArrayList<>(layoutModel.getGraph().vertexSet());
+  public void setVertexOrder(LayoutModel<V> layoutModel, Comparator<V> comparator) {
+    if (vertexOrderedList == null) {
+      vertexOrderedList = new ArrayList<>(layoutModel.getGraph().vertexSet());
     }
-    nodeOrderedList.sort(comparator);
+    vertexOrderedList.sort(comparator);
   }
 
   /**
-   * Sets the order of the nodes in the layout according to the ordering of {@code node_list}.
+   * Sets the order of the vertices in the layout according to the ordering of {@code vertex_list}.
    *
-   * @param node_list a list specifying the ordering of the nodes
+   * @param vertex_list a list specifying the ordering of the vertices
    */
-  public void setNodeOrder(LayoutModel<N> layoutModel, List<N> node_list) {
+  public void setVertexOrder(LayoutModel<V> layoutModel, List<V> vertex_list) {
     Preconditions.checkArgument(
-        node_list.containsAll(layoutModel.getGraph().vertexSet()),
-        "Supplied list must include all nodes of the graph");
-    this.nodeOrderedList = node_list;
+        vertex_list.containsAll(layoutModel.getGraph().vertexSet()),
+        "Supplied list must include all vertices of the graph");
+    this.vertexOrderedList = vertex_list;
   }
 
   @Override
-  public void visit(LayoutModel<N> layoutModel) {
+  public void visit(LayoutModel<V> layoutModel) {
     if (layoutModel != null) {
-      setNodeOrder(layoutModel, new ArrayList<>(layoutModel.getGraph().vertexSet()));
+      setVertexOrder(layoutModel, new ArrayList<>(layoutModel.getGraph().vertexSet()));
 
       double height = layoutModel.getHeight();
       double width = layoutModel.getWidth();
@@ -111,14 +111,14 @@ public class CircleLayoutAlgorithm<N> implements LayoutAlgorithm<N> {
       }
 
       int i = 0;
-      for (N node : nodeOrderedList) {
+      for (V vertex : vertexOrderedList) {
 
-        double angle = (2 * Math.PI * i) / nodeOrderedList.size();
+        double angle = (2 * Math.PI * i) / vertexOrderedList.size();
 
         double posX = Math.cos(angle) * radius + width / 2;
         double posY = Math.sin(angle) * radius + height / 2;
-        layoutModel.set(node, posX, posY);
-        log.trace("set {} to {},{} ", node, posX, posY);
+        layoutModel.set(vertex, posX, posY);
+        log.trace("set {} to {},{} ", vertex, posX, posY);
 
         i++;
       }

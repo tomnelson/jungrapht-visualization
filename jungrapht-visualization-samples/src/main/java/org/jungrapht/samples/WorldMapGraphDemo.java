@@ -31,8 +31,8 @@ import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.Point;
-import org.jungrapht.visualization.renderers.BasicNodeLabelRenderer;
-import org.jungrapht.visualization.renderers.GradientNodeRenderer;
+import org.jungrapht.visualization.renderers.BasicVertexLabelRenderer;
+import org.jungrapht.visualization.renderers.GradientVertexRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
 
 /**
@@ -114,20 +114,25 @@ public class WorldMapGraphDemo extends JPanel {
     }
 
     vv.getRenderer()
-        .setNodeRenderer(
-            new GradientNodeRenderer<>(
-                vv.getSelectedNodeState(), Color.white, Color.red, Color.white, Color.blue, false));
+        .setVertexRenderer(
+            new GradientVertexRenderer<>(
+                vv.getSelectedVertexState(),
+                Color.white,
+                Color.red,
+                Color.white,
+                Color.blue,
+                false));
 
     // add my listeners for ToolTips
-    vv.setNodeToolTipFunction(n -> n);
+    vv.setVertexToolTipFunction(n -> n);
     vv.setEdgeToolTipFunction(
         edge -> "E" + graph.getEdgeSource(edge) + "-" + graph.getEdgeTarget(edge));
 
-    vv.getRenderContext().setNodeLabelFunction(n -> n);
+    vv.getRenderContext().setVertexLabelFunction(n -> n);
     vv.getRenderer()
-        .getNodeLabelRenderer()
-        .setPositioner(new BasicNodeLabelRenderer.InsidePositioner());
-    vv.getRenderContext().setNodeLabelPosition(Renderer.NodeLabel.Position.AUTO);
+        .getVertexLabelRenderer()
+        .setPositioner(new BasicVertexLabelRenderer.InsidePositioner());
+    vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.AUTO);
 
     final GraphZoomScrollPane panel = new GraphZoomScrollPane(vv);
     add(panel);

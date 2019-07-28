@@ -24,64 +24,84 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** @author Tom Nelson */
-public class BaseVisualizationModel<N, E> implements VisualizationModel<N, E> {
+public class BaseVisualizationModel<V, E> implements VisualizationModel<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(BaseVisualizationModel.class);
 
-  protected Graph<N, E> network;
+  //  public class Builder<V, E, T extends VisualizationModel, B extends Builder<V, E, T, B>> {
+  //    private Graph<V,E> graph;
+  //    private LayoutAlgorithm<V> layoutAlgorithm;
+  //    private LayoutModel<V> layoutModel;
+  //    private Dimension layoutSize;
+  //    private Function<V, Point> initializer;
+  //
+  //
+  //    public B builder() {
+  //      return new Builder<V,E,T,B>();
+  //
+  //    }
+  //    public T build() {
+  //      return (T) new BaseVisualizationModel<>(this);
+  //    }
+  //
+  //  }
 
-  protected LayoutModel<N> layoutModel;
+  protected LayoutModel<V> layoutModel;
 
-  protected LayoutAlgorithm<N> layoutAlgorithm;
+  protected LayoutAlgorithm<V> layoutAlgorithm;
 
   protected LayoutChange.Support changeSupport = LayoutChange.Support.create();
 
-  public BaseVisualizationModel(VisualizationModel<N, E> other) {
-    this(other.getNetwork(), other.getLayoutAlgorithm(), null, other.getLayoutSize());
+  public BaseVisualizationModel(VisualizationModel<V, E> other) {
+    this(other.getGraph(), other.getLayoutAlgorithm(), null, other.getLayoutSize());
   }
 
-  public BaseVisualizationModel(VisualizationModel<N, E> other, Dimension layoutSize) {
-    this(other.getNetwork(), other.getLayoutAlgorithm(), null, layoutSize);
+  //  private BaseVisualizationModel(Builder<V, E, ?, ?> builder) {
+  //    return new BaseVisualizationModel<>(builder.graph, builder.layoutAlgorithm, builder.layoutSize, builder)
+  //
+  //  }
+  public BaseVisualizationModel(VisualizationModel<V, E> other, Dimension layoutSize) {
+    this(other.getGraph(), other.getLayoutAlgorithm(), null, layoutSize);
   }
 
   /**
-   * @param network the network to visualize
+   * @param graph the graph to visualize
    * @param layoutAlgorithm the algorithm to apply
    * @param layoutSize the size of the layout area
    */
   public BaseVisualizationModel(
-      Graph<N, E> network, LayoutAlgorithm<N> layoutAlgorithm, Dimension layoutSize) {
-    this(network, layoutAlgorithm, null, layoutSize);
+      Graph<V, E> graph, LayoutAlgorithm<V> layoutAlgorithm, Dimension layoutSize) {
+    this(graph, layoutAlgorithm, null, layoutSize);
   }
 
   /**
-   * Creates an instance for {@code graph} which initializes the node locations using {@code
+   * Creates an instance for {@code graph} which initializes the vertex locations using {@code
    * initializer} and sets the layoutSize of the layout to {@code layoutSize}.
    *
-   * @param network the graph on which the layout algorithm is to operate
-   * @param initializer specifies the starting positions of the nodes
-   * @param layoutSize the dimensions of the region in which the layout algorithm will place nodes
+   * @param graph the graph on which the layout algorithm is to operate
+   * @param initializer specifies the starting positions of the vertices
+   * @param layoutSize the dimensions of the region in which the layout algorithm will place
+   *     vertices
    */
   public BaseVisualizationModel(
-      Graph<N, E> network,
-      LayoutAlgorithm<N> layoutAlgorithm,
-      Function<N, Point> initializer,
+      Graph<V, E> graph,
+      LayoutAlgorithm<V> layoutAlgorithm,
+      Function<V, Point> initializer,
       Dimension layoutSize) {
-    Preconditions.checkNotNull(network);
+    Preconditions.checkNotNull(graph);
     Preconditions.checkNotNull(layoutSize);
     Preconditions.checkArgument(layoutSize.width > 0, "width must be > 0");
     Preconditions.checkArgument(layoutSize.height > 0, "height must be > 0");
     this.layoutAlgorithm = layoutAlgorithm;
     this.layoutModel =
-        LoadingCacheLayoutModel.<N>builder()
-            .graph(network)
+        LoadingCacheLayoutModel.<V>builder()
+            .graph(graph)
             .size(layoutSize.width, layoutSize.height)
             .initializer(
                 new RandomLocationTransformer<>(
                     layoutSize.width, layoutSize.height, System.currentTimeMillis()))
             .build();
 
-    this.network = network;
     if (initializer != null) {
       this.layoutModel.setInitializer(initializer);
     }
@@ -90,24 +110,30 @@ public class BaseVisualizationModel<N, E> implements VisualizationModel<N, E> {
   }
 
   public BaseVisualizationModel(
-      Graph<N, E> network, LayoutModel<N> layoutModel, LayoutAlgorithm<N> layoutAlgorithm) {
-    Preconditions.checkNotNull(network);
+      Graph<V, E> graph, LayoutModel<V> layoutModel, LayoutAlgorithm<V> layoutAlgorithm) {
+    Preconditions.checkNotNull(graph);
     Preconditions.checkNotNull(layoutModel);
     this.layoutModel = layoutModel;
     if (this.layoutModel instanceof LayoutChange.Support) {
       ((LayoutChange.Support) layoutModel).addLayoutChangeListener(this);
     }
-    this.network = network;
     this.layoutModel.accept(layoutAlgorithm);
     this.layoutAlgorithm = layoutAlgorithm;
   }
 
-  public LayoutModel<N> getLayoutModel() {
+  private BaseVisualizationModel(
+      Graph<V, E> graph,
+      LayoutModel<V> layoutModel,
+      Dimension layoutSize,
+      LayoutAlgorithm<V> layoutAlgorithm,
+      Function<V, Point> initializer) {}
+
+  public LayoutModel<V> getLayoutModel() {
     log.trace("getting a layourModel " + layoutModel);
     return layoutModel;
   }
 
-  public void setLayoutModel(LayoutModel<N> layoutModel) {
+  public void setLayoutModel(LayoutModel<V> layoutModel) {
     // stop any Relaxer threads before abandoning the previous LayoutModel
     if (this.layoutModel != null) {
       this.layoutModel.stopRelaxer();
@@ -118,7 +144,7 @@ public class BaseVisualizationModel<N, E> implements VisualizationModel<N, E> {
     }
   }
 
-  public void setLayoutAlgorithm(LayoutAlgorithm<N> layoutAlgorithm) {
+  public void setLayoutAlgorithm(LayoutAlgorithm<V> layoutAlgorithm) {
     this.layoutAlgorithm = layoutAlgorithm;
     log.trace("setLayoutAlgorithm to " + layoutAlgorithm);
     layoutModel.accept(layoutAlgorithm);
@@ -134,14 +160,14 @@ public class BaseVisualizationModel<N, E> implements VisualizationModel<N, E> {
     return new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
   }
 
-  public void setNetwork(Graph<N, E> network) {
-    this.setNetwork(network, true);
+  public void setGraph(Graph<V, E> graph) {
+    this.setGraph(graph, true);
   }
 
-  public void setNetwork(Graph<N, E> network, boolean forceUpdate) {
-    log.trace("setNetwork to n:{} e:{}", network.vertexSet(), network.edgeSet());
-    this.network = network;
-    this.layoutModel.setGraph(network);
+  public void setGraph(Graph<V, E> graph, boolean forceUpdate) {
+    log.trace("setGraph to n:{} e:{}", graph.vertexSet(), graph.edgeSet());
+    //    this.graph = graph;
+    this.layoutModel.setGraph(graph);
     if (forceUpdate && this.layoutAlgorithm != null) {
       log.trace("will accept {}", layoutAlgorithm);
       layoutModel.accept(this.layoutAlgorithm);
@@ -151,12 +177,12 @@ public class BaseVisualizationModel<N, E> implements VisualizationModel<N, E> {
     }
   }
 
-  public LayoutAlgorithm<N> getLayoutAlgorithm() {
+  public LayoutAlgorithm<V> getLayoutAlgorithm() {
     return layoutAlgorithm;
   }
 
-  public Graph<N, E> getNetwork() {
-    return this.network;
+  public Graph<V, E> getGraph() {
+    return this.layoutModel.getGraph();
   }
 
   @Override

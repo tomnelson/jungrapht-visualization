@@ -92,11 +92,11 @@ public class SpatialLensLargeGraphDemo extends JPanel {
     final VisualizationModel<String, Number> visualizationModel =
         new BaseVisualizationModel<>(graph, graphLayoutAlgorithm, preferredSize);
     vv = new VisualizationViewer<>(visualizationModel, viewPreferredSize);
-    vv.getRenderContext().setNodeLabelFunction(Object::toString);
-    vv.getRenderContext().setNodeShapeFunction(n -> new Rectangle2D.Float(-8, -8, 16, 16));
+    vv.getRenderContext().setVertexLabelFunction(Object::toString);
+    vv.getRenderContext().setVertexShapeFunction(n -> new Rectangle2D.Float(-8, -8, 16, 16));
     vv.setBackground(Color.white);
 
-    vv.getRenderContext().setNodeLabelFunction(Object::toString);
+    vv.getRenderContext().setVertexLabelFunction(Object::toString);
 
     GraphZoomScrollPane gzsp = new GraphZoomScrollPane(vv);
     add(gzsp);
@@ -282,7 +282,7 @@ public class SpatialLensLargeGraphDemo extends JPanel {
     controls.add(hyperControls);
     controls.add(modeLabel);
     add(controls, BorderLayout.SOUTH);
-    vv.setNodeToolTipFunction(n -> n);
+    vv.setVertexToolTipFunction(n -> n);
   }
 
   static class VerticalLabelUI extends BasicLabelUI {
@@ -361,7 +361,7 @@ public class SpatialLensLargeGraphDemo extends JPanel {
     }
   }
 
-  Graph<String, Number> buildOneNode() {
+  Graph<String, Number> buildOneVertex() {
     Graph<String, Number> graph =
         GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.directedMultigraph())
             .buildGraph();
@@ -435,10 +435,10 @@ public class SpatialLensLargeGraphDemo extends JPanel {
         g.addEdge(i1, i2, edge++);
       }
     }
-    Iterator<String> nodeIt = g.build().vertexSet().iterator();
-    String current = nodeIt.next();
-    while (nodeIt.hasNext()) {
-      String next = nodeIt.next();
+    Iterator<String> vertexIt = g.build().vertexSet().iterator();
+    String current = vertexIt.next();
+    while (vertexIt.hasNext()) {
+      String next = vertexIt.next();
       g.addEdge(current, next, edge++);
     }
     return g.build();

@@ -65,7 +65,7 @@ public class ShowLayouts extends JPanel {
 
     g_array = new Graph[graph_names.length];
 
-    Supplier<Integer> nodeFactory =
+    Supplier<Integer> vertexFactory =
         new Supplier<Integer>() {
           int count;
 
@@ -103,16 +103,16 @@ public class ShowLayouts extends JPanel {
 
     final VisualizationViewer vv = new VisualizationViewer<>(g, new Dimension(600, 600));
 
-    vv.getRenderContext().setNodeLabelFunction(Object::toString);
+    vv.getRenderContext().setVertexLabelFunction(Object::toString);
 
     final DefaultModalGraphMouse<Integer, Number> graphMouse = new DefaultModalGraphMouse<>();
     vv.setGraphMouse(graphMouse);
 
-    vv.setNodeToolTipFunction(
-        node ->
-            node.toString()
+    vv.setVertexToolTipFunction(
+        vertex ->
+            vertex.toString()
                 + ". with neighbors:"
-                + Graphs.neighborListOf(vv.getModel().getNetwork(), node));
+                + Graphs.neighborListOf(vv.getModel().getGraph(), vertex));
 
     final ScalingControl scaler = new CrossoverScalingControl();
 
@@ -142,8 +142,8 @@ public class ShowLayouts extends JPanel {
                   vv.removePreRenderPaintable(balloonLayoutRings);
                   vv.removePreRenderPaintable(radialLayoutRings);
                   if ((layoutAlgorithm instanceof TreeLayoutAlgorithm)
-                      && vv.getModel().getNetwork().getType().isUndirected()) {
-                    Graph tree = SpanningTreeAdapter.getSpanningTree(vv.getModel().getNetwork());
+                      && vv.getModel().getGraph().getType().isUndirected()) {
+                    Graph tree = SpanningTreeAdapter.getSpanningTree(vv.getModel().getGraph());
                     LayoutModel positionModel = this.getTreeLayoutPositions(tree, layoutAlgorithm);
                     vv.getModel().getLayoutModel().setInitializer(positionModel);
                     layoutAlgorithm = new StaticLayoutAlgorithm();
@@ -183,9 +183,9 @@ public class ShowLayouts extends JPanel {
             SwingUtilities.invokeLater(
                 () -> {
                   graph_index = graph_chooser.getSelectedIndex();
-                  vv.getNodeSpatial().clear();
+                  vv.getVertexSpatial().clear();
                   vv.getEdgeSpatial().clear();
-                  vv.getModel().setNetwork(g_array[graph_index]);
+                  vv.getModel().setGraph(g_array[graph_index]);
                 }));
 
     JButton showRTree = new JButton("Show RTree");

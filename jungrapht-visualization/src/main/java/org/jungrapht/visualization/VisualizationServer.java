@@ -19,7 +19,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.control.TransformSupport;
-import org.jungrapht.visualization.layout.NetworkElementAccessor;
+import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.event.LayoutChange;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
 import org.jungrapht.visualization.renderers.Renderer;
@@ -28,10 +28,10 @@ import org.jungrapht.visualization.spatial.Spatial;
 
 /**
  * @author Tom Nelson
- * @param <N> the node type
+ * @param <V> the vertex type
  * @param <E> the edge type
  */
-public interface VisualizationServer<N, E>
+public interface VisualizationServer<V, E>
     extends LayoutChange.Listener, ChangeListener, LayoutStateChange.Listener {
 
   /**
@@ -50,21 +50,21 @@ public interface VisualizationServer<N, E>
 
   Shape viewOnLayout();
 
-  Spatial<N> getNodeSpatial();
+  Spatial<V> getVertexSpatial();
 
-  void setNodeSpatial(Spatial<N> spatial);
+  void setVertexSpatial(Spatial<V> spatial);
 
   Spatial<E> getEdgeSpatial();
 
   void setEdgeSpatial(Spatial<E> spatial);
 
-  TransformSupport<N, E> getTransformSupport();
+  TransformSupport<V, E> getTransformSupport();
 
   /** @return the model. */
-  VisualizationModel<N, E> getModel();
+  VisualizationModel<V, E> getModel();
 
   /** @param model the model for this class to use */
-  void setModel(VisualizationModel<N, E> model);
+  void setModel(VisualizationModel<V, E> model);
 
   /**
    * In response to changes from the model, repaint the view, then fire an event to any listeners.
@@ -81,10 +81,10 @@ public interface VisualizationServer<N, E>
    *
    * @param r the renderer to use
    */
-  void setRenderer(Renderer<N, E> r);
+  void setRenderer(Renderer<V, E> r);
 
   /** @return the renderer used by this instance. */
-  Renderer<N, E> getRenderer();
+  Renderer<V, E> getRenderer();
 
   /**
    * Makes the component visible if {@code aFlag} is true, or invisible if false.
@@ -142,27 +142,27 @@ public interface VisualizationServer<N, E>
    */
   void fireStateChanged();
 
-  /** @return the node MutableSelectedState instance */
-  MutableSelectedState<N> getSelectedNodeState();
+  /** @return the vertex MutableSelectedState instance */
+  MutableSelectedState<V> getSelectedVertexState();
 
   /** @return the edge MutableSelectedState instance */
   MutableSelectedState<E> getSelectedEdgeState();
 
-  void setSelectedNodeState(MutableSelectedState<N> selectedNodeState);
+  void setSelectedVertexState(MutableSelectedState<V> selectedVertexState);
 
   void setSelectedEdgeState(MutableSelectedState<E> selectedEdgeState);
 
-  /** @return the NetworkElementAccessor */
-  NetworkElementAccessor<N, E> getPickSupport();
+  /** @return the GraphElementAccessor */
+  GraphElementAccessor<V, E> getPickSupport();
 
   /** @param pickSupport The pickSupport to set. */
-  void setPickSupport(NetworkElementAccessor<N, E> pickSupport);
+  void setPickSupport(GraphElementAccessor<V, E> pickSupport);
 
   Point2D getCenter();
 
-  RenderContext<N, E> getRenderContext();
+  RenderContext<V, E> getRenderContext();
 
-  void setRenderContext(RenderContext<N, E> renderContext);
+  void setRenderContext(RenderContext<V, E> renderContext);
 
   void repaint();
 

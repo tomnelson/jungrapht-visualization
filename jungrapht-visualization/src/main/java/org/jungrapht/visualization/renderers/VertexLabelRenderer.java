@@ -15,7 +15,7 @@ import java.awt.Font;
 import javax.swing.JComponent;
 
 /** @author Tom Nelson */
-public interface NodeLabelRenderer {
+public interface VertexLabelRenderer {
   /**
    * Returns the component used for drawing the label. This method is used to configure the renderer
    * appropriately before drawing.
@@ -25,11 +25,11 @@ public interface NodeLabelRenderer {
    *     up to the renderer implementation. For example, if {@code value} is the string "true", it
    *     could be rendered as the string or as a checked checkbox.
    * @param font the font to use in rendering the label
-   * @param isSelected whether the node is currently selected
-   * @param node the edge whose label is being drawn
-   * @param <N> the node type
+   * @param isSelected whether the vertex is currently selected
+   * @param vertex the edge whose label is being drawn
+   * @param <V> the vertex type
    * @return the component used for drawing the label
    */
-  <N> Component getNodeLabelRendererComponent(
-      JComponent vv, Object value, Font font, boolean isSelected, N node);
+  <V> Component getVertexLabelRendererComponent(
+      JComponent vv, Object value, Font font, boolean isSelected, V vertex);
 }

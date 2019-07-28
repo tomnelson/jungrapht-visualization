@@ -13,15 +13,15 @@ import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.PolarPoint;
 
-public class RadialLayoutRings<N, E> implements VisualizationServer.Paintable {
+public class RadialLayoutRings<V, E> implements VisualizationServer.Paintable {
 
   Collection<Double> depths;
-  LayoutModel<N> layoutModel;
-  VisualizationServer<N, E> vv;
-  RadialTreeLayoutAlgorithm<N> radialTreeLayoutAlgorithm;
+  LayoutModel<V> layoutModel;
+  VisualizationServer<V, E> vv;
+  RadialTreeLayoutAlgorithm<V> radialTreeLayoutAlgorithm;
 
   public RadialLayoutRings(
-      VisualizationServer<N, E> vv, RadialTreeLayoutAlgorithm<N> radialTreeLayoutAlgorithm) {
+      VisualizationServer<V, E> vv, RadialTreeLayoutAlgorithm<V> radialTreeLayoutAlgorithm) {
     this.vv = vv;
     this.layoutModel = vv.getModel().getLayoutModel();
     this.radialTreeLayoutAlgorithm = radialTreeLayoutAlgorithm;
@@ -30,8 +30,8 @@ public class RadialLayoutRings<N, E> implements VisualizationServer.Paintable {
 
   private Collection<Double> getDepths() {
     Set<Double> depths = new HashSet<>();
-    Map<N, PolarPoint> polarLocations = radialTreeLayoutAlgorithm.getPolarLocations();
-    for (N v : vv.getModel().getNetwork().vertexSet()) {
+    Map<V, PolarPoint> polarLocations = radialTreeLayoutAlgorithm.getPolarLocations();
+    for (V v : vv.getModel().getGraph().vertexSet()) {
       PolarPoint pp = polarLocations.get(v);
       depths.add(pp.radius);
     }

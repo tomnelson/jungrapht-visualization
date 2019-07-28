@@ -15,70 +15,70 @@ import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.spatial.Spatial;
 
 /**
- * The interface for drawing nodes, edges, and their labels. Implementations of this class can set
- * specific renderers for each element, allowing custom control of each.
+ * The interface for drawing vertices, edges, and their labels. Implementations of this class can
+ * set specific renderers for each element, allowing custom control of each.
  */
-public interface Renderer<N, E> {
+public interface Renderer<V, E> {
 
   void render(
-      RenderContext<N, E> renderContext,
-      VisualizationModel<N, E> visualizationModel,
-      Spatial<N> nodeSpatial,
+      RenderContext<V, E> renderContext,
+      VisualizationModel<V, E> visualizationModel,
+      Spatial<V> vertexSpatial,
       Spatial<E> edgeSpatial);
 
-  void render(RenderContext<N, E> renderContext, VisualizationModel<N, E> visualizationModel);
+  void render(RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel);
 
-  void renderNode(
-      RenderContext<N, E> renderContext, VisualizationModel<N, E> visualizationModel, N v);
+  void renderVertex(
+      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v);
 
-  void renderNodeLabel(
-      RenderContext<N, E> renderContext, VisualizationModel<N, E> visualizationModel, N v);
+  void renderVertexLabel(
+      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v);
 
   void renderEdge(
-      RenderContext<N, E> renderContext, VisualizationModel<N, E> visualizationModel, E e);
+      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e);
 
   void renderEdgeLabel(
-      RenderContext<N, E> renderContext, VisualizationModel<N, E> visualizationModel, E e);
+      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e);
 
-  void setNodeRenderer(Node<N, E> r);
+  void setVertexRenderer(Vertex<V, E> r);
 
-  void setEdgeRenderer(Renderer.Edge<N, E> r);
+  void setEdgeRenderer(Renderer.Edge<V, E> r);
 
-  void setNodeLabelRenderer(NodeLabel<N, E> r);
+  void setVertexLabelRenderer(VertexLabel<V, E> r);
 
-  void setEdgeLabelRenderer(Renderer.EdgeLabel<N, E> r);
+  void setEdgeLabelRenderer(Renderer.EdgeLabel<V, E> r);
 
-  NodeLabel<N, E> getNodeLabelRenderer();
+  VertexLabel<V, E> getVertexLabelRenderer();
 
-  Node<N, E> getNodeRenderer();
+  Vertex<V, E> getVertexRenderer();
 
-  Renderer.Edge<N, E> getEdgeRenderer();
+  Renderer.Edge<V, E> getEdgeRenderer();
 
-  Renderer.EdgeLabel<N, E> getEdgeLabelRenderer();
+  Renderer.EdgeLabel<V, E> getEdgeLabelRenderer();
 
-  interface Node<N, E> {
-    void paintNode(
-        RenderContext<N, E> renderContext, VisualizationModel<N, E> visualizationModel, N v);
+  interface Vertex<V, E> {
+    void paintVertex(
+        RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v);
 
     @SuppressWarnings("rawtypes")
-    class NOOP<N, E> implements Node<N, E> {
-      public void paintNode(
-          RenderContext<N, E> renderContext, VisualizationModel<N, E> visualizationModel, N v) {}
+    class NOOP<V, E> implements Vertex<V, E> {
+      public void paintVertex(
+          RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {}
     }
   }
 
-  interface Edge<N, E> {
+  interface Edge<V, E> {
     void paintEdge(
-        RenderContext<N, E> renderContext, VisualizationModel<N, E> visualizationModel, E e);
+        RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e);
 
-    EdgeArrowRenderingSupport<N, E> getEdgeArrowRenderingSupport();
+    EdgeArrowRenderingSupport<V, E> getEdgeArrowRenderingSupport();
 
-    void setEdgeArrowRenderingSupport(EdgeArrowRenderingSupport<N, E> edgeArrowRenderingSupport);
+    void setEdgeArrowRenderingSupport(EdgeArrowRenderingSupport<V, E> edgeArrowRenderingSupport);
 
     @SuppressWarnings("rawtypes")
-    class NOOP<N, E> implements Edge<N, E> {
+    class NOOP<V, E> implements Edge<V, E> {
       public void paintEdge(
-          RenderContext<N, E> renderContext, VisualizationModel<N, E> visualizationModel, E e) {}
+          RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e) {}
 
       public EdgeArrowRenderingSupport getEdgeArrowRenderingSupport() {
         return null;
@@ -89,11 +89,11 @@ public interface Renderer<N, E> {
     }
   }
 
-  interface NodeLabel<N, E> {
-    void labelNode(
-        RenderContext<N, E> renderContext,
-        VisualizationModel<N, E> visualizationModel,
-        N v,
+  interface VertexLabel<V, E> {
+    void labelVertex(
+        RenderContext<V, E> renderContext,
+        VisualizationModel<V, E> visualizationModel,
+        V v,
         String label);
 
     void setPositioner(Positioner positioner);
@@ -101,11 +101,11 @@ public interface Renderer<N, E> {
     Positioner getPositioner();
 
     @SuppressWarnings("rawtypes")
-    class NOOP<N, E> implements NodeLabel<N, E> {
-      public void labelNode(
-          RenderContext<N, E> renderContext,
-          VisualizationModel<N, E> visualizationModel,
-          N v,
+    class NOOP<V, E> implements VertexLabel<V, E> {
+      public void labelVertex(
+          RenderContext<V, E> renderContext,
+          VisualizationModel<V, E> visualizationModel,
+          V v,
           String label) {}
 
       public Position getPosition() {
@@ -139,18 +139,18 @@ public interface Renderer<N, E> {
     }
   }
 
-  interface EdgeLabel<N, E> {
+  interface EdgeLabel<V, E> {
     void labelEdge(
-        RenderContext<N, E> renderContext,
-        VisualizationModel<N, E> visualizationModel,
+        RenderContext<V, E> renderContext,
+        VisualizationModel<V, E> visualizationModel,
         E e,
         String label);
 
     @SuppressWarnings("rawtypes")
-    class NOOP<N, E> implements EdgeLabel<N, E> {
+    class NOOP<V, E> implements EdgeLabel<V, E> {
       public void labelEdge(
-          RenderContext<N, E> renderContext,
-          VisualizationModel<N, E> visualizationModel,
+          RenderContext<V, E> renderContext,
+          VisualizationModel<V, E> visualizationModel,
           E e,
           String label) {}
     }

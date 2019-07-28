@@ -24,8 +24,8 @@ import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.GraphMouseListener;
 import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
-import org.jungrapht.visualization.renderers.BasicNodeLabelRenderer;
-import org.jungrapht.visualization.renderers.GradientNodeRenderer;
+import org.jungrapht.visualization.renderers.BasicVertexLabelRenderer;
+import org.jungrapht.visualization.renderers.GradientVertexRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
 
 /**
@@ -33,7 +33,7 @@ import org.jungrapht.visualization.renderers.Renderer;
  * VisualizationViewer</code> zooming and panning capabilities, using horizontal and vertical
  * scrollbars.
  *
- * <p>This demo also shows ToolTips on graph nodes and edges, and a key listener to change graph
+ * <p>This demo also shows ToolTips on graph vertices and edges, and a key listener to change graph
  * mouse modes.
  *
  * @author Tom Nelson
@@ -111,23 +111,28 @@ public class GraphZoomScrollPaneDemo {
 
     vv.addGraphMouseListener(new TestGraphMouseListener<>());
     vv.getRenderer()
-        .setNodeRenderer(
-            new GradientNodeRenderer<>(
-                vv.getSelectedNodeState(), Color.white, Color.red, Color.white, Color.blue, false));
+        .setVertexRenderer(
+            new GradientVertexRenderer<>(
+                vv.getSelectedVertexState(),
+                Color.white,
+                Color.red,
+                Color.white,
+                Color.blue,
+                false));
     vv.getRenderContext().setEdgeDrawPaintFunction(e -> Color.lightGray);
     vv.getRenderContext().setArrowFillPaintFunction(a -> Color.lightGray);
     vv.getRenderContext().setArrowDrawPaintFunction(a -> Color.lightGray);
 
     // add my listeners for ToolTips
-    vv.setNodeToolTipFunction(Object::toString);
+    vv.setVertexToolTipFunction(Object::toString);
     vv.setEdgeToolTipFunction(
         edge -> "E" + graph.getEdgeSource(edge) + "-" + graph.getEdgeTarget(edge));
 
-    vv.getRenderContext().setNodeLabelFunction(Object::toString);
+    vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.getRenderer()
-        .getNodeLabelRenderer()
-        .setPositioner(new BasicNodeLabelRenderer.InsidePositioner());
-    vv.getRenderContext().setNodeLabelPosition(Renderer.NodeLabel.Position.AUTO);
+        .getVertexLabelRenderer()
+        .setPositioner(new BasicVertexLabelRenderer.InsidePositioner());
+    vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.AUTO);
     vv.setForeground(Color.lightGray);
 
     // create a frome to hold the graph
@@ -202,19 +207,19 @@ public class GraphZoomScrollPaneDemo {
     return graph;
   }
 
-  /** A nested class to demo the GraphMouseListener finding the right nodes after zoom/pan */
-  static class TestGraphMouseListener<N> implements GraphMouseListener<N> {
+  /** A nested class to demo the GraphMouseListener finding the right vertices after zoom/pan */
+  static class TestGraphMouseListener<V> implements GraphMouseListener<V> {
 
-    public void graphClicked(N v, MouseEvent me) {
-      System.err.println("Node " + v + " was clicked at (" + me.getX() + "," + me.getY() + ")");
+    public void graphClicked(V v, MouseEvent me) {
+      System.err.println("Vertex " + v + " was clicked at (" + me.getX() + "," + me.getY() + ")");
     }
 
-    public void graphPressed(N v, MouseEvent me) {
-      System.err.println("Node " + v + " was pressed at (" + me.getX() + "," + me.getY() + ")");
+    public void graphPressed(V v, MouseEvent me) {
+      System.err.println("Vertex " + v + " was pressed at (" + me.getX() + "," + me.getY() + ")");
     }
 
-    public void graphReleased(N v, MouseEvent me) {
-      System.err.println("Node " + v + " was released at (" + me.getX() + "," + me.getY() + ")");
+    public void graphReleased(V v, MouseEvent me) {
+      System.err.println("Vertex " + v + " was released at (" + me.getX() + "," + me.getY() + ")");
     }
   }
 

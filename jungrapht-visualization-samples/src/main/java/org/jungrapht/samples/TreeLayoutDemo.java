@@ -52,11 +52,11 @@ public class TreeLayoutDemo extends JPanel {
             graph, TreeLayoutAlgorithm.<String>builder().build(), new Dimension(600, 600));
     vv.setBackground(Color.white);
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
-    vv.getRenderContext().setNodeLabelFunction(Object::toString);
-    vv.getRenderContext().setNodeLabelPosition(Renderer.NodeLabel.Position.CNTR);
-    vv.getRenderContext().setNodeLabelDrawPaintFunction(n -> Color.white);
+    vv.getRenderContext().setVertexLabelFunction(Object::toString);
+    vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
+    vv.getRenderContext().setVertexLabelDrawPaintFunction(n -> Color.white);
     // add a listener for ToolTips
-    vv.setNodeToolTipFunction(Object::toString);
+    vv.setVertexToolTipFunction(Object::toString);
     vv.getRenderContext().setArrowFillPaintFunction(n -> Color.lightGray);
     if (log.isTraceEnabled()) {
       vv.addPreRenderPaintable(

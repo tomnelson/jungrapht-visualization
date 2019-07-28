@@ -29,7 +29,7 @@ import org.jungrapht.visualization.control.TranslatingGraphMousePlugin;
 import org.jungrapht.visualization.control.ViewScalingControl;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
-import org.jungrapht.visualization.layout.NetworkElementAccessor;
+import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.selection.MultiMutableSelectedState;
 import org.jungrapht.visualization.selection.MutableSelectedState;
@@ -96,7 +96,7 @@ public class MultiViewDemo extends JPanel {
     vv3 = new VisualizationViewer<>(visualizationModel, preferredSize);
 
     vv1.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
-    vv2.getRenderContext().setNodeShapeFunction(n -> new Rectangle2D.Float(-6, -6, 12, 12));
+    vv2.getRenderContext().setVertexShapeFunction(n -> new Rectangle2D.Float(-6, -6, 12, 12));
 
     vv2.getRenderContext().setEdgeShapeFunction(EdgeShape.quadCurve());
 
@@ -116,7 +116,7 @@ public class MultiViewDemo extends JPanel {
     vv3.setBackground(Color.white);
 
     // create one pick support for all 3 views to share
-    NetworkElementAccessor<String, Number> pickSupport = new ShapePickSupport<>(vv1);
+    GraphElementAccessor<String, Number> pickSupport = new ShapePickSupport<>(vv1);
     vv1.setPickSupport(pickSupport);
     vv2.setPickSupport(pickSupport);
     vv3.setPickSupport(pickSupport);
@@ -124,9 +124,9 @@ public class MultiViewDemo extends JPanel {
     // create one picked state for all 3 views to share
     MutableSelectedState<Number> pes = new MultiMutableSelectedState<>();
     MutableSelectedState<String> pvs = new MultiMutableSelectedState<>();
-    vv1.setSelectedNodeState(pvs);
-    vv2.setSelectedNodeState(pvs);
-    vv3.setSelectedNodeState(pvs);
+    vv1.setSelectedVertexState(pvs);
+    vv2.setSelectedVertexState(pvs);
+    vv3.setSelectedVertexState(pvs);
     vv1.setSelectedEdgeState(pes);
     vv2.setSelectedEdgeState(pes);
     vv3.setSelectedEdgeState(pes);
@@ -139,16 +139,19 @@ public class MultiViewDemo extends JPanel {
     vv3.getRenderContext()
         .setEdgeDrawPaintFunction(new PickableElementPaintFunction<>(pes, Color.black, Color.red));
     vv1.getRenderContext()
-        .setNodeFillPaintFunction(new PickableElementPaintFunction<>(pvs, Color.red, Color.yellow));
+        .setVertexFillPaintFunction(
+            new PickableElementPaintFunction<>(pvs, Color.red, Color.yellow));
     vv2.getRenderContext()
-        .setNodeFillPaintFunction(new PickableElementPaintFunction<>(pvs, Color.blue, Color.cyan));
+        .setVertexFillPaintFunction(
+            new PickableElementPaintFunction<>(pvs, Color.blue, Color.cyan));
     vv3.getRenderContext()
-        .setNodeFillPaintFunction(new PickableElementPaintFunction<>(pvs, Color.red, Color.yellow));
+        .setVertexFillPaintFunction(
+            new PickableElementPaintFunction<>(pvs, Color.red, Color.yellow));
 
     // add default listener for ToolTips
-    vv1.setNodeToolTipFunction(Object::toString);
-    vv2.setNodeToolTipFunction(Object::toString);
-    vv3.setNodeToolTipFunction(Object::toString);
+    vv1.setVertexToolTipFunction(Object::toString);
+    vv2.setVertexToolTipFunction(Object::toString);
+    vv3.setVertexToolTipFunction(Object::toString);
 
     JPanel panel = new JPanel(new GridLayout(1, 0));
 

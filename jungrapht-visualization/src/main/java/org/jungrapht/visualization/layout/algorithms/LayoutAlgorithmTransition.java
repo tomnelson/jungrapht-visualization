@@ -15,11 +15,11 @@ public class LayoutAlgorithmTransition {
 
   private static Logger log = LoggerFactory.getLogger(LayoutAlgorithmTransition.class);
 
-  public static <N, E> void animate(
-      VisualizationServer<N, E> visualizationServer, LayoutAlgorithm<N> endLayoutAlgorithm) {
+  public static <V, E> void animate(
+      VisualizationServer<V, E> visualizationServer, LayoutAlgorithm<V> endLayoutAlgorithm) {
     fireLayoutStateChanged(visualizationServer.getModel().getLayoutModel(), true);
-    LayoutAlgorithm<N> transitionLayoutAlgorithm =
-        AnimationLayoutAlgorithm.<N>builder()
+    LayoutAlgorithm<V> transitionLayoutAlgorithm =
+        AnimationLayoutAlgorithm.<V>builder()
             .visualizationServer(visualizationServer)
             .endLayoutAlgorithm(endLayoutAlgorithm)
             .prerelax(false)
@@ -27,8 +27,8 @@ public class LayoutAlgorithmTransition {
     visualizationServer.getModel().setLayoutAlgorithm(transitionLayoutAlgorithm);
   }
 
-  public static <N, E> void apply(
-      VisualizationServer<N, E> visualizationServer, LayoutAlgorithm<N> endLayoutAlgorithm) {
+  public static <V, E> void apply(
+      VisualizationServer<V, E> visualizationServer, LayoutAlgorithm<V> endLayoutAlgorithm) {
     visualizationServer.getModel().setLayoutAlgorithm(endLayoutAlgorithm);
   }
 

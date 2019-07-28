@@ -10,30 +10,30 @@ import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.IterativeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.event.LayoutChange;
-import org.jungrapht.visualization.layout.event.LayoutNodePositionChange;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
+import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
 import org.jungrapht.visualization.layout.util.VisRunnable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * superclass for LayoutModels. Holds the required attributes for placing graph nodes in a
+ * superclass for LayoutModels. Holds the required attributes for placing graph vertices in a
  * visualization
  *
  * @author Tom Nelson
- * @param <N> the node type
+ * @param <V> the vertex type
  */
-public abstract class AbstractLayoutModel<N> implements LayoutModel<N> {
+public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
 
   private static final Logger log = LoggerFactory.getLogger(AbstractLayoutModel.class);
 
   public abstract static class Builder<
-      N, T extends AbstractLayoutModel<N>, B extends Builder<N, T, B>> {
-    protected Graph<N, ?> graph;
+      V, T extends AbstractLayoutModel<V>, B extends Builder<V, T, B>> {
+    protected Graph<V, ?> graph;
     protected int width;
     protected int height;
 
-    public B graph(Graph<N, ?> graph) {
+    public B graph(Graph<V, ?> graph) {
       this.graph = graph;
       return (B) this;
     }
@@ -55,18 +55,18 @@ public abstract class AbstractLayoutModel<N> implements LayoutModel<N> {
     }
   }
 
-  protected Set<N> lockedNodes = Sets.newHashSet();
+  protected Set<V> lockedVertices = Sets.newHashSet();
   protected boolean locked;
   protected int width;
   protected int height;
-  protected Graph<N, ?> graph;
+  protected Graph<V, ?> graph;
   protected VisRunnable visRunnable;
   /** @value relaxing true is this layout model is being accessed by a running relaxer */
   protected boolean relaxing;
 
   protected CompletableFuture theFuture;
-  protected LayoutNodePositionChange.Support layoutNodePositionSupport =
-      LayoutNodePositionChange.Support.create();
+  protected LayoutVertexPositionChange.Support layoutVertexPositionSupport =
+      LayoutVertexPositionChange.Support.create();
   protected LayoutStateChange.Support layoutStateChangeSupport = LayoutStateChange.Support.create();
   protected LayoutChange.Support layoutChangeSupport = LayoutChange.Support.create();
 
@@ -75,7 +75,7 @@ public abstract class AbstractLayoutModel<N> implements LayoutModel<N> {
     setSize(builder.width, builder.height);
   }
 
-  protected AbstractLayoutModel(Graph<N, ?> graph, int width, int height) {
+  protected AbstractLayoutModel(Graph<V, ?> graph, int width, int height) {
     this.graph = checkNotNull(graph);
     setSize(width, height);
   }
@@ -99,14 +99,14 @@ public abstract class AbstractLayoutModel<N> implements LayoutModel<N> {
    * accept the visit of a LayoutAlgorithm. If it is an IterativeContext, create a VisRunner to run
    * its relaxer in a new Thread. If there is a current VisRunner, stop it first.
    *
-   * @param layoutAlgorithm the algorithm to apply to the model node locations
+   * @param layoutAlgorithm the algorithm to apply to the model vertex locations
    */
   @Override
-  public void accept(LayoutAlgorithm<N> layoutAlgorithm) {
+  public void accept(LayoutAlgorithm<V> layoutAlgorithm) {
     // the layoutMode is active with a new LayoutAlgorithm
     layoutStateChangeSupport.fireLayoutStateChanged(this, true);
     log.trace("accepting {}", layoutAlgorithm);
-    layoutNodePositionSupport.setFireEvents(true);
+    layoutVertexPositionSupport.setFireEvents(true);
     layoutChangeSupport.fireLayoutChanged();
     if (this.visRunnable != null) {
       log.trace("stopping {}", visRunnable);
@@ -164,11 +164,11 @@ public abstract class AbstractLayoutModel<N> implements LayoutModel<N> {
     // layout becomes active
     layoutStateChangeSupport.fireLayoutStateChanged(this, true);
     // pre-relax phase. turn off event dispatch to the visualization system
-    layoutNodePositionSupport.setFireEvents(false);
+    layoutVertexPositionSupport.setFireEvents(false);
     layoutChangeSupport.setFireEvents(false);
     iterativeContext.preRelax();
     layoutChangeSupport.setFireEvents(true);
-    layoutNodePositionSupport.setFireEvents(true);
+    layoutVertexPositionSupport.setFireEvents(true);
     log.trace("prerelax is done");
 
     visRunnable = new VisRunnable(iterativeContext);
@@ -186,11 +186,11 @@ public abstract class AbstractLayoutModel<N> implements LayoutModel<N> {
 
   /** @return the graph */
   @Override
-  public Graph<N, ?> getGraph() {
-    return graph;
+  public <E> Graph<V, E> getGraph() {
+    return (Graph<V, E>) graph;
   }
 
-  public void setGraph(Graph<N, ?> graph) {
+  public void setGraph(Graph<V, ?> graph) {
     this.graph = graph;
     this.layoutChangeSupport.fireLayoutChanged();
     if (log.isTraceEnabled()) {
@@ -199,33 +199,33 @@ public abstract class AbstractLayoutModel<N> implements LayoutModel<N> {
   }
 
   /**
-   * set locked state for the provided node
+   * set locked state for the provided vertex
    *
-   * @param node the node to affect
+   * @param vertex the vertex to affect
    * @param locked to lock or not
    */
   @Override
-  public void lock(N node, boolean locked) {
+  public void lock(V vertex, boolean locked) {
     if (locked) {
-      this.lockedNodes.add(node);
+      this.lockedVertices.add(vertex);
     } else {
-      this.lockedNodes.remove(node);
+      this.lockedVertices.remove(vertex);
     }
   }
 
   /**
-   * @param node the node whose locked state is being queried
-   * @return whether the passed node is locked
+   * @param vertex the vertex whose locked state is being queried
+   * @return whether the passed vertex is locked
    */
   @Override
-  public boolean isLocked(N node) {
-    return this.lockedNodes.contains(node);
+  public boolean isLocked(V vertex) {
+    return this.lockedVertices.contains(vertex);
   }
 
   /**
-   * lock the entire model (all nodes)
+   * lock the entire model (all vertices)
    *
-   * @param locked will prevent the nodes from being moved
+   * @param locked will prevent the vertices from being moved
    */
   @Override
   public void lock(boolean locked) {
@@ -233,7 +233,7 @@ public abstract class AbstractLayoutModel<N> implements LayoutModel<N> {
     this.locked = locked;
   }
 
-  /** @return whether this LayoutModel is locked for all nodes */
+  /** @return whether this LayoutModel is locked for all vertices */
   @Override
   public boolean isLocked() {
     return this.locked;
@@ -268,7 +268,7 @@ public abstract class AbstractLayoutModel<N> implements LayoutModel<N> {
   }
 
   /**
-   * mode all the nodes to the new center of the layout domain
+   * mode all the vertices to the new center of the layout domain
    *
    * @param oldWidth previous width
    * @param oldHeight revious height
@@ -283,11 +283,11 @@ public abstract class AbstractLayoutModel<N> implements LayoutModel<N> {
     int xOffset = (width - oldWidth) / 2;
     int yOffset = (height - oldHeight) / 2;
 
-    // now, move each node to be at the new screen center
+    // now, move each vertex to be at the new screen center
     while (true) {
       try {
-        for (N node : this.graph.vertexSet()) {
-          offsetnode(node, xOffset, yOffset);
+        for (V vertex : this.graph.vertexSet()) {
+          offsetvertex(vertex, xOffset, yOffset);
         }
         break;
       } catch (ConcurrentModificationException cme) {
@@ -308,31 +308,31 @@ public abstract class AbstractLayoutModel<N> implements LayoutModel<N> {
   }
 
   @Override
-  public void set(N node, double x, double y) {
-    this.set(node, Point.of(x, y));
+  public void set(V vertex, double x, double y) {
+    this.set(vertex, Point.of(x, y));
   }
 
   @Override
-  public void set(N node, Point location) {
-    layoutNodePositionSupport.fireLayoutNodePositionChanged(node, location);
+  public void set(V vertex, Point location) {
+    layoutVertexPositionSupport.fireLayoutVertexPositionChanged(vertex, location);
     layoutChangeSupport.fireLayoutChanged();
   }
 
   /**
-   * @param node the node whose coordinates are to be offset
-   * @param xOffset the change to apply to this node's x coordinate
-   * @param yOffset the change to apply to this node's y coordinate
+   * @param vertex the vertex whose coordinates are to be offset
+   * @param xOffset the change to apply to this vertex's x coordinate
+   * @param yOffset the change to apply to this vertex's y coordinate
    */
-  protected void offsetnode(N node, double xOffset, double yOffset) {
-    if (!locked && !isLocked(node)) {
-      Point p = get(node);
-      this.set(node, p.x + xOffset, p.y + yOffset);
+  protected void offsetvertex(V vertex, double xOffset, double yOffset) {
+    if (!locked && !isLocked(vertex)) {
+      Point p = get(vertex);
+      this.set(vertex, p.x + xOffset, p.y + yOffset);
     }
   }
 
   @Override
-  public LayoutNodePositionChange.Support<N> getLayoutNodePositionSupport() {
-    return this.layoutNodePositionSupport;
+  public LayoutVertexPositionChange.Support<V> getLayoutVertexPositionSupport() {
+    return this.layoutVertexPositionSupport;
   }
 
   public boolean isRelaxing() {
@@ -345,12 +345,12 @@ public abstract class AbstractLayoutModel<N> implements LayoutModel<N> {
   }
 
   @Override
-  public void layoutNodePositionChanged(LayoutNodePositionChange.Event<N> evt) {
+  public void layoutVertexPositionChanged(LayoutVertexPositionChange.Event<V> evt) {
     visRunnable.stop();
   }
 
   @Override
-  public void layoutNodePositionChanged(LayoutNodePositionChange.NetworkEvent<N> evt) {}
+  public void layoutVertexPositionChanged(LayoutVertexPositionChange.NetworkEvent<V> evt) {}
 
   @Override
   public String toString() {

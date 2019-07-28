@@ -32,10 +32,10 @@ import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.control.TransformSupport;
 import org.jungrapht.visualization.layout.BoundingRectangleCollector;
-import org.jungrapht.visualization.layout.NetworkElementAccessor;
+import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
-import org.jungrapht.visualization.layout.event.LayoutNodePositionChange;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
+import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.util.Caching;
 import org.jungrapht.visualization.renderers.BasicRenderer;
@@ -69,12 +69,19 @@ import org.slf4j.LoggerFactory;
  * @author Danyel Fisher
  */
 @SuppressWarnings("serial")
-public class BasicVisualizationServer<N, E> extends JPanel implements VisualizationServer<N, E> {
+public class BasicVisualizationServer<V, E> extends JPanel implements VisualizationServer<V, E> {
 
   static Logger log = LoggerFactory.getLogger(BasicVisualizationServer.class);
 
+  public class Builder<V, E, T extends BasicVisualizationServer, B extends Builder<V, E, T, B>> {
+    private Graph<V, E> graph;
+    private LayoutAlgorithm<V> layoutAlgorithm;
+    private VisualizationModel<V, E> visualizationModel;
+    private Dimension preferredSize;
+  }
+
   private static final String PREFIX = "jungrapht.";
-  private static final String NODE_SPATIAL_SUPPORT = PREFIX + "nodeSpatialSupport";
+  private static final String VERTEX_SPATIAL_SUPPORT = PREFIX + "vertexSpatialSupport";
   private static final String EDGE_SPATIAL_SUPPORT = PREFIX + "edgeSpatialSupport";
   private static final String PROPERTIES_FILE_NAME =
       System.getProperty("graph.visualization.properties.file.name", PREFIX + "properties");
@@ -113,19 +120,19 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
   protected ChangeEventSupport changeSupport = new DefaultChangeEventSupport(this);
 
   /** holds the state of this View */
-  protected VisualizationModel<N, E> model;
+  protected VisualizationModel<V, E> model;
 
   /** handles the actual drawing of graph elements */
-  protected Renderer<N, E> renderer;
+  protected Renderer<V, E> renderer;
 
-  protected Renderer<N, E> simpleRenderer = new SimpleRenderer<>();
-  protected Renderer<N, E> complexRenderer;
+  protected Renderer<V, E> simpleRenderer = new SimpleRenderer<>();
+  protected Renderer<V, E> complexRenderer;
 
   /** rendering hints used in drawing. Anti-aliasing is on by default */
   protected Map<Key, Object> renderingHints = new HashMap<>();
 
-  /** holds the state of which nodes of the graph are currently 'selected' */
-  protected MutableSelectedState<N> selectedNodeState;
+  /** holds the state of which vertices of the graph are currently 'selected' */
+  protected MutableSelectedState<V> selectedVertexState;
 
   /** holds the state of which edges of the graph are currently 'selected' */
   protected MutableSelectedState<E> selectedEdgeState;
@@ -156,23 +163,23 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
    */
   protected List<Paintable> postRenderers = new ArrayList<>();
 
-  protected RenderContext<N, E> renderContext;
+  protected RenderContext<V, E> renderContext;
 
-  protected TransformSupport<N, E> transformSupport = new TransformSupport();
+  protected TransformSupport<V, E> transformSupport = new TransformSupport();
 
-  protected Spatial<N> nodeSpatial;
+  protected Spatial<V> vertexSpatial;
 
   protected Spatial<E> edgeSpatial;
 
   protected Predicate<Double> smallScaleOverridePredicate = e -> false;
 
   /**
-   * @param network the network to render
+   * @param network the graph to render
    * @param layoutAlgorithm the algorithm to apply
    * @param preferredSize the size of the graph area
    */
   public BasicVisualizationServer(
-      Graph<N, E> network, LayoutAlgorithm<N> layoutAlgorithm, Dimension preferredSize) {
+      Graph<V, E> network, LayoutAlgorithm<V> layoutAlgorithm, Dimension preferredSize) {
     this(new BaseVisualizationModel<>(network, layoutAlgorithm, preferredSize), preferredSize);
   }
 
@@ -182,9 +189,9 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
    * @param model the model to use
    * @param preferredSize initial preferred layoutSize of the view
    */
-  public BasicVisualizationServer(VisualizationModel<N, E> model, Dimension preferredSize) {
+  public BasicVisualizationServer(VisualizationModel<V, E> model, Dimension preferredSize) {
     this.model = model;
-    renderContext = new DefaultRenderContext<>(model.getNetwork());
+    renderContext = new DefaultRenderContext<>(model.getGraph());
     renderContext.setScreenDevice(this);
     renderer = complexRenderer = new BasicRenderer<>();
     createSpatialStuctures(model, renderContext);
@@ -197,7 +204,7 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
     this.addComponentListener(new VisualizationListener(this));
 
     setPickSupport(new ShapePickSupport<>(this));
-    setSelectedNodeState(new MultiMutableSelectedState<>());
+    setSelectedVertexState(new MultiMutableSelectedState<>());
     setSelectedEdgeState(new MultiMutableSelectedState<>());
 
     setPreferredSize(preferredSize);
@@ -205,9 +212,9 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
 
     renderContext.getMultiLayerTransformer().addChangeListener(this);
 
-    Spatial<N> nodeSpatial = createNodeSpatial(this);
-    if (nodeSpatial != null) {
-      setNodeSpatial(nodeSpatial);
+    Spatial<V> vertexSpatial = createVertexSpatial(this);
+    if (vertexSpatial != null) {
+      setVertexSpatial(vertexSpatial);
     }
 
     Spatial<E> edgeSpatial = createEdgeSpatial(this);
@@ -217,11 +224,11 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
   }
 
   private void createSpatialStuctures(VisualizationModel model, RenderContext renderContext) {
-    setNodeSpatial(
-        SpatialRTree.Nodes.builder()
+    setVertexSpatial(
+        SpatialRTree.Vertices.builder()
             .visualizationModel(model)
             .boundingRectangleCollector(
-                new BoundingRectangleCollector.Nodes<>(renderContext, model))
+                new BoundingRectangleCollector.Vertices<>(renderContext, model))
             .splitterContext(SplitterContext.of(new RStarLeafSplitter<>(), new RStarSplitter<>()))
             .reinsert(true)
             .build());
@@ -238,22 +245,22 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
   }
 
   @Override
-  public Spatial<N> getNodeSpatial() {
-    return nodeSpatial;
+  public Spatial<V> getVertexSpatial() {
+    return vertexSpatial;
   }
 
   @Override
-  public void setNodeSpatial(Spatial<N> spatial) {
+  public void setVertexSpatial(Spatial<V> spatial) {
 
-    if (this.nodeSpatial != null) {
-      disconnectListeners(this.nodeSpatial);
+    if (this.vertexSpatial != null) {
+      disconnectListeners(this.vertexSpatial);
     }
-    this.nodeSpatial = spatial;
+    this.vertexSpatial = spatial;
 
     boolean layoutModelRelaxing = model.getLayoutModel().isRelaxing();
-    nodeSpatial.setActive(!layoutModelRelaxing);
+    vertexSpatial.setActive(!layoutModelRelaxing);
     if (!layoutModelRelaxing) {
-      nodeSpatial.recalculate();
+      vertexSpatial.recalculate();
     }
     connectListeners(spatial);
   }
@@ -286,12 +293,12 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
    * @param spatial will listen for events
    */
   private void connectListeners(Spatial spatial) {
-    LayoutModel<N> layoutModel = model.getLayoutModel();
+    LayoutModel<V> layoutModel = model.getLayoutModel();
     layoutModel.getLayoutStateChangeSupport().addLayoutStateChangeListener(spatial);
-    if (spatial instanceof LayoutNodePositionChange.Listener) {
+    if (spatial instanceof LayoutVertexPositionChange.Listener) {
       layoutModel
-          .getLayoutNodePositionSupport()
-          .addLayoutNodePositionChangeListener((LayoutNodePositionChange.Listener) spatial);
+          .getLayoutVertexPositionSupport()
+          .addLayoutVertexPositionChangeListener((LayoutVertexPositionChange.Listener) spatial);
     }
   }
 
@@ -302,12 +309,12 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
    */
   private void disconnectListeners(Spatial spatial) {
 
-    LayoutModel<N> layoutModel = model.getLayoutModel();
+    LayoutModel<V> layoutModel = model.getLayoutModel();
     layoutModel.getLayoutStateChangeSupport().removeLayoutStateChangeListener(spatial);
-    if (spatial instanceof LayoutNodePositionChange.Listener) {
+    if (spatial instanceof LayoutVertexPositionChange.Listener) {
       layoutModel
-          .getLayoutNodePositionSupport()
-          .removeLayoutNodePositionChangeListener((LayoutNodePositionChange.Listener) spatial);
+          .getLayoutVertexPositionSupport()
+          .removeLayoutVertexPositionChangeListener((LayoutVertexPositionChange.Listener) spatial);
     }
   }
 
@@ -353,12 +360,12 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
   }
 
   @Override
-  public VisualizationModel<N, E> getModel() {
+  public VisualizationModel<V, E> getModel() {
     return model;
   }
 
   @Override
-  public void setModel(VisualizationModel<N, E> model) {
+  public void setModel(VisualizationModel<V, E> model) {
     this.model = model;
   }
 
@@ -369,14 +376,14 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
   }
 
   @Override
-  public void setRenderer(Renderer<N, E> r) {
+  public void setRenderer(Renderer<V, E> r) {
     this.renderer = r;
     this.complexRenderer = renderer;
     repaint();
   }
 
   @Override
-  public Renderer<N, E> getRenderer() {
+  public Renderer<V, E> getRenderer() {
     return renderer;
   }
 
@@ -461,7 +468,7 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
 
     if (log.isTraceEnabled()) {
       // when logging is set to trace, the grid will be drawn on the graph visualization
-      addSpatialAnnotations(this.nodeSpatial, Color.blue);
+      addSpatialAnnotations(this.vertexSpatial, Color.blue);
       addSpatialAnnotations(this.edgeSpatial, Color.green);
     } else {
       removeSpatialAnnotations();
@@ -483,7 +490,7 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
       ((Caching) model).clear();
     }
 
-    renderer.render(renderContext, model, nodeSpatial, edgeSpatial);
+    renderer.render(renderContext, model, vertexSpatial, edgeSpatial);
 
     // if there are postRenderers set, do it
     for (Paintable paintable : postRenderers) {
@@ -515,7 +522,7 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
   @Override
   public void layoutChanged() {
     if (renderContext instanceof DefaultRenderContext) {
-      ((DefaultRenderContext) renderContext).setupArrows(model.getNetwork().getType().isDirected());
+      ((DefaultRenderContext) renderContext).setupArrows(model.getGraph().getType().isDirected());
     }
     repaint();
   }
@@ -544,9 +551,9 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
    * layoutSize.
    */
   protected class VisualizationListener extends ComponentAdapter {
-    protected BasicVisualizationServer<N, E> vv;
+    protected BasicVisualizationServer<V, E> vv;
 
-    public VisualizationListener(BasicVisualizationServer<N, E> vv) {
+    public VisualizationListener(BasicVisualizationServer<V, E> vv) {
       this.vv = vv;
     }
 
@@ -627,8 +634,8 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
   }
 
   @Override
-  public MutableSelectedState<N> getSelectedNodeState() {
-    return this.selectedNodeState;
+  public MutableSelectedState<V> getSelectedVertexState() {
+    return this.selectedVertexState;
   }
 
   @Override
@@ -637,16 +644,16 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
   }
 
   @Override
-  public void setSelectedNodeState(MutableSelectedState<N> selectedNodeState) {
-    if (pickEventListener != null && this.selectedNodeState != null) {
-      this.selectedNodeState.removeItemListener(pickEventListener);
+  public void setSelectedVertexState(MutableSelectedState<V> selectedVertexState) {
+    if (pickEventListener != null && this.selectedVertexState != null) {
+      this.selectedVertexState.removeItemListener(pickEventListener);
     }
-    this.selectedNodeState = selectedNodeState;
-    this.renderContext.setSelectedNodeState(selectedNodeState);
+    this.selectedVertexState = selectedVertexState;
+    this.renderContext.setSelectedVertexState(selectedVertexState);
     if (pickEventListener == null) {
       pickEventListener = e -> repaint();
     }
-    selectedNodeState.addItemListener(pickEventListener);
+    selectedVertexState.addItemListener(pickEventListener);
   }
 
   @Override
@@ -663,12 +670,12 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
   }
 
   @Override
-  public NetworkElementAccessor<N, E> getPickSupport() {
+  public GraphElementAccessor<V, E> getPickSupport() {
     return renderContext.getPickSupport();
   }
 
   @Override
-  public void setPickSupport(NetworkElementAccessor<N, E> pickSupport) {
+  public void setPickSupport(GraphElementAccessor<V, E> pickSupport) {
     renderContext.setPickSupport(pickSupport);
   }
 
@@ -679,12 +686,12 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
   }
 
   @Override
-  public RenderContext<N, E> getRenderContext() {
+  public RenderContext<V, E> getRenderContext() {
     return renderContext;
   }
 
   @Override
-  public void setRenderContext(RenderContext<N, E> renderContext) {
+  public void setRenderContext(RenderContext<V, E> renderContext) {
     this.renderContext = renderContext;
   }
 
@@ -700,11 +707,11 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
   }
 
   @Override
-  public TransformSupport<N, E> getTransformSupport() {
+  public TransformSupport<V, E> getTransformSupport() {
     return transformSupport;
   }
 
-  public void setTransformSupport(TransformSupport<N, E> transformSupport) {
+  public void setTransformSupport(TransformSupport<V, E> transformSupport) {
     this.transformSupport = transformSupport;
   }
 
@@ -748,8 +755,8 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
     }
   }
 
-  private VisualizationModel.SpatialSupport getNodeSpatialSupportPreference() {
-    String spatialSupportProperty = System.getProperty(NODE_SPATIAL_SUPPORT, "RTREE");
+  private VisualizationModel.SpatialSupport getVertexSpatialSupportPreference() {
+    String spatialSupportProperty = System.getProperty(VERTEX_SPATIAL_SUPPORT, "RTREE");
     try {
       return VisualizationModel.SpatialSupport.valueOf(spatialSupportProperty);
     } catch (IllegalArgumentException ex) {
@@ -774,13 +781,13 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
     return VisualizationModel.SpatialSupport.NONE;
   }
 
-  private Spatial<N> createNodeSpatial(VisualizationServer<N, E> visualizationServer) {
-    switch (getNodeSpatialSupportPreference()) {
+  private Spatial<V> createVertexSpatial(VisualizationServer<V, E> visualizationServer) {
+    switch (getVertexSpatialSupportPreference()) {
       case RTREE:
-        return SpatialRTree.Nodes.builder()
+        return SpatialRTree.Vertices.builder()
             .visualizationModel(visualizationServer.getModel())
             .boundingRectangleCollector(
-                new BoundingRectangleCollector.Nodes<>(
+                new BoundingRectangleCollector.Vertices<>(
                     visualizationServer.getRenderContext(), visualizationServer.getModel()))
             .splitterContext(SplitterContext.of(new RStarLeafSplitter<>(), new RStarSplitter<>()))
             .reinsert(true)
@@ -791,11 +798,11 @@ public class BasicVisualizationServer<N, E> extends JPanel implements Visualizat
         return new SpatialQuadTree<>(visualizationServer.getModel().getLayoutModel());
       case NONE:
       default:
-        return new Spatial.NoOp.Node<>(visualizationServer.getModel().getLayoutModel());
+        return new Spatial.NoOp.Vertex<>(visualizationServer.getModel().getLayoutModel());
     }
   }
 
-  private Spatial<E> createEdgeSpatial(VisualizationServer<N, E> visualizationServer) {
+  private Spatial<E> createEdgeSpatial(VisualizationServer<V, E> visualizationServer) {
     switch (getEdgeSpatialSupportPreference()) {
       case RTREE:
         return SpatialRTree.Edges.builder()

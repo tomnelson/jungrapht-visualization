@@ -100,7 +100,7 @@ public class SpatialLensDemo extends JPanel {
   /** create an instance of a simple graph with controls to demo the zoomand hyperbolic features. */
   public SpatialLensDemo() {
     setLayout(new BorderLayout());
-    graph = //buildOneNode();
+    graph = //buildOneVertex();
         TestGraphs.getOneComponentGraph();
 
     graphLayoutAlgorithm = FRLayoutAlgorithm.<String>builder().build();
@@ -111,10 +111,10 @@ public class SpatialLensDemo extends JPanel {
     final VisualizationModel<String, Number> visualizationModel =
         new BaseVisualizationModel<>(graph, graphLayoutAlgorithm, preferredSize);
     vv = new VisualizationViewer<>(visualizationModel, preferredSize);
-    vv.getRenderContext().setNodeLabelFunction(Object::toString);
+    vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.setBackground(Color.white);
 
-    vv.getRenderContext().setNodeLabelFunction(Object::toString);
+    vv.getRenderContext().setVertexLabelFunction(Object::toString);
 
     GraphZoomScrollPane gzsp = new GraphZoomScrollPane(vv);
     add(gzsp);
@@ -377,7 +377,7 @@ public class SpatialLensDemo extends JPanel {
     }
   }
 
-  Graph<String, Number> buildOneNode() {
+  Graph<String, Number> buildOneVertex() {
     Graph<String, Number> graph =
         GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.directedMultigraph())
             .buildGraph();

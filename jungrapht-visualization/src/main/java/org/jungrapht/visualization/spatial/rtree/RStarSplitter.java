@@ -27,14 +27,14 @@ public class RStarSplitter<T> extends AbstractSplitter<T> implements Splitter<T>
   private Comparator verticalEdgeComparator = new VerticalEdgeNodeComparator();
 
   public Pair<InnerNode<T>> split(List<Node<T>> children, Node<T> newEntry) {
-    return chooseSplitNodes(children, newEntry);
+    return chooseSplitVertices(children, newEntry);
   }
 
-  private Pair<InnerNode<T>> chooseSplitNodes(Collection<Node<T>> entries, Node<T> newEntry) {
+  private Pair<InnerNode<T>> chooseSplitVertices(Collection<Node<T>> entries, Node<T> newEntry) {
     Pair<List<Node<T>>> pair = chooseSplit(entries, newEntry);
-    InnerNode<T> innerNodeLeft = InnerNode.create(pair.left);
-    InnerNode<T> innerNodeRight = InnerNode.create(pair.right);
-    return Pair.of(innerNodeLeft, innerNodeRight);
+    InnerNode<T> innerVertexLeft = InnerNode.create(pair.left);
+    InnerNode<T> innerVertexRight = InnerNode.create(pair.right);
+    return Pair.of(innerVertexLeft, innerVertexRight);
   }
 
   private Pair<List<Node<T>>> chooseSplit(Collection<Node<T>> entries, Node<T> newEntry) {

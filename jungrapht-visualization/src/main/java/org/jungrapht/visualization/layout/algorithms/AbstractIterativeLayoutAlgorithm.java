@@ -12,12 +12,12 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-public abstract class AbstractIterativeLayoutAlgorithm<N> implements IterativeLayoutAlgorithm<N> {
+public abstract class AbstractIterativeLayoutAlgorithm<V> implements IterativeLayoutAlgorithm<V> {
 
   private static final Logger log = LoggerFactory.getLogger(AbstractIterativeLayoutAlgorithm.class);
 
   public abstract static class Builder<
-      N, T extends AbstractIterativeLayoutAlgorithm<N>, B extends Builder<N, T, B>> {
+      V, T extends AbstractIterativeLayoutAlgorithm<V>, B extends Builder<V, T, B>> {
     protected Random random = new Random();
     protected boolean shouldPrerelax = true;
     protected int preRelaxDurationMs = 500;
@@ -50,10 +50,11 @@ public abstract class AbstractIterativeLayoutAlgorithm<N> implements IterativeLa
     this.preRelaxDurationMs = builder.preRelaxDurationMs;
   }
   /**
-   * because the IterativeLayoutAlgorithms use multithreading to continuously update node positions,
-   * the layoutModel state is saved (during the visit method) so that it can be used continuously
+   * because the IterativeLayoutAlgorithms use multithreading to continuously update vertex
+   * positions, the layoutModel state is saved (during the visit method) so that it can be used
+   * continuously
    */
-  protected LayoutModel<N> layoutModel;
+  protected LayoutModel<V> layoutModel;
 
   // both of these can be set at instance creation time
   protected boolean shouldPreRelax;
@@ -78,10 +79,11 @@ public abstract class AbstractIterativeLayoutAlgorithm<N> implements IterativeLa
   }
 
   /**
-   * because the IterativeLayoutAlgorithms use multithreading to continuously update node positions,
-   * the layoutModel state is saved (during the visit method) so that it can be used continuously
+   * because the IterativeLayoutAlgorithms use multithreading to continuously update vertex
+   * positions, the layoutModel state is saved (during the visit method) so that it can be used
+   * continuously
    */
-  public void visit(LayoutModel<N> layoutModel) {
+  public void visit(LayoutModel<V> layoutModel) {
     log.trace("visiting " + layoutModel);
     this.layoutModel = layoutModel;
   }

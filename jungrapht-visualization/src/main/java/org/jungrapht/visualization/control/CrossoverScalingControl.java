@@ -19,9 +19,9 @@ import org.jungrapht.visualization.transform.MutableTransformer;
 /**
  * A scaling control that has a crossover point. When the overall scale of the view and model is
  * less than the crossover point, the scaling is applied to the view's transform and the graph
- * nodes, labels, etc grow smaller. This preserves the overall shape of the graph. When the scale is
- * larger than the crossover, the scaling is applied to the graph layout. The graph spreads out, but
- * the nodes and labels grow no larger than their original layoutSize.
+ * vertices, labels, etc grow smaller. This preserves the overall shape of the graph. When the scale
+ * is larger than the crossover, the scaling is applied to the graph layout. The graph spreads out,
+ * but the vertices and labels grow no larger than their original layoutSize.
  *
  * @author Tom Nelson
  */

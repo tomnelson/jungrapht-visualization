@@ -21,15 +21,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The SpringLayout package represents a visualization of a set of nodes. The SpringLayout, which is
- * initialized with a Graph, assigns X/Y locations to each node. When called <code>step()</code>,
- * the SpringLayout moves the visualization forward one step.
+ * The SpringLayout package represents a visualization of a set of vertices. The SpringLayout, which
+ * is initialized with a Graph, assigns X/Y locations to each vertex. When called <code>step()
+ * </code>, the SpringLayout moves the visualization forward one step.
  *
  * @author Danyel Fisher
  * @author Joshua O'Madadhain
  * @author Tom Nelson
  */
-public class SpringLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
+public class SpringLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
     implements IterativeContext {
 
   private static final Logger log = LoggerFactory.getLogger(SpringLayoutAlgorithm.class);
@@ -39,39 +39,39 @@ public class SpringLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N
   protected double force_multiplier = 1.0 / 3.0;
   boolean done = false;
 
-  protected LoadingCache<N, SpringNodeData> springNodeData =
-      CacheBuilder.newBuilder().build(CacheLoader.from(SpringNodeData::new));
+  protected LoadingCache<V, SpringVertexData> springVertexData =
+      CacheBuilder.newBuilder().build(CacheLoader.from(SpringVertexData::new));
 
   protected StandardSpringRepulsion.Builder repulsionContractBuilder;
   protected StandardSpringRepulsion repulsionContract;
 
-  public static class Builder<N>
-      extends AbstractIterativeLayoutAlgorithm.Builder<N, SpringLayoutAlgorithm<N>, Builder<N>> {
+  public static class Builder<V>
+      extends AbstractIterativeLayoutAlgorithm.Builder<V, SpringLayoutAlgorithm<V>, Builder<V>> {
     private StandardSpringRepulsion.Builder repulsionContractBuilder =
         StandardSpringRepulsion.standardBuilder();
     private Function<Object, Integer> lengthFunction = n -> 30;
 
-    public Builder<N> repulsionContractBuilder(
+    public Builder<V> repulsionContractBuilder(
         StandardSpringRepulsion.Builder repulsionContractBuilder) {
       this.repulsionContractBuilder = repulsionContractBuilder;
       return this;
     }
 
-    public Builder<N> withLengthFunction(Function<Object, Integer> lengthFunction) {
+    public Builder<V> withLengthFunction(Function<Object, Integer> lengthFunction) {
       this.lengthFunction = lengthFunction;
       return this;
     }
 
-    public SpringLayoutAlgorithm<N> build() {
+    public SpringLayoutAlgorithm<V> build() {
       return new SpringLayoutAlgorithm<>(this);
     }
   }
 
-  public static <N> Builder<N> builder() {
+  public static <V> Builder<V> builder() {
     return new Builder<>();
   }
 
-  protected SpringLayoutAlgorithm(Builder<N> builder) {
+  protected SpringLayoutAlgorithm(Builder<V> builder) {
     super(builder);
     this.lengthFunction = builder.lengthFunction;
     this.repulsionContractBuilder = builder.repulsionContractBuilder;
@@ -83,14 +83,14 @@ public class SpringLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N
    * @param layoutModel
    */
   @Override
-  public void visit(LayoutModel<N> layoutModel) {
+  public void visit(LayoutModel<V> layoutModel) {
     super.visit(layoutModel);
 
     // setting the layout model will build the BHQT if the builder is the
     // Optimized one
     repulsionContract =
         repulsionContractBuilder
-            .nodeData(springNodeData)
+            .nodeData(springVertexData)
             .layoutModel(layoutModel)
             .random(random)
             .build();
@@ -125,10 +125,10 @@ public class SpringLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N
 
   public void step() {
     this.repulsionContract.step();
-    Graph<N, ?> graph = layoutModel.getGraph();
+    Graph<V, ?> graph = layoutModel.getGraph();
     try {
-      for (N node : graph.vertexSet()) {
-        SpringNodeData svd = springNodeData.getUnchecked(node);
+      for (V vertex : graph.vertexSet()) {
+        SpringVertexData svd = springVertexData.getUnchecked(vertex);
         if (svd == null) {
           continue;
         }
@@ -143,18 +143,18 @@ public class SpringLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N
 
     relaxEdges();
     repulsionContract.calculateRepulsion();
-    moveNodes();
+    moveVertices();
   }
 
   protected void relaxEdges() {
-    Graph<N, Object> graph = (Graph<N, Object>) layoutModel.getGraph();
+    Graph<V, Object> graph = (Graph<V, Object>) layoutModel.getGraph();
     try {
       for (Object edge : layoutModel.getGraph().edgeSet()) {
-        N node1 = graph.getEdgeSource(edge);
-        N node2 = graph.getEdgeTarget(edge);
+        V vertex1 = graph.getEdgeSource(edge);
+        V vertex2 = graph.getEdgeTarget(edge);
 
-        Point p1 = this.layoutModel.get(node1);
-        Point p2 = this.layoutModel.get(node2);
+        Point p1 = this.layoutModel.get(vertex1);
+        Point p2 = this.layoutModel.get(vertex2);
         if (p1 == null || p2 == null) {
           continue;
         }
@@ -168,15 +168,15 @@ public class SpringLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N
         len = (len == 0) ? .0001 : len;
 
         double f = force_multiplier * (desiredLen - len) / len;
-        f = f * Math.pow(stretch, (graph.degreeOf(node1) + graph.degreeOf(node2) - 2));
+        f = f * Math.pow(stretch, (graph.degreeOf(vertex1) + graph.degreeOf(vertex2) - 2));
 
         // the actual movement distance 'dx' is the force multiplied by the
         // distance to go.
         double dx = f * vx;
         double dy = f * vy;
-        SpringNodeData v1D, v2D;
-        v1D = springNodeData.getUnchecked(node1);
-        v2D = springNodeData.getUnchecked(node2);
+        SpringVertexData v1D, v2D;
+        v1D = springVertexData.getUnchecked(vertex1);
+        v2D = springVertexData.getUnchecked(vertex2);
         v1D.edgedx += dx;
         v1D.edgedy += dy;
         v2D.edgedx += -dx;
@@ -187,26 +187,26 @@ public class SpringLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N
     }
   }
 
-  protected void moveNodes() {
-    Graph<N, ?> graph = layoutModel.getGraph();
+  protected void moveVertices() {
+    Graph<V, ?> graph = layoutModel.getGraph();
 
     synchronized (layoutModel) {
       try {
-        for (N node : graph.vertexSet()) {
-          if (layoutModel.isLocked(node)) {
+        for (V vertex : graph.vertexSet()) {
+          if (layoutModel.isLocked(vertex)) {
             continue;
           }
-          SpringNodeData vd = springNodeData.getUnchecked(node);
+          SpringVertexData vd = springVertexData.getUnchecked(vertex);
           if (vd == null) {
             continue;
           }
-          Point xyd = layoutModel.apply(node);
+          Point xyd = layoutModel.apply(vertex);
           double posX = xyd.x;
           double posY = xyd.y;
 
           vd.dx += vd.repulsiondx + vd.edgedx;
           vd.dy += vd.repulsiondy + vd.edgedy;
-          // keeps nodes from moving any faster than 5 per time unit
+          // keeps vertices from moving any faster than 5 per time unit
           posX = posX + Math.max(-5, Math.min(5, vd.dx));
           posY = posY + Math.max(-5, Math.min(5, vd.dy));
 
@@ -225,15 +225,15 @@ public class SpringLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N
           }
           // after the bounds have been honored above, really set the location
           // in the layout model
-          layoutModel.set(node, posX, posY);
+          layoutModel.set(vertex, posX, posY);
         }
       } catch (ConcurrentModificationException cme) {
-        moveNodes();
+        moveVertices();
       }
     }
   }
 
-  public static class SpringNodeData {
+  public static class SpringVertexData {
     protected double edgedx;
     protected double edgedy;
     public double repulsiondx;

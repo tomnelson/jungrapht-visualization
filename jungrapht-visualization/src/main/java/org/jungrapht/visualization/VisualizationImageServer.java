@@ -25,22 +25,22 @@ import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
  * visualization, then produces an image of it.
  *
  * @author tom
- * @param <N> the node type
+ * @param <V> the vertex type
  * @param <E> the edge type
  */
 @SuppressWarnings("serial")
-public class VisualizationImageServer<N, E> extends BasicVisualizationServer<N, E> {
+public class VisualizationImageServer<V, E> extends BasicVisualizationServer<V, E> {
 
   Map<RenderingHints.Key, Object> renderingHints = new HashMap<>();
 
   /**
    * Creates a new instance with the specified layout and preferred layoutSize.
    *
-   * @param layoutAlgorithm the Layout instance; provides the node locations
+   * @param layoutAlgorithm the Layout instance; provides the vertex locations
    * @param preferredSize the preferred layoutSize of the image
    */
   public VisualizationImageServer(
-      Graph<N, E> network, LayoutAlgorithm<N> layoutAlgorithm, Dimension preferredSize) {
+      Graph<V, E> network, LayoutAlgorithm<V> layoutAlgorithm, Dimension preferredSize) {
     super(network, layoutAlgorithm, preferredSize);
     setSize(preferredSize);
     renderingHints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

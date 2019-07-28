@@ -31,11 +31,11 @@ import org.jungrapht.visualization.util.Context;
  * transformation of the edge shape
  *
  * @author Tom Nelson
- * @param <N> the node type
+ * @param <V> the vertex type
  * @param <E> the edge type
  */
-public class ReshapingEdgeRenderer<N, E> extends BasicEdgeRenderer<N, E>
-    implements Renderer.Edge<N, E> {
+public class ReshapingEdgeRenderer<V, E> extends BasicEdgeRenderer<V, E>
+    implements Renderer.Edge<V, E> {
 
   /**
    * Draws the edge <code>e</code>, whose endpoints are at <code>(x1,y1)</code> and <code>(x2,y2)
@@ -44,12 +44,12 @@ public class ReshapingEdgeRenderer<N, E> extends BasicEdgeRenderer<N, E>
    * the distance between <code>(x1,y1)</code> and <code>(x2,y2)</code>.
    */
   protected void drawSimpleEdge(
-      RenderContext<N, E> renderContext, VisualizationModel<N, E> visualizationModel, E e) {
+      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e) {
 
     TransformingGraphics g = (TransformingGraphics) renderContext.getGraphicsContext();
-    Graph<N, E> graph = visualizationModel.getNetwork();
-    N v1 = graph.getEdgeSource(e);
-    N v2 = graph.getEdgeTarget(e);
+    Graph<V, E> graph = visualizationModel.getGraph();
+    V v1 = graph.getEdgeSource(e);
+    V v2 = graph.getEdgeTarget(e);
     Point p1 = visualizationModel.getLayoutModel().apply(v1);
     Point p2 = visualizationModel.getLayoutModel().apply(v2);
     Point2D p12d =
@@ -77,22 +77,22 @@ public class ReshapingEdgeRenderer<N, E> extends BasicEdgeRenderer<N, E>
     }
 
     boolean isLoop = v1.equals(v2);
-    Shape s2 = renderContext.getNodeShapeFunction().apply(v2);
+    Shape s2 = renderContext.getVertexShapeFunction().apply(v2);
     Shape edgeShape = renderContext.getEdgeShapeFunction().apply(Context.getInstance(graph, e));
 
     AffineTransform xform = AffineTransform.getTranslateInstance(x1, y1);
 
     if (isLoop) {
-      // this is a self-loop. scale it is larger than the node
+      // this is a self-loop. scale it is larger than the vertex
       // it decorates and translate it so that its nadir is
-      // at the center of the node.
+      // at the center of the vertex.
       Rectangle2D s2Bounds = s2.getBounds2D();
       xform.scale(s2Bounds.getWidth(), s2Bounds.getHeight());
       xform.translate(0, -edgeShape.getBounds2D().getWidth() / 2);
     } else {
       // this is a normal edge. Rotate it to the angle between
-      // node endpoints, then scale it to the distance between
-      // the nodes
+      // vertex endpoints, then scale it to the distance between
+      // the vertices
       float dx = x2 - x1;
       float dy = y2 - y1;
       float thetaRadians = (float) Math.atan2(dy, dx);
@@ -127,14 +127,14 @@ public class ReshapingEdgeRenderer<N, E> extends BasicEdgeRenderer<N, E>
 
     if (renderContext.renderEdgeArrow()) {
 
-      Shape destNodeShape = renderContext.getNodeShapeFunction().apply(v2);
+      Shape destVertexShape = renderContext.getVertexShapeFunction().apply(v2);
 
       AffineTransform xf = AffineTransform.getTranslateInstance(x2, y2);
-      destNodeShape = xf.createTransformedShape(destNodeShape);
+      destVertexShape = xf.createTransformedShape(destVertexShape);
 
       AffineTransform at =
           edgeArrowRenderingSupport.getArrowTransform(
-              renderContext, new GeneralPath(edgeShape), destNodeShape);
+              renderContext, new GeneralPath(edgeShape), destVertexShape);
       if (at == null) {
         return;
       }
@@ -146,13 +146,13 @@ public class ReshapingEdgeRenderer<N, E> extends BasicEdgeRenderer<N, E>
       g.draw(arrow);
 
       if (!graph.getType().isDirected()) {
-        Shape nodeShape = renderContext.getNodeShapeFunction().apply(v1);
+        Shape vertexShape = renderContext.getVertexShapeFunction().apply(v1);
         xf = AffineTransform.getTranslateInstance(x1, y1);
-        nodeShape = xf.createTransformedShape(nodeShape);
+        vertexShape = xf.createTransformedShape(vertexShape);
 
         at =
             edgeArrowRenderingSupport.getReverseArrowTransform(
-                renderContext, new GeneralPath(edgeShape), nodeShape, !isLoop);
+                renderContext, new GeneralPath(edgeShape), vertexShape, !isLoop);
         if (at == null) {
           return;
         }

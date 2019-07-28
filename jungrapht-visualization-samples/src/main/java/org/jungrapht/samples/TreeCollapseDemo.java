@@ -23,7 +23,7 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.decorators.EdgeShape;
-import org.jungrapht.visualization.decorators.EllipseNodeShapeFunction;
+import org.jungrapht.visualization.decorators.EllipseVertexShapeFunction;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.subLayout.Collapsable;
 import org.jungrapht.visualization.subLayout.TreeCollapser;
@@ -48,14 +48,14 @@ public class TreeCollapseDemo extends JPanel {
     setLayout(new BorderLayout());
     // create a simple graph for the demo
     Graph<String, Integer> generatedGraph = DemoTreeSupplier.createTreeTwo();
-    // make a pseudograph with Collapsable node types
+    // make a pseudograph with Collapsable vertex types
     // the graph has to allow self loops and parallel edges in order to
     // be collapsed and expanded without losing edges
     this.graph =
         GraphTypeBuilder.<Collapsable<?>, Integer>forGraphType(
                 DefaultGraphType.directedPseudograph())
             .buildGraph();
-    // add nodes and edges to the new graph
+    // add vertices and edges to the new graph
     for (Integer edge : generatedGraph.edgeSet()) {
       Collapsable<?> source = Collapsable.of(generatedGraph.getEdgeSource(edge));
       Collapsable<?> target = Collapsable.of(generatedGraph.getEdgeTarget(edge));
@@ -70,10 +70,9 @@ public class TreeCollapseDemo extends JPanel {
     vv = new VisualizationViewer<>(graph, layoutSize, viewSize);
     vv.setBackground(Color.white);
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
-    vv.getRenderContext().setNodeLabelFunction(Object::toString);
-    vv.getRenderContext().setNodeShapeFunction(new ClusterNodeShapeFunction());
+    vv.getRenderContext().setVertexShapeFunction(new ClusterVertexShapeFunction());
     // add a listener for ToolTips
-    vv.setNodeToolTipFunction(Object::toString);
+    vv.setVertexToolTipFunction(Object::toString);
     vv.getRenderContext().setArrowFillPaintFunction(n -> Color.lightGray);
 
     final GraphZoomScrollPane panel = new GraphZoomScrollPane(vv);
@@ -90,14 +89,14 @@ public class TreeCollapseDemo extends JPanel {
     JButton collapse = new JButton("Collapse");
     collapse.addActionListener(
         e -> {
-          Set<Collapsable<?>> picked = vv.getSelectedNodeState().getSelected();
+          Set<Collapsable<?>> picked = vv.getSelectedVertexState().getSelected();
           if (picked.size() == 1) {
             Collapsable<?> root = picked.iterator().next();
             Graph<Collapsable<?>, Integer> subTree = TreeCollapser.collapse(graph, root);
             LayoutModel<Collapsable<?>> objectLayoutModel = vv.getModel().getLayoutModel();
             objectLayoutModel.set(Collapsable.of(subTree), objectLayoutModel.apply(root));
-            vv.getModel().setNetwork(graph, true);
-            vv.getSelectedNodeState().clear();
+            vv.getModel().setGraph(graph, true);
+            vv.getSelectedVertexState().clear();
             vv.repaint();
           }
         });
@@ -105,14 +104,14 @@ public class TreeCollapseDemo extends JPanel {
     JButton expand = new JButton("Expand");
     expand.addActionListener(
         e -> {
-          for (Collapsable<?> v : vv.getSelectedNodeState().getSelected()) {
+          for (Collapsable<?> v : vv.getSelectedVertexState().getSelected()) {
             if (v.get() instanceof Graph) {
               graph = TreeCollapser.expand(graph, (Collapsable<Graph>) v);
               LayoutModel<Collapsable<?>> objectLayoutModel = vv.getModel().getLayoutModel();
               objectLayoutModel.set(Collapsable.of(graph), objectLayoutModel.apply(v));
-              vv.getModel().setNetwork(graph, true);
+              vv.getModel().setGraph(graph, true);
             }
-            vv.getSelectedNodeState().clear();
+            vv.getSelectedVertexState().clear();
             vv.repaint();
           }
         });
@@ -128,14 +127,14 @@ public class TreeCollapseDemo extends JPanel {
   }
 
   /**
-   * a demo class that will create a node shape that is either a polygon or star. The number of
-   * sides corresponds to the number of nodes that were collapsed into the node represented by this
-   * shape.
+   * a demo class that will create a vertex shape that is either a polygon or star. The number of
+   * sides corresponds to the number of vertices that were collapsed into the vertex represented by
+   * this shape.
    */
-  class ClusterNodeShapeFunction extends EllipseNodeShapeFunction<Collapsable<?>> {
+  class ClusterVertexShapeFunction extends EllipseVertexShapeFunction<Collapsable<?>> {
 
-    ClusterNodeShapeFunction() {
-      setSizeTransformer(new ClusterNodeSizeFunction(20));
+    ClusterVertexShapeFunction() {
+      setSizeTransformer(new ClusterVertexSizeFunction(20));
     }
 
     @Override
@@ -155,13 +154,13 @@ public class TreeCollapseDemo extends JPanel {
   }
 
   /**
-   * A demo class that will make nodes larger if they represent a collapsed collection of original
-   * nodes
+   * A demo class that will make vertices larger if they represent a collapsed collection of
+   * original vertices
    */
-  class ClusterNodeSizeFunction implements Function<Collapsable<?>, Integer> {
+  class ClusterVertexSizeFunction implements Function<Collapsable<?>, Integer> {
     int size;
 
-    public ClusterNodeSizeFunction(Integer size) {
+    public ClusterVertexSizeFunction(Integer size) {
       this.size = size;
     }
 

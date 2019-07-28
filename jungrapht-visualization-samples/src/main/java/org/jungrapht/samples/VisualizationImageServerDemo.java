@@ -17,8 +17,8 @@ import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.visualization.VisualizationImageServer;
 import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
-import org.jungrapht.visualization.renderers.BasicNodeLabelRenderer;
-import org.jungrapht.visualization.renderers.GradientNodeRenderer;
+import org.jungrapht.visualization.renderers.BasicVertexLabelRenderer;
+import org.jungrapht.visualization.renderers.GradientVertexRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
 
 /**
@@ -45,18 +45,23 @@ public class VisualizationImageServerDemo {
             graph, KKLayoutAlgorithm.<Integer>builder().build(), new Dimension(600, 600));
 
     vv.getRenderer()
-        .setNodeRenderer(
-            new GradientNodeRenderer<>(
-                vv.getSelectedNodeState(), Color.white, Color.red, Color.white, Color.blue, false));
+        .setVertexRenderer(
+            new GradientVertexRenderer<>(
+                vv.getSelectedVertexState(),
+                Color.white,
+                Color.red,
+                Color.white,
+                Color.blue,
+                false));
     vv.getRenderContext().setEdgeDrawPaintFunction(e -> Color.lightGray);
     vv.getRenderContext().setArrowFillPaintFunction(e -> Color.lightGray);
     vv.getRenderContext().setArrowDrawPaintFunction(e -> Color.lightGray);
 
-    vv.getRenderContext().setNodeLabelFunction(Object::toString);
+    vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.getRenderer()
-        .getNodeLabelRenderer()
-        .setPositioner(new BasicNodeLabelRenderer.InsidePositioner());
-    vv.getRenderContext().setNodeLabelPosition(Renderer.NodeLabel.Position.AUTO);
+        .getVertexLabelRenderer()
+        .setPositioner(new BasicVertexLabelRenderer.InsidePositioner());
+    vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.AUTO);
 
     // create a frome to hold the graph
     final JFrame frame = new JFrame();

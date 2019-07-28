@@ -20,28 +20,28 @@ import org.slf4j.LoggerFactory;
 
 /**
  * An extension of {@code TreeLayoutAlgorithm} that allows a {@code Comparator<E>} for edges so that
- * the children of each node are accessed in a supplied order.
+ * the children of each vertex are accessed in a supplied order.
  *
- * @param <N> the node type
+ * @param <V> the vertex type
  * @param <E> the edge type
  * @author Tom Nelson
  */
-public class EdgeSortingTreeLayoutAlgorithm<N, E> extends TreeLayoutAlgorithm<N>
-    implements LayoutAlgorithm<N> {
+public class EdgeSortingTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
+    implements LayoutAlgorithm<V> {
 
   private static final Logger log = LoggerFactory.getLogger(EdgeSortingTreeLayoutAlgorithm.class);
 
   /**
    * a builder to create an instance of a {@code} EdgeSortingTreeLayoutAlgorithm.
    *
-   * @param <N> the node type
+   * @param <V> the vertex type
    * @param <E> the edge type
    * @param <T> the type that will be created
    * @param <B> the builder type
    */
   public static class Builder<
-          N, E, T extends EdgeSortingTreeLayoutAlgorithm<N, E>, B extends Builder<N, E, T, B>>
-      extends TreeLayoutAlgorithm.Builder<N, T, B> {
+          V, E, T extends EdgeSortingTreeLayoutAlgorithm<V, E>, B extends Builder<V, E, T, B>>
+      extends TreeLayoutAlgorithm.Builder<V, T, B> {
 
     /**
      * a comparator to sort edges
@@ -79,16 +79,16 @@ public class EdgeSortingTreeLayoutAlgorithm<N, E> extends TreeLayoutAlgorithm<N>
   /**
    * create a new {@code EdgeSortingTreeLayoutAlgorithm.Builder}
    *
-   * @param <N> the node type
+   * @param <V> the vertex type
    * @param <E> the edge type
    * @return a new {@code EdgeSortingTreeLayoutAlgorithm.Builder}
    */
-  public static <N, E> Builder<N, E, ?, ?> sortingBuilder() {
+  public static <V, E> Builder<V, E, ?, ?> sortingBuilder() {
     return new Builder<>();
   }
 
-  protected EdgeSortingTreeLayoutAlgorithm(Builder<N, E, ?, ?> builder) {
-    this(builder.horizontalNodeSpacing, builder.verticalNodeSpacing, builder.edgeComparator);
+  protected EdgeSortingTreeLayoutAlgorithm(Builder<V, E, ?, ?> builder) {
+    this(builder.horizontalVertexSpacing, builder.verticalVertexSpacing, builder.edgeComparator);
   }
 
   /**
@@ -97,8 +97,8 @@ public class EdgeSortingTreeLayoutAlgorithm<N, E> extends TreeLayoutAlgorithm<N>
    * @param edgeComparator sorts the edges
    */
   protected EdgeSortingTreeLayoutAlgorithm(
-      int horizontalNodeSpacing, int verticalNodeSpacing, Comparator<E> edgeComparator) {
-    super(horizontalNodeSpacing, verticalNodeSpacing);
+      int horizontalVertexSpacing, int verticalVertexSpacing, Comparator<E> edgeComparator) {
+    super(horizontalVertexSpacing, verticalVertexSpacing);
     this.edgeComparator = edgeComparator;
   }
 
@@ -109,32 +109,32 @@ public class EdgeSortingTreeLayoutAlgorithm<N, E> extends TreeLayoutAlgorithm<N>
   }
 
   @Override
-  protected void buildTree(LayoutModel<N> layoutModel, N node, int x, int y) {
-    Graph<N, E> graph = (Graph<N, E>) layoutModel.getGraph();
-    if (alreadyDone.add(node)) {
+  protected void buildTree(LayoutModel<V> layoutModel, V vertex, int x, int y) {
+    Graph<V, E> graph = (Graph<V, E>) layoutModel.getGraph();
+    if (alreadyDone.add(vertex)) {
       //go one level further down
-      y += this.verticalNodeSpacing;
-      log.trace("Set node {} to {}", node, Point.of(x, y));
-      layoutModel.set(node, x, y);
+      y += this.verticalVertexSpacing;
+      log.trace("Set vertex {} to {}", vertex, Point.of(x, y));
+      layoutModel.set(vertex, x, y);
 
-      int sizeXofCurrent = basePositions.get(node);
+      int sizeXofCurrent = basePositions.get(vertex);
       x -= sizeXofCurrent / 2;
 
       int sizeXofChild;
 
       for (E edgeElement :
           graph
-              .outgoingEdgesOf(node)
+              .outgoingEdgesOf(vertex)
               .stream()
               .sorted(edgeComparator)
               .collect(Collectors.toList())) {
-        N element = graph.getEdgeTarget(edgeElement);
+        V element = graph.getEdgeTarget(edgeElement);
         log.trace("get base position of {} from {}", element, basePositions);
         sizeXofChild = this.basePositions.get(element);
         x += sizeXofChild / 2;
         buildTree(layoutModel, element, x, y);
 
-        x += sizeXofChild / 2 + horizontalNodeSpacing;
+        x += sizeXofChild / 2 + horizontalVertexSpacing;
       }
     }
   }

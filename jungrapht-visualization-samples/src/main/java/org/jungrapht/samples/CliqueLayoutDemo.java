@@ -34,9 +34,9 @@ import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 
 /**
- * Demonstrates the AggregateLayout class. In this demo, nodes are visually clustered as they are
+ * Demonstrates the AggregateLayout class. In this demo, vertices are visually clustered as they are
  * selected. The cluster is formed in a new Layout centered at the middle locations of the selected
- * nodes. The layoutSize and layout algorithm for each new cluster is selectable.
+ * vertices. The layoutSize and layout algorithm for each new cluster is selectable.
  *
  * @author Tom Nelson
  */
@@ -50,9 +50,9 @@ public class CliqueLayoutDemo extends JPanel {
           + "<p>Use the SubLayout combobox to select "
           + "<p>the type of layout for any clusters you create."
           + "<p>To create clusters, use the mouse to select "
-          + "<p>multiple nodes, either by dragging a region, "
-          + "<p>or by shift-clicking on multiple nodes."
-          + "<p>After you select nodes, use the "
+          + "<p>multiple vertices, either by dragging a region, "
+          + "<p>or by shift-clicking on multiple vertices."
+          + "<p>After you select vertices, use the "
           + "<p>Cluster Picked button to cluster them using the "
           + "<p>layout and layoutSize specified in the Sublayout comboboxen."
           + "<p>Use the Uncluster All button to remove all"
@@ -83,7 +83,7 @@ public class CliqueLayoutDemo extends JPanel {
 
     // ClusteringLayout is a decorator class that delegates
     // to another layout, but can also separately manage the
-    // layout of sub-sets of nodes in circular clusters.
+    // layout of sub-sets of vertices in circular clusters.
     Dimension preferredSize = new Dimension(600, 600);
 
     LayoutAlgorithm<String> layoutAlgorithm = FRLayoutAlgorithm.<String>builder().build();
@@ -101,21 +101,22 @@ public class CliqueLayoutDemo extends JPanel {
 
     vv = new VisualizationViewer<>(visualizationModel, preferredSize);
 
-    ps = vv.getSelectedNodeState();
+    ps = vv.getSelectedVertexState();
     vv.getRenderContext()
         .setEdgeDrawPaintFunction(
             new PickableElementPaintFunction<>(vv.getSelectedEdgeState(), Color.black, Color.red));
     vv.getRenderContext()
-        .setNodeFillPaintFunction(
-            new PickableElementPaintFunction<>(vv.getSelectedNodeState(), Color.red, Color.yellow));
+        .setVertexFillPaintFunction(
+            new PickableElementPaintFunction<>(
+                vv.getSelectedVertexState(), Color.red, Color.yellow));
     vv.setBackground(Color.white);
 
-    vv.getRenderContext().setNodeLabelFunction(Object::toString);
-    vv.getRenderContext().setNodeLabelPosition(Renderer.NodeLabel.Position.CNTR);
-    vv.getRenderContext().setNodeLabelDrawPaintFunction(c -> Color.white);
+    vv.getRenderContext().setVertexLabelFunction(Object::toString);
+    vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
+    vv.getRenderContext().setVertexLabelDrawPaintFunction(c -> Color.white);
 
     // add a listener for ToolTips
-    vv.setNodeToolTipFunction(Object::toString);
+    vv.setVertexToolTipFunction(Object::toString);
 
     // the regular graph mouse for the normal view
     final DefaultModalGraphMouse<?, ?> graphMouse = new DefaultModalGraphMouse<>();
@@ -273,7 +274,7 @@ public class CliqueLayoutDemo extends JPanel {
 
   private void cluster(boolean state) {
     // find the cliques in the graph
-    Graph<String, Number> graph = vv.getModel().getNetwork();
+    Graph<String, Number> graph = vv.getModel().getGraph();
     CliqueMinimalSeparatorDecomposition<String, Number> cliqueFinder =
         new CliqueMinimalSeparatorDecomposition<>(graph);
     //    Iterator<Set<String>> iterator = cliqueFinder.maximumIterator();
@@ -285,14 +286,14 @@ public class CliqueLayoutDemo extends JPanel {
     }
 
     //    if (state) {
-    //      // put the picked nodes into a new sublayout
+    //      // put the picked vertices into a new sublayout
     //      Collection<String> picked = ps.getSelected();
     //      if (picked.size() > 1) {
     //        Point2D center = new Point2D.Double();
     //        double x = 0;
     //        double y = 0;
-    //        for (String node : picked) {
-    //          Point p = clusteringLayoutModel.apply(node);
+    //        for (String vertex : picked) {
+    //          Point p = clusteringLayoutModel.apply(vertex);
     //          x += p.x;
     //          y += p.y;
     //        }
@@ -303,14 +304,14 @@ public class CliqueLayoutDemo extends JPanel {
     //        Graph<String, Number> subGraph;
     //        try {
     //          subGraph = GraphTypeBuilder.forGraph(graph).buildGraph();
-    //          for (String node : picked) {
-    //            subGraph.addVertex(node);
-    //            for (Number edge : graph.edgesOf(node)) {
-    //              String nodeU = graph.getEdgeSource(edge);
-    //              String nodeV = graph.getEdgeTarget(edge);
-    //              if (picked.contains(nodeU) && picked.contains(nodeV)) {
+    //          for (String vertex : picked) {
+    //            subGraph.addVertex(vertex);
+    //            for (Number edge : graph.edgesOf(vertex)) {
+    //              String vertexU = graph.getEdgeSource(edge);
+    //              String vertexV = graph.getEdgeTarget(edge);
+    //              if (picked.contains(vertexU) && picked.contains(vertexV)) {
     //                // put this edge into the subgraph
-    //                subGraph.addEdge(nodeU, nodeV, edge);
+    //                subGraph.addEdge(vertexU, vertexV, edge);
     //              }
     //            }
     //          }

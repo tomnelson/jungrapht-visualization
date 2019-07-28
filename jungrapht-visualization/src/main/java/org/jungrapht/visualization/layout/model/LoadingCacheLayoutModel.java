@@ -9,29 +9,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A LayoutModel that uses a lazy cache for node locations (LoadingCache)
+ * A LayoutModel that uses a lazy cache for vertex locations (LoadingCache)
  *
- * @param <N> the node type
+ * @param <V> the vertex type
  * @author Tom Nelson
  */
-public class LoadingCacheLayoutModel<N> extends AbstractLayoutModel<N>
-    implements LayoutModel<N>, Caching {
+public class LoadingCacheLayoutModel<V> extends AbstractLayoutModel<V>
+    implements LayoutModel<V>, Caching {
 
   private static final Logger log = LoggerFactory.getLogger(LoadingCacheLayoutModel.class);
 
-  protected LoadingCache<N, Point> locations =
+  protected LoadingCache<V, Point> locations =
       CacheBuilder.newBuilder().build(CacheLoader.from(() -> Point.ORIGIN));
 
   /**
    * a builder for LoadingCache instances
    *
-   * @param <N> the node type
+   * @param <V> the vertex type
    * @param <T> the type of the superclass of the LayoutModel to be built
    */
-  public static class Builder<N, T extends LoadingCacheLayoutModel<N>, B extends Builder<N, T, B>>
-      extends AbstractLayoutModel.Builder<N, T, B> {
+  public static class Builder<V, T extends LoadingCacheLayoutModel<V>, B extends Builder<V, T, B>>
+      extends AbstractLayoutModel.Builder<V, T, B> {
 
-    protected LoadingCache<N, Point> locations =
+    protected LoadingCache<V, Point> locations =
         CacheBuilder.newBuilder().build(CacheLoader.from(() -> Point.ORIGIN));
 
     /**
@@ -40,19 +40,19 @@ public class LoadingCacheLayoutModel<N> extends AbstractLayoutModel<N>
      * @param layoutModel
      * @return this builder for further use
      */
-    public B layoutModel(LayoutModel<N> layoutModel) {
+    public B layoutModel(LayoutModel<V> layoutModel) {
       this.width = layoutModel.getWidth();
       this.height = layoutModel.getHeight();
       return (B) this;
     }
 
     /**
-     * sets the initializer to use for new nodes
+     * sets the initializer to use for new vertices
      *
      * @param initializer
      * @return the builder
      */
-    public B initializer(Function<N, Point> initializer) {
+    public B initializer(Function<V, Point> initializer) {
       this.locations = CacheBuilder.newBuilder().build(CacheLoader.from(initializer::apply));
       return (B) this;
     }
@@ -67,11 +67,11 @@ public class LoadingCacheLayoutModel<N> extends AbstractLayoutModel<N>
     }
   }
 
-  public static <N> Builder<N, ?, ?> builder() {
+  public static <V> Builder<V, ?, ?> builder() {
     return new Builder<>();
   }
 
-  public static <N> LoadingCacheLayoutModel<N> from(LoadingCacheLayoutModel<N> other) {
+  public static <V> LoadingCacheLayoutModel<V> from(LoadingCacheLayoutModel<V> other) {
     return new LoadingCacheLayoutModel<>(other);
   }
 
@@ -80,38 +80,38 @@ public class LoadingCacheLayoutModel<N> extends AbstractLayoutModel<N>
     this.locations = builder.locations;
   }
 
-  private LoadingCacheLayoutModel(LoadingCacheLayoutModel<N> other) {
+  private LoadingCacheLayoutModel(LoadingCacheLayoutModel<V> other) {
     super(other.graph, other.width, other.height);
   }
 
-  public void setInitializer(Function<N, Point> initializer) {
+  public void setInitializer(Function<V, Point> initializer) {
     this.locations = CacheBuilder.newBuilder().build(CacheLoader.from(initializer::apply));
   }
 
   @Override
-  public void set(N node, Point location) {
+  public void set(V vertex, Point location) {
     if (!locked) {
-      this.locations.put(node, location);
-      super.set(node, location); // will fire events
+      this.locations.put(vertex, location);
+      super.set(vertex, location); // will fire events
     }
   }
 
   @Override
-  public void set(N node, double x, double y) {
-    this.set(node, Point.of(x, y));
+  public void set(V vertex, double x, double y) {
+    this.set(vertex, Point.of(x, y));
   }
 
   @Override
-  public Point get(N node) {
+  public Point get(V vertex) {
     if (log.isTraceEnabled()) {
-      log.trace(this.locations.getUnchecked(node) + " gotten for " + node);
+      log.trace(this.locations.getUnchecked(vertex) + " gotten for " + vertex);
     }
-    return this.locations.getUnchecked(node);
+    return this.locations.getUnchecked(vertex);
   }
 
   @Override
-  public Point apply(N node) {
-    return this.get(node);
+  public Point apply(V vertex) {
+    return this.get(vertex);
   }
 
   @Override

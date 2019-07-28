@@ -23,31 +23,31 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A renderer that will fill node shapes with a GradientPaint
+ * A renderer that will fill vertex shapes with a GradientPaint
  *
  * @author Tom Nelson
- * @param <N> the node type
+ * @param <V> the vertex type
  * @param <E> the edge type
  */
-public class GradientNodeRenderer<N, E> implements Renderer.Node<N, E> {
+public class GradientVertexRenderer<V, E> implements Renderer.Vertex<V, E> {
 
-  private static final Logger log = LoggerFactory.getLogger(GradientNodeRenderer.class);
+  private static final Logger log = LoggerFactory.getLogger(GradientVertexRenderer.class);
 
   Color colorOne;
   Color colorTwo;
   Color pickedColorOne;
   Color pickedColorTwo;
-  MutableSelectedState<N> mutablePickedState;
+  MutableSelectedState<V> mutablePickedState;
   boolean cyclic;
 
-  public GradientNodeRenderer(Color colorOne, Color colorTwo, boolean cyclic) {
+  public GradientVertexRenderer(Color colorOne, Color colorTwo, boolean cyclic) {
     this.colorOne = colorOne;
     this.colorTwo = colorTwo;
     this.cyclic = cyclic;
   }
 
-  public GradientNodeRenderer(
-      MutableSelectedState<N> mutableSelectedState,
+  public GradientVertexRenderer(
+      MutableSelectedState<V> mutableSelectedState,
       Color colorOne,
       Color colorTwo,
       Color pickedColorOne,
@@ -61,12 +61,12 @@ public class GradientNodeRenderer<N, E> implements Renderer.Node<N, E> {
     this.cyclic = cyclic;
   }
 
-  public void paintNode(
-      RenderContext<N, E> renderContext, VisualizationModel<N, E> visualizationModel, N v) {
-    if (renderContext.getNodeIncludePredicate().test(v)) {
+  public void paintVertex(
+      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {
+    if (renderContext.getVertexIncludePredicate().test(v)) {
       // get the shape to be rendered
-      Shape shape = renderContext.getNodeShapeFunction().apply(v);
-      LayoutModel<N> layoutModel = visualizationModel.getLayoutModel();
+      Shape shape = renderContext.getVertexShapeFunction().apply(v);
+      LayoutModel<V> layoutModel = visualizationModel.getLayoutModel();
       Point p = layoutModel.apply(v);
       Point2D p2d =
           renderContext
@@ -77,17 +77,17 @@ public class GradientNodeRenderer<N, E> implements Renderer.Node<N, E> {
       float y = (float) p2d.getY();
 
       // create a transform that translates to the location of
-      // the node to be rendered
+      // the vertex to be rendered
       AffineTransform xform = AffineTransform.getTranslateInstance(x, y);
-      // transform the node shape with xtransform
+      // transform the vertex shape with xtransform
       shape = xform.createTransformedShape(shape);
       log.trace("prepared a shape for " + v + " to go at " + p);
 
-      paintShapeForNode(renderContext, v, shape);
+      paintShapeForVertex(renderContext, v, shape);
     }
   }
 
-  protected void paintShapeForNode(RenderContext<N, E> renderContext, N v, Shape shape) {
+  protected void paintShapeForVertex(RenderContext<V, E> renderContext, V v, Shape shape) {
     GraphicsDecorator g = renderContext.getGraphicsContext();
     Paint oldPaint = g.getPaint();
     Rectangle r = shape.getBounds();
@@ -121,12 +121,12 @@ public class GradientNodeRenderer<N, E> implements Renderer.Node<N, E> {
     g.setPaint(fillPaint);
     g.fill(shape);
     g.setPaint(oldPaint);
-    Paint drawPaint = renderContext.getNodeDrawPaintFunction().apply(v);
+    Paint drawPaint = renderContext.getVertexDrawPaintFunction().apply(v);
     if (drawPaint != null) {
       g.setPaint(drawPaint);
     }
     Stroke oldStroke = g.getStroke();
-    Stroke stroke = renderContext.getNodeStrokeFunction().apply(v);
+    Stroke stroke = renderContext.getVertexStrokeFunction().apply(v);
     if (stroke != null) {
       g.setStroke(stroke);
     }

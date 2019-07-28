@@ -20,23 +20,23 @@ import java.awt.geom.Point2D;
 import javax.swing.JComponent;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.layout.NetworkElementAccessor;
+import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 
 /**
- * AnimatedPickingGraphMousePlugin supports the picking of one Graph Node. When the mouse is
- * released, the graph is translated so that the picked Node is moved to the center of the view.
+ * AnimatedPickingGraphMousePlugin supports the picking of one Graph Vertex. When the mouse is
+ * released, the graph is translated so that the picked Vertex is moved to the center of the view.
  * This translation is conducted in an animation Thread so that the graph slides to its new position
  *
  * @author Tom Nelson
  */
-public class AnimatedPickingGraphMousePlugin<N, E> extends AbstractGraphMousePlugin
+public class AnimatedPickingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     implements MouseListener, MouseMotionListener {
 
-  /** the picked Node */
-  protected N node;
+  /** the picked Vertex */
+  protected V vertex;
 
   /** Creates an instance with default modifiers of BUTTON1_MASK and CTRL_MASK */
   public AnimatedPickingGraphMousePlugin() {
@@ -54,25 +54,25 @@ public class AnimatedPickingGraphMousePlugin<N, E> extends AbstractGraphMousePlu
   }
 
   /**
-   * If the event occurs on a Node, pick that single Node
+   * If the event occurs on a Vertex, pick that single Vertex
    *
    * @param e the event
    */
   @SuppressWarnings("unchecked")
   public void mousePressed(MouseEvent e) {
     if (e.getModifiers() == modifiers) {
-      VisualizationViewer<N, E> vv = (VisualizationViewer<N, E>) e.getSource();
-      LayoutModel<N> layoutModel = vv.getModel().getLayoutModel();
-      NetworkElementAccessor<N, E> pickSupport = vv.getPickSupport();
-      MutableSelectedState<N> pickedNodeState = vv.getSelectedNodeState();
-      if (pickSupport != null && pickedNodeState != null) {
+      VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
+      LayoutModel<V> layoutModel = vv.getModel().getLayoutModel();
+      GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
+      MutableSelectedState<V> pickedVertexState = vv.getSelectedVertexState();
+      if (pickSupport != null && pickedVertexState != null) {
         // p is the screen point for the mouse event
         Point2D p = e.getPoint();
-        node = pickSupport.getNode(layoutModel, p.getX(), p.getY());
-        if (node != null) {
-          if (!pickedNodeState.isSelected(node)) {
-            pickedNodeState.clear();
-            pickedNodeState.pick(node, true);
+        vertex = pickSupport.getVertex(layoutModel, p.getX(), p.getY());
+        if (vertex != null) {
+          if (!pickedVertexState.isSelected(vertex)) {
+            pickedVertexState.clear();
+            pickedVertexState.pick(vertex, true);
           }
         }
       }
@@ -81,22 +81,22 @@ public class AnimatedPickingGraphMousePlugin<N, E> extends AbstractGraphMousePlu
   }
 
   /**
-   * If a Node was picked in the mousePressed event, start a Thread to animate the translation of
-   * the graph so that the picked Node moves to the center of the view
+   * If a Vertex was picked in the mousePressed event, start a Thread to animate the translation of
+   * the graph so that the picked Vertex moves to the center of the view
    *
    * @param e the event
    */
   @SuppressWarnings("unchecked")
   public void mouseReleased(MouseEvent e) {
     if (e.getModifiers() == modifiers) {
-      final VisualizationViewer<N, E> vv = (VisualizationViewer<N, E>) e.getSource();
+      final VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
       Point newCenter = null;
-      if (node != null) {
-        // center the picked node
-        LayoutModel<N> layoutModel = vv.getModel().getLayoutModel();
-        newCenter = layoutModel.apply(node);
+      if (vertex != null) {
+        // center the picked vertex
+        LayoutModel<V> layoutModel = vv.getModel().getLayoutModel();
+        newCenter = layoutModel.apply(vertex);
       } else {
-        // they did not pick a node to center, so
+        // they did not pick a vertex to center, so
         // just center the graph
         Point2D center = vv.getCenter();
         newCenter = Point.of(center.getX(), center.getY());

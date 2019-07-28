@@ -26,31 +26,31 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-public class RadialTreeLayoutAlgorithm<N> extends TreeLayoutAlgorithm<N> {
+public class RadialTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V> {
 
   private static final Logger log = LoggerFactory.getLogger(RadialTreeLayoutAlgorithm.class);
 
-  protected Map<N, PolarPoint> polarLocations = new HashMap<>();
+  protected Map<V, PolarPoint> polarLocations = new HashMap<>();
 
-  public static class Builder<N, T extends RadialTreeLayoutAlgorithm<N>, B extends Builder<N, T, B>>
-      extends TreeLayoutAlgorithm.Builder<N, T, B> {
+  public static class Builder<V, T extends RadialTreeLayoutAlgorithm<V>, B extends Builder<V, T, B>>
+      extends TreeLayoutAlgorithm.Builder<V, T, B> {
 
     public T build() {
       return (T) new RadialTreeLayoutAlgorithm<>(this);
     }
   }
 
-  public static <N> Builder<N, ?, ?> builder() {
+  public static <V> Builder<V, ?, ?> builder() {
     return new Builder<>();
   }
 
-  protected RadialTreeLayoutAlgorithm(Builder<N, ?, ?> builder) {
+  protected RadialTreeLayoutAlgorithm(Builder<V, ?, ?> builder) {
     super(builder);
   }
 
   @Override
-  protected Set<N> buildTree(LayoutModel<N> layoutModel) {
-    Set<N> roots = super.buildTree(layoutModel);
+  protected Set<V> buildTree(LayoutModel<V> layoutModel) {
+    Set<V> roots = super.buildTree(layoutModel);
     setRadialLocations(roots, layoutModel);
     putRadialPointsInModel(layoutModel);
     return roots;
@@ -68,17 +68,17 @@ public class RadialTreeLayoutAlgorithm<N> extends TreeLayoutAlgorithm<N> {
     return 0;
   }
 
-  private void putRadialPointsInModel(LayoutModel<N> layoutModel) {
+  private void putRadialPointsInModel(LayoutModel<V> layoutModel) {
     polarLocations.forEach((key, value) -> layoutModel.set(key, getCartesian(layoutModel, key)));
   }
 
-  /** @return a map from nodes to their locations in polar coordinates. */
-  public Map<N, PolarPoint> getPolarLocations() {
+  /** @return a map from vertices to their locations in polar coordinates. */
+  public Map<V, PolarPoint> getPolarLocations() {
     return polarLocations;
   }
 
-  private Point getCartesian(LayoutModel<N> layoutModel, N node) {
-    PolarPoint pp = polarLocations.get(node);
+  private Point getCartesian(LayoutModel<V> layoutModel, V vertex) {
+    PolarPoint pp = polarLocations.get(vertex);
     double centerX = layoutModel.getWidth() / 2;
     double centerY = layoutModel.getHeight() / 2;
     Point cartesian = PolarPoint.polarToCartesian(pp);
@@ -86,19 +86,19 @@ public class RadialTreeLayoutAlgorithm<N> extends TreeLayoutAlgorithm<N> {
     return cartesian;
   }
 
-  private Point getMaxXY(LayoutModel<N> layoutModel) {
+  private Point getMaxXY(LayoutModel<V> layoutModel) {
     double maxx = 0;
     double maxy = 0;
-    Collection<N> nodes = layoutModel.getGraph().vertexSet();
-    for (N node : nodes) {
-      Point location = layoutModel.apply(node);
+    Collection<V> vertices = layoutModel.getGraph().vertexSet();
+    for (V vertex : vertices) {
+      Point location = layoutModel.apply(vertex);
       maxx = Math.max(maxx, location.x);
       maxy = Math.max(maxy, location.y);
     }
     return Point.of(maxx, maxy);
   }
 
-  private void setRadialLocations(Set<N> roots, LayoutModel<N> layoutModel) {
+  private void setRadialLocations(Set<V> roots, LayoutModel<V> layoutModel) {
     int width = layoutModel.getWidth();
     Point max = getMaxXY(layoutModel);
     double maxx = max.x;
@@ -109,14 +109,14 @@ public class RadialTreeLayoutAlgorithm<N> extends TreeLayoutAlgorithm<N> {
     double deltaRadius = width / 2 / maxy;
     double offset = 0;
     if (roots.size() > 1) {
-      offset = verticalNodeSpacing;
+      offset = verticalVertexSpacing;
     }
-    for (N node : layoutModel.getGraph().vertexSet()) {
-      Point p = layoutModel.get(node);
+    for (V vertex : layoutModel.getGraph().vertexSet()) {
+      Point p = layoutModel.get(vertex);
 
       PolarPoint polarPoint =
-          PolarPoint.of(p.x * theta, (offset + p.y - this.verticalNodeSpacing) * deltaRadius);
-      polarLocations.put(node, polarPoint);
+          PolarPoint.of(p.x * theta, (offset + p.y - this.verticalVertexSpacing) * deltaRadius);
+      polarLocations.put(vertex, polarPoint);
     }
   }
 }

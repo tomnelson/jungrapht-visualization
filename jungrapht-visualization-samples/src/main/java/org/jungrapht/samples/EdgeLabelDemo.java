@@ -27,7 +27,7 @@ import org.jungrapht.visualization.decorators.ParallelEdgeShapeFunction;
 import org.jungrapht.visualization.layout.algorithms.CircleLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.renderers.EdgeLabelRenderer;
-import org.jungrapht.visualization.renderers.NodeLabelRenderer;
+import org.jungrapht.visualization.renderers.VertexLabelRenderer;
 import org.jungrapht.visualization.util.Context;
 
 /**
@@ -46,7 +46,7 @@ public class EdgeLabelDemo extends JPanel {
   VisualizationViewer<Integer, Number> vv;
 
   /** */
-  NodeLabelRenderer nodeLabelRenderer;
+  VertexLabelRenderer vertexLabelRenderer;
 
   EdgeLabelRenderer edgeLabelRenderer;
 
@@ -64,7 +64,7 @@ public class EdgeLabelDemo extends JPanel {
     vv = new VisualizationViewer<>(graph, layoutAlgorithm, new Dimension(600, 400));
     vv.setBackground(Color.white);
 
-    nodeLabelRenderer = vv.getRenderContext().getNodeLabelRenderer();
+    vertexLabelRenderer = vv.getRenderContext().getVertexLabelRenderer();
     edgeLabelRenderer = vv.getRenderContext().getEdgeLabelRenderer();
 
     Function<Number, String> stringer =
@@ -75,11 +75,11 @@ public class EdgeLabelDemo extends JPanel {
         .setEdgeDrawPaintFunction(
             v -> vv.getSelectedEdgeState().isSelected(v) ? Color.cyan : Color.black);
     vv.getRenderContext()
-        .setNodeFillPaintFunction(
-            v -> vv.getSelectedNodeState().isSelected(v) ? Color.yellow : Color.red);
+        .setVertexFillPaintFunction(
+            v -> vv.getSelectedVertexState().isSelected(v) ? Color.yellow : Color.red);
 
     // add my listener for ToolTips
-    vv.setNodeToolTipFunction(o -> o + " " + vv.getModel().getLayoutModel().apply(o));
+    vv.setVertexToolTipFunction(o -> o + " " + vv.getModel().getLayoutModel().apply(o));
 
     // create a frame to hold the graph
     final GraphZoomScrollPane panel = new GraphZoomScrollPane(vv);

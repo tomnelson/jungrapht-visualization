@@ -8,16 +8,16 @@ import org.jungrapht.visualization.BasicVisualizationServer;
  * is a sample implementation
  *
  * @author Tom Nelson
- * @param <N> the node type
- * @param <N> the edge type
+ * @param <V> the vertex type
+ * @param <V> the edge type
  */
-public interface EdgeSupport<N, E> {
+public interface EdgeSupport<V, E> {
 
-  void startEdgeCreate(BasicVisualizationServer<N, E> vv, N startNode, Point2D startPoint);
+  void startEdgeCreate(BasicVisualizationServer<V, E> vv, V startVertex, Point2D startPoint);
 
-  void midEdgeCreate(BasicVisualizationServer<N, E> vv, Point2D midPoint);
+  void midEdgeCreate(BasicVisualizationServer<V, E> vv, Point2D midPoint);
 
-  void endEdgeCreate(BasicVisualizationServer<N, E> vv, N endNode);
+  void endEdgeCreate(BasicVisualizationServer<V, E> vv, V endVertex);
 
-  void abort(BasicVisualizationServer<N, E> vv);
+  void abort(BasicVisualizationServer<V, E> vv);
 }

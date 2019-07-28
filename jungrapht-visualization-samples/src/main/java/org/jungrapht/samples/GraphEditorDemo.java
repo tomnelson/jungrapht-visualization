@@ -54,7 +54,7 @@ public class GraphEditorDemo extends JPanel implements Printable {
   /** the visual component and renderer for the graph */
   VisualizationViewer<Number, Number> vv;
 
-  Map<Number, String> nodeLabelMap = new HashMap<>();
+  Map<Number, String> vertexLabelMap = new HashMap<>();
 
   Map<Number, String> edgeLabelMap = new HashMap<>();
 
@@ -62,9 +62,9 @@ public class GraphEditorDemo extends JPanel implements Printable {
       "<html>"
           + "<h3>All Modes:</h3>"
           + "<ul>"
-          + "<li>Right-click an empty area for <b>Create Node</b> popup"
-          + "<li>Right-click on a Node for <b>Delete Node</b> popup"
-          + "<li>Right-click on a Node for <b>Add Edge</b> menus <br>(if there are selected Nodes)"
+          + "<li>Right-click an empty area for <b>Create vertex</b> popup"
+          + "<li>Right-click on a vertex for <b>Delete vertex</b> popup"
+          + "<li>Right-click on a vertex for <b>Add Edge</b> menus <br>(if there are selected Vertices)"
           + "<li>Right-click on an Edge for <b>Delete Edge</b> popup"
           + "<li>Mousewheel scales with a crossover value of 1.0.<p>"
           + "     - scales the graph layout when the combined scale is greater than 1<p>"
@@ -72,27 +72,27 @@ public class GraphEditorDemo extends JPanel implements Printable {
           + "</ul>"
           + "<h3>Editing Mode:</h3>"
           + "<ul>"
-          + "<li>Left-click an empty area to create a new Node"
-          + "<li>Left-click on a Node and drag to another Node to create an Undirected Edge"
-          + "<li>Shift+Left-click on a Node and drag to another Node to create a Directed Edge"
+          + "<li>Left-click an empty area to create a new vertex"
+          + "<li>Left-click on a vertex and drag to another vertex to create an Undirected Edge"
+          + "<li>Shift+Left-click on a vertex and drag to another vertex to create a Directed Edge"
           + "</ul>"
           + "<h3>Picking Mode:</h3>"
           + "<ul>"
-          + "<li>Mouse1 on a Node selects the node"
-          + "<li>Mouse1 elsewhere unselects all Nodes"
-          + "<li>Mouse1+Shift on a Node adds/removes Node selection"
-          + "<li>Mouse1+drag on a Node moves all selected Nodes"
-          + "<li>Mouse1+drag elsewhere selects Nodes in a region"
-          + "<li>Mouse1+Shift+drag adds selection of Nodes in a new region"
-          + "<li>Mouse1+CTRL on a Node selects the node and centers the display on it"
-          + "<li>Mouse1 double-click on a node or edge allows you to edit the label"
+          + "<li>Mouse1 on a vertex selects the vertex"
+          + "<li>Mouse1 elsewhere unselects all Vertices"
+          + "<li>Mouse1+Shift on a vertex adds/removes vertex selection"
+          + "<li>Mouse1+drag on a vertex moves all selected Vertices"
+          + "<li>Mouse1+drag elsewhere selects Vertices in a region"
+          + "<li>Mouse1+Shift+drag adds selection of Vertices in a new region"
+          + "<li>Mouse1+CTRL on a vertex selects the vertex and centers the display on it"
+          + "<li>Mouse1 double-click on a vertex or edge allows you to edit the label"
           + "</ul>"
           + "<h3>Transforming Mode:</h3>"
           + "<ul>"
           + "<li>Mouse1+drag pans the graph"
           + "<li>Mouse1+Shift+drag rotates the graph"
           + "<li>Mouse1+CTRL(or Command)+drag shears the graph"
-          + "<li>Mouse1 double-click on a node or edge allows you to edit the label"
+          + "<li>Mouse1 double-click on a vertex or edge allows you to edit the label"
           + "</ul>"
           + "<h3>Annotation Mode:</h3>"
           + "<ul>"
@@ -123,26 +123,26 @@ public class GraphEditorDemo extends JPanel implements Printable {
 
     vv.getRenderContext().setParallelEdgeIndexFunction(new ParallelEdgeIndexFunction<>());
     vv.getRenderContext()
-        .setNodeLabelFunction(
-            v -> nodeLabelMap.containsKey(v) ? nodeLabelMap.get(v) : v.toString());
+        .setVertexLabelFunction(
+            v -> vertexLabelMap.containsKey(v) ? vertexLabelMap.get(v) : v.toString());
     vv.getRenderContext()
         .setEdgeLabelFunction(
             e -> edgeLabelMap.containsKey(e) ? edgeLabelMap.get(e) : e.toString());
 
-    vv.setNodeToolTipFunction(vv.getRenderContext().getNodeLabelFunction());
+    vv.setVertexToolTipFunction(vv.getRenderContext().getVertexLabelFunction());
 
     final GraphZoomScrollPane panel = new GraphZoomScrollPane(vv);
     add(panel);
-    Supplier<Number> nodeFactory = new NodeFactory();
+    Supplier<Number> vertexFactory = new VertexFactory();
     Supplier<Number> edgeFactory = new EdgeFactory();
 
     final EditingModalGraphMouse<Number, Number> graphMouse =
         new EditingModalGraphMouse<>(
-            vv.getRenderContext(), nodeFactory, edgeFactory, nodeLabelMap, edgeLabelMap);
+            vv.getRenderContext(), vertexFactory, edgeFactory, vertexLabelMap, edgeLabelMap);
     graphMouse.getLabelEditingPlugin();
 
     // the EditingGraphMouse will pass mouse event coordinates to the
-    // nodeLocations function to set the locations of the nodes as
+    // vertexLocations function to set the locations of the vertices as
     // they are created
     vv.setGraphMouse(graphMouse);
     vv.addKeyListener(graphMouse.getModeKeyListener());
@@ -209,11 +209,11 @@ public class GraphEditorDemo extends JPanel implements Printable {
   }
 
   private String apply(Number number) {
-    if (nodeLabelMap.containsKey(number)) return nodeLabelMap.get(number);
+    if (vertexLabelMap.containsKey(number)) return vertexLabelMap.get(number);
     else return number.toString();
   }
 
-  class NodeFactory implements Supplier<Number> {
+  class VertexFactory implements Supplier<Number> {
 
     int i = 0;
 

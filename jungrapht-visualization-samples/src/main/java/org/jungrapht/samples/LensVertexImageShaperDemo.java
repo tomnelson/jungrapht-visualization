@@ -29,14 +29,14 @@ import org.jungrapht.visualization.control.LensMagnificationGraphMousePlugin;
 import org.jungrapht.visualization.control.ModalGraphMouse.Mode;
 import org.jungrapht.visualization.control.ModalLensGraphMouse;
 import org.jungrapht.visualization.control.ScalingControl;
-import org.jungrapht.visualization.decorators.EllipseNodeShapeFunction;
-import org.jungrapht.visualization.decorators.NodeIconShapeFunction;
+import org.jungrapht.visualization.decorators.EllipseVertexShapeFunction;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
+import org.jungrapht.visualization.decorators.VertexIconShapeFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.renderers.Checkmark;
 import org.jungrapht.visualization.renderers.DefaultEdgeLabelRenderer;
-import org.jungrapht.visualization.renderers.DefaultNodeLabelRenderer;
+import org.jungrapht.visualization.renderers.DefaultVertexLabelRenderer;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 import org.jungrapht.visualization.transform.LayoutLensSupport;
 import org.jungrapht.visualization.transform.Lens;
@@ -46,21 +46,21 @@ import org.jungrapht.visualization.transform.shape.MagnifyImageLensSupport;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
 
 /**
- * Demonstrates the use of images to represent graph nodes. The images are added to the
- * DefaultGraphLabelRenderer and can either be offset from the node, or centered on the node.
+ * Demonstrates the use of images to represent graph vertices. The images are added to the
+ * DefaultGraphLabelRenderer and can either be offset from the vertex, or centered on the vertex.
  * Additionally, the relative positioning of the label and image is controlled by subclassing the
  * DefaultGraphLabelRenderer and setting the appropriate properties on its JLabel superclass
  * FancyGraphLabelRenderer
  *
  * <p>The images used in this demo (courtesy of slashdot.org) are rectangular but with a transparent
- * background. When nodes are represented by these images, it looks better if the actual shape of
+ * background. When vertices are represented by these images, it looks better if the actual shape of
  * the opaque part of the image is computed so that the edge arrowheads follow the visual shape of
  * the image. This demo uses the FourPassImageShaper class to compute the Shape from an image with
  * transparent background.
  *
  * @author Tom Nelson
  */
-public class LensNodeImageShaperDemo extends JPanel {
+public class LensVertexImageShaperDemo extends JPanel {
 
   /** */
   private static final long serialVersionUID = 5432239991020505763L;
@@ -89,7 +89,7 @@ public class LensNodeImageShaperDemo extends JPanel {
   LensSupport magnifyLayoutSupport;
   LensSupport magnifyViewSupport;
   /** create an instance of a simple graph with controls to demo the zoom features. */
-  public LensNodeImageShaperDemo() {
+  public LensVertexImageShaperDemo() {
 
     setLayout(new BorderLayout());
     // create a simple graph for the demo
@@ -98,16 +98,16 @@ public class LensNodeImageShaperDemo extends JPanel {
     // Maps for the labels and icons
     Map<Number, String> map = new HashMap<>();
     Map<Number, Icon> iconMap = new HashMap<>();
-    for (Number node : graph.vertexSet()) {
-      int i = node.intValue();
-      map.put(node, iconNames[i % iconNames.length]);
+    for (Number vertex : graph.vertexSet()) {
+      int i = vertex.intValue();
+      map.put(vertex, iconNames[i % iconNames.length]);
 
       String name = "/images/topic" + iconNames[i] + ".gif";
       try {
         Icon icon =
             new LayeredIcon(
-                new ImageIcon(LensNodeImageShaperDemo.class.getResource(name)).getImage());
-        iconMap.put(node, icon);
+                new ImageIcon(LensVertexImageShaperDemo.class.getResource(name)).getImage());
+        iconMap.put(vertex, icon);
       } catch (Exception ex) {
         System.err.println("You need slashdoticons.jar in your classpath to see the image " + name);
       }
@@ -118,32 +118,32 @@ public class LensNodeImageShaperDemo extends JPanel {
     vv = new VisualizationViewer<>(graph, layoutAlgorithm, new Dimension(600, 600));
 
     Function<Number, Paint> vpf =
-        new PickableElementPaintFunction<>(vv.getSelectedNodeState(), Color.white, Color.yellow);
-    vv.getRenderContext().setNodeFillPaintFunction(vpf);
+        new PickableElementPaintFunction<>(vv.getSelectedVertexState(), Color.white, Color.yellow);
+    vv.getRenderContext().setVertexFillPaintFunction(vpf);
     vv.getRenderContext()
         .setEdgeDrawPaintFunction(
             new PickableElementPaintFunction<>(vv.getSelectedEdgeState(), Color.black, Color.cyan));
 
     vv.setBackground(Color.white);
 
-    vv.getRenderContext().setNodeLabelFunction(map::get);
-    vv.getRenderContext().setNodeLabelRenderer(new DefaultNodeLabelRenderer(Color.cyan));
+    vv.getRenderContext().setVertexLabelFunction(map::get);
+    vv.getRenderContext().setVertexLabelRenderer(new DefaultVertexLabelRenderer(Color.cyan));
     vv.getRenderContext().setEdgeLabelRenderer(new DefaultEdgeLabelRenderer(Color.cyan));
 
-    final NodeIconShapeFunction<Number> nodeImageShapeFunction =
-        new NodeIconShapeFunction<>(new EllipseNodeShapeFunction<>());
+    final VertexIconShapeFunction<Number> vertexImageShapeFunction =
+        new VertexIconShapeFunction<>(new EllipseVertexShapeFunction<>());
 
-    final Function<Number, Icon> nodeIconFunction = iconMap::get;
+    final Function<Number, Icon> vertexIconFunction = iconMap::get;
 
-    nodeImageShapeFunction.setIconMap(iconMap);
+    vertexImageShapeFunction.setIconMap(iconMap);
 
-    vv.getRenderContext().setNodeShapeFunction(nodeImageShapeFunction);
-    vv.getRenderContext().setNodeIconFunction(nodeIconFunction);
+    vv.getRenderContext().setVertexShapeFunction(vertexImageShapeFunction);
+    vv.getRenderContext().setVertexIconFunction(vertexIconFunction);
 
     // Get the pickedState and add a listener that will decorate the
-    //Node images with a checkmark icon when they are picked
-    MutableSelectedState<Number> ps = vv.getSelectedNodeState();
-    ps.addItemListener(new PickWithIconListener(nodeIconFunction));
+    //Vertex images with a checkmark icon when they are picked
+    MutableSelectedState<Number> ps = vv.getSelectedVertexState();
+    ps.addItemListener(new PickWithIconListener(vertexIconFunction));
 
     vv.addPostRenderPaintable(
         new VisualizationViewer.Paintable() {
@@ -178,7 +178,7 @@ public class LensNodeImageShaperDemo extends JPanel {
         });
 
     // add a listener for ToolTips
-    vv.setNodeToolTipFunction(Object::toString);
+    vv.setVertexToolTipFunction(Object::toString);
 
     final GraphZoomScrollPane panel = new GraphZoomScrollPane(vv);
     add(panel);
@@ -323,7 +323,7 @@ public class LensNodeImageShaperDemo extends JPanel {
     Container content = frame.getContentPane();
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-    content.add(new LensNodeImageShaperDemo());
+    content.add(new LensVertexImageShaperDemo());
     frame.pack();
     frame.setVisible(true);
   }

@@ -94,29 +94,29 @@ public class RTree<T> {
     // see if the root is not present (i.e. the RTree is empty
     if (!rtree.root.isPresent()) {
       // The first element addded to an empty RTree
-      // Return a new RTree with the new LeafNode as its root
+      // Return a new RTree with the new LeafVertex as its root
       return new RTree(LeafNode.create(element, bounds));
     }
     // otherwise...
     Node<T> node = rtree.root.get();
     if (node instanceof LeafNode) {
-      // the root is a LeafNode
-      LeafNode<T> leafNode = (LeafNode) node;
+      // the root is a LeafVertex
+      LeafNode<T> leafVertex = (LeafNode) node;
 
-      Node<T> got = leafNode.add(splitterContext, element, bounds);
+      Node<T> got = leafVertex.add(splitterContext, element, bounds);
       Preconditions.checkArgument(
-          !got.getParent().isPresent(), "return from LeafNode add has a parent");
+          !got.getParent().isPresent(), "return from LeafVertex add has a parent");
       return new RTree(got);
 
     } else {
 
-      InnerNode<T> innerNode = (InnerNode) node;
-      Node<T> got = innerNode.add(splitterContext, element, bounds);
+      InnerNode<T> innerVertex = (InnerNode) node;
+      Node<T> got = innerVertex.add(splitterContext, element, bounds);
       if (got == null) {
         log.error("add did not work");
       }
       Preconditions.checkArgument(
-          !got.getParent().isPresent(), "return from InnerNode add has a parent");
+          !got.getParent().isPresent(), "return from InnerVertex add has a parent");
       return new RTree(got);
     }
   }
@@ -142,20 +142,20 @@ public class RTree<T> {
         "average leaf count {}", rtree.averageLeafCount(root, new double[] {0}, new int[] {0}));
 
     // find all nodes that have leaf children
-    List<LeafNode> leafNodes = rtree.collectLeafNodes(root, new ArrayList<>());
+    List<LeafNode> leafVertices = rtree.collectLeafVertices(root, new ArrayList<>());
     // are there dupes?
     // for each leaf node, sort the children max to min, according to how far they are from the center
     List<Map.Entry<T, Rectangle2D>> goners = new ArrayList<>();
     int averageSize = (int) rtree.averageLeafCount(root, new double[] {0}, new int[] {0});
 
-    for (TreeNode node : leafNodes) {
+    for (TreeNode node : leafVertices) {
       if (node instanceof LeafNode) {
-        LeafNode leafNode = (LeafNode) node;
-        NodeMap<T> nodeMap = leafNode.map;
+        LeafNode leafVertex = (LeafNode) node;
+        NodeMap<T> nodeMap = leafVertex.map;
         List<Map.Entry<T, Rectangle2D>> entryList = new ArrayList<>();
         // will be sorted at the end
         entryList.addAll(nodeMap.entrySet());
-        entryList.sort(new DistanceComparator(leafNode.centerOfGravity()));
+        entryList.sort(new DistanceComparator(leafVertex.centerOfGravity()));
 
         // now take 30% from the beginning of the sortedList, remove them all from the tree, then re-insert them all
 
@@ -185,24 +185,24 @@ public class RTree<T> {
         "average leaf count {}", rtree.averageLeafCount(root, new double[] {0}, new int[] {0}));
 
     // find all nodes that have leaf children
-    List<LeafNode> leafNodes = rtree.collectLeafNodes(root, new ArrayList<>());
+    List<LeafNode> leafVertices = rtree.collectLeafVertices(root, new ArrayList<>());
     // are there dupes?
-    Set<LeafNode> leafNodeSet = new HashSet<>(leafNodes);
+    Set<LeafNode> leafVertexSet = new HashSet<>(leafVertices);
     // for each leaf node, sort the children max to min, according to how far they are from the center
     List<Map.Entry<T, Rectangle2D>> goners = new ArrayList<>();
     int averageSize = (int) rtree.averageLeafCount(root, new double[] {0}, new int[] {0});
 
-    for (TreeNode node : leafNodes) {
+    for (TreeNode node : leafVertices) {
       if (node instanceof LeafNode) {
-        Rectangle2D boundsOfLeafNode = node.getBounds();
-        Point2D centerOfLeafNode =
-            new Point2D.Double(boundsOfLeafNode.getCenterX(), boundsOfLeafNode.getCenterY());
-        LeafNode leafNode = (LeafNode) node;
-        NodeMap<T> nodeMap = leafNode.map;
+        Rectangle2D boundsOfLeafVertex = node.getBounds();
+        Point2D centerOfLeafVertex =
+            new Point2D.Double(boundsOfLeafVertex.getCenterX(), boundsOfLeafVertex.getCenterY());
+        LeafNode leafVertex = (LeafNode) node;
+        NodeMap<T> nodeMap = leafVertex.map;
         List<Map.Entry<T, Rectangle2D>> entryList = new ArrayList<>();
         // will be sorted at the end
         entryList.addAll(nodeMap.entrySet());
-        entryList.sort(new DistanceComparator(centerOfLeafNode));
+        entryList.sort(new DistanceComparator(centerOfLeafVertex));
 
         // now take 30% from the beginning of the sortedList, remove them all from the tree, then re-insert them all
 
@@ -252,18 +252,18 @@ public class RTree<T> {
     }
   }
 
-  private List<LeafNode> collectLeafNodes(TreeNode parent, List<LeafNode> leafNodes) {
+  private List<LeafNode> collectLeafVertices(TreeNode parent, List<LeafNode> leafVertices) {
     if (parent instanceof Node) {
       Node<T> node = (Node<T>) parent;
       if (node instanceof LeafNode) {
-        leafNodes.add((LeafNode) node);
+        leafVertices.add((LeafNode) node);
       } else {
         for (TreeNode kid : parent.getChildren()) {
-          collectLeafNodes(kid, leafNodes);
+          collectLeafVertices(kid, leafVertices);
         }
       }
     }
-    return leafNodes;
+    return leafVertices;
   }
 
   /**
@@ -278,8 +278,8 @@ public class RTree<T> {
       // this tree is empty
       return new RTree();
     }
-    Node<T> rootNode = rtree.root.get();
-    Node<T> newRoot = rootNode.remove(element);
+    Node<T> rootVertex = rtree.root.get();
+    Node<T> newRoot = rootVertex.remove(element);
 
     // if the newRoot is empty, return a new empty RTree, otherwise, return this
     if (newRoot.count() == 0) {
@@ -298,11 +298,11 @@ public class RTree<T> {
   public T getPickedObject(Point2D p) {
     Node<T> root = this.root.get();
     if (root instanceof LeafNode) {
-      LeafNode<T> leafNode = (LeafNode) root;
-      return leafNode.getPickedObject(p);
+      LeafNode<T> leafVertex = (LeafNode) root;
+      return leafVertex.getPickedObject(p);
     } else if (root instanceof InnerNode) {
-      InnerNode<T> innerNode = (InnerNode) root;
-      return innerNode.getPickedObject(p);
+      InnerNode<T> innerVertex = (InnerNode) root;
+      return innerVertex.getPickedObject(p);
     } else {
       return null;
     }

@@ -22,24 +22,24 @@ import org.jgrapht.Graph;
  *
  * @author Tom Nelson
  */
-public interface EdgeIndexFunction<N, E> {
+public interface EdgeIndexFunction<V, E> {
 
   /**
    * The index of <code>e</code> is defined as its position in some consistent ordering of <code>e
    * </code> and all edges parallel to <code>e</code>.
    *
-   * @param context the network and the edge whose index is to be queried
+   * @param context the graph and the edge whose index is to be queried
    * @return {@code edge}'s index in this instance's <code>Network</code>.
    */
-  int getIndex(Context<Graph<N, E>, E> context);
+  int getIndex(Context<Graph<V, E>, E> context);
 
   /**
    * Resets the indices for <code>edge</code> and its parallel edges. Should be invoked when an edge
    * parallel to <code>edge</code> has been added or removed.
    *
-   * @param context the network and the edge whose index is to be reset
+   * @param context the graph and the edge whose index is to be reset
    */
-  void reset(Context<Graph<N, E>, E> context);
+  void reset(Context<Graph<V, E>, E> context);
 
   /** Clears all edge indices for all edges. Does not recalculate the indices. */
   void reset();

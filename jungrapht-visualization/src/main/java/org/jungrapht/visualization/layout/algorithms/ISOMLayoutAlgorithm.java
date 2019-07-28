@@ -21,9 +21,9 @@ import org.jgrapht.Graphs;
 import org.jungrapht.visualization.layout.algorithms.util.IterativeContext;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
-import org.jungrapht.visualization.layout.util.NetworkNodeAccessor;
-import org.jungrapht.visualization.layout.util.RadiusNetworkNodeAccessor;
+import org.jungrapht.visualization.layout.util.RadiusVertexAccessor;
 import org.jungrapht.visualization.layout.util.RandomLocationTransformer;
+import org.jungrapht.visualization.layout.util.VertexAccessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,14 +33,14 @@ import org.slf4j.LoggerFactory;
  *
  * @author Yan Biao Boey
  */
-public class ISOMLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
+public class ISOMLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
     implements IterativeContext {
 
   private static final Logger log = LoggerFactory.getLogger(ISOMLayoutAlgorithm.class);
 
-  public static class Builder<N> extends AbstractIterativeLayoutAlgorithm.Builder {
+  public static class Builder<V> extends AbstractIterativeLayoutAlgorithm.Builder {
 
-    public ISOMLayoutAlgorithm<N> build() {
+    public ISOMLayoutAlgorithm<V> build() {
       return new ISOMLayoutAlgorithm<>(this);
     }
   }
@@ -53,12 +53,12 @@ public class ISOMLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
     super(builder);
   }
 
-  private LoadingCache<N, ISOMNodeData> isomNodeData =
+  private LoadingCache<V, ISOMVertexData> isomVertexData =
       CacheBuilder.newBuilder()
           .build(
-              new CacheLoader<N, ISOMNodeData>() {
-                public ISOMNodeData load(N node) {
-                  return new ISOMNodeData();
+              new CacheLoader<V, ISOMVertexData>() {
+                public ISOMVertexData load(V vertex) {
+                  return new ISOMVertexData();
                 }
               });
 
@@ -73,11 +73,11 @@ public class ISOMLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
   protected double initialAdaption;
   protected double minAdaption;
 
-  private NetworkNodeAccessor<N> elementAccessor;
+  private VertexAccessor<V> elementAccessor;
 
   protected double coolingFactor;
 
-  protected List<N> queue = new ArrayList<>();
+  protected List<V> queue = new ArrayList<>();
   protected String status = null;
 
   /** @return the current number of epochs and execution status, as a string. */
@@ -86,13 +86,13 @@ public class ISOMLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
   }
 
   @Override
-  public void visit(LayoutModel<N> layoutModel) {
+  public void visit(LayoutModel<V> layoutModel) {
     if (log.isTraceEnabled()) {
       log.trace("visiting {}", layoutModel);
     }
 
     super.visit(layoutModel);
-    this.elementAccessor = new RadiusNetworkNodeAccessor<>();
+    this.elementAccessor = new RadiusVertexAccessor<>();
     initialize();
   }
 
@@ -143,13 +143,13 @@ public class ISOMLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
     // creates a new XY data location
     Point tempXYD = Point.of(10 + Math.random() * width, 10 + Math.random() * height);
 
-    //Get closest node to random position
-    N winner = elementAccessor.getNode(layoutModel, tempXYD.x, tempXYD.y);
+    //Get closest vertex to random position
+    V winner = elementAccessor.getVertex(layoutModel, tempXYD.x, tempXYD.y);
 
     while (true) {
       try {
-        for (N node : layoutModel.getGraph().vertexSet()) {
-          ISOMNodeData ivd = getISOMNodeData(node);
+        for (V vertex : layoutModel.getGraph().vertexSet()) {
+          ISOMVertexData ivd = getISOMVertexData(vertex);
           ivd.distance = 0;
           ivd.visited = false;
         }
@@ -157,7 +157,7 @@ public class ISOMLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
       } catch (ConcurrentModificationException cme) {
       }
     }
-    adjustNode(winner, tempXYD);
+    adjustVertex(winner, tempXYD);
   }
 
   private synchronized void updateParameters() {
@@ -171,18 +171,18 @@ public class ISOMLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
     }
   }
 
-  private synchronized void adjustNode(N node, Point tempXYD) {
-    Graph<N, ?> graph = layoutModel.getGraph();
+  private synchronized void adjustVertex(V vertex, Point tempXYD) {
+    Graph<V, ?> graph = layoutModel.getGraph();
     queue.clear();
-    ISOMNodeData ivd = getISOMNodeData(node);
+    ISOMVertexData ivd = getISOMVertexData(vertex);
     ivd.distance = 0;
     ivd.visited = true;
-    queue.add(node);
-    N current;
+    queue.add(vertex);
+    V current;
 
     while (!queue.isEmpty()) {
       current = queue.remove(0);
-      ISOMNodeData currData = getISOMNodeData(current);
+      ISOMVertexData currData = getISOMVertexData(current);
       Point currXYData = layoutModel.apply(current);
 
       double dx = tempXYD.x - currXYData.x;
@@ -192,11 +192,11 @@ public class ISOMLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
       layoutModel.set(current, currXYData.x + (factor * dx), currXYData.y + (factor * dy));
 
       if (currData.distance < radius) {
-        Collection<N> s = Graphs.neighborListOf(graph, current);
+        Collection<V> s = Graphs.neighborListOf(graph, current);
         while (true) {
           try {
-            for (N child : s) {
-              ISOMNodeData childData = getISOMNodeData(child);
+            for (V child : s) {
+              ISOMVertexData childData = getISOMVertexData(child);
               if (childData != null && !childData.visited) {
                 childData.visited = true;
                 childData.distance = currData.distance + 1;
@@ -211,27 +211,27 @@ public class ISOMLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
     }
   }
 
-  private ISOMNodeData getISOMNodeData(N node) {
-    return isomNodeData.getUnchecked(node);
+  private ISOMVertexData getISOMVertexData(V vertex) {
+    return isomVertexData.getUnchecked(vertex);
   }
 
   /**
-   * Returns <code>true</code> if the node positions are no longer being updated. Currently <code>
-   * ISOMLayout</code> stops updating node positions after a certain number of iterations have taken
-   * place.
+   * Returns <code>true</code> if the vertex positions are no longer being updated. Currently <code>
+   * ISOMLayout</code> stops updating vertex positions after a certain number of iterations have
+   * taken place.
    *
-   * @return <code>true</code> if the node position updates have stopped, <code>false</code>
+   * @return <code>true</code> if the vertex position updates have stopped, <code>false</code>
    *     otherwise
    */
   public boolean done() {
     return epoch >= maxEpoch;
   }
 
-  private static class ISOMNodeData {
+  private static class ISOMVertexData {
     int distance;
     boolean visited;
 
-    protected ISOMNodeData() {
+    protected ISOMVertexData() {
       distance = 0;
       visited = false;
     }
@@ -239,7 +239,7 @@ public class ISOMLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
 
   /**
    * Resets the layout iteration count to 0, which allows the layout algorithm to continue updating
-   * node positions.
+   * vertex positions.
    */
   public void reset() {
     epoch = 0;

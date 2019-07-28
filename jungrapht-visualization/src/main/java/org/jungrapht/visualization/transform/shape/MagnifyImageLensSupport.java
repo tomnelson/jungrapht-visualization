@@ -18,7 +18,7 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.LensTransformSupport;
 import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.control.TransformSupport;
-import org.jungrapht.visualization.layout.NetworkElementAccessor;
+import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.renderers.BasicRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.transform.AbstractLensSupport;
@@ -32,16 +32,16 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-public class MagnifyImageLensSupport<N, E> extends AbstractLensSupport<N, E> {
+public class MagnifyImageLensSupport<V, E> extends AbstractLensSupport<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(MagnifyImageLensSupport.class);
 
-  protected RenderContext<N, E> renderContext;
+  protected RenderContext<V, E> renderContext;
   protected GraphicsDecorator lensGraphicsDecorator;
   protected GraphicsDecorator savedGraphicsDecorator;
-  protected Renderer<N, E> renderer;
-  protected Renderer<N, E> transformingRenderer;
-  protected NetworkElementAccessor<N, E> pickSupport;
+  protected Renderer<V, E> renderer;
+  protected Renderer<V, E> transformingRenderer;
+  protected GraphElementAccessor<V, E> pickSupport;
 
   static final String instructions =
       "<html><center>Mouse-Drag the Lens center to move it<p>"
@@ -49,7 +49,7 @@ public class MagnifyImageLensSupport<N, E> extends AbstractLensSupport<N, E> {
           + "Ctrl+MouseWheel to change magnification</center></html>";
 
   public MagnifyImageLensSupport(
-      VisualizationViewer<N, E> vv,
+      VisualizationViewer<V, E> vv,
       LensTransformer lensTransformer,
       ModalGraphMouse lensGraphMouse) {
     super(vv, lensGraphMouse);

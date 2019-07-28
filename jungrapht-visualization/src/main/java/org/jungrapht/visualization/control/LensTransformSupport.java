@@ -17,7 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** @author Tom Nelson */
-public class LensTransformSupport<N, E> extends TransformSupport<N, E> {
+public class LensTransformSupport<V, E> extends TransformSupport<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(LensTransformSupport.class);
 
@@ -29,7 +29,7 @@ public class LensTransformSupport<N, E> extends TransformSupport<N, E> {
    * @return
    */
   @Override
-  public Point2D inverseTransform(VisualizationServer<N, E> vv, Point2D p) {
+  public Point2D inverseTransform(VisualizationServer<V, E> vv, Point2D p) {
     MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
     MutableTransformer viewTransformer =
         multiLayerTransformer.getTransformer(MultiLayerTransformer.Layer.VIEW);
@@ -60,18 +60,18 @@ public class LensTransformSupport<N, E> extends TransformSupport<N, E> {
   }
 
   @Override
-  public Shape transform(VisualizationServer<N, E> vv, Shape shape) {
+  public Shape transform(VisualizationServer<V, E> vv, Shape shape) {
     MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
     MutableTransformer viewTransformer =
         multiLayerTransformer.getTransformer(MultiLayerTransformer.Layer.VIEW);
     MutableTransformer layoutTransformer =
         multiLayerTransformer.getTransformer(MultiLayerTransformer.Layer.LAYOUT);
-    VisualizationModel<N, E> model = vv.getModel();
+    VisualizationModel<V, E> model = vv.getModel();
 
     if (viewTransformer instanceof LensTransformer) {
       shape = multiLayerTransformer.transform(shape);
     } else if (layoutTransformer instanceof LensTransformer) {
-      LayoutModel<N> layoutModel = model.getLayoutModel();
+      LayoutModel<V> layoutModel = model.getLayoutModel();
       Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
       HyperbolicShapeTransformer shapeChanger = new HyperbolicShapeTransformer(d, viewTransformer);
       LensTransformer lensTransformer = (LensTransformer) layoutTransformer;
@@ -87,18 +87,18 @@ public class LensTransformSupport<N, E> extends TransformSupport<N, E> {
 
   @Override
   public Shape transform(
-      VisualizationServer<N, E> vv, Shape shape, MultiLayerTransformer.Layer layer) {
+      VisualizationServer<V, E> vv, Shape shape, MultiLayerTransformer.Layer layer) {
     MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
     MutableTransformer viewTransformer =
         multiLayerTransformer.getTransformer(MultiLayerTransformer.Layer.VIEW);
     MutableTransformer layoutTransformer =
         multiLayerTransformer.getTransformer(MultiLayerTransformer.Layer.LAYOUT);
-    VisualizationModel<N, E> model = vv.getModel();
+    VisualizationModel<V, E> model = vv.getModel();
 
     if (viewTransformer instanceof LensTransformer) {
       shape = multiLayerTransformer.transform(shape);
     } else if (layoutTransformer instanceof LensTransformer) {
-      LayoutModel<N> layoutModel = model.getLayoutModel();
+      LayoutModel<V> layoutModel = model.getLayoutModel();
       Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
       HyperbolicShapeTransformer shapeChanger = new HyperbolicShapeTransformer(d, viewTransformer);
       LensTransformer lensTransformer = (LensTransformer) layoutTransformer;
@@ -113,20 +113,20 @@ public class LensTransformSupport<N, E> extends TransformSupport<N, E> {
   }
 
   @Override
-  public Point2D transform(VisualizationServer<N, E> vv, Point2D p) {
+  public Point2D transform(VisualizationServer<V, E> vv, Point2D p) {
     MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
     MutableTransformer viewTransformer =
         multiLayerTransformer.getTransformer(MultiLayerTransformer.Layer.VIEW);
     MutableTransformer layoutTransformer =
         multiLayerTransformer.getTransformer(MultiLayerTransformer.Layer.LAYOUT);
-    VisualizationModel<N, E> model = vv.getModel();
+    VisualizationModel<V, E> model = vv.getModel();
 
     if (viewTransformer instanceof LensTransformer) {
       // use all layers
       p = multiLayerTransformer.transform(p);
     } else if (layoutTransformer instanceof LensTransformer) {
       // apply the shape changer
-      LayoutModel<N> layoutModel = model.getLayoutModel();
+      LayoutModel<V> layoutModel = model.getLayoutModel();
       Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
       HyperbolicShapeTransformer shapeChanger = new HyperbolicShapeTransformer(d, viewTransformer);
       LensTransformer lensTransformer = (LensTransformer) layoutTransformer;
@@ -143,20 +143,20 @@ public class LensTransformSupport<N, E> extends TransformSupport<N, E> {
 
   @Override
   public Point2D transform(
-      VisualizationServer<N, E> vv, Point2D p, MultiLayerTransformer.Layer layer) {
+      VisualizationServer<V, E> vv, Point2D p, MultiLayerTransformer.Layer layer) {
     MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
     MutableTransformer viewTransformer =
         multiLayerTransformer.getTransformer(MultiLayerTransformer.Layer.VIEW);
     MutableTransformer layoutTransformer =
         multiLayerTransformer.getTransformer(MultiLayerTransformer.Layer.LAYOUT);
-    VisualizationModel<N, E> model = vv.getModel();
+    VisualizationModel<V, E> model = vv.getModel();
 
     if (viewTransformer instanceof LensTransformer) {
       // use all layers
       p = multiLayerTransformer.transform(p);
     } else if (layoutTransformer instanceof LensTransformer) {
       // apply the shape changer
-      LayoutModel<N> layoutModel = model.getLayoutModel();
+      LayoutModel<V> layoutModel = model.getLayoutModel();
       Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
       HyperbolicShapeTransformer shapeChanger = new HyperbolicShapeTransformer(d, viewTransformer);
       LensTransformer lensTransformer = (LensTransformer) layoutTransformer;
@@ -179,7 +179,7 @@ public class LensTransformSupport<N, E> extends TransformSupport<N, E> {
    * @return
    */
   @Override
-  public Shape inverseTransform(VisualizationServer<N, E> vv, Shape shape) {
+  public Shape inverseTransform(VisualizationServer<V, E> vv, Shape shape) {
     MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
     MutableTransformer viewTransformer =
         multiLayerTransformer.getTransformer(MultiLayerTransformer.Layer.VIEW);
@@ -188,7 +188,7 @@ public class LensTransformSupport<N, E> extends TransformSupport<N, E> {
 
     if (layoutTransformer instanceof LensTransformer) {
       // apply the shape changer
-      LayoutModel<N> layoutModel = vv.getModel().getLayoutModel();
+      LayoutModel<V> layoutModel = vv.getModel().getLayoutModel();
       Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
       HyperbolicShapeTransformer shapeChanger = new HyperbolicShapeTransformer(d, viewTransformer);
       LensTransformer lensTransformer = (LensTransformer) layoutTransformer;

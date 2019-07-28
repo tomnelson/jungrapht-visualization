@@ -236,19 +236,19 @@ public class RTreeTest2 {
     }
   }
 
-  private void testAreas(TreeNode rootNode) {
+  private void testAreas(TreeNode rootVertex) {
 
-    Rectangle2D rootBounds = rootNode.getBounds();
-    if (rootNode instanceof InnerNode) {
-      InnerNode innerNode = (InnerNode) rootNode;
-      Rectangle2D unionBounds = Node.union(innerNode.getChildren());
+    Rectangle2D rootBounds = rootVertex.getBounds();
+    if (rootVertex instanceof InnerNode) {
+      InnerNode innerVertex = (InnerNode) rootVertex;
+      Rectangle2D unionBounds = Node.union(innerVertex.getChildren());
       assertThat(rootBounds.getMinX()).isWithin(1.0E-3).of(unionBounds.getMinX());
       assertThat(rootBounds.getMinY()).isWithin(1.0E-3).of(unionBounds.getMinY());
       assertThat(rootBounds.getMaxX()).isWithin(1.0E-3).of(unionBounds.getMaxX());
       assertThat(rootBounds.getMaxY()).isWithin(1.0E-3).of(unionBounds.getMaxY());
     }
 
-    for (TreeNode rt : rootNode.getChildren()) {
+    for (TreeNode rt : rootVertex.getChildren()) {
       testAreas(rt);
     }
   }

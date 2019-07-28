@@ -22,38 +22,38 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A utility class for generating <code>Shape</code>s for drawing nodes. The available shapes
+ * A utility class for generating <code>Shape</code>s for drawing vertices. The available shapes
  * include rectangles, rounded rectangles, ellipses, regular polygons, and regular stars. The
- * dimensions of the requested shapes are defined by the specified node layoutSize function
- * (specified by a {@code Function<N, Integer>}) and node aspect ratio function (specified by a
- * {@code Function<N, Float>}) implementations: the width of the bounding box of the shape is given
- * by the node layoutSize, and the height is given by the layoutSize multiplied by the node's aspect
- * ratio.
+ * dimensions of the requested shapes are defined by the specified vertex layoutSize function
+ * (specified by a {@code Function<V, Integer>}) and vertex aspect ratio function (specified by a
+ * {@code Function<V, Float>}) implementations: the width of the bounding box of the shape is given
+ * by the vertex layoutSize, and the height is given by the layoutSize multiplied by the vertex's
+ * aspect ratio.
  *
  * @author Joshua O'Madadhain
  */
-public class NodeShapeFactory<N> {
+public class VertexShapeFactory<V> {
 
-  private static final Logger log = LoggerFactory.getLogger(NodeShapeFactory.class);
-  protected Function<N, Integer> vsf;
-  protected Function<N, Float> varf;
+  private static final Logger log = LoggerFactory.getLogger(VertexShapeFactory.class);
+  protected Function<V, Integer> vsf;
+  protected Function<V, Float> varf;
 
   /**
-   * Creates an instance with the specified node layoutSize and aspect ratio functions.
+   * Creates an instance with the specified vertex layoutSize and aspect ratio functions.
    *
-   * @param vsf provides a layoutSize (width) for each node
-   * @param varf provides a height/width ratio for each node
+   * @param vsf provides a layoutSize (width) for each vertex
+   * @param varf provides a height/width ratio for each vertex
    */
-  public NodeShapeFactory(Function<N, Integer> vsf, Function<N, Float> varf) {
+  public VertexShapeFactory(Function<V, Integer> vsf, Function<V, Float> varf) {
     this.vsf = vsf;
     this.varf = varf;
   }
 
   /**
-   * Creates a <code>NodeShapeFactory</code> with a constant layoutSize of 10 and a constant aspect
-   * ratio of 1.
+   * Creates a <code>VertexShapeFactory</code> with a constant layoutSize of 10 and a constant
+   * aspect ratio of 1.
    */
-  public NodeShapeFactory() {
+  public VertexShapeFactory() {
     this(n -> 10, n -> 1.0f);
   }
 
@@ -61,12 +61,12 @@ public class NodeShapeFactory<N> {
 
   /**
    * Returns a <code>Rectangle2D</code> whose width and height are defined by this instance's
-   * layoutSize and aspect ratio functions for this node.
+   * layoutSize and aspect ratio functions for this vertex.
    *
-   * @param v the node for which the shape will be drawn
-   * @return a rectangle for this node
+   * @param v the vertex for which the shape will be drawn
+   * @return a rectangle for this vertex
    */
-  public Rectangle2D getRectangle(N v) {
+  public Rectangle2D getRectangle(V v) {
     float width = vsf.apply(v);
     float height = width * varf.apply(v);
     float h_offset = -(width / 2);
@@ -79,12 +79,12 @@ public class NodeShapeFactory<N> {
 
   /**
    * Returns a <code>Ellipse2D</code> whose width and height are defined by this instance's
-   * layoutSize and aspect ratio functions for this node.
+   * layoutSize and aspect ratio functions for this vertex.
    *
-   * @param v the node for which the shape will be drawn
-   * @return an ellipse for this node
+   * @param v the vertex for which the shape will be drawn
+   * @return an ellipse for this vertex
    */
-  public Ellipse2D getEllipse(N v) {
+  public Ellipse2D getEllipse(V v) {
     theEllipse.setFrame(getRectangle(v));
     return theEllipse;
   }
@@ -92,13 +92,13 @@ public class NodeShapeFactory<N> {
   private static final RoundRectangle2D theRoundRectangle = new RoundRectangle2D.Float();
   /**
    * Returns a <code>RoundRectangle2D</code> whose width and height are defined by this instance's
-   * layoutSize and aspect ratio functions for this node. The arc layoutSize is set to be half the
+   * layoutSize and aspect ratio functions for this vertex. The arc layoutSize is set to be half the
    * minimum of the height and width of the frame.
    *
-   * @param v the node for which the shape will be drawn
-   * @return an round rectangle for this node
+   * @param v the vertex for which the shape will be drawn
+   * @return an round rectangle for this vertex
    */
-  public RoundRectangle2D getRoundRectangle(N v) {
+  public RoundRectangle2D getRoundRectangle(V v) {
     Rectangle2D frame = getRectangle(v);
     float arc_size = (float) Math.min(frame.getHeight(), frame.getWidth()) / 2;
     theRoundRectangle.setRoundRect(
@@ -110,13 +110,14 @@ public class NodeShapeFactory<N> {
 
   /**
    * Returns a regular <code>num_sides</code>-sided <code>Polygon</code> whose bounding box's width
-   * and height are defined by this instance's layoutSize and aspect ratio functions for this node.
+   * and height are defined by this instance's layoutSize and aspect ratio functions for this
+   * vertex.
    *
-   * @param v the node for which the shape will be drawn
+   * @param v the vertex for which the shape will be drawn
    * @param num_sides the number of sides of the polygon; must be &ge; 3.
-   * @return a regular polygon for this node
+   * @return a regular polygon for this vertex
    */
-  public Shape getRegularPolygon(N v, int num_sides) {
+  public Shape getRegularPolygon(V v, int num_sides) {
     GeneralPath thePolygon = new GeneralPath();
     Preconditions.checkArgument(num_sides >= 3, "Number of sides must be >= 3");
     Rectangle2D frame = getRectangle(v);
@@ -154,13 +155,13 @@ public class NodeShapeFactory<N> {
   /**
    * Returns a regular <code>Polygon</code> of <code>num_points</code> points whose bounding box's
    * width and height are defined by this instance's layoutSize and aspect ratio functions for this
-   * node.
+   * vertex.
    *
-   * @param v the node for which the shape will be drawn
+   * @param v the vertex for which the shape will be drawn
    * @param num_points the number of points of the polygon; must be &ge; 5.
-   * @return an star shape for this node
+   * @return an star shape for this vertex
    */
-  public Shape getRegularStar(N v, int num_points) {
+  public Shape getRegularStar(V v, int num_points) {
     GeneralPath thePolygon = new GeneralPath();
     Preconditions.checkArgument(num_points >= 5, "Number of points must be >= 5");
     Rectangle2D frame = getRectangle(v);

@@ -19,8 +19,8 @@ import org.jungrapht.visualization.util.Context;
  *
  * @author Tom Nelson
  */
-public abstract class AbstractEdgeShapeFunction<N, E>
-    implements Function<Context<Graph<N, E>, E>, Shape> {
+public abstract class AbstractEdgeShapeFunction<V, E>
+    implements Function<Context<Graph<V, E>, E>, Shape> {
 
   /** Specifies how far apart to place the control points for edges being drawn in parallel. */
   protected float control_offset_increment = 20.f;

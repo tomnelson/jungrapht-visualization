@@ -16,7 +16,7 @@ import org.jungrapht.visualization.layout.event.LayoutChange;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 
 /** */
-public interface VisualizationModel<N, E>
+public interface VisualizationModel<V, E>
     extends LayoutChange.Listener, // can tell the view to repaint
         LayoutChange.Producer {
 
@@ -29,17 +29,17 @@ public interface VisualizationModel<N, E>
   /** @return the current layoutSize of the visualization's space */
   Dimension getLayoutSize();
 
-  void setLayoutAlgorithm(LayoutAlgorithm<N> layoutAlgorithm);
+  void setLayoutAlgorithm(LayoutAlgorithm<V> layoutAlgorithm);
 
-  LayoutAlgorithm<N> getLayoutAlgorithm();
+  LayoutAlgorithm<V> getLayoutAlgorithm();
 
-  LayoutModel<N> getLayoutModel();
+  LayoutModel<V> getLayoutModel();
 
-  void setLayoutModel(LayoutModel<N> layoutModel);
+  void setLayoutModel(LayoutModel<V> layoutModel);
 
-  Graph<N, E> getNetwork();
+  Graph<V, E> getGraph();
 
-  void setNetwork(Graph<N, E> network);
+  void setGraph(Graph<V, E> graph);
 
-  void setNetwork(Graph<N, E> network, boolean forceUpdate);
+  void setGraph(Graph<V, E> network, boolean forceUpdate);
 }

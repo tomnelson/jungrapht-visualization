@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Implements the Kamada-Kawai algorithm for node layout. Does not respect filter calls, and
+ * Implements the Kamada-Kawai algorithm for vertex layout. Does not respect filter calls, and
  * sometimes crashes when the view changes to it.
  *
  * @see "Tomihisa Kamada and Satoru Kawai: An algorithm for drawing general indirect graphs.
@@ -35,43 +35,43 @@ import org.slf4j.LoggerFactory;
  * @author Masanori Harada
  * @author Tom Nelson
  */
-public class KKLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
+public class KKLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
     implements IterativeContext {
 
   private static final Logger log = LoggerFactory.getLogger(KKLayoutAlgorithm.class);
 
-  public static class Builder<N> extends AbstractIterativeLayoutAlgorithm.Builder {
-    protected Map<Pair<N>, Integer> distance;
+  public static class Builder<V> extends AbstractIterativeLayoutAlgorithm.Builder {
+    protected Map<Pair<V>, Integer> distance;
     protected int maxIterations = 2000;
     protected boolean adjustForGravity = true;
-    protected boolean exchangeNodes = true;
+    protected boolean exchangeVertices = true;
 
-    public Builder<N> distance(Map<Pair<N>, Integer> distance) {
+    public Builder<V> distance(Map<Pair<V>, Integer> distance) {
       this.distance = distance;
       return this;
     }
 
-    public Builder<N> maxIterations(int maxIterations) {
+    public Builder<V> maxIterations(int maxIterations) {
       this.maxIterations = maxIterations;
       return this;
     }
 
-    public Builder<N> adjustForGravity(boolean adjustForGravity) {
+    public Builder<V> adjustForGravity(boolean adjustForGravity) {
       this.adjustForGravity = adjustForGravity;
       return this;
     }
 
-    public Builder<N> exchangeNodes(boolean exchangeNodes) {
-      this.exchangeNodes = exchangeNodes;
+    public Builder<V> exchangeVertices(boolean exchangeVertices) {
+      this.exchangeVertices = exchangeVertices;
       return this;
     }
 
-    public KKLayoutAlgorithm<N> build() {
+    public KKLayoutAlgorithm<V> build() {
       return new KKLayoutAlgorithm<>(this);
     }
   }
 
-  public static <N> Builder<N> builder() {
+  public static <V> Builder<V> builder() {
     return new Builder<>();
   }
 
@@ -86,18 +86,18 @@ public class KKLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
   private double[][] dm; // distance matrix
 
   private boolean adjustForGravity = true;
-  private boolean exchangenodes = true;
+  private boolean exchangevertices = true;
 
-  private N[] nodes;
+  private V[] vertices;
   private Point[] xydata;
 
-  /** Retrieves graph distances between nodes of the visible graph */
-  //  protected BiFunction<N, N, Number> distance;
-  protected Map<Pair<N>, Integer> distance;
+  /** Retrieves graph distances between vertices of the visible graph */
+  //  protected BiFunction<V, V, Number> distance;
+  protected Map<Pair<V>, Integer> distance;
 
   /**
-   * The diameter of the visible graph. In other words, the maximum over all pairs of nodes of the
-   * length of the shortest path between a and bf the visible graph.
+   * The diameter of the visible graph. In other words, the maximum over all pairs of vertices of
+   * the length of the shortest path between a and bf the visible graph.
    */
   protected double diameter;
 
@@ -106,31 +106,31 @@ public class KKLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
 
   /**
    * A multiplicative factor which specifies the fraction of the graph's diameter to be used as the
-   * inter-node distance between disconnected nodes.
+   * inter-vertex distance between disconnected vertices.
    */
   private double disconnected_multiplier = 0.5;
 
-  protected KKLayoutAlgorithm(Builder<N> builder) {
+  protected KKLayoutAlgorithm(Builder<V> builder) {
     super(builder);
     //    this.distance = (x, y) -> builder.distance.getDistance(x, y);
     this.maxIterations = builder.maxIterations;
     this.adjustForGravity = builder.adjustForGravity;
-    this.exchangenodes = builder.exchangeNodes;
+    this.exchangevertices = builder.exchangeVertices;
   }
 
   //  private KKLayoutAlgorithm() {}
   //
-  //  private KKLayoutAlgorithm(Distance<N> distance) {
+  //  private KKLayoutAlgorithm(Distance<V> distance) {
   //    this.distance = (x, y) -> distance.getDistance(x, y);
   //  }
   //
   @Override
-  public void visit(LayoutModel<N> layoutModel) {
+  public void visit(LayoutModel<V> layoutModel) {
     super.visit(layoutModel);
 
-    Graph<N, ?> graph = layoutModel.getGraph();
+    Graph<V, ?> graph = layoutModel.getGraph();
     if (graph != null) {
-      //      Distance distance = new UnweightedShortestPath<N>(graph);
+      //      Distance distance = new UnweightedShortestPath<V>(graph);
       this.distance = getDistances(graph);
       //              new Dijkstra<>(graph).getAllDistances();
       //(x, y) -> distance.getDistance(x, y);
@@ -138,30 +138,30 @@ public class KKLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
     initialize();
   }
 
-  private Map<Pair<N>, Integer> getDistances(Graph<N, ?> graph) {
+  private Map<Pair<V>, Integer> getDistances(Graph<V, ?> graph) {
 
-    DijkstraShortestPath<N, ?> dijkstra = new DijkstraShortestPath<>(graph);
-    Map<Pair<N>, Integer> distanceMap = new HashMap<>();
-    for (N node : graph.vertexSet()) {
+    DijkstraShortestPath<V, ?> dijkstra = new DijkstraShortestPath<>(graph);
+    Map<Pair<V>, Integer> distanceMap = new HashMap<>();
+    for (V vertex : graph.vertexSet()) {
 
-      ShortestPathAlgorithm.SingleSourcePaths<N, ?> distances = dijkstra.getPaths(node);
-      for (N n : graph.vertexSet()) {
-        GraphPath<N, ?> graphPath = distances.getPath(n);
+      ShortestPathAlgorithm.SingleSourcePaths<V, ?> distances = dijkstra.getPaths(vertex);
+      for (V n : graph.vertexSet()) {
+        GraphPath<V, ?> graphPath = distances.getPath(n);
         if (graphPath == null) {
           continue;
         }
-        Pair<N> pair = Pair.of(node, n);
+        Pair<V> pair = Pair.of(vertex, n);
         if (distanceMap.containsKey(pair)) {
           log.trace(
               "about to replace {},{} with {},{},{}",
               pair,
               distanceMap.get(pair),
-              node,
+              vertex,
               n,
               graphPath.getWeight());
         }
         if (graphPath.getWeight() != 0) {
-          distanceMap.put(Pair.of(node, n), (int) graphPath.getWeight());
+          distanceMap.put(Pair.of(vertex, n), (int) graphPath.getWeight());
         }
       }
     }
@@ -178,7 +178,7 @@ public class KKLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
 
   /**
    * @param disconnected_multiplier a multiplicative factor that specifies the fraction of the
-   *     graph's diameter to be used as the inter-node distance between disconnected nodes
+   *     graph's diameter to be used as the inter-vertex distance between disconnected vertices
    */
   public void setDisconnectedDistanceMultiplier(double disconnected_multiplier) {
     this.disconnected_multiplier = disconnected_multiplier;
@@ -201,8 +201,8 @@ public class KKLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
   @SuppressWarnings("unchecked")
   public void initialize() {
     currentIteration = 0;
-    Graph<N, ?> graph = layoutModel.getGraph();
-    // KKLayoutAlgorithm will fail if all nodes start at the same location
+    Graph<V, ?> graph = layoutModel.getGraph();
+    // KKLayoutAlgorithm will fail if all vertices start at the same location
     layoutModel.setInitializer(
         new RandomLocationTransformer<>(
             layoutModel.getWidth(), layoutModel.getHeight(), graph.vertexSet().size()));
@@ -213,16 +213,16 @@ public class KKLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
 
       int n = graph.vertexSet().size();
       dm = new double[n][n];
-      nodes = (N[]) graph.vertexSet().toArray();
+      vertices = (V[]) graph.vertexSet().toArray();
       xydata = new Point[n];
 
-      // assign IDs to all visible nodes
+      // assign IDs to all visible vertices
       while (true) {
         try {
           int index = 0;
-          for (N node : graph.vertexSet()) {
-            Point xyd = layoutModel.apply(node);
-            nodes[index] = node;
+          for (V vertex : graph.vertexSet()) {
+            Point xyd = layoutModel.apply(vertex);
+            vertices[index] = vertex;
             xydata[index] = xyd;
             index++;
           }
@@ -241,10 +241,10 @@ public class KKLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
 
       for (int i = 0; i < n - 1; i++) {
         for (int j = i + 1; j < n; j++) {
-          Number d_ij = distance.get(Pair.of(nodes[i], nodes[j]));
+          Number d_ij = distance.get(Pair.of(vertices[i], vertices[j]));
           log.trace("distance from " + i + " to " + j + " is " + d_ij);
 
-          Number d_ji = distance.get(Pair.of(nodes[j], nodes[i]));
+          Number d_ji = distance.get(Pair.of(vertices[j], vertices[i]));
           log.trace("distance from " + j + " to " + i + " is " + d_ji);
 
           double dist = diameter * disconnected_multiplier;
@@ -263,7 +263,7 @@ public class KKLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
 
   @Override
   public void step() {
-    Graph<N, ?> graph = layoutModel.getGraph();
+    Graph<V, ?> graph = layoutModel.getGraph();
     currentIteration++;
     double energy = calcEnergy();
     status =
@@ -283,9 +283,9 @@ public class KKLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
     }
 
     double maxDeltaM = 0;
-    int pm = -1; // the node having max deltaM
+    int pm = -1; // the vertex having max deltaM
     for (int i = 0; i < n; i++) {
-      if (layoutModel.isLocked(nodes[i])) {
+      if (layoutModel.isLocked(vertices[i])) {
         continue;
       }
       double deltam = calcDeltaM(i);
@@ -312,14 +312,14 @@ public class KKLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
       adjustForGravity();
     }
 
-    if (exchangenodes && maxDeltaM < EPSILON) {
+    if (exchangevertices && maxDeltaM < EPSILON) {
       energy = calcEnergy();
       for (int i = 0; i < n - 1; i++) {
-        if (layoutModel.isLocked(nodes[i])) {
+        if (layoutModel.isLocked(vertices[i])) {
           continue;
         }
         for (int j = i + 1; j < n; j++) {
-          if (layoutModel.isLocked(nodes[j])) {
+          if (layoutModel.isLocked(vertices[j])) {
             continue;
           }
           double xenergy = calcEnergyIfExchanged(i, j);
@@ -335,7 +335,7 @@ public class KKLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
     }
   }
 
-  /** Shift all nodes so that the center of gravity is located at the center of the screen. */
+  /** Shift all vertices so that the center of gravity is located at the center of the screen. */
   public void adjustForGravity() {
     double height = layoutModel.getHeight();
     double width = layoutModel.getWidth();
@@ -351,7 +351,7 @@ public class KKLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
     double diffy = height / 2 - gy;
     for (int i = 0; i < xydata.length; i++) {
       xydata[i] = xydata[i].add(diffx, diffy);
-      layoutModel.set(nodes[i], xydata[i]);
+      layoutModel.set(vertices[i], xydata[i]);
     }
   }
 
@@ -364,19 +364,19 @@ public class KKLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
   }
 
   /**
-   * Enable or disable the local minimum escape technique by exchanging nodes.
+   * Enable or disable the local minimum escape technique by exchanging vertices.
    *
    * @param on iff the local minimum escape technique is to be enabled
    */
-  public void setExchangenodes(boolean on) {
-    exchangenodes = on;
+  public void setExchangevertices(boolean on) {
+    exchangevertices = on;
   }
 
-  public boolean getExchangenodes() {
-    return exchangenodes;
+  public boolean getExchangevertices() {
+    return exchangevertices;
   }
 
-  /** Determines a step to new position of the node m. */
+  /** Determines a step to new position of the vertex m. */
   private double[] calcDeltaXY(int m) {
     double dE_dxm = 0;
     double dE_dym = 0;
@@ -385,7 +385,7 @@ public class KKLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
     double d2E_dymdxm = 0;
     double d2E_d2ym = 0;
 
-    for (int i = 0; i < nodes.length; i++) {
+    for (int i = 0; i < vertices.length; i++) {
       if (i != m) {
 
         double dist = dm[m][i];
@@ -412,11 +412,11 @@ public class KKLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
     return new double[] {deltaX, deltaY};
   }
 
-  /** Calculates the gradient of energy function at the node m. */
+  /** Calculates the gradient of energy function at the vertex m. */
   private double calcDeltaM(int m) {
     double dEdxm = 0;
     double dEdym = 0;
-    for (int i = 0; i < nodes.length; i++) {
+    for (int i = 0; i < vertices.length; i++) {
       if (i != m) {
         double dist = dm[m][i];
         double l_mi = L * dist;
@@ -437,8 +437,8 @@ public class KKLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
   /** Calculates the energy function E. */
   private double calcEnergy() {
     double energy = 0;
-    for (int i = 0; i < nodes.length - 1; i++) {
-      for (int j = i + 1; j < nodes.length; j++) {
+    for (int i = 0; i < vertices.length - 1; i++) {
+      for (int j = i + 1; j < vertices.length; j++) {
         double dist = dm[i][j];
         double l_ij = L * dist;
         double k_ij = K / (dist * dist);
@@ -452,14 +452,14 @@ public class KKLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
     return energy;
   }
 
-  /** Calculates the energy function E as if positions of the specified nodes are exchanged. */
+  /** Calculates the energy function E as if positions of the specified vertices are exchanged. */
   private double calcEnergyIfExchanged(int p, int q) {
     if (p >= q) {
       throw new RuntimeException("p should be < q");
     }
     double energy = 0; // < 0
-    for (int i = 0; i < nodes.length - 1; i++) {
-      for (int j = i + 1; j < nodes.length; j++) {
+    for (int i = 0; i < vertices.length - 1; i++) {
+      for (int j = i + 1; j < vertices.length; j++) {
         int ii = i;
         int jj = j;
         if (i == p) {
@@ -482,15 +482,15 @@ public class KKLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
     return energy;
   }
 
-  private static <N> double diameter(Graph<N, ?> g, Map<Pair<N>, Integer> d, boolean use_max) {
+  private static <V> double diameter(Graph<V, ?> g, Map<Pair<V>, Integer> d, boolean use_max) {
     double diameter = 0;
     // TODO: provide an undirected version
-    for (N v : g.vertexSet()) {
-      for (N w : g.vertexSet()) {
+    for (V v : g.vertexSet()) {
+      for (V w : g.vertexSet()) {
         if (v.equals(w)) {
           continue; // don't include self-distances
         }
-        Pair<N> pair = Pair.of(v, w);
+        Pair<V> pair = Pair.of(v, w);
         if (d.containsKey(pair)) {
           int dist = d.get(pair);
           diameter = Math.max(diameter, dist);
@@ -505,15 +505,15 @@ public class KKLayoutAlgorithm<N> extends AbstractIterativeLayoutAlgorithm<N>
     return diameter;
   }
 
-  private static class Pair<N> {
-    final N first;
-    final N second;
+  private static class Pair<V> {
+    final V first;
+    final V second;
 
-    public static <N> Pair<N> of(N first, N second) {
+    public static <V> Pair<V> of(V first, V second) {
       return new Pair(first, second);
     }
 
-    private Pair(N first, N second) {
+    private Pair(V first, V second) {
       this.first = first;
       this.second = second;
     }

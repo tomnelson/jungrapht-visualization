@@ -72,7 +72,7 @@ public class BarnesHutVisualizer extends JPanel {
             super.mouseClicked(e);
             stuffToDraw.clear();
             Point2D p = e.getPoint();
-            String got = getNodeAt(p);
+            String got = getVertexAt(p);
             if (got != null) {
               ForceObject<String> nodeForceObject =
                   new ForceObject(got, elements.get(got)) {
@@ -132,7 +132,7 @@ public class BarnesHutVisualizer extends JPanel {
     repaint();
   }
 
-  private String getNodeAt(Point2D p) {
+  private String getVertexAt(Point2D p) {
     for (String node : elements.keySet()) {
       Point loc = elements.get(node);
       if (loc.distanceSquared(p.getX(), p.getY()) < 20) {
@@ -153,9 +153,9 @@ public class BarnesHutVisualizer extends JPanel {
       Color oldColor = g.getColor();
       g.setColor(Color.red);
 
-      Point2D centerOfNode = new Point2D.Double((r.getCenterX()), r.getCenterY());
+      Point2D centerOfVertex = new Point2D.Double((r.getCenterX()), r.getCenterY());
       Point2D centerOfForce = new Point2D.Double(center.x, center.y);
-      g.draw(new Line2D.Double(centerOfNode, centerOfForce));
+      g.draw(new Line2D.Double(centerOfVertex, centerOfForce));
       g.draw(forceCenter);
       g.setColor(oldColor);
     }

@@ -34,16 +34,16 @@ import org.jungrapht.visualization.transform.shape.ShapeTransformer;
  * @author Tom Nelson
  */
 @SuppressWarnings("serial")
-public class SatelliteVisualizationViewer<N, E> extends VisualizationViewer<N, E> {
+public class SatelliteVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 
   /** the master VisualizationViewer that this is a satellite view for */
-  protected VisualizationViewer<N, E> master;
+  protected VisualizationViewer<V, E> master;
 
   /**
    * @param master the master VisualizationViewer for which this is a satellite view
    * @param preferredSize the specified layoutSize of the component
    */
-  public SatelliteVisualizationViewer(VisualizationViewer<N, E> master, Dimension preferredSize) {
+  public SatelliteVisualizationViewer(VisualizationViewer<V, E> master, Dimension preferredSize) {
     super(master.getModel(), preferredSize);
     this.master = master;
 
@@ -75,9 +75,9 @@ public class SatelliteVisualizationViewer<N, E> extends VisualizationViewer<N, E
     master.addChangeListener(this);
 
     // share the picked state of the master
-    setSelectedNodeState(master.getSelectedNodeState());
+    setSelectedVertexState(master.getSelectedVertexState());
     setSelectedEdgeState(master.getSelectedEdgeState());
-    setNodeSpatial(new Spatial.NoOp.Node(model.getLayoutModel()));
+    setVertexSpatial(new Spatial.NoOp.Vertex(model.getLayoutModel()));
     setEdgeSpatial(new Spatial.NoOp.Edge(model));
   }
 
@@ -94,7 +94,7 @@ public class SatelliteVisualizationViewer<N, E> extends VisualizationViewer<N, E
       renderContext.getGraphicsContext().setDelegate(g2d);
     }
     renderContext.setScreenDevice(this);
-    LayoutModel<N> layoutModel = getModel().getLayoutModel();
+    LayoutModel<V> layoutModel = getModel().getLayoutModel();
 
     g2d.setRenderingHints(renderingHints);
 
@@ -144,7 +144,7 @@ public class SatelliteVisualizationViewer<N, E> extends VisualizationViewer<N, E
   }
 
   /** @return Returns the master. */
-  public VisualizationViewer<N, E> getMaster() {
+  public VisualizationViewer<V, E> getMaster() {
     return master;
   }
 
@@ -154,12 +154,12 @@ public class SatelliteVisualizationViewer<N, E> extends VisualizationViewer<N, E
    *
    * @author Tom Nelson
    */
-  static class ViewLens<N, E> implements Paintable {
+  static class ViewLens<V, E> implements Paintable {
 
-    VisualizationViewer<N, E> master;
-    VisualizationViewer<N, E> vv;
+    VisualizationViewer<V, E> master;
+    VisualizationViewer<V, E> vv;
 
-    public ViewLens(VisualizationViewer<N, E> vv, VisualizationViewer<N, E> master) {
+    public ViewLens(VisualizationViewer<V, E> vv, VisualizationViewer<V, E> master) {
       this.vv = vv;
       this.master = master;
     }

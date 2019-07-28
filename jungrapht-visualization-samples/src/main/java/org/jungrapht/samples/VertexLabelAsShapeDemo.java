@@ -23,17 +23,17 @@ import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
-import org.jungrapht.visualization.renderers.DefaultNodeLabelRenderer;
-import org.jungrapht.visualization.renderers.GradientNodeRenderer;
-import org.jungrapht.visualization.renderers.NodeLabelAsShapeRenderer;
+import org.jungrapht.visualization.renderers.DefaultVertexLabelRenderer;
+import org.jungrapht.visualization.renderers.GradientVertexRenderer;
+import org.jungrapht.visualization.renderers.VertexLabelAsShapeRenderer;
 
 /**
- * This demo shows how to use the node labels themselves as the node shapes. Additionally, it shows
- * html labels so they are multi-line, and gradient painting of the node labels.
+ * This demo shows how to use the vertex labels themselves as the vertex shapes. Additionally, it
+ * shows html labels so they are multi-line, and gradient painting of the vertex labels.
  *
  * @author Tom Nelson
  */
-public class NodeLabelAsShapeDemo extends JPanel {
+public class VertexLabelAsShapeDemo extends JPanel {
 
   /** */
   private static final long serialVersionUID = 1017336668368978842L;
@@ -45,7 +45,7 @@ public class NodeLabelAsShapeDemo extends JPanel {
   LayoutAlgorithm<String> layoutAlgorithm;
 
   /** create an instance of a simple graph with basic controls */
-  public NodeLabelAsShapeDemo() {
+  public VertexLabelAsShapeDemo() {
 
     setLayout(new BorderLayout());
     // create a simple graph for the demo
@@ -58,28 +58,28 @@ public class NodeLabelAsShapeDemo extends JPanel {
         new BaseVisualizationModel<>(graph, layoutAlgorithm, preferredSize);
     vv = new VisualizationViewer<>(visualizationModel, preferredSize);
 
-    // this class will provide both label drawing and node shapes
-    NodeLabelAsShapeRenderer<String, Number> vlasr =
-        new NodeLabelAsShapeRenderer<>(visualizationModel, vv.getRenderContext());
+    // this class will provide both label drawing and vertex shapes
+    VertexLabelAsShapeRenderer<String, Number> vlasr =
+        new VertexLabelAsShapeRenderer<>(visualizationModel, vv.getRenderContext());
 
     // customize the render context
     vv.getRenderContext()
-        .setNodeLabelFunction(
+        .setVertexLabelFunction(
             ((Function<String, String>) Object::toString)
                 .andThen(input -> "<html><center>Node<p>" + input));
-    vv.getRenderContext().setNodeShapeFunction(vlasr);
-    vv.getRenderContext().setNodeLabelRenderer(new DefaultNodeLabelRenderer(Color.red));
+    vv.getRenderContext().setVertexShapeFunction(vlasr);
+    vv.getRenderContext().setVertexLabelRenderer(new DefaultVertexLabelRenderer(Color.red));
     vv.getRenderContext().setEdgeDrawPaintFunction(e -> Color.yellow);
     vv.getRenderContext().setEdgeStrokeFunction(e -> new BasicStroke(2.5f));
 
     // customize the renderer
-    vv.getRenderer().setNodeRenderer(new GradientNodeRenderer<>(Color.gray, Color.white, true));
-    vv.getRenderer().setNodeLabelRenderer(vlasr);
+    vv.getRenderer().setVertexRenderer(new GradientVertexRenderer<>(Color.gray, Color.white, true));
+    vv.getRenderer().setVertexLabelRenderer(vlasr);
 
     vv.setBackground(Color.black);
 
     // add a listener for ToolTips
-    vv.setNodeToolTipFunction(n -> n);
+    vv.setVertexToolTipFunction(n -> n);
 
     final DefaultModalGraphMouse<String, Number> graphMouse = new DefaultModalGraphMouse<>();
 
@@ -114,7 +114,7 @@ public class NodeLabelAsShapeDemo extends JPanel {
   public static void main(String[] args) {
     JFrame f = new JFrame();
     f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-    f.getContentPane().add(new NodeLabelAsShapeDemo());
+    f.getContentPane().add(new VertexLabelAsShapeDemo());
     f.pack();
     f.setVisible(true);
   }

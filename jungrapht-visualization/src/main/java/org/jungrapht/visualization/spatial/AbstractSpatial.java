@@ -8,7 +8,7 @@ import java.util.List;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
-import org.jungrapht.visualization.layout.util.RadiusNetworkNodeAccessor;
+import org.jungrapht.visualization.layout.util.RadiusVertexAccessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,14 +32,14 @@ public abstract class AbstractSpatial<T, NT> implements Spatial<T> {
   /** the layoutModel that the structure operates on */
   protected LayoutModel<NT> layoutModel;
 
-  RadiusNetworkNodeAccessor<NT> fallback;
+  RadiusVertexAccessor<NT> fallback;
 
   protected AbstractSpatial(LayoutModel<NT> layoutModel) {
     this.layoutModel = layoutModel;
     if (layoutModel != null) {
       this.rectangle =
           new Rectangle2D.Double(0, 0, layoutModel.getWidth(), layoutModel.getHeight());
-      this.fallback = new RadiusNetworkNodeAccessor();
+      this.fallback = new RadiusVertexAccessor();
     }
   }
 

@@ -16,12 +16,12 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.decorators.ParallelEdgeShapeFunction;
-import org.jungrapht.visualization.layout.NetworkElementAccessor;
+import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.renderers.DefaultEdgeLabelRenderer;
-import org.jungrapht.visualization.renderers.DefaultNodeLabelRenderer;
+import org.jungrapht.visualization.renderers.DefaultVertexLabelRenderer;
 import org.jungrapht.visualization.renderers.EdgeLabelRenderer;
-import org.jungrapht.visualization.renderers.NodeLabelRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
+import org.jungrapht.visualization.renderers.VertexLabelRenderer;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.util.ArrowFactory;
@@ -31,25 +31,25 @@ import org.jungrapht.visualization.util.ParallelEdgeIndexFunction;
 
 /**
  * @author Tom Nelson
- * @param <N> node type
+ * @param <V> vertex type
  * @param <E> edge type
  */
-public class DefaultRenderContext<N, E> implements RenderContext<N, E> {
+public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
 
   private static final String PREFIX = "jungrapht.";
 
-  // node visual property symbols
-  private static final String NODE_SHAPE = PREFIX + "nodeShape";
-  private static final String NODE_SIZE = PREFIX + "nodeSize";
-  private static final String NODE_DRAW_COLOR = PREFIX + "nodeDrawColor";
-  private static final String NODE_FILL_COLOR = PREFIX + "nodeFillColor";
-  private static final String PICKED_NODE_COLOR = PREFIX + "pickedNodeFillColor";
-  private static final String NODE_STROKE_WIDTH = PREFIX + "nodeStrokeWidth";
+  // vertex visual property symbols
+  private static final String VERTEX_SHAPE = PREFIX + "vertexShape";
+  private static final String VERTEX_SIZE = PREFIX + "vertexSize";
+  private static final String VERTEX_DRAW_COLOR = PREFIX + "vertexDrawColor";
+  private static final String VERTEX_FILL_COLOR = PREFIX + "vertexFillColor";
+  private static final String PICKED_VERTEX_COLOR = PREFIX + "pickedVertexFillColor";
+  private static final String VERTEX_STROKE_WIDTH = PREFIX + "vertexStrokeWidth";
 
-  // node label visual property symbols
-  private static final String NODE_LABEL_FONT = PREFIX + "nodeLabelFont";
-  private static final String NODE_LABEL_POSITION = PREFIX + "nodeLabelPosition";
-  private static final String NODE_LABEL_DRAW_COLOR = PREFIX + "nodeLabelDrawColor";
+  // vertex label visual property symbols
+  private static final String VERTEX_LABEL_FONT = PREFIX + "vertexLabelFont";
+  private static final String VERTEX_LABEL_POSITION = PREFIX + "vertexLabelPosition";
+  private static final String VERTEX_LABEL_DRAW_COLOR = PREFIX + "vertexLabelDrawColor";
 
   // edge visual property symbols
   private static final String EDGE_SHAPE = PREFIX + "edgeShape";
@@ -70,39 +70,39 @@ public class DefaultRenderContext<N, E> implements RenderContext<N, E> {
   private static final String EDGE_ARROW_STROKE = PREFIX + "edgeArrowStroke";
   private static final String ARROW_PLACEMENT_TOLERANCE = PREFIX + "arrowPlacementTolerance";
 
-  protected MutableSelectedState<N> pickedNodeState;
+  protected MutableSelectedState<V> pickedVertexState;
   protected MutableSelectedState<E> pickedEdgeState;
 
-  // node properties
-  private int nodeSize = Integer.getInteger(NODE_SIZE, 12);
-  private String nodeShapeString = System.getProperty(NODE_SHAPE, "CIRCLE");
-  private Paint nodeDrawPaint = Color.getColor(NODE_DRAW_COLOR, Color.BLACK);
-  private Paint nodeFillPaint = Color.getColor(NODE_FILL_COLOR, Color.RED);
-  private Paint pickedNodeFillPaint = Color.getColor(PICKED_NODE_COLOR, Color.YELLOW);
-  private Shape nodeShape = getNodeShape(nodeShapeString, nodeSize);
+  // vertex properties
+  private int vertexSize = Integer.getInteger(VERTEX_SIZE, 12);
+  private String vertexShapeString = System.getProperty(VERTEX_SHAPE, "CIRCLE");
+  private Paint vertexDrawPaint = Color.getColor(VERTEX_DRAW_COLOR, Color.BLACK);
+  private Paint vertexFillPaint = Color.getColor(VERTEX_FILL_COLOR, Color.RED);
+  private Paint pickedVertexFillPaint = Color.getColor(PICKED_VERTEX_COLOR, Color.YELLOW);
+  private Shape vertexShape = getVertexShape(vertexShapeString, vertexSize);
 
-  // node functions
-  protected Predicate<N> nodeIncludePredicate = n -> true;
-  protected Function<N, Stroke> nodeStrokeFunction =
-      n -> new BasicStroke(Float.parseFloat(System.getProperty(NODE_STROKE_WIDTH, "1.0")));
-  protected Function<N, Shape> nodeShapeFunction = n -> nodeShape;
+  // vertex functions
+  protected Predicate<V> vertexIncludePredicate = n -> true;
+  protected Function<V, Stroke> vertexStrokeFunction =
+      n -> new BasicStroke(Float.parseFloat(System.getProperty(VERTEX_STROKE_WIDTH, "1.0")));
+  protected Function<V, Shape> vertexShapeFunction = n -> vertexShape;
 
-  protected Function<N, Paint> nodeDrawPaintFunction = n -> nodeDrawPaint;
-  protected Function<N, Paint> nodeFillPaintFunction =
+  protected Function<V, Paint> vertexDrawPaintFunction = n -> vertexDrawPaint;
+  protected Function<V, Paint> vertexFillPaintFunction =
       n ->
-          pickedNodeState != null && pickedNodeState.isSelected(n)
-              ? pickedNodeFillPaint
-              : nodeFillPaint;
+          pickedVertexState != null && pickedVertexState.isSelected(n)
+              ? pickedVertexFillPaint
+              : vertexFillPaint;
 
-  // node label properties
-  private Font nodeFont = Font.getFont(NODE_LABEL_FONT, new Font("Helvetica", Font.PLAIN, 12));
-  private Paint nodeLabelDrawPaint = Color.getColor(NODE_LABEL_DRAW_COLOR, Color.BLACK);
-  private Renderer.NodeLabel.Position nodeLabelPosition =
-      getPosition(System.getProperty(NODE_LABEL_POSITION));
+  // vertex label properties
+  private Font vertexFont = Font.getFont(VERTEX_LABEL_FONT, new Font("Helvetica", Font.PLAIN, 12));
+  private Paint vertexLabelDrawPaint = Color.getColor(VERTEX_LABEL_DRAW_COLOR, Color.BLACK);
+  private Renderer.VertexLabel.Position vertexLabelPosition =
+      getPosition(System.getProperty(VERTEX_LABEL_POSITION));
 
-  // node label functions
-  protected Function<N, Font> nodeFontFunction = n -> nodeFont;
-  protected Function<N, Paint> nodeLabelDrawPaintFunction = n -> nodeLabelDrawPaint;
+  // vertex label functions
+  protected Function<V, Font> vertexFontFunction = n -> vertexFont;
+  protected Function<V, Paint> vertexLabelDrawPaintFunction = n -> vertexLabelDrawPaint;
 
   // edge properties
   private Stroke edgeStroke =
@@ -140,8 +140,8 @@ public class DefaultRenderContext<N, E> implements RenderContext<N, E> {
   protected Function<E, Paint> arrowDrawPaintFunction =
       e -> pickedEdgeState != null && pickedEdgeState.isSelected(e) ? pickedEdgePaint : edgePaint;
 
-  protected Function<N, String> nodeLabelFunction = n -> null;
-  protected Function<N, Icon> nodeIconFunction;
+  protected Function<V, String> vertexLabelFunction = n -> null;
+  protected Function<V, Icon> vertexIconFunction;
 
   protected boolean renderEdgeArrow;
 
@@ -153,14 +153,14 @@ public class DefaultRenderContext<N, E> implements RenderContext<N, E> {
       Float.parseFloat(System.getProperty(UNDIRECTED_EDGE_LABEL_CLOSENESS, "0.65f"));
   protected float edgeLabelCloseness;
 
-  protected Function<Context<Graph<N, E>, E>, Shape> edgeShapeFunction;
+  protected Function<Context<Graph<V, E>, E>, Shape> edgeShapeFunction;
 
-  protected EdgeIndexFunction<N, E> parallelEdgeIndexFunction;
+  protected EdgeIndexFunction<V, E> parallelEdgeIndexFunction;
 
   protected MultiLayerTransformer multiLayerTransformer = new BasicTransformer();
 
   /** pluggable support for picking graph elements by finding them based on their coordinates. */
-  protected NetworkElementAccessor<N, E> pickSupport;
+  protected GraphElementAccessor<V, E> pickSupport;
 
   protected int labelOffset = LABEL_OFFSET;
 
@@ -169,12 +169,12 @@ public class DefaultRenderContext<N, E> implements RenderContext<N, E> {
 
   /**
    * The CellRendererPane is used here just as it is in JTree and JTable, to allow a pluggable
-   * JLabel-based renderer for Node and Edge label strings and icons.
+   * JLabel-based renderer for Vertex and Edge label strings and icons.
    */
   protected CellRendererPane rendererPane = new CellRendererPane();
 
-  /** A default GraphLabelRenderer - picked Node labels are blue, picked edge labels are cyan */
-  protected NodeLabelRenderer nodeLabelRenderer = new DefaultNodeLabelRenderer(Color.blue);
+  /** A default GraphLabelRenderer - picked Vertex labels are blue, picked edge labels are cyan */
+  protected VertexLabelRenderer vertexLabelRenderer = new DefaultVertexLabelRenderer(Color.blue);
 
   protected EdgeLabelRenderer edgeLabelRenderer = new DefaultEdgeLabelRenderer(Color.cyan);
 
@@ -182,7 +182,7 @@ public class DefaultRenderContext<N, E> implements RenderContext<N, E> {
 
   //  private EdgeShape edgeShape;
 
-  DefaultRenderContext(Graph<N, E> graph) {
+  DefaultRenderContext(Graph<V, E> graph) {
     this.parallelEdgeIndexFunction = new ParallelEdgeIndexFunction<>();
     setEdgeShape(System.getProperty(EDGE_SHAPE, "QUAD_CURVE"));
     setupArrows(graph.getType().isDirected());
@@ -201,24 +201,24 @@ public class DefaultRenderContext<N, E> implements RenderContext<N, E> {
     }
   }
 
-  /** @return the nodeShapeFunction */
-  public Function<N, Shape> getNodeShapeFunction() {
-    return nodeShapeFunction;
+  /** @return the vertexShapeFunction */
+  public Function<V, Shape> getVertexShapeFunction() {
+    return vertexShapeFunction;
   }
 
-  /** @param nodeShapeFunction the nodeShapeFunction to set */
-  public void setNodeShapeFunction(Function<N, Shape> nodeShapeFunction) {
-    this.nodeShapeFunction = nodeShapeFunction;
+  /** @param vertexShapeFunction the vertexShapeFunction to set */
+  public void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
+    this.vertexShapeFunction = vertexShapeFunction;
   }
 
-  /** @return the nodeStrokeFunction */
-  public Function<N, Stroke> getNodeStrokeFunction() {
-    return nodeStrokeFunction;
+  /** @return the vertexStrokeFunction */
+  public Function<V, Stroke> getVertexStrokeFunction() {
+    return vertexStrokeFunction;
   }
 
-  /** @param nodeStrokeFunction the nodeStrokeFunction to set */
-  public void setNodeStrokeFunction(Function<N, Stroke> nodeStrokeFunction) {
-    this.nodeStrokeFunction = nodeStrokeFunction;
+  /** @param vertexStrokeFunction the vertexStrokeFunction to set */
+  public void setVertexStrokeFunction(Function<V, Stroke> vertexStrokeFunction) {
+    this.vertexStrokeFunction = vertexStrokeFunction;
   }
 
   public static float[] getDashing() {
@@ -301,26 +301,26 @@ public class DefaultRenderContext<N, E> implements RenderContext<N, E> {
     this.edgeFillPaintFunction = edgeFillPaintFunction;
   }
 
-  public Function<Context<Graph<N, E>, E>, Shape> getEdgeShapeFunction() {
+  public Function<Context<Graph<V, E>, E>, Shape> getEdgeShapeFunction() {
     return edgeShapeFunction;
   }
 
-  public void setEdgeShapeFunction(Function<Context<Graph<N, E>, E>, Shape> edgeShapeFunction) {
+  public void setEdgeShapeFunction(Function<Context<Graph<V, E>, E>, Shape> edgeShapeFunction) {
     this.edgeShapeFunction = edgeShapeFunction;
     if (edgeShapeFunction instanceof ParallelEdgeShapeFunction) {
       @SuppressWarnings("unchecked")
-      ParallelEdgeShapeFunction<N, E> function =
-          (ParallelEdgeShapeFunction<N, E>) edgeShapeFunction;
+      ParallelEdgeShapeFunction<V, E> function =
+          (ParallelEdgeShapeFunction<V, E>) edgeShapeFunction;
       function.setEdgeIndexFunction(this.parallelEdgeIndexFunction);
     }
   }
 
-  public Renderer.NodeLabel.Position getNodeLabelPosition() {
-    return nodeLabelPosition;
+  public Renderer.VertexLabel.Position getVertexLabelPosition() {
+    return vertexLabelPosition;
   }
 
-  public void setNodeLabelPosition(Renderer.NodeLabel.Position nodeLabelPosition) {
-    this.nodeLabelPosition = nodeLabelPosition;
+  public void setVertexLabelPosition(Renderer.VertexLabel.Position vertexLabelPosition) {
+    this.vertexLabelPosition = vertexLabelPosition;
   }
 
   public Function<E, String> getEdgeLabelFunction() {
@@ -363,11 +363,11 @@ public class DefaultRenderContext<N, E> implements RenderContext<N, E> {
     this.labelOffset = labelOffset;
   }
 
-  public EdgeIndexFunction<N, E> getParallelEdgeIndexFunction() {
+  public EdgeIndexFunction<V, E> getParallelEdgeIndexFunction() {
     return parallelEdgeIndexFunction;
   }
 
-  public void setParallelEdgeIndexFunction(EdgeIndexFunction<N, E> parallelEdgeIndexFunction) {
+  public void setParallelEdgeIndexFunction(EdgeIndexFunction<V, E> parallelEdgeIndexFunction) {
     this.parallelEdgeIndexFunction = parallelEdgeIndexFunction;
     // reset the edge shape Function, as the parallel edge index function
     // is used by it
@@ -382,12 +382,12 @@ public class DefaultRenderContext<N, E> implements RenderContext<N, E> {
     this.pickedEdgeState = pickedEdgeState;
   }
 
-  public MutableSelectedState<N> getSelectedNodeState() {
-    return pickedNodeState;
+  public MutableSelectedState<V> getSelectedVertexState() {
+    return pickedVertexState;
   }
 
-  public void setSelectedNodeState(MutableSelectedState<N> pickedNodeState) {
-    this.pickedNodeState = pickedNodeState;
+  public void setSelectedVertexState(MutableSelectedState<V> pickedVertexState) {
+    this.pickedVertexState = pickedVertexState;
   }
 
   public CellRendererPane getRendererPane() {
@@ -407,75 +407,75 @@ public class DefaultRenderContext<N, E> implements RenderContext<N, E> {
     screenDevice.add(rendererPane);
   }
 
-  public Function<N, Font> getNodeFontFunction() {
-    return nodeFontFunction;
+  public Function<V, Font> getVertexFontFunction() {
+    return vertexFontFunction;
   }
 
-  public void setNodeFontFunction(Function<N, Font> nodeFontFunction) {
-    this.nodeFontFunction = nodeFontFunction;
+  public void setVertexFontFunction(Function<V, Font> vertexFontFunction) {
+    this.vertexFontFunction = vertexFontFunction;
   }
 
-  public Function<N, Icon> getNodeIconFunction() {
-    return nodeIconFunction;
+  public Function<V, Icon> getVertexIconFunction() {
+    return vertexIconFunction;
   }
 
-  public void setNodeIconFunction(Function<N, Icon> nodeIconFunction) {
-    this.nodeIconFunction = nodeIconFunction;
+  public void setVertexIconFunction(Function<V, Icon> vertexIconFunction) {
+    this.vertexIconFunction = vertexIconFunction;
   }
 
-  public Predicate<N> getNodeIncludePredicate() {
-    return nodeIncludePredicate;
+  public Predicate<V> getVertexIncludePredicate() {
+    return vertexIncludePredicate;
   }
 
-  public void setNodeIncludePredicate(Predicate<N> nodeIncludePredicate) {
-    this.nodeIncludePredicate = nodeIncludePredicate;
+  public void setVertexIncludePredicate(Predicate<V> vertexIncludePredicate) {
+    this.vertexIncludePredicate = vertexIncludePredicate;
   }
 
-  public NodeLabelRenderer getNodeLabelRenderer() {
-    return nodeLabelRenderer;
+  public VertexLabelRenderer getVertexLabelRenderer() {
+    return vertexLabelRenderer;
   }
 
-  public void setNodeLabelRenderer(NodeLabelRenderer nodeLabelRenderer) {
-    this.nodeLabelRenderer = nodeLabelRenderer;
+  public void setVertexLabelRenderer(VertexLabelRenderer vertexLabelRenderer) {
+    this.vertexLabelRenderer = vertexLabelRenderer;
   }
 
-  public Function<N, Paint> getNodeFillPaintFunction() {
-    return nodeFillPaintFunction;
+  public Function<V, Paint> getVertexFillPaintFunction() {
+    return vertexFillPaintFunction;
   }
 
-  public void setNodeFillPaintFunction(Function<N, Paint> nodeFillPaintFunction) {
-    this.nodeFillPaintFunction = nodeFillPaintFunction;
+  public void setVertexFillPaintFunction(Function<V, Paint> vertexFillPaintFunction) {
+    this.vertexFillPaintFunction = vertexFillPaintFunction;
   }
 
-  public Function<N, Paint> getNodeDrawPaintFunction() {
-    return nodeDrawPaintFunction;
+  public Function<V, Paint> getVertexDrawPaintFunction() {
+    return vertexDrawPaintFunction;
   }
 
-  public void setNodeDrawPaintFunction(Function<N, Paint> nodeDrawPaintFunction) {
-    this.nodeDrawPaintFunction = nodeDrawPaintFunction;
+  public void setVertexDrawPaintFunction(Function<V, Paint> vertexDrawPaintFunction) {
+    this.vertexDrawPaintFunction = vertexDrawPaintFunction;
   }
 
-  public Function<N, String> getNodeLabelFunction() {
-    return nodeLabelFunction;
+  public Function<V, String> getVertexLabelFunction() {
+    return vertexLabelFunction;
   }
 
-  public void setNodeLabelFunction(Function<N, String> nodeLabelFunction) {
-    this.nodeLabelFunction = nodeLabelFunction;
+  public void setVertexLabelFunction(Function<V, String> vertexLabelFunction) {
+    this.vertexLabelFunction = vertexLabelFunction;
   }
 
-  public void setNodeLabelDrawPaintFunction(Function<N, Paint> nodeLabelDrawPaintFunction) {
-    this.nodeLabelDrawPaintFunction = nodeLabelDrawPaintFunction;
+  public void setVertexLabelDrawPaintFunction(Function<V, Paint> vertexLabelDrawPaintFunction) {
+    this.vertexLabelDrawPaintFunction = vertexLabelDrawPaintFunction;
   }
 
-  public Function<N, Paint> getNodeLabelDrawPaintFunction() {
-    return nodeLabelDrawPaintFunction;
+  public Function<V, Paint> getVertexLabelDrawPaintFunction() {
+    return vertexLabelDrawPaintFunction;
   }
 
-  public NetworkElementAccessor<N, E> getPickSupport() {
+  public GraphElementAccessor<V, E> getPickSupport() {
     return pickSupport;
   }
 
-  public void setPickSupport(NetworkElementAccessor<N, E> pickSupport) {
+  public void setPickSupport(GraphElementAccessor<V, E> pickSupport) {
     this.pickSupport = pickSupport;
   }
 
@@ -503,7 +503,7 @@ public class DefaultRenderContext<N, E> implements RenderContext<N, E> {
     this.arrowFillPaintFunction = arrowFillPaintFunction;
   }
 
-  private Shape getNodeShape(String shape, int size) {
+  private Shape getVertexShape(String shape, int size) {
     switch (shape) {
       case "SQUARE":
         return new Rectangle2D.Float(-size / 2.f, -size / 2.f, size, size);
@@ -514,17 +514,17 @@ public class DefaultRenderContext<N, E> implements RenderContext<N, E> {
   }
 
   /**
-   * parse out the node label position
+   * parse out the vertex label position
    *
    * @param position
    * @return
    */
-  private Renderer.NodeLabel.Position getPosition(String position) {
+  private Renderer.VertexLabel.Position getPosition(String position) {
     try {
-      return Renderer.NodeLabel.Position.valueOf(position);
+      return Renderer.VertexLabel.Position.valueOf(position);
     } catch (Exception e) {
     }
-    return Renderer.NodeLabel.Position.SE;
+    return Renderer.VertexLabel.Position.SE;
   }
 
   /**

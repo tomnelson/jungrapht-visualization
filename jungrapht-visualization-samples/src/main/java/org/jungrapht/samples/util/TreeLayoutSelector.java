@@ -11,27 +11,27 @@ import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
 import org.jungrapht.visualization.util.BalloonLayoutRings;
 import org.jungrapht.visualization.util.RadialLayoutRings;
 
-public class TreeLayoutSelector<N, E> extends JPanel {
+public class TreeLayoutSelector<V, E> extends JPanel {
 
   VisualizationServer.Paintable balloonPaintable;
   VisualizationServer.Paintable radialPaintable;
 
-  TreeLayoutAlgorithm<N> treeLayoutAlgorithm = TreeLayoutAlgorithm.<N>builder().build();
+  TreeLayoutAlgorithm<V> treeLayoutAlgorithm = TreeLayoutAlgorithm.<V>builder().build();
 
-  BalloonLayoutAlgorithm<N> balloonLayoutAlgorithm = BalloonLayoutAlgorithm.<N>builder().build();
+  BalloonLayoutAlgorithm<V> balloonLayoutAlgorithm = BalloonLayoutAlgorithm.<V>builder().build();
 
-  RadialTreeLayoutAlgorithm<N> radialTreeLayoutAlgorithm =
-      RadialTreeLayoutAlgorithm.<N>builder().build();
+  RadialTreeLayoutAlgorithm<V> radialTreeLayoutAlgorithm =
+      RadialTreeLayoutAlgorithm.<V>builder().build();
 
-  VisualizationServer<N, E> vv;
+  VisualizationServer<V, E> vv;
 
   final JRadioButton animateTransition = new JRadioButton("Animate Transition", true);
 
-  public TreeLayoutSelector(VisualizationServer<N, E> vv) {
+  public TreeLayoutSelector(VisualizationServer<V, E> vv) {
     this(vv, 0);
   }
 
-  public TreeLayoutSelector(VisualizationServer<N, E> vv, int initialSelection) {
+  public TreeLayoutSelector(VisualizationServer<V, E> vv, int initialSelection) {
     super(new GridLayout(0, 1));
     this.vv = vv;
     JRadioButton treeButton = new JRadioButton("Tree");

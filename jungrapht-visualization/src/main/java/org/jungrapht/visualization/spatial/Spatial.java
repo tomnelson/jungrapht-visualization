@@ -10,11 +10,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.jungrapht.visualization.VisualizationModel;
-import org.jungrapht.visualization.layout.RadiusNetworkElementAccessor;
+import org.jungrapht.visualization.layout.RadiusGraphElementAccessor;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
-import org.jungrapht.visualization.layout.util.RadiusNetworkNodeAccessor;
+import org.jungrapht.visualization.layout.util.RadiusVertexAccessor;
 import org.jungrapht.visualization.spatial.rtree.TreeNode;
 
 /**
@@ -123,15 +123,15 @@ public interface Spatial<T> extends LayoutStateChange.Listener {
    * a special case Spatial that does no filtering
    *
    * @param <T> the type for elements in the spatial
-   * @param <NT> the type for the Nodes in a LayoutModel
+   * @param <NT> the type for the Vertices in a LayoutModel
    */
   abstract class NoOp<T, NT> extends AbstractSpatial<T, NT> {
 
-    private TreeNode treeNode;
+    private TreeNode treeVertex;
 
     public NoOp(LayoutModel<NT> layoutModel) {
       super(layoutModel);
-      this.treeNode = new DegenerateTreeNode(layoutModel);
+      this.treeVertex = new DegenerateTreeVertex(layoutModel);
     }
 
     /**
@@ -193,7 +193,7 @@ public interface Spatial<T> extends LayoutStateChange.Listener {
      */
     @Override
     public Set<? extends TreeNode> getContainingLeafs(Point2D p) {
-      return Collections.singleton(this.treeNode);
+      return Collections.singleton(this.treeVertex);
     }
 
     /**
@@ -203,7 +203,7 @@ public interface Spatial<T> extends LayoutStateChange.Listener {
      */
     @Override
     public Set<? extends TreeNode> getContainingLeafs(double x, double y) {
-      return Collections.singleton(this.treeNode);
+      return Collections.singleton(this.treeVertex);
     }
 
     /**
@@ -212,18 +212,18 @@ public interface Spatial<T> extends LayoutStateChange.Listener {
      */
     @Override
     public TreeNode getContainingLeaf(Object element) {
-      return this.treeNode;
+      return this.treeVertex;
     }
 
     /**
      * a TreeNode that is immutable and covers the entire layout area
      *
-     * @param <N>
+     * @param <V>
      */
-    public static class DegenerateTreeNode<N> implements TreeNode {
-      LayoutModel<N> layoutModel;
+    public static class DegenerateTreeVertex<V> implements TreeNode {
+      LayoutModel<V> layoutModel;
 
-      public DegenerateTreeNode(LayoutModel<N> layoutModel) {
+      public DegenerateTreeVertex(LayoutModel<V> layoutModel) {
         this.layoutModel = layoutModel;
       }
 
@@ -243,17 +243,17 @@ public interface Spatial<T> extends LayoutStateChange.Listener {
       }
     }
 
-    public static class Node<N> extends NoOp<N, N> {
+    public static class Vertex<V> extends NoOp<V, V> {
 
-      RadiusNetworkNodeAccessor<N> accessor;
+      RadiusVertexAccessor<V> accessor;
 
-      public Node(LayoutModel<N> layoutModel) {
+      public Vertex(LayoutModel<V> layoutModel) {
         super(layoutModel);
-        this.accessor = new RadiusNetworkNodeAccessor<>();
+        this.accessor = new RadiusVertexAccessor<>();
       }
 
       @Override
-      public Set<N> getVisibleElements(Shape shape) {
+      public Set<V> getVisibleElements(Shape shape) {
         return new HashSet<>(layoutModel.getGraph().vertexSet());
       }
 
@@ -263,30 +263,30 @@ public interface Spatial<T> extends LayoutStateChange.Listener {
       }
 
       @Override
-      public N getClosestElement(Point2D p) {
+      public V getClosestElement(Point2D p) {
         return getClosestElement(p.getX(), p.getY());
       }
 
       @Override
-      public N getClosestElement(double x, double y) {
+      public V getClosestElement(double x, double y) {
         return null; //use radius node accessor
       }
     }
 
-    public static class Edge<E, N> extends NoOp<E, N> {
+    public static class Edge<E, V> extends NoOp<E, V> {
 
-      private VisualizationModel<N, E> visualizationModel;
-      RadiusNetworkElementAccessor<N, E> accessor;
+      private VisualizationModel<V, E> visualizationModel;
+      RadiusGraphElementAccessor<V, E> accessor;
 
-      public Edge(VisualizationModel<N, E> visualizationModel) {
+      public Edge(VisualizationModel<V, E> visualizationModel) {
         super(visualizationModel.getLayoutModel());
         this.visualizationModel = visualizationModel;
-        this.accessor = new RadiusNetworkElementAccessor<>(visualizationModel.getNetwork());
+        this.accessor = new RadiusGraphElementAccessor<>(visualizationModel.getGraph());
       }
 
       @Override
       public Set<E> getVisibleElements(Shape shape) {
-        return Sets.newHashSet(visualizationModel.getNetwork().edgeSet());
+        return Sets.newHashSet(visualizationModel.getGraph().edgeSet());
       }
 
       @Override

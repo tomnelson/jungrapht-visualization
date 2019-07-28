@@ -10,19 +10,18 @@
 package org.jungrapht.visualization.subLayout;
 
 import com.google.common.collect.Iterables;
+import java.util.Set;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jungrapht.visualization.util.TreeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Set;
-
 public class TreeCollapser {
 
   private static Logger log = LoggerFactory.getLogger(TreeCollapser.class);
   /**
-   * Replaces the subtree of {@code tree} rooted at {@code subRoot} with a node representing that
+   * Replaces the subtree of {@code tree} rooted at {@code subRoot} with a vertex representing that
    * subtree.
    *
    * @param tree the tree whose subtree is to be collapsed
@@ -35,7 +34,7 @@ public class TreeCollapser {
     Graph<Collapsable<?>, E> subTree = TreeUtils.getSubTree(tree, subRoot);
     log.trace("subTree of {} is {}", subRoot, subTree);
     if (tree.incomingEdgesOf(subRoot).isEmpty()) {
-      TreeUtils.removeTreeNode(tree, subRoot);
+      TreeUtils.removeTreeVertex(tree, subRoot);
       tree.addVertex(Collapsable.of(subTree));
     } else {
       log.trace("collapse at subroot {}", subRoot);
@@ -44,7 +43,7 @@ public class TreeCollapser {
         E parentEdge =
             Iterables.getOnlyElement(tree.incomingEdgesOf(subRoot)); // THERE CAN BE ONLY ONE
 
-        TreeUtils.removeTreeNode(tree, subRoot);
+        TreeUtils.removeTreeVertex(tree, subRoot);
 
         tree.addVertex(parent);
         tree.addVertex(Collapsable.of(subTree));

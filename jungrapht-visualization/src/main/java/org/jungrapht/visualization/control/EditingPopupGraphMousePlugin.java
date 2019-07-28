@@ -10,64 +10,64 @@ import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.layout.NetworkElementAccessor;
+import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 
 /**
- * a plugin that uses popup menus to create nodes, undirected edges, and directed edges.
+ * a plugin that uses popup menus to create vertices, undirected edges, and directed edges.
  *
  * @author Tom Nelson
  */
-public class EditingPopupGraphMousePlugin<N, E> extends AbstractPopupGraphMousePlugin {
+public class EditingPopupGraphMousePlugin<V, E> extends AbstractPopupGraphMousePlugin {
 
-  protected Supplier<N> nodeFactory;
+  protected Supplier<V> vertexFactory;
   protected Supplier<E> edgeFactory;
 
-  public EditingPopupGraphMousePlugin(Supplier<N> nodeFactory, Supplier<E> edgeFactory) {
-    this.nodeFactory = nodeFactory;
+  public EditingPopupGraphMousePlugin(Supplier<V> vertexFactory, Supplier<E> edgeFactory) {
+    this.vertexFactory = vertexFactory;
     this.edgeFactory = edgeFactory;
   }
 
   @SuppressWarnings({"unchecked", "serial"})
   protected void handlePopup(MouseEvent e) {
-    final VisualizationViewer<N, E> vv = (VisualizationViewer<N, E>) e.getSource();
-    final LayoutModel<N> layoutModel = vv.getModel().getLayoutModel();
+    final VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
+    final LayoutModel<V> layoutModel = vv.getModel().getLayoutModel();
 
-    final Graph<N, E> graph = vv.getModel().getNetwork();
+    final Graph<V, E> graph = vv.getModel().getGraph();
     final Point2D p = e.getPoint();
-    NetworkElementAccessor<N, E> pickSupport = vv.getPickSupport();
+    GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
     if (pickSupport != null) {
 
-      final N node = pickSupport.getNode(layoutModel, p.getX(), p.getY());
+      final V vertex = pickSupport.getVertex(layoutModel, p.getX(), p.getY());
       final E edge = pickSupport.getEdge(layoutModel, p.getX(), p.getY());
-      final MutableSelectedState<N> pickedNodeState = vv.getSelectedNodeState();
+      final MutableSelectedState<V> pickedVertexState = vv.getSelectedVertexState();
       final MutableSelectedState<E> pickedEdgeState = vv.getSelectedEdgeState();
 
       JPopupMenu popup = new JPopupMenu();
-      if (node != null) {
-        Set<N> picked = pickedNodeState.getSelected();
+      if (vertex != null) {
+        Set<V> picked = pickedVertexState.getSelected();
         if (picked.size() > 0) {
           JMenu menu =
               new JMenu(
                   "Create " + (graph.getType().isDirected() ? "Directed" : "Undirected") + " Edge");
           popup.add(menu);
-          for (final N other : picked) {
+          for (final V other : picked) {
             menu.add(
-                new AbstractAction("[" + other + "," + node + "]") {
+                new AbstractAction("[" + other + "," + vertex + "]") {
                   public void actionPerformed(ActionEvent e) {
-                    graph.addEdge(other, node, edgeFactory.get());
+                    graph.addEdge(other, vertex, edgeFactory.get());
                     vv.repaint();
                   }
                 });
           }
         }
         popup.add(
-            new AbstractAction("Delete Node") {
+            new AbstractAction("Delete Vertex") {
               public void actionPerformed(ActionEvent e) {
-                pickedNodeState.pick(node, false);
-                graph.removeVertex(node);
-                vv.getNodeSpatial().recalculate();
+                pickedVertexState.pick(vertex, false);
+                graph.removeVertex(vertex);
+                vv.getVertexSpatial().recalculate();
                 vv.repaint();
               }
             });
@@ -83,12 +83,12 @@ public class EditingPopupGraphMousePlugin<N, E> extends AbstractPopupGraphMouseP
             });
       } else {
         popup.add(
-            new AbstractAction("Create Node") {
+            new AbstractAction("Create Vertex") {
               public void actionPerformed(ActionEvent e) {
-                N newNode = nodeFactory.get();
-                graph.addVertex(newNode);
+                V newVertex = vertexFactory.get();
+                graph.addVertex(newVertex);
                 Point2D p2d = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(p);
-                vv.getModel().getLayoutModel().set(newNode, p2d.getX(), p2d.getY());
+                vv.getModel().getLayoutModel().set(newVertex, p2d.getX(), p2d.getY());
                 vv.repaint();
               }
             });

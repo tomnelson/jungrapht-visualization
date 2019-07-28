@@ -29,15 +29,15 @@ public class RStarLeafSplitter<T> implements LeafSplitter<T> {
 
   public Pair<LeafNode<T>> split(
       Collection<Map.Entry<T, Rectangle2D>> entries, Map.Entry<T, Rectangle2D> newEntry) {
-    return chooseSplitNodes(entries, newEntry);
+    return chooseSplitVertices(entries, newEntry);
   }
 
-  private Pair<LeafNode<T>> chooseSplitNodes(
+  private Pair<LeafNode<T>> chooseSplitVertices(
       Collection<Map.Entry<T, Rectangle2D>> entries, Map.Entry<T, Rectangle2D> newEntry) {
     Pair<List<Map.Entry<T, Rectangle2D>>> pair = chooseSplit(entries, newEntry);
-    LeafNode<T> leafNodeLeft = LeafNode.create(pair.left);
-    LeafNode<T> leafNodeRight = LeafNode.create(pair.right);
-    return Pair.of(leafNodeLeft, leafNodeRight);
+    LeafNode<T> leafVertexLeft = LeafNode.create(pair.left);
+    LeafNode<T> leafVertexRight = LeafNode.create(pair.right);
+    return Pair.of(leafVertexLeft, leafVertexRight);
   }
 
   /**

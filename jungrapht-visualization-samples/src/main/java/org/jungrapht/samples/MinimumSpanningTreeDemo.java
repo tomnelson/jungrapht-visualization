@@ -33,10 +33,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Demonstrates a single network with 3 layouts in 3 views. The first view is an undirected network
+ * Demonstrates a single graph with 3 layouts in 3 views. The first view is an undirected graph
  * using KKLayout The second view show a TreeLayout view of a MinimumSpanningTree of the first
- * network. The third view shows the complete network of the first view, using the layout positions
- * of the MinimumSpanningTree tree view.
+ * graph. The third view shows the complete graph of the first view, using the layout positions of
+ * the MinimumSpanningTree tree view.
  *
  * @author Tom Nelson
  */
@@ -45,12 +45,12 @@ public class MinimumSpanningTreeDemo extends JPanel {
 
   private static final Logger log = LoggerFactory.getLogger(MinimumSpanningTreeDemo.class);
 
-  /** the network */
+  /** the graph */
   Graph<String, Number> network;
 
   Graph<String, Number> tree;
 
-  /** the visual components and renderers for the network */
+  /** the visual components and renderers for the graph */
   VisualizationViewer<String, Number> vv0;
 
   VisualizationViewer<String, Number> vv1;
@@ -60,14 +60,12 @@ public class MinimumSpanningTreeDemo extends JPanel {
   Dimension preferredSizeRect = new Dimension(1100, 300);
   Dimension viewSizeRect = new Dimension(1100, 300);
 
-  /**
-   * create an instance of a simple network in two views with controls to demo the zoom features.
-   */
+  /** create an instance of a simple graph in two views with controls to demo the zoom features. */
   public MinimumSpanningTreeDemo() {
 
     setLayout(new BorderLayout());
-    // create a simple network for the demo
-    // both models will share one network
+    // create a simple graph for the demo
+    // both models will share one graph
     network = TestGraphs.getDemoGraph();
 
     tree = SpanningTreeAdapter.getSpanningTree(network);
@@ -103,26 +101,26 @@ public class MinimumSpanningTreeDemo extends JPanel {
     vv0.addChangeListener(vv1);
     vv1.addChangeListener(vv2);
 
-    vv0.getRenderContext().setNodeLabelFunction(Object::toString);
-    vv2.getRenderContext().setNodeLabelFunction(Object::toString);
+    vv0.getRenderContext().setVertexLabelFunction(Object::toString);
+    vv2.getRenderContext().setVertexLabelFunction(Object::toString);
 
     Color back = Color.decode("0xffffbb");
     vv0.setBackground(back);
     vv1.setBackground(back);
     vv2.setBackground(back);
 
-    vv0.getRenderContext().setNodeLabelPosition(Renderer.NodeLabel.Position.CNTR);
+    vv0.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
     vv0.setForeground(Color.darkGray);
-    vv1.getRenderContext().setNodeLabelPosition(Renderer.NodeLabel.Position.CNTR);
+    vv1.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
     vv1.setForeground(Color.darkGray);
-    vv2.getRenderContext().setNodeLabelPosition(Renderer.NodeLabel.Position.CNTR);
+    vv2.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
     vv2.setForeground(Color.darkGray);
 
     // share one PickedState between the two views
     MutableSelectedState<String> ps = new MultiMutableSelectedState<>();
-    vv0.setSelectedNodeState(ps);
-    vv1.setSelectedNodeState(ps);
-    vv2.setSelectedNodeState(ps);
+    vv0.setSelectedVertexState(ps);
+    vv1.setSelectedVertexState(ps);
+    vv2.setSelectedVertexState(ps);
 
     MutableSelectedState<Number> pes = new MultiMutableSelectedState<>();
     vv0.setSelectedEdgeState(pes);
@@ -134,21 +132,21 @@ public class MinimumSpanningTreeDemo extends JPanel {
         .setEdgeDrawPaintFunction(
             new PickableElementPaintFunction<>(vv0.getSelectedEdgeState(), Color.black, Color.red));
     vv0.getRenderContext()
-        .setNodeFillPaintFunction(
+        .setVertexFillPaintFunction(
             new PickableElementPaintFunction<>(
-                vv0.getSelectedNodeState(), Color.red, Color.yellow));
+                vv0.getSelectedVertexState(), Color.red, Color.yellow));
     vv1.getRenderContext()
         .setEdgeDrawPaintFunction(
             new PickableElementPaintFunction<>(vv1.getSelectedEdgeState(), Color.black, Color.red));
     vv1.getRenderContext()
-        .setNodeFillPaintFunction(
+        .setVertexFillPaintFunction(
             new PickableElementPaintFunction<>(
-                vv1.getSelectedNodeState(), Color.red, Color.yellow));
+                vv1.getSelectedVertexState(), Color.red, Color.yellow));
 
     // add default listeners for ToolTips
-    vv0.setNodeToolTipFunction(Object::toString);
-    vv1.setNodeToolTipFunction(Object::toString);
-    vv2.setNodeToolTipFunction(Object::toString);
+    vv0.setVertexToolTipFunction(Object::toString);
+    vv1.setVertexToolTipFunction(Object::toString);
+    vv2.setVertexToolTipFunction(Object::toString);
 
     vv0.setLayout(new BorderLayout());
     vv1.setLayout(new BorderLayout());

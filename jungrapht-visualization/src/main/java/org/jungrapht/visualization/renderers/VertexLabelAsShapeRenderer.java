@@ -25,52 +25,56 @@ import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 
 /**
- * Renders Node Labels, but can also supply Shapes for nodes. This has the effect of making the node
- * label the actual node shape. The user will probably want to center the node label on the node
- * location.
+ * Renders Vertex Labels, but can also supply Shapes for vertices. This has the effect of making the
+ * vertex label the actual vertex shape. The user will probably want to center the vertex label on
+ * the vertex location.
  *
  * @author Tom Nelson
- * @param <N> the node type
+ * @param <V> the vertex type
  * @param <E> the edge type
  */
-public class NodeLabelAsShapeRenderer<N, E>
-    implements Renderer.NodeLabel<N, E>, Function<N, Shape> {
+public class VertexLabelAsShapeRenderer<V, E>
+    implements Renderer.VertexLabel<V, E>, Function<V, Shape> {
 
-  protected Map<N, Shape> shapes = new HashMap<>();
-  protected final LayoutModel<N> layoutModel;
-  protected final RenderContext<N, ?> renderContext;
+  protected Map<V, Shape> shapes = new HashMap<>();
+  protected final LayoutModel<V> layoutModel;
+  protected final RenderContext<V, ?> renderContext;
 
-  public NodeLabelAsShapeRenderer(
-      VisualizationModel<N, E> visualizationModel, RenderContext<N, ?> rc) {
+  public VertexLabelAsShapeRenderer(
+      VisualizationModel<V, E> visualizationModel, RenderContext<V, ?> rc) {
     this.layoutModel = visualizationModel.getLayoutModel();
     this.renderContext = rc;
   }
 
   public Component prepareRenderer(
-      RenderContext<N, ?> rc, Object value, boolean isSelected, N node) {
-    return rc.getNodeLabelRenderer()
-        .getNodeLabelRendererComponent(
-            rc.getScreenDevice(), value, rc.getNodeFontFunction().apply(node), isSelected, node);
+      RenderContext<V, ?> rc, Object value, boolean isSelected, V vertex) {
+    return rc.getVertexLabelRenderer()
+        .getVertexLabelRendererComponent(
+            rc.getScreenDevice(),
+            value,
+            rc.getVertexFontFunction().apply(vertex),
+            isSelected,
+            vertex);
   }
 
   /**
-   * Labels the specified node with the specified label. Uses the font specified by this instance's
-   * <code>NodeFontFunction</code>. (If the font is unspecified, the existing font for the graphics
-   * context is used.) If node label centering is active, the label is centered on the position of
-   * the node; otherwise the label is offset slightly.
+   * Labels the specified vertex with the specified label. Uses the font specified by this
+   * instance's <code>VertexFontFunction</code>. (If the font is unspecified, the existing font for
+   * the graphics context is used.) If vertex label centering is active, the label is centered on
+   * the position of the vertex; otherwise the label is offset slightly.
    */
-  public void labelNode(
-      RenderContext<N, E> renderContext,
-      VisualizationModel<N, E> visualizationModel,
-      N v,
+  public void labelVertex(
+      RenderContext<V, E> renderContext,
+      VisualizationModel<V, E> visualizationModel,
+      V v,
       String label) {
-    if (!renderContext.getNodeIncludePredicate().test(v)) {
+    if (!renderContext.getVertexIncludePredicate().test(v)) {
       return;
     }
     GraphicsDecorator g = renderContext.getGraphicsContext();
     Component component =
         prepareRenderer(
-            renderContext, label, renderContext.getSelectedNodeState().isSelected(v), v);
+            renderContext, label, renderContext.getSelectedVertexState().isSelected(v), v);
     Dimension d = component.getPreferredSize();
 
     int h_offset = -d.width / 2;
@@ -100,12 +104,12 @@ public class NodeLabelAsShapeRenderer<N, E>
     shapes.put(v, bounds);
   }
 
-  public Shape apply(N v) {
+  public Shape apply(V v) {
     Component component =
         prepareRenderer(
             renderContext,
-            renderContext.getNodeLabelFunction().apply(v),
-            renderContext.getSelectedNodeState().isSelected(v),
+            renderContext.getVertexLabelFunction().apply(v),
+            renderContext.getSelectedVertexState().isSelected(v),
             v);
     Dimension size = component.getPreferredSize();
     Rectangle bounds =
@@ -113,19 +117,19 @@ public class NodeLabelAsShapeRenderer<N, E>
     return bounds;
   }
 
-  public Renderer.NodeLabel.Position getPosition() {
-    return Renderer.NodeLabel.Position.CNTR;
+  public Renderer.VertexLabel.Position getPosition() {
+    return Renderer.VertexLabel.Position.CNTR;
   }
 
-  public Renderer.NodeLabel.Positioner getPositioner() {
+  public Renderer.VertexLabel.Positioner getPositioner() {
     return (x, y, d) -> Position.CNTR;
   }
 
-  public void setPosition(Renderer.NodeLabel.Position position) {
+  public void setPosition(Renderer.VertexLabel.Position position) {
     // noop
   }
 
-  public void setPositioner(Renderer.NodeLabel.Positioner positioner) {
+  public void setPositioner(Renderer.VertexLabel.Positioner positioner) {
     //noop
   }
 }

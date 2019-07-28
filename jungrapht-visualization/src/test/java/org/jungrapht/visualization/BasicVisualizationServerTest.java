@@ -11,7 +11,7 @@ public class BasicVisualizationServerTest extends TestCase {
 
   /*
    * Previously, a bug was introduced where the RenderContext in BasicVisualizationServer was reassigned, resulting
-   * in data like pickedNodeState to be lost.
+   * in data like pickedVertexState to be lost.
    */
   public void testRenderContextNotOverridden() {
     Graph<Object, Object> graph = DirectedPseudograph.createBuilder(Object::new).build();
@@ -20,7 +20,8 @@ public class BasicVisualizationServerTest extends TestCase {
     BasicVisualizationServer server =
         new BasicVisualizationServer<Object, Object>(graph, algorithm, new Dimension(600, 600));
 
-    MutableSelectedState<Object> pickedNodeState = server.getRenderContext().getSelectedNodeState();
-    assertNotNull(pickedNodeState);
+    MutableSelectedState<Object> pickedVertexState =
+        server.getRenderContext().getSelectedVertexState();
+    assertNotNull(pickedVertexState);
   }
 }

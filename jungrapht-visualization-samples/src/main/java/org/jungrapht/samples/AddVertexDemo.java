@@ -26,20 +26,19 @@ import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
 import org.jungrapht.visualization.layout.algorithms.SpringLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutSpringRepulsion;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A variation of old AddNodeDemo that animates transitions between graph algorithms.
+ * A variation of old AddVertexDemo that animates transitions between graph algorithms.
  *
  * @author Tom Nelson
  */
-public class AddNodeDemo extends JPanel {
+public class AddVertexDemo extends JPanel {
 
-  private static final Logger log = LoggerFactory.getLogger(AddNodeDemo.class);
+  private static final Logger log = LoggerFactory.getLogger(AddVertexDemo.class);
 
   private static final long serialVersionUID = -5345319851341875800L;
 
@@ -57,7 +56,7 @@ public class AddNodeDemo extends JPanel {
 
   public static final int EDGE_LENGTH = 100;
 
-  public AddNodeDemo() {
+  public AddVertexDemo() {
 
     Graph<Number, Number> original =
         GraphTypeBuilder.<Number, Number>forGraphType(DefaultGraphType.directedPseudograph())
@@ -79,8 +78,8 @@ public class AddNodeDemo extends JPanel {
 
     vv.setGraphMouse(new DefaultModalGraphMouse<Number, Number>());
 
-    vv.getRenderContext().setNodeLabelPosition(Renderer.NodeLabel.Position.CNTR);
-    vv.getRenderContext().setNodeLabelFunction(Object::toString);
+    vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
+    vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.setForeground(Color.white);
 
     this.add(vv);
@@ -114,7 +113,7 @@ public class AddNodeDemo extends JPanel {
             layoutAlgorithm =
                 SpringLayoutAlgorithm.<Number>builder()
                     .withLengthFunction(e -> EDGE_LENGTH)
-                    .repulsionContractBuilder(BarnesHutSpringRepulsion.barnesHutBuilder())
+                    //                    .repulsionContractBuilder(BarnesHutSpringRepulsion.barnesHutBuilder())
                     .build();
           } else {
             switchLayout.setText("Switch to SpringLayout");
@@ -142,23 +141,23 @@ public class AddNodeDemo extends JPanel {
 
   public void process() {
 
-    vv.getRenderContext().getSelectedNodeState().clear();
+    vv.getRenderContext().getSelectedVertexState().clear();
     vv.getRenderContext().getSelectedEdgeState().clear();
     try {
 
       if (g.vertexSet().size() < 100) {
-        //add a node
+        //add a vertex
         Integer v1 = g.vertexSet().size();
 
         g.addVertex(v1);
-        vv.getRenderContext().getSelectedNodeState().pick(v1, true);
+        vv.getRenderContext().getSelectedVertexState().pick(v1, true);
 
         // wire it to some edges
         if (v_prev != null) {
           Integer edge = g.edgeSet().size();
           vv.getRenderContext().getSelectedEdgeState().pick(edge, true);
           g.addEdge(v_prev, v1, edge);
-          // let's connect to a random node, too!
+          // let's connect to a random vertex, too!
           int rand = (int) (Math.random() * g.vertexSet().size());
           edge = g.edgeSet().size();
           vv.getRenderContext().getSelectedEdgeState().pick(edge, true);
@@ -193,7 +192,7 @@ public class AddNodeDemo extends JPanel {
   }
 
   public static void main(String[] args) {
-    AddNodeDemo and = new AddNodeDemo();
+    AddVertexDemo and = new AddVertexDemo();
     JFrame frame = new JFrame();
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     frame.getContentPane().add(and);

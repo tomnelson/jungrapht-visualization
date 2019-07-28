@@ -8,8 +8,8 @@ import org.jgrapht.graph.Pseudograph;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
-import org.jungrapht.visualization.layout.util.NetworkNodeAccessor;
-import org.jungrapht.visualization.layout.util.RadiusNetworkNodeAccessor;
+import org.jungrapht.visualization.layout.util.RadiusVertexAccessor;
+import org.jungrapht.visualization.layout.util.VertexAccessor;
 import org.jungrapht.visualization.spatial.Spatial;
 import org.jungrapht.visualization.spatial.rtree.TreeNode;
 import org.junit.Assert;
@@ -28,8 +28,6 @@ public class SpatialRTreeTest {
 
   private static final Logger log = LoggerFactory.getLogger(SpatialRTreeTest.class);
 
-  int width = 600;
-  int height = 600;
   Graph<String, Number> graph;
   LayoutModel<String> layoutModel;
   Spatial<String> tree;
@@ -44,7 +42,7 @@ public class SpatialRTreeTest {
     VisualizationServer<String, Number> vv =
         new BasicVisualizationServer(network, new StaticLayoutAlgorithm(), new Dimension(600, 600));
 
-    tree = vv.getNodeSpatial();
+    tree = vv.getVertexSpatial();
 
     layoutModel = vv.getModel().getLayoutModel();
   }
@@ -66,19 +64,19 @@ public class SpatialRTreeTest {
 
   /**
    * test that the closest node for a random point is the same one returned for the
-   * RadiusNetworkNodeAccessor and for the SpatialQuadTree Test with 1000 randomly generated points
+   * RadiusVertexAccessor and for the SpatialQuadTree Test with 1000 randomly generated points
    */
   @Test
-  public void testClosestNodes() {
+  public void testClosestVertices() {
     final int COUNT = 100;
-    NetworkNodeAccessor<String> slowWay = new RadiusNetworkNodeAccessor<>(Double.MAX_VALUE);
+    VertexAccessor<String> slowWay = new RadiusVertexAccessor<>(Double.MAX_VALUE);
 
     // look for nodes closest to COUNT random locations
     for (int i = 0; i < COUNT; i++) {
       double x = Math.random() * layoutModel.getWidth();
       double y = Math.random() * layoutModel.getHeight();
       // use the slowWay
-      String winnerOne = slowWay.getNode(layoutModel, x, y);
+      String winnerOne = slowWay.getVertex(layoutModel, x, y);
       // use the quadtree
       String winnerTwo = tree.getClosestElement(x, y);
 
@@ -109,13 +107,13 @@ public class SpatialRTreeTest {
   }
 
   /**
-   * a simple performance measure to compare using the RadiusNetworkNodeAccessor and the
-   * SpatialQuadTree. Not really a test, it just outputs elapsed time
+   * a simple performance measure to compare using the RadiusVertexAccessor and the SpatialQuadTree.
+   * Not really a test, it just outputs elapsed time
    */
   @Test
   public void comparePerformance() {
     final int COUNT = 1000;
-    NetworkNodeAccessor<String> slowWay = new RadiusNetworkNodeAccessor<>(Double.MAX_VALUE);
+    VertexAccessor<String> slowWay = new RadiusVertexAccessor<>(Double.MAX_VALUE);
 
     // generate the points first so both tests use the same points
     double[] xs = new double[COUNT];
@@ -127,8 +125,8 @@ public class SpatialRTreeTest {
     long start = System.currentTimeMillis();
     // look for nodes closest to 10000 random locations
     for (int i = 0; i < COUNT; i++) {
-      // use the RadiusNetworkNodeAccessor
-      String winnerOne = slowWay.getNode(layoutModel, xs[i], ys[i]);
+      // use the RadiusVertexAccessor
+      String winnerOne = slowWay.getVertex(layoutModel, xs[i], ys[i]);
     }
     long end = System.currentTimeMillis();
     log.info("radius way took {}", end - start);

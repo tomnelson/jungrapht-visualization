@@ -71,9 +71,9 @@ public class BalloonLayoutForestDemo extends JPanel {
     vv = new VisualizationViewer<>(graph, new StaticLayoutAlgorithm<>(), layoutSize, viewSize);
     vv.setBackground(Color.white);
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
-    vv.getRenderContext().setNodeLabelFunction(Object::toString);
+    vv.getRenderContext().setVertexLabelFunction(Object::toString);
     // add a listener for ToolTips
-    vv.setNodeToolTipFunction(Object::toString);
+    vv.setVertexToolTipFunction(Object::toString);
     vv.getRenderContext().setArrowFillPaintFunction(a -> Color.lightGray);
 
     final GraphZoomScrollPane panel = new GraphZoomScrollPane(vv);

@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
  * @author Tom Nelson
  */
 @SuppressWarnings("serial")
-public class RTreeVisualization<N> extends JPanel {
+public class RTreeVisualization<V> extends JPanel {
 
   private static final Logger log = LoggerFactory.getLogger(RTreeVisualization.class);
   Graph<Object, Integer> graph;
@@ -95,9 +95,9 @@ public class RTreeVisualization<N> extends JPanel {
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.orthogonal());
 
     // add a listener for ToolTips
-    vv.setNodeToolTipFunction(Object::toString);
+    vv.setVertexToolTipFunction(Object::toString);
     vv.getRenderContext().setArrowFillPaintFunction(n -> Color.lightGray);
-    vv.setNodeSpatial(new Spatial.NoOp.Node(vv.getModel().getLayoutModel()));
+    vv.setVertexSpatial(new Spatial.NoOp.Vertex(vv.getModel().getLayoutModel()));
     vv.setEdgeSpatial(new Spatial.NoOp.Edge(vv.getModel()));
 
     final ScalingControl scaler = new CrossoverScalingControl();
@@ -110,7 +110,7 @@ public class RTreeVisualization<N> extends JPanel {
     final DefaultModalGraphMouse<Object, Integer> graphMouse = new DefaultModalGraphMouse<>();
 
     vv.setGraphMouse(graphMouse);
-    MutableSelectedState selectedState = othervv.getSelectedNodeState();
+    MutableSelectedState selectedState = othervv.getSelectedVertexState();
     selectedState.addItemListener(
         e -> {
           if (e.getStateChange() == ItemEvent.DESELECTED) {
@@ -142,7 +142,7 @@ public class RTreeVisualization<N> extends JPanel {
             }
           }
         });
-    vv.setSelectedNodeState(othervv.getSelectedNodeState());
+    vv.setSelectedVertexState(othervv.getSelectedVertexState());
     vv.addKeyListener(graphMouse.getModeKeyListener());
 
     JComboBox<Mode> modeBox = graphMouse.getModeComboBox();
@@ -282,7 +282,7 @@ public class RTreeVisualization<N> extends JPanel {
       Graphics2D g2d = (Graphics2D) g;
 
       Ellipse2D ellipse = new Ellipse2D.Double();
-      for (Object v : vv.getModel().getNetwork().vertexSet()) {
+      for (Object v : vv.getModel().getGraph().vertexSet()) {
         Double radius = layoutAlgorithm.getRadii().get(v);
         if (radius == null) {
           continue;
@@ -301,7 +301,7 @@ public class RTreeVisualization<N> extends JPanel {
     }
   }
 
-  private Graph<Object, Integer> createTreeFromRTree(RTree<N> rtree) {
+  private Graph<Object, Integer> createTreeFromRTree(RTree<V> rtree) {
     Graph<Object, Integer> tree =
         GraphTypeBuilder.<Object, Integer>forGraphType(DefaultGraphType.dag()).buildGraph();
 
@@ -312,22 +312,22 @@ public class RTreeVisualization<N> extends JPanel {
     return tree;
   }
 
-  private void addChildren(Graph<Object, Integer> network, Node<N> parent) {
+  private void addChildren(Graph<Object, Integer> network, Node<V> parent) {
     if (parent instanceof InnerNode) {
-      InnerNode<N> innerNode = (InnerNode<N>) parent;
+      InnerNode<V> innerVertex = (InnerNode<V>) parent;
       network.addVertex(parent);
-      for (Node<N> kid : innerNode.getChildren()) {
+      for (Node<V> kid : innerVertex.getChildren()) {
         network.addVertex(kid);
         network.addEdge(parent, kid, network.edgeSet().size() + 1);
         addChildren(network, kid);
       }
     } else if (parent instanceof LeafNode) {
-      LeafNode<N> leafNode = (LeafNode<N>) parent;
+      LeafNode<V> leafVertex = (LeafNode<V>) parent;
       try {
-        Method method = leafNode.getClass().getDeclaredMethod("getKeys");
+        Method method = leafVertex.getClass().getDeclaredMethod("getKeys");
         method.setAccessible(true);
-        Collection<N> got = (Collection<N>) method.invoke(leafNode);
-        for (N kid : got) {
+        Collection<V> got = (Collection<V>) method.invoke(leafVertex);
+        for (V kid : got) {
           network.addVertex(kid);
           network.addEdge(parent, kid, network.edgeSet().size() + 1);
         }
@@ -342,8 +342,8 @@ public class RTreeVisualization<N> extends JPanel {
     JFrame frame = new JFrame();
     Container content = frame.getContentPane();
 
-    Spatial spatial = vv.getNodeSpatial();
-    if (spatial instanceof SpatialRTree.Nodes) {
+    Spatial spatial = vv.getVertexSpatial();
+    if (spatial instanceof SpatialRTree.Vertices) {
       try {
         SpatialRTree mySpatial = (SpatialRTree) spatial;
         Field rtreeField = mySpatial.getClass().getSuperclass().getDeclaredField("rtree");

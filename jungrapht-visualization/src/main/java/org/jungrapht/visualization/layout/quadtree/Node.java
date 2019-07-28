@@ -24,7 +24,7 @@ public class Node<T> {
    */
   public static final double DEFAULT_THETA = 0.5;
 
-  // a node contains a ForceObject and possibly 4 Nodes
+  // a node contains a ForceObject and possibly 4 Vertices
   protected ForceObject<T> forceObject;
 
   Node NW;

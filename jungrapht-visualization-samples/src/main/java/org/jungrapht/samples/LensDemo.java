@@ -97,28 +97,29 @@ public class LensDemo extends JPanel {
     Dimension preferredSize = new Dimension(600, 600);
     Map<String, Point> map = new HashMap<>();
     Function<String, Point> vlf = map::get;
-    grid = this.generateNodeGrid(map, preferredSize, 25);
+    grid = this.generateVertexGrid(map, preferredSize, 25);
     gridLayoutAlgorithm = new StaticLayoutAlgorithm<>();
 
     final VisualizationModel<String, Number> visualizationModel =
         new BaseVisualizationModel<>(graph, graphLayoutAlgorithm, preferredSize);
     vv = new VisualizationViewer<>(visualizationModel, preferredSize);
 
-    MutableSelectedState<String> ps = vv.getSelectedNodeState();
+    MutableSelectedState<String> ps = vv.getSelectedVertexState();
     MutableSelectedState<Number> pes = vv.getSelectedEdgeState();
     vv.getRenderContext()
-        .setNodeFillPaintFunction(new PickableElementPaintFunction<>(ps, Color.red, Color.yellow));
+        .setVertexFillPaintFunction(
+            new PickableElementPaintFunction<>(ps, Color.red, Color.yellow));
     vv.getRenderContext()
         .setEdgeDrawPaintFunction(new PickableElementPaintFunction<>(pes, Color.black, Color.cyan));
     vv.setBackground(Color.white);
 
-    vv.getRenderContext().setNodeLabelFunction(Object::toString);
+    vv.getRenderContext().setVertexLabelFunction(Object::toString);
 
-    final Function<String, Shape> ovals = vv.getRenderContext().getNodeShapeFunction();
+    final Function<String, Shape> ovals = vv.getRenderContext().getVertexShapeFunction();
     final Function<String, Shape> squares = n -> new Rectangle2D.Float(-10, -10, 20, 20);
 
     // add a listener for ToolTips
-    vv.setNodeToolTipFunction(n -> n); //Object::toString);
+    vv.setVertexToolTipFunction(n -> n); //Object::toString);
 
     GraphZoomScrollPane gzsp = new GraphZoomScrollPane(vv);
     add(gzsp);
@@ -244,10 +245,10 @@ public class LensDemo extends JPanel {
           if (e.getStateChange() == ItemEvent.SELECTED) {
             layoutModel.setInitializer(
                 new RandomLocationTransformer<>(layoutModel.getWidth(), layoutModel.getHeight()));
-            visualizationModel.setNetwork(graph, false);
+            visualizationModel.setGraph(graph, false);
             LayoutAlgorithmTransition.apply(vv, graphLayoutAlgorithm);
-            vv.getRenderContext().setNodeShapeFunction(ovals);
-            vv.getRenderContext().setNodeLabelFunction(Object::toString);
+            vv.getRenderContext().setVertexShapeFunction(ovals);
+            vv.getRenderContext().setVertexLabelFunction(Object::toString);
             vv.repaint();
           }
         });
@@ -258,10 +259,10 @@ public class LensDemo extends JPanel {
           if (e.getStateChange() == ItemEvent.SELECTED) {
             layoutModel.setInitializer(vlf);
             // so it won't start running the old layout algorithm on the new graph
-            visualizationModel.setNetwork(grid, false);
+            visualizationModel.setGraph(grid, false);
             LayoutAlgorithmTransition.apply(vv, gridLayoutAlgorithm);
-            vv.getRenderContext().setNodeShapeFunction(squares);
-            vv.getRenderContext().setNodeLabelFunction(n -> null);
+            vv.getRenderContext().setVertexShapeFunction(squares);
+            vv.getRenderContext().setVertexLabelFunction(n -> null);
             vv.repaint();
           }
         });
@@ -302,7 +303,7 @@ public class LensDemo extends JPanel {
     add(controls, BorderLayout.SOUTH);
   }
 
-  private Graph<String, Number> generateNodeGrid(
+  private Graph<String, Number> generateVertexGrid(
       Map<String, Point> vlf, Dimension d, int interval) {
     int count = d.width / interval * d.height / interval;
     Graph<String, Number> graph =
@@ -314,9 +315,9 @@ public class LensDemo extends JPanel {
       x %= d.width;
 
       Point location = Point.of(x, y);
-      String node = "v" + i;
-      vlf.put(node, location);
-      graph.addVertex(node);
+      String vertex = "v" + i;
+      vlf.put(vertex, location);
+      graph.addVertex(vertex);
     }
     return graph;
   }

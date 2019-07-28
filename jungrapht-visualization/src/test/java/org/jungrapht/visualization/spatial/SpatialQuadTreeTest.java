@@ -6,9 +6,9 @@ import org.jgrapht.graph.Pseudograph;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.LoadingCacheLayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
-import org.jungrapht.visualization.layout.util.NetworkNodeAccessor;
-import org.jungrapht.visualization.layout.util.RadiusNetworkNodeAccessor;
+import org.jungrapht.visualization.layout.util.RadiusVertexAccessor;
 import org.jungrapht.visualization.layout.util.RandomLocationTransformer;
+import org.jungrapht.visualization.layout.util.VertexAccessor;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,8 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * test to make sure that a search for a node returns the same leaf that you get when you search for
- * the point location of that node
+ * test to make sure that a search for a vertex returns the same leaf that you get when you search
+ * for the point location of that vertex
  *
  * @author Tom Nelson
  */
@@ -33,7 +33,7 @@ public class SpatialQuadTreeTest {
 
   @Before
   public void setup() {
-    // generate 100 random nodes in a graph at random locations in the layoutModel
+    // generate 100 random vertices in a graph at random locations in the layoutModel
     Pseudograph<String, Object> network =
         Pseudograph.<String, Object>createBuilder(Object::new).build();
 
@@ -47,44 +47,44 @@ public class SpatialQuadTreeTest {
             .build();
 
     tree = new SpatialQuadTree(layoutModel, width, height);
-    for (String node : graph.vertexSet()) {
-      tree.insert(node);
+    for (String vertex : graph.vertexSet()) {
+      tree.insert(vertex);
     }
   }
 
   /**
-   * confirm that the quadtree cell for a node is the same as the quadtree cell for the node's
+   * confirm that the quadtree cell for a vertex is the same as the quadtree cell for the vertex's
    * location
    */
   @Test
   public void testRandomPointsAndLocations() {
-    for (String node : graph.vertexSet()) {
-      Point location = layoutModel.apply(node);
+    for (String vertex : graph.vertexSet()) {
+      Point location = layoutModel.apply(vertex);
       SpatialQuadTree pointQuadTree = tree.getContainingQuadTreeLeaf(location.x, location.y);
-      SpatialQuadTree nodeQuadTree = (SpatialQuadTree) tree.getContainingQuadTreeLeaf(node);
-      Assert.assertEquals(pointQuadTree, nodeQuadTree);
+      SpatialQuadTree vertexQuadTree = (SpatialQuadTree) tree.getContainingQuadTreeLeaf(vertex);
+      Assert.assertEquals(pointQuadTree, vertexQuadTree);
       log.debug(
-          "pointQuadTree level {} nodeQuadTree level {}",
+          "pointQuadTree level {} vertexQuadTree level {}",
           pointQuadTree.getLevel(),
-          nodeQuadTree.getLevel());
+          vertexQuadTree.getLevel());
     }
   }
 
   /**
-   * test that the closest node for a random point is the same one returned for the
-   * RadiusNetworkNodeAccessor and for the SpatialQuadTree Test with 1000 randomly generated points
+   * test that the closest vertex for a random point is the same one returned for the
+   * RadiusVertexAccessor and for the SpatialQuadTree Test with 1000 randomly generated points
    */
   @Test
-  public void testClosestNodes() {
+  public void testClosestVertices() {
     final int COUNT = 10000;
-    NetworkNodeAccessor<String> slowWay = new RadiusNetworkNodeAccessor<>(Double.MAX_VALUE);
+    VertexAccessor<String> slowWay = new RadiusVertexAccessor<>(Double.MAX_VALUE);
 
-    // look for nodes closest to COUNT random locations
+    // look for vertices closest to COUNT random locations
     for (int i = 0; i < COUNT; i++) {
       double x = Math.random() * layoutModel.getWidth();
       double y = Math.random() * layoutModel.getHeight();
       // use the slowWay
-      String winnerOne = slowWay.getNode(layoutModel, x, y);
+      String winnerOne = slowWay.getVertex(layoutModel, x, y);
       // use the quadtree
       String winnerTwo = tree.getClosestElement(x, y);
 
@@ -125,13 +125,13 @@ public class SpatialQuadTreeTest {
   }
 
   /**
-   * a simple performance measure to compare using the RadiusNetworkNodeAccessor and the
-   * SpatialQuadTree. Not really a test, it just outputs elapsed time
+   * a simple performance measure to compare using the RadiusVertexAccessor and the SpatialQuadTree.
+   * Not really a test, it just outputs elapsed time
    */
   @Test
   public void comparePerformance() {
     final int COUNT = 100000;
-    NetworkNodeAccessor<String> slowWay = new RadiusNetworkNodeAccessor<>(Double.MAX_VALUE);
+    VertexAccessor<String> slowWay = new RadiusVertexAccessor<>(Double.MAX_VALUE);
 
     // generate the points first so both tests use the same points
     double[] xs = new double[COUNT];
@@ -141,10 +141,10 @@ public class SpatialQuadTreeTest {
       ys[i] = Math.random() * layoutModel.getHeight();
     }
     long start = System.currentTimeMillis();
-    // look for nodes closest to 10000 random locations
+    // look for vertices closest to 10000 random locations
     for (int i = 0; i < COUNT; i++) {
-      // use the RadiusNetworkNodeAccessor
-      String winnerOne = slowWay.getNode(layoutModel, xs[i], ys[i]);
+      // use the RadiusVertexAccessor
+      String winnerOne = slowWay.getVertex(layoutModel, xs[i], ys[i]);
     }
     long end = System.currentTimeMillis();
     log.info("radius way took {}", end - start);

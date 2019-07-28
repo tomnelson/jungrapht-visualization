@@ -22,21 +22,21 @@ import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.util.Context;
 
-public class SimpleEdgeRenderer<N, E> implements Renderer.Edge<N, E> {
+public class SimpleEdgeRenderer<V, E> implements Renderer.Edge<V, E> {
 
   @Override
   public void paintEdge(
-      RenderContext<N, E> renderContext, VisualizationModel<N, E> visualizationModel, E e) {
+      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e) {
     GraphicsDecorator g2d = renderContext.getGraphicsContext();
     if (!renderContext.getEdgeIncludePredicate().test(e)) {
       return;
     }
 
-    // don't draw edge if either incident node is not drawn
-    N u = visualizationModel.getNetwork().getEdgeSource(e);
-    N v = visualizationModel.getNetwork().getEdgeTarget(e);
-    Predicate<N> nodeIncludePredicate = renderContext.getNodeIncludePredicate();
-    if (!nodeIncludePredicate.test(u) || !nodeIncludePredicate.test(v)) {
+    // don't draw edge if either incident vertex is not drawn
+    V u = visualizationModel.getGraph().getEdgeSource(e);
+    V v = visualizationModel.getGraph().getEdgeTarget(e);
+    Predicate<V> vertexIncludePredicate = renderContext.getVertexIncludePredicate();
+    if (!vertexIncludePredicate.test(u) || !vertexIncludePredicate.test(v)) {
       return;
     }
 
@@ -55,13 +55,13 @@ public class SimpleEdgeRenderer<N, E> implements Renderer.Edge<N, E> {
   }
 
   protected Shape prepareFinalEdgeShape(
-      RenderContext<N, E> renderContext,
-      VisualizationModel<N, E> visualizationModel,
+      RenderContext<V, E> renderContext,
+      VisualizationModel<V, E> visualizationModel,
       E e,
       int[] coords,
       boolean[] loop) {
-    N v1 = visualizationModel.getNetwork().getEdgeSource(e);
-    N v2 = visualizationModel.getNetwork().getEdgeTarget(e);
+    V v1 = visualizationModel.getGraph().getEdgeSource(e);
+    V v2 = visualizationModel.getGraph().getEdgeTarget(e);
 
     org.jungrapht.visualization.layout.model.Point p1 =
         visualizationModel.getLayoutModel().apply(v1);
@@ -84,24 +84,23 @@ public class SimpleEdgeRenderer<N, E> implements Renderer.Edge<N, E> {
     coords[3] = (int) y2;
 
     boolean isLoop = loop[0] = v1.equals(v2);
-    Shape s2 = renderContext.getNodeShapeFunction().apply(v2);
-    Shape edgeShape =
-        EdgeShape.line().apply(Context.getInstance(visualizationModel.getNetwork(), e));
+    Shape s2 = renderContext.getVertexShapeFunction().apply(v2);
+    Shape edgeShape = EdgeShape.line().apply(Context.getInstance(visualizationModel.getGraph(), e));
 
     AffineTransform xform = AffineTransform.getTranslateInstance(x1, y1);
 
     if (isLoop) {
-      // this is a self-loop. scale it is larger than the node
+      // this is a self-loop. scale it is larger than the vertex
       // it decorates and translate it so that its nadir is
-      // at the center of the node.
+      // at the center of the vertex.
       Rectangle2D s2Bounds = s2.getBounds2D();
       xform.scale(s2Bounds.getWidth(), s2Bounds.getHeight());
       xform.translate(0, -edgeShape.getBounds2D().getWidth() / 2);
 
     } else {
       // this is a normal edge. Rotate it to the angle between
-      // node endpoints, then scale it to the distance between
-      // the nodes
+      // vertex endpoints, then scale it to the distance between
+      // the vertices
       float dx = x2 - x1;
       float dy = y2 - y1;
       float thetaRadians = (float) Math.atan2(dy, dx);
@@ -123,7 +122,7 @@ public class SimpleEdgeRenderer<N, E> implements Renderer.Edge<N, E> {
    * @param e the edge to be drawn
    */
   protected void drawSimpleEdge(
-      RenderContext<N, E> renderContext, VisualizationModel<N, E> visualizationModel, E e) {
+      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e) {
 
     int[] coords = new int[4];
     boolean[] loop = new boolean[1];
@@ -149,10 +148,10 @@ public class SimpleEdgeRenderer<N, E> implements Renderer.Edge<N, E> {
     g.setPaint(oldPaint);
   }
 
-  public EdgeArrowRenderingSupport<N, E> getEdgeArrowRenderingSupport() {
+  public EdgeArrowRenderingSupport<V, E> getEdgeArrowRenderingSupport() {
     return null;
   }
 
   public void setEdgeArrowRenderingSupport(
-      EdgeArrowRenderingSupport<N, E> edgeArrowRenderingSupport) {}
+      EdgeArrowRenderingSupport<V, E> edgeArrowRenderingSupport) {}
 }

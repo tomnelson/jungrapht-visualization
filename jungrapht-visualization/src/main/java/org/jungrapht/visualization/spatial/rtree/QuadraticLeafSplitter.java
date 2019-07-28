@@ -38,12 +38,12 @@ public class QuadraticLeafSplitter<T> implements LeafSplitter<T> {
       if (!pickedSeeds.left.map.containsKey(entry.getKey())
           && !pickedSeeds.right.map.containsKey(entry.getKey())) {
         // calculate area increase that would happen
-        LeafNode<T> leftNode = pickedSeeds.left;
-        LeafNode<T> rightNode = pickedSeeds.right;
-        double leftArea = area(leftNode.getBounds());
-        double rightArea = area(rightNode.getBounds());
-        Rectangle2D leftUnion = leftNode.getBounds().createUnion(entry.getValue());
-        Rectangle2D rightUnion = rightNode.getBounds().createUnion(entry.getValue());
+        LeafNode<T> leftVertex = pickedSeeds.left;
+        LeafNode<T> rightVertex = pickedSeeds.right;
+        double leftArea = area(leftVertex.getBounds());
+        double rightArea = area(rightVertex.getBounds());
+        Rectangle2D leftUnion = leftVertex.getBounds().createUnion(entry.getValue());
+        Rectangle2D rightUnion = rightVertex.getBounds().createUnion(entry.getValue());
         double leftAreaIncrease = area(leftUnion) - leftArea;
         double rightAreaIncrease = area(rightUnion) - rightArea;
         double difference = leftAreaIncrease - rightAreaIncrease;
@@ -90,11 +90,11 @@ public class QuadraticLeafSplitter<T> implements LeafSplitter<T> {
     }
     Preconditions.checkArgument(winningPair.isPresent(), "Winning pair not found");
     Map.Entry<T, Rectangle2D> leftEntry = winningPair.get().left;
-    LeafNode leftNode = LeafNode.create(leftEntry);
+    LeafNode leftVertex = LeafNode.create(leftEntry);
     Map.Entry<T, Rectangle2D> rightEntry = winningPair.get().right;
-    LeafNode rightNode = LeafNode.create(rightEntry);
+    LeafNode rightVertex = LeafNode.create(rightEntry);
 
-    return Pair.of(leftNode, rightNode);
+    return Pair.of(leftVertex, rightVertex);
   }
 
   private void distributeEntry(
@@ -145,11 +145,11 @@ public class QuadraticLeafSplitter<T> implements LeafSplitter<T> {
    */
   private Pair<LeafNode<T>> quadraticSplit(
       Collection<Map.Entry<T, Rectangle2D>> entries, Map.Entry<T, Rectangle2D> newEntry) {
-    // make a collection of kids from leafNode that also include the new element
+    // make a collection of kids from leafVertex that also include the new element
     // items will be removed from the entryList as they are distributed
     List<Map.Entry<T, Rectangle2D>> entryList = Lists.newArrayList(entries);
     entryList.add(newEntry);
-    // get the best pair to split on from the leafNode elements
+    // get the best pair to split on from the leafVertex elements
     Pair<LeafNode<T>> pickedSeeds = pickSeeds(entryList);
     // these currently have no parent set....
     while (entryList.size() > 0

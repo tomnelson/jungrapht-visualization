@@ -9,11 +9,12 @@
  */
 package org.jungrapht.visualization.renderers;
 
-import java.awt.*;
+import java.awt.Paint;
+import java.awt.Shape;
+import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
-import java.util.function.Function;
+import javax.swing.Icon;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationModel;
@@ -22,36 +23,34 @@ import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SimpleNodeRenderer<N, E> implements Renderer.Node<N, E> {
+public class BasicVertexRenderer<V, E> implements Renderer.Vertex<V, E> {
 
-  private static final Logger log = LoggerFactory.getLogger(SimpleNodeRenderer.class);
+  private static final Logger log = LoggerFactory.getLogger(BasicVertexRenderer.class);
 
-  private Function<N, Shape> simpleNodeShapeFunction = n -> new Ellipse2D.Float(-6.f, -6.f, 12, 12);
-
-  public void paintNode(
-      RenderContext<N, E> renderContext, VisualizationModel<N, E> visualizationModel, N v) {
-    if (renderContext.getNodeIncludePredicate().test(v)) {
-      paintIconForNode(renderContext, visualizationModel, v);
+  public void paintVertex(
+      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {
+    if (renderContext.getVertexIncludePredicate().test(v)) {
+      paintIconForVertex(renderContext, visualizationModel, v);
     }
   }
 
   /**
-   * Returns the node shape in layout coordinates.
+   * Returns the vertex shape in layout coordinates.
    *
-   * @param v the node whose shape is to be returned
+   * @param v the vertex whose shape is to be returned
    * @param coords the x and y view coordinates
-   * @return the node shape in view coordinates
+   * @return the vertex shape in view coordinates
    */
-  protected Shape prepareFinalNodeShape(
-      RenderContext<N, E> renderContext,
-      VisualizationModel<N, E> visualizationModel,
-      N v,
+  protected Shape prepareFinalVertexShape(
+      RenderContext<V, E> renderContext,
+      VisualizationModel<V, E> visualizationModel,
+      V v,
       int[] coords) {
 
     // get the shape to be rendered
-    Shape shape = simpleNodeShapeFunction.apply(v);
+    Shape shape = renderContext.getVertexShapeFunction().apply(v);
     Point p = visualizationModel.getLayoutModel().apply(v);
-    // p is the node location in layout coordinates
+    // p is the vertex location in layout coordinates
     log.trace("prepared a shape for " + v + " to go at " + p);
     Point2D p2d =
         renderContext
@@ -64,9 +63,9 @@ public class SimpleNodeRenderer<N, E> implements Renderer.Node<N, E> {
     coords[0] = (int) x;
     coords[1] = (int) y;
     // create a transform that translates to the location of
-    // the node to be rendered
+    // the vertex to be rendered
     AffineTransform xform = AffineTransform.getTranslateInstance(x, y);
-    // transform the node shape with xtransform
+    // transform the vertex shape with xtransform
     shape = xform.createTransformedShape(shape);
     return shape;
   }
@@ -74,35 +73,46 @@ public class SimpleNodeRenderer<N, E> implements Renderer.Node<N, E> {
   /**
    * Paint <code>v</code>'s icon on <code>g</code> at <code>(x,y)</code>.
    *
-   * @param v the node to be painted
+   * @param v the vertex to be painted
    */
-  protected void paintIconForNode(
-      RenderContext<N, E> renderContext, VisualizationModel<N, E> visualizationModel, N v) {
+  protected void paintIconForVertex(
+      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {
     GraphicsDecorator g = renderContext.getGraphicsContext();
     int[] coords = new int[2];
-    Shape shape = prepareFinalNodeShape(renderContext, visualizationModel, v, coords);
+    Shape shape = prepareFinalVertexShape(renderContext, visualizationModel, v, coords);
 
-    paintShapeForNode(renderContext, visualizationModel, v, shape);
+    if (renderContext.getVertexIconFunction() != null) {
+      Icon icon = renderContext.getVertexIconFunction().apply(v);
+      if (icon != null) {
+
+        g.draw(icon, renderContext.getScreenDevice(), shape, coords[0], coords[1]);
+
+      } else {
+        paintShapeForVertex(renderContext, visualizationModel, v, shape);
+      }
+    } else {
+      paintShapeForVertex(renderContext, visualizationModel, v, shape);
+    }
   }
 
-  protected void paintShapeForNode(
-      RenderContext<N, E> renderContext,
-      VisualizationModel<N, E> visualizationModel,
-      N v,
+  protected void paintShapeForVertex(
+      RenderContext<V, E> renderContext,
+      VisualizationModel<V, E> visualizationModel,
+      V v,
       Shape shape) {
     GraphicsDecorator g = renderContext.getGraphicsContext();
     Paint oldPaint = g.getPaint();
-    Paint fillPaint = renderContext.getNodeFillPaintFunction().apply(v);
+    Paint fillPaint = renderContext.getVertexFillPaintFunction().apply(v);
     if (fillPaint != null) {
       g.setPaint(fillPaint);
       g.fill(shape);
       g.setPaint(oldPaint);
     }
-    Paint drawPaint = renderContext.getNodeDrawPaintFunction().apply(v);
+    Paint drawPaint = renderContext.getVertexDrawPaintFunction().apply(v);
     if (drawPaint != null) {
       g.setPaint(drawPaint);
       Stroke oldStroke = g.getStroke();
-      Stroke stroke = renderContext.getNodeStrokeFunction().apply(v);
+      Stroke stroke = renderContext.getVertexStrokeFunction().apply(v);
       if (stroke != null) {
         g.setStroke(stroke);
       }

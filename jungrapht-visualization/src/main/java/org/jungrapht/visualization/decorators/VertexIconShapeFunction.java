@@ -21,40 +21,40 @@ import javax.swing.ImageIcon;
 import org.jungrapht.visualization.util.ImageShapeUtils;
 
 /**
- * A default implementation that stores images in a Map keyed on the node. Also applies a shaping
+ * A default implementation that stores images in a Map keyed on the vertex. Also applies a shaping
  * function to images to extract the shape of the opaque part of a transparent image.
  *
  * @author Tom Nelson
  */
-public class NodeIconShapeFunction<N> implements Function<N, Shape> {
+public class VertexIconShapeFunction<V> implements Function<V, Shape> {
   protected Map<Image, Shape> shapeMap = new HashMap<>();
-  protected Map<N, Icon> iconMap;
-  protected Function<N, Shape> delegate;
+  protected Map<V, Icon> iconMap;
+  protected Function<V, Shape> delegate;
 
   /**
    * Creates an instance with the specified delegate.
    *
-   * @param delegate the node-to-shape function to use if no image is present for the node
+   * @param delegate the vertex-to-shape function to use if no image is present for the vertex
    */
-  public NodeIconShapeFunction(Function<N, Shape> delegate) {
+  public VertexIconShapeFunction(Function<V, Shape> delegate) {
     this.delegate = delegate;
   }
 
   /** @return Returns the delegate. */
-  public Function<N, Shape> getDelegate() {
+  public Function<V, Shape> getDelegate() {
     return delegate;
   }
 
   /** @param delegate The delegate to set. */
-  public void setDelegate(Function<N, Shape> delegate) {
+  public void setDelegate(Function<V, Shape> delegate) {
     this.delegate = delegate;
   }
 
   /**
    * get the shape from the image. If not available, get the shape from the delegate
-   * NodeShapeFunction
+   * VertexShapeFunction
    */
-  public Shape apply(N v) {
+  public Shape apply(V v) {
     Icon icon = iconMap.get(v);
     if (icon instanceof ImageIcon) {
       Image image = ((ImageIcon) icon).getImage();
@@ -78,12 +78,12 @@ public class NodeIconShapeFunction<N> implements Function<N, Shape> {
   }
 
   /** @return the iconMap */
-  public Map<N, Icon> getIconMap() {
+  public Map<V, Icon> getIconMap() {
     return iconMap;
   }
 
   /** @param iconMap the iconMap to set */
-  public void setIconMap(Map<N, Icon> iconMap) {
+  public void setIconMap(Map<V, Icon> iconMap) {
     this.iconMap = iconMap;
   }
 

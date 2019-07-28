@@ -17,8 +17,8 @@ import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.transform.MutableTransformer;
 
 /**
- * LayoutScalingControl applies a scaling transformation to the graph layout. The Nodes get closer
- * or farther apart, but do not themselves change layoutSize. ScalingGraphMouse uses
+ * LayoutScalingControl applies a scaling transformation to the graph layout. The Vertices get
+ * closer or farther apart, but do not themselves change layoutSize. ScalingGraphMouse uses
  * MouseWheelEvents to apply the scaling.
  *
  * @author Tom Nelson

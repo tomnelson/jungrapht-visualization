@@ -220,7 +220,7 @@ public class RTreeVisualizer extends JPanel {
     if (node instanceof InnerNode) {
       checkBounds((InnerNode) node);
     } else if (node instanceof LeafNode) {
-      log.trace("leafNode: {}", node);
+      log.trace("leafVertex: {}", node);
     }
   }
 
