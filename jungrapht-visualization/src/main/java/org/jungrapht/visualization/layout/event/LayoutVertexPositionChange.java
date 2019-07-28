@@ -114,21 +114,21 @@ public interface LayoutVertexPositionChange {
     }
   }
 
-  class NetworkEvent<V> extends Event<V> {
-    final Graph<V, ?> network;
+  class GraphEvent<V> extends Event<V> {
+    final Graph<V, ?> graph;
 
-    public NetworkEvent(V vertex, Graph<V, ?> network, Point location) {
+    public GraphEvent(V vertex, Graph<V, ?> graph, Point location) {
       super(vertex, location);
-      this.network = network;
+      this.graph = graph;
     }
 
-    public NetworkEvent(Event<V> layoutEvent, Graph<V, ?> network) {
+    public GraphEvent(Event<V> layoutEvent, Graph<V, ?> graph) {
       super(layoutEvent.vertex, layoutEvent.location);
-      this.network = network;
+      this.graph = graph;
     }
 
-    public Graph<V, ?> getNetwork() {
-      return this.network;
+    public Graph<V, ?> getGraph() {
+      return this.graph;
     }
   }
 
@@ -140,6 +140,6 @@ public interface LayoutVertexPositionChange {
   interface Listener<V> {
     void layoutVertexPositionChanged(Event<V> evt);
 
-    void layoutVertexPositionChanged(NetworkEvent<V> evt);
+    void layoutVertexPositionChanged(GraphEvent<V> evt);
   }
 }

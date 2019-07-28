@@ -46,7 +46,7 @@ public class MinimumSpanningTreeDemo extends JPanel {
   private static final Logger log = LoggerFactory.getLogger(MinimumSpanningTreeDemo.class);
 
   /** the graph */
-  Graph<String, Number> network;
+  Graph<String, Number> graph;
 
   Graph<String, Number> tree;
 
@@ -66,9 +66,9 @@ public class MinimumSpanningTreeDemo extends JPanel {
     setLayout(new BorderLayout());
     // create a simple graph for the demo
     // both models will share one graph
-    network = TestGraphs.getDemoGraph();
+    graph = TestGraphs.getDemoGraph();
 
-    tree = SpanningTreeAdapter.getSpanningTree(network);
+    tree = SpanningTreeAdapter.getSpanningTree(graph);
 
     LayoutAlgorithm<String> kkLayoutAlgorithm = KKLayoutAlgorithm.<String>builder().build();
     LayoutAlgorithm<String> treeLayoutAlgorithm = TreeLayoutAlgorithm.<String>builder().build();
@@ -76,7 +76,7 @@ public class MinimumSpanningTreeDemo extends JPanel {
 
     // create the two models, each with a different layout
     VisualizationModel<String, Number> vm0 =
-        BaseVisualizationModel.builder(network)
+        BaseVisualizationModel.builder(graph)
             .layoutAlgorithm(kkLayoutAlgorithm)
             .layoutSize(preferredSize)
             .build();
@@ -88,7 +88,7 @@ public class MinimumSpanningTreeDemo extends JPanel {
     // initializer is the layout model for vm1
     // and the size is also set to the same size required for the Tree in treeLayoutAlgorithm
     VisualizationModel<String, Number> vm2 =
-        BaseVisualizationModel.builder(network)
+        BaseVisualizationModel.builder(graph)
             .layoutAlgorithm(staticLayoutAlgorithm)
             .layoutModel(vm1.getLayoutModel())
             .layoutSize(vm1.getLayoutSize())
@@ -162,7 +162,7 @@ public class MinimumSpanningTreeDemo extends JPanel {
     vv2.setLayout(new BorderLayout());
 
     Font font = vv0.getFont().deriveFont(Font.BOLD, 16);
-    JLabel vv0Label = new JLabel("<html>Original Network<p>using KKLayout");
+    JLabel vv0Label = new JLabel("<html>Original Graph<p>using KKLayout");
     vv0Label.setFont(font);
     JLabel vv1Label = new JLabel("Minimum Spanning Trees");
     vv1Label.setFont(font);

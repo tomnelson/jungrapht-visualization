@@ -226,13 +226,13 @@ public class BasicVisualizationServer<V, E> extends JPanel implements Visualizat
   protected Predicate<Double> smallScaleOverridePredicate = e -> false;
 
   /**
-   * @param network the graph to render
+   * @param graph the graph to render
    * @param layoutAlgorithm the algorithm to apply
    * @param preferredSize the size of the graph area
    */
   protected BasicVisualizationServer(
-      Graph<V, E> network, LayoutAlgorithm<V> layoutAlgorithm, Dimension preferredSize) {
-    this(new BaseVisualizationModel<>(network, layoutAlgorithm, preferredSize), preferredSize);
+      Graph<V, E> graph, LayoutAlgorithm<V> layoutAlgorithm, Dimension preferredSize) {
+    this(new BaseVisualizationModel<>(graph, layoutAlgorithm, preferredSize), preferredSize);
   }
 
   /**

@@ -83,22 +83,22 @@ public class ShowLayouts extends JPanel {
         };
 
     g_array[0] = TestGraphs.createTestGraph(false);
-    g_array[1] = TestGraphs.getGeneratedNetwork();
+    g_array[1] = TestGraphs.getGeneratedGraph();
     g_array[2] = TestGraphs.getDemoGraph();
     g_array[3] = TestGraphs.getOneComponentGraph();
     g_array[4] = TestGraphs.createChainPlusIsolates(18, 5);
     g_array[5] = TestGraphs.createChainPlusIsolates(0, 20);
-    Graph<String, Number> network =
+    Graph<String, Number> graph =
         GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.directedMultigraph())
             .buildGraph();
 
-    network.addVertex("A");
-    network.addVertex("B");
-    network.addVertex("C");
-    network.addEdge("A", "B", 1);
-    network.addEdge("A", "C", 2);
+    graph.addVertex("A");
+    graph.addVertex("B");
+    graph.addVertex("C");
+    graph.addEdge("A", "B", 1);
+    graph.addEdge("A", "C", 2);
 
-    g_array[6] = network;
+    g_array[6] = graph;
 
     Graph<String, Number> g = g_array[3]; // initial graph
 

@@ -31,11 +31,11 @@ import org.jungrapht.visualization.layout.util.RadiusVertexAccessor;
  */
 public class RadiusGraphElementAccessor<V, E> extends RadiusVertexAccessor<V>
     implements GraphElementAccessor<V, E> {
-  private final Graph<V, E> network;
+  private final Graph<V, E> graph;
 
   /** Creates an instance with an effectively infinite default maximum distance. */
-  public RadiusGraphElementAccessor(Graph<V, E> network) {
-    this(network, Math.sqrt(Double.MAX_VALUE - 1000));
+  public RadiusGraphElementAccessor(Graph<V, E> graph) {
+    this(graph, Math.sqrt(Double.MAX_VALUE - 1000));
   }
 
   /**
@@ -44,9 +44,9 @@ public class RadiusGraphElementAccessor<V, E> extends RadiusVertexAccessor<V>
    * @param maxDistance the maximum distance at which any element can be from a specified location
    *     and still be returned
    */
-  public RadiusGraphElementAccessor(Graph<V, E> network, double maxDistance) {
+  public RadiusGraphElementAccessor(Graph<V, E> graph, double maxDistance) {
     super(maxDistance);
-    this.network = network;
+    this.graph = graph;
   }
 
   /**
@@ -81,9 +81,9 @@ public class RadiusGraphElementAccessor<V, E> extends RadiusVertexAccessor<V>
     E closest = null;
     while (true) {
       try {
-        for (E edge : network.edgeSet()) {
-          V vertex1 = network.getEdgeSource(edge);
-          V vertex2 = network.getEdgeTarget(edge);
+        for (E edge : graph.edgeSet()) {
+          V vertex1 = graph.getEdgeSource(edge);
+          V vertex2 = graph.getEdgeTarget(edge);
           // Get coords
           org.jungrapht.visualization.layout.model.Point p1 = layoutModel.apply(vertex1);
           org.jungrapht.visualization.layout.model.Point p2 = layoutModel.apply(vertex2);

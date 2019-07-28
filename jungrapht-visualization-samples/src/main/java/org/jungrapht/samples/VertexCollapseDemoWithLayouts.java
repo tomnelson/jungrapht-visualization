@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * vertex objects.
  *
  * <p>Note that the collection types don't use generics in this demo, because the vertices are of
- * two types: String for plain vertices, and {@code Network<String, Number>} for the collapsed
+ * two types: String for plain vertices, and {@code Graph<String, Number>} for the collapsed
  * vertices.
  *
  * @author Tom Nelson

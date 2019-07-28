@@ -81,7 +81,7 @@ public class GraphCollapser<E> {
   }
 
   public Graph<Collapsable<?>, E> expand(
-      Graph<Collapsable<?>, E> originalNetwork,
+      Graph<Collapsable<?>, E> originalGraph,
       Graph<Collapsable<?>, E> inGraph,
       Collapsable<Graph<Collapsable<?>, E>> clusterGraphVertex) {
 
@@ -137,8 +137,7 @@ public class GraphCollapser<E> {
         if (endpoint.equals(clusterGraphVertex)) {
           // get the endpoints for this edge from the original graph
           Set<Collapsable<?>> endpointsFromOriginalGraph =
-              Sets.newHashSet(
-                  originalNetwork.getEdgeSource(edge), originalNetwork.getEdgeTarget(edge));
+              Sets.newHashSet(originalGraph.getEdgeSource(edge), originalGraph.getEdgeTarget(edge));
           // remove the endpoint that is the cluster i am expanding
           endpointsFromCollapsedGraph.remove(endpoint);
           // put in the one that is in the collapsedGraphVertex i am expanding

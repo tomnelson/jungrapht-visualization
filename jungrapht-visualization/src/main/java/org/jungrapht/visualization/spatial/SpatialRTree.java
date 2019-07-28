@@ -384,7 +384,7 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
     }
 
     @Override
-    public void layoutVertexPositionChanged(LayoutVertexPositionChange.NetworkEvent<V> evt) {
+    public void layoutVertexPositionChanged(LayoutVertexPositionChange.GraphEvent<V> evt) {
       update(evt.vertex, evt.location);
     }
 
@@ -425,7 +425,7 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
 
     GraphElementAccessor<V, E> graphElementAccessor;
 
-    // Edges gets a VisualizationModel reference to access the Network and work with edges
+    // Edges gets a VisualizationModel reference to access the Graph and work with edges
     VisualizationModel<V, E> visualizationModel;
 
     Edges(
@@ -516,7 +516,7 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
     }
 
     @Override
-    public void layoutVertexPositionChanged(LayoutVertexPositionChange.NetworkEvent<V> evt) {
+    public void layoutVertexPositionChanged(LayoutVertexPositionChange.GraphEvent<V> evt) {
       V vertex = evt.vertex;
       org.jungrapht.visualization.layout.model.Point p = evt.location;
       if (visualizationModel.getGraph().vertexSet().contains(vertex)) {
@@ -589,9 +589,9 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
         double winningDistance = -1;
         for (E edge : edges) {
           // get the 2 endpoints
-          Graph<V, E> network = visualizationModel.getGraph();
-          V u = network.getEdgeSource(edge);
-          V v = network.getEdgeTarget(edge);
+          Graph<V, E> graph = visualizationModel.getGraph();
+          V u = graph.getEdgeSource(edge);
+          V v = graph.getEdgeTarget(edge);
           org.jungrapht.visualization.layout.model.Point up = layoutModel.apply(u);
           Point vp = layoutModel.apply(v);
           // compute the distance between my point and a Line connecting u and v

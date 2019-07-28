@@ -34,11 +34,11 @@ public class SpatialQuadTreeTest {
   @Before
   public void setup() {
     // generate 100 random vertices in a graph at random locations in the layoutModel
-    Pseudograph<String, Object> network =
+    Pseudograph<String, Object> graph =
         Pseudograph.<String, Object>createBuilder(Object::new).build();
 
-    IntStream.range(0, 100).mapToObj(i -> "N" + i).forEach(network::addVertex);
-    this.graph = network;
+    IntStream.range(0, 100).mapToObj(i -> "N" + i).forEach(graph::addVertex);
+    this.graph = graph;
     layoutModel =
         LoadingCacheLayoutModel.<String>builder()
             .graph(graph)

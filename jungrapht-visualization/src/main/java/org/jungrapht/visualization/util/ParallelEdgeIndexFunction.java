@@ -30,14 +30,14 @@ public class ParallelEdgeIndexFunction<V, E> implements EdgeIndexFunction<V, E> 
   protected Map<E, Integer> edge_index = new HashMap<>();
 
   public int getIndex(Context<Graph<V, E>, E> context) {
-    Graph<V, E> network = context.graph;
+    Graph<V, E> graph = context.graph;
     E edge = context.element;
     Integer index = edge_index.get(edge);
     if (index == null) {
-      V u = network.getEdgeSource(edge);
-      V v = network.getEdgeTarget(edge);
+      V u = graph.getEdgeSource(edge);
+      V v = graph.getEdgeTarget(edge);
       int count = 0;
-      for (E connectingEdge : network.getAllEdges(u, v)) {
+      for (E connectingEdge : graph.getAllEdges(u, v)) {
         edge_index.put(connectingEdge, count++);
       }
       return edge_index.get(edge);

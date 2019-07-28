@@ -14,7 +14,7 @@ package org.jungrapht.visualization.util;
 import org.jgrapht.Graph;
 
 /**
- * An interface for a service to access the index of a given edge (in a given {@code Network}) into
+ * An interface for a service to access the index of a given edge (in a given {@code Graph}) into
  * the set formed by the given edge and all the other edges it is parallel to.
  *
  * <p>This index is assumed to be an integer value in the interval [0,n-1], where n-1 is the number
@@ -29,7 +29,7 @@ public interface EdgeIndexFunction<V, E> {
    * </code> and all edges parallel to <code>e</code>.
    *
    * @param context the graph and the edge whose index is to be queried
-   * @return {@code edge}'s index in this instance's <code>Network</code>.
+   * @return {@code edge}'s index in this instance's <code>Graph</code>.
    */
   int getIndex(Context<Graph<V, E>, E> context);
 

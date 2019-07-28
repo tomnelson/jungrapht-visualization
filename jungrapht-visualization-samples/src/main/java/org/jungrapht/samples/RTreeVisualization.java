@@ -316,14 +316,14 @@ public class RTreeVisualization<V> extends JPanel {
     return tree;
   }
 
-  private void addChildren(Graph<Object, Integer> network, Node<V> parent) {
+  private void addChildren(Graph<Object, Integer> graph, Node<V> parent) {
     if (parent instanceof InnerNode) {
       InnerNode<V> innerVertex = (InnerNode<V>) parent;
-      network.addVertex(parent);
+      graph.addVertex(parent);
       for (Node<V> kid : innerVertex.getChildren()) {
-        network.addVertex(kid);
-        network.addEdge(parent, kid, network.edgeSet().size() + 1);
-        addChildren(network, kid);
+        graph.addVertex(kid);
+        graph.addEdge(parent, kid, graph.edgeSet().size() + 1);
+        addChildren(graph, kid);
       }
     } else if (parent instanceof LeafNode) {
       LeafNode<V> leafVertex = (LeafNode<V>) parent;
@@ -332,8 +332,8 @@ public class RTreeVisualization<V> extends JPanel {
         method.setAccessible(true);
         Collection<V> got = (Collection<V>) method.invoke(leafVertex);
         for (V kid : got) {
-          network.addVertex(kid);
-          network.addEdge(parent, kid, network.edgeSet().size() + 1);
+          graph.addVertex(kid);
+          graph.addEdge(parent, kid, graph.edgeSet().size() + 1);
         }
       } catch (Exception ex) {
         ex.printStackTrace();

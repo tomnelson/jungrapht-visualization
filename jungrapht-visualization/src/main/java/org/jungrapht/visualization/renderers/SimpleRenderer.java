@@ -87,11 +87,11 @@ public class SimpleRenderer<V, E> implements Renderer<V, E> {
   @Override
   public void render(
       RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel) {
-    Graph<V, E> network = visualizationModel.getGraph();
+    Graph<V, E> graph = visualizationModel.getGraph();
     //        renderContext.setVertexShapeFunction(simpleVertexShapeFunction);
     // paint all the edges
     try {
-      for (E e : network.edgeSet()) {
+      for (E e : graph.edgeSet()) {
         renderEdge(renderContext, visualizationModel, e);
         //          renderEdgeLabel(renderContext, visualizationModel, e);
       }
@@ -101,7 +101,7 @@ public class SimpleRenderer<V, E> implements Renderer<V, E> {
 
     // paint all the vertices
     try {
-      for (V v : network.vertexSet()) {
+      for (V v : graph.vertexSet()) {
         renderVertex(renderContext, visualizationModel, v);
         //          renderVertexLabel(renderContext, visualizationModel, v);
       }

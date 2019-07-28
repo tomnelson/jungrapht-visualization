@@ -35,12 +35,11 @@ public class SpatialRTreeTest {
   @Before
   public void setup() {
     // generate 100 random nodes in a graph at random locations in the layoutModel
-    Graph<String, Number> network = Pseudograph.<String, Number>createBuilder(Number.class).build();
-    IntStream.range(0, 10).mapToObj(i -> "N" + i).forEach(network::addVertex);
-    graph = network;
+    this.graph = Pseudograph.<String, Number>createBuilder(Number.class).build();
+    IntStream.range(0, 10).mapToObj(i -> "N" + i).forEach(graph::addVertex);
 
     VisualizationServer<String, Number> vv =
-        new BasicVisualizationServer(network, new StaticLayoutAlgorithm(), new Dimension(600, 600));
+        new BasicVisualizationServer(graph, new StaticLayoutAlgorithm(), new Dimension(600, 600));
 
     tree = vv.getVertexSpatial();
 

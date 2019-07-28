@@ -545,7 +545,7 @@ public class SpatialQuadTree<V> extends AbstractSpatial<V, V>
   }
 
   @Override
-  public void layoutVertexPositionChanged(LayoutVertexPositionChange.NetworkEvent<V> evt) {
+  public void layoutVertexPositionChanged(LayoutVertexPositionChange.GraphEvent<V> evt) {
     this.update(evt.vertex, evt.location);
   }
 

@@ -265,5 +265,5 @@ public class AggregateLayoutModel<V> implements LayoutModel<V> {
   public void layoutVertexPositionChanged(LayoutVertexPositionChange.Event<V> evt) {}
 
   @Override
-  public void layoutVertexPositionChanged(LayoutVertexPositionChange.NetworkEvent<V> evt) {}
+  public void layoutVertexPositionChanged(LayoutVertexPositionChange.GraphEvent<V> evt) {}
 }

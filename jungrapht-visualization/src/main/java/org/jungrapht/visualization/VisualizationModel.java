@@ -41,5 +41,5 @@ public interface VisualizationModel<V, E>
 
   void setGraph(Graph<V, E> graph);
 
-  void setGraph(Graph<V, E> network, boolean forceUpdate);
+  void setGraph(Graph<V, E> graph, boolean forceUpdate);
 }

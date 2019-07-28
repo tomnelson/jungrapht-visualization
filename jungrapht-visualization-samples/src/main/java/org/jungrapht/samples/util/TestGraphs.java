@@ -186,7 +186,7 @@ public class TestGraphs {
   /**
    * Returns a bigger test graph with a clique, several components, and other parts.
    *
-   * @return a demonstration graph of type <tt>UndirectedSparseMultiNetwork</tt> with 28 vertices.
+   * @return a demonstration graph of type <tt>UndirectedSparseMultiGraph</tt> with 28 vertices.
    */
   public static Graph<String, Number> getDemoGraph() {
     Graph<String, Number> graph =
@@ -248,7 +248,7 @@ public class TestGraphs {
   }
 
   /** @return the graph for this demo */
-  public static Graph<String, Number> getGeneratedNetwork() {
+  public static Graph<String, Number> getGeneratedGraph() {
 
     Graph<String, Number> graph =
         GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.directedPseudograph())
@@ -260,7 +260,7 @@ public class TestGraphs {
     return graph;
   }
 
-  public static Graph<String, Number> getGeneratedNetwork2() {
+  public static Graph<String, Number> getGeneratedGraph2() {
 
     Graph<String, Number> graph =
         GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.directedPseudograph())

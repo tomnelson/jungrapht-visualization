@@ -34,7 +34,7 @@ public class ShortestPathDemo extends JPanel {
   /** Ending vertex */
   private String toVertex;
 
-  private Graph<String, Number> network;
+  private Graph<String, Number> graph;
   private Set<String> path = new HashSet<>();
 
   private final Stroke THIN = new BasicStroke(1);
@@ -42,12 +42,12 @@ public class ShortestPathDemo extends JPanel {
 
   private ShortestPathDemo() {
 
-    this.network = getNetwork();
+    this.graph = getGraph();
     setBackground(Color.WHITE);
 
     final LayoutAlgorithm<String> layoutAlgorithm = FRLayoutAlgorithm.<String>builder().build();
     final VisualizationViewer<String, Number> vv =
-        VisualizationViewer.builder(network)
+        VisualizationViewer.builder(graph)
             .layoutAlgorithm(layoutAlgorithm)
             .viewSize(new Dimension(1000, 1000))
             .build();
@@ -136,7 +136,7 @@ public class ShortestPathDemo extends JPanel {
             }
 
             // for all edges, paint edges that are in shortest path
-            for (Number e : network.edgeSet()) {
+            for (Number e : graph.edgeSet()) {
               if (onShortestPath(e)) {
                 Renderer<String, Number> renderer = vv.getRenderer();
                 renderer.renderEdge(vv.getRenderContext(), vv.getModel(), e);
@@ -158,8 +158,8 @@ public class ShortestPathDemo extends JPanel {
   }
 
   private boolean onShortestPath(Number e) {
-    String v1 = network.getEdgeSource(e);
-    String v2 = network.getEdgeTarget(e);
+    String v1 = graph.getEdgeSource(e);
+    String v2 = graph.getEdgeTarget(e);
     return !v1.equals(v2) && path.contains(v1) && path.contains(v2);
   }
 
@@ -171,7 +171,7 @@ public class ShortestPathDemo extends JPanel {
       return;
     }
     path.clear();
-    BFSShortestPath<String, Number> bfsShortestPath = new BFSShortestPath<>(this.network);
+    BFSShortestPath<String, Number> bfsShortestPath = new BFSShortestPath<>(this.graph);
     GraphPath<String, Number> path = bfsShortestPath.getPath(fromVertex, toVertex);
     this.path.addAll(path.getVertexList());
     repaint();
@@ -186,16 +186,16 @@ public class ShortestPathDemo extends JPanel {
   }
 
   /** @return the graph for this demo */
-  private Graph<String, Number> getNetwork() {
-    Graph<String, Number> network =
+  private Graph<String, Number> getGraph() {
+    Graph<String, Number> graph =
         GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.pseudograph())
             .vertexSupplier(new VertexSupplier())
             .edgeSupplier(new EdgeSupplier())
             .buildGraph();
 
     BarabasiAlbertGraphGenerator<String, Number> gen = new BarabasiAlbertGraphGenerator<>(4, 3, 20);
-    gen.generateGraph(network, null);
-    return network;
+    gen.generateGraph(graph, null);
+    return graph;
   }
 
   static class VertexSupplier implements Supplier<String> {

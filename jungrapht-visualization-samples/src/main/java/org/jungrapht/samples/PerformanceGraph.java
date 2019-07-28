@@ -24,7 +24,7 @@ public class PerformanceGraph {
     JFrame f = new JFrame();
     f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-    Graph<String, Number> graph = TestGraphs.getGeneratedNetwork2();
+    Graph<String, Number> graph = TestGraphs.getGeneratedGraph2();
 
     Dimension layoutSize = new Dimension(1600, 1600);
     Dimension viewSize = new Dimension(800, 800);

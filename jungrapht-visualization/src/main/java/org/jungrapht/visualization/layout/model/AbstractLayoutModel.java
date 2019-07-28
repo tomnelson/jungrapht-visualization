@@ -350,7 +350,7 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
   }
 
   @Override
-  public void layoutVertexPositionChanged(LayoutVertexPositionChange.NetworkEvent<V> evt) {}
+  public void layoutVertexPositionChanged(LayoutVertexPositionChange.GraphEvent<V> evt) {}
 
   @Override
   public String toString() {

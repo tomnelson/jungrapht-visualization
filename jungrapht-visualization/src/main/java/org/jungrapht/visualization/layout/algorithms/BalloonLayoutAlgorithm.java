@@ -100,7 +100,7 @@ public class BalloonLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V> {
           width / 2,
           new HashSet<>());
     } else if (roots.size() > 1) {
-      // its a Network
+      // its a Graph
       setPolars(layoutModel, roots, getCenter(layoutModel), 0, width / 2, new HashSet<>());
     }
   }

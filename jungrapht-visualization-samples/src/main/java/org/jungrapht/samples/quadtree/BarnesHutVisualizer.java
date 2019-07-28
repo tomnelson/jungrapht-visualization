@@ -95,7 +95,7 @@ public class BarnesHutVisualizer extends JPanel {
         });
 
     JButton clear = new JButton("clear");
-    clear.addActionListener(e -> clearNetwork());
+    clear.addActionListener(e -> clearGraph());
     JButton go = new JButton("Log all forces");
     go.addActionListener(
         e -> {
@@ -117,7 +117,7 @@ public class BarnesHutVisualizer extends JPanel {
     add(controls, BorderLayout.SOUTH);
   }
 
-  private void clearNetwork() {
+  private void clearGraph() {
     elements.clear();
     stuffToDraw.clear();
     tree = BarnesHutQuadTree.builder().bounds(getWidth(), getHeight()).build();

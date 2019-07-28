@@ -62,8 +62,8 @@ public class VisualizationImageServer<V, E> extends BasicVisualizationServer<V, 
    * @param preferredSize the preferred layoutSize of the image
    */
   protected VisualizationImageServer(
-      Graph<V, E> network, LayoutAlgorithm<V> layoutAlgorithm, Dimension preferredSize) {
-    super(network, layoutAlgorithm, preferredSize);
+      Graph<V, E> graph, LayoutAlgorithm<V> layoutAlgorithm, Dimension preferredSize) {
+    super(graph, layoutAlgorithm, preferredSize);
     setSize(preferredSize);
     renderingHints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     addNotify();

@@ -79,14 +79,14 @@ public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
     g_array[2] = TestGraphs.getOneComponentGraph();
     g_array[3] = TestGraphs.createChainPlusIsolates(18, 5);
     g_array[4] = TestGraphs.createChainPlusIsolates(0, 20);
-    Graph<String, Number> network =
+    Graph<String, Number> graph =
         GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.directedMultigraph())
             .buildGraph();
-    Stream.of("A", "B", "C").forEach(network::addVertex);
-    network.addEdge("A", "B", 1);
-    network.addEdge("A", "C", 2);
+    Stream.of("A", "B", "C").forEach(graph::addVertex);
+    graph.addEdge("A", "B", 1);
+    graph.addEdge("A", "C", 2);
 
-    g_array[5] = network;
+    g_array[5] = graph;
 
     Graph<String, Number> g = g_array[2]; // initial graph
 

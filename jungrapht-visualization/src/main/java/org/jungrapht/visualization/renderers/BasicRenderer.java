@@ -70,11 +70,11 @@ public class BasicRenderer<V, E> implements Renderer<V, E> {
     }
 
     try {
-      Graph<V, E> network = visualizationModel.getGraph();
+      Graph<V, E> graph = visualizationModel.getGraph();
       // paint all the edges
       log.trace("the visibleEdges are {}", visibleEdges);
       for (E e : visibleEdges) {
-        if (network.edgeSet().contains(e)) {
+        if (graph.edgeSet().contains(e)) {
           renderEdge(renderContext, visualizationModel, e);
           renderEdgeLabel(renderContext, visualizationModel, e);
         }
@@ -99,10 +99,10 @@ public class BasicRenderer<V, E> implements Renderer<V, E> {
   @Override
   public void render(
       RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel) {
-    Graph<V, E> network = visualizationModel.getGraph();
+    Graph<V, E> graph = visualizationModel.getGraph();
     // paint all the edges
     try {
-      for (E e : network.edgeSet()) {
+      for (E e : graph.edgeSet()) {
         renderEdge(renderContext, visualizationModel, e);
         renderEdgeLabel(renderContext, visualizationModel, e);
       }
@@ -112,7 +112,7 @@ public class BasicRenderer<V, E> implements Renderer<V, E> {
 
     // paint all the vertices
     try {
-      for (V v : network.vertexSet()) {
+      for (V v : graph.vertexSet()) {
         renderVertex(renderContext, visualizationModel, v);
         renderVertexLabel(renderContext, visualizationModel, v);
       }

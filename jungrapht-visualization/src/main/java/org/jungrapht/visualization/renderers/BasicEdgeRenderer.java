@@ -188,7 +188,7 @@ public class BasicEdgeRenderer<V, E> implements Renderer.Edge<V, E> {
     boolean isLoop = loop[0];
 
     GraphicsDecorator g = renderContext.getGraphicsContext();
-    Graph<V, E> network = visualizationModel.getGraph();
+    Graph<V, E> graph = visualizationModel.getGraph();
 
     Paint oldPaint = g.getPaint();
 
@@ -220,8 +220,7 @@ public class BasicEdgeRenderer<V, E> implements Renderer.Edge<V, E> {
         g.setStroke(new_stroke);
       }
 
-      Shape destVertexShape =
-          renderContext.getVertexShapeFunction().apply(network.getEdgeTarget(e));
+      Shape destVertexShape = renderContext.getVertexShapeFunction().apply(graph.getEdgeTarget(e));
 
       AffineTransform xf = AffineTransform.getTranslateInstance(x2, y2);
       destVertexShape = xf.createTransformedShape(destVertexShape);
@@ -238,8 +237,8 @@ public class BasicEdgeRenderer<V, E> implements Renderer.Edge<V, E> {
       g.setPaint(renderContext.getArrowDrawPaintFunction().apply(e));
       g.draw(arrow);
 
-      if (!network.getType().isDirected()) {
-        Shape vertexShape = renderContext.getVertexShapeFunction().apply(network.getEdgeSource(e));
+      if (!graph.getType().isDirected()) {
+        Shape vertexShape = renderContext.getVertexShapeFunction().apply(graph.getEdgeSource(e));
         xf = AffineTransform.getTranslateInstance(x1, y1);
         vertexShape = xf.createTransformedShape(vertexShape);
         at =
