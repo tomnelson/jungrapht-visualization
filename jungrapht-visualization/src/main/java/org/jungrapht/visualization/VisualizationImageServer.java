@@ -18,7 +18,6 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 import org.jgrapht.Graph;
-import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 
 /**
  * A class that could be used on the server side of a thin-client application. It creates the jung
@@ -40,7 +39,6 @@ public class VisualizationImageServer<V, E> extends BasicVisualizationServer<V, 
     }
 
     public T build() {
-      super.build();
       return (T) new VisualizationImageServer<>(this);
     }
   }
@@ -50,24 +48,12 @@ public class VisualizationImageServer<V, E> extends BasicVisualizationServer<V, 
   }
 
   protected VisualizationImageServer(Builder<V, E, ?, ?> builder) {
-    this(builder.graph, builder.layoutAlgorithm, builder.viewSize);
-  }
-
-  Map<RenderingHints.Key, Object> renderingHints = new HashMap<>();
-
-  /**
-   * Creates a new instance with the specified layout and preferred layoutSize.
-   *
-   * @param layoutAlgorithm the Layout instance; provides the vertex locations
-   * @param preferredSize the preferred layoutSize of the image
-   */
-  protected VisualizationImageServer(
-      Graph<V, E> graph, LayoutAlgorithm<V> layoutAlgorithm, Dimension preferredSize) {
-    super(graph, layoutAlgorithm, preferredSize);
-    setSize(preferredSize);
+    super(builder);
     renderingHints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     addNotify();
   }
+
+  Map<RenderingHints.Key, Object> renderingHints = new HashMap<>();
 
   public Image getImage(Point2D center, Dimension d) {
     int width = getWidth();

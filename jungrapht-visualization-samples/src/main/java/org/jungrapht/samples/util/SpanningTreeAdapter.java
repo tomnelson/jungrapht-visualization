@@ -20,9 +20,9 @@ public class SpanningTreeAdapter {
     Graph<V, E> newGraph = GraphTypeBuilder.<V, E>forGraphType(DefaultGraphType.dag()).buildGraph();
 
     for (E edge : tree.getEdges()) {
-      newGraph.addVertex(newGraph.getEdgeSource(edge));
-      if (!newGraph.addVertex(newGraph.getEdgeTarget(edge))) continue;
-      newGraph.addEdge(newGraph.getEdgeSource(edge), newGraph.getEdgeTarget(edge), edge);
+      newGraph.addVertex(graph.getEdgeSource(edge));
+      if (!newGraph.addVertex(graph.getEdgeTarget(edge))) continue;
+      newGraph.addEdge(graph.getEdgeSource(edge), graph.getEdgeTarget(edge), edge);
     }
     return newGraph;
   }

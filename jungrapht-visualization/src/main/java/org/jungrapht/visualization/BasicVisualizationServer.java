@@ -110,17 +110,7 @@ public class BasicVisualizationServer<V, E> extends JPanel implements Visualizat
     }
 
     public T build() {
-      if (visualizationModel == null) {
-        Preconditions.checkNotNull(graph);
-        Preconditions.checkNotNull(viewSize);
-        if (layoutSize == null) {
-          layoutSize = viewSize;
-        }
-        Preconditions.checkArgument(layoutSize.width > 0, "width must be > 0");
-        Preconditions.checkArgument(layoutSize.height > 0, "height must be > 0");
-        visualizationModel = new BaseVisualizationModel<>(graph, layoutAlgorithm, layoutSize);
-      }
-      return (T) new BasicVisualizationServer<>(visualizationModel, viewSize);
+      return (T) new BasicVisualizationServer(this);
     }
   }
 
@@ -166,7 +156,6 @@ public class BasicVisualizationServer<V, E> extends JPanel implements Visualizat
   static {
     loadFromDefault();
     loadFromAppName();
-    //    if (!loadFromAppName()) loadFromDefault();
   }
 
   protected ChangeEventSupport changeSupport = new DefaultChangeEventSupport(this);
@@ -225,24 +214,36 @@ public class BasicVisualizationServer<V, E> extends JPanel implements Visualizat
 
   protected Predicate<Double> smallScaleOverridePredicate = e -> false;
 
-  /**
-   * @param graph the graph to render
-   * @param layoutAlgorithm the algorithm to apply
-   * @param preferredSize the size of the graph area
-   */
-  protected BasicVisualizationServer(
-      Graph<V, E> graph, LayoutAlgorithm<V> layoutAlgorithm, Dimension preferredSize) {
-    this(new BaseVisualizationModel<>(graph, layoutAlgorithm, preferredSize), preferredSize);
+  protected BasicVisualizationServer(Builder<V, E, ?, ?> builder) {
+    this(
+        builder.graph,
+        builder.visualizationModel,
+        builder.layoutAlgorithm,
+        builder.layoutSize,
+        builder.viewSize);
   }
 
-  /**
-   * Create an instance with the specified model and view dimension.
-   *
-   * @param model the model to use
-   * @param viewSize initial preferred layoutSize of the view
-   */
-  protected BasicVisualizationServer(VisualizationModel<V, E> model, Dimension viewSize) {
-    this.model = model;
+  protected BasicVisualizationServer(
+      Graph<V, E> graph,
+      VisualizationModel<V, E> visualizationModel,
+      LayoutAlgorithm<V> layoutAlgorithm,
+      Dimension layoutSize,
+      Dimension viewSize) {
+    if (visualizationModel == null) {
+      Preconditions.checkNotNull(graph);
+      Preconditions.checkNotNull(viewSize);
+      if (viewSize == null) {
+        viewSize = getPreferredSize();
+      }
+      if (layoutSize == null) {
+        layoutSize = viewSize;
+      }
+      Preconditions.checkArgument(layoutSize.width > 0, "width must be > 0");
+      Preconditions.checkArgument(layoutSize.height > 0, "height must be > 0");
+      this.model = BaseVisualizationModel.builder(graph).layoutSize(layoutSize).build();
+    } else {
+      this.model = visualizationModel;
+    }
     renderContext = new DefaultRenderContext<>(model.getGraph());
     renderContext.setScreenDevice(this);
     renderer = complexRenderer = new BasicRenderer<>();

@@ -18,7 +18,10 @@ public class BasicVisualizationServerTest extends TestCase {
     CircleLayoutAlgorithm algorithm = CircleLayoutAlgorithm.builder().build();
 
     BasicVisualizationServer server =
-        new BasicVisualizationServer<Object, Object>(graph, algorithm, new Dimension(600, 600));
+        BasicVisualizationServer.builder(graph)
+            .layoutAlgorithm(algorithm)
+            .viewSize(new Dimension(600, 600))
+            .build();
 
     MutableSelectedState<Object> pickedVertexState =
         server.getRenderContext().getSelectedVertexState();

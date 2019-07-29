@@ -39,7 +39,10 @@ public class SpatialRTreeTest {
     IntStream.range(0, 10).mapToObj(i -> "N" + i).forEach(graph::addVertex);
 
     VisualizationServer<String, Number> vv =
-        new BasicVisualizationServer(graph, new StaticLayoutAlgorithm(), new Dimension(600, 600));
+        BasicVisualizationServer.builder(graph)
+            .layoutAlgorithm(new StaticLayoutAlgorithm())
+            .viewSize(new Dimension(600, 600))
+            .build();
 
     tree = vv.getVertexSpatial();
 

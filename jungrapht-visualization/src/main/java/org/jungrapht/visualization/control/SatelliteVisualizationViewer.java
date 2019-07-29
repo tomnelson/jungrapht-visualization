@@ -47,9 +47,13 @@ public class SatelliteVisualizationViewer<V, E> extends VisualizationViewer<V, E
       this.master = master;
     }
 
+    private Dimension getViewSize() {
+      return viewSize;
+    }
+
     public T build() {
       super.build();
-      return (T) new SatelliteVisualizationViewer<>(master, viewSize);
+      return (T) new SatelliteVisualizationViewer<>(this);
     }
   }
 
@@ -57,22 +61,12 @@ public class SatelliteVisualizationViewer<V, E> extends VisualizationViewer<V, E
     return new Builder(master);
   }
 
-  //  protected SatelliteVisualizationViewer(Builder<V, E, ?, ?> builder) {
-  //    this(builder.master, builder.viewSize);
-  //  }
-
   /** the master VisualizationViewer that this is a satellite view for */
   protected VisualizationViewer<V, E> master;
 
-  /**
-   * @param master the master VisualizationViewer for which this is a satellite view
-   * @param preferredSize the specified layoutSize of the component
-   */
-  protected SatelliteVisualizationViewer(
-      VisualizationViewer<V, E> master, Dimension preferredSize) {
-    super(master.getModel(), preferredSize);
+  protected SatelliteVisualizationViewer(Builder<V, E, ?, ?> builder) {
+    super(builder);
     this.master = master;
-
     // create a graph mouse with custom plugins to affect the master view
     ModalGraphMouse gm = new ModalSatelliteGraphMouse();
     setGraphMouse(gm);

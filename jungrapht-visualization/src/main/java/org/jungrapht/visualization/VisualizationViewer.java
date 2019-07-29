@@ -48,8 +48,8 @@ public class VisualizationViewer<V, E> extends BasicVisualizationServer<V, E> {
     }
 
     public T build() {
-      super.build();
-      return (T) new VisualizationViewer<>(visualizationModel, viewSize);
+      //      super.build();
+      return (T) new VisualizationViewer<>(this);
     }
   }
 
@@ -62,7 +62,21 @@ public class VisualizationViewer<V, E> extends BasicVisualizationServer<V, E> {
   }
 
   protected VisualizationViewer(Builder<V, E, ?, ?> builder) {
-    this(builder.graph, builder.viewSize);
+    this(
+        builder.graph,
+        builder.visualizationModel,
+        builder.layoutAlgorithm,
+        builder.layoutSize,
+        builder.viewSize);
+  }
+
+  protected VisualizationViewer(
+      Graph<V, E> graph,
+      VisualizationModel<V, E> visualizationModel,
+      LayoutAlgorithm<V> layoutAlgorithm,
+      Dimension layoutSize,
+      Dimension viewSize) {
+    super(graph, visualizationModel, layoutAlgorithm, layoutSize, viewSize);
   }
 
   protected Function<V, String> vertexToolTipFunction;
@@ -78,59 +92,6 @@ public class VisualizationViewer<V, E> extends BasicVisualizationServer<V, E> {
           requestFocusInWindow();
         }
       };
-
-  /**
-   * @param graph the graph to render
-   * @param size the size for the layout and for the view
-   */
-  protected VisualizationViewer(Graph<V, E> graph, Dimension size) {
-    this(graph, size, size);
-  }
-
-  /**
-   * @param graph the graph to visualize
-   * @param layoutSize the size of the layout area
-   * @param viewSize the size of the view area
-   */
-  protected VisualizationViewer(Graph<V, E> graph, Dimension layoutSize, Dimension viewSize) {
-    this(graph, null, layoutSize, viewSize);
-  }
-
-  /**
-   * @param graph the graph to visualize
-   * @param layoutAlgorithm the algorithm to apply
-   * @param layoutSize the size for the layout area
-   * @param viewSize the size of the window to display the graph
-   */
-  protected VisualizationViewer(
-      Graph<V, E> graph,
-      LayoutAlgorithm<V> layoutAlgorithm,
-      Dimension layoutSize,
-      Dimension viewSize) {
-    this(new BaseVisualizationModel<>(graph, layoutAlgorithm, layoutSize), viewSize);
-  }
-
-  /**
-   * @param graph the graph to render
-   * @param layoutAlgorithm the algorithm to apply
-   * @param preferredSize the size to use for both the layout and the screen display
-   */
-  protected VisualizationViewer(
-      Graph<V, E> graph, LayoutAlgorithm<V> layoutAlgorithm, Dimension preferredSize) {
-    this(new BaseVisualizationModel<>(graph, layoutAlgorithm, preferredSize), preferredSize);
-  }
-
-  /**
-   * @param model the model for the view
-   * @param preferredSize the initial size of the window to display the graph
-   */
-  protected VisualizationViewer(VisualizationModel<V, E> model, Dimension preferredSize) {
-    super(model, preferredSize);
-    setFocusable(true);
-    addMouseListener(requestFocusListener);
-  }
-
-  //  protected VisualizationViewer(Vis)
 
   /**
    * a setter for the GraphMouse. This will remove any previous GraphMouse (including the one that

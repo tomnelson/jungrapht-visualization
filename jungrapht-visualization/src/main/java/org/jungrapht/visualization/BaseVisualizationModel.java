@@ -68,21 +68,6 @@ public class BaseVisualizationModel<V, E> implements VisualizationModel<V, E> {
     }
 
     public T build() {
-      if (layoutModel == null) {
-        Preconditions.checkNotNull(graph);
-        Preconditions.checkNotNull(layoutSize);
-        Preconditions.checkArgument(layoutSize.width > 0, "width must be > 0");
-        Preconditions.checkArgument(layoutSize.height > 0, "height must be > 0");
-        this.layoutModel =
-            LoadingCacheLayoutModel.<V>builder()
-                .graph(graph)
-                .size(layoutSize.width, layoutSize.height)
-                .initializer(
-                    new RandomLocationTransformer<>(
-                        layoutSize.width, layoutSize.height, System.currentTimeMillis()))
-                .build();
-      }
-
       return (T) new BaseVisualizationModel<>(this);
     }
   }
@@ -95,8 +80,56 @@ public class BaseVisualizationModel<V, E> implements VisualizationModel<V, E> {
     return new Builder(layoutModel);
   }
 
-  private BaseVisualizationModel(Builder<V, E, ?, ?> builder) {
-    this(builder.layoutModel, builder.layoutAlgorithm);
+  protected BaseVisualizationModel(Builder<V, E, ?, ?> builder) {
+    this(
+        builder.graph,
+        builder.layoutAlgorithm,
+        builder.layoutModel,
+        builder.layoutSize,
+        builder.initializer);
+  }
+
+  private BaseVisualizationModel(
+      Graph<V, E> graph,
+      LayoutAlgorithm<V> layoutAlgorithm,
+      LayoutModel<V> layoutModel,
+      Dimension layoutSize,
+      Function<V, Point> initializer) {
+    if (layoutModel == null) {
+      // I must have both a graph and a layoutSize to create a layoutModel
+      Preconditions.checkNotNull(graph);
+      Preconditions.checkNotNull(layoutSize);
+      Preconditions.checkArgument(layoutSize.width > 0, "width must be > 0");
+      Preconditions.checkArgument(layoutSize.height > 0, "height must be > 0");
+      if (initializer == null) {
+        initializer =
+            new RandomLocationTransformer<>(
+                layoutSize.width, layoutSize.height, System.currentTimeMillis());
+      }
+      this.layoutModel =
+          LoadingCacheLayoutModel.<V>builder()
+              .graph(graph)
+              .size(layoutSize.width, layoutSize.height)
+              .initializer(initializer)
+              .build();
+    } else {
+      this.layoutModel = layoutModel;
+    }
+    this.layoutAlgorithm = layoutAlgorithm;
+  }
+
+  /**
+   * copy constructor
+   *
+   * @param other the {@code BaseVisualizationModel} to copy
+   */
+  protected BaseVisualizationModel(VisualizationModel<V, E> other) {
+    this(
+        other.getGraph(),
+        other.getLayoutAlgorithm(),
+        other.getLayoutModel(),
+        other.getLayoutSize(),
+        null);
   }
 
   protected LayoutModel<V> layoutModel;
@@ -105,94 +138,13 @@ public class BaseVisualizationModel<V, E> implements VisualizationModel<V, E> {
 
   protected LayoutChange.Support changeSupport = LayoutChange.Support.create();
 
-  protected BaseVisualizationModel(VisualizationModel<V, E> other) {
-    this(other.getGraph(), other.getLayoutAlgorithm(), null, other.getLayoutSize());
-  }
-
-  protected BaseVisualizationModel(VisualizationModel<V, E> other, Dimension layoutSize) {
-    this(other.getGraph(), other.getLayoutAlgorithm(), null, layoutSize);
-  }
-
-  /**
-   * @param graph the graph to visualize
-   * @param layoutAlgorithm the algorithm to apply
-   * @param layoutSize the size of the layout area
-   */
-  protected BaseVisualizationModel(
-      Graph<V, E> graph, LayoutAlgorithm<V> layoutAlgorithm, Dimension layoutSize) {
-    this(graph, layoutAlgorithm, null, layoutSize);
-  }
-
-  /**
-   * Creates an instance for {@code graph} which initializes the vertex locations using {@code
-   * initializer} and sets the layoutSize of the layout to {@code layoutSize}.
-   *
-   * @param graph the graph on which the layout algorithm is to operate
-   * @param initializer specifies the starting positions of the vertices
-   * @param layoutSize the dimensions of the region in which the layout algorithm will place
-   *     vertices
-   */
-  protected BaseVisualizationModel(
-      Graph<V, E> graph,
-      LayoutAlgorithm<V> layoutAlgorithm,
-      Function<V, Point> initializer,
-      Dimension layoutSize) {
-    Preconditions.checkNotNull(graph);
-    Preconditions.checkNotNull(layoutSize);
-    Preconditions.checkArgument(layoutSize.width > 0, "width must be > 0");
-    Preconditions.checkArgument(layoutSize.height > 0, "height must be > 0");
-    this.layoutAlgorithm = layoutAlgorithm;
-    this.layoutModel =
-        LoadingCacheLayoutModel.<V>builder()
-            .graph(graph)
-            .size(layoutSize.width, layoutSize.height)
-            .initializer(
-                new RandomLocationTransformer<>(
-                    layoutSize.width, layoutSize.height, System.currentTimeMillis()))
-            .build();
-
-    if (initializer != null) {
-      this.layoutModel.setInitializer(initializer);
-    }
-
-    this.layoutModel.accept(layoutAlgorithm);
-  }
-
-  protected BaseVisualizationModel(
-      Graph<V, E> graph, LayoutModel<V> layoutModel, LayoutAlgorithm<V> layoutAlgorithm) {
-    Preconditions.checkNotNull(graph);
-    Preconditions.checkNotNull(layoutModel);
-    this.layoutModel = layoutModel;
-    if (this.layoutModel instanceof LayoutChange.Support) {
-      ((LayoutChange.Support) layoutModel).addLayoutChangeListener(this);
-    }
-    this.layoutModel.accept(layoutAlgorithm);
-    this.layoutAlgorithm = layoutAlgorithm;
-  }
-
-  protected BaseVisualizationModel(LayoutModel<V> layoutModel, LayoutAlgorithm<V> layoutAlgorithm) {
-    //    Preconditions.checkNotNull(graph);
-    Preconditions.checkNotNull(layoutModel);
-    this.layoutModel = layoutModel;
-    if (this.layoutModel instanceof LayoutChange.Support) {
-      ((LayoutChange.Support) layoutModel).addLayoutChangeListener(this);
-    }
-    this.layoutModel.accept(layoutAlgorithm);
-    this.layoutAlgorithm = layoutAlgorithm;
-  }
-
-  private BaseVisualizationModel(
-      Graph<V, E> graph,
-      LayoutModel<V> layoutModel,
-      Dimension layoutSize,
-      LayoutAlgorithm<V> layoutAlgorithm,
-      Function<V, Point> initializer) {}
-
+  @Override
   public LayoutModel<V> getLayoutModel() {
     log.trace("getting a layourModel " + layoutModel);
     return layoutModel;
   }
 
+  @Override
   public void setLayoutModel(LayoutModel<V> layoutModel) {
     // stop any Relaxer threads before abandoning the previous LayoutModel
     if (this.layoutModel != null) {
@@ -204,6 +156,7 @@ public class BaseVisualizationModel<V, E> implements VisualizationModel<V, E> {
     }
   }
 
+  @Override
   public void setLayoutAlgorithm(LayoutAlgorithm<V> layoutAlgorithm) {
     this.layoutAlgorithm = layoutAlgorithm;
     log.trace("setLayoutAlgorithm to " + layoutAlgorithm);
@@ -216,17 +169,19 @@ public class BaseVisualizationModel<V, E> implements VisualizationModel<V, E> {
    *
    * @return the current layoutSize of the screen
    */
+  @Override
   public Dimension getLayoutSize() {
     return new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
   }
 
+  @Override
   public void setGraph(Graph<V, E> graph) {
     this.setGraph(graph, true);
   }
 
+  @Override
   public void setGraph(Graph<V, E> graph, boolean forceUpdate) {
     log.trace("setGraph to n:{} e:{}", graph.vertexSet(), graph.edgeSet());
-    //    this.graph = graph;
     this.layoutModel.setGraph(graph);
     if (forceUpdate && this.layoutAlgorithm != null) {
       log.trace("will accept {}", layoutAlgorithm);
@@ -237,10 +192,12 @@ public class BaseVisualizationModel<V, E> implements VisualizationModel<V, E> {
     }
   }
 
+  @Override
   public LayoutAlgorithm<V> getLayoutAlgorithm() {
     return layoutAlgorithm;
   }
 
+  @Override
   public Graph<V, E> getGraph() {
     return this.layoutModel.getGraph();
   }
