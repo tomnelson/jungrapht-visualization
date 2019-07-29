@@ -50,6 +50,8 @@ public class EdgeSortingTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
      */
     private Comparator<E> edgeComparator = (e1, e2) -> 0;
 
+    private boolean adjustProportions;
+
     /**
      * self reference with typecase
      *
@@ -67,6 +69,11 @@ public class EdgeSortingTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
      */
     public B edgeComparator(Comparator<E> edgeComparator) {
       this.edgeComparator = edgeComparator;
+      return self();
+    }
+
+    public B adjustProportions(boolean adjustProportions) {
+      this.adjustProportions = adjustProportions;
       return self();
     }
 
@@ -88,7 +95,11 @@ public class EdgeSortingTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
   }
 
   protected EdgeSortingTreeLayoutAlgorithm(Builder<V, E, ?, ?> builder) {
-    this(builder.horizontalVertexSpacing, builder.verticalVertexSpacing, builder.edgeComparator);
+    this(
+        builder.horizontalVertexSpacing,
+        builder.verticalVertexSpacing,
+        builder.edgeComparator,
+        builder.adjustProportions);
   }
 
   /**
@@ -97,20 +108,39 @@ public class EdgeSortingTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
    * @param edgeComparator sorts the edges
    */
   protected EdgeSortingTreeLayoutAlgorithm(
-      int horizontalVertexSpacing, int verticalVertexSpacing, Comparator<E> edgeComparator) {
+      int horizontalVertexSpacing,
+      int verticalVertexSpacing,
+      Comparator<E> edgeComparator,
+      boolean adjustProportions) {
     super(horizontalVertexSpacing, verticalVertexSpacing);
     this.edgeComparator = edgeComparator;
+    this.adjustProportions = adjustProportions;
   }
 
   protected Comparator<E> edgeComparator;
+  protected boolean adjustProportions;
 
   public void setEdgeComparator(Comparator<E> edgeComparator) {
     this.edgeComparator = edgeComparator;
   }
 
+  private void adjustProportions(LayoutModel<V> layoutModel) {
+    int overallWidth = layoutModel.getWidth();
+    int overallHeight = layoutModel.getHeight();
+    // if the tree is way wider than it is high, adjust the verticalVertexSpacing and the layoutModel height
+    if (overallWidth > 2 * overallHeight) {
+      double ratio = overallWidth / (2 * overallHeight);
+      verticalVertexSpacing *= ratio;
+      layoutModel.setSize(overallWidth, (int) (overallHeight * ratio));
+    }
+  }
+
   @Override
   protected void buildTree(LayoutModel<V> layoutModel, V vertex, int x, int y) {
-    Graph<V, E> graph = (Graph<V, E>) layoutModel.getGraph();
+    if (adjustProportions) {
+      adjustProportions(layoutModel);
+    }
+    Graph<V, E> graph = layoutModel.getGraph();
     if (alreadyDone.add(vertex)) {
       //go one level further down
       y += this.verticalVertexSpacing;

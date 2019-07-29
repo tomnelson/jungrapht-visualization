@@ -52,7 +52,6 @@ public class SatelliteVisualizationViewer<V, E> extends VisualizationViewer<V, E
     }
 
     public T build() {
-      super.build();
       return (T) new SatelliteVisualizationViewer<>(this);
     }
   }
@@ -66,7 +65,7 @@ public class SatelliteVisualizationViewer<V, E> extends VisualizationViewer<V, E
 
   protected SatelliteVisualizationViewer(Builder<V, E, ?, ?> builder) {
     super(builder);
-    this.master = master;
+    this.master = builder.master;
     // create a graph mouse with custom plugins to affect the master view
     ModalGraphMouse gm = new ModalSatelliteGraphMouse();
     setGraphMouse(gm);

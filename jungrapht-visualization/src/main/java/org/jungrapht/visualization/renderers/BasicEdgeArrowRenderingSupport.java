@@ -17,8 +17,12 @@ import java.awt.geom.Line2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import org.jungrapht.visualization.RenderContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BasicEdgeArrowRenderingSupport<V, E> implements EdgeArrowRenderingSupport<V, E> {
+
+  private static final Logger log = LoggerFactory.getLogger(BasicEdgeArrowRenderingSupport.class);
 
   public AffineTransform getArrowTransform(
       RenderContext<V, E> rc, Shape edgeShape, Shape vertexShape) {
@@ -84,7 +88,7 @@ public class BasicEdgeArrowRenderingSupport<V, E> implements EdgeArrowRenderingS
       try {
         edgeShape = getLastOutsideSegment(edgeShape, vertexShape);
       } catch (IllegalArgumentException e) {
-        System.err.println(e.toString());
+        log.error("got {}", e);
         return null;
       }
       dx = (float) (edgeShape.getX1() - edgeShape.getX2());
@@ -106,7 +110,7 @@ public class BasicEdgeArrowRenderingSupport<V, E> implements EdgeArrowRenderingS
       try {
         edgeShape = getFirstOutsideSegment(edgeShape, vertexShape);
       } catch (IllegalArgumentException e) {
-        System.err.println(e.toString());
+        log.error("got {}", e);
         return null;
       }
       dx = (float) (edgeShape.getX1() - edgeShape.getX2());

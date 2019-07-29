@@ -16,6 +16,8 @@ import java.awt.geom.Point2D;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.transform.MutableTransformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Overrides TranslatingGraphMousePlugin so that mouse events in the satellite view cause
@@ -26,9 +28,10 @@ import org.jungrapht.visualization.transform.MutableTransformer;
  */
 public class SatelliteTranslatingGraphMousePlugin extends TranslatingGraphMousePlugin {
 
-  public SatelliteTranslatingGraphMousePlugin() {
-    super();
-  }
+  private static final Logger log =
+      LoggerFactory.getLogger(SatelliteTranslatingGraphMousePlugin.class);
+
+  public SatelliteTranslatingGraphMousePlugin() {}
 
   public SatelliteTranslatingGraphMousePlugin(int modifiers) {
     super(modifiers);
@@ -64,7 +67,7 @@ public class SatelliteTranslatingGraphMousePlugin extends TranslatingGraphMouseP
           down.x = e.getX();
           down.y = e.getY();
         } catch (RuntimeException ex) {
-          System.err.println("down = " + down + ", e = " + e);
+          log.error("down = {}, e = {}", down, e);
           throw ex;
         }
       }

@@ -19,6 +19,8 @@ import java.awt.geom.Point2D;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.transform.MutableTransformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * ViewTranslatingGraphMousePlugin uses a MouseButtonOne press and drag gesture to translate the
@@ -31,6 +33,7 @@ import org.jungrapht.visualization.transform.MutableTransformer;
 public class ViewTranslatingGraphMousePlugin extends AbstractGraphMousePlugin
     implements MouseListener, MouseMotionListener {
 
+  private static final Logger log = LoggerFactory.getLogger(ViewTranslatingGraphMousePlugin.class);
   /** */
   public ViewTranslatingGraphMousePlugin() {
     this(MouseEvent.BUTTON1_MASK);
@@ -93,7 +96,7 @@ public class ViewTranslatingGraphMousePlugin extends AbstractGraphMousePlugin
         down.x = e.getX();
         down.y = e.getY();
       } catch (RuntimeException ex) {
-        System.err.println("down = " + down + ", e = " + e);
+        log.error("down = {}, e = {}", down, e);
         throw ex;
       }
 

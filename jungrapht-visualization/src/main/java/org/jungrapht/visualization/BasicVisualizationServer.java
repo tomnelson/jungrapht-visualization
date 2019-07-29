@@ -240,7 +240,11 @@ public class BasicVisualizationServer<V, E> extends JPanel implements Visualizat
       }
       Preconditions.checkArgument(layoutSize.width > 0, "width must be > 0");
       Preconditions.checkArgument(layoutSize.height > 0, "height must be > 0");
-      this.model = BaseVisualizationModel.builder(graph).layoutSize(layoutSize).build();
+      this.model =
+          BaseVisualizationModel.builder(graph)
+              .layoutAlgorithm(layoutAlgorithm)
+              .layoutSize(layoutSize)
+              .build();
     } else {
       this.model = visualizationModel;
     }

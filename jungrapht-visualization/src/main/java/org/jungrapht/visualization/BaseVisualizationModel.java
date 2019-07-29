@@ -115,6 +115,7 @@ public class BaseVisualizationModel<V, E> implements VisualizationModel<V, E> {
     } else {
       this.layoutModel = layoutModel;
     }
+    this.layoutModel.accept(layoutAlgorithm);
     this.layoutAlgorithm = layoutAlgorithm;
   }
 

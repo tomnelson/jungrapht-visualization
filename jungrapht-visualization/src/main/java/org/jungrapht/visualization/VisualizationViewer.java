@@ -48,7 +48,6 @@ public class VisualizationViewer<V, E> extends BasicVisualizationServer<V, E> {
     }
 
     public T build() {
-      //      super.build();
       return (T) new VisualizationViewer<>(this);
     }
   }
