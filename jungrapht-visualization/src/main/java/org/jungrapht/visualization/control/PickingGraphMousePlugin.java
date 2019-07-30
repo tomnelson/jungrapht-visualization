@@ -405,9 +405,7 @@ public class PickingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
       GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
       LayoutModel<V> layoutModel = vv.getModel().getLayoutModel();
       Collection<V> picked = pickSupport.getVertices(layoutModel, pickTarget);
-      for (V v : picked) {
-        pickedVertexState.pick(v, true);
-      }
+      pickedVertexState.pick(picked, true);
     }
   }
 

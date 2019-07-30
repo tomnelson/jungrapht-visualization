@@ -43,7 +43,7 @@ import org.jungrapht.visualization.transform.MagnifyTransformer;
 import org.jungrapht.visualization.transform.shape.HyperbolicShapeTransformer;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
 import org.jungrapht.visualization.transform.shape.ViewLensSupport;
-import org.jungrapht.visualization.util.VertexShapeFactory;
+import org.jungrapht.visualization.util.ShapeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,12 +105,11 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
     vv.getRenderContext()
         .setVertexShapeFunction(
             new Function<String, Shape>() {
-              VertexShapeFactory<String> vertexShapeFactory =
-                  new VertexShapeFactory<>(n -> 30, n -> 1.0f);
+              ShapeFactory<String> shapeFactory = new ShapeFactory<>(n -> 30, n -> 1.0f);
 
               @Override
               public Shape apply(String s) {
-                return vertexShapeFactory.getRegularStar(s, 5);
+                return shapeFactory.getRegularStar(s, 5);
               }
             });
 

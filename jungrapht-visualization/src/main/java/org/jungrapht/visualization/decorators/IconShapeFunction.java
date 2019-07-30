@@ -21,41 +21,40 @@ import javax.swing.ImageIcon;
 import org.jungrapht.visualization.util.ImageShapeUtils;
 
 /**
- * A default implementation that stores images in a Map keyed on the vertex. Also applies a shaping
+ * A default implementation that stores images in a Map keyed on the input T. Also applies a shaping
  * function to images to extract the shape of the opaque part of a transparent image.
  *
  * @author Tom Nelson
  */
-public class VertexIconShapeFunction<V> implements Function<V, Shape> {
+public class IconShapeFunction<T> implements Function<T, Shape> {
   protected Map<Image, Shape> shapeMap = new HashMap<>();
-  protected Map<V, Icon> iconMap;
-  protected Function<V, Shape> delegate;
+  protected Map<T, Icon> iconMap;
+  protected Function<T, Shape> delegate;
 
   /**
    * Creates an instance with the specified delegate.
    *
-   * @param delegate the vertex-to-shape function to use if no image is present for the vertex
+   * @param delegate the function to use if no image is present for the input t
    */
-  public VertexIconShapeFunction(Function<V, Shape> delegate) {
+  public IconShapeFunction(Function<T, Shape> delegate) {
     this.delegate = delegate;
   }
 
   /** @return Returns the delegate. */
-  public Function<V, Shape> getDelegate() {
+  public Function<T, Shape> getDelegate() {
     return delegate;
   }
 
   /** @param delegate The delegate to set. */
-  public void setDelegate(Function<V, Shape> delegate) {
+  public void setDelegate(Function<T, Shape> delegate) {
     this.delegate = delegate;
   }
 
   /**
-   * get the shape from the image. If not available, get the shape from the delegate
-   * VertexShapeFunction
+   * get the shape from the image. If not available, get the shape from the delegate ShapeFunction
    */
-  public Shape apply(V v) {
-    Icon icon = iconMap.get(v);
+  public Shape apply(T t) {
+    Icon icon = iconMap.get(t);
     if (icon instanceof ImageIcon) {
       Image image = ((ImageIcon) icon).getImage();
       Shape shape = shapeMap.get(image);
@@ -73,17 +72,17 @@ public class VertexIconShapeFunction<V> implements Function<V, Shape> {
       }
       return shape;
     } else {
-      return delegate.apply(v);
+      return delegate.apply(t);
     }
   }
 
   /** @return the iconMap */
-  public Map<V, Icon> getIconMap() {
+  public Map<T, Icon> getIconMap() {
     return iconMap;
   }
 
   /** @param iconMap the iconMap to set */
-  public void setIconMap(Map<V, Icon> iconMap) {
+  public void setIconMap(Map<T, Icon> iconMap) {
     this.iconMap = iconMap;
   }
 

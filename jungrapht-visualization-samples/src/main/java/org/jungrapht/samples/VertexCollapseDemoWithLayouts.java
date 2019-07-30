@@ -27,7 +27,7 @@ import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.ModalGraphMouse;
-import org.jungrapht.visualization.decorators.EllipseVertexShapeFunction;
+import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
@@ -119,7 +119,7 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
             .build();
     vv = VisualizationViewer.builder(visualizationModel).viewSize(preferredSize).build();
 
-    vv.getRenderContext().setVertexShapeFunction(new ClusterVertexShapeFunction());
+    vv.getRenderContext().setVertexShapeFunction(new ClusterShapeFunction());
 
     final Set exclusions = new HashSet();
     final PredicatedParallelEdgeIndexFunction eif =
@@ -318,10 +318,10 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
    * sides corresponds to the number of vertices that were collapsed into the vertex represented by
    * this shape.
    */
-  class ClusterVertexShapeFunction extends EllipseVertexShapeFunction<Collapsable<?>> {
+  class ClusterShapeFunction extends EllipseShapeFunction<Collapsable<?>> {
 
-    ClusterVertexShapeFunction() {
-      setSizeTransformer(new ClusterVertexSizeFunction(20));
+    ClusterShapeFunction() {
+      setSizeFunction(new ClusterSizeFunction(20));
     }
 
     @Override
@@ -343,10 +343,10 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
    * A demo class that will make vertices larger if they represent a collapsed collection of
    * original vertices
    */
-  class ClusterVertexSizeFunction implements Function<Collapsable<?>, Integer> {
+  class ClusterSizeFunction implements Function<Collapsable<?>, Integer> {
     int size;
 
-    public ClusterVertexSizeFunction(Integer size) {
+    public ClusterSizeFunction(Integer size) {
       this.size = size;
     }
 

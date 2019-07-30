@@ -14,9 +14,9 @@ package org.jungrapht.visualization.decorators;
 import java.awt.Shape;
 import java.util.function.Function;
 
-/** @author Joshua O'Madadhain */
-public interface SettableVertexShapeFunction<V> extends Function<V, Shape> {
-  void setSizeTransformer(Function<V, Integer> vsf);
+public interface SettableShapeFunction<T> extends Function<T, Shape> {
 
-  void setAspectRatioTransformer(Function<V, Float> varf);
+  void setSizeFunction(Function<T, Integer> sizeFunction);
+
+  void setAspectRatioFunction(Function<T, Float> aspectRatioFunction);
 }

@@ -23,7 +23,7 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.decorators.EdgeShape;
-import org.jungrapht.visualization.decorators.EllipseVertexShapeFunction;
+import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.subLayout.Collapsable;
 import org.jungrapht.visualization.subLayout.TreeCollapser;
@@ -70,7 +70,7 @@ public class TreeCollapseDemo extends JPanel {
     vv = VisualizationViewer.builder(graph).layoutSize(layoutSize).viewSize(viewSize).build();
     vv.setBackground(Color.white);
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
-    vv.getRenderContext().setVertexShapeFunction(new ClusterVertexShapeFunction());
+    vv.getRenderContext().setVertexShapeFunction(new ClusterShapeFunction());
     // add a listener for ToolTips
     vv.setVertexToolTipFunction(Object::toString);
     vv.getRenderContext().setArrowFillPaintFunction(n -> Color.lightGray);
@@ -131,10 +131,10 @@ public class TreeCollapseDemo extends JPanel {
    * sides corresponds to the number of vertices that were collapsed into the vertex represented by
    * this shape.
    */
-  class ClusterVertexShapeFunction extends EllipseVertexShapeFunction<Collapsable<?>> {
+  class ClusterShapeFunction extends EllipseShapeFunction<Collapsable<?>> {
 
-    ClusterVertexShapeFunction() {
-      setSizeTransformer(new ClusterVertexSizeFunction(20));
+    ClusterShapeFunction() {
+      setSizeFunction(new ClusterSizeFunction(20));
     }
 
     @Override
@@ -157,10 +157,10 @@ public class TreeCollapseDemo extends JPanel {
    * A demo class that will make vertices larger if they represent a collapsed collection of
    * original vertices
    */
-  class ClusterVertexSizeFunction implements Function<Collapsable<?>, Integer> {
+  class ClusterSizeFunction implements Function<Collapsable<?>, Integer> {
     int size;
 
-    public ClusterVertexSizeFunction(Integer size) {
+    public ClusterSizeFunction(Integer size) {
       this.size = size;
     }
 

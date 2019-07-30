@@ -32,9 +32,9 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.ScalingControl;
-import org.jungrapht.visualization.decorators.EllipseVertexShapeFunction;
+import org.jungrapht.visualization.decorators.EllipseShapeFunction;
+import org.jungrapht.visualization.decorators.IconShapeFunction;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
-import org.jungrapht.visualization.decorators.VertexIconShapeFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.util.RandomLocationTransformer;
@@ -142,8 +142,8 @@ public class VertexImageShaperDemo extends JPanel {
 
     // For this demo only, I use a special class that lets me turn various
     // features on and off. For a real application, use VertexIconShapeTransformer instead.
-    final DemoVertexIconShapeFunction<Number> vertexIconShapeTransformer =
-        new DemoVertexIconShapeFunction<>(new EllipseVertexShapeFunction<>());
+    final DemoIconShapeFunction<Number> vertexIconShapeTransformer =
+        new DemoIconShapeFunction<>(new EllipseShapeFunction<>());
     vertexIconShapeTransformer.setIconMap(iconMap);
 
     final DemoVertexIconTransformer<Number> vertexIconTransformer =
@@ -385,11 +385,11 @@ public class VertexImageShaperDemo extends JPanel {
    * this class exists only to provide settings to turn on/off shapes and image fill in this demo.
    * In a real application, use VertexIconShapeTransformer instead.
    */
-  public static class DemoVertexIconShapeFunction<V> extends VertexIconShapeFunction<V> {
+  public static class DemoIconShapeFunction<V> extends IconShapeFunction<V> {
 
     boolean shapeImages = true;
 
-    public DemoVertexIconShapeFunction(Function<V, Shape> delegate) {
+    public DemoIconShapeFunction(Function<V, Shape> delegate) {
       super(delegate);
     }
 

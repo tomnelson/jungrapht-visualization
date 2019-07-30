@@ -22,9 +22,9 @@ import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.visualization.GraphZoomScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
-import org.jungrapht.visualization.decorators.EllipseVertexShapeFunction;
+import org.jungrapht.visualization.decorators.EllipseShapeFunction;
+import org.jungrapht.visualization.decorators.IconShapeFunction;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
-import org.jungrapht.visualization.decorators.VertexIconShapeFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.DefaultEdgeLabelRenderer;
 import org.jungrapht.visualization.renderers.DefaultVertexLabelRenderer;
@@ -56,13 +56,13 @@ public class UnicodeLabelDemo {
     vv.getRenderContext().setVertexLabelFunction(new UnicodeVertexStringer());
     vv.getRenderContext().setVertexLabelRenderer(new DefaultVertexLabelRenderer(Color.cyan));
     vv.getRenderContext().setEdgeLabelRenderer(new DefaultEdgeLabelRenderer(Color.cyan));
-    VertexIconShapeFunction<Integer> vertexIconShapeFunction =
-        new VertexIconShapeFunction<>(new EllipseVertexShapeFunction<>());
+    IconShapeFunction<Integer> iconShapeFunction =
+        new IconShapeFunction<>(new EllipseShapeFunction<>());
     Function<Integer, Icon> vertexIconFunction = iconMap::get;
-    vv.getRenderContext().setVertexShapeFunction(vertexIconShapeFunction);
+    vv.getRenderContext().setVertexShapeFunction(iconShapeFunction);
     vv.getRenderContext().setVertexIconFunction(vertexIconFunction);
     loadImages(iconMap);
-    vertexIconShapeFunction.setIconMap(iconMap);
+    iconShapeFunction.setIconMap(iconMap);
     vv.getRenderContext()
         .setVertexFillPaintFunction(
             new PickableElementPaintFunction<>(

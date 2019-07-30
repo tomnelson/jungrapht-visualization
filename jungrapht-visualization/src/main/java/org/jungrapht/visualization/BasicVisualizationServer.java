@@ -41,7 +41,7 @@ import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.util.Caching;
 import org.jungrapht.visualization.renderers.BasicRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
-import org.jungrapht.visualization.renderers.SimpleRenderer;
+import org.jungrapht.visualization.renderers.LightweightRenderer;
 import org.jungrapht.visualization.selection.MultiMutableSelectedState;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 import org.jungrapht.visualization.selection.ShapePickSupport;
@@ -166,7 +166,7 @@ public class BasicVisualizationServer<V, E> extends JPanel implements Visualizat
   /** handles the actual drawing of graph elements */
   protected Renderer<V, E> renderer;
 
-  protected Renderer<V, E> simpleRenderer = new SimpleRenderer<>();
+  protected Renderer<V, E> simpleRenderer = new LightweightRenderer<>();
   protected Renderer<V, E> complexRenderer;
 
   /** rendering hints used in drawing. Anti-aliasing is on by default */

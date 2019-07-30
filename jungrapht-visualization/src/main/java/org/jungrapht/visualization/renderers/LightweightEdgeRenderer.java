@@ -22,7 +22,7 @@ import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.util.Context;
 
-public class SimpleEdgeRenderer<V, E> implements Renderer.Edge<V, E> {
+public class LightweightEdgeRenderer<V, E> implements Renderer.Edge<V, E> {
 
   @Override
   public void paintEdge(

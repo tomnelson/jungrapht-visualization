@@ -29,9 +29,9 @@ import org.jungrapht.visualization.control.LensMagnificationGraphMousePlugin;
 import org.jungrapht.visualization.control.ModalGraphMouse.Mode;
 import org.jungrapht.visualization.control.ModalLensGraphMouse;
 import org.jungrapht.visualization.control.ScalingControl;
-import org.jungrapht.visualization.decorators.EllipseVertexShapeFunction;
+import org.jungrapht.visualization.decorators.EllipseShapeFunction;
+import org.jungrapht.visualization.decorators.IconShapeFunction;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
-import org.jungrapht.visualization.decorators.VertexIconShapeFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.renderers.Checkmark;
@@ -134,8 +134,8 @@ public class LensVertexImageShaperDemo extends JPanel {
     vv.getRenderContext().setVertexLabelRenderer(new DefaultVertexLabelRenderer(Color.cyan));
     vv.getRenderContext().setEdgeLabelRenderer(new DefaultEdgeLabelRenderer(Color.cyan));
 
-    final VertexIconShapeFunction<Number> vertexImageShapeFunction =
-        new VertexIconShapeFunction<>(new EllipseVertexShapeFunction<>());
+    final IconShapeFunction<Number> vertexImageShapeFunction =
+        new IconShapeFunction<>(new EllipseShapeFunction<>());
 
     final Function<Number, Icon> vertexIconFunction = iconMap::get;
 

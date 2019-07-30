@@ -75,7 +75,7 @@ public class BalloonLayoutDemo extends JPanel {
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     // add a listener for ToolTips
     vv.setVertexToolTipFunction(Object::toString);
-    vv.getRenderContext().setArrowFillPaintFunction(a -> Color.lightGray);
+    vv.getRenderContext().setArrowFillPaintFunction(a -> Color.black);
 
     final GraphZoomScrollPane panel = new GraphZoomScrollPane(vv);
     add(panel);

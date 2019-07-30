@@ -74,7 +74,7 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
   protected MutableSelectedState<E> pickedEdgeState;
 
   // vertex properties
-  private int vertexSize = Integer.getInteger(VERTEX_SIZE, 12);
+  private int vertexSize = Integer.getInteger(VERTEX_SIZE, 20);
   private String vertexShapeString = System.getProperty(VERTEX_SHAPE, "CIRCLE");
   private Paint vertexDrawPaint = Color.getColor(VERTEX_DRAW_COLOR, Color.BLACK);
   private Paint vertexFillPaint = Color.getColor(VERTEX_FILL_COLOR, Color.RED);

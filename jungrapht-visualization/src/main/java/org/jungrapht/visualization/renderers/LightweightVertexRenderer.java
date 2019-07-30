@@ -22,12 +22,12 @@ import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SimpleVertexRenderer<V, E> implements Renderer.Vertex<V, E> {
+public class LightweightVertexRenderer<V, E> implements Renderer.Vertex<V, E> {
 
-  private static final Logger log = LoggerFactory.getLogger(SimpleVertexRenderer.class);
+  private static final Logger log = LoggerFactory.getLogger(LightweightVertexRenderer.class);
 
   private Function<V, Shape> simpleVertexShapeFunction =
-      n -> new Ellipse2D.Float(-6.f, -6.f, 12, 12);
+      n -> new Ellipse2D.Float(-10.f, -10.f, 20, 20);
 
   public void paintVertex(
       RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {

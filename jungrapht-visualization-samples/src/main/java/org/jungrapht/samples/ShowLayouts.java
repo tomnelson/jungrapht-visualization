@@ -11,7 +11,6 @@ import java.awt.*;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Supplier;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
@@ -64,23 +63,6 @@ public class ShowLayouts extends JPanel {
   public ShowLayouts() {
 
     g_array = new Graph[graph_names.length];
-
-    Supplier<Integer> vertexFactory =
-        new Supplier<Integer>() {
-          int count;
-
-          public Integer get() {
-            return count++;
-          }
-        };
-    Supplier<Number> edgeFactory =
-        new Supplier<Number>() {
-          int count;
-
-          public Number get() {
-            return count++;
-          }
-        };
 
     g_array[0] = TestGraphs.createTestGraph(false);
     g_array[1] = TestGraphs.getGeneratedGraph();

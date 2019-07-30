@@ -27,46 +27,69 @@ import java.util.Set;
  */
 public class MultiMutableSelectedState<T> extends AbstractMutableSelectedState<T>
     implements MutableSelectedState<T> {
-  /** the 'picked' vertices */
+  /** the 'selected' items */
   protected Set<T> picked = new LinkedHashSet<>();
 
-  public boolean pick(T v, boolean state) {
-    boolean prior_state = this.picked.contains(v);
+  @Override
+  public boolean pick(T t, boolean state) {
+    boolean priorState = this.picked.contains(t);
     if (state) {
-      picked.add(v);
-      if (!prior_state) {
+      picked.add(t);
+      if (!priorState) {
         fireItemStateChanged(
-            new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, v, ItemEvent.SELECTED));
+            new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, t, ItemEvent.SELECTED));
       }
 
     } else {
-      picked.remove(v);
-      if (prior_state) {
+      picked.remove(t);
+      if (priorState) {
         fireItemStateChanged(
-            new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, v, ItemEvent.DESELECTED));
+            new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, t, ItemEvent.DESELECTED));
       }
     }
-    return prior_state;
+    return priorState;
   }
 
+  @Override
+  public boolean pick(Collection<T> t, boolean state) {
+    boolean priorState = this.picked.containsAll(t);
+    if (state) {
+      picked.addAll(t);
+      if (!priorState) {
+        fireItemStateChanged(
+            new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, t, ItemEvent.SELECTED));
+      }
+
+    } else {
+      picked.remove(t);
+      if (priorState) {
+        fireItemStateChanged(
+            new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, t, ItemEvent.DESELECTED));
+      }
+    }
+    return priorState;
+  }
+
+  @Override
   public void clear() {
     Collection<T> unpicks = new ArrayList<>(picked);
-    for (T v : unpicks) {
-      pick(v, false);
-    }
+    pick(unpicks, false);
     picked.clear();
   }
 
+  @Override
   public Set<T> getSelected() {
     return Collections.unmodifiableSet(picked);
   }
 
-  public boolean isSelected(T e) {
-    return picked.contains(e);
+  @Override
+  public boolean isSelected(T t) {
+    return picked.contains(t);
   }
 
   /** for the ItemSelectable interface contract */
   @SuppressWarnings("unchecked")
+  @Override
   public T[] getSelectedObjects() {
     List<T> list = new ArrayList<>(picked);
     return (T[]) list.toArray();
