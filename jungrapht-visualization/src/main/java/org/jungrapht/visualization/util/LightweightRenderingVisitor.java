@@ -3,6 +3,7 @@ package org.jungrapht.visualization.util;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.jungrapht.visualization.VisualizationServer;
+import org.jungrapht.visualization.renderers.Renderer;
 
 public class LightweightRenderingVisitor implements ChangeListener {
 
@@ -16,6 +17,15 @@ public class LightweightRenderingVisitor implements ChangeListener {
   public static void visit(VisualizationServer visualizationServer, double scaleLimit) {
     visualizationServer.addChangeListener(
         new LightweightRenderingVisitor(visualizationServer, scaleLimit));
+  }
+
+  public static <V, E> void visit(
+      VisualizationServer visualizationServer,
+      Renderer<V, E> lightweightRenderer,
+      double scaleLimit) {
+    visualizationServer.addChangeListener(
+        new LightweightRenderingVisitor(visualizationServer, scaleLimit));
+    visualizationServer.setLightweightRenderer(lightweightRenderer);
   }
 
   private LightweightRenderingVisitor(VisualizationServer visualizationServer) {

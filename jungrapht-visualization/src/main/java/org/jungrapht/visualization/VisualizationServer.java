@@ -83,6 +83,13 @@ public interface VisualizationServer<V, E>
    */
   void setRenderer(Renderer<V, E> r);
 
+  /**
+   * Sets the lightweight Renderer
+   *
+   * @param r the renderer to use
+   */
+  void setLightweightRenderer(Renderer<V, E> r);
+
   /** @return the renderer used by this instance. */
   Renderer<V, E> getRenderer();
 

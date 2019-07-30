@@ -40,8 +40,8 @@ import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.util.Caching;
 import org.jungrapht.visualization.renderers.BasicRenderer;
-import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.renderers.LightweightRenderer;
+import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.selection.MultiMutableSelectedState;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 import org.jungrapht.visualization.selection.ShapePickSupport;
@@ -166,7 +166,7 @@ public class BasicVisualizationServer<V, E> extends JPanel implements Visualizat
   /** handles the actual drawing of graph elements */
   protected Renderer<V, E> renderer;
 
-  protected Renderer<V, E> simpleRenderer = new LightweightRenderer<>();
+  protected Renderer<V, E> lightweightRenderer = new LightweightRenderer<>();
   protected Renderer<V, E> complexRenderer;
 
   /** rendering hints used in drawing. Anti-aliasing is on by default */
@@ -440,6 +440,12 @@ public class BasicVisualizationServer<V, E> extends JPanel implements Visualizat
   }
 
   @Override
+  public void setLightweightRenderer(Renderer<V, E> r) {
+    this.lightweightRenderer = r;
+    repaint();
+  }
+
+  @Override
   public Renderer<V, E> getRenderer() {
     return renderer;
   }
@@ -450,17 +456,17 @@ public class BasicVisualizationServer<V, E> extends JPanel implements Visualizat
 
   public void scaleToLayout(ScalingControl scaler) {
     Dimension vd = getPreferredSize();
-    log.info("pref vd {}", vd);
+    log.trace("pref vd {}", vd);
     if (this.isShowing()) {
       vd = getSize();
-      log.info("actual vd {}", vd);
+      log.trace("actual vd {}", vd);
     }
     Dimension ld = model.getLayoutSize();
     if (!vd.equals(ld)) {
-      log.info("vd.getWidth() {} ld.getWidth() {} ", vd.getWidth(), ld.getWidth());
+      log.trace("vd.getWidth() {} ld.getWidth() {} ", vd.getWidth(), ld.getWidth());
       getRenderContext().getMultiLayerTransformer().setToIdentity();
       scaler.scale(this, (float) (vd.getWidth() / ld.getWidth()), new Point2D.Double());
-      log.info("scaled by {}", vd.getWidth() / ld.getWidth());
+      log.trace("scaled by {}", vd.getWidth() / ld.getWidth());
     }
   }
 
@@ -565,6 +571,9 @@ public class BasicVisualizationServer<V, E> extends JPanel implements Visualizat
 
   public void setSmallScaleOverridePredicate(Predicate<Double> smallScaleOverridePredicate) {
     this.smallScaleOverridePredicate = smallScaleOverridePredicate;
+    // ensures that the first rendering of the visualization checks to see if it should be simplified
+    // based on the current view scale
+    simplifyRenderer(smallScale());
   }
 
   private boolean smallScale() {
@@ -591,14 +600,14 @@ public class BasicVisualizationServer<V, E> extends JPanel implements Visualizat
   @Override
   public void simplifyRenderer(boolean simplify) {
     if (smallScale() || simplify) {
-      this.renderer = simpleRenderer;
+      this.renderer = lightweightRenderer;
       this.getRenderingHints().remove(RenderingHints.KEY_ANTIALIASING);
     } else {
       this.renderer = complexRenderer;
       this.getRenderingHints()
           .put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-      repaint();
     }
+    repaint();
   }
 
   /**
@@ -789,6 +798,7 @@ public class BasicVisualizationServer<V, E> extends JPanel implements Visualizat
 
     @Override
     public void paint(Graphics g) {
+      System.err.println("paint!");
       Graphics2D g2d = (Graphics2D) g;
       Color oldColor = g2d.getColor();
       //gather all the grid shapes

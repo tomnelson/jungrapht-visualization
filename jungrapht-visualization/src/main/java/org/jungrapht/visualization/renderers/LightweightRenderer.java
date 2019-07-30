@@ -14,8 +14,6 @@ public class LightweightRenderer<V, E> implements Renderer<V, E> {
   protected Vertex<V, E> vertexRenderer = new LightweightVertexRenderer<>();
   protected VertexLabel<V, E> vertexLabelRenderer = new BasicVertexLabelRenderer<>();
   protected Renderer.Edge<V, E> edgeRenderer = new LightweightEdgeRenderer<>();
-  //    protected Function<V, Shape> simpleVertexShapeFunction = new EllipseShapeFunction<>();
-  //    protected Renderer.EdgeLabel<V, E> edgeLabelRenderer = new BasicEdgeLabelRenderer<>();
 
   @Override
   public void render(
@@ -32,12 +30,10 @@ public class LightweightRenderer<V, E> implements Renderer<V, E> {
   public void render(
       RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel) {
     Graph<V, E> graph = visualizationModel.getGraph();
-    //        renderContext.setVertexShapeFunction(simpleVertexShapeFunction);
     // paint all the edges
     try {
       for (E e : graph.edgeSet()) {
         renderEdge(renderContext, visualizationModel, e);
-        //          renderEdgeLabel(renderContext, visualizationModel, e);
       }
     } catch (ConcurrentModificationException cme) {
       renderContext.getScreenDevice().repaint();
@@ -47,7 +43,6 @@ public class LightweightRenderer<V, E> implements Renderer<V, E> {
     try {
       for (V v : graph.vertexSet()) {
         renderVertex(renderContext, visualizationModel, v);
-        //          renderVertexLabel(renderContext, visualizationModel, v);
       }
     } catch (ConcurrentModificationException cme) {
       renderContext.getScreenDevice().repaint();
@@ -75,10 +70,7 @@ public class LightweightRenderer<V, E> implements Renderer<V, E> {
 
   @Override
   public void renderEdgeLabel(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e) {
-    //      edgeLabelRenderer.labelEdge(
-    //              renderContext, visualizationModel, e, renderContext.getEdgeLabelFunction().apply(e));
-  }
+      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e) {}
 
   @Override
   public void setVertexRenderer(Vertex<V, E> r) {
@@ -98,9 +90,7 @@ public class LightweightRenderer<V, E> implements Renderer<V, E> {
 
   /** @param edgeLabelRenderer the edgeLabelRenderer to set */
   @Override
-  public void setEdgeLabelRenderer(Renderer.EdgeLabel<V, E> edgeLabelRenderer) {
-    //      this.edgeLabelRenderer = edgeLabelRenderer;
-  }
+  public void setEdgeLabelRenderer(Renderer.EdgeLabel<V, E> edgeLabelRenderer) {}
 
   /** @return the vertexLabelRenderer */
   @Override
@@ -110,9 +100,7 @@ public class LightweightRenderer<V, E> implements Renderer<V, E> {
 
   /** @param vertexLabelRenderer the vertexLabelRenderer to set */
   @Override
-  public void setVertexLabelRenderer(VertexLabel<V, E> vertexLabelRenderer) {
-    //      this.vertexLabelRenderer = vertexLabelRenderer;
-  }
+  public void setVertexLabelRenderer(VertexLabel<V, E> vertexLabelRenderer) {}
 
   /** @return the edgeRenderer */
   @Override

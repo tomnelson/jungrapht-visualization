@@ -63,13 +63,28 @@ public class ShapeFactory<T> {
    * @param t the object for which the shape will be drawn
    * @return a rectangle for this input T
    */
-  public Rectangle2D getRectangle(T t) {
+  public Shape getRectangle(T t, double rotation) {
     float width = sizeFunction.apply(t);
     float height = width * aspectRatioFunction.apply(t);
-    float h_offset = -(width / 2);
-    float v_offset = -(height / 2);
-    theRectangle.setFrame(h_offset, v_offset, width, height);
-    return theRectangle;
+    theRectangle.setFrame(0, 0, width, height);
+
+    AffineTransform at = new AffineTransform();
+    if (rotation != 0) {
+      at.rotate(rotation);
+    }
+    at.translate(-width / 2, -height / 2);
+    return at.createTransformedShape(theRectangle);
+  }
+
+  /**
+   * Returns a <code>Rectangle2D</code> whose width and height are defined by this instance's size
+   * and aspect ratio functions.
+   *
+   * @param t the object for which the shape will be drawn
+   * @return a rectangle for this input T
+   */
+  public Shape getRectangle(T t) {
+    return getRectangle(t, 0.0);
   }
 
   private static final Ellipse2D theEllipse = new Ellipse2D.Float();
@@ -81,8 +96,8 @@ public class ShapeFactory<T> {
    * @param t the object for which the shape will be drawn
    * @return an ellipse for input T
    */
-  public Ellipse2D getEllipse(T t) {
-    theEllipse.setFrame(getRectangle(t));
+  public Shape getEllipse(T t) {
+    theEllipse.setFrame(getRectangle(t).getBounds2D());
     return theEllipse;
   }
 
@@ -96,7 +111,7 @@ public class ShapeFactory<T> {
    * @return an round rectangle for this input T
    */
   public RoundRectangle2D getRoundRectangle(T t) {
-    Rectangle2D frame = getRectangle(t);
+    Rectangle2D frame = getRectangle(t).getBounds2D();
     float arc_size = (float) Math.min(frame.getHeight(), frame.getWidth()) / 2;
     theRoundRectangle.setRoundRect(
         frame.getX(), frame.getY(), frame.getWidth(), frame.getHeight(), arc_size, arc_size);
@@ -111,10 +126,10 @@ public class ShapeFactory<T> {
    * @param sides the number of sides of the polygon; must be &ge; 3.
    * @return a regular polygon for this t
    */
-  public Shape getRegularPolygon(T t, int sides) {
+  public Shape getRegularPolygon(T t, int sides, double rotation) {
     GeneralPath thePolygon = new GeneralPath();
     Preconditions.checkArgument(sides >= 3, "Number of sides must be >= 3");
-    Rectangle2D frame = getRectangle(t);
+    Rectangle2D frame = getRectangle(t).getBounds2D();
     float width = (float) frame.getWidth();
     float height = (float) frame.getHeight();
 
@@ -141,9 +156,23 @@ public class ShapeFactory<T> {
     float translationY = (float) (r.getMinY() + r.getHeight() / 2);
 
     AffineTransform at = AffineTransform.getScaleInstance(scale_x, scale_y);
+    if (rotation != 0) {
+      at.rotate(Math.PI);
+    }
     at.translate(-translationX, -translationY);
 
     return at.createTransformedShape(thePolygon);
+  }
+  /**
+   * Returns a regular <code>sides</code>-sided <code>Polygon</code> whose bounding box's width and
+   * height are defined by this instance's size and aspect ratio functions.
+   *
+   * @param t the T for which the shape will be drawn
+   * @param sides the number of sides of the polygon; must be &ge; 3.
+   * @return a regular polygon for this t
+   */
+  public Shape getRegularPolygon(T t, int sides) {
+    return getRegularPolygon(t, sides, 0.0);
   }
 
   /**
@@ -157,7 +186,7 @@ public class ShapeFactory<T> {
   public Shape getRegularStar(T t, int points) {
     GeneralPath thePolygon = new GeneralPath();
     Preconditions.checkArgument(points >= 5, "Number of points must be >= 5");
-    Rectangle2D frame = getRectangle(t);
+    Rectangle2D frame = getRectangle(t).getBounds2D();
     float width = (float) frame.getWidth();
     float height = (float) frame.getHeight();
 

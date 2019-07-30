@@ -29,6 +29,10 @@ public class LightweightVertexRenderer<V, E> implements Renderer.Vertex<V, E> {
   private Function<V, Shape> simpleVertexShapeFunction =
       n -> new Ellipse2D.Float(-10.f, -10.f, 20, 20);
 
+  public void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
+    this.simpleVertexShapeFunction = vertexShapeFunction;
+  }
+
   public void paintVertex(
       RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {
     if (renderContext.getVertexIncludePredicate().test(v)) {
