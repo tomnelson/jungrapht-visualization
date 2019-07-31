@@ -19,6 +19,8 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import javax.swing.*;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationModel;
@@ -186,11 +188,19 @@ public class PickingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
         vertex = pickSupport.getVertex(layoutModel, layoutPoint.getX(), layoutPoint.getY());
         log.trace("mousePressed with add set the vertex to {}", vertex);
         if (vertex != null) {
-          boolean wasThere = pickedVertexState.pick(vertex, !pickedVertexState.isSelected(vertex));
-          if (wasThere) {
-            log.trace("already, so now vertex will be null");
+          Set<V> alreadySelected = pickedVertexState.getSelected();
+          if (pickedVertexState.isSelected(vertex)) {
+            // this is an un-pick.
+            pickedVertexState.pick(vertex, false);
             vertex = null;
+          } else {
+            // add the new vertex to the set to pick
+            Set<V> toSelect = new HashSet<>(pickedVertexState.getSelected());
+            toSelect.add(vertex);
+            // now pick all at once to fire one event for all
+            pickedVertexState.pick(toSelect, true);
           }
+
         } else if ((edge = pickSupport.getEdge(layoutModel, layoutPoint.getX(), layoutPoint.getY()))
             != null) {
           pickedEdgeState.pick(edge, !pickedEdgeState.isSelected(edge));
@@ -402,6 +412,7 @@ public class PickingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
       GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
       LayoutModel<V> layoutModel = vv.getModel().getLayoutModel();
       Collection<V> picked = pickSupport.getVertices(layoutModel, pickTarget);
+      picked.addAll(pickedVertexState.getSelected());
       pickedVertexState.pick(picked, true);
     }
   }

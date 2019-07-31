@@ -61,7 +61,7 @@ public class MultiMutableSelectedState<T> extends AbstractMutableSelectedState<T
       }
 
     } else {
-      picked.remove(t);
+      picked.removeAll(t);
       if (priorState) {
         fireItemStateChanged(
             new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, t, ItemEvent.DESELECTED));
