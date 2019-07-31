@@ -41,7 +41,7 @@ public abstract class AbstractGraphMousePlugin implements GraphMousePlugin {
 
   /** getter for mouse modifiers */
   @Override
-  public int getModifiers() {
+  public int getModifiersEx() {
     return modifiers;
   }
 
@@ -56,7 +56,7 @@ public abstract class AbstractGraphMousePlugin implements GraphMousePlugin {
    */
   @Override
   public boolean checkModifiers(MouseEvent e) {
-    return (e.getModifiersEx() & modifiers) == modifiers;
+    return e.getModifiersEx() == modifiers;
   }
 
   /** @return Returns the cursor. */

@@ -34,22 +34,22 @@ public class LensMagnificationGraphMousePlugin extends AbstractGraphMousePlugin
   protected final float delta;
 
   /**
-   * Creates an instance with modifier of CTRL_MASK, and default min/max/delta zoom values of
+   * Creates an instance with modifier of CTRL_DOWN_MASK, and default min/max/delta zoom values of
    * 1/4/0.2.
    */
   public LensMagnificationGraphMousePlugin() {
-    this(MouseEvent.CTRL_MASK);
+    this(MouseEvent.CTRL_DOWN_MASK);
   }
 
   /**
-   * Creates an instance with modifier of CTRL_MASK, and the specified zoom parameters.
+   * Creates an instance with modifier of CTRL_DOWN_MASK, and the specified zoom parameters.
    *
    * @param floor the minimum zoom value
    * @param ceiling the maximum zoom value
    * @param delta the change in zoom value caused by each mouse event
    */
   public LensMagnificationGraphMousePlugin(float floor, float ceiling, float delta) {
-    this(MouseEvent.CTRL_MASK, floor, ceiling, delta);
+    this(MouseEvent.CTRL_DOWN_MASK, floor, ceiling, delta);
   }
 
   /**
@@ -79,7 +79,7 @@ public class LensMagnificationGraphMousePlugin extends AbstractGraphMousePlugin
 
   /** override to check equality with a mask */
   public boolean checkModifiers(MouseEvent e) {
-    return (e.getModifiers() & modifiers) != 0;
+    return (e.getModifiersEx() & modifiers) != 0;
   }
 
   private void changeMagnification(Lens lens, float delta) {

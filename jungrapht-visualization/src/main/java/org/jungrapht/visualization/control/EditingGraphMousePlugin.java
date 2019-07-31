@@ -34,13 +34,13 @@ public class EditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
 
   /**
    * Creates an instance and prepares shapes for visual effects, using the default modifiers of
-   * BUTTON1_MASK.
+   * BUTTON1_DOWN_MASK.
    *
    * @param vertexFactory for creating vertices
    * @param edgeFactory for creating edges
    */
   public EditingGraphMousePlugin(Supplier<V> vertexFactory, Supplier<E> edgeFactory) {
-    this(MouseEvent.BUTTON1_MASK, vertexFactory, edgeFactory);
+    this(MouseEvent.BUTTON1_DOWN_MASK, vertexFactory, edgeFactory);
   }
 
   /**
@@ -64,7 +64,7 @@ public class EditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    */
   @Override
   public boolean checkModifiers(MouseEvent e) {
-    return (e.getModifiers() & modifiers) != 0;
+    return (e.getModifiersEx() & modifiers) != 0;
   }
 
   /**

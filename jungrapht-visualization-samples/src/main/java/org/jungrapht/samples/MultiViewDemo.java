@@ -195,7 +195,7 @@ public class MultiViewDemo extends JPanel {
           protected void loadPlugins() {
             pickingPlugin = new PickingGraphMousePlugin<String, Number>();
             animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<String, Number>();
-            translatingPlugin = new TranslatingGraphMousePlugin(InputEvent.BUTTON1_MASK);
+            translatingPlugin = new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
             scalingPlugin = new ScalingGraphMousePlugin(new LayoutScalingControl(), 0);
             rotatingPlugin = new RotatingGraphMousePlugin();
             shearingPlugin = new ShearingGraphMousePlugin();
@@ -210,7 +210,7 @@ public class MultiViewDemo extends JPanel {
           protected void loadPlugins() {
             pickingPlugin = new PickingGraphMousePlugin<String, Number>();
             animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<String, Number>();
-            translatingPlugin = new TranslatingGraphMousePlugin(InputEvent.BUTTON1_MASK);
+            translatingPlugin = new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
             scalingPlugin = new ScalingGraphMousePlugin(new ViewScalingControl(), 0);
             rotatingPlugin = new RotatingGraphMousePlugin();
             shearingPlugin = new ShearingGraphMousePlugin();

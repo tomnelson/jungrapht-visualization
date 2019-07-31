@@ -54,7 +54,7 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
   }
 
   public boolean checkModifiers(MouseEvent e) {
-    return e.getModifiers() == modifiers || (e.getModifiers() & modifiers) != 0;
+    return e.getModifiersEx() == modifiers || (e.getModifiersEx() & modifiers) != 0;
   }
 
   /** zoom the display in or out, depending on the direction of the mouse wheel motion. */

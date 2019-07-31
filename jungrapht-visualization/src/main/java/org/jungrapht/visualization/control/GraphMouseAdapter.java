@@ -26,7 +26,7 @@ public class GraphMouseAdapter extends MouseAdapter {
     this.modifiers = modifiers;
   }
 
-  public int getModifiers() {
+  public int getModifiersEx() {
     return modifiers;
   }
 
@@ -35,6 +35,6 @@ public class GraphMouseAdapter extends MouseAdapter {
   }
 
   protected boolean checkModifiers(MouseEvent e) {
-    return e.getModifiers() == modifiers;
+    return e.getModifiersEx() == modifiers;
   }
 }

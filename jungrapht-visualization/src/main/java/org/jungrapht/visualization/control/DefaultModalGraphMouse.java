@@ -58,7 +58,7 @@ public class DefaultModalGraphMouse<V, E> extends AbstractModalGraphMouse
   protected void loadPlugins() {
     pickingPlugin = new PickingGraphMousePlugin<V, E>();
     animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<V, E>();
-    translatingPlugin = new TranslatingGraphMousePlugin(InputEvent.BUTTON1_MASK);
+    translatingPlugin = new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
     scalingPlugin = new ScalingGraphMousePlugin(new CrossoverScalingControl(), 0, in, out);
     rotatingPlugin = new RotatingGraphMousePlugin();
     shearingPlugin = new ShearingGraphMousePlugin();

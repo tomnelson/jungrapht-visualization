@@ -75,7 +75,10 @@ public class AnnotatingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    * @param rc the RenderContext for which this plugin will be used
    */
   public AnnotatingGraphMousePlugin(RenderContext<V, E> rc) {
-    this(rc, InputEvent.BUTTON1_MASK, InputEvent.BUTTON1_MASK | InputEvent.SHIFT_MASK);
+    this(
+        rc,
+        InputEvent.BUTTON1_DOWN_MASK,
+        InputEvent.BUTTON1_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
   }
 
   /**
@@ -146,10 +149,10 @@ public class AnnotatingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
             new Annotation<>(annotationString, layer, annotationColor, fill, p);
         annotationManager.add(layer, annotation);
       }
-    } else if (e.getModifiers() == additionalModifiers) {
+    } else if (e.getModifiersEx() == additionalModifiers) {
       Annotation<?> annotation = annotationManager.getAnnotation(down);
       annotationManager.remove(annotation);
-    } else if (e.getModifiers() == modifiers) {
+    } else if (e.getModifiersEx() == modifiers) {
       rectangularShape.setFrameFromDiagonal(down, down);
       vv.addPostRenderPaintable(lensPaintable);
     }
@@ -168,7 +171,7 @@ public class AnnotatingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
             new Annotation<>(annotationString, layer, annotationColor, fill, p);
         annotationManager.add(layer, annotation);
       }
-    } else if (e.getModifiers() == modifiers) {
+    } else if (e.getModifiersEx() == modifiers) {
       if (down != null) {
         Point2D out = e.getPoint();
         RectangularShape arect = (RectangularShape) rectangularShape.clone();
@@ -192,10 +195,10 @@ public class AnnotatingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
 
     Point2D out = e.getPoint();
-    if (e.getModifiers() == additionalModifiers) {
+    if (e.getModifiersEx() == additionalModifiers) {
       rectangularShape.setFrameFromDiagonal(down, out);
 
-    } else if (e.getModifiers() == modifiers) {
+    } else if (e.getModifiersEx() == modifiers) {
       rectangularShape.setFrameFromDiagonal(down, out);
     }
     rectangularShape.setFrameFromDiagonal(down, out);

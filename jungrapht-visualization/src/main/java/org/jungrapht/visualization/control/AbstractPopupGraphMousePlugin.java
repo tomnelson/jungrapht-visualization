@@ -15,7 +15,7 @@ public abstract class AbstractPopupGraphMousePlugin extends AbstractGraphMousePl
     implements MouseListener {
 
   public AbstractPopupGraphMousePlugin() {
-    this(MouseEvent.BUTTON3_MASK);
+    this(MouseEvent.BUTTON3_DOWN_MASK);
   }
 
   public AbstractPopupGraphMousePlugin(int modifiers) {

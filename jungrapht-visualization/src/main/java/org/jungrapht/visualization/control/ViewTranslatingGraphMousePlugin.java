@@ -36,7 +36,7 @@ public class ViewTranslatingGraphMousePlugin extends AbstractGraphMousePlugin
   private static final Logger log = LoggerFactory.getLogger(ViewTranslatingGraphMousePlugin.class);
   /** */
   public ViewTranslatingGraphMousePlugin() {
-    this(MouseEvent.BUTTON1_MASK);
+    this(MouseEvent.BUTTON1_DOWN_MASK);
   }
 
   /**

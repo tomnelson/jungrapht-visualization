@@ -159,7 +159,7 @@ public class ShortestPathDemo extends JPanel {
   }
 
   private void select(Collection<String> items) {
-    select(items.stream().findFirst().orElse(null));
+    items.stream().findFirst().ifPresent(this::select);
   }
 
   private void deselect(Object item) {
@@ -172,13 +172,13 @@ public class ShortestPathDemo extends JPanel {
   }
 
   private void deselect(Collection<String> items) {
-    deselect(items.stream().findFirst().orElse(null));
+    items.stream().findFirst().ifPresent(this::deselect);
   }
 
   private void deselect(String e) {
     if (Objects.equals(e, fromVertex)) {
       fromVertex = null;
-    } else if (Objects.equals(e,toVertex)) {
+    } else if (Objects.equals(e, toVertex)) {
       toVertex = null;
     }
   }

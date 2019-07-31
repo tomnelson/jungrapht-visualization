@@ -40,7 +40,7 @@ public class LabelEditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
 
   /** create an instance with default settings */
   public LabelEditingGraphMousePlugin(Map<V, String> vertexLabelMap, Map<E, String> edgeLabelMap) {
-    this(vertexLabelMap, edgeLabelMap, InputEvent.BUTTON1_MASK);
+    this(vertexLabelMap, edgeLabelMap, InputEvent.BUTTON1_DOWN_MASK);
   }
 
   /**
@@ -70,8 +70,8 @@ public class LabelEditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   @SuppressWarnings("unchecked")
   public void mouseClicked(MouseEvent e) {
     //    System.err.println(
-    //        "e.getModifiers() = " + e.getModifiers() + " and e.getClickCount() = " + e.getClickCount());
-    if (e.getModifiers() == modifiers && e.getClickCount() == 2) {
+    //        "e.getModifiersEx() = " + e.getModifiersEx() + " and e.getClickCount() = " + e.getClickCount());
+    if (e.getModifiersEx() == modifiers && e.getClickCount() == 2) {
       VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
       LayoutModel<V> layoutModel = vv.getModel().getLayoutModel();
       GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();

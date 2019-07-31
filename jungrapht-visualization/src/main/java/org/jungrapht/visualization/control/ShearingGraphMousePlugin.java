@@ -40,7 +40,7 @@ import org.jungrapht.visualization.transform.MutableTransformer;
 public class ShearingGraphMousePlugin extends AbstractGraphMousePlugin
     implements MouseListener, MouseMotionListener {
 
-  private static int mask = MouseEvent.CTRL_MASK;
+  private static int mask = MouseEvent.CTRL_DOWN_MASK;
 
   static {
     if (System.getProperty("os.name").startsWith("Mac")) {
@@ -49,7 +49,7 @@ public class ShearingGraphMousePlugin extends AbstractGraphMousePlugin
   }
   /** create an instance with default modifier values */
   public ShearingGraphMousePlugin() {
-    this(MouseEvent.BUTTON1_MASK | mask);
+    this(MouseEvent.BUTTON1_DOWN_MASK | mask);
   }
 
   /**

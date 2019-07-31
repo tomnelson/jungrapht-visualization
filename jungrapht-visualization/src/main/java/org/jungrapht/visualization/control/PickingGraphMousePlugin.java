@@ -76,7 +76,7 @@ public class PickingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
 
   /** create an instance with default settings */
   public PickingGraphMousePlugin() {
-    this(InputEvent.BUTTON1_MASK, InputEvent.BUTTON1_MASK | InputEvent.SHIFT_MASK);
+    this(InputEvent.BUTTON1_DOWN_MASK, InputEvent.BUTTON1_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
   }
 
   /**
@@ -157,7 +157,7 @@ public class PickingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
       // subclass can override to account for view distortion effects
       Point2D layoutPoint = transformSupport.inverseTransform(vv, down);
       log.trace("layout coords of mouse click {}", layoutPoint);
-      if (e.getModifiers() == modifiers) {
+      if (e.getModifiersEx() == modifiers) {
 
         vertex = pickSupport.getVertex(layoutModel, layoutPoint.getX(), layoutPoint.getY());
         log.trace("mousePressed set the vertex to {}", vertex);
@@ -180,7 +180,7 @@ public class PickingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
           pickedVertexState.clear();
         }
 
-      } else if (e.getModifiers() == addToSelectionModifiers) {
+      } else if (e.getModifiersEx() == addToSelectionModifiers) {
         vv.addPostRenderPaintable(lensPaintable);
 
         vertex = pickSupport.getVertex(layoutModel, layoutPoint.getX(), layoutPoint.getY());
@@ -222,14 +222,15 @@ public class PickingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     }
     MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
 
-    if (e.getModifiers() == modifiers) {
+    if (e.getModifiersEx() == modifiers) {
       if (down != null) {
 
         if (vertex == null && !heyThatsTooClose(down, out, 5)) {
           pickContainedVertices(vv, layoutTargetShape, true);
         }
       }
-    } else if (e.getModifiers() == this.addToSelectionModifiers) {
+    } else if (e.getModifiersEx()
+        == this.addToSelectionModifiers) {
       if (down != null) {
 
         if (vertex == null && !heyThatsTooClose(down, out, 5)) {
@@ -314,7 +315,8 @@ public class PickingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
 
       } else {
         Point2D out = e.getPoint();
-        if (e.getModifiers() == this.addToSelectionModifiers || e.getModifiers() == modifiers) {
+        if (e.getModifiersEx() == this.addToSelectionModifiers
+            || e.getModifiersEx() == modifiers) {
           updatePickingTargets(vv, multiLayerTransformer, down, out);
         }
       }

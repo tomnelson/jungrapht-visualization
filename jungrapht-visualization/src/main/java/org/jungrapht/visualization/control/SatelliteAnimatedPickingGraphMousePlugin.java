@@ -34,7 +34,7 @@ public class SatelliteAnimatedPickingGraphMousePlugin<V, E>
 
   /** create an instance */
   public SatelliteAnimatedPickingGraphMousePlugin() {
-    this(InputEvent.BUTTON1_MASK | InputEvent.CTRL_MASK);
+    this(InputEvent.BUTTON1_DOWN_MASK | InputEvent.CTRL_DOWN_MASK);
   }
 
   public SatelliteAnimatedPickingGraphMousePlugin(int selectionModifiers) {
@@ -44,7 +44,7 @@ public class SatelliteAnimatedPickingGraphMousePlugin<V, E>
   /** override subclass method to translate the master view instead of this satellite view */
   @SuppressWarnings("unchecked")
   public void mouseReleased(MouseEvent e) {
-    if (e.getModifiers() == modifiers) {
+    if (e.getModifiersEx() == modifiers) {
       final VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
       if (vv instanceof SatelliteVisualizationViewer) {
         final VisualizationViewer<V, E> vvMaster =

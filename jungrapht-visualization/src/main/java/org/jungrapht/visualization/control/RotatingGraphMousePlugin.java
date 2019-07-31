@@ -41,7 +41,7 @@ public class RotatingGraphMousePlugin extends AbstractGraphMousePlugin
 
   /** create an instance with default modifier values */
   public RotatingGraphMousePlugin() {
-    this(MouseEvent.BUTTON1_MASK | MouseEvent.SHIFT_MASK);
+    this(MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.SHIFT_DOWN_MASK);
   }
 
   /**
