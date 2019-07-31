@@ -21,7 +21,7 @@ import org.jungrapht.samples.util.SpanningTreeAdapter;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
-import org.jungrapht.visualization.control.DefaultModalGraphMouse;
+import org.jungrapht.visualization.control.NonModalGraphMouse;
 import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -89,7 +89,7 @@ public class ShowLayouts extends JPanel {
 
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
 
-    final DefaultModalGraphMouse<Integer, Number> graphMouse = new DefaultModalGraphMouse<>();
+    final NonModalGraphMouse<Integer, Number> graphMouse = new NonModalGraphMouse<>();
     vv.setGraphMouse(graphMouse);
 
     vv.setVertexToolTipFunction(
@@ -105,9 +105,9 @@ public class ShowLayouts extends JPanel {
     JButton minus = new JButton("-");
     minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
 
-    JComboBox modeBox = graphMouse.getModeComboBox();
-    modeBox.addItemListener(
-        ((DefaultModalGraphMouse<Integer, Number>) vv.getGraphMouse()).getModeListener());
+    //    JComboBox modeBox = graphMouse.getModeComboBox();
+    //    modeBox.addItemListener(
+    //        ((DefaultModalGraphMouse<Integer, Number>) vv.getGraphMouse()).getModeListener());
 
     vv.setBackground(Color.WHITE);
 
@@ -180,7 +180,7 @@ public class ShowLayouts extends JPanel {
     bottomControls.add(animateLayoutTransition);
     bottomControls.add(plus);
     bottomControls.add(minus);
-    bottomControls.add(modeBox);
+    //    bottomControls.add(modeBox);
     bottomControls.add(showRTree);
   }
 

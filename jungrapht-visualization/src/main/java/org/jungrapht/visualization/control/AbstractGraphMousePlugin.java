@@ -17,7 +17,7 @@ import java.awt.event.MouseEvent;
 /**
  * a base class for GraphMousePlugin instances. Holds some members common to all GraphMousePlugins
  *
- * @author thomasnelson
+ * @author Tom Nelson
  */
 public abstract class AbstractGraphMousePlugin implements GraphMousePlugin {
 
@@ -40,6 +40,7 @@ public abstract class AbstractGraphMousePlugin implements GraphMousePlugin {
   }
 
   /** getter for mouse modifiers */
+  @Override
   public int getModifiers() {
     return modifiers;
   }
@@ -53,8 +54,9 @@ public abstract class AbstractGraphMousePlugin implements GraphMousePlugin {
    * check the mouse event modifiers against the instance member modifiers. Default implementation
    * checks equality. Can be overridden to test with a mask
    */
+  @Override
   public boolean checkModifiers(MouseEvent e) {
-    return e.getModifiers() == modifiers;
+    return (e.getModifiersEx() & modifiers) == modifiers;
   }
 
   /** @return Returns the cursor. */

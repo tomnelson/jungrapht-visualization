@@ -47,7 +47,6 @@ public class LayoutHelper {
     Layouts(String name, LayoutAlgorithm layoutAlgorithm) {
       this.name = name;
       this.layoutAlgorithm = layoutAlgorithm;
-      System.err.println(name + " got " + layoutAlgorithm);
     }
 
     private final String name;
