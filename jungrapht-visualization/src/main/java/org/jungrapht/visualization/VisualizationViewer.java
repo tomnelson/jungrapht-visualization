@@ -76,6 +76,7 @@ public class VisualizationViewer<V, E> extends BasicVisualizationServer<V, E> {
       Dimension layoutSize,
       Dimension viewSize) {
     super(graph, visualizationModel, layoutAlgorithm, layoutSize, viewSize);
+    addMouseListener(requestFocusListener);
   }
 
   protected Function<V, String> vertexToolTipFunction;

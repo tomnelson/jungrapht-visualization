@@ -4,7 +4,7 @@
 package org.jungrapht.samples;
 
 import java.awt.*;
-import java.awt.event.ItemEvent;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -21,6 +21,7 @@ import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.renderers.Renderer;
+import org.jungrapht.visualization.selection.SelectedState;
 
 /** Demonstrates use of the JGrapht shortest path algorithm and visualization of the results. */
 public class ShortestPathDemo extends JPanel {
@@ -102,26 +103,8 @@ public class ShortestPathDemo extends JPanel {
     final AbstractModalGraphMouse graphMouse = new DefaultModalGraphMouse<Integer, Number>();
     vv.setGraphMouse(graphMouse);
     vv.addKeyListener(graphMouse.getModeKeyListener());
-
     vv.getSelectedVertexState()
-        .addItemListener(
-            e -> {
-              if (e.getStateChange() == ItemEvent.DESELECTED) {
-                if (e.getItem().equals(fromVertex)) {
-                  fromVertex = null;
-                } else if (e.getItem().equals(toVertex)) {
-                  toVertex = null;
-                }
-              } else if (e.getStateChange() == ItemEvent.SELECTED) {
-                String item = (String) e.getItem();
-                if (fromVertex == null) {
-                  fromVertex = item;
-                } else {
-                  toVertex = item;
-                }
-              }
-              drawShortestPath();
-            });
+        .addItemListener(new SelectedState.StateChangeListener<>(this::select, this::deselect));
 
     vv.addPostRenderPaintable(
         new VisualizationViewer.Paintable() {
@@ -155,6 +138,52 @@ public class ShortestPathDemo extends JPanel {
             + "<li>Type 't' to return to transforming mode";
     JLabel instructions = new JLabel(labelString);
     add(instructions, BorderLayout.SOUTH);
+  }
+
+  private void select(Object item) {
+    if (item instanceof String) {
+      select((String) item);
+    } else if (item instanceof Collection) {
+      select((Collection<String>) item);
+    }
+    drawShortestPath();
+  }
+
+  private void select(String item) {
+    if (fromVertex == null) {
+      fromVertex = item;
+    } else {
+      toVertex = item;
+    }
+  }
+
+  private void select(Collection<String> items) {
+    if (!items.isEmpty()) {
+      select(items.iterator().next());
+    }
+  }
+
+  private void deselect(Object item) {
+    if (item instanceof String) {
+      deselect((String) item);
+    } else if (item instanceof Collection) {
+      deselect((Collection<String>) item);
+    }
+    drawShortestPath();
+  }
+
+  private void deselect(Collection<String> items) {
+    if (!items.isEmpty()) {
+      deselect(items.iterator().next());
+    }
+  }
+
+  private void deselect(String e) {
+    if (e.equals(fromVertex)) {
+      fromVertex = null;
+    } else if (e.equals(toVertex)) {
+      toVertex = null;
+    }
   }
 
   private boolean onShortestPath(Number e) {
