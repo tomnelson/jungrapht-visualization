@@ -104,11 +104,7 @@ public class EditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
       final Point2D p = e.getPoint();
       if (createMode == Creating.EDGE) {
         GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
-        V vertex = null;
-        // TODO: how does it make any sense for pickSupport to be null in this scenario?
-        if (pickSupport != null) {
-          vertex = pickSupport.getVertex(layoutModel, p.getX(), p.getY());
-        }
+        V vertex = pickSupport.getVertex(layoutModel, p.getX(), p.getY());
         if (vertex != null) {
           edgeSupport.endEdgeCreate(vv, vertex);
           vv.getEdgeSpatial().recalculate();

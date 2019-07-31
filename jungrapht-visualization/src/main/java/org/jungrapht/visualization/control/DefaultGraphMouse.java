@@ -14,7 +14,7 @@ package org.jungrapht.visualization.control;
 import java.awt.event.InputEvent;
 
 /** @author Tom Nelson */
-public class NonModalGraphMouse<V, E> extends PluggableGraphMouse {
+public class DefaultGraphMouse<V, E> extends PluggableGraphMouse {
 
   /** used by the scaling plugins for zoom in */
   protected float in;
@@ -24,7 +24,7 @@ public class NonModalGraphMouse<V, E> extends PluggableGraphMouse {
   protected GraphMousePlugin scalingPlugin;
 
   /** create an instance with default values */
-  public NonModalGraphMouse() {
+  public DefaultGraphMouse() {
     this(1.1f, 1 / 1.1f);
   }
 
@@ -34,7 +34,7 @@ public class NonModalGraphMouse<V, E> extends PluggableGraphMouse {
    * @param in override value for scale in
    * @param out override value for scale out
    */
-  public NonModalGraphMouse(float in, float out) {
+  public DefaultGraphMouse(float in, float out) {
     this.in = in;
     this.out = out;
     loadPlugins();
@@ -43,9 +43,8 @@ public class NonModalGraphMouse<V, E> extends PluggableGraphMouse {
   /** create the plugins, and load the plugins for TRANSFORMING mode */
   protected void loadPlugins() {
     scalingPlugin = new ScalingGraphMousePlugin(new CrossoverScalingControl(), 0, in, out);
-    add(new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK));
+    add(new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK | InputEvent.CTRL_DOWN_MASK));
     add(new PickingGraphMousePlugin<V, E>());
-    add(new AnimatedPickingGraphMousePlugin<V, E>());
     add(new ScalingGraphMousePlugin(new CrossoverScalingControl(), 0, in, out));
   }
 

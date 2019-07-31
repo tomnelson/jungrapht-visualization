@@ -8,7 +8,11 @@ package org.jungrapht.samples;
  *
  */
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Shape;
 import java.util.Set;
 import java.util.function.Function;
 import javax.swing.*;
@@ -20,8 +24,7 @@ import org.jungrapht.samples.util.DemoTreeSupplier;
 import org.jungrapht.samples.util.TreeLayoutSelector;
 import org.jungrapht.visualization.GraphZoomScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.DefaultModalGraphMouse;
-import org.jungrapht.visualization.control.ModalGraphMouse;
+import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -78,13 +81,8 @@ public class TreeCollapseDemo extends JPanel {
     final GraphZoomScrollPane panel = new GraphZoomScrollPane(vv);
     add(panel);
 
-    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
+    final DefaultGraphMouse<String, Integer> graphMouse = new DefaultGraphMouse<>();
     vv.setGraphMouse(graphMouse);
-    vv.addKeyListener(graphMouse.getModeKeyListener());
-
-    JComboBox<?> modeBox = graphMouse.getModeComboBox();
-    modeBox.addItemListener(graphMouse.getModeListener());
-    graphMouse.setMode(ModalGraphMouse.Mode.TRANSFORMING);
 
     JButton collapse = new JButton("Collapse");
     collapse.addActionListener(
@@ -120,7 +118,6 @@ public class TreeCollapseDemo extends JPanel {
     controls.add(new TreeLayoutSelector<>(vv, 0));
 
     controls.add(ControlHelpers.getZoomControls(vv, "Zoom"));
-    controls.add(modeBox);
     controls.add(collapse);
     controls.add(expand);
     add(controls, BorderLayout.SOUTH);

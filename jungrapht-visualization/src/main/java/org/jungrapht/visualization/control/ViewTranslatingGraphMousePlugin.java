@@ -64,7 +64,7 @@ public class ViewTranslatingGraphMousePlugin extends AbstractGraphMousePlugin
     }
   }
 
-  /** unset the 'down' point and change the cursoe back to the system default cursor */
+  /** unset the 'down' point and change the cursor back to the system default cursor */
   public void mouseReleased(MouseEvent e) {
     VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
     down = null;

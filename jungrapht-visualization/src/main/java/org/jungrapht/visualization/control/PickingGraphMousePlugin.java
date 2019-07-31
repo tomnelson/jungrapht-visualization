@@ -76,7 +76,7 @@ public class PickingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
 
   /** create an instance with default settings */
   public PickingGraphMousePlugin() {
-    this(InputEvent.BUTTON1_DOWN_MASK, InputEvent.BUTTON1_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
+    this(InputEvent.BUTTON1_DOWN_MASK, InputEvent.SHIFT_DOWN_MASK);
   }
 
   /**
@@ -180,7 +180,7 @@ public class PickingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
           pickedVertexState.clear();
         }
 
-      } else if (e.getModifiersEx() == addToSelectionModifiers) {
+      } else if (e.getModifiersEx() == (modifiers | addToSelectionModifiers)) {
         vv.addPostRenderPaintable(lensPaintable);
 
         vertex = pickSupport.getVertex(layoutModel, layoutPoint.getX(), layoutPoint.getY());
@@ -222,19 +222,17 @@ public class PickingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     }
     MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
 
-    if (e.getModifiersEx() == modifiers) {
+    // mouse is not down, check only for the addToSelectionModifiers (defaults to SHIFT_DOWN_MASK)
+    if (e.getModifiersEx() == addToSelectionModifiers) {
       if (down != null) {
-
-        if (vertex == null && !heyThatsTooClose(down, out, 5)) {
-          pickContainedVertices(vv, layoutTargetShape, true);
-        }
-      }
-    } else if (e.getModifiersEx()
-        == this.addToSelectionModifiers) {
-      if (down != null) {
-
         if (vertex == null && !heyThatsTooClose(down, out, 5)) {
           pickContainedVertices(vv, layoutTargetShape, false);
+        }
+      }
+    } else {
+      if (down != null) {
+        if (vertex == null && !heyThatsTooClose(down, out, 5)) {
+          pickContainedVertices(vv, layoutTargetShape, true);
         }
       }
     }
@@ -315,10 +313,7 @@ public class PickingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
 
       } else {
         Point2D out = e.getPoint();
-        if (e.getModifiersEx() == this.addToSelectionModifiers
-            || e.getModifiersEx() == modifiers) {
-          updatePickingTargets(vv, multiLayerTransformer, down, out);
-        }
+        updatePickingTargets(vv, multiLayerTransformer, down, out);
       }
       if (vertex != null) {
         e.consume();
