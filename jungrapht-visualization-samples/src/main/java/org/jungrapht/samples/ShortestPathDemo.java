@@ -6,6 +6,7 @@ package org.jungrapht.samples;
 import java.awt.*;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
 import javax.swing.*;
@@ -158,9 +159,7 @@ public class ShortestPathDemo extends JPanel {
   }
 
   private void select(Collection<String> items) {
-    if (!items.isEmpty()) {
-      select(items.iterator().next());
-    }
+    select(items.stream().findFirst().orElse(null));
   }
 
   private void deselect(Object item) {
@@ -173,15 +172,13 @@ public class ShortestPathDemo extends JPanel {
   }
 
   private void deselect(Collection<String> items) {
-    if (!items.isEmpty()) {
-      deselect(items.iterator().next());
-    }
+    deselect(items.stream().findFirst().orElse(null));
   }
 
   private void deselect(String e) {
-    if (e.equals(fromVertex)) {
+    if (Objects.equals(e, fromVertex)) {
       fromVertex = null;
-    } else if (e.equals(toVertex)) {
+    } else if (Objects.equals(e,toVertex)) {
       toVertex = null;
     }
   }
