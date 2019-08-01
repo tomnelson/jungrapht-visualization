@@ -88,7 +88,7 @@ public class SimpleGraphSpatialSearchTest extends JPanel {
             String vertex = vv.getVertexSpatial().getClosestElement(layoutPoint);
             if (vertex != null) {
               vv.getSelectedVertexState().clear();
-              vv.getSelectedVertexState().pick(vertex, true);
+              vv.getSelectedVertexState().select(vertex);
             }
           }
         });
@@ -172,11 +172,11 @@ public class SimpleGraphSpatialSearchTest extends JPanel {
         log.info("the cell for winnerOne {} is {}", winnerOne, tree.getContainingLeaf(winnerOne));
         log.info("the cell for winnerTwo {} is {}", winnerTwo, tree.getContainingLeaf(winnerTwo));
         log.info("the cell for the search point {},{} is {}", x, y, tree.getContainingLeafs(x, y));
-        vv.getSelectedVertexState().pick(winnerOne, true);
-        vv.getSelectedVertexState().pick(winnerTwo, true);
+        vv.getSelectedVertexState().select(winnerOne);
+        vv.getSelectedVertexState().select(winnerTwo);
         graph.addVertex("P");
         layoutModel.set("P", x, y);
-        vv.getRenderContext().getSelectedVertexState().pick("P", true);
+        vv.getRenderContext().getSelectedVertexState().select("P");
         break;
       }
     }

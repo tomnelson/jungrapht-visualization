@@ -93,7 +93,7 @@ public class SimpleGraphSpatialEdgeSearchTest extends JPanel {
             Number edge = vv.getEdgeSpatial().getClosestElement(layoutPoint);
             if (edge != null) {
               vv.getSelectedEdgeState().clear();
-              vv.getSelectedEdgeState().pick(edge, true);
+              vv.getSelectedEdgeState().select(edge);
             }
           }
         });
@@ -178,11 +178,11 @@ public class SimpleGraphSpatialEdgeSearchTest extends JPanel {
         log.info("the cell for winnerOne {} is {}", winnerOne, tree.getContainingLeaf(winnerOne));
         log.info("the cell for winnerTwo {} is {}", winnerTwo, tree.getContainingLeaf(winnerTwo));
         log.info("the cell for the search point {},{} is {}", x, y, tree.getContainingLeafs(x, y));
-        vv.getSelectedVertexState().pick(winnerOne, true);
-        vv.getSelectedVertexState().pick(winnerTwo, true);
+        vv.getSelectedVertexState().select(winnerOne);
+        vv.getSelectedVertexState().select(winnerTwo);
         graph.addVertex("P");
         layoutModel.set("P", x, y);
-        vv.getRenderContext().getSelectedVertexState().pick("P", true);
+        vv.getRenderContext().getSelectedVertexState().select("P");
         break;
       }
     }

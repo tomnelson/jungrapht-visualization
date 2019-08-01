@@ -32,17 +32,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * PickingGraphMousePlugin supports the picking of graph elements with the mouse. MouseButtonOne
- * picks a single vertex or edge, and MouseButtonTwo adds to the set of selected Vertices or
+ * SelectingGraphMousePlugin supports the selecting of graph elements with the mouse. MouseButtonOne
+ * selects a single vertex or edge, and MouseButtonTwo adds to the set of selected Vertices or
  * EdgeType. If a Vertex is selected and the mouse is dragged while on the selected Vertex, then
  * that Vertex will be repositioned to follow the mouse until the button is released.
  *
  * @author Tom Nelson
  */
-public class PickingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
+public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     implements MouseListener, MouseMotionListener {
 
-  private static final Logger log = LoggerFactory.getLogger(PickingGraphMousePlugin.class);
+  private static final Logger log = LoggerFactory.getLogger(SelectingGraphMousePlugin.class);
   /** the selected Vertex, if any */
   protected V vertex;
 
@@ -75,7 +75,7 @@ public class PickingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   protected boolean edgeSpatialActiveInitialState;
 
   /** create an instance with default settings */
-  public PickingGraphMousePlugin() {
+  public SelectingGraphMousePlugin() {
     this(InputEvent.BUTTON1_DOWN_MASK, InputEvent.SHIFT_DOWN_MASK);
   }
 
@@ -85,7 +85,7 @@ public class PickingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    * @param selectionModifiers for primary selection
    * @param addToSelectionModifiers for additional selection
    */
-  public PickingGraphMousePlugin(int selectionModifiers, int addToSelectionModifiers) {
+  public SelectingGraphMousePlugin(int selectionModifiers, int addToSelectionModifiers) {
     super(selectionModifiers);
     this.addToSelectionModifiers = addToSelectionModifiers;
     this.lensPaintable = new LensPaintable();
@@ -143,8 +143,8 @@ public class PickingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     TransformSupport<V, E> transformSupport = vv.getTransformSupport();
     LayoutModel<V> layoutModel = vv.getModel().getLayoutModel();
     GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
-    MutableSelectedState<V> pickedVertexState = vv.getSelectedVertexState();
-    MutableSelectedState<E> pickedEdgeState = vv.getSelectedEdgeState();
+    MutableSelectedState<V> selectedVertexState = vv.getSelectedVertexState();
+    MutableSelectedState<E> selectedEdgeState = vv.getSelectedEdgeState();
 
     MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
 
@@ -157,45 +157,57 @@ public class PickingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     log.trace("layout coords of mouse click {}", layoutPoint);
     if (e.getModifiersEx() == modifiers) {
 
-      if ((vertex = pickSupport.getVertex(layoutModel, layoutPoint.getX(), layoutPoint.getY()))
-          != null) {
+      V vertex = pickSupport.getVertex(layoutModel, layoutPoint.getX(), layoutPoint.getY());
+
+      if (vertex != null) {
 
         log.trace("mousePressed set the vertex to {}", vertex);
-        pickedVertexState.pick(vertex, true);
+        selectedVertexState.select(vertex);
+        e.consume();
+        return;
+      }
 
-      } else if ((edge = pickSupport.getEdge(layoutModel, layoutPoint.getX(), layoutPoint.getY()))
-          != null) {
+      E edge = pickSupport.getEdge(layoutModel, layoutPoint.getX(), layoutPoint.getY());
+
+      if (edge != null) {
 
         log.trace("mousePressed set the edge to {}", edge);
-        pickedEdgeState.pick(edge, true);
-
-      } else {
-        // got no vertex and no edge, clear all selections
-        pickedEdgeState.clear();
-        pickedVertexState.clear();
-        vv.addPostRenderPaintable(lensPaintable);
+        selectedEdgeState.select(edge);
+        e.consume();
+        return;
       }
+
+      // got no vertex and no edge, clear all selections
+      selectedEdgeState.clear();
+      selectedVertexState.clear();
+      vv.addPostRenderPaintable(lensPaintable);
+      e.consume();
+      return;
 
     } else if (e.getModifiersEx() == (modifiers | addToSelectionModifiers)) {
 
       vv.addPostRenderPaintable(lensPaintable);
 
-      if ((vertex = pickSupport.getVertex(layoutModel, layoutPoint.getX(), layoutPoint.getY()))
-          != null) {
+      V vertex = pickSupport.getVertex(layoutModel, layoutPoint.getX(), layoutPoint.getY());
 
+      if (vertex != null) {
         log.trace("mousePressed set the vertex to {}", vertex);
-        pickedVertexState.pick(vertex, true);
+        selectedVertexState.add(vertex);
+        e.consume();
+        return;
+      }
 
-      } else if ((edge = pickSupport.getEdge(layoutModel, layoutPoint.getX(), layoutPoint.getY()))
-          != null) {
+      E edge = pickSupport.getEdge(layoutModel, layoutPoint.getX(), layoutPoint.getY());
 
+      if (edge != null) {
         log.trace("mousePressed set the edge to {}", edge);
-        pickedEdgeState.pick(edge, true);
+        selectedEdgeState.add(edge);
+        e.consume();
+        return;
       }
     }
-    if (vertex != null) {
-      e.consume();
-    }
+    e.consume();
+    return;
   }
 
   /**
@@ -389,14 +401,15 @@ public class PickingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    */
   protected void pickContainedVertices(
       VisualizationViewer<V, E> vv, Shape pickTarget, boolean clear) {
-    MutableSelectedState<V> pickedVertexState = vv.getSelectedVertexState();
-    if (clear) {
-      pickedVertexState.clear();
-    }
+    MutableSelectedState<V> selectedVertexState = vv.getSelectedVertexState();
     GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
     LayoutModel<V> layoutModel = vv.getModel().getLayoutModel();
     Collection<V> picked = pickSupport.getVertices(layoutModel, pickTarget);
-    pickedVertexState.pick(picked, true);
+    if (clear) {
+      selectedVertexState.select(picked);
+    } else {
+      selectedVertexState.add(picked);
+    }
   }
 
   public void mouseClicked(MouseEvent e) {}

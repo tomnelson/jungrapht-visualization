@@ -14,6 +14,7 @@ import java.awt.event.ItemListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -269,10 +270,17 @@ public class VertexImageShaperDemo extends JPanel {
     }
 
     public void itemStateChanged(ItemEvent e) {
-      @SuppressWarnings("unchecked")
-      Icon icon = imager.apply((V) e.getItem());
+      if (e.getItem() instanceof Collection) {
+        ((Collection<V>) e.getItem()).forEach(n -> updatePickIcon(n, e.getStateChange()));
+      } else {
+        updatePickIcon((V) e.getItem(), e.getStateChange());
+      }
+    }
+
+    private void updatePickIcon(V n, int stateChange) {
+      Icon icon = imager.apply(n);
       if (icon instanceof LayeredIcon) {
-        if (e.getStateChange() == ItemEvent.SELECTED) {
+        if (stateChange == ItemEvent.SELECTED) {
           ((LayeredIcon) icon).add(checked);
         } else {
           ((LayeredIcon) icon).remove(checked);

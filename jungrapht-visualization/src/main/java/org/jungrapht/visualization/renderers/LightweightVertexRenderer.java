@@ -33,6 +33,10 @@ public class LightweightVertexRenderer<V, E> implements Renderer.Vertex<V, E> {
     this.simpleVertexShapeFunction = vertexShapeFunction;
   }
 
+  public Function<V, Shape> getVertexShapeFunction() {
+    return this.simpleVertexShapeFunction;
+  }
+
   public void paintVertex(
       RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {
     if (renderContext.getVertexIncludePredicate().test(v)) {
@@ -72,8 +76,7 @@ public class LightweightVertexRenderer<V, E> implements Renderer.Vertex<V, E> {
     // the vertex to be rendered
     AffineTransform xform = AffineTransform.getTranslateInstance(x, y);
     // transform the vertex shape with xtransform
-    shape = xform.createTransformedShape(shape);
-    return shape;
+    return xform.createTransformedShape(shape);
   }
 
   /**

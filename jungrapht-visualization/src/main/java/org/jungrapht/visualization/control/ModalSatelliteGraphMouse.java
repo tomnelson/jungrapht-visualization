@@ -24,7 +24,7 @@ public class ModalSatelliteGraphMouse extends DefaultModalGraphMouse implements 
   }
 
   protected void loadPlugins() {
-    pickingPlugin = new PickingGraphMousePlugin();
+    pickingPlugin = new SelectingGraphMousePlugin();
     animatedPickingPlugin = new SatelliteAnimatedPickingGraphMousePlugin();
     translatingPlugin = new SatelliteTranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
     scalingPlugin = new SatelliteScalingGraphMousePlugin(new CrossoverScalingControl(), 0);

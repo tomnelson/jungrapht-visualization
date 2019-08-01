@@ -21,9 +21,9 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.AnimatedPickingGraphMousePlugin;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.LayoutScalingControl;
-import org.jungrapht.visualization.control.PickingGraphMousePlugin;
 import org.jungrapht.visualization.control.RotatingGraphMousePlugin;
 import org.jungrapht.visualization.control.ScalingGraphMousePlugin;
+import org.jungrapht.visualization.control.SelectingGraphMousePlugin;
 import org.jungrapht.visualization.control.ShearingGraphMousePlugin;
 import org.jungrapht.visualization.control.TranslatingGraphMousePlugin;
 import org.jungrapht.visualization.control.ViewScalingControl;
@@ -193,7 +193,7 @@ public class MultiViewDemo extends JPanel {
     DefaultModalGraphMouse<String, Number> gm1 =
         new DefaultModalGraphMouse<String, Number>() {
           protected void loadPlugins() {
-            pickingPlugin = new PickingGraphMousePlugin<String, Number>();
+            pickingPlugin = new SelectingGraphMousePlugin<String, Number>();
             animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<String, Number>();
             translatingPlugin = new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
             scalingPlugin = new ScalingGraphMousePlugin(new LayoutScalingControl(), 0);
@@ -208,7 +208,7 @@ public class MultiViewDemo extends JPanel {
     DefaultModalGraphMouse<String, Number> gm2 =
         new DefaultModalGraphMouse<String, Number>() {
           protected void loadPlugins() {
-            pickingPlugin = new PickingGraphMousePlugin<String, Number>();
+            pickingPlugin = new SelectingGraphMousePlugin<String, Number>();
             animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<String, Number>();
             translatingPlugin = new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
             scalingPlugin = new ScalingGraphMousePlugin(new ViewScalingControl(), 0);

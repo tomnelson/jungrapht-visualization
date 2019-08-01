@@ -65,7 +65,7 @@ public class EditingPopupGraphMousePlugin<V, E> extends AbstractPopupGraphMouseP
         popup.add(
             new AbstractAction("Delete Vertex") {
               public void actionPerformed(ActionEvent e) {
-                pickedVertexState.pick(vertex, false);
+                pickedVertexState.deselect(vertex);
                 graph.removeVertex(vertex);
                 vv.getVertexSpatial().recalculate();
                 vv.repaint();
@@ -75,7 +75,7 @@ public class EditingPopupGraphMousePlugin<V, E> extends AbstractPopupGraphMouseP
         popup.add(
             new AbstractAction("Delete Edge") {
               public void actionPerformed(ActionEvent e) {
-                pickedEdgeState.pick(edge, false);
+                pickedEdgeState.deselect(edge);
                 graph.removeEdge(edge);
                 vv.getEdgeSpatial().recalculate();
                 vv.repaint();

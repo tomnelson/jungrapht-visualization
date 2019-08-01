@@ -150,17 +150,17 @@ public class AddVertexDemo extends JPanel {
         Integer v1 = graph.vertexSet().size();
 
         graph.addVertex(v1);
-        vv.getRenderContext().getSelectedVertexState().pick(v1, true);
+        vv.getRenderContext().getSelectedVertexState().select(v1);
 
         // wire it to some edges
         if (v_prev != null) {
           Integer edge = graph.edgeSet().size();
-          vv.getRenderContext().getSelectedEdgeState().pick(edge, true);
+          vv.getRenderContext().getSelectedEdgeState().select(edge);
           graph.addEdge(v_prev, v1, edge);
           // let's connect to a random vertex, too!
           int rand = (int) (Math.random() * graph.vertexSet().size());
           edge = graph.edgeSet().size();
-          vv.getRenderContext().getSelectedEdgeState().pick(edge, true);
+          vv.getRenderContext().getSelectedEdgeState().select(edge);
           graph.addEdge(v1, rand, edge);
         }
 

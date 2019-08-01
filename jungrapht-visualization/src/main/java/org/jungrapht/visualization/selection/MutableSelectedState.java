@@ -14,31 +14,75 @@ import java.awt.ItemSelectable;
 import java.util.Collection;
 
 /**
- * An interface for classes that keep track of the "selected" state of edges or vertices.
+ * An interface for classes that keep track of the selected state of T objects.
  *
  * @author Tom Nelson
- * @author Joshua O'Madadhain
  */
 public interface MutableSelectedState<T> extends SelectedState<T>, ItemSelectable {
-  /**
-   * Marks <code>element</code> as "selected" if <code>b == true</code>, and unmarks <code>v</code>
-   * as selected if <code>b == false</code>.
-   *
-   * @param element the element to be selected/unpicked
-   * @param state true if {@code v} is to be marked as selected, false if to be marked as unpicked
-   * @return the "selected" state of <code>element</code> prior to this call
-   */
-  boolean pick(T element, boolean state);
 
   /**
-   * Marks <code>element</code> as "selected" if <code>b == true</code>, and unmarks <code>v</code>
-   * as selected if <code>b == false</code>.
+   * select one element.
    *
-   * @param element the element to be selected/unpicked
-   * @param state true if {@code v} is to be marked as selected, false if to be marked as unpicked
-   * @return the "selected" state of <code>element</code> prior to this call
+   * @param element the element to select
+   * @return true if the collection of selected elements was changed
    */
-  boolean pick(Collection<T> element, boolean state);
+  boolean select(T element);
+
+  /**
+   * deselect one element
+   *
+   * @param element the element to deselect
+   * @return true is the collection of selected elements was changed
+   */
+  boolean deselect(T element);
+
+  /**
+   * add an element to the collection of selected elements
+   *
+   * @param element the element to add
+   * @return true if the collection of selected elements was changed
+   */
+  boolean add(T element);
+
+  /**
+   * remove one element from the collection of selected elements
+   *
+   * @param element the element to remove
+   * @return true if the collection of selected elements was changed
+   */
+  boolean remove(T element);
+
+  /**
+   * select a collection of elements to be the only selected elements
+   *
+   * @param elements
+   * @return true if the collection of selected elements was changed
+   */
+  boolean select(Collection<T> elements);
+
+  /**
+   * deselect a collection of elements
+   *
+   * @param elements the elements to deselect
+   * @return true if the collection of selected elements was changed
+   */
+  boolean deselect(Collection<T> elements);
+
+  /**
+   * add a collection of elements to those already selected
+   *
+   * @param elements the elements to add
+   * @return true if the collection of selected elements was changed
+   */
+  boolean add(Collection<T> elements);
+
+  /**
+   * removes a collection of elements from the selected elements
+   *
+   * @param elements the elements to remove from the selected elements
+   * @return true if the collection of selected elements was changed
+   */
+  boolean remove(Collection<T> elements);
 
   /** Clears the "selected" state from all elements. */
   void clear();

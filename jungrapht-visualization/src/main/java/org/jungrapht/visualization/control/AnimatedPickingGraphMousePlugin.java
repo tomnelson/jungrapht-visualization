@@ -70,10 +70,7 @@ public class AnimatedPickingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
         Point2D p = e.getPoint();
         vertex = pickSupport.getVertex(layoutModel, p.getX(), p.getY());
         if (vertex != null) {
-          if (!pickedVertexState.isSelected(vertex)) {
-            pickedVertexState.clear();
-            pickedVertexState.pick(vertex, true);
-          }
+          pickedVertexState.select(vertex);
         }
       }
       e.consume();

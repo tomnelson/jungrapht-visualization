@@ -55,6 +55,7 @@ public class LightweightRenderingVisitor implements ChangeListener {
     public Timer(VisualizationServer visualizationServer) {
       this.visualizationServer = visualizationServer;
       visualizationServer.simplifyRenderer(true);
+      visualizationServer.repaint();
     }
 
     public void incrementValue() {

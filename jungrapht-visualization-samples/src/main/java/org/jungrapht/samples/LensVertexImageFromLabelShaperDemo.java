@@ -11,6 +11,7 @@ package org.jungrapht.samples;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.Collection;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
@@ -257,9 +258,17 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
     }
 
     public void itemStateChanged(ItemEvent e) {
-      Icon icon = imager.apply((Number) e.getItem());
+      if (e.getItem() instanceof Collection) {
+        ((Collection<Number>) e.getItem()).forEach(n -> updatePickIcon(n, e.getStateChange()));
+      } else {
+        updatePickIcon((Number) e.getItem(), e.getStateChange());
+      }
+    }
+
+    private void updatePickIcon(Number n, int stateChange) {
+      Icon icon = imager.apply(n);
       if (icon instanceof LayeredIcon) {
-        if (e.getStateChange() == ItemEvent.SELECTED) {
+        if (stateChange == ItemEvent.SELECTED) {
           ((LayeredIcon) icon).add(checked);
         } else {
           ((LayeredIcon) icon).remove(checked);

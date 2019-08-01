@@ -8,14 +8,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A subclass of PickingGraphMousePlugin that contains methods that are overridden to account for
+ * A subclass of SelectingGraphMousePlugin that contains methods that are overridden to account for
  * the Lens effects that are in the view projection
  *
  * @author Tom Nelson
  */
-public class LensPickingGraphMousePlugin<V, E> extends PickingGraphMousePlugin<V, E> {
+public class LensSelectingGraphMousePlugin<V, E> extends SelectingGraphMousePlugin<V, E> {
 
-  private static final Logger log = LoggerFactory.getLogger(LensPickingGraphMousePlugin.class);
+  private static final Logger log = LoggerFactory.getLogger(LensSelectingGraphMousePlugin.class);
 
   protected TransformSupport transformSupport = new LensTransformSupport();
 

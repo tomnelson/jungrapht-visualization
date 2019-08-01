@@ -65,9 +65,8 @@ public class BasicVertexRenderer<V, E> implements Renderer.Vertex<V, E> {
     // create a transform that translates to the location of
     // the vertex to be rendered
     AffineTransform xform = AffineTransform.getTranslateInstance(x, y);
-    // transform the vertex shape with xtransform
-    shape = xform.createTransformedShape(shape);
-    return shape;
+    // return the transformed vertex shape
+    return xform.createTransformedShape(shape);
   }
 
   /**
@@ -84,9 +83,7 @@ public class BasicVertexRenderer<V, E> implements Renderer.Vertex<V, E> {
     if (renderContext.getVertexIconFunction() != null) {
       Icon icon = renderContext.getVertexIconFunction().apply(v);
       if (icon != null) {
-
         g.draw(icon, renderContext.getScreenDevice(), shape, coords[0], coords[1]);
-
       } else {
         paintShapeForVertex(renderContext, visualizationModel, v, shape);
       }

@@ -29,7 +29,48 @@ public class MultiMutableSelectedState<T> extends AbstractMutableSelectedState<T
   /** the 'selected' items */
   protected Set<T> selected = new LinkedHashSet<>();
 
-  private boolean select(T t) {
+  /**
+   * Make element the only selected item, if it is not already selected if element is already
+   * selected, clear all the selections (including element) if element is not already selected, make
+   * element the only item that is selected
+   *
+   * @param element
+   * @return
+   */
+  @Override
+  public boolean select(T element) {
+    // if element is already selected
+    if (selected.contains(element)) {
+      // this is a deselect
+      clear();
+      return true;
+    }
+    clear();
+    this.selected.add(element);
+    // added and mutated the set.
+    fireItemStateChanged(
+        new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, element, ItemEvent.SELECTED));
+    return true; // mutated the collection and fired an event
+  }
+
+  /**
+   * if t is was already selected, remove it
+   *
+   * @param t
+   * @return
+   */
+  @Override
+  public boolean deselect(T t) {
+    if (this.selected.remove(t)) {
+      fireItemStateChanged(
+          new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, t, ItemEvent.DESELECTED));
+      return true; // mutated the collection
+    }
+    return false;
+  }
+
+  @Override
+  public boolean add(T t) {
     if (this.selected.add(t)) {
       fireItemStateChanged(
           new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, t, ItemEvent.SELECTED));
@@ -43,59 +84,66 @@ public class MultiMutableSelectedState<T> extends AbstractMutableSelectedState<T
     return false;
   }
 
-  private boolean deselect(T t) {
-    if (this.selected.remove(t)) {
+  @Override
+  public boolean remove(T element) {
+    return false;
+  }
+
+  @Override
+  public boolean select(Collection<T> elements) {
+
+    // if element is already selected
+    if (selected.containsAll(elements)) {
+      // this is a deselect
+      clear();
+      return true;
+    }
+    this.selected.addAll(elements);
+    // added and mutated the set.
+    fireItemStateChanged(
+        new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, elements, ItemEvent.SELECTED));
+    return true; // mutated the collection and fired an event
+  }
+
+  @Override
+  public boolean deselect(Collection<T> elements) {
+    if (this.selected.removeAll(elements)) {
       fireItemStateChanged(
-          new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, t, ItemEvent.DESELECTED));
+          new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, elements, ItemEvent.DESELECTED));
       return true; // mutated the collection
     }
     return false;
   }
 
-  /**
-   * select or deselect passed t, based on state
-   *
-   * @param t the item to select
-   * @param state true to select, false to deselect
-   * @return true if the selected state was changed
-   */
   @Override
-  public boolean pick(T t, boolean state) {
-    return state ? select(t) : deselect(t);
-  }
-
-  private boolean select(Collection<T> t) {
-    if (this.selected.addAll(t)) {
+  public boolean add(Collection<T> elements) {
+    if (this.selected.addAll(elements)) {
       fireItemStateChanged(
-          new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, t, ItemEvent.SELECTED));
+          new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, elements, ItemEvent.SELECTED));
       return true; // mutated the collection and fired an event
     }
-    if (this.selected.removeAll(t)) {
+    if (this.selected.removeAll(elements)) {
       fireItemStateChanged(
-          new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, t, ItemEvent.DESELECTED));
+          new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, elements, ItemEvent.DESELECTED));
       return true;
     }
     return false;
   }
 
-  private boolean deselect(Collection<T> t) {
-    if (this.selected.remove(t)) {
+  @Override
+  public boolean remove(Collection<T> elements) {
+    if (this.selected.remove(elements)) {
       fireItemStateChanged(
-          new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, t, ItemEvent.DESELECTED));
+          new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, elements, ItemEvent.DESELECTED));
       return true; // mutated the collection
     }
     return false;
   }
 
   @Override
-  public boolean pick(Collection<T> t, boolean state) {
-    return state ? select(t) : deselect(t);
-  }
-
-  @Override
   public void clear() {
     Collection<T> unpicks = new ArrayList<>(selected);
-    pick(unpicks, false);
+    deselect(unpicks);
     selected.clear();
   }
 

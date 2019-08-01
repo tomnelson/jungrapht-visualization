@@ -29,9 +29,9 @@ import org.jungrapht.visualization.control.AbstractModalGraphMouse;
 import org.jungrapht.visualization.control.AnimatedPickingGraphMousePlugin;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.ModalGraphMouse;
-import org.jungrapht.visualization.control.PickingGraphMousePlugin;
 import org.jungrapht.visualization.control.RotatingGraphMousePlugin;
 import org.jungrapht.visualization.control.ScalingGraphMousePlugin;
+import org.jungrapht.visualization.control.SelectingGraphMousePlugin;
 import org.jungrapht.visualization.control.ShearingGraphMousePlugin;
 import org.jungrapht.visualization.control.TranslatingGraphMousePlugin;
 
@@ -84,7 +84,7 @@ public class AnnotatingModalGraphMouse<V, E> extends AbstractModalGraphMouse
   /** create the plugins, and load the plugins for TRANSFORMING mode */
   @Override
   protected void loadPlugins() {
-    this.pickingPlugin = new PickingGraphMousePlugin<V, E>();
+    this.pickingPlugin = new SelectingGraphMousePlugin<V, E>();
     this.animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<V, E>();
     this.translatingPlugin = new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
     this.scalingPlugin = new ScalingGraphMousePlugin(new CrossoverScalingControl(), 0, in, out);
