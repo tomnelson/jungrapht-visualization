@@ -26,6 +26,7 @@ import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.AbstractModalGraphMouse;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
+import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -139,10 +140,9 @@ public class WorldMapGraphDemo extends JPanel {
 
     final GraphZoomScrollPane panel = new GraphZoomScrollPane(vv);
     add(panel);
-    final AbstractModalGraphMouse graphMouse = new DefaultModalGraphMouse<String, Number>();
+    final VisualizationViewer.GraphMouse graphMouse = new DefaultGraphMouse<String, Number>();
     vv.setGraphMouse(graphMouse);
 
-    vv.addKeyListener(graphMouse.getModeKeyListener());
     vv.setToolTipText("<html><center>Type 'p' for Pick mode<p>Type 't' for Transform mode");
 
     final ScalingControl scaler = new CrossoverScalingControl();

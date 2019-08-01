@@ -173,6 +173,7 @@ public class PickingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
         // got no vertex and no edge, clear all selections
         pickedEdgeState.clear();
         pickedVertexState.clear();
+        vv.addPostRenderPaintable(lensPaintable);
       }
 
     } else if (e.getModifiersEx() == (modifiers | addToSelectionModifiers)) {
