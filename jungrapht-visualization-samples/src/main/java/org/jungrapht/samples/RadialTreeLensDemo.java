@@ -134,7 +134,7 @@ public class RadialTreeLensDemo extends JPanel {
     JPanel controls = new JPanel(new GridLayout(1, 0));
     JPanel hyperControls = new JPanel(new GridLayout(3, 2));
     hyperControls.setBorder(BorderFactory.createTitledBorder("Examiner Lens"));
-    JPanel modeControls = new JPanel(new BorderLayout());
+    JPanel modeControls = new JPanel();
     modeControls.setBorder(BorderFactory.createTitledBorder("Mouse Mode"));
     modeControls.add(graphMouse.getModeComboBox());
     hyperControls.add(hyperView);

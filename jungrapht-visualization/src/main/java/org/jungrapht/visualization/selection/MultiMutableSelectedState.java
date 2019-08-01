@@ -19,79 +19,101 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Maintains the state of what has been 'picked' in the graph. The <code>Sets</code> are constructed
- * so that their iterators will traverse them in the order in which they are picked.
+ * Maintains the state of what has been 'selected' in the graph. The <code>Sets</code> are
+ * constructed so that their iterators will traverse them in the order in which they are selected.
  *
  * @author Tom Nelson
- * @author Joshua O'Madadhain
  */
 public class MultiMutableSelectedState<T> extends AbstractMutableSelectedState<T>
     implements MutableSelectedState<T> {
   /** the 'selected' items */
-  protected Set<T> picked = new LinkedHashSet<>();
+  protected Set<T> selected = new LinkedHashSet<>();
 
+  private boolean select(T t) {
+    if (this.selected.add(t)) {
+      fireItemStateChanged(
+          new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, t, ItemEvent.SELECTED));
+      return true; // mutated the collection and fired an event
+    }
+    if (this.selected.remove(t)) {
+      fireItemStateChanged(
+          new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, t, ItemEvent.DESELECTED));
+      return true;
+    }
+    return false;
+  }
+
+  private boolean deselect(T t) {
+    if (this.selected.remove(t)) {
+      fireItemStateChanged(
+          new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, t, ItemEvent.DESELECTED));
+      return true; // mutated the collection
+    }
+    return false;
+  }
+
+  /**
+   * select or deselect passed t, based on state
+   *
+   * @param t the item to select
+   * @param state true to select, false to deselect
+   * @return true if the selected state was changed
+   */
   @Override
   public boolean pick(T t, boolean state) {
-    boolean priorState = this.picked.contains(t);
-    if (state) {
-      picked.add(t);
-      if (!priorState) {
-        fireItemStateChanged(
-            new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, t, ItemEvent.SELECTED));
-      }
+    return state ? select(t) : deselect(t);
+  }
 
-    } else {
-      picked.remove(t);
-      if (priorState) {
-        fireItemStateChanged(
-            new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, t, ItemEvent.DESELECTED));
-      }
+  private boolean select(Collection<T> t) {
+    if (this.selected.addAll(t)) {
+      fireItemStateChanged(
+          new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, t, ItemEvent.SELECTED));
+      return true; // mutated the collection and fired an event
     }
-    return priorState;
+    if (this.selected.removeAll(t)) {
+      fireItemStateChanged(
+          new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, t, ItemEvent.DESELECTED));
+      return true;
+    }
+    return false;
+  }
+
+  private boolean deselect(Collection<T> t) {
+    if (this.selected.remove(t)) {
+      fireItemStateChanged(
+          new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, t, ItemEvent.DESELECTED));
+      return true; // mutated the collection
+    }
+    return false;
   }
 
   @Override
   public boolean pick(Collection<T> t, boolean state) {
-    boolean priorState = this.picked.containsAll(t);
-    if (state) {
-      picked.addAll(t);
-      if (!priorState) {
-        fireItemStateChanged(
-            new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, t, ItemEvent.SELECTED));
-      }
-
-    } else {
-      picked.removeAll(t);
-      if (priorState) {
-        fireItemStateChanged(
-            new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, t, ItemEvent.DESELECTED));
-      }
-    }
-    return priorState;
+    return state ? select(t) : deselect(t);
   }
 
   @Override
   public void clear() {
-    Collection<T> unpicks = new ArrayList<>(picked);
+    Collection<T> unpicks = new ArrayList<>(selected);
     pick(unpicks, false);
-    picked.clear();
+    selected.clear();
   }
 
   @Override
   public Set<T> getSelected() {
-    return Collections.unmodifiableSet(picked);
+    return Collections.unmodifiableSet(selected);
   }
 
   @Override
   public boolean isSelected(T t) {
-    return picked.contains(t);
+    return selected.contains(t);
   }
 
   /** for the ItemSelectable interface contract */
   @SuppressWarnings("unchecked")
   @Override
   public T[] getSelectedObjects() {
-    List<T> list = new ArrayList<>(picked);
+    List<T> list = new ArrayList<>(selected);
     return (T[]) list.toArray();
   }
 }

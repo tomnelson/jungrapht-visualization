@@ -38,7 +38,7 @@ public class DefaultVertexLabelRenderer extends JLabel
   /**
    * Creates a default table cell renderer.
    *
-   * @param pickedVertexLabelColor the color to use for rendering the labels of picked vertices
+   * @param pickedVertexLabelColor the color to use for rendering the labels of selected vertices
    */
   public DefaultVertexLabelRenderer(Color pickedVertexLabelColor) {
     this.pickedVertexLabelColor = pickedVertexLabelColor;

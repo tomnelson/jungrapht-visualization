@@ -124,7 +124,7 @@ public class MultiViewDemo extends JPanel {
     vv2.setPickSupport(pickSupport);
     vv3.setPickSupport(pickSupport);
 
-    // create one picked state for all 3 views to share
+    // create one selected state for all 3 views to share
     MutableSelectedState<Number> pes = new MultiMutableSelectedState<>();
     MutableSelectedState<String> pvs = new MultiMutableSelectedState<>();
     vv1.setSelectedVertexState(pvs);
@@ -134,7 +134,7 @@ public class MultiViewDemo extends JPanel {
     vv2.setSelectedEdgeState(pes);
     vv3.setSelectedEdgeState(pes);
 
-    // set an edge paint function that shows picked edges
+    // set an edge paint function that shows selected edges
     vv1.getRenderContext()
         .setEdgeDrawPaintFunction(new PickableElementPaintFunction<>(pes, Color.black, Color.red));
     vv2.getRenderContext()

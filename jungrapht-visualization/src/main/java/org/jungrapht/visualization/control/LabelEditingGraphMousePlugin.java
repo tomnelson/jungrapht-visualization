@@ -28,10 +28,10 @@ import org.jungrapht.visualization.layout.model.LayoutModel;
 public class LabelEditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     implements MouseListener {
 
-  /** the picked Vertex, if any */
+  /** the selected Vertex, if any */
   protected V vertex;
 
-  /** the picked Edge, if any */
+  /** the selected Edge, if any */
   protected E edge;
 
   protected Map<V, String> vertexLabelMap;
@@ -58,12 +58,12 @@ public class LabelEditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
 
   /**
    * For primary modifiers (default, MouseButton1): pick a single Vertex or Edge that is under the
-   * mouse pointer. If no Vertex or edge is under the pointer, unselect all picked Vertices and
+   * mouse pointer. If no Vertex or edge is under the pointer, unselect all selected Vertices and
    * edges, and set up to draw a rectangle for multiple selection of contained Vertices. For
    * additional selection (default Shift+MouseButton1): Add to the selection, a single Vertex or
-   * Edge that is under the mouse pointer. If a previously picked Vertex or Edge is under the
-   * pointer, it is un-picked. If no vertex or Edge is under the pointer, set up to draw a multiple
-   * selection rectangle (as above) but do not unpick previously picked elements.
+   * Edge that is under the mouse pointer. If a previously selected Vertex or Edge is under the
+   * pointer, it is un-selected. If no vertex or Edge is under the pointer, set up to draw a
+   * multiple selection rectangle (as above) but do not unpick previously selected elements.
    *
    * @param e the event
    */
@@ -131,8 +131,8 @@ public class LabelEditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   public void mouseReleased(MouseEvent e) {}
 
   /**
-   * If the mouse is over a picked vertex, drag all picked vertices with the mouse. If the mouse is
-   * not over a Vertex, draw the rectangle to select multiple Vertices
+   * If the mouse is over a selected vertex, drag all selected vertices with the mouse. If the mouse
+   * is not over a Vertex, draw the rectangle to select multiple Vertices
    */
   public void mousePressed(MouseEvent e) {}
 

@@ -103,7 +103,7 @@ public class QuadraticLeafSplitter<T> implements LeafSplitter<T> {
     Optional<Map.Entry<T, Rectangle2D>> nextOptional = pickNext(entries, pickedSeeds);
     if (nextOptional.isPresent()) {
       Map.Entry<T, Rectangle2D> next = nextOptional.get();
-      // which of the picked seeds should it be added to?
+      // which of the selected seeds should it be added to?
       Rectangle2D leftBounds = pickedSeeds.left.getBounds();
       Rectangle2D rightBounds = pickedSeeds.right.getBounds();
       // which rectangle is enlarged the least?

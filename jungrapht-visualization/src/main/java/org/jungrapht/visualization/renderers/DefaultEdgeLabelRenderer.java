@@ -42,7 +42,7 @@ public class DefaultEdgeLabelRenderer extends JLabel implements EdgeLabelRendere
   /**
    * Creates an instance with the specified properties.
    *
-   * @param pickedEdgeLabelColor the color to use for rendering the labels of picked edges
+   * @param pickedEdgeLabelColor the color to use for rendering the labels of selected edges
    * @param rotateEdgeLabels whether the
    */
   public DefaultEdgeLabelRenderer(Color pickedEdgeLabelColor, boolean rotateEdgeLabels) {

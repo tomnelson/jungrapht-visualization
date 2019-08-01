@@ -289,30 +289,30 @@ public class CliqueLayoutDemo extends JPanel {
     }
 
     //    if (state) {
-    //      // put the picked vertices into a new sublayout
-    //      Collection<String> picked = ps.getSelected();
-    //      if (picked.size() > 1) {
+    //      // put the selected vertices into a new sublayout
+    //      Collection<String> selected = ps.getSelected();
+    //      if (selected.size() > 1) {
     //        Point2D center = new Point2D.Double();
     //        double x = 0;
     //        double y = 0;
-    //        for (String vertex : picked) {
+    //        for (String vertex : selected) {
     //          Point p = clusteringLayoutModel.apply(vertex);
     //          x += p.x;
     //          y += p.y;
     //        }
-    //        x /= picked.size();
-    //        y /= picked.size();
+    //        x /= selected.size();
+    //        y /= selected.size();
     //        center.setLocation(x, y);
     //
     //        Graph<String, Number> subGraph;
     //        try {
     //          subGraph = GraphTypeBuilder.forGraph(graph).buildGraph();
-    //          for (String vertex : picked) {
+    //          for (String vertex : selected) {
     //            subGraph.addVertex(vertex);
     //            for (Number edge : graph.edgesOf(vertex)) {
     //              String vertexU = graph.getEdgeSource(edge);
     //              String vertexV = graph.getEdgeTarget(edge);
-    //              if (picked.contains(vertexU) && picked.contains(vertexV)) {
+    //              if (selected.contains(vertexU) && selected.contains(vertexV)) {
     //                // put this edge into the subgraph
     //                subGraph.addEdge(vertexU, vertexV, edge);
     //              }

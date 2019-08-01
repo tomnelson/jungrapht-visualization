@@ -27,6 +27,7 @@ import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
+import org.jungrapht.visualization.selection.SelectedState;
 import org.jungrapht.visualization.transform.HyperbolicTransformer;
 import org.jungrapht.visualization.transform.LayoutLensSupport;
 import org.jungrapht.visualization.transform.Lens;
@@ -110,6 +111,9 @@ public class BalloonLayoutForestDemo extends JPanel {
           }
         });
 
+    vv.getSelectedVertexState()
+        .addItemListener(new SelectedState.StateChangeListener<>(this::selected, this::deselected));
+
     LayoutModel layoutModel = vv.getModel().getLayoutModel();
     Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
     Lens lens = new Lens(d);
@@ -174,6 +178,14 @@ public class BalloonLayoutForestDemo extends JPanel {
     viewControls.add(noLens);
     controls.add(viewControls);
     add(controls, BorderLayout.SOUTH);
+  }
+
+  private void selected(Object o) {
+    log.info("selected was {}", o);
+  }
+
+  private void deselected(Object o) {
+    log.info("deselected: {}", o);
   }
 
   public static void main(String[] args) {

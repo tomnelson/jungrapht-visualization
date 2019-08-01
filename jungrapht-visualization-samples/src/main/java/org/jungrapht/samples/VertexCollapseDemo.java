@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A demo that shows how collections of vertices can be collapsed into a single vertex. In this
- * demo, the vertices that are collapsed are those mouse-picked by the user. Any criteria could be
+ * demo, the vertices that are collapsed are those mouse-selected by the user. Any criteria could be
  * used to form the vertex collections to be collapsed, perhaps some common characteristic of those
  * vertex objects.
  *

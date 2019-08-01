@@ -27,7 +27,7 @@ import org.jungrapht.visualization.selection.MutableSelectedState;
 
 /**
  * AnimatedPickingGraphMousePlugin supports the picking of one Graph Vertex. When the mouse is
- * released, the graph is translated so that the picked Vertex is moved to the center of the view.
+ * released, the graph is translated so that the selected Vertex is moved to the center of the view.
  * This translation is conducted in an animation Thread so that the graph slides to its new position
  *
  * @author Tom Nelson
@@ -35,7 +35,7 @@ import org.jungrapht.visualization.selection.MutableSelectedState;
 public class AnimatedPickingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     implements MouseListener, MouseMotionListener {
 
-  /** the picked Vertex */
+  /** the selected Vertex */
   protected V vertex;
 
   /** Creates an instance with default modifiers of BUTTON1_DOWN_MASK and CTRL_DOWN_MASK */
@@ -81,8 +81,8 @@ public class AnimatedPickingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
   }
 
   /**
-   * If a Vertex was picked in the mousePressed event, start a Thread to animate the translation of
-   * the graph so that the picked Vertex moves to the center of the view
+   * If a Vertex was selected in the mousePressed event, start a Thread to animate the translation
+   * of the graph so that the selected Vertex moves to the center of the view
    *
    * @param e the event
    */
@@ -92,7 +92,7 @@ public class AnimatedPickingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
       final VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
       Point newCenter = null;
       if (vertex != null) {
-        // center the picked vertex
+        // center the selected vertex
         LayoutModel<V> layoutModel = vv.getModel().getLayoutModel();
         newCenter = layoutModel.apply(vertex);
       } else {

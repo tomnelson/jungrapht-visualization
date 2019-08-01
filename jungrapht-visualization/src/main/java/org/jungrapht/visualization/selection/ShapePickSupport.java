@@ -227,7 +227,7 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
    * @param layoutModel
    * @param x in the layout coordinate system
    * @param y in the layout coordinate system
-   * @return the picked vertex
+   * @return the selected vertex
    */
   protected V getVertex(Spatial<V> spatial, LayoutModel<V> layoutModel, double x, double y) {
 
@@ -262,7 +262,7 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
 
     double minDistance = Double.MAX_VALUE;
 
-    // will be the picked vertex
+    // will be the selected vertex
     V closest = null;
 
     // get the all vertices from any leafs that intersect the target
@@ -308,7 +308,7 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
       }
     }
     if (log.isTraceEnabled()) {
-      log.trace("picked {} with spatial quadtree", closest);
+      log.trace("selected {} with spatial quadtree", closest);
     }
     return closest;
   }
@@ -380,7 +380,7 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
       }
     }
     if (log.isTraceEnabled()) {
-      log.trace("these were actually picked: {}", visible);
+      log.trace("these were actually selected: {}", visible);
     }
     return visible;
   }
@@ -410,7 +410,7 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
       }
     }
     if (log.isTraceEnabled()) {
-      log.trace("these were actually picked: {}", visible);
+      log.trace("these were actually selected: {}", visible);
     }
     return visible;
   }
@@ -496,7 +496,7 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
    * @param layoutModel
    * @param x in the layout coordinate system
    * @param y in the layout coordinate system
-   * @return the picked vertex
+   * @return the selected vertex
    */
   protected E getEdge(
       SpatialRTree.Edges<E, V> spatial, LayoutModel<V> layoutModel, double x, double y) {
@@ -529,7 +529,7 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
 
     double minDistance = Double.MAX_VALUE;
 
-    // will be the picked edge
+    // will be the selected edge
     E closest = null;
 
     // get the all vertices from any leafs that intersect the target

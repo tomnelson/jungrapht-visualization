@@ -11,6 +11,7 @@ package org.jungrapht.samples;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -145,7 +146,7 @@ public class LensVertexImageShaperDemo extends JPanel {
     vv.getRenderContext().setVertexIconFunction(vertexIconFunction);
 
     // Get the pickedState and add a listener that will decorate the
-    //Vertex images with a checkmark icon when they are picked
+    //Vertex images with a checkmark icon when they are selected
     MutableSelectedState<Number> ps = vv.getSelectedVertexState();
     ps.addItemListener(new PickWithIconListener(vertexIconFunction));
 
@@ -311,9 +312,17 @@ public class LensVertexImageShaperDemo extends JPanel {
     }
 
     public void itemStateChanged(ItemEvent e) {
-      Icon icon = imager.apply((Number) e.getItem());
+      if (e.getItem() instanceof Collection) {
+        ((Collection<Number>) e.getItem()).forEach(n -> updatePickIcon(n, e.getStateChange()));
+      } else {
+        updatePickIcon((Number) e.getItem(), e.getStateChange());
+      }
+    }
+
+    private void updatePickIcon(Number n, int stateChange) {
+      Icon icon = imager.apply(n);
       if (icon instanceof LayeredIcon) {
-        if (e.getStateChange() == ItemEvent.SELECTED) {
+        if (stateChange == ItemEvent.SELECTED) {
           ((LayeredIcon) icon).add(checked);
         } else {
           ((LayeredIcon) icon).remove(checked);

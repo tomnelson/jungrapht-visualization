@@ -93,7 +93,7 @@ public class SatelliteVisualizationViewer<V, E> extends VisualizationViewer<V, E
     // make sure the satellite listens for changes in the master
     master.addChangeListener(this);
 
-    // share the picked state of the master
+    // share the selected state of the master
     setSelectedVertexState(master.getSelectedVertexState());
     setSelectedEdgeState(master.getSelectedEdgeState());
     setVertexSpatial(new Spatial.NoOp.Vertex(model.getLayoutModel()));

@@ -7,6 +7,7 @@
  */
 package org.jungrapht.visualization;
 
+import com.google.common.base.Preconditions;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
@@ -173,7 +174,9 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
    */
   protected CellRendererPane rendererPane = new CellRendererPane();
 
-  /** A default GraphLabelRenderer - picked Vertex labels are blue, picked edge labels are cyan */
+  /**
+   * A default GraphLabelRenderer - selected Vertex labels are blue, selected edge labels are cyan
+   */
   protected VertexLabelRenderer vertexLabelRenderer = new DefaultVertexLabelRenderer(Color.blue);
 
   protected EdgeLabelRenderer edgeLabelRenderer = new DefaultEdgeLabelRenderer(Color.cyan);
@@ -476,6 +479,7 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
   }
 
   public void setPickSupport(GraphElementAccessor<V, E> pickSupport) {
+    Preconditions.checkNotNull(pickSupport);
     this.pickSupport = pickSupport;
   }
 

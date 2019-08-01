@@ -50,8 +50,8 @@ import org.slf4j.LoggerFactory;
 /**
  * The purpose of this demo is to test picking a single, irregularly shaped vertex in the presence
  * of Lens effects and spatial data structures. Correct operation is that the vertex should become
- * 'picked' when the mouse is clicked within the vertex star shape (i.e. not beyond its bounds and
- * not between the star points), or it should become 'picked' when a rectangular region is dragged
+ * 'selected' when the mouse is clicked within the vertex star shape (i.e. not beyond its bounds and
+ * not between the star points), or it should become 'selected' when a rectangular region is dragged
  * that contains the vertex's center.
  *
  * @author Tom Nelson

@@ -19,8 +19,6 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 import javax.swing.*;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationModel;
@@ -45,10 +43,10 @@ public class PickingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     implements MouseListener, MouseMotionListener {
 
   private static final Logger log = LoggerFactory.getLogger(PickingGraphMousePlugin.class);
-  /** the picked Vertex, if any */
+  /** the selected Vertex, if any */
   protected V vertex;
 
-  /** the picked Edge, if any */
+  /** the selected Edge, if any */
   protected E edge;
 
   /** controls whether the Vertices may be moved with the mouse */
@@ -57,7 +55,7 @@ public class PickingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   /** additional modifiers for the action of adding to an existing selection */
   protected int addToSelectionModifiers;
 
-  /** used to draw a rectangle to contain picked vertices */
+  /** used to draw a rectangle to contain selected vertices */
   protected Rectangle2D viewRectangle = new Rectangle2D.Float();
   // viewRectangle projected onto the layout coordinate system
   protected Shape layoutTargetShape = viewRectangle;
@@ -125,12 +123,12 @@ public class PickingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
 
   /**
    * For primary modifiers (default, MouseButton1): pick a single Vertex or Edge that is under the
-   * mouse pointer. If no Vertex or edge is under the pointer, unselect all picked Vertices and
+   * mouse pointer. If no Vertex or edge is under the pointer, unselect all selected Vertices and
    * edges, and set up to draw a rectangle for multiple selection of contained Vertices. For
    * additional selection (default Shift+MouseButton1): Add to the selection, a single Vertex or
-   * Edge that is under the mouse pointer. If a previously picked Vertex or Edge is under the
-   * pointer, it is un-picked. If no vertex or Edge is under the pointer, set up to draw a multiple
-   * selection rectangle (as above) but do not unpick previously picked elements.
+   * Edge that is under the mouse pointer. If a previously selected Vertex or Edge is under the
+   * pointer, it is un-selected. If no vertex or Edge is under the pointer, set up to draw a
+   * multiple selection rectangle (as above) but do not unpick previously selected elements.
    *
    * @param e the event
    */
@@ -147,64 +145,51 @@ public class PickingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
     MutableSelectedState<V> pickedVertexState = vv.getSelectedVertexState();
     MutableSelectedState<E> pickedEdgeState = vv.getSelectedEdgeState();
-    if (pickSupport != null && pickedVertexState != null) {
-      MultiLayerTransformer multiLayerTransformer =
-          vv.getRenderContext().getMultiLayerTransformer();
 
-      // subclass can override to account for view distortion effects
-      updatePickingTargets(vv, multiLayerTransformer, down, down);
+    MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
 
-      // layoutPoint is the mouse event point projected on the layout coordinate system
+    // subclass can override to account for view distortion effects
+    updatePickingTargets(vv, multiLayerTransformer, down, down);
 
-      // subclass can override to account for view distortion effects
-      Point2D layoutPoint = transformSupport.inverseTransform(vv, down);
-      log.trace("layout coords of mouse click {}", layoutPoint);
-      if (e.getModifiersEx() == modifiers) {
+    // subclass can override to account for view distortion effects
+    // layoutPoint is the mouse event point projected on the layout coordinate system
+    Point2D layoutPoint = transformSupport.inverseTransform(vv, down);
+    log.trace("layout coords of mouse click {}", layoutPoint);
+    if (e.getModifiersEx() == modifiers) {
 
-        vertex = pickSupport.getVertex(layoutModel, layoutPoint.getX(), layoutPoint.getY());
+      if ((vertex = pickSupport.getVertex(layoutModel, layoutPoint.getX(), layoutPoint.getY()))
+          != null) {
+
         log.trace("mousePressed set the vertex to {}", vertex);
-        if (vertex != null) {
-          // picked a vertex
-          if (!pickedVertexState.isSelected(vertex)) {
-            pickedVertexState.clear();
-            pickedVertexState.pick(vertex, true);
-          }
+        pickedVertexState.pick(vertex, true);
 
-        } else if ((edge = pickSupport.getEdge(layoutModel, layoutPoint.getX(), layoutPoint.getY()))
-            != null) {
-          // picked an edge
-          pickedEdgeState.clear();
-          pickedEdgeState.pick(edge, true);
-        } else {
-          // prepare to draw a pick area and clear previous picks
-          vv.addPostRenderPaintable(lensPaintable);
-          pickedEdgeState.clear();
-          pickedVertexState.clear();
-        }
+      } else if ((edge = pickSupport.getEdge(layoutModel, layoutPoint.getX(), layoutPoint.getY()))
+          != null) {
 
-      } else if (e.getModifiersEx() == (modifiers | addToSelectionModifiers)) {
-        vv.addPostRenderPaintable(lensPaintable);
+        log.trace("mousePressed set the edge to {}", edge);
+        pickedEdgeState.pick(edge, true);
 
-        vertex = pickSupport.getVertex(layoutModel, layoutPoint.getX(), layoutPoint.getY());
-        log.trace("mousePressed with add set the vertex to {}", vertex);
-        if (vertex != null) {
-          Set<V> alreadySelected = pickedVertexState.getSelected();
-          if (pickedVertexState.isSelected(vertex)) {
-            // this is an un-pick.
-            pickedVertexState.pick(vertex, false);
-            vertex = null;
-          } else {
-            // add the new vertex to the set to pick
-            Set<V> toSelect = new HashSet<>(pickedVertexState.getSelected());
-            toSelect.add(vertex);
-            // now pick all at once to fire one event for all
-            pickedVertexState.pick(toSelect, true);
-          }
+      } else {
+        // got no vertex and no edge, clear all selections
+        pickedEdgeState.clear();
+        pickedVertexState.clear();
+      }
 
-        } else if ((edge = pickSupport.getEdge(layoutModel, layoutPoint.getX(), layoutPoint.getY()))
-            != null) {
-          pickedEdgeState.pick(edge, !pickedEdgeState.isSelected(edge));
-        }
+    } else if (e.getModifiersEx() == (modifiers | addToSelectionModifiers)) {
+
+      vv.addPostRenderPaintable(lensPaintable);
+
+      if ((vertex = pickSupport.getVertex(layoutModel, layoutPoint.getX(), layoutPoint.getY()))
+          != null) {
+
+        log.trace("mousePressed set the vertex to {}", vertex);
+        pickedVertexState.pick(vertex, true);
+
+      } else if ((edge = pickSupport.getEdge(layoutModel, layoutPoint.getX(), layoutPoint.getY()))
+          != null) {
+
+        log.trace("mousePressed set the edge to {}", edge);
+        pickedEdgeState.pick(edge, true);
       }
     }
     if (vertex != null) {
@@ -279,8 +264,8 @@ public class PickingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   }
 
   /**
-   * If the mouse is over a picked vertex, drag all picked vertices with the mouse. If the mouse is
-   * not over a Vertex, draw the rectangle to select multiple Vertices
+   * If the mouse is over a selected vertex, drag all selected vertices with the mouse. If the mouse
+   * is not over a Vertex, draw the rectangle to select multiple Vertices
    */
   @SuppressWarnings("unchecked")
   public void mouseDragged(MouseEvent e) {
@@ -397,24 +382,20 @@ public class PickingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    * pick the vertices inside the rectangle created from points 'down' and 'out' (two diagonally
    * opposed corners of the rectangle)
    *
-   * @param vv the viewer containing the layout and picked state
+   * @param vv the viewer containing the layout and selected state
    * @param pickTarget - the shape to pick vertices in (layout coordinate system)
-   * @param clear whether to reset existing picked state
+   * @param clear whether to reset existing selected state
    */
   protected void pickContainedVertices(
       VisualizationViewer<V, E> vv, Shape pickTarget, boolean clear) {
     MutableSelectedState<V> pickedVertexState = vv.getSelectedVertexState();
-
-    if (pickedVertexState != null) {
-      if (clear) {
-        pickedVertexState.clear();
-      }
-      GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
-      LayoutModel<V> layoutModel = vv.getModel().getLayoutModel();
-      Collection<V> picked = pickSupport.getVertices(layoutModel, pickTarget);
-      picked.addAll(pickedVertexState.getSelected());
-      pickedVertexState.pick(picked, true);
+    if (clear) {
+      pickedVertexState.clear();
     }
+    GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
+    LayoutModel<V> layoutModel = vv.getModel().getLayoutModel();
+    Collection<V> picked = pickSupport.getVertices(layoutModel, pickTarget);
+    pickedVertexState.pick(picked, true);
   }
 
   public void mouseClicked(MouseEvent e) {}

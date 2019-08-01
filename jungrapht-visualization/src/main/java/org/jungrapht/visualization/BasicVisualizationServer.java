@@ -711,6 +711,7 @@ public class BasicVisualizationServer<V, E> extends JPanel implements Visualizat
 
   @Override
   public void setSelectedVertexState(MutableSelectedState<V> selectedVertexState) {
+    Preconditions.checkNotNull(selectedVertexState);
     if (pickEventListener != null && this.selectedVertexState != null) {
       this.selectedVertexState.removeItemListener(pickEventListener);
     }
@@ -724,6 +725,7 @@ public class BasicVisualizationServer<V, E> extends JPanel implements Visualizat
 
   @Override
   public void setSelectedEdgeState(MutableSelectedState<E> selectedEdgeState) {
+    Preconditions.checkNotNull(selectedEdgeState);
     if (pickEventListener != null && this.selectedEdgeState != null) {
       this.selectedEdgeState.removeItemListener(pickEventListener);
     }
@@ -798,7 +800,6 @@ public class BasicVisualizationServer<V, E> extends JPanel implements Visualizat
 
     @Override
     public void paint(Graphics g) {
-      System.err.println("paint!");
       Graphics2D g2d = (Graphics2D) g;
       Color oldColor = g2d.getColor();
       //gather all the grid shapes

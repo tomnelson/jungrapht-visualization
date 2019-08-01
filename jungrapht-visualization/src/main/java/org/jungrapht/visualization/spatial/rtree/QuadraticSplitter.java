@@ -55,7 +55,7 @@ public class QuadraticSplitter<T> extends AbstractSplitter<T> implements Splitte
     Optional<Node<T>> nextOptional = pickNext(entries, pickedSeeds);
     if (nextOptional.isPresent()) {
       Node<T> next = nextOptional.get();
-      // which of the picked seeds should it be added to?
+      // which of the selected seeds should it be added to?
       Rectangle2D leftBounds = pickedSeeds.left.getBounds();
       Rectangle2D rightBounds = pickedSeeds.right.getBounds();
       // which rectangle is enlarged the least?

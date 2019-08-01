@@ -110,7 +110,7 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
 
     vv.addPostRenderPaintable(SelectedVertexPaintable.builder(vv).build());
     // Get the pickedState and add a listener that will decorate the
-    //Vertex images with a checkmark icon when they are picked
+    //Vertex images with a checkmark icon when they are selected
     MutableSelectedState<Number> ps = vv.getSelectedVertexState();
     ps.addItemListener(new PickWithIconListener(iconCache::get));
 

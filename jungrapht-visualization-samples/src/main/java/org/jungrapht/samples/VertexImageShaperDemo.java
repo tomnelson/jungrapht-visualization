@@ -254,8 +254,8 @@ public class VertexImageShaperDemo extends JPanel {
   }
 
   /**
-   * When Vertices are picked, add a checkmark icon to the imager. Remove the icon when a Vertex is
-   * unpicked
+   * When Vertices are selected, add a checkmark icon to the imager. Remove the icon when a Vertex
+   * is unpicked
    *
    * @author Tom Nelson
    */
