@@ -157,22 +157,28 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     log.trace("layout coords of mouse click {}", layoutPoint);
     if (e.getModifiersEx() == modifiers) {
 
-      V vertex = pickSupport.getVertex(layoutModel, layoutPoint.getX(), layoutPoint.getY());
+      this.vertex = pickSupport.getVertex(layoutModel, layoutPoint.getX(), layoutPoint.getY());
 
       if (vertex != null) {
 
         log.trace("mousePressed set the vertex to {}", vertex);
-        selectedVertexState.select(vertex);
+        if (!selectedVertexState.isSelected(vertex)) {
+          selectedVertexState.clear();
+          selectedVertexState.select(vertex);
+        }
         e.consume();
         return;
       }
 
-      E edge = pickSupport.getEdge(layoutModel, layoutPoint.getX(), layoutPoint.getY());
+      this.edge = pickSupport.getEdge(layoutModel, layoutPoint.getX(), layoutPoint.getY());
 
       if (edge != null) {
 
         log.trace("mousePressed set the edge to {}", edge);
-        selectedEdgeState.select(edge);
+        if (!selectedEdgeState.select(edge)) {
+          selectedEdgeState.clear();
+          selectedEdgeState.select(edge);
+        }
         e.consume();
         return;
       }
@@ -188,20 +194,28 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
 
       vv.addPostRenderPaintable(lensPaintable);
 
-      V vertex = pickSupport.getVertex(layoutModel, layoutPoint.getX(), layoutPoint.getY());
+      this.vertex = pickSupport.getVertex(layoutModel, layoutPoint.getX(), layoutPoint.getY());
 
       if (vertex != null) {
         log.trace("mousePressed set the vertex to {}", vertex);
-        selectedVertexState.add(vertex);
+        if (selectedVertexState.isSelected(vertex)) {
+          selectedVertexState.deselect(vertex);
+        } else {
+          selectedVertexState.select(vertex);
+        }
         e.consume();
         return;
       }
 
-      E edge = pickSupport.getEdge(layoutModel, layoutPoint.getX(), layoutPoint.getY());
+      this.edge = pickSupport.getEdge(layoutModel, layoutPoint.getX(), layoutPoint.getY());
 
       if (edge != null) {
         log.trace("mousePressed set the edge to {}", edge);
-        selectedEdgeState.add(edge);
+        if (selectedEdgeState.isSelected(edge)) {
+          selectedEdgeState.deselect(edge);
+        } else {
+          selectedEdgeState.select(edge);
+        }
         e.consume();
         return;
       }
@@ -406,10 +420,9 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     LayoutModel<V> layoutModel = vv.getModel().getLayoutModel();
     Collection<V> picked = pickSupport.getVertices(layoutModel, pickTarget);
     if (clear) {
-      selectedVertexState.select(picked);
-    } else {
-      selectedVertexState.add(picked);
+      selectedVertexState.clear();
     }
+    selectedVertexState.select(picked);
   }
 
   public void mouseClicked(MouseEvent e) {}

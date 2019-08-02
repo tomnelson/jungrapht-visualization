@@ -37,22 +37,6 @@ public interface MutableSelectedState<T> extends SelectedState<T>, ItemSelectabl
   boolean deselect(T element);
 
   /**
-   * add an element to the collection of selected elements
-   *
-   * @param element the element to add
-   * @return true if the collection of selected elements was changed
-   */
-  boolean add(T element);
-
-  /**
-   * remove one element from the collection of selected elements
-   *
-   * @param element the element to remove
-   * @return true if the collection of selected elements was changed
-   */
-  boolean remove(T element);
-
-  /**
    * select a collection of elements to be the only selected elements
    *
    * @param elements
@@ -67,22 +51,6 @@ public interface MutableSelectedState<T> extends SelectedState<T>, ItemSelectabl
    * @return true if the collection of selected elements was changed
    */
   boolean deselect(Collection<T> elements);
-
-  /**
-   * add a collection of elements to those already selected
-   *
-   * @param elements the elements to add
-   * @return true if the collection of selected elements was changed
-   */
-  boolean add(Collection<T> elements);
-
-  /**
-   * removes a collection of elements from the selected elements
-   *
-   * @param elements the elements to remove from the selected elements
-   * @return true if the collection of selected elements was changed
-   */
-  boolean remove(Collection<T> elements);
 
   /** Clears the "selected" state from all elements. */
   void clear();

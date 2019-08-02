@@ -33,20 +33,15 @@ public class MultiMutableSelectedStateTest {
     Assert.assertEquals(multiMutableSelectedState.getSelected(), Collections.singleton("A"));
   }
 
-  /**
-   * Select 'reselection' of one item. Should be removed from selected set and should not fire a
-   * selected event
-   */
+  /** Select 'reselection' of one item. Should not fire an event to select or deselect */
   @Test
-  public void testToggleSelectionOfOne() {
+  public void testSelectionOfOneAlreadySelected() {
     multiMutableSelectedState.select("A");
     multiMutableSelectedState.addItemListener(
-        new SelectedState.StateChangeListener<>(this::forbidden, this::deselected));
-    // pick the already selected item. Should be removed and should fire event
-    // to deselect. should not fire an event to select
+        new SelectedState.StateChangeListener<>(this::forbidden, this::forbidden));
+    // pick the already selected item. Should not fire an event to select or deselect
     multiMutableSelectedState.select("A");
-    Assert.assertFalse(multiMutableSelectedState.getSelected().contains("A"));
-    Assert.assertTrue(multiMutableSelectedState.getSelected().isEmpty());
+    Assert.assertEquals(multiMutableSelectedState.getSelected(), Collections.singleton("A"));
   }
 
   /**
@@ -69,26 +64,9 @@ public class MultiMutableSelectedStateTest {
   public void testToggleSelectionOfMany() {
     multiMutableSelectedState.select(Sets.newHashSet("A", "B", "C"));
     multiMutableSelectedState.addItemListener(
-        new SelectedState.StateChangeListener<>(this::forbidden, this::deselected));
+        new SelectedState.StateChangeListener<>(this::forbidden, this::forbidden));
     multiMutableSelectedState.select(Sets.newHashSet("A", "B", "C"));
-    Assert.assertFalse(
-        multiMutableSelectedState.getSelected().containsAll(Sets.newHashSet("A", "B", "C")));
-    Assert.assertTrue(multiMutableSelectedState.getSelected().isEmpty());
-  }
-
-  /**
-   * Test add one new item to those already selected Should be added to the selected items and
-   * should not fire a deselected event
-   */
-  @Test
-  public void testAddOneToExistingSelection() {
-    multiMutableSelectedState.select(Sets.newHashSet("A", "B", "C"));
-    multiMutableSelectedState.addItemListener(
-        new SelectedState.StateChangeListener<>(this::selected, this::forbidden));
-    multiMutableSelectedState.add("D");
-    Assert.assertTrue(multiMutableSelectedState.getSelected().contains("D"));
-    Assert.assertEquals(
-        multiMutableSelectedState.getSelected(), Sets.newHashSet("A", "B", "C", "D"));
+    Assert.assertEquals(multiMutableSelectedState.getSelected(), Sets.newHashSet("A", "B", "C"));
   }
 
   /**
@@ -102,21 +80,8 @@ public class MultiMutableSelectedStateTest {
         new SelectedState.StateChangeListener<>(this::selected, this::deselected));
     multiMutableSelectedState.select("D");
     Assert.assertTrue(multiMutableSelectedState.getSelected().contains("D"));
-    Assert.assertEquals(multiMutableSelectedState.getSelected(), Sets.newHashSet("D"));
-  }
-
-  /**
-   * Test reselect of one item of many that are already selected Should remove that item from the
-   * selected set and should not fire a selected event
-   */
-  @Test
-  public void testRemoveOneFromExistingSelection() {
-    multiMutableSelectedState.select(Sets.newHashSet("A", "B", "C"));
-    multiMutableSelectedState.addItemListener(
-        new SelectedState.StateChangeListener<>(this::forbidden, this::deselected));
-    multiMutableSelectedState.add("A");
-    Assert.assertFalse(multiMutableSelectedState.getSelected().contains("A"));
-    Assert.assertEquals(multiMutableSelectedState.getSelected(), Sets.newHashSet("B", "C"));
+    Assert.assertEquals(
+        multiMutableSelectedState.getSelected(), Sets.newHashSet("A", "B", "C", "D"));
   }
 
   private void selected(Object item) {

@@ -48,8 +48,8 @@ public class GraphCollapserTest {
 
     GraphCollapser<Number> collapser = new GraphCollapser(graph);
     MultiMutableSelectedState picker = new MultiMutableSelectedState();
-    picker.add(Collapsable.of("B"));
-    picker.add(Collapsable.of("C"));
+    picker.select(Collapsable.of("B"));
+    picker.select(Collapsable.of("C"));
 
     Graph<Collapsable<?>, Number> clusterGraph =
         collapser.getClusterGraph(graph, picker.getSelected());
@@ -72,7 +72,7 @@ public class GraphCollapserTest {
     picker.clear();
     for (Collapsable<?> vertex : collapsed.vertexSet()) {
       if (vertex.get() instanceof Graph) {
-        picker.add(vertex);
+        picker.select(vertex);
       }
     }
     Graph<Collapsable<?>, Number> expanded =
@@ -106,9 +106,9 @@ public class GraphCollapserTest {
 
     GraphCollapser<Number> collapser = new GraphCollapser(originalGraph);
     MultiMutableSelectedState picker = new MultiMutableSelectedState();
-    picker.add(Collapsable.of("A"));
-    picker.add(Collapsable.of("B"));
-    picker.add(Collapsable.of("C"));
+    picker.select(Collapsable.of("A"));
+    picker.select(Collapsable.of("B"));
+    picker.select(Collapsable.of("C"));
 
     log.debug("originalGraph:" + originalGraph);
 
@@ -120,9 +120,9 @@ public class GraphCollapserTest {
     log.debug("collapsedGraphOne:" + collapsedGraphOne);
 
     picker.clear();
-    picker.add(Collapsable.of("D"));
-    picker.add(Collapsable.of("E"));
-    picker.add(Collapsable.of("F"));
+    picker.select(Collapsable.of("D"));
+    picker.select(Collapsable.of("E"));
+    picker.select(Collapsable.of("F"));
 
     Graph clusterVertexTwo = collapser.getClusterGraph(collapsedGraphOne, picker.getSelected());
     Graph collapsedGraphTwo = collapser.collapse(collapsedGraphOne, clusterVertexTwo);
