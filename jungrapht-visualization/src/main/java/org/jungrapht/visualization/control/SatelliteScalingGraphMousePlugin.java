@@ -11,6 +11,7 @@
 package org.jungrapht.visualization.control;
 
 import java.awt.event.MouseWheelEvent;
+import org.jungrapht.visualization.SatelliteVisualizationViewer;
 import org.jungrapht.visualization.VisualizationViewer;
 
 /**

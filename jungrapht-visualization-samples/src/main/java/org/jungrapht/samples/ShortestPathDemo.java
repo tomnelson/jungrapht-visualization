@@ -130,7 +130,7 @@ public class ShortestPathDemo extends JPanel {
         });
 
     setLayout(new BorderLayout());
-    add(vv, BorderLayout.CENTER);
+    add(vv.getComponent(), BorderLayout.CENTER);
 
     String labelString =
         "<html><ul><li>Type 'p' to enter picking mode"

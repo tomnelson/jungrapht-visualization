@@ -112,7 +112,7 @@ public class ShowLayouts extends JPanel {
     vv.setBackground(Color.WHITE);
 
     setLayout(new BorderLayout());
-    add(vv, BorderLayout.CENTER);
+    add(vv.getComponent(), BorderLayout.CENTER);
     LayoutHelper.Layouts[] combos = LayoutHelper.getCombos();
     final JRadioButton animateLayoutTransition = new JRadioButton("Animate Layout Transition");
 

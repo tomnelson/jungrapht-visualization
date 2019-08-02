@@ -45,7 +45,7 @@ public class PerformanceGraph {
     vv.setGraphMouse(graphMouse);
     vv.addKeyListener(graphMouse.getModeKeyListener());
 
-    f.getContentPane().add(vv);
+    f.getContentPane().add(vv.getComponent());
     f.setSize(viewSize);
     f.setVisible(true);
   }

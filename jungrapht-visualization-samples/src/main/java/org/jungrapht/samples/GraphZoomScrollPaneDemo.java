@@ -71,7 +71,7 @@ public class GraphZoomScrollPaneDemo {
           new VisualizationViewer.Paintable() {
             public void paint(Graphics g) {
               Dimension d = vv.getSize();
-              g.drawImage(icon.getImage(), 0, 0, d.width, d.height, vv);
+              g.drawImage(icon.getImage(), 0, 0, d.width, d.height, vv.getComponent());
             }
 
             public boolean useTransform() {

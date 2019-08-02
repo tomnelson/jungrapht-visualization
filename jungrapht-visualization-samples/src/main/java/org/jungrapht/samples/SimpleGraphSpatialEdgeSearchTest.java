@@ -82,20 +82,21 @@ public class SimpleGraphSpatialEdgeSearchTest extends JPanel {
     vv.setVertexSpatial(new SpatialQuadTree(model.getLayoutModel()));
     vv.setEdgeSpatial(new Spatial.NoOp.Edge(model));
 
-    vv.addMouseListener(
-        new MouseAdapter() {
-          @Override
-          public void mouseClicked(MouseEvent e) {
-            MultiLayerTransformer multiLayerTransformer =
-                vv.getRenderContext().getMultiLayerTransformer();
-            Point2D layoutPoint = multiLayerTransformer.inverseTransform(e.getX(), e.getY());
-            Number edge = vv.getEdgeSpatial().getClosestElement(layoutPoint);
-            if (edge != null) {
-              vv.getSelectedEdgeState().clear();
-              vv.getSelectedEdgeState().select(edge);
-            }
-          }
-        });
+    vv.getComponent()
+        .addMouseListener(
+            new MouseAdapter() {
+              @Override
+              public void mouseClicked(MouseEvent e) {
+                MultiLayerTransformer multiLayerTransformer =
+                    vv.getRenderContext().getMultiLayerTransformer();
+                Point2D layoutPoint = multiLayerTransformer.inverseTransform(e.getX(), e.getY());
+                Number edge = vv.getEdgeSpatial().getClosestElement(layoutPoint);
+                if (edge != null) {
+                  vv.getSelectedEdgeState().clear();
+                  vv.getSelectedEdgeState().select(edge);
+                }
+              }
+            });
 
     JRadioButton showSpatialEffects = new JRadioButton("Show Spatial Structure");
     showSpatialEffects.addItemListener(
@@ -127,7 +128,7 @@ public class SimpleGraphSpatialEdgeSearchTest extends JPanel {
         });
 
     vv.scaleToLayout(scaler);
-    this.add(vv);
+    this.add(vv.getComponent());
     JPanel buttons = new JPanel();
     JButton search = new JButton("Test 1000 Searches");
     buttons.add(search);

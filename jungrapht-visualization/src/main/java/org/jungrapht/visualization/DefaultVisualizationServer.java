@@ -68,7 +68,8 @@ import org.slf4j.LoggerFactory;
  * @author Tom Nelson
  */
 @SuppressWarnings("serial")
-class DefaultVisualizationServer<V, E> extends JPanel implements VisualizationServer<V, E> {
+class DefaultVisualizationServer<V, E> extends JPanel
+    implements VisualizationServer<V, E>, VisualizationComponent {
 
   static Logger log = LoggerFactory.getLogger(DefaultVisualizationServer.class);
 
@@ -228,6 +229,11 @@ class DefaultVisualizationServer<V, E> extends JPanel implements VisualizationSe
     if (edgeSpatial != null) {
       setEdgeSpatial(edgeSpatial);
     }
+  }
+
+  @Override
+  public JComponent getComponent() {
+    return this;
   }
 
   private void createSpatialStuctures(VisualizationModel model, RenderContext renderContext) {
@@ -593,6 +599,7 @@ class DefaultVisualizationServer<V, E> extends JPanel implements VisualizationSe
     preRenderers.add(paintable);
   }
 
+  @Override
   public void prependPreRenderPaintable(Paintable paintable) {
     if (preRenderers == null) {
       preRenderers = new ArrayList<>();
@@ -729,6 +736,7 @@ class DefaultVisualizationServer<V, E> extends JPanel implements VisualizationSe
     return transformSupport;
   }
 
+  @Override
   public void setTransformSupport(TransformSupport<V, E> transformSupport) {
     this.transformSupport = transformSupport;
   }

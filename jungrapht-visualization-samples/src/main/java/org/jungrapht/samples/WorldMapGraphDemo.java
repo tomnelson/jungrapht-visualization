@@ -104,7 +104,13 @@ public class WorldMapGraphDemo extends JPanel {
               at.concatenate(vat);
               at.concatenate(lat);
               g2d.setTransform(at);
-              g.drawImage(icon.getImage(), 0, 0, icon.getIconWidth(), icon.getIconHeight(), vv);
+              g.drawImage(
+                  icon.getImage(),
+                  0,
+                  0,
+                  icon.getIconWidth(),
+                  icon.getIconHeight(),
+                  vv.getComponent());
               g2d.setTransform(oldXform);
             }
 

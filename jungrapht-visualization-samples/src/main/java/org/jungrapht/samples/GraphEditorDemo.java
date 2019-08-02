@@ -32,6 +32,7 @@ import org.jungrapht.visualization.control.ModalGraphMouse.Mode;
 import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
+import org.jungrapht.visualization.spatial.Spatial;
 import org.jungrapht.visualization.util.ParallelEdgeIndexFunction;
 
 /**
@@ -133,6 +134,9 @@ public class GraphEditorDemo extends JPanel implements Printable {
         .setEdgeLabelFunction(
             e -> edgeLabelMap.containsKey(e) ? edgeLabelMap.get(e) : e.toString());
 
+    vv.setVertexSpatial(new Spatial.NoOp.Vertex(vv.getModel().getLayoutModel()));
+    vv.setEdgeSpatial(new Spatial.NoOp.Edge(vv.getModel()));
+
     vv.setVertexToolTipFunction(vv.getRenderContext().getVertexLabelFunction());
 
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
@@ -161,7 +165,7 @@ public class GraphEditorDemo extends JPanel implements Printable {
     minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
 
     JButton help = new JButton("Help");
-    help.addActionListener(e -> JOptionPane.showMessageDialog(vv, instructions));
+    help.addActionListener(e -> JOptionPane.showMessageDialog(vv.getComponent(), instructions));
 
     AnnotationControls<Number, Number> annotationControls =
         new AnnotationControls<>(graphMouse.getAnnotatingPlugin());
@@ -186,7 +190,7 @@ public class GraphEditorDemo extends JPanel implements Printable {
 
     BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
     Graphics2D graphics = bi.createGraphics();
-    vv.paint(graphics);
+    vv.getComponent().paint(graphics);
     graphics.dispose();
 
     try {
@@ -205,7 +209,7 @@ public class GraphEditorDemo extends JPanel implements Printable {
       vv.setDoubleBuffered(false);
       g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
 
-      vv.paint(g2d);
+      vv.getComponent().paint(g2d);
       vv.setDoubleBuffered(true);
 
       return (Printable.PAGE_EXISTS);

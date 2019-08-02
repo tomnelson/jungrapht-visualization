@@ -16,13 +16,13 @@ import org.jgrapht.Graph;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
+import org.jungrapht.visualization.SatelliteVisualizationViewer;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
-import org.jungrapht.visualization.control.SatelliteVisualizationViewer;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.GradientVertexRenderer;
@@ -158,7 +158,7 @@ public class SatelliteViewDemo extends JPanel {
     VisualizationScrollPane gzsp = new VisualizationScrollPane(mainVisualizationViewer);
     panel.add(gzsp);
     rightPanel.add(new JPanel());
-    rightPanel.add(satelliteVisualizationViewer, BorderLayout.SOUTH);
+    rightPanel.add(satelliteVisualizationViewer.getComponent(), BorderLayout.SOUTH);
     panel.add(rightPanel, BorderLayout.EAST);
 
     helpDialog = new JDialog();

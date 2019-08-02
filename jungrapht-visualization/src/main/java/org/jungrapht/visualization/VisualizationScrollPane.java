@@ -11,7 +11,9 @@ package org.jungrapht.visualization;
 
 import static org.jungrapht.visualization.MultiLayerTransformer.Layer;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.ComponentAdapter;
@@ -72,7 +74,7 @@ public class VisualizationScrollPane extends JPanel {
           VisualizationViewer<?, ?> vv1 = (VisualizationViewer<?, ?>) evt.getSource();
           setScrollBars(vv1);
         });
-    add(vv);
+    add(vv.getComponent());
     add(verticalScrollBar, BorderLayout.EAST);
     south = new JPanel(new BorderLayout());
     south.add(horizontalScrollBar);

@@ -60,10 +60,6 @@ public class MagnifyImageLensSupport<V, E> extends AbstractLensSupport<V, E> {
     this.savedGraphicsDecorator = renderContext.getGraphicsContext();
     this.lensTransformer = lensTransformer;
 
-    Dimension d = vv.getSize();
-    if (d.width == 0 || d.height == 0) {
-      d = vv.getPreferredSize();
-    }
     this.lensGraphicsDecorator = new MagnifyIconGraphics(lensTransformer);
   }
 

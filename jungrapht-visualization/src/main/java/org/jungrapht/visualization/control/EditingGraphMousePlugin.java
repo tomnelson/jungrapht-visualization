@@ -10,6 +10,8 @@ import javax.swing.JComponent;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.model.LayoutModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A plugin that can create vertices, undirected edges, and directed edges using mouse gestures.
@@ -22,6 +24,7 @@ import org.jungrapht.visualization.layout.model.LayoutModel;
 public class EditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     implements MouseListener, MouseMotionListener {
 
+  private static Logger log = LoggerFactory.getLogger(EditingGraphMousePlugin.class);
   protected VertexSupport<V, E> vertexSupport;
   protected EdgeSupport<V, E> edgeSupport;
   private Creating createMode = Creating.UNDETERMINED;
@@ -64,7 +67,7 @@ public class EditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    */
   @Override
   public boolean checkModifiers(MouseEvent e) {
-    return (e.getModifiersEx() & modifiers) != 0;
+    return (e.getModifiersEx() & modifiers) == modifiers;
   }
 
   /**
@@ -98,24 +101,22 @@ public class EditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    */
   @SuppressWarnings("unchecked")
   public void mouseReleased(MouseEvent e) {
-    if (checkModifiers(e)) {
-      final VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
-      final LayoutModel<V> layoutModel = vv.getModel().getLayoutModel();
-      final Point2D p = e.getPoint();
-      if (createMode == Creating.EDGE) {
-        GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
-        V vertex = pickSupport.getVertex(layoutModel, p.getX(), p.getY());
-        if (vertex != null) {
-          edgeSupport.endEdgeCreate(vv, vertex);
-          vv.getEdgeSpatial().recalculate();
+    final VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
+    final LayoutModel<V> layoutModel = vv.getModel().getLayoutModel();
+    final Point2D p = e.getPoint();
+    if (createMode == Creating.EDGE) {
+      GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
+      V vertex = pickSupport.getVertex(layoutModel, p.getX(), p.getY());
+      if (vertex != null) {
+        edgeSupport.endEdgeCreate(vv, vertex);
+        vv.getEdgeSpatial().recalculate();
 
-        } else {
-          edgeSupport.abort(vv);
-        }
-      } else if (createMode == Creating.VERTEX) {
-        vertexSupport.endVertexCreate(vv, e.getPoint());
-        vv.getVertexSpatial().recalculate();
+      } else {
+        edgeSupport.abort(vv);
       }
+    } else if (createMode == Creating.VERTEX) {
+      vertexSupport.endVertexCreate(vv, e.getPoint());
+      vv.getVertexSpatial().recalculate();
     }
     createMode = Creating.UNDETERMINED;
   }

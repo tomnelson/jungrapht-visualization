@@ -94,7 +94,7 @@ public class EditingPopupGraphMousePlugin<V, E> extends AbstractPopupGraphMouseP
             });
       }
       if (popup.getComponentCount() > 0) {
-        popup.show(vv, e.getX(), e.getY());
+        popup.show(vv.getComponent(), e.getX(), e.getY());
       }
     }
   }

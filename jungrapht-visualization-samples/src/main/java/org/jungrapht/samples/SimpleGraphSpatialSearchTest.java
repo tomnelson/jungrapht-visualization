@@ -77,20 +77,21 @@ public class SimpleGraphSpatialSearchTest extends JPanel {
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
 
-    vv.addMouseListener(
-        new MouseAdapter() {
-          @Override
-          public void mouseClicked(MouseEvent e) {
-            MultiLayerTransformer multiLayerTransformer =
-                vv.getRenderContext().getMultiLayerTransformer();
-            Point2D layoutPoint = multiLayerTransformer.inverseTransform(e.getX(), e.getY());
-            String vertex = vv.getVertexSpatial().getClosestElement(layoutPoint);
-            if (vertex != null) {
-              vv.getSelectedVertexState().clear();
-              vv.getSelectedVertexState().select(vertex);
-            }
-          }
-        });
+    vv.getComponent()
+        .addMouseListener(
+            new MouseAdapter() {
+              @Override
+              public void mouseClicked(MouseEvent e) {
+                MultiLayerTransformer multiLayerTransformer =
+                    vv.getRenderContext().getMultiLayerTransformer();
+                Point2D layoutPoint = multiLayerTransformer.inverseTransform(e.getX(), e.getY());
+                String vertex = vv.getVertexSpatial().getClosestElement(layoutPoint);
+                if (vertex != null) {
+                  vv.getSelectedVertexState().clear();
+                  vv.getSelectedVertexState().select(vertex);
+                }
+              }
+            });
 
     JRadioButton showSpatialEffects = new JRadioButton("Show Spatial Structure");
     showSpatialEffects.addItemListener(
@@ -122,7 +123,7 @@ public class SimpleGraphSpatialSearchTest extends JPanel {
         });
 
     vv.scaleToLayout(scaler);
-    this.add(vv);
+    this.add(vv.getComponent());
     JPanel buttons = new JPanel();
     JButton search = new JButton("Test 1000 Searches");
     buttons.add(search);

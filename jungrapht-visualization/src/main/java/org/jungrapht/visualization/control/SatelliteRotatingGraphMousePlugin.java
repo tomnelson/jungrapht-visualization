@@ -13,6 +13,7 @@ package org.jungrapht.visualization.control;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import org.jungrapht.visualization.MultiLayerTransformer;
+import org.jungrapht.visualization.SatelliteVisualizationViewer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.transform.MutableTransformer;
 

@@ -12,12 +12,12 @@ import java.awt.*;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.TestGraphs;
+import org.jungrapht.visualization.SatelliteVisualizationViewer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.control.ModalGraphMouse.Mode;
-import org.jungrapht.visualization.control.SatelliteVisualizationViewer;
 import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.ISOMLayoutAlgorithm;
@@ -117,7 +117,7 @@ public class InternalFrameSatelliteViewDemo {
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
     JInternalFrame vvFrame = new JInternalFrame();
-    vvFrame.getContentPane().add(vv);
+    vvFrame.getContentPane().add(vv.getComponent());
     vvFrame.pack();
     vvFrame.setVisible(true); //necessary as of 1.3
     desktop.add(vvFrame);
@@ -150,7 +150,7 @@ public class InternalFrameSatelliteViewDemo {
     controls.add(minus);
     controls.add(dismiss);
     controls.add(help);
-    content.add(satellite);
+    content.add(satellite.getComponent());
     content.add(controls, BorderLayout.SOUTH);
 
     JButton zoomer = new JButton("Show Satellite View");

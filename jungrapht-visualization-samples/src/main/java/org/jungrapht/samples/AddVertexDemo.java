@@ -82,27 +82,28 @@ public class AddVertexDemo extends JPanel {
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.setForeground(Color.white);
 
-    this.add(vv);
+    this.add(vv.getComponent());
 
     // add listener to change layout size and restart layoutalgorithm when
     // the view is resized
-    vv.addComponentListener(
-        new ComponentAdapter() {
-          /**
-           * Invoked when the component's size changes.
-           *
-           * @param e the event payload
-           */
-          @Override
-          public void componentResized(ComponentEvent e) {
-            super.componentResized(e);
-            VisualizationViewer vv = (VisualizationViewer) e.getComponent();
-            VisualizationModel model = vv.getModel();
-            LayoutModel layoutModel = model.getLayoutModel();
-            layoutModel.setSize(vv.getWidth(), vv.getHeight());
-            layoutModel.accept(model.getLayoutAlgorithm());
-          }
-        });
+    vv.getComponent()
+        .addComponentListener(
+            new ComponentAdapter() {
+              /**
+               * Invoked when the component's size changes.
+               *
+               * @param e the event payload
+               */
+              @Override
+              public void componentResized(ComponentEvent e) {
+                super.componentResized(e);
+                VisualizationViewer vv = (VisualizationViewer) e.getComponent();
+                VisualizationModel model = vv.getModel();
+                LayoutModel layoutModel = model.getLayoutModel();
+                layoutModel.setSize(vv.getWidth(), vv.getHeight());
+                layoutModel.accept(model.getLayoutAlgorithm());
+              }
+            });
 
     final JRadioButton animateChange = new JRadioButton("Animate Layout Change");
     switchLayout = new JButton("Switch to SpringLayout");

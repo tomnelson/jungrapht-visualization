@@ -14,6 +14,7 @@ import java.awt.RenderingHints.Key;
 import java.awt.geom.Point2D;
 import java.util.Map;
 import java.util.function.Predicate;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
@@ -34,7 +35,10 @@ import org.jungrapht.visualization.spatial.Spatial;
  * @param <E> the edge type
  */
 public interface VisualizationServer<V, E>
-    extends LayoutChange.Listener, ChangeListener, LayoutStateChange.Listener {
+    extends VisualizationComponent,
+        LayoutChange.Listener,
+        ChangeListener,
+        LayoutStateChange.Listener {
 
   class Builder<V, E, T extends DefaultVisualizationServer<V, E>, B extends Builder<V, E, T, B>> {
     protected Graph<V, E> graph;
@@ -109,6 +113,8 @@ public interface VisualizationServer<V, E>
 
   TransformSupport<V, E> getTransformSupport();
 
+  void setTransformSupport(TransformSupport<V, E> transformSupport);
+
   /** @return the model. */
   VisualizationModel<V, E> getModel();
 
@@ -155,6 +161,9 @@ public interface VisualizationServer<V, E>
 
   /** @param renderingHints The renderingHints to set. */
   void setRenderingHints(Map<Key, Object> renderingHints);
+
+  /** @param paintable The paintable to add. */
+  void prependPreRenderPaintable(Paintable paintable);
 
   /** @param paintable The paintable to add. */
   void addPreRenderPaintable(Paintable paintable);

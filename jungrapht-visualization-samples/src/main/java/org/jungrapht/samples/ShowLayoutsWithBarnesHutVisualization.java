@@ -26,6 +26,8 @@ import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.samples.util.LayoutHelper;
 import org.jungrapht.samples.util.SpanningTreeAdapter;
 import org.jungrapht.samples.util.TestGraphs;
+import org.jungrapht.visualization.DelegateVisualizationViewer;
+import org.jungrapht.visualization.VisualizationComponent;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
@@ -92,7 +94,7 @@ public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
 
     final VisualizationViewer<String, Number> vv =
         new DecoratedVisualizationViewer(
-            VisualizationViewer.builder(g).viewSize(new Dimension(600, 600)));
+            VisualizationViewer.builder(g).viewSize(new Dimension(600, 600)).build());
 
     vv.setBackground(Color.white);
 
@@ -118,7 +120,7 @@ public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
 
     setBackground(Color.WHITE);
     setLayout(new BorderLayout());
-    add(vv, BorderLayout.CENTER);
+    add(vv.getComponent(), BorderLayout.CENTER);
     LayoutHelper.Layouts[] combos = LayoutHelper.getCombos();
     final JRadioButton animateLayoutTransition = new JRadioButton("Animate Layout Transition");
 
@@ -177,11 +179,12 @@ public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
     bottomControls.add(modeBox);
   }
 
-  static class DecoratedVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
+  static class DecoratedVisualizationViewer<V, E> extends DelegateVisualizationViewer<V, E>
+      implements VisualizationViewer<V, E>, VisualizationComponent {
     VisualizationServer.Paintable paintable = null;
 
-    DecoratedVisualizationViewer(VisualizationViewer.Builder builder) {
-      super(builder);
+    DecoratedVisualizationViewer(VisualizationViewer<V, E> delegate) {
+      super(delegate);
     }
 
     @Override

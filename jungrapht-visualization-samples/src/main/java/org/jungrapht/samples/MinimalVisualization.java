@@ -46,7 +46,7 @@ public class MinimalVisualization {
     // create a frame to hold the graph
     final JFrame frame = new JFrame();
     Container content = frame.getContentPane();
-    content.add(vv);
+    content.add(vv.getComponent());
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
     final DefaultModalGraphMouse<Integer, Number> gm = new DefaultModalGraphMouse<>();

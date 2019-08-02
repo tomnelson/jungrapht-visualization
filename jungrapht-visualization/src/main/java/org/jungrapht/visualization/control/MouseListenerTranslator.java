@@ -19,23 +19,20 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 
-/**
- * This class translates mouse clicks into vertex clicks
- *
- * @author danyelf
- */
+/** This class translates mouse clicks into vertex clicks */
 public class MouseListenerTranslator<V, E> extends MouseAdapter {
 
-  private VisualizationViewer<V, E> vv;
-  private GraphMouseListener<V> gel;
+  private VisualizationViewer<V, E> visualizationViewer;
+  private GraphMouseListener<V> graphMouseListener;
 
   /**
-   * @param gel listens for mouse events
-   * @param vv the viewer used for visualization
+   * @param graphMouseListener listens for mouse events
+   * @param visualizationViewer the viewer used for visualization
    */
-  public MouseListenerTranslator(GraphMouseListener<V> gel, VisualizationViewer<V, E> vv) {
-    this.gel = gel;
-    this.vv = vv;
+  public MouseListenerTranslator(
+      GraphMouseListener<V> graphMouseListener, VisualizationViewer<V, E> visualizationViewer) {
+    this.graphMouseListener = graphMouseListener;
+    this.visualizationViewer = visualizationViewer;
   }
 
   /**
@@ -48,10 +45,8 @@ public class MouseListenerTranslator<V, E> extends MouseAdapter {
   private V getVertex(Point2D point) {
     // adjust for scale and offset in the VisualizationViewer
     Point2D p = point;
-    //vv.getRenderContext().getBasicTransformer().inverseViewTransform(point);
-    GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
-    LayoutModel<V> layoutModel = vv.getModel().getLayoutModel();
-    //        Layout<V> layout = vv.getGraphLayout();
+    GraphElementAccessor<V, E> pickSupport = visualizationViewer.getPickSupport();
+    LayoutModel<V> layoutModel = visualizationViewer.getModel().getLayoutModel();
     V v = null;
     if (pickSupport != null) {
       v = pickSupport.getVertex(layoutModel, p.getX(), p.getY());
@@ -62,7 +57,7 @@ public class MouseListenerTranslator<V, E> extends MouseAdapter {
   public void mouseClicked(MouseEvent e) {
     V v = getVertex(e.getPoint());
     if (v != null) {
-      gel.graphClicked(v, e);
+      graphMouseListener.graphClicked(v, e);
     }
   }
 
@@ -70,7 +65,7 @@ public class MouseListenerTranslator<V, E> extends MouseAdapter {
   public void mousePressed(MouseEvent e) {
     V v = getVertex(e.getPoint());
     if (v != null) {
-      gel.graphPressed(v, e);
+      graphMouseListener.graphPressed(v, e);
     }
   }
 
@@ -78,7 +73,7 @@ public class MouseListenerTranslator<V, E> extends MouseAdapter {
   public void mouseReleased(MouseEvent e) {
     V v = getVertex(e.getPoint());
     if (v != null) {
-      gel.graphReleased(v, e);
+      graphMouseListener.graphReleased(v, e);
     }
   }
 }
