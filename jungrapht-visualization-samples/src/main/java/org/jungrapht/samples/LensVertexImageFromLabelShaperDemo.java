@@ -19,9 +19,9 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
-import org.jungrapht.visualization.GraphZoomScrollPane;
 import org.jungrapht.visualization.LayeredIcon;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
+import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.annotations.SelectedVertexPaintable;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
@@ -118,7 +118,7 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
     // add a listener for ToolTips
     vv.setVertexToolTipFunction(Object::toString);
 
-    final GraphZoomScrollPane panel = new GraphZoomScrollPane(vv);
+    final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
 
     final DefaultModalGraphMouse<Number, Number> graphMouse = new DefaultModalGraphMouse<>();

@@ -13,9 +13,9 @@ import java.util.function.Function;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.TestGraphs;
-import org.jungrapht.visualization.BaseVisualizationModel;
-import org.jungrapht.visualization.GraphZoomScrollPane;
+import org.jungrapht.visualization.DefaultVisualizationModel;
 import org.jungrapht.visualization.VisualizationModel;
+import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
@@ -55,7 +55,7 @@ public class VertexLabelAsShapeDemo extends JPanel {
 
     Dimension preferredSize = new Dimension(400, 400);
     final VisualizationModel<String, Number> visualizationModel =
-        BaseVisualizationModel.builder(graph)
+        DefaultVisualizationModel.builder(graph)
             .layoutAlgorithm(layoutAlgorithm)
             .layoutSize(preferredSize)
             .build();
@@ -89,7 +89,7 @@ public class VertexLabelAsShapeDemo extends JPanel {
     vv.setGraphMouse(graphMouse);
     vv.addKeyListener(graphMouse.getModeKeyListener());
 
-    GraphZoomScrollPane gzsp = new GraphZoomScrollPane(vv);
+    VisualizationScrollPane gzsp = new VisualizationScrollPane(vv);
     add(gzsp);
 
     JComboBox<?> modeBox = graphMouse.getModeComboBox();

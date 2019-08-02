@@ -13,10 +13,10 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.TestGraphs;
-import org.jungrapht.visualization.BaseVisualizationModel;
-import org.jungrapht.visualization.GraphZoomScrollPane;
+import org.jungrapht.visualization.DefaultVisualizationModel;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationModel;
+import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.annotations.AnnotatingGraphMousePlugin;
 import org.jungrapht.visualization.annotations.AnnotatingModalGraphMouse;
@@ -74,7 +74,7 @@ public class AnnotationsDemo extends JPanel {
     layoutAlgorithm.setMaxIterations(500);
 
     VisualizationModel<String, Number> vm =
-        BaseVisualizationModel.builder(graph)
+        DefaultVisualizationModel.builder(graph)
             .layoutAlgorithm(layoutAlgorithm)
             .layoutSize(preferredSize1)
             .build();
@@ -91,7 +91,7 @@ public class AnnotationsDemo extends JPanel {
 
     Container panel = new JPanel(new BorderLayout());
 
-    GraphZoomScrollPane gzsp = new GraphZoomScrollPane(vv);
+    VisualizationScrollPane gzsp = new VisualizationScrollPane(vv);
     panel.add(gzsp);
 
     helpDialog = new JDialog();

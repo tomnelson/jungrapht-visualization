@@ -26,8 +26,8 @@ import org.jungrapht.visualization.transform.BidirectionalTransformer;
 import org.jungrapht.visualization.transform.shape.Intersector;
 
 /**
- * GraphZoomScrollPane is a Container for the Graph's VisualizationViewer and includes custom
- * horizontal and vertical scrollbars. GraphZoomScrollPane listens for changes in the scale and
+ * VisualizationScrollPane is a Container for the Graph's VisualizationViewer and includes custom
+ * horizontal and vertical scrollbars. VisualizationScrollPane listens for changes in the scale and
  * translation of the VisualizationViewer, and will update the scrollbar positions and sizes
  * accordingly. Changes in the scrollbar positions will cause the corresponding change in the
  * translation component (offset) of the VisualizationViewer. The scrollbars are modified so that
@@ -41,7 +41,7 @@ import org.jungrapht.visualization.transform.shape.Intersector;
  * @author Tom Nelson
  */
 @SuppressWarnings("serial")
-public class GraphZoomScrollPane extends JPanel {
+public class VisualizationScrollPane extends JPanel {
   protected VisualizationViewer<?, ?> vv;
   protected JScrollBar horizontalScrollBar;
   protected JScrollBar verticalScrollBar;
@@ -50,11 +50,11 @@ public class GraphZoomScrollPane extends JPanel {
   protected JPanel south;
 
   /**
-   * Create an instance of the GraphZoomScrollPane to contain the VisualizationViewer
+   * Create an instance of the VisualizationScrollPane to contain the VisualizationViewer
    *
    * @param vv the VisualizationViewer for which this instance is to be created
    */
-  public GraphZoomScrollPane(VisualizationViewer<?, ?> vv) {
+  public VisualizationScrollPane(VisualizationViewer<?, ?> vv) {
     super(new BorderLayout());
     this.vv = vv;
     addComponentListener(new ResizeListener());

@@ -15,7 +15,7 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.samples.util.ControlHelpers;
-import org.jungrapht.visualization.GraphZoomScrollPane;
+import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
@@ -97,7 +97,7 @@ public class DrawnIconVertexDemo {
     // create a frome to hold the graph
     final JFrame frame = new JFrame();
     Container content = frame.getContentPane();
-    final GraphZoomScrollPane panel = new GraphZoomScrollPane(vv);
+    final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     content.add(panel);
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 

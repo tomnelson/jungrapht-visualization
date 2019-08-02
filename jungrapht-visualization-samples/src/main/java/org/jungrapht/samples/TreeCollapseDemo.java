@@ -22,7 +22,7 @@ import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.DemoTreeSupplier;
 import org.jungrapht.samples.util.TreeLayoutSelector;
-import org.jungrapht.visualization.GraphZoomScrollPane;
+import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.decorators.EdgeShape;
@@ -78,7 +78,7 @@ public class TreeCollapseDemo extends JPanel {
     vv.setVertexToolTipFunction(Object::toString);
     vv.getRenderContext().setArrowFillPaintFunction(n -> Color.lightGray);
 
-    final GraphZoomScrollPane panel = new GraphZoomScrollPane(vv);
+    final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
 
     final DefaultGraphMouse<String, Integer> graphMouse = new DefaultGraphMouse<>();

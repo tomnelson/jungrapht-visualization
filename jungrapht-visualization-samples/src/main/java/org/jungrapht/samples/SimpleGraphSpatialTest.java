@@ -17,7 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.TestGraphs;
-import org.jungrapht.visualization.BaseVisualizationModel;
+import org.jungrapht.visualization.DefaultVisualizationModel;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
@@ -51,7 +51,7 @@ public class SimpleGraphSpatialTest extends JPanel {
 
     ScalingControl scaler = new CrossoverScalingControl();
     VisualizationModel<String, Number> model =
-        BaseVisualizationModel.builder(g)
+        DefaultVisualizationModel.builder(g)
             .layoutAlgorithm(layoutAlgorithm)
             .initializer(new RandomLocationTransformer(600, 600, System.currentTimeMillis()))
             .layoutSize(layoutPreferredSize)
@@ -75,7 +75,7 @@ public class SimpleGraphSpatialTest extends JPanel {
     ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) log;
     LoggerContext ctx = (LoggerContext) LoggerFactory.getILoggerFactory();
     ctx.getLogger("org.jungrapht.visualization.layout.spatial").setLevel(Level.DEBUG);
-    ctx.getLogger("org.jungrapht.visualization.BasicVisualizationServer").setLevel(Level.TRACE);
+    ctx.getLogger("org.jungrapht.visualization.DefaultVisualizationServer").setLevel(Level.TRACE);
     ctx.getLogger("org.jungrapht.visualization.picking").setLevel(Level.TRACE);
 
     JFrame jf = new JFrame();

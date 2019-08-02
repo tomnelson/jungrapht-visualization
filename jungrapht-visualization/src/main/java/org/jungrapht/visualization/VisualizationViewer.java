@@ -33,11 +33,11 @@ import org.jungrapht.visualization.layout.model.LayoutModel;
  * @author Tom Nelson
  */
 @SuppressWarnings("serial")
-public class VisualizationViewer<V, E> extends BasicVisualizationServer<V, E> {
+public class VisualizationViewer<V, E> extends DefaultVisualizationServer<V, E> {
 
   public static class Builder<
           V, E, T extends VisualizationViewer<V, E>, B extends Builder<V, E, T, B>>
-      extends BasicVisualizationServer.Builder<V, E, T, B> {
+      extends DefaultVisualizationServer.Builder<V, E, T, B> {
 
     protected Builder(Graph<V, E> graph) {
       super(graph);

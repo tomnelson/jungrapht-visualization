@@ -1,7 +1,7 @@
 package org.jungrapht.visualization.control;
 
 import java.awt.geom.Point2D;
-import org.jungrapht.visualization.BasicVisualizationServer;
+import org.jungrapht.visualization.DefaultVisualizationServer;
 
 /**
  * interface to support the creation of new vertices by the EditingGraphMousePlugin.
@@ -12,9 +12,9 @@ import org.jungrapht.visualization.BasicVisualizationServer;
  */
 public interface VertexSupport<V, E> {
 
-  void startVertexCreate(BasicVisualizationServer<V, E> vv, Point2D point);
+  void startVertexCreate(DefaultVisualizationServer<V, E> vv, Point2D point);
 
-  void midVertexCreate(BasicVisualizationServer<V, E> vv, Point2D point);
+  void midVertexCreate(DefaultVisualizationServer<V, E> vv, Point2D point);
 
-  void endVertexCreate(BasicVisualizationServer<V, E> vv, Point2D point);
+  void endVertexCreate(DefaultVisualizationServer<V, E> vv, Point2D point);
 }

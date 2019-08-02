@@ -15,8 +15,8 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
-import org.jungrapht.visualization.GraphZoomScrollPane;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
+import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.AbstractModalGraphMouse;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
@@ -29,7 +29,7 @@ import org.jungrapht.visualization.renderers.GradientVertexRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
 
 /**
- * Demonstrates the use of <code>GraphZoomScrollPane</code>. This class shows the <code>
+ * Demonstrates the use of <code>VisualizationScrollPane</code>. This class shows the <code>
  * VisualizationViewer</code> zooming and panning capabilities, using horizontal and vertical
  * scrollbars.
  *
@@ -87,7 +87,7 @@ public class GraphZoomScrollPaneDemo {
           FontMetrics metrics;
           int swidth;
           int sheight;
-          String str = "GraphZoomScrollPane Demo";
+          String str = "VisualizationScrollPane Demo";
 
           public void paint(Graphics g) {
             Dimension d = vv.getSize();
@@ -140,7 +140,7 @@ public class GraphZoomScrollPaneDemo {
     // create a frome to hold the graph
     final JFrame frame = new JFrame();
     Container content = frame.getContentPane();
-    final GraphZoomScrollPane panel = new GraphZoomScrollPane(vv);
+    final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     content.add(panel);
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     final AbstractModalGraphMouse graphMouse = new DefaultModalGraphMouse<Integer, Number>();

@@ -21,10 +21,10 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.samples.util.TestGraphs;
-import org.jungrapht.visualization.BaseVisualizationModel;
-import org.jungrapht.visualization.GraphZoomScrollPane;
+import org.jungrapht.visualization.DefaultVisualizationModel;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationModel;
+import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
@@ -101,7 +101,7 @@ public class LensDemo extends JPanel {
     gridLayoutAlgorithm = new StaticLayoutAlgorithm<>();
 
     final VisualizationModel<String, Number> visualizationModel =
-        BaseVisualizationModel.builder(graph)
+        DefaultVisualizationModel.builder(graph)
             .layoutAlgorithm(graphLayoutAlgorithm)
             .layoutSize(preferredSize)
             .build();
@@ -124,7 +124,7 @@ public class LensDemo extends JPanel {
     // add a listener for ToolTips
     vv.setVertexToolTipFunction(n -> n); //Object::toString);
 
-    GraphZoomScrollPane gzsp = new GraphZoomScrollPane(vv);
+    VisualizationScrollPane gzsp = new VisualizationScrollPane(vv);
     add(gzsp);
 
     // the regular graph mouse for the normal view

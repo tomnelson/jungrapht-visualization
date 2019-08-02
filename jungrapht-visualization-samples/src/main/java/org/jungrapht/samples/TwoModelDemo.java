@@ -13,9 +13,9 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.TestGraphs;
-import org.jungrapht.visualization.BaseVisualizationModel;
-import org.jungrapht.visualization.GraphZoomScrollPane;
+import org.jungrapht.visualization.DefaultVisualizationModel;
 import org.jungrapht.visualization.VisualizationModel;
+import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
@@ -58,12 +58,12 @@ public class TwoModelDemo extends JPanel {
 
     // create the two models, each with a different layout
     VisualizationModel<String, Number> vm1 =
-        BaseVisualizationModel.builder(graph)
+        DefaultVisualizationModel.builder(graph)
             .layoutAlgorithm(layoutAlgorithm1)
             .layoutSize(preferredSize)
             .build();
     VisualizationModel<String, Number> vm2 =
-        BaseVisualizationModel.builder(graph)
+        DefaultVisualizationModel.builder(graph)
             .layoutAlgorithm(layoutAlgorithm2)
             .layoutSize(preferredSize)
             .build();
@@ -109,8 +109,8 @@ public class TwoModelDemo extends JPanel {
     vv2.setVertexToolTipFunction(Object::toString);
 
     JPanel panel = new JPanel(new GridLayout(1, 0));
-    panel.add(new GraphZoomScrollPane(vv1));
-    panel.add(new GraphZoomScrollPane(vv2));
+    panel.add(new VisualizationScrollPane(vv1));
+    panel.add(new VisualizationScrollPane(vv2));
 
     add(panel);
 

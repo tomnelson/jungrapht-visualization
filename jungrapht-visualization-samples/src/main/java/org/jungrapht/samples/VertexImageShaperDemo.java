@@ -23,12 +23,12 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphBuilder;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
-import org.jungrapht.visualization.BaseVisualizationModel;
-import org.jungrapht.visualization.GraphZoomScrollPane;
+import org.jungrapht.visualization.DefaultVisualizationModel;
 import org.jungrapht.visualization.LayeredIcon;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationModel;
+import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
@@ -114,7 +114,7 @@ public class VertexImageShaperDemo extends JPanel {
     vv =
         VisualizationViewer.builder(
                 (VisualizationModel<Number, Number>)
-                    BaseVisualizationModel.<Number, Number>builder(graph)
+                    DefaultVisualizationModel.<Number, Number>builder(graph)
                         .layoutAlgorithm(layoutAlgorithm)
                         .initializer(new RandomLocationTransformer<>(400, 400, 0))
                         .layoutSize(new Dimension(400, 400))
@@ -193,7 +193,7 @@ public class VertexImageShaperDemo extends JPanel {
     // add a listener for ToolTips
     vv.setVertexToolTipFunction(Object::toString);
 
-    final GraphZoomScrollPane panel = new GraphZoomScrollPane(vv);
+    final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
 
     final DefaultModalGraphMouse<Number, Number> graphMouse = new DefaultModalGraphMouse<>();

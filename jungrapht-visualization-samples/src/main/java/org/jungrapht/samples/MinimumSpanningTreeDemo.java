@@ -13,9 +13,9 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.SpanningTreeAdapter;
 import org.jungrapht.samples.util.TestGraphs;
-import org.jungrapht.visualization.BaseVisualizationModel;
-import org.jungrapht.visualization.GraphZoomScrollPane;
+import org.jungrapht.visualization.DefaultVisualizationModel;
 import org.jungrapht.visualization.VisualizationModel;
+import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
@@ -76,19 +76,19 @@ public class MinimumSpanningTreeDemo extends JPanel {
 
     // create the two models, each with a different layout
     VisualizationModel<String, Number> vm0 =
-        BaseVisualizationModel.builder(graph)
+        DefaultVisualizationModel.builder(graph)
             .layoutAlgorithm(kkLayoutAlgorithm)
             .layoutSize(preferredSize)
             .build();
     VisualizationModel<String, Number> vm1 =
-        BaseVisualizationModel.builder(tree)
+        DefaultVisualizationModel.builder(tree)
             .layoutAlgorithm(treeLayoutAlgorithm)
             .layoutSize(preferredSizeRect)
             .build();
     // initializer is the layout model for vm1
     // and the size is also set to the same size required for the Tree in treeLayoutAlgorithm
     VisualizationModel<String, Number> vm2 =
-        BaseVisualizationModel.builder(graph)
+        DefaultVisualizationModel.builder(graph)
             .layoutAlgorithm(staticLayoutAlgorithm)
             .layoutModel(vm1.getLayoutModel())
             .layoutSize(vm1.getLayoutSize())
@@ -183,9 +183,9 @@ public class MinimumSpanningTreeDemo extends JPanel {
 
     JPanel grid = new JPanel(new GridLayout(0, 1));
     JPanel panel = new JPanel(new BorderLayout());
-    panel.add(new GraphZoomScrollPane(vv0), BorderLayout.WEST);
-    grid.add(new GraphZoomScrollPane(vv1));
-    grid.add(new GraphZoomScrollPane(vv2));
+    panel.add(new VisualizationScrollPane(vv0), BorderLayout.WEST);
+    grid.add(new VisualizationScrollPane(vv1));
+    grid.add(new VisualizationScrollPane(vv2));
     panel.add(grid);
 
     add(panel);

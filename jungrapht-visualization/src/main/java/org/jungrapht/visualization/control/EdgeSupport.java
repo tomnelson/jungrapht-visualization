@@ -1,7 +1,7 @@
 package org.jungrapht.visualization.control;
 
 import java.awt.geom.Point2D;
-import org.jungrapht.visualization.BasicVisualizationServer;
+import org.jungrapht.visualization.DefaultVisualizationServer;
 
 /**
  * interface to support the creation of new edges by the EditingGraphMousePlugin SimpleEdgeSupport
@@ -13,11 +13,11 @@ import org.jungrapht.visualization.BasicVisualizationServer;
  */
 public interface EdgeSupport<V, E> {
 
-  void startEdgeCreate(BasicVisualizationServer<V, E> vv, V startVertex, Point2D startPoint);
+  void startEdgeCreate(DefaultVisualizationServer<V, E> vv, V startVertex, Point2D startPoint);
 
-  void midEdgeCreate(BasicVisualizationServer<V, E> vv, Point2D midPoint);
+  void midEdgeCreate(DefaultVisualizationServer<V, E> vv, Point2D midPoint);
 
-  void endEdgeCreate(BasicVisualizationServer<V, E> vv, V endVertex);
+  void endEdgeCreate(DefaultVisualizationServer<V, E> vv, V endVertex);
 
-  void abort(BasicVisualizationServer<V, E> vv);
+  void abort(DefaultVisualizationServer<V, E> vv);
 }

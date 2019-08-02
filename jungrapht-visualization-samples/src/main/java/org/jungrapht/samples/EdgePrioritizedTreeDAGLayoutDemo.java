@@ -17,7 +17,7 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.samples.util.ControlHelpers;
-import org.jungrapht.visualization.GraphZoomScrollPane;
+import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
@@ -72,7 +72,7 @@ public class EdgePrioritizedTreeDAGLayoutDemo extends JPanel {
     vv.getRenderContext().setVertexLabelDrawPaintFunction(c -> Color.white);
     vv.getRenderContext().setEdgeLabelFunction(Objects::toString);
 
-    final GraphZoomScrollPane panel = new GraphZoomScrollPane(vv);
+    final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
 
     final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();

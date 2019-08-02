@@ -19,10 +19,10 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-public class BasicTransformer
+public class DefaultTransformer
     implements MultiLayerTransformer, ShapeTransformer, ChangeListener, ChangeEventSupport {
 
-  private static final Logger log = LoggerFactory.getLogger(BasicTransformer.class);
+  private static final Logger log = LoggerFactory.getLogger(DefaultTransformer.class);
 
   protected ChangeEventSupport changeSupport = new DefaultChangeEventSupport(this);
 
@@ -36,7 +36,7 @@ public class BasicTransformer
    * Creates an instance and notifies the view and layout Functions to listen to changes published
    * by this instance.
    */
-  public BasicTransformer() {
+  public DefaultTransformer() {
     super();
     viewTransformer.addChangeListener(this);
     layoutTransformer.addChangeListener(this);

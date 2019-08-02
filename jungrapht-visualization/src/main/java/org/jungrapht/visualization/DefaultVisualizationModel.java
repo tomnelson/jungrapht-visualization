@@ -24,9 +24,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** @author Tom Nelson */
-public class BaseVisualizationModel<V, E> implements VisualizationModel<V, E> {
+public class DefaultVisualizationModel<V, E> implements VisualizationModel<V, E> {
 
-  private static final Logger log = LoggerFactory.getLogger(BaseVisualizationModel.class);
+  private static final Logger log = LoggerFactory.getLogger(DefaultVisualizationModel.class);
 
   public static class Builder<V, E, T extends VisualizationModel, B extends Builder<V, E, T, B>> {
     protected Graph<V, E> graph;
@@ -68,7 +68,7 @@ public class BaseVisualizationModel<V, E> implements VisualizationModel<V, E> {
     }
 
     public T build() {
-      return (T) new BaseVisualizationModel<>(this);
+      return (T) new DefaultVisualizationModel<>(this);
     }
   }
 
@@ -80,7 +80,7 @@ public class BaseVisualizationModel<V, E> implements VisualizationModel<V, E> {
     return new Builder(layoutModel);
   }
 
-  protected BaseVisualizationModel(Builder<V, E, ?, ?> builder) {
+  protected DefaultVisualizationModel(Builder<V, E, ?, ?> builder) {
     this(
         builder.graph,
         builder.layoutAlgorithm,
@@ -89,7 +89,7 @@ public class BaseVisualizationModel<V, E> implements VisualizationModel<V, E> {
         builder.initializer);
   }
 
-  private BaseVisualizationModel(
+  private DefaultVisualizationModel(
       Graph<V, E> graph,
       LayoutAlgorithm<V> layoutAlgorithm,
       LayoutModel<V> layoutModel,
@@ -122,9 +122,9 @@ public class BaseVisualizationModel<V, E> implements VisualizationModel<V, E> {
   /**
    * copy constructor
    *
-   * @param other the {@code BaseVisualizationModel} to copy
+   * @param other the {@code DefaultVisualizationModel} to copy
    */
-  protected BaseVisualizationModel(VisualizationModel<V, E> other) {
+  protected DefaultVisualizationModel(VisualizationModel<V, E> other) {
     this(
         other.getGraph(),
         other.getLayoutAlgorithm(),

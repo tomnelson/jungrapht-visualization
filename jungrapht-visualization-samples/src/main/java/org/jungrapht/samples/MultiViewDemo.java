@@ -14,9 +14,9 @@ import java.awt.geom.Rectangle2D;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.TestGraphs;
-import org.jungrapht.visualization.BaseVisualizationModel;
-import org.jungrapht.visualization.GraphZoomScrollPane;
+import org.jungrapht.visualization.DefaultVisualizationModel;
 import org.jungrapht.visualization.VisualizationModel;
+import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.AnimatedPickingGraphMousePlugin;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
@@ -88,7 +88,7 @@ public class MultiViewDemo extends JPanel {
 
     // create one model that all 3 views will share
     VisualizationModel<String, Number> visualizationModel =
-        BaseVisualizationModel.builder(graph)
+        DefaultVisualizationModel.builder(graph)
             .layoutAlgorithm(layoutAlgorithm)
             .layoutSize(preferredSize)
             .build();
@@ -162,9 +162,9 @@ public class MultiViewDemo extends JPanel {
     final JPanel p2 = new JPanel(new BorderLayout());
     final JPanel p3 = new JPanel(new BorderLayout());
 
-    p1.add(new GraphZoomScrollPane(vv1));
-    p2.add(new GraphZoomScrollPane(vv2));
-    p3.add(new GraphZoomScrollPane(vv3));
+    p1.add(new VisualizationScrollPane(vv1));
+    p2.add(new VisualizationScrollPane(vv2));
+    p3.add(new VisualizationScrollPane(vv3));
 
     JButton h1 = new JButton("?");
     h1.addActionListener(

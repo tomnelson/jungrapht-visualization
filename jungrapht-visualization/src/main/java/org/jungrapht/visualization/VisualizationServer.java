@@ -68,7 +68,7 @@ public interface VisualizationServer<V, E>
 
   /**
    * In response to changes from the model, repaint the view, then fire an event to any listeners.
-   * Examples of listeners are the GraphZoomScrollPane and the BirdsEyeVisualizationViewer
+   * Examples of listeners are the VisualizationScrollPane and the BirdsEyeVisualizationViewer
    *
    * @param e the change event
    */

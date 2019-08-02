@@ -28,7 +28,7 @@ import java.awt.event.KeyEvent;
  * <p>To change between modes, two different controls are offered, a combo box and a menu system.
  * These controls are lazily created in their respective 'getter' methods so they don't impact code
  * that does not intend to use them. The menu control can be placed in an unused corner of the
- * GraphZoomScrollPane, which is a common location for mouse mode selection menus in mainstream
+ * VisualizationScrollPane, which is a common location for mouse mode selection menus in mainstream
  * applications.
  *
  * @author Tom Nelson

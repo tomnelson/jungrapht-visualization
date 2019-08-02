@@ -10,15 +10,15 @@ import org.jungrapht.visualization.selection.MutableSelectedState;
 public class BasicVisualizationServerTest extends TestCase {
 
   /*
-   * Previously, a bug was introduced where the RenderContext in BasicVisualizationServer was reassigned, resulting
+   * Previously, a bug was introduced where the RenderContext in DefaultVisualizationServer was reassigned, resulting
    * in data like pickedVertexState to be lost.
    */
   public void testRenderContextNotOverridden() {
     Graph<Object, Object> graph = DirectedPseudograph.createBuilder(Object::new).build();
     CircleLayoutAlgorithm algorithm = CircleLayoutAlgorithm.builder().build();
 
-    BasicVisualizationServer server =
-        BasicVisualizationServer.builder(graph)
+    DefaultVisualizationServer server =
+        DefaultVisualizationServer.builder(graph)
             .layoutAlgorithm(algorithm)
             .viewSize(new Dimension(600, 600))
             .build();

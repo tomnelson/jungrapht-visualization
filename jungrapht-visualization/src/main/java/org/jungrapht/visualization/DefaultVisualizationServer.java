@@ -65,17 +65,15 @@ import org.slf4j.LoggerFactory;
  * is the old VisualizationViewer without tooltips and mouse behaviors. Its purpose is to be a base
  * class that can also be used on the server side of a multi-tiered application.
  *
- * @author Joshua O'Madadhain
  * @author Tom Nelson
- * @author Danyel Fisher
  */
 @SuppressWarnings("serial")
-public class BasicVisualizationServer<V, E> extends JPanel implements VisualizationServer<V, E> {
+public class DefaultVisualizationServer<V, E> extends JPanel implements VisualizationServer<V, E> {
 
-  static Logger log = LoggerFactory.getLogger(BasicVisualizationServer.class);
+  static Logger log = LoggerFactory.getLogger(DefaultVisualizationServer.class);
 
   public static class Builder<
-      V, E, T extends BasicVisualizationServer<V, E>, B extends Builder<V, E, T, B>> {
+      V, E, T extends DefaultVisualizationServer<V, E>, B extends Builder<V, E, T, B>> {
     protected Graph<V, E> graph;
     protected Dimension layoutSize;
     protected Dimension viewSize;
@@ -110,7 +108,7 @@ public class BasicVisualizationServer<V, E> extends JPanel implements Visualizat
     }
 
     public T build() {
-      return (T) new BasicVisualizationServer(this);
+      return (T) new DefaultVisualizationServer(this);
     }
   }
 
@@ -214,7 +212,7 @@ public class BasicVisualizationServer<V, E> extends JPanel implements Visualizat
 
   protected Predicate<Double> smallScaleOverridePredicate = e -> false;
 
-  protected BasicVisualizationServer(Builder<V, E, ?, ?> builder) {
+  protected DefaultVisualizationServer(Builder<V, E, ?, ?> builder) {
     this(
         builder.graph,
         builder.visualizationModel,
@@ -223,7 +221,7 @@ public class BasicVisualizationServer<V, E> extends JPanel implements Visualizat
         builder.viewSize);
   }
 
-  protected BasicVisualizationServer(
+  protected DefaultVisualizationServer(
       Graph<V, E> graph,
       VisualizationModel<V, E> visualizationModel,
       LayoutAlgorithm<V> layoutAlgorithm,
@@ -241,7 +239,7 @@ public class BasicVisualizationServer<V, E> extends JPanel implements Visualizat
       Preconditions.checkArgument(layoutSize.width > 0, "width must be > 0");
       Preconditions.checkArgument(layoutSize.height > 0, "height must be > 0");
       this.model =
-          BaseVisualizationModel.builder(graph)
+          DefaultVisualizationModel.builder(graph)
               .layoutAlgorithm(layoutAlgorithm)
               .layoutSize(layoutSize)
               .build();
@@ -617,9 +615,9 @@ public class BasicVisualizationServer<V, E> extends JPanel implements Visualizat
    * layoutSize.
    */
   protected class VisualizationListener extends ComponentAdapter {
-    protected BasicVisualizationServer<V, E> vv;
+    protected DefaultVisualizationServer<V, E> vv;
 
-    public VisualizationListener(BasicVisualizationServer<V, E> vv) {
+    public VisualizationListener(DefaultVisualizationServer<V, E> vv) {
       this.vv = vv;
     }
 
@@ -771,7 +769,7 @@ public class BasicVisualizationServer<V, E> extends JPanel implements Visualizat
 
   private void removeSpatialAnnotations() {
     preRenderers.removeIf(
-        paintable -> paintable instanceof BasicVisualizationServer.SpatialPaintable);
+        paintable -> paintable instanceof DefaultVisualizationServer.SpatialPaintable);
   }
 
   @Override
@@ -807,14 +805,14 @@ public class BasicVisualizationServer<V, E> extends JPanel implements Visualizat
 
       g2d.setColor(color);
       for (Shape r : grid) {
-        Shape shape = transformSupport.transform(BasicVisualizationServer.this, r);
+        Shape shape = transformSupport.transform(DefaultVisualizationServer.this, r);
         g2d.draw(shape);
       }
       g2d.setColor(Color.red);
 
       for (Shape pickShape : quadTree.getPickShapes()) {
         if (pickShape != null) {
-          Shape shape = transformSupport.transform(BasicVisualizationServer.this, pickShape);
+          Shape shape = transformSupport.transform(DefaultVisualizationServer.this, pickShape);
 
           g2d.draw(shape);
         }

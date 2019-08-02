@@ -22,7 +22,7 @@ import javax.swing.WindowConstants;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
-import org.jungrapht.visualization.BaseVisualizationModel;
+import org.jungrapht.visualization.DefaultVisualizationModel;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
@@ -70,7 +70,7 @@ public class SpatialRTreeTest extends JPanel {
 
     ScalingControl scaler = new CrossoverScalingControl();
     VisualizationModel<String, Number> model =
-        BaseVisualizationModel.builder(g)
+        DefaultVisualizationModel.builder(g)
             .layoutAlgorithm(layoutAlgorithm)
             .layoutSize(layoutPreferredSize)
             .build();
@@ -104,7 +104,7 @@ public class SpatialRTreeTest extends JPanel {
             ctx.getLogger("org.jungrapht.visualization.layout.spatial").setLevel(Level.DEBUG);
             ctx.getLogger("org.jungrapht.visualization.layout.spatial.rtree").setLevel(Level.DEBUG);
 
-            ctx.getLogger("org.jungrapht.visualization.BasicVisualizationServer")
+            ctx.getLogger("org.jungrapht.visualization.DefaultVisualizationServer")
                 .setLevel(Level.TRACE);
             ctx.getLogger("org.jungrapht.visualization.picking").setLevel(Level.TRACE);
             repaint();
@@ -118,7 +118,7 @@ public class SpatialRTreeTest extends JPanel {
             ctx.getLogger("org.jungrapht.visualization.layout.spatial").setLevel(Level.INFO);
             ctx.getLogger("org.jungrapht.visualization.layout.spatial.rtree").setLevel(Level.INFO);
 
-            ctx.getLogger("org.jungrapht.visualization.BasicVisualizationServer")
+            ctx.getLogger("org.jungrapht.visualization.DefaultVisualizationServer")
                 .setLevel(Level.INFO);
             ctx.getLogger("org.jungrapht.visualization.picking").setLevel(Level.INFO);
             repaint();

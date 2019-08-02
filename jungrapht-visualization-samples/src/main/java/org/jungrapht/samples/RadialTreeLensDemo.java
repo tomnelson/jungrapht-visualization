@@ -15,10 +15,10 @@ import org.jgrapht.Graph;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.DemoTreeSupplier;
 import org.jungrapht.samples.util.TreeLayoutSelector;
-import org.jungrapht.visualization.BaseVisualizationModel;
-import org.jungrapht.visualization.GraphZoomScrollPane;
+import org.jungrapht.visualization.DefaultVisualizationModel;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationModel;
+import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.ModalLensGraphMouse;
@@ -63,7 +63,7 @@ public class RadialTreeLensDemo extends JPanel {
     Dimension preferredSize = new Dimension(600, 600);
 
     final VisualizationModel<String, Integer> visualizationModel =
-        BaseVisualizationModel.builder(graph)
+        DefaultVisualizationModel.builder(graph)
             .layoutAlgorithm(new StaticLayoutAlgorithm())
             .layoutSize(preferredSize)
             .build();
@@ -85,7 +85,7 @@ public class RadialTreeLensDemo extends JPanel {
     // add a listener for ToolTips
     vv.setVertexToolTipFunction(Object::toString);
 
-    GraphZoomScrollPane gzsp = new GraphZoomScrollPane(vv);
+    VisualizationScrollPane gzsp = new VisualizationScrollPane(vv);
     add(gzsp);
 
     final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();

@@ -28,11 +28,11 @@ import org.jgrapht.Graph;
  * @param <E> the edge type
  */
 @SuppressWarnings("serial")
-public class VisualizationImageServer<V, E> extends BasicVisualizationServer<V, E> {
+public class VisualizationImageServer<V, E> extends DefaultVisualizationServer<V, E> {
 
   public static class Builder<
           V, E, T extends VisualizationImageServer<V, E>, B extends Builder<V, E, T, B>>
-      extends BasicVisualizationServer.Builder<V, E, T, B> {
+      extends DefaultVisualizationServer.Builder<V, E, T, B> {
 
     protected Builder(Graph<V, E> graph) {
       super(graph);

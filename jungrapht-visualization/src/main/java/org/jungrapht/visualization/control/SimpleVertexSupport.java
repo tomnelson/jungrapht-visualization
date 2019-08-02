@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import java.awt.geom.Point2D;
 import java.util.function.Supplier;
 import org.jgrapht.Graph;
-import org.jungrapht.visualization.BasicVisualizationServer;
+import org.jungrapht.visualization.DefaultVisualizationServer;
 import org.jungrapht.visualization.VisualizationModel;
 
 /**
@@ -24,7 +24,7 @@ public class SimpleVertexSupport<V, E> implements VertexSupport<V, E> {
     this.vertexFactory = vertexFactory;
   }
 
-  public void startVertexCreate(BasicVisualizationServer<V, E> vv, Point2D point) {
+  public void startVertexCreate(DefaultVisualizationServer<V, E> vv, Point2D point) {
     Preconditions.checkState(
         vv.getModel().getGraph().getType().isModifiable(), "graph must be mutable");
     V newVertex = vertexFactory.get();
@@ -36,11 +36,11 @@ public class SimpleVertexSupport<V, E> implements VertexSupport<V, E> {
     vv.repaint();
   }
 
-  public void midVertexCreate(BasicVisualizationServer<V, E> vv, Point2D point) {
+  public void midVertexCreate(DefaultVisualizationServer<V, E> vv, Point2D point) {
     // noop
   }
 
-  public void endVertexCreate(BasicVisualizationServer<V, E> vv, Point2D point) {
+  public void endVertexCreate(DefaultVisualizationServer<V, E> vv, Point2D point) {
     //noop
   }
 

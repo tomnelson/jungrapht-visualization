@@ -19,10 +19,10 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
-import org.jungrapht.visualization.BaseVisualizationModel;
-import org.jungrapht.visualization.GraphZoomScrollPane;
+import org.jungrapht.visualization.DefaultVisualizationModel;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationModel;
+import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultGraphMouse;
@@ -76,7 +76,7 @@ public class WorldMapGraphDemo extends JPanel {
     Function<String, Point> initializer =
         new CityTransformer(map).andThen(new LatLonPixelTransformer(new Dimension(2000, 1000)));
     VisualizationModel<String, Number> model =
-        BaseVisualizationModel.builder(graph)
+        DefaultVisualizationModel.builder(graph)
             .layoutAlgorithm(layoutAlgorithm)
             .initializer(initializer)
             .layoutSize(new Dimension(2000, 1000))
@@ -136,7 +136,7 @@ public class WorldMapGraphDemo extends JPanel {
         .setPositioner(new BasicVertexLabelRenderer.InsidePositioner());
     vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.AUTO);
 
-    final GraphZoomScrollPane panel = new GraphZoomScrollPane(vv);
+    final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
     final VisualizationViewer.GraphMouse graphMouse = new DefaultGraphMouse<String, Number>();
     vv.setGraphMouse(graphMouse);

@@ -15,10 +15,10 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.TestGraphs;
-import org.jungrapht.visualization.BaseVisualizationModel;
-import org.jungrapht.visualization.GraphZoomScrollPane;
+import org.jungrapht.visualization.DefaultVisualizationModel;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationModel;
+import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
@@ -94,7 +94,7 @@ public class SatelliteViewDemo extends JPanel {
 
     // create one model that both views will share
     VisualizationModel<String, Number> vm =
-        BaseVisualizationModel.builder(graph)
+        DefaultVisualizationModel.builder(graph)
             .layoutAlgorithm(layoutAlgorithm)
             .layoutSize(layoutSize)
             .build();
@@ -156,7 +156,7 @@ public class SatelliteViewDemo extends JPanel {
     Container panel = new JPanel(new BorderLayout());
     Container rightPanel = new JPanel(new BorderLayout());
 
-    GraphZoomScrollPane gzsp = new GraphZoomScrollPane(mainVisualizationViewer);
+    VisualizationScrollPane gzsp = new VisualizationScrollPane(mainVisualizationViewer);
     panel.add(gzsp);
     rightPanel.add(new JPanel());
     rightPanel.add(satelliteVisualizationViewer, BorderLayout.SOUTH);

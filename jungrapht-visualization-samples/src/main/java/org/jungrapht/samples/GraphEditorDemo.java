@@ -22,7 +22,7 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
-import org.jungrapht.visualization.GraphZoomScrollPane;
+import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.annotations.AnnotationControls;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
@@ -135,7 +135,7 @@ public class GraphEditorDemo extends JPanel implements Printable {
 
     vv.setVertexToolTipFunction(vv.getRenderContext().getVertexLabelFunction());
 
-    final GraphZoomScrollPane panel = new GraphZoomScrollPane(vv);
+    final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
     Supplier<Number> vertexFactory = new VertexFactory();
     Supplier<Number> edgeFactory = new EdgeFactory();

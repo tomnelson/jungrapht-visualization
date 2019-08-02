@@ -22,10 +22,10 @@ import javax.swing.plaf.basic.BasicLabelUI;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
-import org.jungrapht.visualization.BaseVisualizationModel;
-import org.jungrapht.visualization.GraphZoomScrollPane;
+import org.jungrapht.visualization.DefaultVisualizationModel;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationModel;
+import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
@@ -92,7 +92,7 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
     Map<String, Point2D> map = new HashMap<>();
 
     final VisualizationModel<String, Number> visualizationModel =
-        BaseVisualizationModel.builder(graph)
+        DefaultVisualizationModel.builder(graph)
             .layoutAlgorithm(graphLayoutAlgorithm)
             .layoutSize(preferredSize)
             .build();
@@ -113,7 +113,7 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
               }
             });
 
-    GraphZoomScrollPane gzsp = new GraphZoomScrollPane(vv);
+    VisualizationScrollPane gzsp = new VisualizationScrollPane(vv);
     add(gzsp);
 
     // the regular graph mouse for the normal view
@@ -247,7 +247,7 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
             ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) log;
             LoggerContext ctx = (LoggerContext) LoggerFactory.getILoggerFactory();
             ctx.getLogger("org.jungrapht.visualization.layout.spatial").setLevel(Level.DEBUG);
-            ctx.getLogger("org.jungrapht.visualization.BasicVisualizationServer")
+            ctx.getLogger("org.jungrapht.visualization.DefaultVisualizationServer")
                 .setLevel(Level.TRACE);
             ctx.getLogger("org.jungrapht.visualization.picking").setLevel(Level.TRACE);
             repaint();
@@ -259,7 +259,7 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
             ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) log;
             LoggerContext ctx = (LoggerContext) LoggerFactory.getILoggerFactory();
             ctx.getLogger("org.jungrapht.visualization.layout.spatial").setLevel(Level.INFO);
-            ctx.getLogger("org.jungrapht.visualization.BasicVisualizationServer")
+            ctx.getLogger("org.jungrapht.visualization.DefaultVisualizationServer")
                 .setLevel(Level.INFO);
             ctx.getLogger("org.jungrapht.visualization.picking").setLevel(Level.INFO);
             repaint();

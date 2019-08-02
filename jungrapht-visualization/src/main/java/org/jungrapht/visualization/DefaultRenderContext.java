@@ -158,7 +158,7 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
 
   protected EdgeIndexFunction<V, E> parallelEdgeIndexFunction;
 
-  protected MultiLayerTransformer multiLayerTransformer = new BasicTransformer();
+  protected MultiLayerTransformer multiLayerTransformer = new DefaultTransformer();
 
   /** pluggable support for picking graph elements by finding them based on their coordinates. */
   protected GraphElementAccessor<V, E> pickSupport;

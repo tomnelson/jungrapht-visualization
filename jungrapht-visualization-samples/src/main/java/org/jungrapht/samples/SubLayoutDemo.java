@@ -21,9 +21,9 @@ import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.SpanningTreeAdapter;
 import org.jungrapht.samples.util.TestGraphs;
-import org.jungrapht.visualization.BaseVisualizationModel;
-import org.jungrapht.visualization.GraphZoomScrollPane;
+import org.jungrapht.visualization.DefaultVisualizationModel;
 import org.jungrapht.visualization.VisualizationModel;
+import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.ModalGraphMouse;
@@ -104,7 +104,7 @@ public class SubLayoutDemo extends JPanel {
     clusteringLayoutModel.accept(layoutAlgorithm);
 
     final VisualizationModel<String, Number> visualizationModel =
-        BaseVisualizationModel.builder(graph)
+        DefaultVisualizationModel.builder(graph)
             .layoutModel(clusteringLayoutModel)
             .layoutAlgorithm(layoutAlgorithm)
             .build();
@@ -129,7 +129,7 @@ public class SubLayoutDemo extends JPanel {
 
     vv.setGraphMouse(graphMouse);
 
-    GraphZoomScrollPane gzsp = new GraphZoomScrollPane(vv);
+    VisualizationScrollPane gzsp = new VisualizationScrollPane(vv);
     add(gzsp);
 
     JComboBox<?> modeBox = graphMouse.getModeComboBox();
