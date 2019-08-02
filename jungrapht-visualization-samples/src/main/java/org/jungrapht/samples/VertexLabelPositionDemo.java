@@ -12,7 +12,6 @@ import java.awt.*;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.TestGraphs;
-import org.jungrapht.visualization.DefaultVisualizationModel;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
@@ -58,7 +57,7 @@ public class VertexLabelPositionDemo extends JPanel {
     Dimension preferredSize = new Dimension(600, 600);
 
     final VisualizationModel<String, Number> visualizationModel =
-        DefaultVisualizationModel.builder(graph)
+        VisualizationModel.builder(graph)
             .layoutAlgorithm(graphLayoutAlgorithm)
             .layoutSize(preferredSize)
             .build();

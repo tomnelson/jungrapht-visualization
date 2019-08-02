@@ -21,7 +21,6 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphBuilder;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
-import org.jungrapht.visualization.DefaultVisualizationModel;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -90,7 +89,7 @@ public class SpatialLensLargeGraphDemo extends JPanel {
     Dimension viewPreferredSize = new Dimension(800, 800);
 
     final VisualizationModel<String, Number> visualizationModel =
-        DefaultVisualizationModel.builder(graph)
+        VisualizationModel.builder(graph)
             .layoutAlgorithm(graphLayoutAlgorithm)
             .layoutSize(preferredSize)
             .build();

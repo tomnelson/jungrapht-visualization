@@ -17,9 +17,11 @@ import java.util.function.Predicate;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
+import org.jgrapht.Graph;
 import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.control.TransformSupport;
 import org.jungrapht.visualization.layout.GraphElementAccessor;
+import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.event.LayoutChange;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
 import org.jungrapht.visualization.renderers.Renderer;
@@ -33,6 +35,53 @@ import org.jungrapht.visualization.spatial.Spatial;
  */
 public interface VisualizationServer<V, E>
     extends LayoutChange.Listener, ChangeListener, LayoutStateChange.Listener {
+
+  class Builder<V, E, T extends DefaultVisualizationServer<V, E>, B extends Builder<V, E, T, B>> {
+    protected Graph<V, E> graph;
+    protected Dimension layoutSize;
+    protected Dimension viewSize;
+    protected LayoutAlgorithm<V> layoutAlgorithm;
+    protected VisualizationModel<V, E> visualizationModel;
+
+    protected Builder(Graph<V, E> graph) {
+      this.graph = graph;
+    }
+
+    protected Builder(VisualizationModel<V, E> visualizationModel) {
+      this.visualizationModel = visualizationModel;
+    }
+
+    protected B self() {
+      return (B) this;
+    }
+
+    public B layoutSize(Dimension layoutSize) {
+      this.layoutSize = layoutSize;
+      return self();
+    }
+
+    public B viewSize(Dimension viewSize) {
+      this.viewSize = viewSize;
+      return self();
+    }
+
+    public B layoutAlgorithm(LayoutAlgorithm<V> layoutAlgorithm) {
+      this.layoutAlgorithm = layoutAlgorithm;
+      return self();
+    }
+
+    public T build() {
+      return (T) new DefaultVisualizationServer(this);
+    }
+  }
+
+  static <V, E> Builder<V, E, ?, ?> builder(Graph<V, E> graph) {
+    return new Builder(graph);
+  }
+
+  static <V, E> Builder<V, E, ?, ?> builder(VisualizationModel<V, E> visualizationModel) {
+    return new Builder(visualizationModel);
+  }
 
   /**
    * Specify whether this class uses its offscreen image or not.

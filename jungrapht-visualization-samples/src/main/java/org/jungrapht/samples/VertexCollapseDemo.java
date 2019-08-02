@@ -20,7 +20,6 @@ import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.TestGraphs;
-import org.jungrapht.visualization.DefaultVisualizationModel;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
@@ -110,7 +109,7 @@ public class VertexCollapseDemo extends JPanel {
     Dimension preferredSize = new Dimension(400, 400);
 
     final VisualizationModel<Collapsable<?>, Number> visualizationModel =
-        DefaultVisualizationModel.builder(graph)
+        VisualizationModel.builder(graph)
             .layoutAlgorithm(layoutAlgorithm)
             .layoutSize(preferredSize)
             .build();

@@ -22,7 +22,6 @@ import javax.swing.plaf.basic.BasicLabelUI;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
-import org.jungrapht.visualization.DefaultVisualizationModel;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -92,7 +91,7 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
     Map<String, Point2D> map = new HashMap<>();
 
     final VisualizationModel<String, Number> visualizationModel =
-        DefaultVisualizationModel.builder(graph)
+        VisualizationModel.builder(graph)
             .layoutAlgorithm(graphLayoutAlgorithm)
             .layoutSize(preferredSize)
             .build();

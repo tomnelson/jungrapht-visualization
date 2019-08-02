@@ -21,7 +21,6 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.samples.util.TestGraphs;
-import org.jungrapht.visualization.DefaultVisualizationModel;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -101,7 +100,7 @@ public class LensDemo extends JPanel {
     gridLayoutAlgorithm = new StaticLayoutAlgorithm<>();
 
     final VisualizationModel<String, Number> visualizationModel =
-        DefaultVisualizationModel.builder(graph)
+        VisualizationModel.builder(graph)
             .layoutAlgorithm(graphLayoutAlgorithm)
             .layoutSize(preferredSize)
             .build();

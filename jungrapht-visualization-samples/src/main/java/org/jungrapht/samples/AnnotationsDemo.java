@@ -13,7 +13,6 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.TestGraphs;
-import org.jungrapht.visualization.DefaultVisualizationModel;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -74,7 +73,7 @@ public class AnnotationsDemo extends JPanel {
     layoutAlgorithm.setMaxIterations(500);
 
     VisualizationModel<String, Number> vm =
-        DefaultVisualizationModel.builder(graph)
+        VisualizationModel.builder(graph)
             .layoutAlgorithm(layoutAlgorithm)
             .layoutSize(preferredSize1)
             .build();

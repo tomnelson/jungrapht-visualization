@@ -17,8 +17,8 @@ public class BasicVisualizationServerTest extends TestCase {
     Graph<Object, Object> graph = DirectedPseudograph.createBuilder(Object::new).build();
     CircleLayoutAlgorithm algorithm = CircleLayoutAlgorithm.builder().build();
 
-    DefaultVisualizationServer server =
-        DefaultVisualizationServer.builder(graph)
+    VisualizationServer server =
+        VisualizationServer.builder(graph)
             .layoutAlgorithm(algorithm)
             .viewSize(new Dimension(600, 600))
             .build();

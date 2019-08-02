@@ -22,7 +22,6 @@ import javax.swing.JRadioButton;
 import javax.swing.WindowConstants;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.TestGraphs;
-import org.jungrapht.visualization.DefaultVisualizationModel;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationViewer;
@@ -68,7 +67,7 @@ public class SimpleGraphSpatialEdgeSearchTest extends JPanel {
 
     ScalingControl scaler = new CrossoverScalingControl();
     VisualizationModel<String, Number> model =
-        DefaultVisualizationModel.builder(g)
+        VisualizationModel.builder(g)
             .layoutAlgorithm(layoutAlgorithm)
             .initializer(new RandomLocationTransformer(600, 600, System.currentTimeMillis()))
             .layoutSize(layoutPreferredSize)

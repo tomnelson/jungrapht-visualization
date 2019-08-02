@@ -24,61 +24,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** @author Tom Nelson */
-public class DefaultVisualizationModel<V, E> implements VisualizationModel<V, E> {
+class DefaultVisualizationModel<V, E> implements VisualizationModel<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(DefaultVisualizationModel.class);
-
-  public static class Builder<V, E, T extends VisualizationModel, B extends Builder<V, E, T, B>> {
-    protected Graph<V, E> graph;
-    protected LayoutAlgorithm<V> layoutAlgorithm;
-    protected LayoutModel<V> layoutModel;
-    protected Dimension layoutSize;
-    protected Function<V, Point> initializer;
-
-    protected B self() {
-      return (B) this;
-    }
-
-    protected Builder(Graph<V, E> graph) {
-      this.graph = graph;
-    }
-
-    protected Builder(LayoutModel<V> layoutModel) {
-      this.layoutModel = layoutModel;
-    }
-
-    public B layoutAlgorithm(LayoutAlgorithm<V> layoutAlgorithm) {
-      this.layoutAlgorithm = layoutAlgorithm;
-      return self();
-    }
-
-    public B layoutModel(LayoutModel<V> layoutModel) {
-      this.layoutModel = layoutModel;
-      return self();
-    }
-
-    public B layoutSize(Dimension layoutSize) {
-      this.layoutSize = layoutSize;
-      return self();
-    }
-
-    public B initializer(Function<V, Point> initializer) {
-      this.initializer = initializer;
-      return self();
-    }
-
-    public T build() {
-      return (T) new DefaultVisualizationModel<>(this);
-    }
-  }
-
-  public static <V, E> Builder<V, E, ?, ?> builder(Graph<V, E> graph) {
-    return new Builder(graph);
-  }
-
-  public static <V, E> Builder<V, E, ?, ?> builder(LayoutModel<V> layoutModel) {
-    return new Builder(layoutModel);
-  }
 
   protected DefaultVisualizationModel(Builder<V, E, ?, ?> builder) {
     this(

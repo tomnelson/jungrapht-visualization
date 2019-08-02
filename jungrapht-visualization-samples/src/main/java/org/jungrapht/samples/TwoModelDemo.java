@@ -13,7 +13,6 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.TestGraphs;
-import org.jungrapht.visualization.DefaultVisualizationModel;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
@@ -58,12 +57,12 @@ public class TwoModelDemo extends JPanel {
 
     // create the two models, each with a different layout
     VisualizationModel<String, Number> vm1 =
-        DefaultVisualizationModel.builder(graph)
+        VisualizationModel.builder(graph)
             .layoutAlgorithm(layoutAlgorithm1)
             .layoutSize(preferredSize)
             .build();
     VisualizationModel<String, Number> vm2 =
-        DefaultVisualizationModel.builder(graph)
+        VisualizationModel.builder(graph)
             .layoutAlgorithm(layoutAlgorithm2)
             .layoutSize(preferredSize)
             .build();

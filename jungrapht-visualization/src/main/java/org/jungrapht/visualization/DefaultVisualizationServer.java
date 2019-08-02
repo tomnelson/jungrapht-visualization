@@ -68,57 +68,9 @@ import org.slf4j.LoggerFactory;
  * @author Tom Nelson
  */
 @SuppressWarnings("serial")
-public class DefaultVisualizationServer<V, E> extends JPanel implements VisualizationServer<V, E> {
+class DefaultVisualizationServer<V, E> extends JPanel implements VisualizationServer<V, E> {
 
   static Logger log = LoggerFactory.getLogger(DefaultVisualizationServer.class);
-
-  public static class Builder<
-      V, E, T extends DefaultVisualizationServer<V, E>, B extends Builder<V, E, T, B>> {
-    protected Graph<V, E> graph;
-    protected Dimension layoutSize;
-    protected Dimension viewSize;
-    protected LayoutAlgorithm<V> layoutAlgorithm;
-    protected VisualizationModel<V, E> visualizationModel;
-
-    protected Builder(Graph<V, E> graph) {
-      this.graph = graph;
-    }
-
-    protected Builder(VisualizationModel<V, E> visualizationModel) {
-      this.visualizationModel = visualizationModel;
-    }
-
-    protected B self() {
-      return (B) this;
-    }
-
-    public B layoutSize(Dimension layoutSize) {
-      this.layoutSize = layoutSize;
-      return self();
-    }
-
-    public B viewSize(Dimension viewSize) {
-      this.viewSize = viewSize;
-      return self();
-    }
-
-    public B layoutAlgorithm(LayoutAlgorithm<V> layoutAlgorithm) {
-      this.layoutAlgorithm = layoutAlgorithm;
-      return self();
-    }
-
-    public T build() {
-      return (T) new DefaultVisualizationServer(this);
-    }
-  }
-
-  public static <V, E> Builder<V, E, ?, ?> builder(Graph<V, E> graph) {
-    return new Builder(graph);
-  }
-
-  public static <V, E> Builder<V, E, ?, ?> builder(VisualizationModel<V, E> visualizationModel) {
-    return new Builder(visualizationModel);
-  }
 
   private static final String PREFIX = "jungrapht.";
   private static final String VERTEX_SPATIAL_SUPPORT = PREFIX + "vertexSpatialSupport";
@@ -239,7 +191,7 @@ public class DefaultVisualizationServer<V, E> extends JPanel implements Visualiz
       Preconditions.checkArgument(layoutSize.width > 0, "width must be > 0");
       Preconditions.checkArgument(layoutSize.height > 0, "height must be > 0");
       this.model =
-          DefaultVisualizationModel.builder(graph)
+          VisualizationModel.builder(graph)
               .layoutAlgorithm(layoutAlgorithm)
               .layoutSize(layoutSize)
               .build();

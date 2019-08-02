@@ -14,7 +14,6 @@ import java.awt.geom.Rectangle2D;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.TestGraphs;
-import org.jungrapht.visualization.DefaultVisualizationModel;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
@@ -88,7 +87,7 @@ public class MultiViewDemo extends JPanel {
 
     // create one model that all 3 views will share
     VisualizationModel<String, Number> visualizationModel =
-        DefaultVisualizationModel.builder(graph)
+        VisualizationModel.builder(graph)
             .layoutAlgorithm(layoutAlgorithm)
             .layoutSize(preferredSize)
             .build();

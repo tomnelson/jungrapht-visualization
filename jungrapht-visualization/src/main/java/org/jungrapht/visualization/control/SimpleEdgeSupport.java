@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import java.awt.geom.Point2D;
 import java.util.function.Supplier;
 import org.jgrapht.Graph;
-import org.jungrapht.visualization.DefaultVisualizationServer;
+import org.jungrapht.visualization.VisualizationServer;
 
 public class SimpleEdgeSupport<V, E> implements EdgeSupport<V, E> {
 
@@ -19,8 +19,7 @@ public class SimpleEdgeSupport<V, E> implements EdgeSupport<V, E> {
   }
 
   @Override
-  public void startEdgeCreate(
-      DefaultVisualizationServer<V, E> vv, V startVertex, Point2D startPoint) {
+  public void startEdgeCreate(VisualizationServer<V, E> vv, V startVertex, Point2D startPoint) {
     this.startVertex = startVertex;
     this.down = startPoint;
     this.edgeEffects.startEdgeEffects(vv, startPoint, startPoint);
@@ -31,7 +30,7 @@ public class SimpleEdgeSupport<V, E> implements EdgeSupport<V, E> {
   }
 
   @Override
-  public void midEdgeCreate(DefaultVisualizationServer<V, E> vv, Point2D midPoint) {
+  public void midEdgeCreate(VisualizationServer<V, E> vv, Point2D midPoint) {
     if (startVertex != null) {
       this.edgeEffects.midEdgeEffects(vv, down, midPoint);
       if (vv.getModel().getGraph().getType().isDirected()) {
@@ -42,7 +41,7 @@ public class SimpleEdgeSupport<V, E> implements EdgeSupport<V, E> {
   }
 
   @Override
-  public void endEdgeCreate(DefaultVisualizationServer<V, E> vv, V endVertex) {
+  public void endEdgeCreate(VisualizationServer<V, E> vv, V endVertex) {
     Preconditions.checkState(
         vv.getModel().getGraph() instanceof Graph<?, ?>, "graph must be mutable");
     if (startVertex != null) {
@@ -57,7 +56,7 @@ public class SimpleEdgeSupport<V, E> implements EdgeSupport<V, E> {
   }
 
   @Override
-  public void abort(DefaultVisualizationServer<V, E> vv) {
+  public void abort(VisualizationServer<V, E> vv) {
     startVertex = null;
     edgeEffects.endEdgeEffects(vv);
     edgeEffects.endArrowEffects(vv);

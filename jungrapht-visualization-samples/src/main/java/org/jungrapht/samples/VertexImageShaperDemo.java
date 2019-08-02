@@ -23,7 +23,6 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphBuilder;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
-import org.jungrapht.visualization.DefaultVisualizationModel;
 import org.jungrapht.visualization.LayeredIcon;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.RenderContext;
@@ -114,7 +113,7 @@ public class VertexImageShaperDemo extends JPanel {
     vv =
         VisualizationViewer.builder(
                 (VisualizationModel<Number, Number>)
-                    DefaultVisualizationModel.<Number, Number>builder(graph)
+                    VisualizationModel.<Number, Number>builder(graph)
                         .layoutAlgorithm(layoutAlgorithm)
                         .initializer(new RandomLocationTransformer<>(400, 400, 0))
                         .layoutSize(new Dimension(400, 400))

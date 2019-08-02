@@ -1,19 +1,19 @@
 package org.jungrapht.visualization.control;
 
 import java.awt.geom.Point2D;
-import org.jungrapht.visualization.DefaultVisualizationServer;
+import org.jungrapht.visualization.VisualizationServer;
 
 public interface EdgeEffects<V, E> {
 
-  void startEdgeEffects(DefaultVisualizationServer<V, E> vv, Point2D down, Point2D out);
+  void startEdgeEffects(VisualizationServer<V, E> vv, Point2D down, Point2D out);
 
-  void midEdgeEffects(DefaultVisualizationServer<V, E> vv, Point2D down, Point2D out);
+  void midEdgeEffects(VisualizationServer<V, E> vv, Point2D down, Point2D out);
 
-  void endEdgeEffects(DefaultVisualizationServer<V, E> vv);
+  void endEdgeEffects(VisualizationServer<V, E> vv);
 
-  void startArrowEffects(DefaultVisualizationServer<V, E> vv, Point2D down, Point2D out);
+  void startArrowEffects(VisualizationServer<V, E> vv, Point2D down, Point2D out);
 
-  void midArrowEffects(DefaultVisualizationServer<V, E> vv, Point2D down, Point2D out);
+  void midArrowEffects(VisualizationServer<V, E> vv, Point2D down, Point2D out);
 
-  void endArrowEffects(DefaultVisualizationServer<V, E> vv);
+  void endArrowEffects(VisualizationServer<V, E> vv);
 }

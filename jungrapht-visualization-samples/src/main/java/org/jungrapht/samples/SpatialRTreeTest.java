@@ -22,7 +22,6 @@ import javax.swing.WindowConstants;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
-import org.jungrapht.visualization.DefaultVisualizationModel;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
@@ -70,7 +69,7 @@ public class SpatialRTreeTest extends JPanel {
 
     ScalingControl scaler = new CrossoverScalingControl();
     VisualizationModel<String, Number> model =
-        DefaultVisualizationModel.builder(g)
+        VisualizationModel.builder(g)
             .layoutAlgorithm(layoutAlgorithm)
             .layoutSize(layoutPreferredSize)
             .build();

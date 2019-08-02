@@ -19,7 +19,6 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
-import org.jungrapht.visualization.DefaultVisualizationModel;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -76,7 +75,7 @@ public class WorldMapGraphDemo extends JPanel {
     Function<String, Point> initializer =
         new CityTransformer(map).andThen(new LatLonPixelTransformer(new Dimension(2000, 1000)));
     VisualizationModel<String, Number> model =
-        DefaultVisualizationModel.builder(graph)
+        VisualizationModel.builder(graph)
             .layoutAlgorithm(layoutAlgorithm)
             .initializer(initializer)
             .layoutSize(new Dimension(2000, 1000))

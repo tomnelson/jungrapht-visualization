@@ -13,7 +13,6 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.SpanningTreeAdapter;
 import org.jungrapht.samples.util.TestGraphs;
-import org.jungrapht.visualization.DefaultVisualizationModel;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
@@ -76,19 +75,19 @@ public class MinimumSpanningTreeDemo extends JPanel {
 
     // create the two models, each with a different layout
     VisualizationModel<String, Number> vm0 =
-        DefaultVisualizationModel.builder(graph)
+        VisualizationModel.builder(graph)
             .layoutAlgorithm(kkLayoutAlgorithm)
             .layoutSize(preferredSize)
             .build();
     VisualizationModel<String, Number> vm1 =
-        DefaultVisualizationModel.builder(tree)
+        VisualizationModel.builder(tree)
             .layoutAlgorithm(treeLayoutAlgorithm)
             .layoutSize(preferredSizeRect)
             .build();
     // initializer is the layout model for vm1
     // and the size is also set to the same size required for the Tree in treeLayoutAlgorithm
     VisualizationModel<String, Number> vm2 =
-        DefaultVisualizationModel.builder(graph)
+        VisualizationModel.builder(graph)
             .layoutAlgorithm(staticLayoutAlgorithm)
             .layoutModel(vm1.getLayoutModel())
             .layoutSize(vm1.getLayoutSize())

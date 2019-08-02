@@ -15,7 +15,6 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.DemoTreeSupplier;
-import org.jungrapht.visualization.DefaultVisualizationModel;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -92,7 +91,7 @@ public class SatelliteViewTreeDemo extends JPanel {
 
     // create one model that both views will share
     VisualizationModel<String, Integer> vm =
-        DefaultVisualizationModel.builder(graph)
+        VisualizationModel.builder(graph)
             .layoutAlgorithm(layoutAlgorithm)
             .layoutSize(layoutSize)
             .build();

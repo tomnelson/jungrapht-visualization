@@ -15,7 +15,6 @@ import org.jgrapht.Graph;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.DemoTreeSupplier;
 import org.jungrapht.samples.util.TreeLayoutSelector;
-import org.jungrapht.visualization.DefaultVisualizationModel;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -63,7 +62,7 @@ public class RadialTreeLensDemo extends JPanel {
     Dimension preferredSize = new Dimension(600, 600);
 
     final VisualizationModel<String, Integer> visualizationModel =
-        DefaultVisualizationModel.builder(graph)
+        VisualizationModel.builder(graph)
             .layoutAlgorithm(new StaticLayoutAlgorithm())
             .layoutSize(preferredSize)
             .build();
