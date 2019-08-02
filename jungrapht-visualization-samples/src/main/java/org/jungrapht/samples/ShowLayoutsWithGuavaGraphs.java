@@ -57,7 +57,8 @@ public class ShowLayoutsWithGuavaGraphs extends JPanel {
     "One component graph",
     "Chain+isolate graph",
     "Trivial (disconnected) graph",
-    "Little Graph"
+    "Little Graph",
+    "Generated Graph"
   };
 
   BalloonLayoutRings balloonLayoutRings;
@@ -78,6 +79,7 @@ public class ShowLayoutsWithGuavaGraphs extends JPanel {
     graph.putEdge("A", "C");
 
     g_array[5] = new MutableGraphAdapter(graph);
+    g_array[6] = new MutableGraphAdapter(TestGuavaGraphs.getGeneratedGraph());
 
     Graph<String, Number> g = g_array[2]; // initial graph
 

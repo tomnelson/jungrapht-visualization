@@ -11,11 +11,15 @@
  */
 package org.jungrapht.samples.util;
 
+import com.google.common.graph.EndpointPair;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.function.Supplier;
+import org.jgrapht.generate.BarabasiAlbertGraphGenerator;
+import org.jgrapht.graph.guava.MutableGraphAdapter;
 
 /** Provides generators for several different test graphs. */
 public class TestGuavaGraphs {
@@ -204,5 +208,25 @@ public class TestGuavaGraphs {
     graph.putEdge("B", "C");
 
     return graph;
+  }
+
+  /** @return the graph for this demo */
+  public static MutableGraph<String> getGeneratedGraph() {
+
+    MutableGraph<String> graph = GraphBuilder.directed().build();
+    MutableGraphAdapter<String> adapter = new MutableGraphAdapter<>(graph);
+    adapter.setVertexSupplier(new VertexSupplier());
+    BarabasiAlbertGraphGenerator<String, EndpointPair<String>> gen =
+        new BarabasiAlbertGraphGenerator<>(4, 3, 20);
+    gen.generateGraph(adapter, null);
+    return graph;
+  }
+
+  static class VertexSupplier implements Supplier<String> {
+    char a = 'a';
+
+    public String get() {
+      return Character.toString(a++);
+    }
   }
 }
