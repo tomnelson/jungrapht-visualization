@@ -48,9 +48,9 @@ public class RadialTreeLensDemo extends JPanel {
   VisualizationViewer<String, Integer> vv;
 
   /** provides a Hyperbolic lens for the view */
-  LensSupport hyperbolicViewSupport;
+  LensSupport<ModalLensGraphMouse> hyperbolicViewSupport;
 
-  LensSupport hyperbolicLayoutSupport;
+  LensSupport<ModalLensGraphMouse> hyperbolicLayoutSupport;
 
   /** create an instance of a simple graph with controls to demo the zoomand hyperbolic features. */
   public RadialTreeLensDemo() {

@@ -29,6 +29,7 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.LensMagnificationGraphMousePlugin;
+import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.control.ModalLensGraphMouse;
 import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
@@ -68,14 +69,14 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
   VisualizationViewer<String, Number> vv;
 
   /** provides a Hyperbolic lens for the view */
-  LensSupport hyperbolicViewSupport;
+  LensSupport<ModalLensGraphMouse> hyperbolicViewSupport;
   /** provides a magnification lens for the view */
-  LensSupport magnifyViewSupport;
+  LensSupport<ModalLensGraphMouse> magnifyViewSupport;
 
   /** provides a Hyperbolic lens for the model */
-  LensSupport hyperbolicLayoutSupport;
+  LensSupport<ModalLensGraphMouse> hyperbolicLayoutSupport;
   /** provides a magnification lens for the model */
-  LensSupport magnifyLayoutSupport;
+  LensSupport<ModalLensGraphMouse> magnifyLayoutSupport;
 
   ScalingControl scaler;
 
@@ -223,7 +224,8 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
     radio.add(magnifyView);
     normal.setSelected(true);
 
-    graphMouse.addItemListener(hyperbolicLayoutSupport.getGraphMouse().getModeListener());
+    graphMouse.addItemListener(
+        ((ModalGraphMouse) hyperbolicLayoutSupport.getGraphMouse()).getModeListener());
     graphMouse.addItemListener(hyperbolicViewSupport.getGraphMouse().getModeListener());
     graphMouse.addItemListener(magnifyLayoutSupport.getGraphMouse().getModeListener());
     graphMouse.addItemListener(magnifyViewSupport.getGraphMouse().getModeListener());

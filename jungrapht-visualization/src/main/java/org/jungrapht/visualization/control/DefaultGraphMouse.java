@@ -45,7 +45,7 @@ public class DefaultGraphMouse<V, E> extends PluggableGraphMouse {
     scalingPlugin = new ScalingGraphMousePlugin(new CrossoverScalingControl(), 0, in, out);
     add(new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK | InputEvent.CTRL_DOWN_MASK));
     add(new SelectingGraphMousePlugin<V, E>());
-    add(new ScalingGraphMousePlugin(new CrossoverScalingControl(), 0, in, out));
+    add(scalingPlugin);
   }
 
   /** @param zoomAtMouse The zoomAtMouse to set. */

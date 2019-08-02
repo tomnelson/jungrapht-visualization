@@ -22,7 +22,8 @@ import java.awt.event.KeyEvent;
  *
  * @author Tom Nelson
  */
-public class ModalLensGraphMouse extends AbstractModalGraphMouse implements ModalGraphMouse {
+public class ModalLensGraphMouse extends AbstractModalGraphMouse
+    implements ModalGraphMouse, LensGraphMouse {
 
   /** not included in the base class */
   protected LensMagnificationGraphMousePlugin magnificationPlugin;

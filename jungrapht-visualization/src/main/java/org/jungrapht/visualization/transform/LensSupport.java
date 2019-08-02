@@ -10,14 +10,14 @@
 
 package org.jungrapht.visualization.transform;
 
-import org.jungrapht.visualization.control.ModalGraphMouse;
+import org.jungrapht.visualization.control.LensGraphMouse;
 
 /**
  * basic API for implementing lens projection support
  *
  * @author Tom Nelson
  */
-public interface LensSupport {
+public interface LensSupport<T extends LensGraphMouse> {
 
   void activate();
 
@@ -27,5 +27,5 @@ public interface LensSupport {
 
   LensTransformer getLensTransformer();
 
-  ModalGraphMouse getGraphMouse();
+  T getGraphMouse();
 }

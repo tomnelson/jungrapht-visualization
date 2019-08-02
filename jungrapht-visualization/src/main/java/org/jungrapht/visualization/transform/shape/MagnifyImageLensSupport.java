@@ -10,13 +10,12 @@
 
 package org.jungrapht.visualization.transform.shape;
 
-import java.awt.*;
 import java.awt.geom.Point2D;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationViewer;
+import org.jungrapht.visualization.control.LensGraphMouse;
 import org.jungrapht.visualization.control.LensTransformSupport;
-import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.control.TransformSupport;
 import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.renderers.BasicRenderer;
@@ -32,7 +31,8 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-public class MagnifyImageLensSupport<V, E> extends AbstractLensSupport<V, E> {
+public class MagnifyImageLensSupport<V, E, T extends LensGraphMouse>
+    extends AbstractLensSupport<V, E, T> {
 
   private static final Logger log = LoggerFactory.getLogger(MagnifyImageLensSupport.class);
 
@@ -49,9 +49,7 @@ public class MagnifyImageLensSupport<V, E> extends AbstractLensSupport<V, E> {
           + "Ctrl+MouseWheel to change magnification</center></html>";
 
   public MagnifyImageLensSupport(
-      VisualizationViewer<V, E> vv,
-      LensTransformer lensTransformer,
-      ModalGraphMouse lensGraphMouse) {
+      VisualizationViewer<V, E> vv, LensTransformer lensTransformer, T lensGraphMouse) {
     super(vv, lensGraphMouse);
     this.renderContext = vv.getRenderContext();
     this.pickSupport = renderContext.getPickSupport();

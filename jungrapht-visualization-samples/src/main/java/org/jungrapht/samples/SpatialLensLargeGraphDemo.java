@@ -65,14 +65,14 @@ public class SpatialLensLargeGraphDemo extends JPanel {
   VisualizationViewer<String, Number> vv;
 
   /** provides a Hyperbolic lens for the view */
-  LensSupport hyperbolicViewSupport;
+  LensSupport<ModalLensGraphMouse> hyperbolicViewSupport;
   /** provides a magnification lens for the view */
-  LensSupport magnifyViewSupport;
+  LensSupport<ModalLensGraphMouse> magnifyViewSupport;
 
   /** provides a Hyperbolic lens for the model */
-  LensSupport hyperbolicLayoutSupport;
+  LensSupport<ModalLensGraphMouse> hyperbolicLayoutSupport;
   /** provides a magnification lens for the model */
-  LensSupport magnifyLayoutSupport;
+  LensSupport<ModalLensGraphMouse> magnifyLayoutSupport;
 
   ScalingControl scaler;
 

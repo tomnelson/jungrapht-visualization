@@ -8,13 +8,13 @@
  */
 package org.jungrapht.visualization.transform.shape;
 
-import java.awt.*;
+import java.awt.Dimension;
 import java.awt.geom.Point2D;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationViewer;
+import org.jungrapht.visualization.control.LensGraphMouse;
 import org.jungrapht.visualization.control.LensTransformSupport;
-import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.control.TransformSupport;
 import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -30,7 +30,8 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-public class ViewLensSupport<V, E> extends AbstractLensSupport<V, E> implements LensSupport {
+public class ViewLensSupport<V, E, T extends LensGraphMouse> extends AbstractLensSupport<V, E, T>
+    implements LensSupport<T> {
 
   private static final Logger log = LoggerFactory.getLogger(ViewLensSupport.class);
 
@@ -42,9 +43,7 @@ public class ViewLensSupport<V, E> extends AbstractLensSupport<V, E> implements 
   protected Renderer.Edge<V, E> reshapingEdgeRenderer;
 
   public ViewLensSupport(
-      VisualizationViewer<V, E> vv,
-      LensTransformer lensTransformer,
-      ModalGraphMouse lensGraphMouse) {
+      VisualizationViewer<V, E> vv, LensTransformer lensTransformer, T lensGraphMouse) {
     super(vv, lensGraphMouse);
     this.renderContext = vv.getRenderContext();
     this.pickSupport = renderContext.getPickSupport();

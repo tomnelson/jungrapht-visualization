@@ -17,7 +17,7 @@ import java.awt.Paint;
 import java.awt.geom.RectangularShape;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.ModalGraphMouse;
+import org.jungrapht.visualization.control.LensGraphMouse;
 
 /**
  * A class to make it easy to add an examining lens to a jung graph application. See
@@ -25,12 +25,13 @@ import org.jungrapht.visualization.control.ModalGraphMouse;
  *
  * @author Tom Nelson
  */
-public abstract class AbstractLensSupport<V, E> implements LensSupport {
+public abstract class AbstractLensSupport<V, E, T extends LensGraphMouse>
+    implements LensSupport<T> {
 
   protected VisualizationViewer<V, E> vv;
   protected VisualizationViewer.GraphMouse graphMouse;
   protected LensTransformer lensTransformer;
-  protected ModalGraphMouse lensGraphMouse;
+  protected T lensGraphMouse;
   protected LensPaintable lensPaintable;
   protected LensControls lensControls;
   protected String defaultToolTipText;
@@ -46,7 +47,7 @@ public abstract class AbstractLensSupport<V, E> implements LensSupport {
    * @param vv the VisualizationViewer to work on
    * @param lensGraphMouse the GraphMouse instance to use for the lens
    */
-  public AbstractLensSupport(VisualizationViewer<V, E> vv, ModalGraphMouse lensGraphMouse) {
+  public AbstractLensSupport(VisualizationViewer<V, E> vv, T lensGraphMouse) {
     this.vv = vv;
     this.graphMouse = vv.getGraphMouse();
     this.defaultToolTipText = vv.getToolTipText();
@@ -66,7 +67,7 @@ public abstract class AbstractLensSupport<V, E> implements LensSupport {
   }
 
   /** @return the hyperbolicGraphMouse. */
-  public ModalGraphMouse getGraphMouse() {
+  public T getGraphMouse() {
     return lensGraphMouse;
   }
 

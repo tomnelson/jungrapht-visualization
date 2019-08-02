@@ -87,8 +87,8 @@ public class LensVertexImageShaperDemo extends JPanel {
     "privacy"
   };
 
-  LensSupport magnifyLayoutSupport;
-  LensSupport magnifyViewSupport;
+  LensSupport<ModalLensGraphMouse> magnifyLayoutSupport;
+  LensSupport<ModalLensGraphMouse> magnifyViewSupport;
   /** create an instance of a simple graph with controls to demo the zoom features. */
   public LensVertexImageShaperDemo() {
 

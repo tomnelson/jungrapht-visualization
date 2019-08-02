@@ -4,9 +4,12 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.renderers.Renderer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LightweightRenderingVisitor implements ChangeListener {
 
+  private static Logger log = LoggerFactory.getLogger(LightweightRenderingVisitor.class);
   private VisualizationServer visualizationServer;
   private Timer timer;
 
@@ -55,6 +58,7 @@ public class LightweightRenderingVisitor implements ChangeListener {
     public Timer(VisualizationServer visualizationServer) {
       this.visualizationServer = visualizationServer;
       visualizationServer.simplifyRenderer(true);
+      log.info("will repaint");
       visualizationServer.repaint();
     }
 
@@ -74,6 +78,7 @@ public class LightweightRenderingVisitor implements ChangeListener {
       }
       visualizationServer.simplifyRenderer(false);
       done = true;
+      log.info("done, will repaint");
       visualizationServer.repaint();
     }
   }

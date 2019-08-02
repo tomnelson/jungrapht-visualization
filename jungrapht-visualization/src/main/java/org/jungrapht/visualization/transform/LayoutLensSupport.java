@@ -13,9 +13,8 @@ package org.jungrapht.visualization.transform;
 import java.awt.geom.Point2D;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationViewer;
+import org.jungrapht.visualization.control.LensGraphMouse;
 import org.jungrapht.visualization.control.LensTransformSupport;
-import org.jungrapht.visualization.control.ModalGraphMouse;
-import org.jungrapht.visualization.control.ModalLensGraphMouse;
 import org.jungrapht.visualization.control.TransformSupport;
 import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.slf4j.Logger;
@@ -27,32 +26,11 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-public class LayoutLensSupport<V, E> extends AbstractLensSupport<V, E> implements LensSupport {
+public class LayoutLensSupport<V, E, T extends LensGraphMouse> extends AbstractLensSupport<V, E, T>
+    implements LensSupport<T> {
 
   private static final Logger log = LoggerFactory.getLogger(LayoutLensSupport.class);
   protected GraphElementAccessor<V, E> pickSupport;
-
-  public LayoutLensSupport(VisualizationViewer<V, E> vv) {
-    this(
-        vv,
-        new HyperbolicTransformer(
-            new Lens(vv.getModel().getLayoutSize()),
-            vv.getRenderContext()
-                .getMultiLayerTransformer()
-                .getTransformer(MultiLayerTransformer.Layer.LAYOUT)),
-        new ModalLensGraphMouse());
-  }
-
-  public LayoutLensSupport(VisualizationViewer<V, E> vv, Lens lens) {
-    this(
-        vv,
-        new HyperbolicTransformer(
-            lens,
-            vv.getRenderContext()
-                .getMultiLayerTransformer()
-                .getTransformer(MultiLayerTransformer.Layer.LAYOUT)),
-        new ModalLensGraphMouse());
-  }
 
   /**
    * Create an instance with the specified parameters.
@@ -62,9 +40,7 @@ public class LayoutLensSupport<V, E> extends AbstractLensSupport<V, E> implement
    * @param lensGraphMouse the lens input handler
    */
   public LayoutLensSupport(
-      VisualizationViewer<V, E> vv,
-      LensTransformer lensTransformer,
-      ModalGraphMouse lensGraphMouse) {
+      VisualizationViewer<V, E> vv, LensTransformer lensTransformer, T lensGraphMouse) {
     super(vv, lensGraphMouse);
     this.lensTransformer = lensTransformer;
     this.pickSupport = vv.getPickSupport();

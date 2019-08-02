@@ -8,7 +8,12 @@
  */
 package org.jungrapht.samples;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.Paint;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Collection;
@@ -25,10 +30,10 @@ import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.annotations.SelectedVertexPaintable;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
-import org.jungrapht.visualization.control.DefaultModalGraphMouse;
+import org.jungrapht.visualization.control.DefaultGraphMouse;
+import org.jungrapht.visualization.control.DefaultLensGraphMouse;
+import org.jungrapht.visualization.control.LensGraphMouse;
 import org.jungrapht.visualization.control.LensMagnificationGraphMousePlugin;
-import org.jungrapht.visualization.control.ModalGraphMouse.Mode;
-import org.jungrapht.visualization.control.ModalLensGraphMouse;
 import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.decorators.IconShapeFunction;
@@ -60,8 +65,8 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
   /** the visual component and renderer for the graph */
   VisualizationViewer<Number, Number> vv;
 
-  LensSupport magnifyLayoutSupport;
-  LensSupport magnifyViewSupport;
+  LensSupport<LensGraphMouse> magnifyLayoutSupport;
+  LensSupport<LensGraphMouse> magnifyViewSupport;
   /** create an instance of a simple graph with controls to demo the zoom features. */
   public LensVertexImageFromLabelShaperDemo() {
 
@@ -121,9 +126,8 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
 
-    final DefaultModalGraphMouse<Number, Number> graphMouse = new DefaultModalGraphMouse<>();
+    final DefaultGraphMouse<Number, Number> graphMouse = new DefaultGraphMouse<>();
     vv.setGraphMouse(graphMouse);
-    vv.addKeyListener(graphMouse.getModeKeyListener());
 
     final ScalingControl scaler = new CrossoverScalingControl();
     vv.scaleToLayout(scaler);
@@ -135,11 +139,6 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
 
     LightweightRenderingVisitor.visit(vv);
 
-    JComboBox<Mode> modeBox = graphMouse.getModeComboBox();
-    JPanel modePanel = new JPanel();
-    modePanel.setBorder(BorderFactory.createTitledBorder("Mouse Mode"));
-    modePanel.add(modeBox);
-
     JPanel scaleGrid = new JPanel(new GridLayout(1, 0));
     scaleGrid.setBorder(BorderFactory.createTitledBorder("Zoom"));
     JPanel controls = new JPanel();
@@ -147,7 +146,6 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
     scaleGrid.add(minus);
     controls.add(scaleGrid);
 
-    controls.add(modePanel);
     add(controls, BorderLayout.SOUTH);
 
     LayoutModel<Number> layoutModel = vv.getModel().getLayoutModel();
@@ -160,7 +158,7 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
             vv,
             new MagnifyShapeTransformer(
                 lens, vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW)),
-            new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)));
+            new DefaultLensGraphMouse<>(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)));
     lens = new Lens(d);
     lens.setMagnification(2.f);
     magnifyLayoutSupport =
@@ -169,10 +167,7 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
             new MagnifyTransformer(
                 lens,
                 vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT)),
-            new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)));
-
-    graphMouse.addItemListener(magnifyLayoutSupport.getGraphMouse().getModeListener());
-    graphMouse.addItemListener(magnifyViewSupport.getGraphMouse().getModeListener());
+            new DefaultLensGraphMouse<>(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)));
 
     ButtonGroup radio = new ButtonGroup();
     JRadioButton none = new JRadioButton("None");
@@ -203,10 +198,6 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
     radio.add(none);
     radio.add(magnifyView);
     radio.add(magnifyModel);
-
-    JMenuBar menubar = new JMenuBar();
-    JMenu modeMenu = graphMouse.getModeMenu();
-    menubar.add(modeMenu);
 
     JPanel lensPanel = new JPanel(new GridLayout(2, 0));
     lensPanel.setBorder(BorderFactory.createTitledBorder("Lens"));

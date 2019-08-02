@@ -57,9 +57,9 @@ public class BalloonLayoutForestDemo extends JPanel {
   VisualizationViewer<String, Integer> vv;
 
   /** provides a Hyperbolic lens for the view */
-  LensSupport hyperbolicViewSupport;
+  LensSupport<ModalLensGraphMouse> hyperbolicViewSupport;
 
-  LensSupport hyperbolicSupport;
+  LensSupport<ModalLensGraphMouse> hyperbolicSupport;
 
   Dimension layoutSize = new Dimension(600, 600);
   Dimension viewSize = new Dimension(600, 600);

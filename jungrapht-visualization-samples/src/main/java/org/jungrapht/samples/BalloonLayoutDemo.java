@@ -54,9 +54,9 @@ public class BalloonLayoutDemo extends JPanel {
   VisualizationViewer<String, Integer> vv;
 
   /** provides a Hyperbolic lens for the view */
-  LensSupport hyperbolicViewSupport;
+  LensSupport<ModalLensGraphMouse> hyperbolicViewSupport;
 
-  LensSupport hyperbolicSupport;
+  LensSupport<ModalLensGraphMouse> hyperbolicSupport;
 
   public BalloonLayoutDemo() {
     setLayout(new BorderLayout());

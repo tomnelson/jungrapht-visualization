@@ -33,10 +33,6 @@
             <groupId>org.jgrapht</groupId>
             <artifactId>jgrapht-core</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.jgrapht</groupId>
-            <artifactId>jgrapht-guava</artifactId>
-        </dependency>
     </dependencies>
     <build>
         <plugins>
