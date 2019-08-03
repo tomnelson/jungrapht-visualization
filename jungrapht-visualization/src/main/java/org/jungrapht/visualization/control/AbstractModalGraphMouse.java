@@ -43,13 +43,9 @@ import javax.swing.plaf.basic.BasicIconFactory;
  *
  * @author Tom Nelson
  */
-public abstract class AbstractModalGraphMouse extends PluggableGraphMouse
+public abstract class AbstractModalGraphMouse extends AbstractGraphMouse
     implements ModalGraphMouse, ItemSelectable {
 
-  /** used by the scaling plugins for zoom in */
-  protected float in;
-  /** used by the scaling plugins for zoom out */
-  protected float out;
   /** a listener for mode changes */
   protected ItemListener modeListener;
   /** a JComboBox control available to set the mode */
@@ -64,14 +60,12 @@ public abstract class AbstractModalGraphMouse extends PluggableGraphMouse
   protected GraphMousePlugin pickingPlugin;
   protected GraphMousePlugin translatingPlugin;
   protected GraphMousePlugin animatedPickingPlugin;
-  protected GraphMousePlugin scalingPlugin;
   protected GraphMousePlugin rotatingPlugin;
   protected GraphMousePlugin shearingPlugin;
   protected KeyListener modeKeyListener;
 
   protected AbstractModalGraphMouse(float in, float out) {
-    this.in = in;
-    this.out = out;
+    super(in, out);
   }
 
   /** create the plugins, and load the plugins for TRANSFORMING mode */

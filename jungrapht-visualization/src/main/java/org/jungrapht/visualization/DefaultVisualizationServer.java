@@ -57,6 +57,7 @@ import org.jungrapht.visualization.spatial.rtree.SplitterContext;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.util.ChangeEventSupport;
 import org.jungrapht.visualization.util.DefaultChangeEventSupport;
+import org.jungrapht.visualization.util.LightweightRenderingVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,6 +79,8 @@ class DefaultVisualizationServer<V, E> extends JPanel
   private static final String EDGE_SPATIAL_SUPPORT = PREFIX + "edgeSpatialSupport";
   private static final String PROPERTIES_FILE_NAME =
       System.getProperty("graph.visualization.properties.file.name", PREFIX + "properties");
+  private static final String LIGHTWEIGHT_VERTEX_COUNT_THRESHOLD =
+      PREFIX + "lightweightVertexCountThreshold";
 
   private static boolean loadFromAppName() {
     try {
@@ -229,6 +232,9 @@ class DefaultVisualizationServer<V, E> extends JPanel
     if (edgeSpatial != null) {
       setEdgeSpatial(edgeSpatial);
     }
+    int lightweightVertexCountThreshold =
+        Integer.parseInt(System.getProperty(LIGHTWEIGHT_VERTEX_COUNT_THRESHOLD, "20"));
+    LightweightRenderingVisitor.visit(this, 0.5, lightweightVertexCountThreshold);
   }
 
   @Override

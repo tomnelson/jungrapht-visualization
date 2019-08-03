@@ -18,14 +18,7 @@ import java.awt.event.InputEvent;
  *
  * @author Tom Nelson
  */
-public class DefaultLensGraphMouse<V, E> extends PluggableGraphMouse implements LensGraphMouse {
-
-  /** used by the scaling plugins for zoom in */
-  protected float in;
-  /** used by the scaling plugins for zoom out */
-  protected float out;
-
-  protected GraphMousePlugin scalingPlugin;
+public class DefaultLensGraphMouse<V, E> extends AbstractGraphMouse implements LensGraphMouse {
 
   /** not included in the base class */
   protected LensMagnificationGraphMousePlugin magnificationPlugin;
@@ -44,8 +37,7 @@ public class DefaultLensGraphMouse<V, E> extends PluggableGraphMouse implements 
 
   public DefaultLensGraphMouse(
       float in, float out, LensMagnificationGraphMousePlugin magnificationPlugin) {
-    this.in = in;
-    this.out = out;
+    super(in, out);
     this.magnificationPlugin = magnificationPlugin;
     scalingPlugin = new ScalingGraphMousePlugin(new CrossoverScalingControl(), 0, in, out);
     loadPlugins();

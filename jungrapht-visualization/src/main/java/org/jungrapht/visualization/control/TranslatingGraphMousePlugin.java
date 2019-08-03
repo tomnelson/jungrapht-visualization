@@ -45,7 +45,7 @@ public class TranslatingGraphMousePlugin extends AbstractGraphMousePlugin
    */
   public TranslatingGraphMousePlugin(int modifiers) {
     super(modifiers);
-    log.info("setModifiers({})", modifiers);
+    log.trace("setModifiers({})", modifiers);
     this.cursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
   }
 

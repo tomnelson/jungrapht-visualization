@@ -19,7 +19,7 @@ import org.jgrapht.Graph;
 import org.jungrapht.visualization.control.GraphMouseListener;
 
 /**
- * Adds mouse behaviors and tooltips to the graph visualization base class
+ * Adds mouse behaviors and tooltips to the graph VisualizationServer base class
  *
  * @author Tom Nelson
  */

@@ -7,19 +7,27 @@ import org.jungrapht.visualization.renderers.Renderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 public class LightweightRenderingVisitor implements ChangeListener {
 
   private static Logger log = LoggerFactory.getLogger(LightweightRenderingVisitor.class);
   private VisualizationServer visualizationServer;
   private Timer timer;
+  private int threshold = DEFAULT_THRESHOLD;
+  private static final int DEFAULT_THRESHOLD = 19;
 
   public static void visit(VisualizationServer visualizationServer) {
-    visit(visualizationServer, 0.5);
+    visit(visualizationServer, DEFAULT_THRESHOLD);
+  }
+
+  public static void visit(
+      VisualizationServer visualizationServer, double scaleLimit, int threshold) {
+    visualizationServer.addChangeListener(
+        new LightweightRenderingVisitor(visualizationServer, scaleLimit, threshold));
   }
 
   public static void visit(VisualizationServer visualizationServer, double scaleLimit) {
-    visualizationServer.addChangeListener(
-        new LightweightRenderingVisitor(visualizationServer, scaleLimit));
+    visit(visualizationServer, scaleLimit, DEFAULT_THRESHOLD);
   }
 
   public static <V, E> void visit(
@@ -27,21 +35,26 @@ public class LightweightRenderingVisitor implements ChangeListener {
       Renderer<V, E> lightweightRenderer,
       double scaleLimit) {
     visualizationServer.addChangeListener(
-        new LightweightRenderingVisitor(visualizationServer, scaleLimit));
+        new LightweightRenderingVisitor(visualizationServer, scaleLimit, DEFAULT_THRESHOLD));
     visualizationServer.setLightweightRenderer(lightweightRenderer);
   }
 
   private LightweightRenderingVisitor(VisualizationServer visualizationServer) {
-    this(visualizationServer, 0.5);
+    this(visualizationServer, 0.5, DEFAULT_THRESHOLD);
   }
 
-  private LightweightRenderingVisitor(VisualizationServer visualizationServer, double scaleLimit) {
+  private LightweightRenderingVisitor(
+      VisualizationServer visualizationServer, double scaleLimit, int threshold) {
     this.visualizationServer = visualizationServer;
+    this.threshold = threshold;
     visualizationServer.setSmallScaleOverridePredicate(scale -> (double) scale < scaleLimit);
   }
 
   @Override
   public void stateChanged(ChangeEvent e) {
+    if (visualizationServer.getModel().getGraph().vertexSet().size() < threshold) {
+      return;
+    }
     if (timer == null || timer.done) {
       timer = new Timer(visualizationServer);
       timer.start();
@@ -58,7 +71,6 @@ public class LightweightRenderingVisitor implements ChangeListener {
     public Timer(VisualizationServer visualizationServer) {
       this.visualizationServer = visualizationServer;
       visualizationServer.simplifyRenderer(true);
-      log.info("will repaint");
       visualizationServer.repaint();
     }
 
@@ -78,7 +90,6 @@ public class LightweightRenderingVisitor implements ChangeListener {
       }
       visualizationServer.simplifyRenderer(false);
       done = true;
-      log.info("done, will repaint");
       visualizationServer.repaint();
     }
   }

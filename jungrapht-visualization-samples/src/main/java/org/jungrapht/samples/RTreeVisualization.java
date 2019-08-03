@@ -12,7 +12,7 @@ import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
+import java.awt.geom.Point2D;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -30,8 +30,7 @@ import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
-import org.jungrapht.visualization.control.DefaultModalGraphMouse;
-import org.jungrapht.visualization.control.ModalGraphMouse.Mode;
+import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
@@ -79,8 +78,11 @@ public class RTreeVisualization<V> extends JPanel {
 
   Map<Node, VisualizationServer.Paintable> thePaintables = new HashMap<>();
 
+  VisualizationServer othervv;
+
   public RTreeVisualization(RTree rtree, VisualizationServer othervv) {
     this.rtree = rtree;
+    this.othervv = othervv;
 
     setLayout(new BorderLayout());
     // create a simple graph for the demo
@@ -111,7 +113,7 @@ public class RTreeVisualization<V> extends JPanel {
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
 
-    final DefaultModalGraphMouse<Object, Integer> graphMouse = new DefaultModalGraphMouse<>();
+    final DefaultGraphMouse<Object, Integer> graphMouse = new DefaultGraphMouse<>();
 
     vv.setGraphMouse(graphMouse);
     MutableSelectedState selectedState = othervv.getSelectedVertexState();
@@ -119,39 +121,43 @@ public class RTreeVisualization<V> extends JPanel {
         e -> {
           if (e.getStateChange() == ItemEvent.DESELECTED) {
             Object unpicked = e.getItem();
-            if (unpicked instanceof Node) {
+            if (unpicked instanceof Collection) {
+              Collection selections = (Collection) unpicked;
+              selections.forEach(
+                  selection -> {
+                    if (selection instanceof Node) {
+                      Node node = (Node) selection;
+                      othervv.removePreRenderPaintable(thePaintables.get(node));
+                      thePaintables.remove(node);
+                    }
+                  });
+            } else if (unpicked instanceof Node) {
               othervv.removePreRenderPaintable(thePaintables.get(unpicked));
               thePaintables.remove(unpicked);
             }
           }
           if (e.getStateChange() == ItemEvent.SELECTED) {
             Object picked = e.getItem();
-            if (picked instanceof Node) {
-              Rectangle2D rectangle = ((Node) picked).getBounds();
-              VisualizationServer.Paintable thePaintable =
-                  new VisualizationServer.Paintable() {
-                    @Override
-                    public void paint(Graphics g) {
-                      g.setColor(Color.magenta);
-                      ((Graphics2D) g).draw(rectangle);
+            if (picked instanceof Collection) {
+              Collection selections = (Collection) picked;
+              selections.forEach(
+                  selection -> {
+                    if (selection instanceof Node) {
+                      Node node = (Node) selection;
+                      RTreePaintable paintable = new RTreePaintable(node);
+                      othervv.addPreRenderPaintable(paintable);
+                      thePaintables.put(node, paintable);
                     }
-
-                    @Override
-                    public boolean useTransform() {
-                      return true;
-                    }
-                  };
-              othervv.addPreRenderPaintable(thePaintable);
-              thePaintables.put((Node) picked, thePaintable);
+                  });
+            } else if (picked instanceof Node) {
+              Node node = (Node) picked;
+              RTreePaintable paintable = new RTreePaintable(node);
+              othervv.addPreRenderPaintable(paintable);
+              thePaintables.put(node, paintable);
             }
           }
         });
     vv.setSelectedVertexState(othervv.getSelectedVertexState());
-    vv.addKeyListener(graphMouse.getModeKeyListener());
-
-    JComboBox<Mode> modeBox = graphMouse.getModeComboBox();
-    modeBox.addItemListener(graphMouse.getModeListener());
-    graphMouse.setMode(Mode.TRANSFORMING);
 
     JRadioButton animate = new JRadioButton("Animate Transition");
     JRadioButton treeLayout = new JRadioButton("Tree Layout");
@@ -224,9 +230,29 @@ public class RTreeVisualization<V> extends JPanel {
     JPanel controls = new JPanel();
     controls.add(layoutPanel);
     controls.add(ControlHelpers.getZoomControls(vv, "Zoom"));
-    controls.add(modeBox);
 
     add(controls, BorderLayout.SOUTH);
+  }
+
+  class RTreePaintable implements VisualizationServer.Paintable {
+    Node node;
+
+    RTreePaintable(Node node) {
+      this.node = node;
+    }
+
+    @Override
+    public void paint(Graphics g) {
+      g.setColor(Color.magenta);
+      Shape shape = node.getBounds();
+      shape = othervv.getRenderContext().getMultiLayerTransformer().transform(shape);
+      ((Graphics2D) g).draw(shape);
+    }
+
+    @Override
+    public boolean useTransform() {
+      return false;
+    }
   }
 
   class Rings implements VisualizationServer.Paintable {
@@ -354,6 +380,11 @@ public class RTreeVisualization<V> extends JPanel {
         rtreeField.setAccessible(true);
         RTree rtree = (RTree) rtreeField.get(spatial);
         content.add(new RTreeVisualization<>(rtree, vv));
+        // where is the caling visualization:
+        Point2D callerLocation = vv.getComponent().getLocationOnScreen();
+        int callerWidth = vv.getComponent().getWidth();
+        frame.setLocation(
+            (int) callerLocation.getX() + callerWidth + 50, (int) callerLocation.getY());
         frame.pack();
         frame.setVisible(true);
 

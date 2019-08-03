@@ -70,7 +70,7 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
   /** create an instance of a simple graph with controls to demo the zoom features. */
   public LensVertexImageFromLabelShaperDemo() {
 
-    Dimension layoutSize = new Dimension(2000, 2000);
+    Dimension layoutSize = new Dimension(600, 600);
     Dimension viewSize = new Dimension(600, 600);
 
     setLayout(new BorderLayout());

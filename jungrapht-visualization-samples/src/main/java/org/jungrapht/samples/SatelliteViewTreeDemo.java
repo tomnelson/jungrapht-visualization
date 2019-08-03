@@ -21,15 +21,16 @@ import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
+import org.jungrapht.visualization.annotations.SelectedVertexPaintable;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
-import org.jungrapht.visualization.control.DefaultModalGraphMouse;
+import org.jungrapht.visualization.control.DefaultGraphMouse;
+import org.jungrapht.visualization.control.DefaultSatelliteGraphMouse;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.GradientVertexRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.transform.shape.ShapeTransformer;
-import org.jungrapht.visualization.util.LightweightRenderingVisitor;
 
 /**
  * Demonstrates the construction of a graph visualization with a main and a satellite view. The
@@ -103,8 +104,9 @@ public class SatelliteViewTreeDemo extends JPanel {
         SatelliteVisualizationViewer.builder(mainVisualizationViewer)
             .viewSize(preferredSize2)
             .build();
-    LightweightRenderingVisitor.visit(mainVisualizationViewer);
-    LightweightRenderingVisitor.visit(satelliteVisualizationViewer);
+    mainVisualizationViewer.addPostRenderPaintable(
+        SelectedVertexPaintable.builder(mainVisualizationViewer).build());
+
     mainVisualizationViewer.setBackground(Color.white);
     mainVisualizationViewer
         .getRenderContext()
@@ -126,6 +128,7 @@ public class SatelliteViewTreeDemo extends JPanel {
         .setVertexFillPaintFunction(
             new PickableElementPaintFunction<>(
                 satelliteVisualizationViewer.getSelectedVertexState(), Color.red, Color.yellow));
+    satelliteVisualizationViewer.setGraphMouse(new DefaultSatelliteGraphMouse());
     mainVisualizationViewer
         .getRenderer()
         .setVertexRenderer(new GradientVertexRenderer<>(Color.red, Color.white, true));
@@ -165,13 +168,8 @@ public class SatelliteViewTreeDemo extends JPanel {
     helpDialog.getContentPane().add(new JLabel(instructions));
 
     // create a GraphMouse for the main view
-    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
+    final DefaultGraphMouse<String, Integer> graphMouse = new DefaultGraphMouse<>();
     mainVisualizationViewer.setGraphMouse(graphMouse);
-
-    JComboBox<?> modeBox = graphMouse.getModeComboBox();
-    modeBox.addItemListener(
-        ((DefaultModalGraphMouse<?, ?>) satelliteVisualizationViewer.getGraphMouse())
-            .getModeListener());
 
     JCheckBox gridBox = new JCheckBox("Show Grid");
     gridBox.addItemListener(
@@ -186,8 +184,6 @@ public class SatelliteViewTreeDemo extends JPanel {
 
     JPanel controls = new JPanel();
     controls.add(ControlHelpers.getZoomControls(mainVisualizationViewer, ""));
-    //    controls.add(minus);
-    controls.add(modeBox);
     controls.add(gridBox);
     controls.add(help);
     add(panel);
