@@ -5,205 +5,128 @@
  * This software is open-source under the BSD license; see either "license.txt"
  * or https://github.com/tomnelson/jungrapht-visualization/blob/master/LICENSE for a description.
  *
- * Created on Apr 14, 2005
+ * Created on Aug 23, 2005
  */
-
 package org.jungrapht.visualization.renderers;
 
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
-import java.awt.Rectangle;
-import java.io.Serializable;
-import java.util.Objects;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
+import java.awt.Dimension;
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Point2D;
+import java.util.function.Predicate;
+import org.jungrapht.visualization.MultiLayerTransformer;
+import org.jungrapht.visualization.RenderContext;
+import org.jungrapht.visualization.VisualizationModel;
+import org.jungrapht.visualization.layout.model.Point;
+import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
+import org.jungrapht.visualization.util.Context;
 
-/**
- * DefaultEdgeLabelRenderer is similar to the cell renderers used by the JTable and JTree jfc
- * classes.
- *
- * @author Tom Nelson
- */
-@SuppressWarnings("serial")
-public class DefaultEdgeLabelRenderer extends JLabel implements EdgeLabelRenderer, Serializable {
+public class DefaultEdgeLabelRenderer<V, E> implements Renderer.EdgeLabel<V, E> {
 
-  protected static Border noFocusBorder = new EmptyBorder(0, 0, 0, 0);
-
-  protected Color pickedEdgeLabelColor = Color.black;
-  protected boolean rotateEdgeLabels;
-
-  public DefaultEdgeLabelRenderer(Color pickedEdgeLabelColor) {
-    this(pickedEdgeLabelColor, true);
+  public Component prepareRenderer(
+      RenderContext<V, E> renderContext, Object value, boolean isSelected, E edge) {
+    return renderContext
+        .getEdgeLabelRenderer()
+        .getEdgeLabelRendererComponent(
+            renderContext.getScreenDevice(),
+            value,
+            renderContext.getEdgeFontFunction().apply(edge),
+            isSelected,
+            edge);
   }
 
-  /**
-   * Creates an instance with the specified properties.
-   *
-   * @param pickedEdgeLabelColor the color to use for rendering the labels of selected edges
-   * @param rotateEdgeLabels whether the
-   */
-  public DefaultEdgeLabelRenderer(Color pickedEdgeLabelColor, boolean rotateEdgeLabels) {
-    super();
-    this.pickedEdgeLabelColor = pickedEdgeLabelColor;
-    this.rotateEdgeLabels = rotateEdgeLabels;
-    setOpaque(true);
-    setBorder(noFocusBorder);
-  }
-
-  /** @return Returns the rotateEdgeLabels. */
-  public boolean isRotateEdgeLabels() {
-    return rotateEdgeLabels;
-  }
-  /** @param rotateEdgeLabels The rotateEdgeLabels to set. */
-  public void setRotateEdgeLabels(boolean rotateEdgeLabels) {
-    this.rotateEdgeLabels = rotateEdgeLabels;
-  }
-  /**
-   * Overrides <code>JComponent.setForeground</code> to assign the unselected-foreground color to
-   * the specified color.
-   *
-   * @param c set the foreground color to this value
-   */
   @Override
-  public void setForeground(Color c) {
-    super.setForeground(c);
-  }
-
-  /**
-   * Overrides <code>JComponent.setBackground</code> to assign the unselected-background color to
-   * the specified color.
-   *
-   * @param c set the background color to this value
-   */
-  @Override
-  public void setBackground(Color c) {
-    super.setBackground(c);
-  }
-
-  /**
-   * Notification from the <code>UIManager</code> that the look and feel has changed. Replaces the
-   * current UI object with the latest version from the <code>UIManager</code>.
-   *
-   * @see JComponent#updateUI
-   */
-  @Override
-  public void updateUI() {
-    super.updateUI();
-    setForeground(null);
-    setBackground(null);
-  }
-
-  /**
-   * Returns the default label renderer for an Edge
-   *
-   * @param vv the <code>VisualizationViewer</code> to render on
-   * @param value the value to assign to the label for <code>Edge</code>
-   * @param edge the <code>Edge</code>
-   * @return the default label renderer
-   */
-  public <E> Component getEdgeLabelRendererComponent(
-      JComponent vv, Object value, Font font, boolean isSelected, E edge) {
-
-    super.setForeground(vv.getForeground());
-    if (isSelected) {
-      setForeground(pickedEdgeLabelColor);
+  public void labelEdge(
+      RenderContext<V, E> renderContext,
+      VisualizationModel<V, E> visualizationModel,
+      E e,
+      String label) {
+    if (label == null || label.length() == 0) {
+      return;
     }
-    super.setBackground(vv.getBackground());
 
-    if (font != null) {
-      setFont(font);
-    } else {
-      setFont(vv.getFont());
+    // don't draw edge if either incident vertex is not drawn
+    V v1 = visualizationModel.getGraph().getEdgeSource(e);
+    V v2 = visualizationModel.getGraph().getEdgeTarget(e);
+    Predicate<V> vertexIncludePredicate = renderContext.getVertexIncludePredicate();
+    if (!vertexIncludePredicate.test(v1) || !vertexIncludePredicate.test(v2)) {
+      return;
     }
-    setIcon(null);
-    setBorder(noFocusBorder);
-    setValue(value);
-    return this;
-  }
 
-  /*
-   * <bold id="override">Implementation Note</bold>
-   * The following methods are overridden as a performance measure to
-   * prune code-paths that are often called in the case of renders
-   * but which we know are unnecessary.  Great care should be taken
-   * when writing your own renderer to weigh the benefits and
-   * drawbacks of overriding methods like these.
-   */
+    Point p1 = visualizationModel.getLayoutModel().apply(v1);
+    Point p2 = visualizationModel.getLayoutModel().apply(v2);
+    Point2D p2d1 =
+        renderContext
+            .getMultiLayerTransformer()
+            .transform(MultiLayerTransformer.Layer.LAYOUT, new Point2D.Double(p1.x, p1.y));
+    Point2D p2d2 =
+        renderContext
+            .getMultiLayerTransformer()
+            .transform(MultiLayerTransformer.Layer.LAYOUT, new Point2D.Double(p2.x, p2.y));
+    float x1 = (float) p2d1.getX();
+    float y1 = (float) p2d1.getY();
+    float x2 = (float) p2d2.getX();
+    float y2 = (float) p2d2.getY();
 
-  /**
-   * Overridden for performance reasons. See the <a href="#override">Implementation Note</a> for
-   * more information.
-   */
-  @Override
-  public boolean isOpaque() {
-    Color back = getBackground();
-    Component p = getParent();
-    if (p != null) {
-      p = p.getParent();
+    GraphicsDecorator g = renderContext.getGraphicsContext();
+    float distX = x2 - x1;
+    float distY = y2 - y1;
+    double totalLength = Math.sqrt(distX * distX + distY * distY);
+
+    float closeness = renderContext.getEdgeLabelCloseness();
+
+    int posX = (int) (x1 + (closeness) * distX);
+    int posY = (int) (y1 + (closeness) * distY);
+
+    int xDisplacement = (int) (renderContext.getLabelOffset() * (distY / totalLength));
+    int yDisplacement = (int) (renderContext.getLabelOffset() * (-distX / totalLength));
+
+    Component component =
+        prepareRenderer(
+            renderContext, label, renderContext.getSelectedEdgeState().isSelected(e), e);
+
+    Dimension d = component.getPreferredSize();
+
+    Shape edgeShape =
+        renderContext
+            .getEdgeShapeFunction()
+            .apply(Context.getInstance(visualizationModel.getGraph(), e));
+
+    double parallelOffset = 1;
+
+    parallelOffset +=
+        renderContext
+            .getParallelEdgeIndexFunction()
+            .getIndex(Context.getInstance(visualizationModel.getGraph(), e));
+
+    parallelOffset *= d.height;
+    if (edgeShape instanceof Ellipse2D) {
+      parallelOffset += edgeShape.getBounds().getHeight();
+      parallelOffset = -parallelOffset;
     }
-    boolean colorMatch =
-        (back != null) && (p != null) && back.equals(p.getBackground()) && p.isOpaque();
-    return !colorMatch && super.isOpaque();
-  }
 
-  /**
-   * Overridden for performance reasons. See the <a href="#override">Implementation Note</a> for
-   * more information.
-   */
-  @Override
-  public void validate() {}
-
-  /**
-   * Overridden for performance reasons. See the <a href="#override">Implementation Note</a> for
-   * more information.
-   */
-  @Override
-  public void revalidate() {}
-
-  /**
-   * Overridden for performance reasons. See the <a href="#override">Implementation Note</a> for
-   * more information.
-   */
-  @Override
-  public void repaint(long tm, int x, int y, int width, int height) {}
-
-  /**
-   * Overridden for performance reasons. See the <a href="#override">Implementation Note</a> for
-   * more information.
-   */
-  @Override
-  public void repaint(Rectangle r) {}
-
-  /**
-   * Overridden for performance reasons. See the <a href="#override">Implementation Note</a> for
-   * more information.
-   */
-  @Override
-  protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
-    // Strings get interned...
-    if (Objects.equals(propertyName, "text")) {
-      super.firePropertyChange(propertyName, oldValue, newValue);
+    AffineTransform old = g.getTransform();
+    AffineTransform xform = new AffineTransform(old);
+    xform.translate(posX + xDisplacement, posY + yDisplacement);
+    double dx = x2 - x1;
+    double dy = y2 - y1;
+    if (renderContext.getEdgeLabelRenderer().isRotateEdgeLabels()) {
+      double theta = Math.atan2(dy, dx);
+      if (dx < 0) {
+        theta += Math.PI;
+      }
+      xform.rotate(theta);
     }
-  }
+    if (dx < 0) {
+      parallelOffset = -parallelOffset;
+    }
 
-  /**
-   * Overridden for performance reasons. See the <a href="#override">Implementation Note</a> for
-   * more information.
-   */
-  @Override
-  public void firePropertyChange(String propertyName, boolean oldValue, boolean newValue) {}
+    xform.translate(-d.width / 2, -(d.height / 2. - parallelOffset));
+    g.setTransform(xform);
+    g.draw(component, renderContext.getRendererPane(), 0, 0, d.width, d.height, true);
 
-  /**
-   * Sets the <code>String</code> object for the cell being rendered to <code>value</code>.
-   *
-   * @param value the string value for this cell; if value is <code>null</code> it sets the text
-   *     value to an empty string
-   * @see JLabel#setText
-   */
-  protected void setValue(Object value) {
-    setText((value == null) ? "" : value.toString());
+    g.setTransform(old);
   }
 }

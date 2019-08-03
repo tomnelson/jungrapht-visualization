@@ -38,10 +38,10 @@ import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.util.RandomLocationTransformer;
-import org.jungrapht.visualization.renderers.BasicVertexRenderer;
 import org.jungrapht.visualization.renderers.Checkmark;
-import org.jungrapht.visualization.renderers.DefaultEdgeLabelRenderer;
-import org.jungrapht.visualization.renderers.DefaultVertexLabelRenderer;
+import org.jungrapht.visualization.renderers.DefaultVertexRenderer;
+import org.jungrapht.visualization.renderers.JLabelEdgeLabelRenderer;
+import org.jungrapht.visualization.renderers.JLabelVertexLabelRenderer;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.util.ImageShapeUtils;
@@ -137,8 +137,8 @@ public class VertexImageShaperDemo extends JPanel {
 
     final Function<Number, String> vertexStringerImpl = new VertexStringerImpl<>(map);
     vv.getRenderContext().setVertexLabelFunction(vertexStringerImpl);
-    vv.getRenderContext().setVertexLabelRenderer(new DefaultVertexLabelRenderer(Color.cyan));
-    vv.getRenderContext().setEdgeLabelRenderer(new DefaultEdgeLabelRenderer(Color.cyan));
+    vv.getRenderContext().setVertexLabelRenderer(new JLabelVertexLabelRenderer(Color.cyan));
+    vv.getRenderContext().setEdgeLabelRenderer(new JLabelEdgeLabelRenderer(Color.cyan));
 
     // For this demo only, I use a special class that lets me turn various
     // features on and off. For a real application, use VertexIconShapeTransformer instead.
@@ -443,11 +443,11 @@ public class VertexImageShaperDemo extends JPanel {
 
   /**
    * a special renderer that can turn outlines on and off in this demo. You won't need this for a
-   * real application. Use BasicVertexRenderer instead
+   * real application. Use DefaultVertexRenderer instead
    *
    * @author Tom Nelson
    */
-  class DemoRenderer<V, E> extends BasicVertexRenderer<V, E> {
+  class DemoRenderer<V, E> extends DefaultVertexRenderer<V, E> {
 
     @Override
     public void paintIconForVertex(

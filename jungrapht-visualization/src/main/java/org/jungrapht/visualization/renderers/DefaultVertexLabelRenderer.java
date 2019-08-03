@@ -5,188 +5,217 @@
  * This software is open-source under the BSD license; see either "license.txt"
  * or https://github.com/tomnelson/jungrapht-visualization/blob/master/LICENSE for a description.
  *
- * Created on Apr 14, 2005
+ * Created on Aug 23, 2005
  */
-
 package org.jungrapht.visualization.renderers;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.Rectangle;
-import java.io.Serializable;
-import java.util.Objects;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import org.jungrapht.visualization.MultiLayerTransformer;
+import org.jungrapht.visualization.RenderContext;
+import org.jungrapht.visualization.VisualizationModel;
+import org.jungrapht.visualization.layout.model.LayoutModel;
+import org.jungrapht.visualization.layout.model.Point;
+import org.jungrapht.visualization.transform.BidirectionalTransformer;
+import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
+import org.jungrapht.visualization.transform.shape.ShapeTransformer;
+import org.jungrapht.visualization.transform.shape.TransformingGraphics;
 
-/**
- * DefaultVertexLabelRenderer is similar to the cell renderers used by the JTable and JTree JFC
- * classes.
- *
- * @author Tom Nelson
- */
-@SuppressWarnings("serial")
-public class DefaultVertexLabelRenderer extends JLabel
-    implements VertexLabelRenderer, Serializable {
+public class DefaultVertexLabelRenderer<V, E> implements Renderer.VertexLabel<V, E> {
 
-  protected static Border noFocusBorder = new EmptyBorder(0, 0, 0, 0);
+  //  protected Position position = Position.SE;
+  private Positioner positioner = new OutsidePositioner();
 
-  protected Color pickedVertexLabelColor = Color.black;
-
-  /**
-   * Creates a default table cell renderer.
-   *
-   * @param pickedVertexLabelColor the color to use for rendering the labels of selected vertices
-   */
-  public DefaultVertexLabelRenderer(Color pickedVertexLabelColor) {
-    this.pickedVertexLabelColor = pickedVertexLabelColor;
-    setOpaque(true);
-    setBorder(noFocusBorder);
+  public Component prepareRenderer(
+      RenderContext<V, E> renderContext, Object value, boolean isSelected, V vertex) {
+    return renderContext
+        .getVertexLabelRenderer()
+        .getVertexLabelRendererComponent(
+            renderContext.getScreenDevice(),
+            value,
+            renderContext.getVertexFontFunction().apply(vertex),
+            isSelected,
+            vertex);
   }
 
   /**
-   * Overrides <code>JComponent.setForeground</code> to assign the unselected-foreground color to
-   * the specified color.
-   *
-   * @param c set the foreground color to this value
+   * Labels the specified vertex with the specified label. Uses the font specified by this
+   * instance's <code>VertexFontFunction</code>. (If the font is unspecified, the existing font for
+   * the graphics context is used.) If vertex label centering is active, the label is centered on
+   * the position of the vertex; otherwise the label is offset slightly.
    */
-  @Override
-  public void setForeground(Color c) {
-    super.setForeground(c);
-  }
-
-  /**
-   * Overrides <code>JComponent.setBackground</code> to assign the unselected-background color to
-   * the specified color.
-   *
-   * @param c set the background color to this value
-   */
-  @Override
-  public void setBackground(Color c) {
-    super.setBackground(c);
-  }
-
-  /**
-   * Notification from the <code>UIManager</code> that the look and feel has changed. Replaces the
-   * current UI object with the latest version from the <code>UIManager</code>.
-   *
-   * @see JComponent#updateUI
-   */
-  @Override
-  public void updateUI() {
-    super.updateUI();
-    setForeground(null);
-    setBackground(null);
-  }
-
-  /**
-   * Returns the default label renderer for a Vertex
-   *
-   * @param vv the <code>VisualizationViewer</code> to render on
-   * @param value the value to assign to the label for <code>Vertex</code>
-   * @param vertex the <code>Vertex</code>
-   * @return the default label renderer
-   */
-  public <V> Component getVertexLabelRendererComponent(
-      JComponent vv, Object value, Font font, boolean isSelected, V vertex) {
-
-    super.setForeground(vv.getForeground());
-    if (isSelected) {
-      setForeground(pickedVertexLabelColor);
+  public void labelVertex(
+      RenderContext<V, E> renderContext,
+      VisualizationModel<V, E> visualizationModel,
+      V v,
+      String label) {
+    if (!renderContext.getVertexIncludePredicate().test(v)) {
+      return;
     }
-    super.setBackground(vv.getBackground());
-    if (font != null) {
-      setFont(font);
+    LayoutModel<V> layoutModel = visualizationModel.getLayoutModel();
+    org.jungrapht.visualization.layout.model.Point pt = layoutModel.apply(v);
+    Point2D pt2d =
+        renderContext
+            .getMultiLayerTransformer()
+            .transform(MultiLayerTransformer.Layer.LAYOUT, new Point2D.Double(pt.x, pt.y));
+
+    float x = (float) pt2d.getX();
+    float y = (float) pt2d.getY();
+
+    Component component =
+        prepareRenderer(
+            renderContext, label, renderContext.getSelectedVertexState().isSelected(v), v);
+    GraphicsDecorator g = renderContext.getGraphicsContext();
+    Dimension d = component.getPreferredSize();
+    AffineTransform xform = AffineTransform.getTranslateInstance(x, y);
+
+    Shape shape = renderContext.getVertexShapeFunction().apply(v);
+    shape = xform.createTransformedShape(shape);
+    if (renderContext.getGraphicsContext() instanceof TransformingGraphics) {
+      BidirectionalTransformer transformer =
+          ((TransformingGraphics) renderContext.getGraphicsContext()).getTransformer();
+      if (transformer instanceof ShapeTransformer) {
+        ShapeTransformer shapeTransformer = (ShapeTransformer) transformer;
+        shape = shapeTransformer.transform(shape);
+      }
+    }
+    Rectangle2D bounds = shape.getBounds2D();
+
+    org.jungrapht.visualization.layout.model.Point p;
+    Position position = renderContext.getVertexLabelPosition();
+    if (position == Position.AUTO) {
+      Dimension vvd = renderContext.getScreenDevice().getSize();
+      if (vvd.width == 0 || vvd.height == 0) {
+        vvd = renderContext.getScreenDevice().getPreferredSize();
+      }
+      p = getAnchorPoint(bounds, d, positioner.getPosition(x, y, vvd));
     } else {
-      setFont(vv.getFont());
+      p = getAnchorPoint(bounds, d, position);
     }
-    setIcon(null);
-    setBorder(noFocusBorder);
-    setValue(value);
-    return this;
-  }
 
-  /*
-   * The following methods are overridden as a performance measure to
-   * to prune code-paths are often called in the case of renders
-   * but which we know are unnecessary.  Great care should be taken
-   * when writing your own renderer to weigh the benefits and
-   * drawbacks of overriding methods like these.
-   */
-
-  /**
-   * Overridden for performance reasons. See the <a href="#override">Implementation Note</a> for
-   * more information.
-   */
-  @Override
-  public boolean isOpaque() {
-    Color back = getBackground();
-    Component p = getParent();
-    if (p != null) {
-      p = p.getParent();
-    }
-    boolean colorMatch =
-        (back != null) && (p != null) && back.equals(p.getBackground()) && p.isOpaque();
-    return !colorMatch && super.isOpaque();
-  }
-
-  /**
-   * Overridden for performance reasons. See the <a href="#override">Implementation Note</a> for
-   * more information.
-   */
-  @Override
-  public void validate() {}
-
-  /**
-   * Overridden for performance reasons. See the <a href="#override">Implementation Note</a> for
-   * more information.
-   */
-  @Override
-  public void revalidate() {}
-
-  /**
-   * Overridden for performance reasons. See the <a href="#override">Implementation Note</a> for
-   * more information.
-   */
-  @Override
-  public void repaint(long tm, int x, int y, int width, int height) {}
-
-  /**
-   * Overridden for performance reasons. See the <a href="#override">Implementation Note</a> for
-   * more information.
-   */
-  @Override
-  public void repaint(Rectangle r) {}
-
-  /**
-   * Overridden for performance reasons. See the <a href="#override">Implementation Note</a> for
-   * more information.
-   */
-  @Override
-  protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
-    // Strings get interned...
-    if (Objects.equals(propertyName, "text")) {
-      super.firePropertyChange(propertyName, oldValue, newValue);
+    Paint fillPaint = renderContext.getVertexLabelDrawPaintFunction().apply(v);
+    if (fillPaint != null) {
+      Color oldPaint = component.getForeground();
+      component.setForeground((Color) fillPaint);
+      g.draw(
+          component,
+          renderContext.getRendererPane(),
+          (int) p.x,
+          (int) p.y,
+          d.width,
+          d.height,
+          true);
+      component.setForeground(oldPaint);
+    } else {
+      g.draw(
+          component,
+          renderContext.getRendererPane(),
+          (int) p.x,
+          (int) p.y,
+          d.width,
+          d.height,
+          true);
     }
   }
 
-  /**
-   * Overridden for performance reasons. See the <a href="#override">Implementation Note</a> for
-   * more information.
-   */
-  @Override
-  public void firePropertyChange(String propertyName, boolean oldValue, boolean newValue) {}
+  protected org.jungrapht.visualization.layout.model.Point getAnchorPoint(
+      Rectangle2D vertexBounds, Dimension labelSize, Position position) {
+    double x;
+    double y;
+    int offset = 5;
+    switch (position) {
+      case N:
+        x = vertexBounds.getCenterX() - labelSize.width / 2.;
+        y = vertexBounds.getMinY() - offset - labelSize.height;
+        return org.jungrapht.visualization.layout.model.Point.of(x, y);
 
-  /**
-   * Sets the <code>String</code> object for the cell being rendered to <code>value</code>.
-   *
-   * @param value the string value for this cell; if value is <code>null</code> it sets the text
-   *     value to an empty string
-   * @see JLabel#setText
-   */
-  protected void setValue(Object value) {
-    setText((value == null) ? "" : value.toString());
+      case NE:
+        x = vertexBounds.getMaxX() + offset;
+        y = vertexBounds.getMinY() - offset - labelSize.height;
+        return org.jungrapht.visualization.layout.model.Point.of(x, y);
+
+      case E:
+        x = vertexBounds.getMaxX() + offset;
+        y = vertexBounds.getCenterY() - labelSize.height / 2.;
+        return org.jungrapht.visualization.layout.model.Point.of(x, y);
+
+      case SE:
+        x = vertexBounds.getMaxX() + offset;
+        y = vertexBounds.getMaxY() + offset;
+        return org.jungrapht.visualization.layout.model.Point.of(x, y);
+
+      case S:
+        x = vertexBounds.getCenterX() - labelSize.width / 2.;
+        y = vertexBounds.getMaxY() + offset;
+        return org.jungrapht.visualization.layout.model.Point.of(x, y);
+
+      case SW:
+        x = vertexBounds.getMinX() - offset - labelSize.width;
+        y = vertexBounds.getMaxY() + offset;
+        return org.jungrapht.visualization.layout.model.Point.of(x, y);
+
+      case W:
+        x = vertexBounds.getMinX() - offset - labelSize.width;
+        y = vertexBounds.getCenterY() - labelSize.height / 2.;
+        return org.jungrapht.visualization.layout.model.Point.of(x, y);
+
+      case NW:
+        x = vertexBounds.getMinX() - offset - labelSize.width;
+        y = vertexBounds.getMinY() - offset - labelSize.height;
+        return org.jungrapht.visualization.layout.model.Point.of(x, y);
+
+      case CNTR:
+        x = vertexBounds.getCenterX() - labelSize.width / 2.;
+        y = vertexBounds.getCenterY() - labelSize.height / 2.;
+        return org.jungrapht.visualization.layout.model.Point.of(x, y);
+
+      default:
+        return Point.ORIGIN;
+    }
+  }
+
+  public static class InsidePositioner implements Positioner {
+    public Position getPosition(float x, float y, Dimension d) {
+      int cx = d.width / 2;
+      int cy = d.height / 2;
+      if (x > cx && y > cy) {
+        return Position.NW;
+      }
+      if (x > cx && y < cy) {
+        return Position.SW;
+      }
+      if (x < cx && y > cy) {
+        return Position.NE;
+      }
+      return Position.SE;
+    }
+  }
+
+  public static class OutsidePositioner implements Positioner {
+    public Position getPosition(float x, float y, Dimension d) {
+      int cx = d.width / 2;
+      int cy = d.height / 2;
+      if (x > cx && y > cy) {
+        return Position.SE;
+      }
+      if (x > cx && y < cy) {
+        return Position.NE;
+      }
+      if (x < cx && y > cy) {
+        return Position.SW;
+      }
+      return Position.NW;
+    }
+  }
+  /** @return the positioner */
+  public Positioner getPositioner() {
+    return positioner;
+  }
+
+  /** @param positioner the positioner to set */
+  public void setPositioner(Positioner positioner) {
+    this.positioner = positioner;
   }
 }

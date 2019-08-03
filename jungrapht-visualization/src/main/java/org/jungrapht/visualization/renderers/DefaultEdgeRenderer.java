@@ -26,10 +26,10 @@ import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.util.Context;
 import org.jungrapht.visualization.util.EdgeIndexFunction;
 
-public class BasicEdgeRenderer<V, E> implements Renderer.Edge<V, E> {
+public class DefaultEdgeRenderer<V, E> implements Renderer.Edge<V, E> {
 
   protected EdgeArrowRenderingSupport<V, E> edgeArrowRenderingSupport =
-      new BasicEdgeArrowRenderingSupport<>();
+      new DefaultEdgeArrowRenderingSupport<>();
 
   @Override
   public void paintEdge(

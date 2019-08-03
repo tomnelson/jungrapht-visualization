@@ -26,8 +26,8 @@ import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.decorators.IconShapeFunction;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
-import org.jungrapht.visualization.renderers.DefaultEdgeLabelRenderer;
-import org.jungrapht.visualization.renderers.DefaultVertexLabelRenderer;
+import org.jungrapht.visualization.renderers.JLabelEdgeLabelRenderer;
+import org.jungrapht.visualization.renderers.JLabelVertexLabelRenderer;
 
 /**
  * A demo that shows flag images as vertices, and uses unicode to render vertex labels.
@@ -54,8 +54,8 @@ public class UnicodeLabelDemo {
             .viewSize(new Dimension(700, 700))
             .build();
     vv.getRenderContext().setVertexLabelFunction(new UnicodeVertexStringer());
-    vv.getRenderContext().setVertexLabelRenderer(new DefaultVertexLabelRenderer(Color.cyan));
-    vv.getRenderContext().setEdgeLabelRenderer(new DefaultEdgeLabelRenderer(Color.cyan));
+    vv.getRenderContext().setVertexLabelRenderer(new JLabelVertexLabelRenderer(Color.cyan));
+    vv.getRenderContext().setEdgeLabelRenderer(new JLabelEdgeLabelRenderer(Color.cyan));
     IconShapeFunction<Integer> iconShapeFunction =
         new IconShapeFunction<>(new EllipseShapeFunction<>());
     Function<Integer, Icon> vertexIconFunction = iconMap::get;

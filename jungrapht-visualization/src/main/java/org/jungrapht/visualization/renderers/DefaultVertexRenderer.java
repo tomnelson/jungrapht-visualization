@@ -23,9 +23,9 @@ import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BasicVertexRenderer<V, E> implements Renderer.Vertex<V, E> {
+public class DefaultVertexRenderer<V, E> implements Renderer.Vertex<V, E> {
 
-  private static final Logger log = LoggerFactory.getLogger(BasicVertexRenderer.class);
+  private static final Logger log = LoggerFactory.getLogger(DefaultVertexRenderer.class);
 
   public void paintVertex(
       RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {

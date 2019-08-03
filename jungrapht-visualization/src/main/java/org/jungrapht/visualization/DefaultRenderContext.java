@@ -18,9 +18,9 @@ import org.jgrapht.Graph;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.decorators.ParallelEdgeShapeFunction;
 import org.jungrapht.visualization.layout.GraphElementAccessor;
-import org.jungrapht.visualization.renderers.DefaultEdgeLabelRenderer;
-import org.jungrapht.visualization.renderers.DefaultVertexLabelRenderer;
 import org.jungrapht.visualization.renderers.EdgeLabelRenderer;
+import org.jungrapht.visualization.renderers.JLabelEdgeLabelRenderer;
+import org.jungrapht.visualization.renderers.JLabelVertexLabelRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.renderers.VertexLabelRenderer;
 import org.jungrapht.visualization.selection.MutableSelectedState;
@@ -177,9 +177,9 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
   /**
    * A default GraphLabelRenderer - selected Vertex labels are blue, selected edge labels are cyan
    */
-  protected VertexLabelRenderer vertexLabelRenderer = new DefaultVertexLabelRenderer(Color.blue);
+  protected VertexLabelRenderer vertexLabelRenderer = new JLabelVertexLabelRenderer(Color.blue);
 
-  protected EdgeLabelRenderer edgeLabelRenderer = new DefaultEdgeLabelRenderer(Color.cyan);
+  protected EdgeLabelRenderer edgeLabelRenderer = new JLabelEdgeLabelRenderer(Color.cyan);
 
   protected GraphicsDecorator graphicsContext;
 

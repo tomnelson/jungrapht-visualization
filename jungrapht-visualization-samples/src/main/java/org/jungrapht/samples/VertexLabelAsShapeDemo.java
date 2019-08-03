@@ -22,8 +22,8 @@ import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
-import org.jungrapht.visualization.renderers.DefaultVertexLabelRenderer;
 import org.jungrapht.visualization.renderers.GradientVertexRenderer;
+import org.jungrapht.visualization.renderers.JLabelVertexLabelRenderer;
 import org.jungrapht.visualization.renderers.VertexLabelAsShapeRenderer;
 
 /**
@@ -70,7 +70,7 @@ public class VertexLabelAsShapeDemo extends JPanel {
             ((Function<String, String>) Object::toString)
                 .andThen(input -> "<html><center>Node<p>" + input));
     vv.getRenderContext().setVertexShapeFunction(vlasr);
-    vv.getRenderContext().setVertexLabelRenderer(new DefaultVertexLabelRenderer(Color.red));
+    vv.getRenderContext().setVertexLabelRenderer(new JLabelVertexLabelRenderer(Color.red));
     vv.getRenderContext().setEdgeDrawPaintFunction(e -> Color.yellow);
     vv.getRenderContext().setEdgeStrokeFunction(e -> new BasicStroke(2.5f));
 

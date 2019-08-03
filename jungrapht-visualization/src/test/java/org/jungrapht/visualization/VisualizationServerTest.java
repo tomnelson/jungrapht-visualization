@@ -9,7 +9,7 @@ import org.jungrapht.visualization.layout.algorithms.CircleLayoutAlgorithm;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 import org.junit.Test;
 
-public class BasicVisualizationServerTest {
+public class VisualizationServerTest {
 
   /*
    * Previously, a bug was introduced where the RenderContext in DefaultVisualizationServer was reassigned, resulting

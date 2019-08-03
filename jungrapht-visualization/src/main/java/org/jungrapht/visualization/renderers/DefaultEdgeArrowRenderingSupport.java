@@ -20,9 +20,9 @@ import org.jungrapht.visualization.RenderContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BasicEdgeArrowRenderingSupport<V, E> implements EdgeArrowRenderingSupport<V, E> {
+public class DefaultEdgeArrowRenderingSupport<V, E> implements EdgeArrowRenderingSupport<V, E> {
 
-  private static final Logger log = LoggerFactory.getLogger(BasicEdgeArrowRenderingSupport.class);
+  private static final Logger log = LoggerFactory.getLogger(DefaultEdgeArrowRenderingSupport.class);
 
   public AffineTransform getArrowTransform(
       RenderContext<V, E> rc, Shape edgeShape, Shape vertexShape) {

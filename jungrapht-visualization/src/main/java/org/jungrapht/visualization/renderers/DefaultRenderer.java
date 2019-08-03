@@ -27,10 +27,10 @@ import org.slf4j.LoggerFactory;
 class DefaultRenderer<V, E> implements Renderer<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(DefaultRenderer.class);
-  protected Vertex<V, E> vertexRenderer = new BasicVertexRenderer<>();
-  protected VertexLabel<V, E> vertexLabelRenderer = new BasicVertexLabelRenderer<>();
-  protected Renderer.Edge<V, E> edgeRenderer = new BasicEdgeRenderer<>();
-  protected Renderer.EdgeLabel<V, E> edgeLabelRenderer = new BasicEdgeLabelRenderer<>();
+  protected Vertex<V, E> vertexRenderer = new DefaultVertexRenderer<>();
+  protected VertexLabel<V, E> vertexLabelRenderer = new DefaultVertexLabelRenderer<>();
+  protected Renderer.Edge<V, E> edgeRenderer = new DefaultEdgeRenderer<>();
+  protected Renderer.EdgeLabel<V, E> edgeLabelRenderer = new DefaultEdgeLabelRenderer<>();
 
   public void render(
       RenderContext<V, E> renderContext,

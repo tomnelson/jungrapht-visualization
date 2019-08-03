@@ -24,7 +24,7 @@ import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.GraphMouseListener;
 import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
-import org.jungrapht.visualization.renderers.BasicVertexLabelRenderer;
+import org.jungrapht.visualization.renderers.DefaultVertexLabelRenderer;
 import org.jungrapht.visualization.renderers.GradientVertexRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
 
@@ -133,7 +133,7 @@ public class GraphZoomScrollPaneDemo {
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.getRenderer()
         .getVertexLabelRenderer()
-        .setPositioner(new BasicVertexLabelRenderer.InsidePositioner());
+        .setPositioner(new DefaultVertexLabelRenderer.InsidePositioner());
     vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.AUTO);
     vv.setForeground(Color.lightGray);
 

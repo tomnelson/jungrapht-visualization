@@ -23,8 +23,8 @@ import org.jungrapht.visualization.control.ModalGraphMouse.Mode;
 import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
-import org.jungrapht.visualization.renderers.DefaultEdgeLabelRenderer;
-import org.jungrapht.visualization.renderers.DefaultVertexLabelRenderer;
+import org.jungrapht.visualization.renderers.JLabelEdgeLabelRenderer;
+import org.jungrapht.visualization.renderers.JLabelVertexLabelRenderer;
 
 /**
  * Demonstrates the use of images on graph edge labels.
@@ -64,8 +64,8 @@ public class ImageEdgeLabelDemo extends JPanel {
 
     vv.setBackground(Color.white);
 
-    vv.getRenderContext().setVertexLabelRenderer(new DefaultVertexLabelRenderer(Color.cyan));
-    vv.getRenderContext().setEdgeLabelRenderer(new DefaultEdgeLabelRenderer(Color.cyan));
+    vv.getRenderContext().setVertexLabelRenderer(new JLabelVertexLabelRenderer(Color.cyan));
+    vv.getRenderContext().setEdgeLabelRenderer(new JLabelEdgeLabelRenderer(Color.cyan));
     vv.getRenderContext()
         .setEdgeLabelFunction(
             new Function<Number, String>() {

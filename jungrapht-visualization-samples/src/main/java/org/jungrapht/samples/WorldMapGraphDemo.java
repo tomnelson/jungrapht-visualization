@@ -29,7 +29,7 @@ import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.Point;
-import org.jungrapht.visualization.renderers.BasicVertexLabelRenderer;
+import org.jungrapht.visualization.renderers.DefaultVertexLabelRenderer;
 import org.jungrapht.visualization.renderers.GradientVertexRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
 
@@ -138,7 +138,7 @@ public class WorldMapGraphDemo extends JPanel {
     vv.getRenderContext().setVertexLabelFunction(n -> n);
     vv.getRenderer()
         .getVertexLabelRenderer()
-        .setPositioner(new BasicVertexLabelRenderer.InsidePositioner());
+        .setPositioner(new DefaultVertexLabelRenderer.InsidePositioner());
     vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.AUTO);
 
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);

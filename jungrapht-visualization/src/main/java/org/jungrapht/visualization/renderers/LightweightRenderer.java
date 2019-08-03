@@ -12,7 +12,7 @@ public class LightweightRenderer<V, E> implements Renderer<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(LightweightRenderer.class);
   protected Vertex<V, E> vertexRenderer = new LightweightVertexRenderer<>();
-  protected VertexLabel<V, E> vertexLabelRenderer = new BasicVertexLabelRenderer<>();
+  protected VertexLabel<V, E> vertexLabelRenderer = new DefaultVertexLabelRenderer<>();
   protected Renderer.Edge<V, E> edgeRenderer = new LightweightEdgeRenderer<>();
 
   @Override
