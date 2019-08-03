@@ -8,23 +8,9 @@
  */
 package org.jungrapht.samples;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Paint;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.Collection;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.IntStream;
-import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
-import org.jungrapht.visualization.LayeredIcon;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
@@ -40,7 +26,6 @@ import org.jungrapht.visualization.decorators.IconShapeFunction;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.jungrapht.visualization.renderers.Checkmark;
 import org.jungrapht.visualization.renderers.JLabelEdgeLabelRenderer;
 import org.jungrapht.visualization.renderers.JLabelVertexLabelRenderer;
 import org.jungrapht.visualization.selection.MutableSelectedState;
@@ -51,7 +36,13 @@ import org.jungrapht.visualization.transform.MagnifyTransformer;
 import org.jungrapht.visualization.transform.shape.MagnifyImageLensSupport;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
 import org.jungrapht.visualization.util.IconCache;
-import org.jungrapht.visualization.util.LightweightRenderingVisitor;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.IntStream;
 
 /** @author Tom Nelson */
 public class LensVertexImageFromLabelShaperDemo extends JPanel {
@@ -118,7 +109,6 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
     // Get the pickedState and add a listener that will decorate the
     //Vertex images with a checkmark icon when they are selected
     MutableSelectedState<Number> ps = vv.getSelectedVertexState();
-    ps.addItemListener(new PickWithIconListener(iconCache::get));
 
     // add a listener for ToolTips
     vv.setVertexToolTipFunction(Object::toString);
@@ -136,8 +126,6 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
 
     JButton minus = new JButton("-");
     minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
-
-    LightweightRenderingVisitor.visit(vv);
 
     JPanel scaleGrid = new JPanel(new GridLayout(1, 0));
     scaleGrid.setBorder(BorderFactory.createTitledBorder("Zoom"));
@@ -237,35 +225,6 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
     graph.addEdge(10, 4);
 
     return graph;
-  }
-
-  public static class PickWithIconListener implements ItemListener {
-    Function<Number, Icon> imager;
-    Icon checked;
-
-    public PickWithIconListener(Function<Number, Icon> imager) {
-      this.imager = imager;
-      checked = new Checkmark(Color.red);
-    }
-
-    public void itemStateChanged(ItemEvent e) {
-      if (e.getItem() instanceof Collection) {
-        ((Collection<Number>) e.getItem()).forEach(n -> updatePickIcon(n, e.getStateChange()));
-      } else {
-        updatePickIcon((Number) e.getItem(), e.getStateChange());
-      }
-    }
-
-    private void updatePickIcon(Number n, int stateChange) {
-      Icon icon = imager.apply(n);
-      if (icon instanceof LayeredIcon) {
-        if (stateChange == ItemEvent.SELECTED) {
-          ((LayeredIcon) icon).add(checked);
-        } else {
-          ((LayeredIcon) icon).remove(checked);
-        }
-      }
-    }
   }
 
   public static void main(String[] args) {
