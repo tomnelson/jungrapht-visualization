@@ -8,6 +8,12 @@
  */
 package org.jungrapht.samples;
 
+import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.IntStream;
+import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
@@ -36,13 +42,6 @@ import org.jungrapht.visualization.transform.MagnifyTransformer;
 import org.jungrapht.visualization.transform.shape.MagnifyImageLensSupport;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
 import org.jungrapht.visualization.util.IconCache;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.IntStream;
 
 /** @author Tom Nelson */
 public class LensVertexImageFromLabelShaperDemo extends JPanel {
