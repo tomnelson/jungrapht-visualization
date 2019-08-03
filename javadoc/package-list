@@ -1,7 +1,3 @@
-org.jungrapht.samples
-org.jungrapht.samples.quadtree
-org.jungrapht.samples.rtree
-org.jungrapht.samples.util
 org.jungrapht.visualization
 org.jungrapht.visualization.annotations
 org.jungrapht.visualization.control
