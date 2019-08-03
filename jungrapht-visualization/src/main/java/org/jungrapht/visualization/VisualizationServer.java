@@ -14,7 +14,6 @@ import java.awt.RenderingHints.Key;
 import java.awt.geom.Point2D;
 import java.util.Map;
 import java.util.function.Predicate;
-import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
@@ -30,6 +29,8 @@ import org.jungrapht.visualization.selection.MutableSelectedState;
 import org.jungrapht.visualization.spatial.Spatial;
 
 /**
+ * The interface for the visualization view
+ *
  * @author Tom Nelson
  * @param <V> the vertex type
  * @param <E> the edge type
@@ -40,49 +41,100 @@ public interface VisualizationServer<V, E>
         ChangeListener,
         LayoutStateChange.Listener {
 
+  /**
+   * A builder for creating instances of a {@link VisualizationServer} with user defined properties
+   *
+   * @param <V> the vertex type
+   * @param <E> the edge type
+   * @param <T> the type that is built
+   * @param <B> the builder type
+   */
   class Builder<V, E, T extends DefaultVisualizationServer<V, E>, B extends Builder<V, E, T, B>> {
+    /** the {@link Graph} to be visualized */
     protected Graph<V, E> graph;
+    /** the bounds of the graph layout area */
     protected Dimension layoutSize;
+    /** the size of the viewer window */
     protected Dimension viewSize;
+    /** the algorithm to apply to position the vertices */
     protected LayoutAlgorithm<V> layoutAlgorithm;
+    /** the model to hold state for the visualization */
     protected VisualizationModel<V, E> visualizationModel;
 
+    /**
+     * create an instance of the builder the graph may be null if the visualizationModel is non-null
+     * (and contains a reference to the graph)
+     *
+     * @param graph the graph to visualize
+     */
     protected Builder(Graph<V, E> graph) {
       this.graph = graph;
     }
 
+    /**
+     * create an instance of the builder if the visualizationModel is null, a new one will be
+     * created from the graph and layout size, both of which must not be null
+     *
+     * @param visualizationModel the model to hold visualization state
+     */
     protected Builder(VisualizationModel<V, E> visualizationModel) {
       this.visualizationModel = visualizationModel;
     }
 
+    /** @return this builder cast to type B */
     protected B self() {
       return (B) this;
     }
 
+    /**
+     * @param layoutSize the width height bounds of the graph layout area
+     * @return this builder for method chaining
+     */
     public B layoutSize(Dimension layoutSize) {
       this.layoutSize = layoutSize;
       return self();
     }
 
+    /**
+     * @param viewSize the preferred size of the view
+     * @return this builder for method chaining
+     */
     public B viewSize(Dimension viewSize) {
       this.viewSize = viewSize;
       return self();
     }
 
+    /**
+     * @param layoutAlgorithm the algorithm to apply to place the graph vertices
+     * @return this builder for chaining
+     */
     public B layoutAlgorithm(LayoutAlgorithm<V> layoutAlgorithm) {
       this.layoutAlgorithm = layoutAlgorithm;
       return self();
     }
 
+    /** @return a new instance of a {@link }DefaultVisualizationServer} */
     public T build() {
       return (T) new DefaultVisualizationServer(this);
     }
   }
 
+  /**
+   * @param graph the graph to visualize
+   * @param <V> the vertex type
+   * @param <E> the edge type
+   * @return the builder
+   */
   static <V, E> Builder<V, E, ?, ?> builder(Graph<V, E> graph) {
     return new Builder(graph);
   }
 
+  /**
+   * @param visualizationModel the visualization model
+   * @param <V> the vertex type
+   * @param <E> the edge type
+   * @return the builder
+   */
   static <V, E> Builder<V, E, ?, ?> builder(VisualizationModel<V, E> visualizationModel) {
     return new Builder(visualizationModel);
   }
@@ -223,10 +275,13 @@ public interface VisualizationServer<V, E>
   /** @param pickSupport The pickSupport to set. */
   void setPickSupport(GraphElementAccessor<V, E> pickSupport);
 
+  /** @return the x,y coordinates of the view center */
   Point2D getCenter();
 
+  /** @return the {@link RenderContext} used to draw the graph */
   RenderContext<V, E> getRenderContext();
 
+  /** @param renderContext the {@link RenderContext} used to draw the graph */
   void setRenderContext(RenderContext<V, E> renderContext);
 
   void repaint();
@@ -242,7 +297,13 @@ public interface VisualizationServer<V, E>
 
   void setSmallScaleOverridePredicate(Predicate<Double> smallScaleOverridePredicate);
 
+  /**
+   * scale the graph layout to fit withon the view window
+   *
+   * @param scaler the {@link ScalingControl} to change the view scale
+   */
   void scaleToLayout(ScalingControl scaler);
 
+  /** scale the graph visualization to fit within the view window */
   void scaleToLayout();
 }

@@ -142,19 +142,16 @@ public class AnnotatingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     }
 
     if (e.isPopupTrigger()) {
-      String annotationString = JOptionPane.showInputDialog(vv, "Annotation:");
+      String annotationString = JOptionPane.showInputDialog(vv.getComponent(), "Annotation:");
       if (annotationString != null && annotationString.length() > 0) {
         Point2D p = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(down);
         Annotation<String> annotation =
             new Annotation<>(annotationString, layer, annotationColor, fill, p);
         annotationManager.add(layer, annotation);
       }
-    } else if (e.getModifiersEx() == additionalModifiers) {
+    } else if (e.getModifiersEx() == (modifiers | additionalModifiers)) {
       Annotation<?> annotation = annotationManager.getAnnotation(down);
       annotationManager.remove(annotation);
-    } else if (e.getModifiersEx() == modifiers) {
-      rectangularShape.setFrameFromDiagonal(down, down);
-      vv.addPostRenderPaintable(lensPaintable);
     }
     vv.repaint();
   }
@@ -171,7 +168,7 @@ public class AnnotatingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
             new Annotation<>(annotationString, layer, annotationColor, fill, p);
         annotationManager.add(layer, annotation);
       }
-    } else if (e.getModifiersEx() == modifiers) {
+    } else {
       if (down != null) {
         Point2D out = e.getPoint();
         RectangularShape arect = (RectangularShape) rectangularShape.clone();

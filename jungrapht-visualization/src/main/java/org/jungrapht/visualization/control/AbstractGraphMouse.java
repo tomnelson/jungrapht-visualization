@@ -11,7 +11,6 @@
  */
 package org.jungrapht.visualization.control;
 
-
 /**
  * AbstractGraphMouse is a PluggableGraphMouse class that manages a collection of plugins for
  * picking and transforming the graph.

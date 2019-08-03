@@ -10,7 +10,12 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
-public class IconCache<V> extends HashMap<V, Icon> {
+/**
+ * a lazy-map backed {@code Function} that creates an image icon for each vertex
+ *
+ * @param <V> the vertex type
+ */
+public class IconCache<V> extends HashMap<V, Icon> implements Function<V, Icon> {
 
   protected Function<V, String> vertexLabelFunction;
   protected JLabel stamp = new JLabel();
@@ -36,6 +41,11 @@ public class IconCache<V> extends HashMap<V, Icon> {
       cacheIconFor((V) n);
     }
     return super.get(n);
+  }
+
+  @Override
+  public Icon apply(V in) {
+    return get(in);
   }
 
   protected void cacheIconFor(V vertex) {

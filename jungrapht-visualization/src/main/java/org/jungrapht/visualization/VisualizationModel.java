@@ -18,7 +18,7 @@ import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 
 /**
- * Interface for the model to hold state information for a graph visualization
+ * Interface for the visualization model to hold state information for a graph visualization
  *
  * @param <V> the vertex type
  * @param <E> the edge type
@@ -28,7 +28,7 @@ public interface VisualizationModel<V, E>
         LayoutChange.Producer {
 
   /**
-   * builder for creating new instances of a VisualizationModel
+   * A builder for creating instances of a {@link }VisualizationModel} with user defined properties
    *
    * @param <V> the vertex type
    * @param <E> the edge type
