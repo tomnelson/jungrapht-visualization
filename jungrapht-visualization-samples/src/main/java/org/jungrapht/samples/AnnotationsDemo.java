@@ -90,8 +90,8 @@ public class AnnotationsDemo extends JPanel {
 
     Container panel = new JPanel(new BorderLayout());
 
-    VisualizationScrollPane gzsp = new VisualizationScrollPane(vv);
-    panel.add(gzsp);
+    VisualizationScrollPane visualizationScrollPane = new VisualizationScrollPane(vv);
+    panel.add(visualizationScrollPane);
 
     helpDialog = new JDialog();
     helpDialog.getContentPane().add(new JLabel(instructions));

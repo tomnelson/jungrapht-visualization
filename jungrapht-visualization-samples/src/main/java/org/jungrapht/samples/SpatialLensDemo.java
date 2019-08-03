@@ -115,8 +115,8 @@ public class SpatialLensDemo extends JPanel {
 
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
 
-    VisualizationScrollPane gzsp = new VisualizationScrollPane(vv);
-    add(gzsp);
+    VisualizationScrollPane visualizationScrollPane = new VisualizationScrollPane(vv);
+    add(visualizationScrollPane);
 
     // the regular graph mouse for the normal view
     final DefaultModalGraphMouse<String, Number> graphMouse = new DefaultModalGraphMouse<>();
@@ -232,7 +232,7 @@ public class SpatialLensDemo extends JPanel {
 
     JMenuBar menubar = new JMenuBar();
     menubar.add(graphMouse.getModeMenu());
-    gzsp.setCorner(menubar);
+    visualizationScrollPane.setCorner(menubar);
 
     JComboBox modeBox = graphMouse.getModeComboBox();
     modeBox.addItemListener(

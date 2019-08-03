@@ -56,8 +56,8 @@ public class VisualizationImageServer<V, E> extends DefaultVisualizationServer<V
   Map<RenderingHints.Key, Object> renderingHints = new HashMap<>();
 
   public Image getImage(Point2D center, Dimension d) {
-    int width = getWidth();
-    int height = getHeight();
+    int width = (int)this.getPreferredSize().getWidth();
+    int height = (int)this.getPreferredSize().getHeight();
 
     float scalex = (float) width / d.width;
     float scaley = (float) height / d.height;

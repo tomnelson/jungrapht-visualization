@@ -155,8 +155,9 @@ public class SatelliteViewDemo extends JPanel {
     Container panel = new JPanel(new BorderLayout());
     Container rightPanel = new JPanel(new BorderLayout());
 
-    VisualizationScrollPane gzsp = new VisualizationScrollPane(mainVisualizationViewer);
-    panel.add(gzsp);
+    VisualizationScrollPane visualizationScrollPane =
+        new VisualizationScrollPane(mainVisualizationViewer);
+    panel.add(visualizationScrollPane);
     rightPanel.add(new JPanel());
     rightPanel.add(satelliteVisualizationViewer.getComponent(), BorderLayout.SOUTH);
     panel.add(rightPanel, BorderLayout.EAST);

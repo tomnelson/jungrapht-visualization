@@ -25,13 +25,23 @@ import org.jungrapht.visualization.control.GraphMouseListener;
  */
 public interface VisualizationViewer<V, E> extends VisualizationServer<V, E> {
 
+  /**
+   * Builder for VisualizationViewer instances
+   *
+   * @param <V> the vertex type
+   * @param <E> the edge type
+   * @param <T> the type of VisualizationViewer to build
+   * @param <B> the builder typw
+   */
   class Builder<V, E, T extends DefaultVisualizationViewer<V, E>, B extends Builder<V, E, T, B>>
       extends DefaultVisualizationServer.Builder<V, E, T, B> {
 
+    /** @param graph the graph to be visualized */
     protected Builder(Graph<V, E> graph) {
       super(graph);
     }
 
+    /** @param visualizationModel the model for visualization state */
     protected Builder(VisualizationModel<V, E> visualizationModel) {
       super(visualizationModel);
     }
@@ -41,10 +51,22 @@ public interface VisualizationViewer<V, E> extends VisualizationServer<V, E> {
     }
   }
 
+  /**
+   * @param graph the graph to be visualized
+   * @param <V> the vertex type
+   * @param <E> the edge type
+   * @return the builder
+   */
   static <V, E> Builder<V, E, ?, ?> builder(Graph<V, E> graph) {
     return new Builder(graph);
   }
 
+  /**
+   * @param visualizationModel the model to hold visualization state
+   * @param <V> the vertex type
+   * @param <E> the edge type
+   * @return the builder
+   */
   static <V, E> Builder<V, E, ?, ?> builder(VisualizationModel<V, E> visualizationModel) {
     return new Builder(visualizationModel);
   }

@@ -134,8 +134,8 @@ public class VertexCollapseDemo extends JPanel {
 
     vv.setGraphMouse(graphMouse);
 
-    VisualizationScrollPane gzsp = new VisualizationScrollPane(vv);
-    add(gzsp);
+    VisualizationScrollPane visualizationScrollPane = new VisualizationScrollPane(vv);
+    add(visualizationScrollPane);
 
     JComboBox modeBox = graphMouse.getModeComboBox();
     modeBox.addItemListener(graphMouse.getModeListener());

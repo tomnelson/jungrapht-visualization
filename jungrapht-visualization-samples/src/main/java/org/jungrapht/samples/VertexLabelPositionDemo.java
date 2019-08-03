@@ -78,8 +78,8 @@ public class VertexLabelPositionDemo extends JPanel {
     // add a listener for ToolTips
     vv.setVertexToolTipFunction(n -> n);
 
-    VisualizationScrollPane gzsp = new VisualizationScrollPane(vv);
-    add(gzsp);
+    VisualizationScrollPane visualizationScrollPane = new VisualizationScrollPane(vv);
+    add(visualizationScrollPane);
 
     // the regular graph mouse for the normal view
     final AbstractModalGraphMouse graphMouse = new DefaultModalGraphMouse<>();
@@ -99,7 +99,7 @@ public class VertexLabelPositionDemo extends JPanel {
     positionPanel.setBorder(BorderFactory.createTitledBorder("Label Position"));
     JMenuBar menubar = new JMenuBar();
     menubar.add(graphMouse.getModeMenu());
-    gzsp.setCorner(menubar);
+    visualizationScrollPane.setCorner(menubar);
     JComboBox<Position> cb = new JComboBox<>();
     cb.addItem(Renderer.VertexLabel.Position.N);
     cb.addItem(Renderer.VertexLabel.Position.NE);

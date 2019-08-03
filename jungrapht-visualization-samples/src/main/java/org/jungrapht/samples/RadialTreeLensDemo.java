@@ -84,8 +84,8 @@ public class RadialTreeLensDemo extends JPanel {
     // add a listener for ToolTips
     vv.setVertexToolTipFunction(Object::toString);
 
-    VisualizationScrollPane gzsp = new VisualizationScrollPane(vv);
-    add(gzsp);
+    VisualizationScrollPane visualizationScrollPane = new VisualizationScrollPane(vv);
+    add(visualizationScrollPane);
 
     final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
 
@@ -128,7 +128,7 @@ public class RadialTreeLensDemo extends JPanel {
 
     JMenuBar menubar = new JMenuBar();
     menubar.add(graphMouse.getModeMenu());
-    gzsp.setCorner(menubar);
+    visualizationScrollPane.setCorner(menubar);
 
     JPanel controls = new JPanel(new GridLayout(1, 0));
     JPanel hyperControls = new JPanel(new GridLayout(3, 2));

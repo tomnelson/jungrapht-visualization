@@ -113,7 +113,7 @@ public interface VisualizationServer<V, E>
       return self();
     }
 
-    /** @return a new instance of a {@link }DefaultVisualizationServer} */
+    /** @return a new instance of a {@link DefaultVisualizationServer} */
     public T build() {
       return (T) new DefaultVisualizationServer(this);
     }

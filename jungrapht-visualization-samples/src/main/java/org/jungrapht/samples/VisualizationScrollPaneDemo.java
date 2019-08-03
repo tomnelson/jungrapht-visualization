@@ -16,7 +16,6 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
-import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.AbstractModalGraphMouse;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
@@ -38,7 +37,7 @@ import org.jungrapht.visualization.renderers.Renderer;
  *
  * @author Tom Nelson
  */
-public class GraphZoomScrollPaneDemo {
+public class VisualizationScrollPaneDemo {
 
   /** the graph */
   Graph<Integer, Number> graph;
@@ -47,7 +46,7 @@ public class GraphZoomScrollPaneDemo {
   VisualizationViewer<Integer, Number> vv;
 
   /** create an instance of a simple graph with controls to demo the zoom features. */
-  public GraphZoomScrollPaneDemo() {
+  public VisualizationScrollPaneDemo() {
 
     // create a simple graph for the demo
     graph = createGraph();
@@ -140,7 +139,8 @@ public class GraphZoomScrollPaneDemo {
     // create a frome to hold the graph
     final JFrame frame = new JFrame();
     Container content = frame.getContentPane();
-    final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
+    final org.jungrapht.visualization.VisualizationScrollPane panel =
+        new org.jungrapht.visualization.VisualizationScrollPane(vv);
     content.add(panel);
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     final AbstractModalGraphMouse graphMouse = new DefaultModalGraphMouse<Integer, Number>();
@@ -226,6 +226,6 @@ public class GraphZoomScrollPaneDemo {
   }
 
   public static void main(String[] args) {
-    new GraphZoomScrollPaneDemo();
+    new VisualizationScrollPaneDemo();
   }
 }
