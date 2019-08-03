@@ -24,9 +24,9 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-public class BasicRenderer<V, E> implements Renderer<V, E> {
+class DefaultRenderer<V, E> implements Renderer<V, E> {
 
-  private static final Logger log = LoggerFactory.getLogger(BasicRenderer.class);
+  private static final Logger log = LoggerFactory.getLogger(DefaultRenderer.class);
   protected Vertex<V, E> vertexRenderer = new BasicVertexRenderer<>();
   protected VertexLabel<V, E> vertexLabelRenderer = new BasicVertexLabelRenderer<>();
   protected Renderer.Edge<V, E> edgeRenderer = new BasicEdgeRenderer<>();

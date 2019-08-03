@@ -185,7 +185,11 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
 
   //  private EdgeShape edgeShape;
 
-  DefaultRenderContext(Graph<V, E> graph) {
+  DefaultRenderContext(Builder<V, E, ?, ?> builder) {
+    this(builder.graph);
+  }
+
+  private DefaultRenderContext(Graph<V, E> graph) {
     this.parallelEdgeIndexFunction = new ParallelEdgeIndexFunction<>();
     setEdgeShape(System.getProperty(EDGE_SHAPE, "QUAD_CURVE"));
     setupArrows(graph.getType().isDirected());

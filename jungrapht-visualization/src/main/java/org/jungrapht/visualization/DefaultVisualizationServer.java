@@ -39,7 +39,6 @@ import org.jungrapht.visualization.layout.event.LayoutStateChange;
 import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.util.Caching;
-import org.jungrapht.visualization.renderers.BasicRenderer;
 import org.jungrapht.visualization.renderers.LightweightRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.selection.MultiMutableSelectedState;
@@ -202,9 +201,9 @@ class DefaultVisualizationServer<V, E> extends JPanel
     } else {
       this.model = visualizationModel;
     }
-    renderContext = new DefaultRenderContext<>(model.getGraph());
+    renderContext = RenderContext.builder(model.getGraph()).build();
     renderContext.setScreenDevice(this);
-    renderer = complexRenderer = new BasicRenderer<>();
+    renderer = complexRenderer = Renderer.<V, E>builder().build();
     createSpatialStuctures(model, renderContext);
     model
         .getLayoutModel()

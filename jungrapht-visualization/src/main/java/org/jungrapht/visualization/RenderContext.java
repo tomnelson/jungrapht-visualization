@@ -27,6 +27,23 @@ import org.jungrapht.visualization.util.EdgeIndexFunction;
  */
 public interface RenderContext<V, E> {
 
+  class Builder<V, E, T extends RenderContext<V, E>, B extends Builder<V, E, T, B>> {
+
+    Graph<V, E> graph;
+
+    public Builder(Graph<V, E> graph) {
+      this.graph = graph;
+    }
+
+    T build() {
+      return (T) new DefaultRenderContext<>(this);
+    }
+  }
+
+  static <V, E> Builder<V, E, ?, ?> builder(Graph<V, E> graph) {
+    return new Builder<>(graph);
+  }
+
   float[] dotting = {1.0f, 3.0f};
   float[] dashing = {5.0f};
 

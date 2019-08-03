@@ -18,7 +18,6 @@ import org.jungrapht.visualization.control.LensGraphMouse;
 import org.jungrapht.visualization.control.LensTransformSupport;
 import org.jungrapht.visualization.control.TransformSupport;
 import org.jungrapht.visualization.layout.GraphElementAccessor;
-import org.jungrapht.visualization.renderers.BasicRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.transform.AbstractLensSupport;
 import org.jungrapht.visualization.transform.LensTransformer;
@@ -54,7 +53,7 @@ public class MagnifyImageLensSupport<V, E, T extends LensGraphMouse>
     this.renderContext = vv.getRenderContext();
     this.pickSupport = renderContext.getPickSupport();
     this.renderer = vv.getRenderer();
-    this.transformingRenderer = new BasicRenderer<>();
+    this.transformingRenderer = Renderer.<V, E>builder().build();
     this.savedGraphicsDecorator = renderContext.getGraphicsContext();
     this.lensTransformer = lensTransformer;
 

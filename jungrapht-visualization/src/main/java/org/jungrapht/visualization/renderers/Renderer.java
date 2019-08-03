@@ -20,6 +20,17 @@ import org.jungrapht.visualization.spatial.Spatial;
  */
 public interface Renderer<V, E> {
 
+  class Builder<V, E, T extends Renderer<V, E>, B extends Builder<V, E, T, B>> {
+
+    public T build() {
+      return (T) new DefaultRenderer<>();
+    }
+  }
+
+  static <V, E> Builder<V, E, ?, ?> builder() {
+    return new Builder<>();
+  }
+
   void render(
       RenderContext<V, E> renderContext,
       VisualizationModel<V, E> visualizationModel,
