@@ -9,7 +9,6 @@ import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.layout.algorithms.SpringLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutSpringRepulsion;
-import org.jungrapht.visualization.util.LightweightRenderingVisitor;
 
 /**
  * demonstrates a large graph with animated layout lightweight rendering is enabled for better
@@ -38,7 +37,6 @@ public class PerformanceGraph {
             .viewSize(viewSize)
             .build();
 
-    LightweightRenderingVisitor.visit(vv, 1.1);
     vv.scaleToLayout(new CrossoverScalingControl());
 
     DefaultModalGraphMouse<String, Double> graphMouse = new DefaultModalGraphMouse<>();

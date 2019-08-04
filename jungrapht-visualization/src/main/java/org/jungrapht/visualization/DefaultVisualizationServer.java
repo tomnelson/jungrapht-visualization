@@ -39,8 +39,8 @@ import org.jungrapht.visualization.layout.event.LayoutStateChange;
 import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.util.Caching;
-import org.jungrapht.visualization.renderers.BasicRenderer;
-import org.jungrapht.visualization.renderers.LightweightRenderer;
+import org.jungrapht.visualization.renderers.DefaultModalRenderer;
+import org.jungrapht.visualization.renderers.ModalRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.selection.MultiMutableSelectedState;
 import org.jungrapht.visualization.selection.MutableSelectedState;
@@ -57,7 +57,6 @@ import org.jungrapht.visualization.spatial.rtree.SplitterContext;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.util.ChangeEventSupport;
 import org.jungrapht.visualization.util.DefaultChangeEventSupport;
-import org.jungrapht.visualization.util.LightweightRenderingVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,6 +80,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
       System.getProperty("graph.visualization.properties.file.name", PREFIX + "properties");
   private static final String LIGHTWEIGHT_VERTEX_COUNT_THRESHOLD =
       PREFIX + "lightweightVertexCountThreshold";
+  private static final String LIGHTWEIGHT_SCALE_THRESHOLD = PREFIX + "lightweightScaleThreshold";
 
   private static boolean loadFromAppName() {
     try {
@@ -120,8 +120,8 @@ class DefaultVisualizationServer<V, E> extends JPanel
   /** handles the actual drawing of graph elements */
   protected Renderer<V, E> renderer;
 
-  protected Renderer<V, E> lightweightRenderer = new LightweightRenderer<>();
-  protected Renderer<V, E> complexRenderer;
+  //  protected Renderer<V, E> lightweightRenderer = new LightweightRenderer<>();
+  //  protected Renderer<V, E> complexRenderer;
 
   /** rendering hints used in drawing. Anti-aliasing is on by default */
   protected Map<Key, Object> renderingHints = new HashMap<>();
@@ -166,7 +166,14 @@ class DefaultVisualizationServer<V, E> extends JPanel
 
   protected Spatial<E> edgeSpatial;
 
-  protected Predicate<Double> smallScaleOverridePredicate = e -> false;
+  protected int lightweightRenderingVertexCountThreshold =
+      Integer.parseInt(System.getProperty(LIGHTWEIGHT_VERTEX_COUNT_THRESHOLD, "20"));
+
+  protected double lightweightRenderingScaleThreshold =
+      Double.parseDouble(System.getProperty(LIGHTWEIGHT_SCALE_THRESHOLD, "0.5"));
+
+  protected Predicate<Double> smallScaleOverridePredicate =
+      e -> e < lightweightRenderingScaleThreshold;
 
   protected DefaultVisualizationServer(Builder<V, E, ?, ?> builder) {
     this(
@@ -204,7 +211,15 @@ class DefaultVisualizationServer<V, E> extends JPanel
     }
     renderContext = new DefaultRenderContext<>(model.getGraph());
     renderContext.setScreenDevice(this);
-    renderer = complexRenderer = new BasicRenderer<>();
+    renderer = new DefaultModalRenderer<>(this);
+    ((DefaultModalRenderer<V, E>) renderer)
+        .setCountSupplier(getModel().getGraph().vertexSet()::size);
+    ((DefaultModalRenderer<V, E>) renderer)
+        .setScaleSupplier(
+            getRenderContext()
+                    .getMultiLayerTransformer()
+                    .getTransformer(MultiLayerTransformer.Layer.VIEW)
+                ::scale);
     createSpatialStuctures(model, renderContext);
     model
         .getLayoutModel()
@@ -232,9 +247,8 @@ class DefaultVisualizationServer<V, E> extends JPanel
     if (edgeSpatial != null) {
       setEdgeSpatial(edgeSpatial);
     }
-    int lightweightVertexCountThreshold =
-        Integer.parseInt(System.getProperty(LIGHTWEIGHT_VERTEX_COUNT_THRESHOLD, "20"));
-    LightweightRenderingVisitor.visit(this, 0.5, lightweightVertexCountThreshold);
+    addChangeListener((DefaultModalRenderer) renderer);
+    //    LightweightRenderingVisitor.visit(this, 0.5, lightweightRenderingVertexCountThreshold);
   }
 
   @Override
@@ -397,14 +411,14 @@ class DefaultVisualizationServer<V, E> extends JPanel
   @Override
   public void setRenderer(Renderer<V, E> r) {
     this.renderer = r;
-    this.complexRenderer = renderer;
+    //    this.complexRenderer = renderer;
     repaint();
   }
 
   @Override
   public void setLightweightRenderer(Renderer<V, E> r) {
-    this.lightweightRenderer = r;
-    repaint();
+    //    this.lightweightRenderer = r;
+    //    repaint();
   }
 
   @Override
@@ -561,15 +575,18 @@ class DefaultVisualizationServer<V, E> extends JPanel
 
   @Override
   public void simplifyRenderer(boolean simplify) {
-    if (smallScale() || simplify) {
-      this.renderer = lightweightRenderer;
-      this.getRenderingHints().remove(RenderingHints.KEY_ANTIALIASING);
-    } else {
-      this.renderer = complexRenderer;
-      this.getRenderingHints()
-          .put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    if (renderer instanceof ModalRenderer) {
+      ModalRenderer modalRenderer = (ModalRenderer) renderer;
+      if (smallScale() || simplify) {
+        modalRenderer.setMode(ModalRenderer.Mode.LIGHTWEIGHT);
+        //        this.getRenderingHints().remove(RenderingHints.KEY_ANTIALIASING);
+      } else {
+        modalRenderer.setMode(ModalRenderer.Mode.DEFAULT);
+        //        this.getRenderingHints()
+        //                .put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+      }
+      repaint();
     }
-    repaint();
   }
 
   /**
@@ -851,4 +868,53 @@ class DefaultVisualizationServer<V, E> extends JPanel
         return new Spatial.NoOp.Edge<>(visualizationServer.getModel());
     }
   }
+
+  //  class LightweightRenderingListener implements ChangeListener {
+  //
+  //    private Timer timer;
+  //
+  //    @Override
+  //    public void stateChanged(ChangeEvent e) {
+  //      if (getModel().getGraph().vertexSet().size() < lightweightRenderingVertexCountThreshold) {
+  //        return;
+  //      }
+  //      if (timer == null || timer.done) {
+  //        timer = new Timer(DefaultVisualizationServer.this);
+  //        timer.start();
+  //      } else {
+  //        timer.incrementValue();
+  //      }
+  //    }
+  //
+  //    class Timer extends Thread {
+  //      long value = 10;
+  //      boolean done;
+  //      VisualizationServer visualizationServer;
+  //
+  //      public Timer(VisualizationServer visualizationServer) {
+  //        this.visualizationServer = visualizationServer;
+  //        visualizationServer.simplifyRenderer(true);
+  //        visualizationServer.repaint();
+  //      }
+  //
+  //      public void incrementValue() {
+  //        value = 10;
+  //      }
+  //
+  //      public void run() {
+  //        done = false;
+  //        while (value > 0) {
+  //          value--;
+  //          try {
+  //            Thread.sleep(10);
+  //          } catch (InterruptedException ex) {
+  //            ex.printStackTrace();
+  //          }
+  //        }
+  //        visualizationServer.simplifyRenderer(false);
+  //        done = true;
+  //        visualizationServer.repaint();
+  //      }
+  //    }
+  //  }
 }

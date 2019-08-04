@@ -7,6 +7,7 @@
  */
 package org.jungrapht.visualization.renderers;
 
+import java.awt.*;
 import java.util.ConcurrentModificationException;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.RenderContext;
@@ -41,6 +42,10 @@ public class BasicRenderer<V, E> implements Renderer<V, E> {
       render(renderContext, visualizationModel);
       return;
     }
+    renderContext
+        .getGraphicsContext()
+        .getRenderingHints()
+        .put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     Iterable<V> visibleVertices = null;
     Iterable<E> visibleEdges = null;
 
@@ -99,6 +104,10 @@ public class BasicRenderer<V, E> implements Renderer<V, E> {
   @Override
   public void render(
       RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel) {
+    renderContext
+        .getGraphicsContext()
+        .getRenderingHints()
+        .put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     Graph<V, E> graph = visualizationModel.getGraph();
     // paint all the edges
     try {

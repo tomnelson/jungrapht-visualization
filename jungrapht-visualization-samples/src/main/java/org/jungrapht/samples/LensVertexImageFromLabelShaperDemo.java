@@ -8,12 +8,7 @@
  */
 package org.jungrapht.samples;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Paint;
+import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Collection;
@@ -51,7 +46,6 @@ import org.jungrapht.visualization.transform.MagnifyTransformer;
 import org.jungrapht.visualization.transform.shape.MagnifyImageLensSupport;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
 import org.jungrapht.visualization.util.IconCache;
-import org.jungrapht.visualization.util.LightweightRenderingVisitor;
 
 /** @author Tom Nelson */
 public class LensVertexImageFromLabelShaperDemo extends JPanel {
@@ -136,8 +130,6 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
 
     JButton minus = new JButton("-");
     minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
-
-    LightweightRenderingVisitor.visit(vv);
 
     JPanel scaleGrid = new JPanel(new GridLayout(1, 0));
     scaleGrid.setBorder(BorderFactory.createTitledBorder("Zoom"));

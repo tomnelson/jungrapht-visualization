@@ -38,7 +38,7 @@ import org.jungrapht.visualization.transform.shape.Intersector;
  *
  * <p>The lower-right corner of this component is available to use as a small button or menu.
  *
- * <p>samples.graph.GraphZoomScrollPaneDemo shows the use of this component.
+ * <p>VisualizationScrollPaneDemo shows the use of this component.
  *
  * @author Tom Nelson
  */

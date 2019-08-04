@@ -47,6 +47,8 @@ public interface MutableTransformer extends ShapeTransformer, ChangeEventSupport
 
   double getScale();
 
+  double scale();
+
   double getTranslateX();
 
   double getTranslateY();

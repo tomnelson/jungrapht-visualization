@@ -1,5 +1,6 @@
 package org.jungrapht.visualization.renderers;
 
+import java.awt.*;
 import java.util.ConcurrentModificationException;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.RenderContext;
@@ -29,6 +30,7 @@ public class LightweightRenderer<V, E> implements Renderer<V, E> {
   @Override
   public void render(
       RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel) {
+    renderContext.getGraphicsContext().getRenderingHints().remove(RenderingHints.KEY_ANTIALIASING);
     Graph<V, E> graph = visualizationModel.getGraph();
     // paint all the edges
     try {

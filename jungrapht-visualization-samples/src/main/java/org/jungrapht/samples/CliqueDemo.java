@@ -12,7 +12,12 @@ import static org.jungrapht.samples.util.LayoutHelper.*;
 
 import java.awt.*;
 import java.awt.event.ItemEvent;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.clique.CliqueMinimalSeparatorDecomposition;
@@ -31,6 +36,8 @@ import org.jungrapht.visualization.layout.model.AggregateLayoutModel;
 import org.jungrapht.visualization.layout.model.LoadingCacheLayoutModel;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.selection.MutableSelectedState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Demonstrates the AggregateLayout class. In this demo, vertices are visually clustered as they are
@@ -40,7 +47,9 @@ import org.jungrapht.visualization.selection.MutableSelectedState;
  * @author Tom Nelson
  */
 @SuppressWarnings("serial")
-public class CliqueLayoutDemo extends JPanel {
+public class CliqueDemo extends JPanel {
+
+  private static Logger log = LoggerFactory.getLogger(CliqueDemo.class);
 
   String instructions =
       "<html>"
@@ -67,14 +76,12 @@ public class CliqueLayoutDemo extends JPanel {
 
   AggregateLayoutModel<String> clusteringLayoutModel;
 
-  Dimension subLayoutSize;
-
   MutableSelectedState<String> ps;
 
   @SuppressWarnings("rawtypes")
   LayoutAlgorithm<String> subLayoutType = CircleLayoutAlgorithm.builder().build();
 
-  public CliqueLayoutDemo() {
+  public CliqueDemo() {
 
     setLayout(new BorderLayout());
     // create a simple graph for the demo
@@ -157,60 +164,6 @@ public class CliqueLayoutDemo extends JPanel {
           }
         });
 
-    //    JComboBox<Layouts> subLayoutTypeComboBox = new JComboBox<>(getCombos());
-    //
-    //    subLayoutTypeComboBox.setRenderer(
-    //        new DefaultListCellRenderer() {
-    //          public Component getListCellRendererComponent(
-    //              JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-    //            String valueString = value.toString();
-    //            valueString = valueString.substring(valueString.lastIndexOf('.') + 1);
-    //            return super.getListCellRendererComponent(
-    //                list, valueString, index, isSelected, cellHasFocus);
-    //          }
-    //        });
-    //    subLayoutTypeComboBox.addItemListener(
-    //        e -> {
-    //          if (e.getStateChange() == ItemEvent.SELECTED) {
-    //            subLayoutType = (createLayout((Layouts) e.getItem()));
-    //            uncluster();
-    //            clusterPicked();
-    //          }
-    //        });
-    //
-    //    JComboBox<?> subLayoutDimensionComboBox =
-    //        new JComboBox<Object>(
-    //            new Dimension[] {
-    //              new Dimension(75, 75),
-    //              new Dimension(100, 100),
-    //              new Dimension(150, 150),
-    //              new Dimension(200, 200),
-    //              new Dimension(250, 250),
-    //              new Dimension(300, 300)
-    //            });
-    //    subLayoutDimensionComboBox.setRenderer(
-    //        new DefaultListCellRenderer() {
-    //          public Component getListCellRendererComponent(
-    //              JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-    //            String valueString = value.toString();
-    //            valueString = valueString.substring(valueString.lastIndexOf('['));
-    //            valueString = valueString.replaceAll("idth", "");
-    //            valueString = valueString.replaceAll("eight", "");
-    //            return super.getListCellRendererComponent(
-    //                list, valueString, index, isSelected, cellHasFocus);
-    //          }
-    //        });
-    //    subLayoutDimensionComboBox.addItemListener(
-    //        e -> {
-    //          if (e.getStateChange() == ItemEvent.SELECTED) {
-    //            subLayoutSize = (Dimension) e.getItem();
-    //            uncluster();
-    //            clusterPicked();
-    //          }
-    //        });
-    //
-    //    subLayoutDimensionComboBox.setSelectedIndex(1);
-
     JButton help = new JButton("Help");
     help.addActionListener(
         e ->
@@ -239,14 +192,6 @@ public class CliqueLayoutDemo extends JPanel {
     layoutControls.add(layoutTypeComboBox);
     heightConstrain(layoutControls);
     controls.add(layoutControls);
-
-    //    JPanel subLayoutControls = new JPanel(new GridLayout(0, 1));
-    //    subLayoutControls.setBorder(BorderFactory.createTitledBorder("SubLayout"));
-    //    subLayoutControls.add(subLayoutTypeComboBox);
-    //    subLayoutControls.add(subLayoutDimensionComboBox);
-    //    heightConstrain(subLayoutControls);
-    //    controls.add(subLayoutControls);
-    //    controls.add(Box.createRigidArea(space));
 
     JPanel modePanel = new JPanel(new GridLayout(1, 1));
     modePanel.setBorder(BorderFactory.createTitledBorder("Mouse Mode"));
@@ -279,74 +224,32 @@ public class CliqueLayoutDemo extends JPanel {
     Graph<String, Number> graph = vv.getModel().getGraph();
     CliqueMinimalSeparatorDecomposition<String, Number> cliqueFinder =
         new CliqueMinimalSeparatorDecomposition<>(graph);
-    //    Iterator<Set<String>> iterator = cliqueFinder.maximumIterator();
-    //    while (iterator.hasNext()) {
-    //      System.err.println("max clique of "+iterator.next());
-    //    }
+    java.util.List<Color> colors =
+        Arrays.asList(new Color[] {Color.yellow, Color.green, Color.pink, Color.magenta});
+    Iterator<Color> colorIterator = colors.iterator();
+    Map<String, Color> map = new HashMap<>();
     for (Set<String> set : cliqueFinder.getAtoms()) {
-      System.err.println("clique of " + set);
+      Color color = colorIterator.next();
+      set.stream().forEach(e -> map.put(e, color));
     }
+    vv.repaint();
+    log.info("cliques are {}", cliqueFinder.getAtoms());
+    vv.getRenderContext().setVertexFillPaintFunction(map::get);
+  }
 
-    //    if (state) {
-    //      // put the selected vertices into a new sublayout
-    //      Collection<String> selected = ps.getSelected();
-    //      if (selected.size() > 1) {
-    //        Point2D center = new Point2D.Double();
-    //        double x = 0;
-    //        double y = 0;
-    //        for (String vertex : selected) {
-    //          Point p = clusteringLayoutModel.apply(vertex);
-    //          x += p.x;
-    //          y += p.y;
-    //        }
-    //        x /= selected.size();
-    //        y /= selected.size();
-    //        center.setLocation(x, y);
-    //
-    //        Graph<String, Number> subGraph;
-    //        try {
-    //          subGraph = GraphTypeBuilder.forGraph(graph).buildGraph();
-    //          for (String vertex : selected) {
-    //            subGraph.addVertex(vertex);
-    //            for (Number edge : graph.edgesOf(vertex)) {
-    //              String vertexU = graph.getEdgeSource(edge);
-    //              String vertexV = graph.getEdgeTarget(edge);
-    //              if (selected.contains(vertexU) && selected.contains(vertexV)) {
-    //                // put this edge into the subgraph
-    //                subGraph.addEdge(vertexU, vertexV, edge);
-    //              }
-    //            }
-    //          }
-    //
-    //          LayoutAlgorithm<String> subLayoutAlgorithm = subLayoutType;
-    //
-    //          LayoutModel<String> newLayoutModel =
-    //              LoadingCacheLayoutModel.<String>builder()
-    //                  .graph(subGraph)
-    //                  .size(subLayoutSize.width, subLayoutSize.height)
-    //                  .initializer(
-    //                      new RandomLocationTransformer<>(subLayoutSize.width, subLayoutSize.height, 0))
-    //                  .build();
-    //
-    //          clusteringLayoutModel.put(newLayoutModel, Point.of(center.getX(), center.getY()));
-    //          newLayoutModel.accept(subLayoutAlgorithm);
-    //          vv.repaint();
-    //
-    //        } catch (Exception e) {
-    //          e.printStackTrace();
-    //        }
-    //      }
-    //    } else {
-    //      // remove all sublayouts
-    //      this.clusteringLayoutModel.removeAll();
-    //      vv.repaint();
-    //    }
+  class EdgeSupplier implements Supplier<Integer> {
+    Integer n = 100;
+
+    @Override
+    public Integer get() {
+      return n++;
+    }
   }
 
   public static void main(String[] args) {
     JFrame f = new JFrame();
     f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-    f.getContentPane().add(new CliqueLayoutDemo());
+    f.getContentPane().add(new CliqueDemo());
     f.pack();
     f.setVisible(true);
   }

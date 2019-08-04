@@ -38,7 +38,7 @@ import org.jungrapht.visualization.renderers.Renderer;
  *
  * @author Tom Nelson
  */
-public class GraphZoomScrollPaneDemo {
+public class VisualizationScrollPaneDemo {
 
   /** the graph */
   Graph<Integer, Number> graph;
@@ -47,7 +47,7 @@ public class GraphZoomScrollPaneDemo {
   VisualizationViewer<Integer, Number> vv;
 
   /** create an instance of a simple graph with controls to demo the zoom features. */
-  public GraphZoomScrollPaneDemo() {
+  public VisualizationScrollPaneDemo() {
 
     // create a simple graph for the demo
     graph = createGraph();
@@ -226,6 +226,6 @@ public class GraphZoomScrollPaneDemo {
   }
 
   public static void main(String[] args) {
-    new GraphZoomScrollPaneDemo();
+    new VisualizationScrollPaneDemo();
   }
 }

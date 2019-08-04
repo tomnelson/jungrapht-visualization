@@ -11,6 +11,7 @@
 package org.jungrapht.visualization.control;
 
 import java.awt.event.ItemListener;
+import java.awt.event.KeyListener;
 import org.jungrapht.visualization.VisualizationViewer;
 
 /**
@@ -24,6 +25,8 @@ public interface ModalGraphMouse extends VisualizationViewer.GraphMouse {
 
   /** @return Returns the modeListener. */
   ItemListener getModeListener();
+
+  KeyListener getModeKeyListener();
 
   /** */
   enum Mode {
