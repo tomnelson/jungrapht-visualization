@@ -7,6 +7,8 @@
  */
 package org.jungrapht.visualization;
 
+import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+
 import com.google.common.base.Preconditions;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
@@ -36,8 +38,6 @@ import org.jungrapht.visualization.util.ParallelEdgeIndexFunction;
  * @param <E> edge type
  */
 public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
-
-  private static final String PREFIX = "jungrapht.";
 
   // vertex visual property symbols
   private static final String VERTEX_SHAPE = PREFIX + "vertexShape";

@@ -1,5 +1,6 @@
 package org.jungrapht.visualization.renderers;
 
+import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 import static org.jungrapht.visualization.renderers.ModalRenderer.Mode.DEFAULT;
 import static org.jungrapht.visualization.renderers.ModalRenderer.Mode.LIGHTWEIGHT;
 
@@ -37,8 +38,6 @@ public class DefaultModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeLi
 
   private static final Logger log = LoggerFactory.getLogger(DefaultModalRenderer.class);
 
-  private static final String PREFIX = "jungrapht.";
-
   private static final String LIGHTWEIGHT_COUNT_THRESHOLD = PREFIX + "lightweightCountThreshold";
 
   private static final String LIGHTWEIGHT_SCALE_THRESHOLD = PREFIX + "lightweightScaleThreshold";
@@ -50,16 +49,16 @@ public class DefaultModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeLi
       Double.parseDouble(System.getProperty(LIGHTWEIGHT_SCALE_THRESHOLD, "0.5"));
 
   protected Supplier<Double> scaleSupplier;
-  protected Predicate<Supplier<Double>> smallScaleOverridePredicate =
+  protected Predicate<Supplier<Double>> scalePredicate =
       t -> scaleSupplier.get() < lightweightRenderingScaleThreshold;
 
   protected Supplier<Integer> countSupplier;
-  protected Predicate<Supplier<Integer>> vertexCountPredicate =
+  protected Predicate<Supplier<Integer>> countPredicate =
       t -> countSupplier.get() > lightweightRenderingCountThreshold;
 
-  Renderer<V, E> defaultRenderer = new DefaultRenderer();
-  Renderer<V, E> lightweightRenderer = new LightweightRenderer<>();
-  Renderer<V, E> currentRenderer;
+  private Renderer<V, E> defaultRenderer = new DefaultRenderer<>();
+  private Renderer<V, E> lightweightRenderer = new LightweightRenderer<>();
+  private Renderer<V, E> currentRenderer;
 
   Timer timer;
   JComponent component;
@@ -107,10 +106,10 @@ public class DefaultModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeLi
    */
   private void confirmInitialRenderer() {
     if (currentRenderer == null) {
-      if (!this.vertexCountPredicate.test(countSupplier)) {
+      if (!this.countPredicate.test(countSupplier)) {
         // small graph, initial state is default
         setMode(DEFAULT);
-      } else if (this.smallScaleOverridePredicate.test(scaleSupplier)) {
+      } else if (this.scalePredicate.test(scaleSupplier)) {
         // so its a big graph, test the scale
         // not a small graph and the scale is small. use lightweight
         setMode(LIGHTWEIGHT);
@@ -206,7 +205,7 @@ public class DefaultModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeLi
   public void stateChanged(ChangeEvent e) {
     log.trace("count supplier got {}", countSupplier.get());
     log.trace("scale supplier got {}", scaleSupplier.get());
-    if (!this.vertexCountPredicate.test(this.countSupplier)) {
+    if (!this.countPredicate.test(this.countSupplier)) {
       // its a small graph, always use default renderer
       setMode(DEFAULT);
       component.repaint();
@@ -214,7 +213,7 @@ public class DefaultModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeLi
     }
 
     // its a big graph, check the scale
-    if (this.smallScaleOverridePredicate.test(this.scaleSupplier)) {
+    if (this.scalePredicate.test(this.scaleSupplier)) {
       // the scale is small, use lightweight
       setMode(LIGHTWEIGHT);
       component.repaint();
@@ -233,15 +232,16 @@ public class DefaultModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeLi
     long value = 10;
     boolean done;
 
-    public Timer() {
+    Timer() {
       setMode(LIGHTWEIGHT);
       component.repaint();
     }
 
-    public void incrementValue() {
+    void incrementValue() {
       value = 10;
     }
 
+    @Override
     public void run() {
       done = false;
       while (value > 0) {

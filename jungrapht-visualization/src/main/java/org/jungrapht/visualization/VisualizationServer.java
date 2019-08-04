@@ -40,6 +40,8 @@ public interface VisualizationServer<V, E>
         ChangeListener,
         LayoutStateChange.Listener {
 
+  String PREFIX = "jungrapht.";
+
   /**
    * A builder for creating instances of a {@link VisualizationServer} with user defined properties
    *

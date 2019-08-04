@@ -72,7 +72,6 @@ class DefaultVisualizationServer<V, E> extends JPanel
 
   static Logger log = LoggerFactory.getLogger(DefaultVisualizationServer.class);
 
-  private static final String PREFIX = "jungrapht.";
   private static final String VERTEX_SPATIAL_SUPPORT = PREFIX + "vertexSpatialSupport";
   private static final String EDGE_SPATIAL_SUPPORT = PREFIX + "edgeSpatialSupport";
   private static final String PROPERTIES_FILE_NAME =
