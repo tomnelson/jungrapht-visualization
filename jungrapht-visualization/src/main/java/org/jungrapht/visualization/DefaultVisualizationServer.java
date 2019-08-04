@@ -40,7 +40,6 @@ import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.util.Caching;
 import org.jungrapht.visualization.renderers.DefaultModalRenderer;
-import org.jungrapht.visualization.renderers.ModalRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.selection.MultiMutableSelectedState;
 import org.jungrapht.visualization.selection.MutableSelectedState;
@@ -118,10 +117,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
   protected VisualizationModel<V, E> model;
 
   /** handles the actual drawing of graph elements */
-  protected Renderer<V, E> renderer;
-
-  //  protected Renderer<V, E> lightweightRenderer = new LightweightRenderer<>();
-  //  protected Renderer<V, E> complexRenderer;
+  protected DefaultModalRenderer<V, E> renderer;
 
   /** rendering hints used in drawing. Anti-aliasing is on by default */
   protected Map<Key, Object> renderingHints = new HashMap<>();
@@ -212,14 +208,12 @@ class DefaultVisualizationServer<V, E> extends JPanel
     renderContext = RenderContext.builder(model.getGraph()).build();
     renderContext.setScreenDevice(this);
     renderer = new DefaultModalRenderer<>(this);
-    ((DefaultModalRenderer<V, E>) renderer)
-        .setCountSupplier(getModel().getGraph().vertexSet()::size);
-    ((DefaultModalRenderer<V, E>) renderer)
-        .setScaleSupplier(
-            getRenderContext()
-                    .getMultiLayerTransformer()
-                    .getTransformer(MultiLayerTransformer.Layer.VIEW)
-                ::scale);
+    renderer.setCountSupplier(getModel().getGraph().vertexSet()::size);
+    renderer.setScaleSupplier(
+        getRenderContext()
+                .getMultiLayerTransformer()
+                .getTransformer(MultiLayerTransformer.Layer.VIEW)
+            ::scale);
     createSpatialStuctures(model, renderContext);
     model
         .getLayoutModel()
@@ -409,19 +403,6 @@ class DefaultVisualizationServer<V, E> extends JPanel
   }
 
   @Override
-  public void setRenderer(Renderer<V, E> r) {
-    this.renderer = r;
-    //    this.complexRenderer = renderer;
-    repaint();
-  }
-
-  @Override
-  public void setLightweightRenderer(Renderer<V, E> r) {
-    //    this.lightweightRenderer = r;
-    //    repaint();
-  }
-
-  @Override
   public Renderer<V, E> getRenderer() {
     return renderer;
   }
@@ -545,48 +526,18 @@ class DefaultVisualizationServer<V, E> extends JPanel
     g2d.setTransform(oldXform);
   }
 
-  public void setSmallScaleOverridePredicate(Predicate<Double> smallScaleOverridePredicate) {
-    this.smallScaleOverridePredicate = smallScaleOverridePredicate;
-    // ensures that the first rendering of the visualization checks to see if it should be simplified
-    // based on the current view scale
-    simplifyRenderer(smallScale());
-  }
-
-  private boolean smallScale() {
-    return smallScaleOverridePredicate.test(
-        getRenderContext()
-            .getMultiLayerTransformer()
-            .getTransformer(MultiLayerTransformer.Layer.VIEW)
-            .getScale());
-  }
-
   /** a LayoutChange.Event from the LayoutModel will trigger a repaint of the visualization */
   @Override
   public void layoutChanged() {
     if (renderContext instanceof DefaultRenderContext) {
       ((DefaultRenderContext) renderContext).setupArrows(model.getGraph().getType().isDirected());
     }
+    renderer.setCountSupplier(model.getGraph().vertexSet()::size);
     repaint();
   }
 
   public void layoutStateChanged(LayoutStateChange.Event evt) {
     //    no op
-  }
-
-  @Override
-  public void simplifyRenderer(boolean simplify) {
-    if (renderer instanceof ModalRenderer) {
-      ModalRenderer modalRenderer = (ModalRenderer) renderer;
-      if (smallScale() || simplify) {
-        modalRenderer.setMode(ModalRenderer.Mode.LIGHTWEIGHT);
-        //        this.getRenderingHints().remove(RenderingHints.KEY_ANTIALIASING);
-      } else {
-        modalRenderer.setMode(ModalRenderer.Mode.DEFAULT);
-        //        this.getRenderingHints()
-        //                .put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-      }
-      repaint();
-    }
   }
 
   /**

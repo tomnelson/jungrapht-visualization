@@ -1,5 +1,7 @@
 package org.jungrapht.visualization.renderers;
 
+import static org.jungrapht.visualization.renderers.ModalRenderer.Mode.DEFAULT;
+import static org.jungrapht.visualization.renderers.ModalRenderer.Mode.LIGHTWEIGHT;
 
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -57,7 +59,7 @@ public class DefaultModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeLi
 
   Renderer<V, E> defaultRenderer = new DefaultRenderer();
   Renderer<V, E> lightweightRenderer = new LightweightRenderer<>();
-  Renderer<V, E> currentRenderer = defaultRenderer;
+  Renderer<V, E> currentRenderer;
 
   Timer timer;
   JComponent component;
@@ -84,6 +86,7 @@ public class DefaultModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeLi
 
   @Override
   public void setMode(Mode mode) {
+    log.trace("setMode({})", mode);
     switch (mode) {
       case LIGHTWEIGHT:
         currentRenderer = lightweightRenderer;
@@ -97,18 +100,41 @@ public class DefaultModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeLi
     }
   }
 
+  /**
+   * if the graph has few vertices, always use the default renderer if the graph is at small scale,
+   * always use the lightweight renderer if the graph is being manipulated, use the lightweight then
+   * default
+   */
+  private void confirmInitialRenderer() {
+    if (currentRenderer == null) {
+      if (!this.vertexCountPredicate.test(countSupplier)) {
+        // small graph, initial state is default
+        setMode(DEFAULT);
+      } else if (this.smallScaleOverridePredicate.test(scaleSupplier)) {
+        // so its a big graph, test the scale
+        // not a small graph and the scale is small. use lightweight
+        setMode(LIGHTWEIGHT);
+      } else {
+        // its a big graph, but the scale is big, use default
+        setMode(DEFAULT);
+      }
+    }
+  }
+
   @Override
   public void render(
       RenderContext<V, E> renderContext,
       VisualizationModel<V, E> visualizationModel,
       Spatial<V> vertexSpatial,
       Spatial<E> edgeSpatial) {
+    confirmInitialRenderer();
     currentRenderer.render(renderContext, visualizationModel, vertexSpatial, edgeSpatial);
   }
 
   @Override
   public void render(
       RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel) {
+    confirmInitialRenderer();
     currentRenderer.render(renderContext, visualizationModel);
   }
 
@@ -178,15 +204,23 @@ public class DefaultModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeLi
 
   @Override
   public void stateChanged(ChangeEvent e) {
+    log.trace("count supplier got {}", countSupplier.get());
+    log.trace("scale supplier got {}", scaleSupplier.get());
     if (!this.vertexCountPredicate.test(this.countSupplier)) {
-      return;
-    }
-
-    if (this.smallScaleOverridePredicate.test(this.scaleSupplier)) {
-      setMode(Mode.LIGHTWEIGHT);
+      // its a small graph, always use default renderer
+      setMode(DEFAULT);
       component.repaint();
       return;
     }
+
+    // its a big graph, check the scale
+    if (this.smallScaleOverridePredicate.test(this.scaleSupplier)) {
+      // the scale is small, use lightweight
+      setMode(LIGHTWEIGHT);
+      component.repaint();
+      return;
+    }
+    // its a big graph, but the scale is not small, start a timer
     if (timer == null || timer.done) {
       timer = new Timer();
       timer.start();
@@ -200,7 +234,7 @@ public class DefaultModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeLi
     boolean done;
 
     public Timer() {
-      setMode(Mode.LIGHTWEIGHT);
+      setMode(LIGHTWEIGHT);
       component.repaint();
     }
 
@@ -215,7 +249,7 @@ public class DefaultModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeLi
         try {
           Thread.sleep(10);
         } catch (InterruptedException ex) {
-          ex.printStackTrace();
+          // ignore
         }
       }
       setMode(Mode.DEFAULT);

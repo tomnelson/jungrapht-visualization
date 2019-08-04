@@ -7,7 +7,6 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -139,16 +138,6 @@ public class DelegateVisualizationViewer<V, E> extends JPanel
   }
 
   @Override
-  public void setRenderer(Renderer<V, E> r) {
-    delegate.setRenderer(r);
-  }
-
-  @Override
-  public void setLightweightRenderer(Renderer<V, E> r) {
-    delegate.setLightweightRenderer(r);
-  }
-
-  @Override
   public Renderer<V, E> getRenderer() {
     return delegate.getRenderer();
   }
@@ -261,16 +250,6 @@ public class DelegateVisualizationViewer<V, E> extends JPanel
   @Override
   public void repaint() {
     delegate.repaint();
-  }
-
-  @Override
-  public void simplifyRenderer(boolean simplify) {
-    delegate.simplifyRenderer(simplify);
-  }
-
-  @Override
-  public void setSmallScaleOverridePredicate(Predicate<Double> smallScaleOverridePredicate) {
-    delegate.setSmallScaleOverridePredicate(smallScaleOverridePredicate);
   }
 
   @Override

@@ -13,7 +13,6 @@ import java.awt.*;
 import java.awt.RenderingHints.Key;
 import java.awt.geom.Point2D;
 import java.util.Map;
-import java.util.function.Predicate;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
@@ -181,22 +180,6 @@ public interface VisualizationServer<V, E>
    */
   void stateChanged(ChangeEvent e);
 
-  /**
-   * Sets the showing Renderer to be the input Renderer. Also tells the Renderer to refer to this
-   * instance as a PickedKey. (Because Renderers maintain a small amount of state, such as the
-   * PickedKey, it is important to create a separate instance for each VV instance.)
-   *
-   * @param r the renderer to use
-   */
-  void setRenderer(Renderer<V, E> r);
-
-  /**
-   * Sets the lightweight Renderer
-   *
-   * @param r the renderer to use
-   */
-  void setLightweightRenderer(Renderer<V, E> r);
-
   /** @return the renderer used by this instance. */
   Renderer<V, E> getRenderer();
 
@@ -292,10 +275,6 @@ public interface VisualizationServer<V, E>
 
     boolean useTransform();
   }
-
-  void simplifyRenderer(boolean simplify);
-
-  void setSmallScaleOverridePredicate(Predicate<Double> smallScaleOverridePredicate);
 
   /**
    * scale the graph layout to fit withon the view window
