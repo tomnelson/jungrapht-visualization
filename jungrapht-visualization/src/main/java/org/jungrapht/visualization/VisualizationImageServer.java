@@ -9,10 +9,7 @@
  */
 package org.jungrapht.visualization;
 
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
@@ -49,6 +46,7 @@ public class VisualizationImageServer<V, E> extends DefaultVisualizationServer<V
 
   protected VisualizationImageServer(Builder<V, E, ?, ?> builder) {
     super(builder);
+    setSize(builder.viewSize);
     renderingHints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     addNotify();
   }
@@ -56,8 +54,8 @@ public class VisualizationImageServer<V, E> extends DefaultVisualizationServer<V
   Map<RenderingHints.Key, Object> renderingHints = new HashMap<>();
 
   public Image getImage(Point2D center, Dimension d) {
-    int width = (int)this.getPreferredSize().getWidth();
-    int height = (int)this.getPreferredSize().getHeight();
+    int width = (int) this.getPreferredSize().getWidth();
+    int height = (int) this.getPreferredSize().getHeight();
 
     float scalex = (float) width / d.width;
     float scaley = (float) height / d.height;

@@ -58,6 +58,10 @@ public abstract class MutableTransformerDecorator implements MutableTransformer 
     return delegate.getScale();
   }
 
+  public double scale() {
+    return getScale();
+  }
+
   public double getScaleX() {
     return delegate.getScaleX();
   }

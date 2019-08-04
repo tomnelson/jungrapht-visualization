@@ -134,6 +134,7 @@ public abstract class AbstractModalGraphMouse extends AbstractGraphMouse
   }
 
   /** @return the modeKeyListener */
+  @Override
   public KeyListener getModeKeyListener() {
     return modeKeyListener;
   }

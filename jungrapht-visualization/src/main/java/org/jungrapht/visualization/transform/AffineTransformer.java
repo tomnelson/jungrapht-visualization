@@ -97,6 +97,10 @@ public class AffineTransformer implements BidirectionalTransformer, ShapeTransfo
     return Math.sqrt(transform.getDeterminant());
   }
 
+  public double scale() {
+    return getScale();
+  }
+
   /** @return the transform's x shear value */
   public double getShearX() {
     return transform.getShearX();

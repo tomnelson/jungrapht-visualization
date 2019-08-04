@@ -24,6 +24,7 @@ import java.util.function.Function;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.control.GraphMouseListener;
+import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.control.MouseListenerTranslator;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -99,6 +100,9 @@ class DefaultVisualizationViewer<V, E> extends DefaultVisualizationServer<V, E>
     addMouseListener(graphMouse);
     addMouseMotionListener(graphMouse);
     addMouseWheelListener(graphMouse);
+    if (graphMouse instanceof ModalGraphMouse) {
+      addKeyListener(((ModalGraphMouse) graphMouse).getModeKeyListener());
+    }
   }
 
   /** @return the current <code>GraphMouse</code> */

@@ -7,7 +7,7 @@ import org.jungrapht.visualization.renderers.Renderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LightweightRenderingVisitor implements ChangeListener {
+class LightweightRenderingVisitor implements ChangeListener {
 
   private static Logger log = LoggerFactory.getLogger(LightweightRenderingVisitor.class);
   private VisualizationServer visualizationServer;

@@ -21,7 +21,7 @@ import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.annotations.SelectedVertexPaintable;
+import org.jungrapht.visualization.annotations.MultiSelectedVertexPaintable;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.control.DefaultSatelliteGraphMouse;
@@ -105,7 +105,7 @@ public class SatelliteViewTreeDemo extends JPanel {
             .viewSize(preferredSize2)
             .build();
     mainVisualizationViewer.addPostRenderPaintable(
-        SelectedVertexPaintable.builder(mainVisualizationViewer).build());
+        MultiSelectedVertexPaintable.builder(mainVisualizationViewer).build());
 
     mainVisualizationViewer.setBackground(Color.white);
     mainVisualizationViewer
