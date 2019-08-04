@@ -9,6 +9,9 @@ import org.jungrapht.visualization.spatial.Spatial;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.awt.RenderingHints.KEY_ANTIALIASING;
+import static java.awt.RenderingHints.VALUE_ANTIALIAS_OFF;
+
 public class LightweightRenderer<V, E> implements Renderer<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(LightweightRenderer.class);
@@ -23,6 +26,7 @@ public class LightweightRenderer<V, E> implements Renderer<V, E> {
       Spatial<V> vertexSpatial,
       Spatial<E> edgeSpatial) {
     // simple rendering does not use spatial structures
+
     render(renderContext, visualizationModel);
     log.trace("simpleRendering ignoring {}", vertexSpatial);
   }
@@ -30,7 +34,8 @@ public class LightweightRenderer<V, E> implements Renderer<V, E> {
   @Override
   public void render(
       RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel) {
-    renderContext.getGraphicsContext().getRenderingHints().remove(RenderingHints.KEY_ANTIALIASING);
+    renderContext.getGraphicsContext().setRenderingHint(KEY_ANTIALIASING, VALUE_ANTIALIAS_OFF);
+
     Graph<V, E> graph = visualizationModel.getGraph();
     // paint all the edges
     try {

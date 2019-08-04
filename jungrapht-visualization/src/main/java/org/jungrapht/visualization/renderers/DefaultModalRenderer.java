@@ -1,5 +1,8 @@
 package org.jungrapht.visualization.renderers;
 
+import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import javax.swing.*;
@@ -11,9 +14,13 @@ import org.jungrapht.visualization.spatial.Spatial;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.awt.RenderingHints.*;
+
 public class DefaultModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeListener {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultModalRenderer.class);
+
+    private Map<Key, Object> renderingHints = new HashMap<>();
   private static final String PREFIX = "jungrapht.";
   private static final String LIGHTWEIGHT_VERTEX_COUNT_THRESHOLD =
       PREFIX + "lightweightVertexCountThreshold";
@@ -27,7 +34,7 @@ public class DefaultModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeLi
 
   protected Supplier<Double> scaleSupplier;
   protected Predicate<Supplier<Double>> smallScaleOverridePredicate =
-      t -> scaleSupplier.get() < lightweightRenderingVertexCountThreshold;
+      t -> scaleSupplier.get() < lightweightRenderingScaleThreshold;
 
   protected Supplier<Integer> countSupplier;
   protected Predicate<Supplier<Integer>> vertexCountPredicate =
@@ -65,13 +72,12 @@ public class DefaultModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeLi
     switch (mode) {
       case LIGHTWEIGHT:
         currentRenderer = lightweightRenderer;
-        log.info("setMode:{}", mode);
+        log.trace("setMode:{}", mode);
         break;
       case DEFAULT:
       default:
         currentRenderer = defaultRenderer;
-          log.info("setMode:{}", mode);
-
+          log.trace("setMode:{}", mode);
           break;
     }
   }
@@ -83,14 +89,14 @@ public class DefaultModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeLi
       Spatial<V> vertexSpatial,
       Spatial<E> edgeSpatial) {
     currentRenderer.render(renderContext, visualizationModel, vertexSpatial, edgeSpatial);
-    log.info("hints:{}",renderContext.getGraphicsContext().getRenderingHints());
+//    log.trace("antialias hints:{}",renderContext.getGraphicsContext().getRenderingHints().get(KEY_ANTIALIASING));
   }
 
   @Override
   public void render(
       RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel) {
     currentRenderer.render(renderContext, visualizationModel);
-      log.info("hints:{}",renderContext.getGraphicsContext().getRenderingHints());
+      log.info("antialias hints:{}",renderContext.getGraphicsContext().getRenderingHints().get(KEY_ANTIALIASING));
   }
 
   @Override
@@ -160,18 +166,19 @@ public class DefaultModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeLi
   @Override
   public void stateChanged(ChangeEvent e) {
     if (!this.vertexCountPredicate.test(this.countSupplier)) {
-        log.info("vertexCountPredicate {} tested false with {} when lightweightRenderingVertexCountThreshold:{}", vertexCountPredicate, countSupplier.get(), lightweightRenderingVertexCountThreshold);
+        log.trace(" do nothing because vertexCountPredicate {} tested false with {} when lightweightRenderingVertexCountThreshold:{}", vertexCountPredicate, countSupplier.get(), lightweightRenderingVertexCountThreshold);
       return;
     }
-      log.info("vertexCountPredicate {} tested true with {} when lightweightRenderingVertexCountThreshold:{}", vertexCountPredicate, countSupplier.get(), lightweightRenderingVertexCountThreshold, vertexCountPredicate, countSupplier.get());
+//      log.info("vertexCountPredicate {} tested true with {} when lightweightRenderingVertexCountThreshold:{}", vertexCountPredicate, countSupplier.get(), lightweightRenderingVertexCountThreshold, vertexCountPredicate, countSupplier.get());
 
+    log.trace("{} < {} is {}", scaleSupplier.get(), this.lightweightRenderingScaleThreshold, this.smallScaleOverridePredicate.test(scaleSupplier));
     if (this.smallScaleOverridePredicate.test(this.scaleSupplier)) {
-        log.info("smallScaleOverridePredicate {} tested true with {} when lightweightRenderingScaleThreshold:{}", smallScaleOverridePredicate, scaleSupplier.get(), lightweightRenderingScaleThreshold);
+        log.trace("do always becaue smallScaleOverridePredicate {} tested true with {} when lightweightRenderingScaleThreshold:{}", smallScaleOverridePredicate, scaleSupplier.get(), lightweightRenderingScaleThreshold);
         setMode(Mode.LIGHTWEIGHT);
         component.repaint();
         return;
     } else {
-        log.info("smallScaleOverridePredicate {} tested false with {} when lightweightRenderingScaleThreshold:{}", smallScaleOverridePredicate, scaleSupplier, lightweightRenderingScaleThreshold);
+        log.trace("run timer because smallScaleOverridePredicate {} tested false with {} when lightweightRenderingScaleThreshold:{}", smallScaleOverridePredicate, scaleSupplier.get(), lightweightRenderingScaleThreshold);
     }
       if (timer == null || timer.done) {
         timer = new Timer();
