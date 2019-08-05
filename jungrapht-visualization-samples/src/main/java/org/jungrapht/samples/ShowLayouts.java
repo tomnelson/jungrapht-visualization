@@ -54,7 +54,8 @@ public class ShowLayouts extends JPanel {
     "One component graph",
     "Chain+isolate graph",
     "Trivial (disconnected) graph",
-    "Little Graph"
+    "Little Graph",
+    "Bipartite Graph"
   };
 
   BalloonLayoutRings balloonLayoutRings;
@@ -81,6 +82,7 @@ public class ShowLayouts extends JPanel {
     graph.addEdge("A", "C", 2);
 
     g_array[6] = graph;
+    g_array[7] = TestGraphs.getGeneratedBipartiteGraph();
 
     Graph<String, Number> g = g_array[3]; // initial graph
 

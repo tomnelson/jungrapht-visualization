@@ -163,42 +163,42 @@ public class DefaultModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeLi
 
   @Override
   public void setVertexRenderer(Vertex<V, E> r) {
-    currentRenderer.setVertexRenderer(r);
+    defaultRenderer.setVertexRenderer(r);
   }
 
   @Override
   public void setEdgeRenderer(Edge<V, E> r) {
-    currentRenderer.setEdgeRenderer(r);
+    defaultRenderer.setEdgeRenderer(r);
   }
 
   @Override
   public void setVertexLabelRenderer(VertexLabel<V, E> r) {
-    currentRenderer.setVertexLabelRenderer(r);
+    defaultRenderer.setVertexLabelRenderer(r);
   }
 
   @Override
   public void setEdgeLabelRenderer(EdgeLabel<V, E> r) {
-    currentRenderer.setEdgeLabelRenderer(r);
+    defaultRenderer.setEdgeLabelRenderer(r);
   }
 
   @Override
   public VertexLabel<V, E> getVertexLabelRenderer() {
-    return currentRenderer.getVertexLabelRenderer();
+    return defaultRenderer.getVertexLabelRenderer();
   }
 
   @Override
   public Vertex<V, E> getVertexRenderer() {
-    return currentRenderer.getVertexRenderer();
+    return defaultRenderer.getVertexRenderer();
   }
 
   @Override
   public Edge<V, E> getEdgeRenderer() {
-    return currentRenderer.getEdgeRenderer();
+    return defaultRenderer.getEdgeRenderer();
   }
 
   @Override
   public EdgeLabel<V, E> getEdgeLabelRenderer() {
-    return currentRenderer.getEdgeLabelRenderer();
+    return defaultRenderer.getEdgeLabelRenderer();
   }
 
   @Override

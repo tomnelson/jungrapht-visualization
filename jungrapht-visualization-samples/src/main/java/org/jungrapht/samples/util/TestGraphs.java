@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 import org.jgrapht.Graph;
 import org.jgrapht.generate.BarabasiAlbertGraphGenerator;
+import org.jgrapht.generate.CompleteBipartiteGraphGenerator;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 
@@ -265,12 +266,25 @@ public class TestGraphs {
   public static Graph<String, Number> getGeneratedGraph2() {
 
     Graph<String, Number> graph =
-        GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.directedPseudograph())
+        GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.multigraph())
             .vertexSupplier(new VertexSupplier())
             .edgeSupplier(new EdgeSupplier())
             .buildGraph();
     BarabasiAlbertGraphGenerator<String, Number> gen =
-        new BarabasiAlbertGraphGenerator<>(2, 2, 800);
+        new BarabasiAlbertGraphGenerator<>(2, 2, 1000);
+    gen.generateGraph(graph, null);
+    return graph;
+  }
+
+  public static Graph<String, Number> getGeneratedBipartiteGraph() {
+
+    Graph<String, Number> graph =
+        GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.multigraph())
+            .vertexSupplier(new VertexSupplier())
+            .edgeSupplier(new EdgeSupplier())
+            .buildGraph();
+    CompleteBipartiteGraphGenerator<String, Number> gen =
+        new CompleteBipartiteGraphGenerator<>(20, 30);
     gen.generateGraph(graph, null);
     return graph;
   }
