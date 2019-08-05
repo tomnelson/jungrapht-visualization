@@ -38,6 +38,11 @@
             <artifactId>jgrapht-guava</artifactId>
             <version>${jgrapht.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.jgrapht</groupId>
+            <artifactId>jgrapht-io</artifactId>
+            <version>${jgrapht.version}</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
