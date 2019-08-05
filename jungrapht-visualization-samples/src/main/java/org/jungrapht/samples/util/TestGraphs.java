@@ -284,7 +284,7 @@ public class TestGraphs {
             .edgeSupplier(new EdgeSupplier())
             .buildGraph();
     CompleteBipartiteGraphGenerator<String, Number> gen =
-        new CompleteBipartiteGraphGenerator<>(20, 30);
+        new CompleteBipartiteGraphGenerator<>(5, 10);
     gen.generateGraph(graph, null);
     return graph;
   }

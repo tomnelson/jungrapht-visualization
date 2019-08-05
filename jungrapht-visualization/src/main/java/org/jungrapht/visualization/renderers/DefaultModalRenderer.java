@@ -1,9 +1,10 @@
 package org.jungrapht.visualization.renderers;
 
 import static org.jungrapht.visualization.VisualizationServer.PREFIX;
-import static org.jungrapht.visualization.renderers.ModalRenderer.Mode.DEFAULT;
-import static org.jungrapht.visualization.renderers.ModalRenderer.Mode.LIGHTWEIGHT;
+import static org.jungrapht.visualization.renderers.LightweightModalRenderer.Mode.DEFAULT;
+import static org.jungrapht.visualization.renderers.LightweightModalRenderer.Mode.LIGHTWEIGHT;
 
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import javax.swing.*;
@@ -34,7 +35,8 @@ import org.slf4j.LoggerFactory;
  * @param <V> the vertex type
  * @param <E> the edge type
  */
-public class DefaultModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeListener {
+public class DefaultModalRenderer<V, E> implements LightweightModalRenderer<V, E>, ChangeListener {
+
 
   private static final Logger log = LoggerFactory.getLogger(DefaultModalRenderer.class);
 
@@ -56,9 +58,9 @@ public class DefaultModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeLi
   protected Predicate<Supplier<Integer>> countPredicate =
       t -> countSupplier.get() > lightweightRenderingCountThreshold;
 
-  private Renderer<V, E> defaultRenderer = new DefaultRenderer<>();
-  private Renderer<V, E> lightweightRenderer = new LightweightRenderer<>();
-  private Renderer<V, E> currentRenderer;
+  protected Mode mode;
+
+  private Map<Mode, Renderer<V,E>> rendererMap = Map.of(DEFAULT, new DefaultRenderer<>(), LIGHTWEIGHT, new LightweightRenderer<>());
 
   Timer timer;
   JComponent component;
@@ -86,17 +88,18 @@ public class DefaultModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeLi
   @Override
   public void setMode(Mode mode) {
     log.trace("setMode({})", mode);
-    switch (mode) {
-      case LIGHTWEIGHT:
-        currentRenderer = lightweightRenderer;
-        log.trace("setMode:{}", mode);
-        break;
-      case DEFAULT:
-      default:
-        currentRenderer = defaultRenderer;
-        log.trace("setMode:{}", mode);
-        break;
-    }
+    this.mode = mode;
+//    switch (mode) {
+//      case LIGHTWEIGHT:
+//        currentRenderer = lightweightRenderer;
+//        log.trace("setMode:{}", mode);
+//        break;
+//      case DEFAULT:
+//      default:
+//        currentRenderer = defaultRenderer;
+//        log.trace("setMode:{}", mode);
+//        break;
+//    }
   }
 
   /**
@@ -104,8 +107,8 @@ public class DefaultModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeLi
    * always use the lightweight renderer if the graph is being manipulated, use the lightweight then
    * default
    */
-  private void confirmInitialRenderer() {
-    if (currentRenderer == null) {
+  private void confirmInitialMode() {
+//    if (currentRenderer == null) {
       if (!this.countPredicate.test(countSupplier)) {
         // small graph, initial state is default
         setMode(DEFAULT);
@@ -117,7 +120,7 @@ public class DefaultModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeLi
         // its a big graph, but the scale is big, use default
         setMode(DEFAULT);
       }
-    }
+//    }
   }
 
   @Override
@@ -126,79 +129,120 @@ public class DefaultModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeLi
       VisualizationModel<V, E> visualizationModel,
       Spatial<V> vertexSpatial,
       Spatial<E> edgeSpatial) {
-    confirmInitialRenderer();
-    currentRenderer.render(renderContext, visualizationModel, vertexSpatial, edgeSpatial);
+    confirmInitialMode();
+    rendererMap.get(mode).render(renderContext, visualizationModel, vertexSpatial, edgeSpatial);
   }
 
   @Override
   public void render(
       RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel) {
-    confirmInitialRenderer();
-    currentRenderer.render(renderContext, visualizationModel);
+    confirmInitialMode();
+    rendererMap.get(mode).render(renderContext, visualizationModel);
   }
 
   @Override
   public void renderVertex(
       RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {
-    currentRenderer.renderVertex(renderContext, visualizationModel, v);
+    rendererMap.get(mode).renderVertex(renderContext, visualizationModel, v);
   }
 
   @Override
   public void renderVertexLabel(
       RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {
-    currentRenderer.renderVertexLabel(renderContext, visualizationModel, v);
+    rendererMap.get(mode).renderVertexLabel(renderContext, visualizationModel, v);
   }
 
   @Override
   public void renderEdge(
       RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e) {
-    currentRenderer.renderEdge(renderContext, visualizationModel, e);
+    rendererMap.get(mode).renderEdge(renderContext, visualizationModel, e);
   }
 
   @Override
   public void renderEdgeLabel(
       RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e) {
-    currentRenderer.renderEdgeLabel(renderContext, visualizationModel, e);
+    rendererMap.get(mode).renderEdgeLabel(renderContext, visualizationModel, e);
   }
 
   @Override
   public void setVertexRenderer(Vertex<V, E> r) {
-    defaultRenderer.setVertexRenderer(r);
+    rendererMap.get(mode).setVertexRenderer(r);
   }
 
   @Override
   public void setEdgeRenderer(Edge<V, E> r) {
-    defaultRenderer.setEdgeRenderer(r);
+    rendererMap.get(mode).setEdgeRenderer(r);
   }
 
   @Override
   public void setVertexLabelRenderer(VertexLabel<V, E> r) {
-    defaultRenderer.setVertexLabelRenderer(r);
+    rendererMap.get(mode).setVertexLabelRenderer(r);
   }
 
   @Override
   public void setEdgeLabelRenderer(EdgeLabel<V, E> r) {
-    defaultRenderer.setEdgeLabelRenderer(r);
+    rendererMap.get(mode).setEdgeLabelRenderer(r);
   }
 
   @Override
   public VertexLabel<V, E> getVertexLabelRenderer() {
-    return defaultRenderer.getVertexLabelRenderer();
+    return rendererMap.get(mode).getVertexLabelRenderer();
   }
 
   @Override
   public Vertex<V, E> getVertexRenderer() {
-    return defaultRenderer.getVertexRenderer();
+    return rendererMap.get(mode).getVertexRenderer();
   }
 
   @Override
   public Edge<V, E> getEdgeRenderer() {
-    return defaultRenderer.getEdgeRenderer();
+    return rendererMap.get(mode).getEdgeRenderer();
   }
 
   @Override
   public EdgeLabel<V, E> getEdgeLabelRenderer() {
-    return defaultRenderer.getEdgeLabelRenderer();
+    return rendererMap.get(mode).getEdgeLabelRenderer();
+  }
+
+
+  @Override
+  public void setVertexRenderer(Mode mode, Vertex<V, E> r) {
+    rendererMap.get(mode).setVertexRenderer(r);
+  }
+
+  @Override
+  public void setEdgeRenderer(Mode mode, Edge<V, E> r) {
+     rendererMap.get(mode).setEdgeRenderer(r);
+  }
+
+  @Override
+  public void setVertexLabelRenderer(Mode mode, VertexLabel<V, E> r) {
+    rendererMap.get(mode).setVertexLabelRenderer(r);
+  }
+
+  @Override
+  public void setEdgeLabelRenderer(Mode mode, EdgeLabel<V, E> r) {
+    rendererMap.get(mode).setEdgeLabelRenderer(r);
+  }
+
+  @Override
+  public VertexLabel<V, E> getVertexLabelRenderer(Mode mode) {
+    return rendererMap.get(mode).getVertexLabelRenderer();
+  }
+
+  @Override
+  public Vertex<V, E> getVertexRenderer(Mode mode) {
+    return rendererMap.get(mode).getVertexRenderer();
+  }
+
+  @Override
+  public Edge<V, E> getEdgeRenderer(Mode mode) {
+    return rendererMap.get(mode).getEdgeRenderer();
+  }
+
+  @Override
+  public EdgeLabel<V, E> getEdgeLabelRenderer(Mode mode) {
+    return rendererMap.get(mode).getEdgeLabelRenderer();
   }
 
   @Override
@@ -252,9 +296,11 @@ public class DefaultModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeLi
           // ignore
         }
       }
-      setMode(Mode.DEFAULT);
+      setMode(DEFAULT);
       done = true;
       component.repaint();
     }
   }
 }
+
+

@@ -63,7 +63,7 @@
         <gpg.plugin.version>1.6</gpg.plugin.version>
         <guava.version>28.0-jre</guava.version>
         <jar.plugin.version>2.6</jar.plugin.version>
-        <java.version>1.8</java.version>
+        <java.version>11</java.version>
         <javadoc.plugin.version>2.10.4</javadoc.plugin.version>
         <jgrapht.version>1.3.1</jgrapht.version>
         <junit.version>4.12</junit.version>

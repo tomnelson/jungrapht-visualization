@@ -10,6 +10,7 @@ package org.jungrapht.samples;
 
 import java.awt.*;
 import java.awt.event.ItemEvent;
+import java.awt.geom.Rectangle2D;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
@@ -34,6 +35,8 @@ import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.renderers.JLabelEdgeLabelRenderer;
 import org.jungrapht.visualization.renderers.JLabelVertexLabelRenderer;
+import org.jungrapht.visualization.renderers.ModalRenderer;
+import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 import org.jungrapht.visualization.transform.LayoutLensSupport;
 import org.jungrapht.visualization.transform.Lens;
@@ -42,6 +45,8 @@ import org.jungrapht.visualization.transform.MagnifyTransformer;
 import org.jungrapht.visualization.transform.shape.MagnifyImageLensSupport;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
 import org.jungrapht.visualization.util.IconCache;
+
+import static org.jungrapht.visualization.renderers.LightweightModalRenderer.Mode.LIGHTWEIGHT;
 
 /** @author Tom Nelson */
 public class LensVertexImageFromLabelShaperDemo extends JPanel {
@@ -117,6 +122,21 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
 
     final DefaultGraphMouse<Number, Number> graphMouse = new DefaultGraphMouse<>();
     vv.setGraphMouse(graphMouse);
+
+
+    Renderer<Number, Number> renderer =  vv.getRenderer();
+    if (renderer instanceof ModalRenderer) {
+      ModalRenderer modalRenderer = (ModalRenderer)renderer;
+      Renderer.Vertex<Number,Number> vertexRenderer = modalRenderer.getVertexRenderer(LIGHTWEIGHT);
+      vertexRenderer.
+
+              .setVertexShapeFunction(
+              new Function<Number, Shape>() {
+                public Shape apply(Number n) {
+                  return new Rectangle2D.Double(-10, -10, 20, 20);
+                }
+              });
+    }
 
     final ScalingControl scaler = new CrossoverScalingControl();
     vv.scaleToLayout(scaler);
