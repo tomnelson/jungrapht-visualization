@@ -37,7 +37,6 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultModalRenderer<V, E> implements LightweightModalRenderer<V, E>, ChangeListener {
 
-
   private static final Logger log = LoggerFactory.getLogger(DefaultModalRenderer.class);
 
   private static final String LIGHTWEIGHT_COUNT_THRESHOLD = PREFIX + "lightweightCountThreshold";
@@ -60,7 +59,8 @@ public class DefaultModalRenderer<V, E> implements LightweightModalRenderer<V, E
 
   protected Mode mode;
 
-  private Map<Mode, Renderer<V,E>> rendererMap = Map.of(DEFAULT, new DefaultRenderer<>(), LIGHTWEIGHT, new LightweightRenderer<>());
+  private Map<Mode, Renderer<V, E>> rendererMap =
+      Map.of(DEFAULT, new DefaultRenderer<>(), LIGHTWEIGHT, new LightweightRenderer<>());
 
   Timer timer;
   JComponent component;
@@ -89,17 +89,6 @@ public class DefaultModalRenderer<V, E> implements LightweightModalRenderer<V, E
   public void setMode(Mode mode) {
     log.trace("setMode({})", mode);
     this.mode = mode;
-//    switch (mode) {
-//      case LIGHTWEIGHT:
-//        currentRenderer = lightweightRenderer;
-//        log.trace("setMode:{}", mode);
-//        break;
-//      case DEFAULT:
-//      default:
-//        currentRenderer = defaultRenderer;
-//        log.trace("setMode:{}", mode);
-//        break;
-//    }
   }
 
   /**
@@ -107,20 +96,19 @@ public class DefaultModalRenderer<V, E> implements LightweightModalRenderer<V, E
    * always use the lightweight renderer if the graph is being manipulated, use the lightweight then
    * default
    */
-  private void confirmInitialMode() {
-//    if (currentRenderer == null) {
-      if (!this.countPredicate.test(countSupplier)) {
-        // small graph, initial state is default
-        setMode(DEFAULT);
-      } else if (this.scalePredicate.test(scaleSupplier)) {
-        // so its a big graph, test the scale
-        // not a small graph and the scale is small. use lightweight
-        setMode(LIGHTWEIGHT);
-      } else {
-        // its a big graph, but the scale is big, use default
-        setMode(DEFAULT);
-      }
-//    }
+  private Renderer<V, E> getInitialRenderer() {
+    log.trace("initialMode...");
+    if (!this.countPredicate.test(countSupplier)) {
+      // small graph, initial state is default
+      return rendererMap.get(DEFAULT);
+    } else if (this.scalePredicate.test(scaleSupplier)) {
+      // bigger graph, test the scale
+      // not a small graph and the scale is small. use lightweight
+      return rendererMap.get(LIGHTWEIGHT);
+    } else {
+      // bigger graph, but the scale is big, use default
+      return rendererMap.get(DEFAULT);
+    }
   }
 
   @Override
@@ -129,14 +117,17 @@ public class DefaultModalRenderer<V, E> implements LightweightModalRenderer<V, E
       VisualizationModel<V, E> visualizationModel,
       Spatial<V> vertexSpatial,
       Spatial<E> edgeSpatial) {
-    confirmInitialMode();
-    rendererMap.get(mode).render(renderContext, visualizationModel, vertexSpatial, edgeSpatial);
+
+    if (mode == null) {
+      getInitialRenderer().render(renderContext, visualizationModel, vertexSpatial, edgeSpatial);
+    } else {
+      rendererMap.get(mode).render(renderContext, visualizationModel, vertexSpatial, edgeSpatial);
+    }
   }
 
   @Override
   public void render(
       RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel) {
-    confirmInitialMode();
     rendererMap.get(mode).render(renderContext, visualizationModel);
   }
 
@@ -204,7 +195,6 @@ public class DefaultModalRenderer<V, E> implements LightweightModalRenderer<V, E
     return rendererMap.get(mode).getEdgeLabelRenderer();
   }
 
-
   @Override
   public void setVertexRenderer(Mode mode, Vertex<V, E> r) {
     rendererMap.get(mode).setVertexRenderer(r);
@@ -212,7 +202,7 @@ public class DefaultModalRenderer<V, E> implements LightweightModalRenderer<V, E
 
   @Override
   public void setEdgeRenderer(Mode mode, Edge<V, E> r) {
-     rendererMap.get(mode).setEdgeRenderer(r);
+    rendererMap.get(mode).setEdgeRenderer(r);
   }
 
   @Override
@@ -248,7 +238,10 @@ public class DefaultModalRenderer<V, E> implements LightweightModalRenderer<V, E
   @Override
   public void stateChanged(ChangeEvent e) {
     log.trace("count supplier got {}", countSupplier.get());
+    log.trace("count threshold is {}", lightweightRenderingCountThreshold);
+    log.trace("count predicate {}", countPredicate);
     log.trace("scale supplier got {}", scaleSupplier.get());
+    log.trace("scale threshold is {}", lightweightRenderingScaleThreshold);
     if (!this.countPredicate.test(this.countSupplier)) {
       // its a small graph, always use default renderer
       setMode(DEFAULT);
@@ -302,5 +295,3 @@ public class DefaultModalRenderer<V, E> implements LightweightModalRenderer<V, E
     }
   }
 }
-
-

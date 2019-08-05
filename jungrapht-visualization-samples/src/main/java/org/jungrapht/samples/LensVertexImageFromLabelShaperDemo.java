@@ -8,20 +8,19 @@
  */
 package org.jungrapht.samples;
 
+import static org.jungrapht.visualization.renderers.LightweightModalRenderer.Mode.LIGHTWEIGHT;
+
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.geom.Rectangle2D;
 import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.IntStream;
 import javax.swing.*;
 import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultGraphType;
-import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.annotations.SelectedVertexPaintable;
+import org.jungrapht.visualization.annotations.MultiSelectedVertexPaintable;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.control.DefaultLensGraphMouse;
@@ -35,6 +34,7 @@ import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.renderers.JLabelEdgeLabelRenderer;
 import org.jungrapht.visualization.renderers.JLabelVertexLabelRenderer;
+import org.jungrapht.visualization.renderers.LightweightVertexRenderer;
 import org.jungrapht.visualization.renderers.ModalRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.selection.MutableSelectedState;
@@ -46,8 +46,6 @@ import org.jungrapht.visualization.transform.shape.MagnifyImageLensSupport;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
 import org.jungrapht.visualization.util.IconCache;
 
-import static org.jungrapht.visualization.renderers.LightweightModalRenderer.Mode.LIGHTWEIGHT;
-
 /** @author Tom Nelson */
 public class LensVertexImageFromLabelShaperDemo extends JPanel {
 
@@ -55,24 +53,24 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
   private static final long serialVersionUID = 5432239991020505763L;
 
   /** the graph */
-  Graph<Number, Number> graph;
+  Graph<String, Number> graph;
 
   /** the visual component and renderer for the graph */
-  VisualizationViewer<Number, Number> vv;
+  VisualizationViewer<String, Number> vv;
 
   LensSupport<LensGraphMouse> magnifyLayoutSupport;
   LensSupport<LensGraphMouse> magnifyViewSupport;
   /** create an instance of a simple graph with controls to demo the zoom features. */
   public LensVertexImageFromLabelShaperDemo() {
 
-    Dimension layoutSize = new Dimension(600, 600);
+    Dimension layoutSize = new Dimension(1300, 1300);
     Dimension viewSize = new Dimension(600, 600);
 
     setLayout(new BorderLayout());
     // create a simple graph for the demo
-    graph = createGraph();
+    graph = TestGraphs.getOneComponentGraph();
 
-    FRLayoutAlgorithm<Number> layoutAlgorithm = FRLayoutAlgorithm.<Number>builder().build();
+    FRLayoutAlgorithm<String> layoutAlgorithm = FRLayoutAlgorithm.<String>builder().build();
     layoutAlgorithm.setMaxIterations(100);
     vv =
         VisualizationViewer.builder(graph)
@@ -81,7 +79,7 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
             .viewSize(viewSize)
             .build();
 
-    Function<Number, Paint> vpf =
+    Function<String, Paint> vpf =
         new PickableElementPaintFunction<>(vv.getSelectedVertexState(), Color.white, Color.yellow);
     vv.getRenderContext().setVertexFillPaintFunction(vpf);
     vv.getRenderContext()
@@ -89,10 +87,10 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
             new PickableElementPaintFunction<>(vv.getSelectedEdgeState(), Color.black, Color.cyan));
 
     vv.setBackground(Color.white);
-    IconCache<Number> iconCache =
+    IconCache<String> iconCache =
         new IconCache(
             n -> "<html>This<br>is a<br>multiline<br>label " + n,
-            (Function<Number, Paint>)
+            (Function<String, Paint>)
                 n -> {
                   if (graph.incomingEdgesOf(n).isEmpty()) return Color.red;
                   if (graph.outgoingEdgesOf(n).isEmpty()) return Color.green;
@@ -102,17 +100,17 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
     vv.getRenderContext().setVertexLabelRenderer(new JLabelVertexLabelRenderer(Color.cyan));
     vv.getRenderContext().setEdgeLabelRenderer(new JLabelEdgeLabelRenderer(Color.cyan));
 
-    final IconShapeFunction<Number> vertexImageShapeFunction =
+    final IconShapeFunction<String> vertexImageShapeFunction =
         new IconShapeFunction<>(new EllipseShapeFunction<>());
     vertexImageShapeFunction.setIconMap(iconCache);
 
     vv.getRenderContext().setVertexShapeFunction(vertexImageShapeFunction);
     vv.getRenderContext().setVertexIconFunction(iconCache::get);
 
-    vv.addPostRenderPaintable(SelectedVertexPaintable.builder(vv).build());
+    vv.addPostRenderPaintable(MultiSelectedVertexPaintable.builder(vv).build());
     // Get the pickedState and add a listener that will decorate the
     //Vertex images with a checkmark icon when they are selected
-    MutableSelectedState<Number> ps = vv.getSelectedVertexState();
+    MutableSelectedState<String> ps = vv.getSelectedVertexState();
 
     // add a listener for ToolTips
     vv.setVertexToolTipFunction(Object::toString);
@@ -120,22 +118,20 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
 
-    final DefaultGraphMouse<Number, Number> graphMouse = new DefaultGraphMouse<>();
+    final DefaultGraphMouse<String, Number> graphMouse = new DefaultGraphMouse<>();
     vv.setGraphMouse(graphMouse);
 
-
-    Renderer<Number, Number> renderer =  vv.getRenderer();
+    Renderer<String, Number> renderer = vv.getRenderer();
     if (renderer instanceof ModalRenderer) {
-      ModalRenderer modalRenderer = (ModalRenderer)renderer;
-      Renderer.Vertex<Number,Number> vertexRenderer = modalRenderer.getVertexRenderer(LIGHTWEIGHT);
-      vertexRenderer.
-
-              .setVertexShapeFunction(
-              new Function<Number, Shape>() {
-                public Shape apply(Number n) {
-                  return new Rectangle2D.Double(-10, -10, 20, 20);
-                }
-              });
+      ModalRenderer modalRenderer = (ModalRenderer) renderer;
+      Renderer.Vertex<Number, Number> vertexRenderer = modalRenderer.getVertexRenderer(LIGHTWEIGHT);
+      // TODO: refactor interfaces
+      if (vertexRenderer instanceof LightweightVertexRenderer) {
+        LightweightVertexRenderer lightweightVertexRenderer =
+            (LightweightVertexRenderer) vertexRenderer;
+        lightweightVertexRenderer.setVertexShapeFunction(
+            n -> new Rectangle2D.Double(-10, -10, 20, 20));
+      }
     }
 
     final ScalingControl scaler = new CrossoverScalingControl();
@@ -155,7 +151,7 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
 
     add(controls, BorderLayout.SOUTH);
 
-    LayoutModel<Number> layoutModel = vv.getModel().getLayoutModel();
+    LayoutModel<String> layoutModel = vv.getModel().getLayoutModel();
     Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
 
     Lens lens = new Lens(d);
@@ -215,36 +211,6 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
   }
 
   Integer n = 0;
-
-  Graph<Number, Number> createGraph() {
-    Graph<Number, Number> graph =
-        GraphTypeBuilder.<Number, Number>forGraphType(DefaultGraphType.dag())
-            .edgeSupplier((Supplier<Number>) () -> n++)
-            .buildGraph();
-
-    IntStream.rangeClosed(0, 10).forEach(graph::addVertex);
-    graph.addEdge(0, 1);
-    graph.addEdge(3, 0);
-    graph.addEdge(0, 4);
-    graph.addEdge(4, 5);
-    graph.addEdge(5, 3);
-    graph.addEdge(2, 1);
-    graph.addEdge(4, 1);
-    graph.addEdge(8, 2);
-    graph.addEdge(3, 8);
-    graph.addEdge(6, 7);
-    graph.addEdge(7, 5);
-    graph.addEdge(0, 9);
-    graph.addEdge(9, 8);
-    graph.addEdge(7, 6);
-    graph.addEdge(6, 5);
-    graph.addEdge(4, 2);
-    graph.addEdge(5, 4);
-    graph.addEdge(4, 10);
-    graph.addEdge(10, 4);
-
-    return graph;
-  }
 
   public static void main(String[] args) {
     JFrame frame = new JFrame();

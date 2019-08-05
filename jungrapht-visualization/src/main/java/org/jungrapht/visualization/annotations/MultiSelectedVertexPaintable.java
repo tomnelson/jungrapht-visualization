@@ -17,8 +17,9 @@ import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
-import org.jungrapht.visualization.renderers.LightweightRenderer;
 import org.jungrapht.visualization.renderers.LightweightVertexRenderer;
+import org.jungrapht.visualization.renderers.ModalRenderer;
+import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.util.ArrowFactory;
 
@@ -171,12 +172,17 @@ public class MultiSelectedVertexPaintable<V> implements VisualizationServer.Pain
 
     // get the shape to be rendered
     Shape shape;
-    if (visualizationServer.getRenderer() instanceof LightweightRenderer) {
-      LightweightRenderer<V, ?> lightweightRenderer =
-          (LightweightRenderer) visualizationServer.getRenderer();
-      LightweightVertexRenderer<V, ?> lightweightVertexRenderer =
-          (LightweightVertexRenderer) lightweightRenderer.getVertexRenderer();
-      shape = lightweightVertexRenderer.getVertexShapeFunction().apply(v);
+    Renderer<V, ?> renderer = visualizationServer.getRenderer();
+    if (renderer instanceof ModalRenderer) {
+      ModalRenderer modalRenderer = (ModalRenderer) renderer;
+      Renderer.Vertex vertexRenderer = modalRenderer.getVertexRenderer();
+      if (vertexRenderer instanceof LightweightVertexRenderer) {
+        LightweightVertexRenderer<V, ?> lightweightVertexRenderer =
+            (LightweightVertexRenderer) vertexRenderer;
+        shape = lightweightVertexRenderer.getVertexShapeFunction().apply(v);
+      } else {
+        shape = renderContext.getVertexShapeFunction().apply(v);
+      }
 
     } else {
       shape = renderContext.getVertexShapeFunction().apply(v);

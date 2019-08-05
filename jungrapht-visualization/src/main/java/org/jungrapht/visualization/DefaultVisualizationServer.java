@@ -420,7 +420,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
     Dimension ld = model.getLayoutSize();
     if (!vd.equals(ld)) {
       log.trace("vd.getWidth() {} ld.getWidth() {} ", vd.getWidth(), ld.getWidth());
-      getRenderContext().getMultiLayerTransformer().setToIdentity();
+      //      getRenderContext().getMultiLayerTransformer().setToIdentity();
       scaler.scale(this, (float) (vd.getWidth() / ld.getWidth()), new Point2D.Double());
       log.trace("scaled by {}", vd.getWidth() / ld.getWidth());
     }

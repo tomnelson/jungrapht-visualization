@@ -9,6 +9,8 @@
 
   <Logger name="org.jungrapht.visualization.renderers" level="info" />
 
+  <Logger name="org.jungrapht.visualization.renderers.DefaultModalRenderer" level="debug" />
+
   <Logger name="org.jungrapht.visualization.layout.spatial" level="info"/>
 
   <Logger name="org.jungrapht.visualization.layout.spatial.rtree" level="info"/>
