@@ -13,6 +13,7 @@ import java.awt.event.ItemEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -89,16 +90,18 @@ public class RTreeVisualization<V> extends JPanel {
     graph = createTreeFromRTree(rtree);
 
     treeLayoutAlgorithm = TreeLayoutAlgorithm.builder().build();
-    radialLayoutAlgorithm = RadialTreeLayoutAlgorithm.builder().expandLayout(false).build();
-    balloonLayoutAlgorithm = BalloonLayoutAlgorithm.builder().expandLayout(false).build();
+    radialLayoutAlgorithm = RadialTreeLayoutAlgorithm.builder().build();
+    balloonLayoutAlgorithm = BalloonLayoutAlgorithm.builder().build();
 
     vv =
         VisualizationViewer.builder(graph)
-            .layoutAlgorithm(treeLayoutAlgorithm)
+            .layoutAlgorithm(balloonLayoutAlgorithm)
+            .layoutSize(new Dimension(2400, 2400))
             .viewSize(new Dimension(600, 600))
             .build();
     vv.setBackground(Color.white);
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.orthogonal());
+    vv.getRenderContext().setVertexShapeFunction(v -> new Rectangle2D.Double(-10, -10, 20, 20));
 
     // add a listener for ToolTips
     vv.setVertexToolTipFunction(Object::toString);

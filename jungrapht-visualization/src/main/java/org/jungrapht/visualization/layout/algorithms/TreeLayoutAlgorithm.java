@@ -35,8 +35,7 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
   public static class Builder<V, T extends TreeLayoutAlgorithm<V>, B extends Builder<V, T, B>> {
     protected int horizontalVertexSpacing = DEFAULT_HORIZONTAL_VERTEX_SPACING;
     protected int verticalVertexSpacing = DEFAULT_VERTICAL_VERTEX_SPACING;
-    protected boolean expandLayout = true;
-    protected int initialVerticalOffset;
+    protected boolean expandLayout;
 
     protected B self() {
       return (B) this;
@@ -146,7 +145,6 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
     int y = getInitialY(layoutModel.getHeight(), overallHeight);
     log.trace("got initial y of {}", y);
 
-    //    Set<V> seen = new HashSet<>();
     for (V vertex : roots) {
       int w = this.basePositions.get(vertex);
       log.trace("w is {} and basePositions.get(vertex) = {}", w, basePositions.get(vertex));

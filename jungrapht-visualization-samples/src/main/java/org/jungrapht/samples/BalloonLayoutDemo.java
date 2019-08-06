@@ -16,7 +16,6 @@ import org.jungrapht.samples.util.DemoTreeSupplier;
 import org.jungrapht.samples.util.TreeLayoutSelector;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationScrollPane;
-import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
@@ -47,8 +46,6 @@ public class BalloonLayoutDemo extends JPanel {
   private static final Logger log = LoggerFactory.getLogger(BalloonLayoutDemo.class);
 
   Graph<String, Integer> graph;
-
-  VisualizationServer.Paintable rings;
 
   /** the visual component and renderer for the graph */
   VisualizationViewer<String, Integer> vv;

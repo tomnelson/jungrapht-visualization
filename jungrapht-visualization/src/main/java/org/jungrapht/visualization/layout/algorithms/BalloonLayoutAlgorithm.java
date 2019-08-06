@@ -74,7 +74,6 @@ public class BalloonLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V> {
     if (log.isTraceEnabled()) {
       log.trace("visit {}", layoutModel);
     }
-    super.visit(layoutModel);
     setRootPolars(layoutModel);
   }
 
@@ -109,6 +108,11 @@ public class BalloonLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V> {
     PolarPoint pp = PolarPoint.ORIGIN;
     Point p = getCenter(layoutModel);
     polarLocations.put(root, pp);
+    log.trace(
+        "putting the root at {} in model of size {},{}",
+        pp,
+        layoutModel.getWidth(),
+        layoutModel.getHeight());
     layoutModel.set(root, p);
   }
 
