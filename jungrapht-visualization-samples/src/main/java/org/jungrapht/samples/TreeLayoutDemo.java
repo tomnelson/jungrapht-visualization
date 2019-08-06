@@ -93,7 +93,7 @@ public class TreeLayoutDemo extends JPanel {
           public void paint(Graphics g) {
             Graphics2D g2d = (Graphics2D) g;
             // get the layout dimensions:
-            Dimension layoutSize = vv.getModel().getLayoutSize();
+            Dimension layoutSize = vv.getVisualizationModel().getLayoutSize();
             g.setColor(Color.cyan);
             Shape layoutRectangle =
                 new Rectangle2D.Double(0, 0, layoutSize.width, layoutSize.height);

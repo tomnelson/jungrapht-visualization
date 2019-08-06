@@ -151,7 +151,7 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
 
     add(controls, BorderLayout.SOUTH);
 
-    LayoutModel<String> layoutModel = vv.getModel().getLayoutModel();
+    LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
     Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
 
     Lens lens = new Lens(d);

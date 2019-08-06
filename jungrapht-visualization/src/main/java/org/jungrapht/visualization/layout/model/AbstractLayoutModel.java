@@ -9,9 +9,10 @@ import java.util.concurrent.CompletableFuture;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.IterativeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
-import org.jungrapht.visualization.layout.event.LayoutChange;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
 import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
+import org.jungrapht.visualization.layout.event.ModelChange;
+import org.jungrapht.visualization.layout.event.ViewChange;
 import org.jungrapht.visualization.layout.util.VisRunnable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +69,8 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
   protected LayoutVertexPositionChange.Support layoutVertexPositionSupport =
       LayoutVertexPositionChange.Support.create();
   protected LayoutStateChange.Support layoutStateChangeSupport = LayoutStateChange.Support.create();
-  protected LayoutChange.Support layoutChangeSupport = LayoutChange.Support.create();
+  protected ModelChange.Support modelChangeSupport = ModelChange.Support.create();
+  protected ViewChange.Support viewChangeSupport = ViewChange.Support.create();
 
   protected AbstractLayoutModel(Builder builder) {
     this.graph = checkNotNull(builder.graph);
@@ -107,7 +109,7 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
     layoutStateChangeSupport.fireLayoutStateChanged(this, true);
     log.trace("accepting {}", layoutAlgorithm);
     layoutVertexPositionSupport.setFireEvents(true);
-    layoutChangeSupport.fireLayoutChanged();
+    modelChangeSupport.fireModelChanged();
     if (this.visRunnable != null) {
       log.trace("stopping {}", visRunnable);
       this.visRunnable.stop();
@@ -143,8 +145,13 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
   }
 
   @Override
-  public LayoutChange.Support getLayoutChangeSupport() {
-    return this.layoutChangeSupport;
+  public ModelChange.Support getModelChangeSupport() {
+    return this.modelChangeSupport;
+  }
+
+  @Override
+  public ViewChange.Support getViewChangeSupport() {
+    return this.viewChangeSupport;
   }
 
   /**
@@ -165,9 +172,9 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
     layoutStateChangeSupport.fireLayoutStateChanged(this, true);
     // pre-relax phase. turn off event dispatch to the visualization system
     layoutVertexPositionSupport.setFireEvents(false);
-    layoutChangeSupport.setFireEvents(false);
+    modelChangeSupport.setFireEvents(false);
     iterativeContext.preRelax();
-    layoutChangeSupport.setFireEvents(true);
+    modelChangeSupport.setFireEvents(true);
     layoutVertexPositionSupport.setFireEvents(true);
     log.trace("prerelax is done");
 
@@ -178,7 +185,7 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
                 () -> {
                   log.trace("We're done");
                   setRelaxing(false);
-                  this.layoutChangeSupport.fireLayoutChanged();
+                  this.viewChangeSupport.fireViewChanged();
                   // fire an event to say that the layout relax is done
                   this.layoutStateChangeSupport.fireLayoutStateChanged(this, false);
                 });
@@ -192,7 +199,7 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
 
   public void setGraph(Graph<V, ?> graph) {
     this.graph = graph;
-    this.layoutChangeSupport.fireLayoutChanged();
+    this.modelChangeSupport.fireModelChanged();
     if (log.isTraceEnabled()) {
       log.trace("setGraph to n:{} e:{}", graph.vertexSet(), graph.edgeSet());
     }
@@ -315,7 +322,7 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
   @Override
   public void set(V vertex, Point location) {
     layoutVertexPositionSupport.fireLayoutVertexPositionChanged(vertex, location);
-    layoutChangeSupport.fireLayoutChanged();
+    viewChangeSupport.fireViewChanged();
   }
 
   /**

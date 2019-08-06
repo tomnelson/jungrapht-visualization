@@ -214,7 +214,7 @@ public class LensVertexImageShaperDemo extends JPanel {
     controls.add(modePanel);
     add(controls, BorderLayout.SOUTH);
 
-    LayoutModel<Number> layoutModel = vv.getModel().getLayoutModel();
+    LayoutModel<Number> layoutModel = vv.getVisualizationModel().getLayoutModel();
     Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
 
     Lens lens = new Lens(d);

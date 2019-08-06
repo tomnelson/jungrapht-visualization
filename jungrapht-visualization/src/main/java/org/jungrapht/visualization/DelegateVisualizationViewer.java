@@ -123,13 +123,13 @@ public class DelegateVisualizationViewer<V, E> extends JPanel
   }
 
   @Override
-  public VisualizationModel<V, E> getModel() {
-    return delegate.getModel();
+  public VisualizationModel<V, E> getVisualizationModel() {
+    return delegate.getVisualizationModel();
   }
 
   @Override
-  public void setModel(VisualizationModel<V, E> model) {
-    delegate.setModel(model);
+  public void setVisualizationModel(VisualizationModel<V, E> visualizationModel) {
+    delegate.setVisualizationModel(visualizationModel);
   }
 
   @Override
@@ -273,12 +273,27 @@ public class DelegateVisualizationViewer<V, E> extends JPanel
   }
 
   @Override
-  public void layoutChanged() {
-    this.delegate.layoutChanged();
+  public void modelChanged() {
+    this.delegate.modelChanged();
+  }
+
+  @Override
+  public void viewChanged() {
+    this.delegate.viewChanged();
   }
 
   @Override
   public void layoutStateChanged(LayoutStateChange.Event evt) {
     this.delegate.layoutStateChanged(evt);
   }
+
+  //  @Override
+  //  public void layoutVertexPositionChanged(LayoutVertexPositionChange.Event evt) {
+  //    delegate.repaint();
+  //  }
+  //
+  //  @Override
+  //  public void layoutVertexPositionChanged(LayoutVertexPositionChange.GraphEvent evt) {
+  //    delegate.repaint();
+  //  }
 }

@@ -62,7 +62,7 @@ public class AnimatedPickingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
   public void mousePressed(MouseEvent e) {
     if (e.getModifiersEx() == modifiers) {
       VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
-      LayoutModel<V> layoutModel = vv.getModel().getLayoutModel();
+      LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
       GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
       MutableSelectedState<V> pickedVertexState = vv.getSelectedVertexState();
       if (pickSupport != null && pickedVertexState != null) {
@@ -90,7 +90,7 @@ public class AnimatedPickingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
       Point newCenter = null;
       if (vertex != null) {
         // center the selected vertex
-        LayoutModel<V> layoutModel = vv.getModel().getLayoutModel();
+        LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
         newCenter = layoutModel.apply(vertex);
       } else {
         // they did not pick a vertex to center, so

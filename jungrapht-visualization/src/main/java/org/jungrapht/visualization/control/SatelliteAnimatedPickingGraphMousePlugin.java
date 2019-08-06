@@ -52,7 +52,7 @@ public class SatelliteAnimatedPickingGraphMousePlugin<V, E>
             ((SatelliteVisualizationViewer<V, E>) vv).getMaster();
 
         if (vertex != null) {
-          LayoutModel<V> layoutModel = vvMaster.getModel().getLayoutModel();
+          LayoutModel<V> layoutModel = vvMaster.getVisualizationModel().getLayoutModel();
           Point q = layoutModel.apply(vertex);
           Point2D lvc =
               vvMaster

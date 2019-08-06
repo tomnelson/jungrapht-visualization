@@ -39,6 +39,10 @@ public interface LayoutStateChange {
 
     List<LayoutStateChange.Listener> getLayoutStateChangeListeners();
 
+    /**
+     * @param layoutModel the layoutModel
+     * @param state {@code true} if the layoutModel is active, {@code false} otherwise
+     */
     void fireLayoutStateChanged(LayoutModel layoutModel, boolean state);
   }
 

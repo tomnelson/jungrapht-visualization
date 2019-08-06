@@ -17,9 +17,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
-import org.jungrapht.visualization.layout.event.LayoutChange;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
 import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
+import org.jungrapht.visualization.layout.event.ModelChange;
+import org.jungrapht.visualization.layout.event.ViewChange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,15 +69,15 @@ public class AggregateLayoutModel<V> implements LayoutModel<V> {
           .addLayoutStateChangeListener(layoutStateChangeListener);
     }
 
-    for (LayoutChange.Listener changeListener :
-        delegate.getLayoutChangeSupport().getLayoutChangeListeners()) {
-      newLayoutModel.getLayoutChangeSupport().addLayoutChangeListener(changeListener);
+    for (ModelChange.Listener changeListener :
+        delegate.getModelChangeSupport().getModelChangeListeners()) {
+      newLayoutModel.getModelChangeSupport().addModelChangeListener(changeListener);
     }
   }
 
   private void disconnectListeners(LayoutModel<V> newLayoutModel) {
     newLayoutModel.getLayoutStateChangeSupport().getLayoutStateChangeListeners().clear();
-    newLayoutModel.getLayoutChangeSupport().getLayoutChangeListeners().clear();
+    newLayoutModel.getModelChangeSupport().getModelChangeListeners().clear();
   }
 
   /**
@@ -252,8 +253,13 @@ public class AggregateLayoutModel<V> implements LayoutModel<V> {
   }
 
   @Override
-  public LayoutChange.Support getLayoutChangeSupport() {
-    return delegate.getLayoutChangeSupport();
+  public ModelChange.Support getModelChangeSupport() {
+    return delegate.getModelChangeSupport();
+  }
+
+  @Override
+  public ViewChange.Support getViewChangeSupport() {
+    return delegate.getViewChangeSupport();
   }
 
   @Override

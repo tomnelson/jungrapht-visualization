@@ -26,9 +26,9 @@ public class SimpleVertexSupport<V, E> implements VertexSupport<V, E> {
 
   public void startVertexCreate(VisualizationServer<V, E> vv, Point2D point) {
     Preconditions.checkState(
-        vv.getModel().getGraph().getType().isModifiable(), "graph must be mutable");
+        vv.getVisualizationModel().getGraph().getType().isModifiable(), "graph must be mutable");
     V newVertex = vertexFactory.get();
-    VisualizationModel<V, E> visualizationModel = vv.getModel();
+    VisualizationModel<V, E> visualizationModel = vv.getVisualizationModel();
     Graph<V, E> graph = visualizationModel.getGraph();
     graph.addVertex(newVertex);
     Point2D p2d = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(point);

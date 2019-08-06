@@ -105,7 +105,7 @@ public class L2RTreeLayoutDemo extends JPanel {
             LayoutAlgorithmTransition.animate(vv, radialLayoutAlgorithm);
             vv.getRenderContext().getMultiLayerTransformer().setToIdentity();
             if (rings == null) {
-              rings = new Rings(vv.getModel().getLayoutModel());
+              rings = new Rings(vv.getVisualizationModel().getLayoutModel());
             }
             vv.addPreRenderPaintable(rings);
           } else {
@@ -132,7 +132,7 @@ public class L2RTreeLayoutDemo extends JPanel {
   }
 
   private void setLtoR(VisualizationViewer<String, Integer> vv) {
-    Dimension d = vv.getModel().getLayoutSize();
+    Dimension d = vv.getVisualizationModel().getLayoutSize();
     Point2D center = new Point2D.Double(d.width / 2, d.height / 2);
     vv.getRenderContext()
         .getMultiLayerTransformer()

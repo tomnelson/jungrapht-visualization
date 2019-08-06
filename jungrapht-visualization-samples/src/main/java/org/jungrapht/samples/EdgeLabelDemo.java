@@ -83,7 +83,8 @@ public class EdgeLabelDemo extends JPanel {
             v -> vv.getSelectedVertexState().isSelected(v) ? Color.yellow : Color.red);
 
     // add my listener for ToolTips
-    vv.setVertexToolTipFunction(o -> o + " " + vv.getModel().getLayoutModel().apply(o));
+    vv.setVertexToolTipFunction(
+        o -> o + " " + vv.getVisualizationModel().getLayoutModel().apply(o));
 
     // create a frame to hold the graph
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);

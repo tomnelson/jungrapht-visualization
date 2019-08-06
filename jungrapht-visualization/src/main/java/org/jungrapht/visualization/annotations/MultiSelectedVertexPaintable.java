@@ -128,7 +128,7 @@ public class MultiSelectedVertexPaintable<V> implements VisualizationServer.Pain
     g2d.setPaint(selectionPaint);
     // get the currently currently selected vertices
     Set<V> selectedVertices = visualizationServer.getSelectedVertexState().getSelected();
-    LayoutModel<V> layoutModel = visualizationServer.getModel().getLayoutModel();
+    LayoutModel<V> layoutModel = visualizationServer.getVisualizationModel().getLayoutModel();
     MultiLayerTransformer multiLayerTransformer =
         visualizationServer.getRenderContext().getMultiLayerTransformer();
     // if there is only one selected vertex, make a big arrow pointing to it
@@ -156,7 +156,9 @@ public class MultiSelectedVertexPaintable<V> implements VisualizationServer.Pain
       ((JComponent) visualizationServer).revalidate();
       for (V vertex : selectedVertices) {
         paintIconForVertex(
-            visualizationServer.getRenderContext(), visualizationServer.getModel(), vertex);
+            visualizationServer.getRenderContext(),
+            visualizationServer.getVisualizationModel(),
+            vertex);
       }
     }
     // put back the old values

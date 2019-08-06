@@ -49,7 +49,7 @@ public class ViewLensSupport<V, E, T extends LensGraphMouse> extends AbstractLen
     this.pickSupport = renderContext.getPickSupport();
     this.savedGraphicsDecorator = renderContext.getGraphicsContext();
     this.lensTransformer = lensTransformer;
-    LayoutModel layoutModel = vv.getModel().getLayoutModel();
+    LayoutModel layoutModel = vv.getVisualizationModel().getLayoutModel();
     Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
     lensTransformer.getLens().setSize(d);
 

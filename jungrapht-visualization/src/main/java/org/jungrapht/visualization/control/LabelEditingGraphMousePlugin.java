@@ -73,7 +73,7 @@ public class LabelEditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     //        "e.getModifiersEx() = " + e.getModifiersEx() + " and e.getClickCount() = " + e.getClickCount());
     if (e.getModifiersEx() == modifiers && e.getClickCount() == 2) {
       VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
-      LayoutModel<V> layoutModel = vv.getModel().getLayoutModel();
+      LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
       GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
       if (pickSupport != null) {
         Function<V, String> vs = vv.getRenderContext().getVertexLabelFunction();

@@ -150,7 +150,7 @@ class DefaultVisualizationViewer<V, E> extends DefaultVisualizationServer<V, E>
 
   /** called by the superclass to display tooltips */
   public String getToolTipText(MouseEvent event) {
-    LayoutModel<V> layoutModel = getModel().getLayoutModel();
+    LayoutModel<V> layoutModel = getVisualizationModel().getLayoutModel();
     Point2D p = null;
     if (vertexToolTipFunction != null) {
       p = getTransformSupport().inverseTransform(this, event.getPoint());

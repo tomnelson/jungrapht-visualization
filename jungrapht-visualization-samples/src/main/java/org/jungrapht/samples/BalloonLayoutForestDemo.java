@@ -96,7 +96,7 @@ public class BalloonLayoutForestDemo extends JPanel {
           public void paint(Graphics g) {
             Graphics2D g2d = (Graphics2D) g;
             // get the layout dimensions:
-            Dimension layoutSize = vv.getModel().getLayoutSize();
+            Dimension layoutSize = vv.getVisualizationModel().getLayoutSize();
             g.setColor(Color.cyan);
             Shape layoutRectangle =
                 new Rectangle2D.Double(0, 0, layoutSize.width, layoutSize.height);
@@ -114,7 +114,7 @@ public class BalloonLayoutForestDemo extends JPanel {
     vv.getSelectedVertexState()
         .addItemListener(new SelectedState.StateChangeListener<>(this::selected, this::deselected));
 
-    LayoutModel layoutModel = vv.getModel().getLayoutModel();
+    LayoutModel layoutModel = vv.getVisualizationModel().getLayoutModel();
     Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
     Lens lens = new Lens(d);
     hyperbolicViewSupport =

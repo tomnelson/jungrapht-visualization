@@ -7,22 +7,26 @@
  */
 package org.jungrapht.samples;
 
-import com.google.common.graph.GraphBuilder;
-import com.google.common.graph.MutableGraph;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.zip.ZipInputStream;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
-import org.jgrapht.graph.guava.MutableGraphAdapter;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.SimpleGraph;
+import org.jgrapht.io.EdgeProvider;
+import org.jgrapht.io.GmlImporter;
+import org.jgrapht.io.VertexProvider;
 import org.jungrapht.samples.util.LayoutHelper;
 import org.jungrapht.samples.util.SpanningTreeAdapter;
-import org.jungrapht.samples.util.TestGuavaGraphs;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
@@ -42,51 +46,41 @@ import org.jungrapht.visualization.util.RadialLayoutRings;
  * Demonstrates several of the graph layout algorithms. Allows the user to interactively select one
  * of several graphs, and one of several layouts, and visualizes the combination.
  *
- * @author Tom Nelson
+ * @author Tom Nelson - extensive modification
  */
 @SuppressWarnings("serial")
-public class ShowLayoutsWithGuavaGraphs extends JPanel {
-
-  protected static Graph<String, Number>[] g_array;
-  protected static int graph_index;
-  protected static String[] graph_names = {
-    "Two component graph",
-    "Random mixed-mode graph",
-    "One component graph",
-    "Chain+isolate graph",
-    "Trivial (disconnected) graph",
-    "Little Graph",
-    "Generated Graph"
-  };
+public class ShowLayoutsWithOneJGraphtIO extends JPanel {
 
   BalloonLayoutRings balloonLayoutRings;
   RadialLayoutRings radialLayoutRings;
 
-  public ShowLayoutsWithGuavaGraphs() {
+  public ShowLayoutsWithOneJGraphtIO() throws Exception {
 
-    g_array = new Graph[graph_names.length];
+    Graph<String, DefaultEdge> graph = new SimpleGraph<>(DefaultEdge.class);
 
-    g_array[0] = new MutableGraphAdapter(TestGuavaGraphs.createTestGraph(false));
-    g_array[1] = new MutableGraphAdapter(TestGuavaGraphs.getDemoGraph());
-    g_array[2] = new MutableGraphAdapter(TestGuavaGraphs.getOneComponentGraph());
-    g_array[3] = new MutableGraphAdapter(TestGuavaGraphs.createChainPlusIsolates(18, 5));
-    g_array[4] = new MutableGraphAdapter(TestGuavaGraphs.createChainPlusIsolates(0, 20));
-    MutableGraph<String> graph = GraphBuilder.directed().build();
+    VertexProvider<String> vp = (label, attributes) -> attributes.toString();
+    EdgeProvider<String, DefaultEdge> ep =
+        (from, to, label, attributes) -> graph.getEdgeSupplier().get();
 
-    graph.putEdge("A", "B");
-    graph.putEdge("A", "C");
+    GmlImporter gmlImporter = new GmlImporter(vp, ep);
+    URL url = new URL("https://gephi.org/datasets/netscience.gml.zip");
+    ZipInputStream zipInputStream = new ZipInputStream(url.openStream());
 
-    g_array[5] = new MutableGraphAdapter(graph);
-    g_array[6] = new MutableGraphAdapter(TestGuavaGraphs.getGeneratedGraph());
+    if (zipInputStream.getNextEntry() != null) {
+      InputStreamReader inputStreamReader = new InputStreamReader(zipInputStream);
+      gmlImporter.importGraph(graph, inputStreamReader);
+      inputStreamReader.close();
+    }
 
-    Graph<String, Number> g = g_array[2]; // initial graph
-
-    final VisualizationViewer<String, Number> vv =
-        VisualizationViewer.builder(g).viewSize(new Dimension(600, 600)).build();
+    final VisualizationViewer<String, DefaultEdge> vv =
+        VisualizationViewer.builder(graph)
+            .layoutSize(new Dimension(1300, 1300))
+            .viewSize(new Dimension(600, 600))
+            .build();
 
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
 
-    final DefaultModalGraphMouse<Integer, Number> graphMouse = new DefaultModalGraphMouse<>();
+    final DefaultModalGraphMouse<Integer, DefaultEdge> graphMouse = new DefaultModalGraphMouse<>();
     vv.setGraphMouse(graphMouse);
 
     vv.setVertexToolTipFunction(
@@ -96,6 +90,7 @@ public class ShowLayoutsWithGuavaGraphs extends JPanel {
                 + Graphs.neighborListOf(vv.getVisualizationModel().getGraph(), vertex));
 
     final ScalingControl scaler = new CrossoverScalingControl();
+    vv.scaleToLayout(scaler);
 
     JButton plus = new JButton("+");
     plus.addActionListener(e -> scaler.scale(vv, 1.1f, vv.getCenter()));
@@ -104,7 +99,7 @@ public class ShowLayoutsWithGuavaGraphs extends JPanel {
 
     JComboBox modeBox = graphMouse.getModeComboBox();
     modeBox.addItemListener(
-        ((DefaultModalGraphMouse<Integer, Number>) vv.getGraphMouse()).getModeListener());
+        ((DefaultModalGraphMouse<Integer, DefaultEdge>) vv.getGraphMouse()).getModeListener());
 
     vv.setBackground(Color.WHITE);
 
@@ -156,25 +151,10 @@ public class ShowLayoutsWithGuavaGraphs extends JPanel {
     control_panel.add(bottomControls);
     add(control_panel, BorderLayout.NORTH);
 
-    final JComboBox graph_chooser = new JComboBox(graph_names);
-    // do this before adding the listener so there is no event fired
-    graph_chooser.setSelectedIndex(2);
-
-    graph_chooser.addActionListener(
-        e ->
-            SwingUtilities.invokeLater(
-                () -> {
-                  graph_index = graph_chooser.getSelectedIndex();
-                  vv.getVertexSpatial().clear();
-                  vv.getEdgeSpatial().clear();
-                  vv.getVisualizationModel().setGraph(g_array[graph_index]);
-                }));
-
     JButton showRTree = new JButton("Show RTree");
     showRTree.addActionListener(e -> RTreeVisualization.showRTree(vv));
 
     topControls.add(jcb);
-    topControls.add(graph_chooser);
     bottomControls.add(animateLayoutTransition);
     bottomControls.add(plus);
     bottomControls.add(minus);
@@ -198,8 +178,8 @@ public class ShowLayoutsWithGuavaGraphs extends JPanel {
     return roots;
   }
 
-  public static void main(String[] args) {
-    JPanel jp = new ShowLayoutsWithGuavaGraphs();
+  public static void main(String[] args) throws Exception {
+    JPanel jp = new ShowLayoutsWithOneJGraphtIO();
 
     JFrame jf = new JFrame();
     jf.setTitle("Guava Graph Visualization");

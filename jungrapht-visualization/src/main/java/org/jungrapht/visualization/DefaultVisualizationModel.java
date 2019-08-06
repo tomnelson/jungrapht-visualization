@@ -15,7 +15,8 @@ import java.awt.Dimension;
 import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
-import org.jungrapht.visualization.layout.event.LayoutChange;
+import org.jungrapht.visualization.layout.event.ModelChange;
+import org.jungrapht.visualization.layout.event.ViewChange;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.LoadingCacheLayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
@@ -54,15 +55,14 @@ class DefaultVisualizationModel<V, E> implements VisualizationModel<V, E> {
             new RandomLocationTransformer<>(
                 layoutSize.width, layoutSize.height, System.currentTimeMillis());
       }
-      this.layoutModel =
+      layoutModel =
           LoadingCacheLayoutModel.<V>builder()
               .graph(graph)
               .size(layoutSize.width, layoutSize.height)
               .initializer(initializer)
               .build();
-    } else {
-      this.layoutModel = layoutModel;
     }
+    setLayoutModel(layoutModel); // will hook up events
     this.layoutModel.accept(layoutAlgorithm);
     this.layoutAlgorithm = layoutAlgorithm;
   }
@@ -85,7 +85,9 @@ class DefaultVisualizationModel<V, E> implements VisualizationModel<V, E> {
 
   protected LayoutAlgorithm<V> layoutAlgorithm;
 
-  protected LayoutChange.Support changeSupport = LayoutChange.Support.create();
+  protected ModelChange.Support modelChangeSupport = ModelChange.Support.create();
+
+  protected ViewChange.Support viewChangeSupport = ViewChange.Support.create();
 
   @Override
   public LayoutModel<V> getLayoutModel() {
@@ -98,8 +100,12 @@ class DefaultVisualizationModel<V, E> implements VisualizationModel<V, E> {
     // stop any Relaxer threads before abandoning the previous LayoutModel
     if (this.layoutModel != null) {
       this.layoutModel.stopRelaxer();
+      this.layoutModel.getModelChangeSupport().getModelChangeListeners().remove(this);
+      this.layoutModel.getViewChangeSupport().getViewChangeListeners().remove(this);
     }
     this.layoutModel = layoutModel;
+    this.layoutModel.getModelChangeSupport().addModelChangeListener(this);
+    this.layoutModel.getViewChangeSupport().addViewChangeListener(this);
     if (layoutAlgorithm != null) {
       layoutModel.accept(layoutAlgorithm);
     }
@@ -135,9 +141,9 @@ class DefaultVisualizationModel<V, E> implements VisualizationModel<V, E> {
     if (forceUpdate && this.layoutAlgorithm != null) {
       log.trace("will accept {}", layoutAlgorithm);
       layoutModel.accept(this.layoutAlgorithm);
-      log.trace("will fire stateChanged");
-      changeSupport.fireLayoutChanged();
-      log.trace("fired stateChanged");
+      log.trace("will fire fireModelChanged");
+      modelChangeSupport.fireModelChanged();
+      log.trace("fired fireModelChanged");
     }
   }
 
@@ -152,12 +158,22 @@ class DefaultVisualizationModel<V, E> implements VisualizationModel<V, E> {
   }
 
   @Override
-  public LayoutChange.Support getLayoutChangeSupport() {
-    return this.changeSupport;
+  public ModelChange.Support getModelChangeSupport() {
+    return this.modelChangeSupport;
   }
 
   @Override
-  public void layoutChanged() {
-    getLayoutChangeSupport().fireLayoutChanged();
+  public ViewChange.Support getViewChangeSupport() {
+    return this.viewChangeSupport;
+  }
+
+  @Override
+  public void viewChanged() {
+    getViewChangeSupport().fireViewChanged();
+  }
+
+  @Override
+  public void modelChanged() {
+    getModelChangeSupport().fireModelChanged();
   }
 }

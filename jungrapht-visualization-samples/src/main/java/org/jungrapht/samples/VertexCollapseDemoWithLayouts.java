@@ -154,10 +154,11 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
                   LayoutAlgorithm layoutAlgorithm = layoutType.getLayoutAlgorithm();
                   log.trace("got a {}", layoutAlgorithm);
                   if ((layoutAlgorithm instanceof TreeLayoutAlgorithm)
-                      && vv.getModel().getGraph().getType().isUndirected()) {
-                    Graph tree = SpanningTreeAdapter.getSpanningTree(vv.getModel().getGraph());
+                      && vv.getVisualizationModel().getGraph().getType().isUndirected()) {
+                    Graph tree =
+                        SpanningTreeAdapter.getSpanningTree(vv.getVisualizationModel().getGraph());
                     LayoutModel positionModel = this.getTreeLayoutPositions(tree, layoutAlgorithm);
-                    vv.getModel().getLayoutModel().setInitializer(positionModel);
+                    vv.getVisualizationModel().getLayoutModel().setInitializer(positionModel);
                     layoutAlgorithm = new StaticLayoutAlgorithm();
                   }
                   if (animateLayoutTransition.isSelected()) {
@@ -179,8 +180,9 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
                   Collection<Collapsable<?>> picked =
                       new HashSet(vv.getSelectedVertexState().getSelected());
                   if (picked.size() > 1) {
-                    Graph<Collapsable<?>, Number> inGraph = vv.getModel().getGraph();
-                    LayoutModel<Collapsable<?>> layoutModel = vv.getModel().getLayoutModel();
+                    Graph<Collapsable<?>, Number> inGraph = vv.getVisualizationModel().getGraph();
+                    LayoutModel<Collapsable<?>> layoutModel =
+                        vv.getVisualizationModel().getLayoutModel();
                     Graph<Collapsable<?>, Number> clusterGraph =
                         collapser.getClusterGraph(inGraph, picked);
                     log.trace("clusterGraph:" + clusterGraph);
@@ -203,10 +205,10 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
                     log.trace("put the cluster at " + cp);
                     layoutModel.lock(Collapsable.of(clusterGraph), true);
                     layoutModel.lock(true);
-                    vv.getModel().setGraph(g);
+                    vv.getVisualizationModel().setGraph(g);
 
                     vv.getRenderContext().getParallelEdgeIndexFunction().reset();
-                    layoutModel.accept(vv.getModel().getLayoutAlgorithm());
+                    layoutModel.accept(vv.getVisualizationModel().getLayoutAlgorithm());
                     vv.getSelectedVertexState().clear();
 
                     vv.repaint();
@@ -222,14 +224,15 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
                       new HashSet(vv.getSelectedVertexState().getSelected());
                   for (Collapsable<?> v : picked) {
                     if (v.get() instanceof Graph) {
-                      Graph<Collapsable<?>, Number> inGraph = vv.getModel().getGraph();
-                      LayoutModel<Collapsable<?>> layoutModel = vv.getModel().getLayoutModel();
+                      Graph<Collapsable<?>, Number> inGraph = vv.getVisualizationModel().getGraph();
+                      LayoutModel<Collapsable<?>> layoutModel =
+                          vv.getVisualizationModel().getLayoutModel();
                       Graph<Collapsable<?>, Number> g =
                           collapser.expand(
                               graph, inGraph, (Collapsable<Graph<Collapsable<?>, Number>>) v);
 
                       layoutModel.lock(false);
-                      vv.getModel().setGraph(g);
+                      vv.getVisualizationModel().setGraph(g);
 
                       vv.getRenderContext().getParallelEdgeIndexFunction().reset();
                     }
@@ -246,7 +249,7 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
             Iterator pickedIter = picked.iterator();
             Object vertexU = pickedIter.next();
             Object vertexV = pickedIter.next();
-            Graph graph = vv.getModel().getGraph();
+            Graph graph = vv.getVisualizationModel().getGraph();
             Collection edges = new HashSet(graph.edgesOf(vertexU));
             edges.retainAll(graph.edgesOf(vertexV));
             exclusions.addAll(edges);
@@ -262,7 +265,7 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
             Iterator pickedIter = picked.iterator();
             Object vertexU = pickedIter.next();
             Object vertexV = pickedIter.next();
-            Graph graph = vv.getModel().getGraph();
+            Graph graph = vv.getVisualizationModel().getGraph();
             Collection edges = new HashSet(graph.edgesOf(vertexU));
             edges.retainAll(graph.edgesOf(vertexV));
             exclusions.removeAll(edges);
@@ -273,7 +276,7 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
     JButton reset = new JButton("Reset");
     reset.addActionListener(
         e -> {
-          vv.getModel().setGraph(graph);
+          vv.getVisualizationModel().setGraph(graph);
           exclusions.clear();
           vv.repaint();
         });

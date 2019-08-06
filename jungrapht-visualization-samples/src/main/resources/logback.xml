@@ -9,13 +9,17 @@
 
   <Logger name="org.jungrapht.visualization.renderers" level="info" />
 
-  <Logger name="org.jungrapht.visualization.renderers.DefaultModalRenderer" level="debug" />
 
   <Logger name="org.jungrapht.visualization.layout.spatial" level="info"/>
 
   <Logger name="org.jungrapht.visualization.layout.spatial.rtree" level="info"/>
 
   <Logger name="org.junggrapht.visualization.BasicVisualizationServer" level="info"/>
+  <Logger name="org.junggrapht.visualization.BasicVisualizationViewer" level="info"/>
+  <Logger name="org.jungrapht.visualization.layout.event.ModelChange$SupportImpl" level="info"/>
+  <Logger name="org.jungrapht.visualization.layout.event.ViewChange$SupportImpl" level="info"/>
+  <Logger name="org.jungrapht.visualization.layout.model.AbstractLayoutModel" level="info"/>
+  <Logger name="org.jungrapht.visualization.renderers.DefaultModalRenderer" level="info" />
 
   <Logger name="org.jungrapht.visualization.selection" level="info"/>
 

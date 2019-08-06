@@ -46,7 +46,7 @@ public class SpatialRTreeTest {
 
     tree = vv.getVertexSpatial();
 
-    layoutModel = vv.getModel().getLayoutModel();
+    layoutModel = vv.getVisualizationModel().getLayoutModel();
   }
 
   /**

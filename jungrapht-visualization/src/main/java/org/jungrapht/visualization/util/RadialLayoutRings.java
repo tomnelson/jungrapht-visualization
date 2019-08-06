@@ -23,7 +23,7 @@ public class RadialLayoutRings<V, E> implements VisualizationServer.Paintable {
   public RadialLayoutRings(
       VisualizationServer<V, E> vv, RadialTreeLayoutAlgorithm<V> radialTreeLayoutAlgorithm) {
     this.vv = vv;
-    this.layoutModel = vv.getModel().getLayoutModel();
+    this.layoutModel = vv.getVisualizationModel().getLayoutModel();
     this.radialTreeLayoutAlgorithm = radialTreeLayoutAlgorithm;
     depths = getDepths();
   }
@@ -31,7 +31,7 @@ public class RadialLayoutRings<V, E> implements VisualizationServer.Paintable {
   private Collection<Double> getDepths() {
     Set<Double> depths = new HashSet<>();
     Map<V, PolarPoint> polarLocations = radialTreeLayoutAlgorithm.getPolarLocations();
-    for (V v : vv.getModel().getGraph().vertexSet()) {
+    for (V v : vv.getVisualizationModel().getGraph().vertexSet()) {
       PolarPoint pp = polarLocations.get(v);
       depths.add(pp.radius);
     }

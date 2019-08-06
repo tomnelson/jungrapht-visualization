@@ -105,7 +105,9 @@ public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
 
     vv.setVertexToolTipFunction(
         vertex ->
-            vertex + ". with neighbors:" + Graphs.neighborListOf(vv.getModel().getGraph(), vertex));
+            vertex
+                + ". with neighbors:"
+                + Graphs.neighborListOf(vv.getVisualizationModel().getGraph(), vertex));
 
     final ScalingControl scaler = new CrossoverScalingControl();
 
@@ -135,9 +137,10 @@ public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
                     if (layoutAlgorithm instanceof TreeLayoutAlgorithm) {
                       LayoutModel positionModel =
                           this.getTreeLayoutPositions(
-                              SpanningTreeAdapter.getSpanningTree(vv.getModel().getGraph()),
+                              SpanningTreeAdapter.getSpanningTree(
+                                  vv.getVisualizationModel().getGraph()),
                               layoutAlgorithm);
-                      vv.getModel().getLayoutModel().setInitializer(positionModel);
+                      vv.getVisualizationModel().getLayoutModel().setInitializer(positionModel);
                       layoutAlgorithm = new StaticLayoutAlgorithm();
                     }
                     if (animateLayoutTransition.isSelected()) {
@@ -168,7 +171,7 @@ public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
                   graph_index = graph_chooser.getSelectedIndex();
                   vv.getVertexSpatial().clear();
                   vv.getEdgeSpatial().clear();
-                  vv.getModel().setGraph(g_array[graph_index]);
+                  vv.getVisualizationModel().setGraph(g_array[graph_index]);
                 }));
 
     topControls.add(jcb);
@@ -196,7 +199,7 @@ public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
     private void updatePaintables(VisualizationViewer vv) {
 
       vv.removePreRenderPaintable(paintable);
-      LayoutAlgorithm<V> layoutAlgorithm = getModel().getLayoutAlgorithm();
+      LayoutAlgorithm<V> layoutAlgorithm = getVisualizationModel().getLayoutAlgorithm();
       BarnesHutQuadTree tree = getBarnesHutQuadTreeFrom(layoutAlgorithm);
       if (tree != null) {
         Set<Shape> shapes = new HashSet<>();

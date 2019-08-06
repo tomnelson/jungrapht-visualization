@@ -23,7 +23,7 @@ public class SimpleEdgeSupport<V, E> implements EdgeSupport<V, E> {
     this.startVertex = startVertex;
     this.down = startPoint;
     this.edgeEffects.startEdgeEffects(vv, startPoint, startPoint);
-    if (vv.getModel().getGraph().getType().isDirected()) {
+    if (vv.getVisualizationModel().getGraph().getType().isDirected()) {
       this.edgeEffects.startArrowEffects(vv, startPoint, startPoint);
     }
     vv.repaint();
@@ -33,7 +33,7 @@ public class SimpleEdgeSupport<V, E> implements EdgeSupport<V, E> {
   public void midEdgeCreate(VisualizationServer<V, E> vv, Point2D midPoint) {
     if (startVertex != null) {
       this.edgeEffects.midEdgeEffects(vv, down, midPoint);
-      if (vv.getModel().getGraph().getType().isDirected()) {
+      if (vv.getVisualizationModel().getGraph().getType().isDirected()) {
         this.edgeEffects.midArrowEffects(vv, down, midPoint);
       }
       vv.repaint();
@@ -43,9 +43,9 @@ public class SimpleEdgeSupport<V, E> implements EdgeSupport<V, E> {
   @Override
   public void endEdgeCreate(VisualizationServer<V, E> vv, V endVertex) {
     Preconditions.checkState(
-        vv.getModel().getGraph() instanceof Graph<?, ?>, "graph must be mutable");
+        vv.getVisualizationModel().getGraph() instanceof Graph<?, ?>, "graph must be mutable");
     if (startVertex != null) {
-      Graph<V, E> graph = vv.getModel().getGraph();
+      Graph<V, E> graph = vv.getVisualizationModel().getGraph();
       graph.addEdge(startVertex, endVertex, edgeFactory.get());
       vv.getEdgeSpatial().recalculate();
       vv.repaint();

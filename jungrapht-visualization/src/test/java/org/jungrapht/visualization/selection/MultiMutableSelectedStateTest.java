@@ -2,6 +2,7 @@ package org.jungrapht.visualization.selection;
 
 import com.google.common.collect.Sets;
 import java.util.Collections;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,8 +16,11 @@ public class MultiMutableSelectedStateTest {
   private MultiMutableSelectedState<String> multiMutableSelectedState =
       new MultiMutableSelectedState<>();
 
+  AtomicBoolean atomicBoolean = new AtomicBoolean(false);
+
   @Before
   public void setup() {
+    atomicBoolean.set(false);
     multiMutableSelectedState.clear();
   }
 
@@ -31,6 +35,7 @@ public class MultiMutableSelectedStateTest {
     multiMutableSelectedState.select("A");
     Assert.assertTrue(multiMutableSelectedState.getSelected().contains("A"));
     Assert.assertEquals(multiMutableSelectedState.getSelected(), Collections.singleton("A"));
+    Assert.assertTrue(atomicBoolean.get());
   }
 
   /** Select 'reselection' of one item. Should not fire an event to select or deselect */
@@ -42,6 +47,7 @@ public class MultiMutableSelectedStateTest {
     // pick the already selected item. Should not fire an event to select or deselect
     multiMutableSelectedState.select("A");
     Assert.assertEquals(multiMutableSelectedState.getSelected(), Collections.singleton("A"));
+    Assert.assertFalse(atomicBoolean.get());
   }
 
   /**
@@ -54,6 +60,7 @@ public class MultiMutableSelectedStateTest {
         new SelectedState.StateChangeListener<>(this::selected, this::forbidden));
     multiMutableSelectedState.select(Sets.newHashSet("A", "B", "C"));
     Assert.assertEquals(multiMutableSelectedState.getSelected(), Sets.newHashSet("A", "B", "C"));
+    Assert.assertTrue(atomicBoolean.get());
   }
 
   /**
@@ -67,6 +74,7 @@ public class MultiMutableSelectedStateTest {
         new SelectedState.StateChangeListener<>(this::forbidden, this::forbidden));
     multiMutableSelectedState.select(Sets.newHashSet("A", "B", "C"));
     Assert.assertEquals(multiMutableSelectedState.getSelected(), Sets.newHashSet("A", "B", "C"));
+    Assert.assertFalse(atomicBoolean.get());
   }
 
   /**
@@ -82,16 +90,19 @@ public class MultiMutableSelectedStateTest {
     Assert.assertTrue(multiMutableSelectedState.getSelected().contains("D"));
     Assert.assertEquals(
         multiMutableSelectedState.getSelected(), Sets.newHashSet("A", "B", "C", "D"));
+    Assert.assertTrue(atomicBoolean.get());
   }
 
   private void selected(Object item) {
     String methodName = Thread.currentThread().getStackTrace()[6].getMethodName();
     log.info("{} selected {}", methodName, item);
+    atomicBoolean.set(true);
   }
 
   private void deselected(Object item) {
     String methodName = Thread.currentThread().getStackTrace()[6].getMethodName();
     log.info("{} deselected {}", methodName, item);
+    atomicBoolean.set(true);
   }
 
   private void forbidden(Object item) {

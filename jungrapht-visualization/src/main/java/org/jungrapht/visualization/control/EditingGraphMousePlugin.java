@@ -79,7 +79,7 @@ public class EditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     if (checkModifiers(e)) {
       final VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
       //      vv.getVertexSpatial().setActive(true);
-      final LayoutModel<V> layoutModel = vv.getModel().getLayoutModel();
+      final LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
       final Point2D p = e.getPoint();
       GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
       if (pickSupport != null) {
@@ -102,7 +102,7 @@ public class EditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   @SuppressWarnings("unchecked")
   public void mouseReleased(MouseEvent e) {
     final VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
-    final LayoutModel<V> layoutModel = vv.getModel().getLayoutModel();
+    final LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
     final Point2D p = e.getPoint();
     if (createMode == Creating.EDGE) {
       GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();

@@ -13,7 +13,8 @@ import java.awt.*;
 import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
-import org.jungrapht.visualization.layout.event.LayoutChange;
+import org.jungrapht.visualization.layout.event.ModelChange;
+import org.jungrapht.visualization.layout.event.ViewChange;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 
@@ -24,8 +25,12 @@ import org.jungrapht.visualization.layout.model.Point;
  * @param <E> the edge type
  */
 public interface VisualizationModel<V, E>
-    extends LayoutChange.Listener, // can tell the view to repaint
-        LayoutChange.Producer {
+    extends ViewChange.Listener,
+        ViewChange.Producer,
+        //        LayoutVertexPositionChange.Listener,
+        //        LayoutVertexPositionChange.Producer,// can tell the view to repaint
+        ModelChange.Listener, //
+        ModelChange.Producer {
 
   /**
    * A builder for creating instances of a {@link }VisualizationModel} with user defined properties

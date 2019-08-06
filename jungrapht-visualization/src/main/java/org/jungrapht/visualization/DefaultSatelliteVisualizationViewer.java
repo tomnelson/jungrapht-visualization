@@ -69,8 +69,8 @@ public class DefaultSatelliteVisualizationViewer<V, E> extends DefaultVisualizat
     // share the selected state of the master
     setSelectedVertexState(master.getSelectedVertexState());
     setSelectedEdgeState(master.getSelectedEdgeState());
-    setVertexSpatial(new Spatial.NoOp.Vertex(model.getLayoutModel()));
-    setEdgeSpatial(new Spatial.NoOp.Edge(model));
+    setVertexSpatial(new Spatial.NoOp.Vertex(visualizationModel.getLayoutModel()));
+    setEdgeSpatial(new Spatial.NoOp.Edge(visualizationModel));
   }
 
   /**
@@ -86,7 +86,7 @@ public class DefaultSatelliteVisualizationViewer<V, E> extends DefaultVisualizat
       renderContext.getGraphicsContext().setDelegate(g2d);
     }
     renderContext.setScreenDevice(this);
-    LayoutModel<V> layoutModel = getModel().getLayoutModel();
+    LayoutModel<V> layoutModel = getVisualizationModel().getLayoutModel();
 
     g2d.setRenderingHints(renderingHints);
 
@@ -119,7 +119,7 @@ public class DefaultSatelliteVisualizationViewer<V, E> extends DefaultVisualizat
       }
     }
 
-    renderer.render(renderContext, model);
+    renderer.render(renderContext, visualizationModel);
 
     // if there are postRenderers set, do it
     for (Paintable paintable : postRenderers) {

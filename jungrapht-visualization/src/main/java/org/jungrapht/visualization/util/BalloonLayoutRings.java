@@ -24,12 +24,12 @@ public class BalloonLayoutRings<V, E> implements VisualizationServer.Paintable {
     Graphics2D g2d = (Graphics2D) g;
 
     Ellipse2D ellipse = new Ellipse2D.Double();
-    for (V v : vv.getModel().getGraph().vertexSet()) {
+    for (V v : vv.getVisualizationModel().getGraph().vertexSet()) {
       Double radius = layoutAlgorithm.getRadii().get(v);
       if (radius == null) {
         continue;
       }
-      Point p = vv.getModel().getLayoutModel().apply(v);
+      Point p = vv.getVisualizationModel().getLayoutModel().apply(v);
       ellipse.setFrame(-radius, -radius, 2 * radius, 2 * radius);
       AffineTransform at = AffineTransform.getTranslateInstance(p.x, p.y);
       Shape shape = at.createTransformedShape(ellipse);

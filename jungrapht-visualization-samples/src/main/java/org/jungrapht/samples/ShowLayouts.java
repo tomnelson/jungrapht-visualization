@@ -98,7 +98,7 @@ public class ShowLayouts extends JPanel {
         vertex ->
             vertex.toString()
                 + ". with neighbors:"
-                + Graphs.neighborListOf(vv.getModel().getGraph(), vertex));
+                + Graphs.neighborListOf(vv.getVisualizationModel().getGraph(), vertex));
 
     final ScalingControl scaler = new CrossoverScalingControl();
 
@@ -128,10 +128,11 @@ public class ShowLayouts extends JPanel {
                   vv.removePreRenderPaintable(balloonLayoutRings);
                   vv.removePreRenderPaintable(radialLayoutRings);
                   if ((layoutAlgorithm instanceof TreeLayoutAlgorithm)
-                      && vv.getModel().getGraph().getType().isUndirected()) {
-                    Graph tree = SpanningTreeAdapter.getSpanningTree(vv.getModel().getGraph());
+                      && vv.getVisualizationModel().getGraph().getType().isUndirected()) {
+                    Graph tree =
+                        SpanningTreeAdapter.getSpanningTree(vv.getVisualizationModel().getGraph());
                     LayoutModel positionModel = this.getTreeLayoutPositions(tree, layoutAlgorithm);
-                    vv.getModel().getLayoutModel().setInitializer(positionModel);
+                    vv.getVisualizationModel().getLayoutModel().setInitializer(positionModel);
                     layoutAlgorithm = new StaticLayoutAlgorithm();
                   }
                   if (animateLayoutTransition.isSelected()) {
@@ -171,7 +172,7 @@ public class ShowLayouts extends JPanel {
                   graph_index = graph_chooser.getSelectedIndex();
                   vv.getVertexSpatial().clear();
                   vv.getEdgeSpatial().clear();
-                  vv.getModel().setGraph(g_array[graph_index]);
+                  vv.getVisualizationModel().setGraph(g_array[graph_index]);
                 }));
 
     JButton showRTree = new JButton("Show RTree");

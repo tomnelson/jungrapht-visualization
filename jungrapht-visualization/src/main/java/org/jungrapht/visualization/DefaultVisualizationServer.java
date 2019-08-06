@@ -113,7 +113,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
   protected ChangeEventSupport changeSupport = new DefaultChangeEventSupport(this);
 
   /** holds the state of this View */
-  protected VisualizationModel<V, E> model;
+  protected VisualizationModel<V, E> visualizationModel;
 
   /** handles the actual drawing of graph elements */
   protected DefaultModalRenderer<V, E> renderer;
@@ -196,29 +196,23 @@ class DefaultVisualizationServer<V, E> extends JPanel
       }
       Preconditions.checkArgument(layoutSize.width > 0, "width must be > 0");
       Preconditions.checkArgument(layoutSize.height > 0, "height must be > 0");
-      this.model =
+      visualizationModel =
           VisualizationModel.builder(graph)
               .layoutAlgorithm(layoutAlgorithm)
               .layoutSize(layoutSize)
               .build();
-    } else {
-      this.model = visualizationModel;
     }
-    renderContext = RenderContext.builder(model.getGraph()).build();
+    setVisualizationModel(visualizationModel);
+    renderContext = RenderContext.builder(this.visualizationModel.getGraph()).build();
     renderContext.setScreenDevice(this);
     renderer = new DefaultModalRenderer<>(this);
-    renderer.setCountSupplier(getModel().getGraph().vertexSet()::size);
+    renderer.setCountSupplier(getVisualizationModel().getGraph().vertexSet()::size);
     renderer.setScaleSupplier(
         getRenderContext()
                 .getMultiLayerTransformer()
                 .getTransformer(MultiLayerTransformer.Layer.VIEW)
             ::scale);
-    createSpatialStuctures(model, renderContext);
-    model
-        .getLayoutModel()
-        .getLayoutChangeSupport()
-        .addLayoutChangeListener(this); // will cause a repaint
-    model.getLayoutModel().getLayoutStateChangeSupport().addLayoutStateChangeListener(this);
+    createSpatialStuctures(this.visualizationModel, renderContext);
     setDoubleBuffered(false);
     this.addComponentListener(new VisualizationListener(this));
 
@@ -240,8 +234,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
     if (edgeSpatial != null) {
       setEdgeSpatial(edgeSpatial);
     }
-    addChangeListener((DefaultModalRenderer) renderer);
-    //    LightweightRenderingVisitor.visit(this, 0.5, lightweightRenderingVertexCountThreshold);
+    addChangeListener(renderer);
   }
 
   @Override
@@ -283,7 +276,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
     }
     this.vertexSpatial = spatial;
 
-    boolean layoutModelRelaxing = model.getLayoutModel().isRelaxing();
+    boolean layoutModelRelaxing = visualizationModel.getLayoutModel().isRelaxing();
     vertexSpatial.setActive(!layoutModelRelaxing);
     if (!layoutModelRelaxing) {
       vertexSpatial.recalculate();
@@ -304,7 +297,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
     }
     this.edgeSpatial = spatial;
 
-    boolean layoutModelRelaxing = model.getLayoutModel().isRelaxing();
+    boolean layoutModelRelaxing = visualizationModel.getLayoutModel().isRelaxing();
     edgeSpatial.setActive(!layoutModelRelaxing);
     if (!layoutModelRelaxing) {
       edgeSpatial.recalculate();
@@ -319,7 +312,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
    * @param spatial will listen for events
    */
   private void connectListeners(Spatial spatial) {
-    LayoutModel<V> layoutModel = model.getLayoutModel();
+    LayoutModel<V> layoutModel = visualizationModel.getLayoutModel();
     layoutModel.getLayoutStateChangeSupport().addLayoutStateChangeListener(spatial);
     if (spatial instanceof LayoutVertexPositionChange.Listener) {
       layoutModel
@@ -335,7 +328,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
    */
   private void disconnectListeners(Spatial spatial) {
 
-    LayoutModel<V> layoutModel = model.getLayoutModel();
+    LayoutModel<V> layoutModel = visualizationModel.getLayoutModel();
     layoutModel.getLayoutStateChangeSupport().removeLayoutStateChangeListener(spatial);
     if (spatial instanceof LayoutVertexPositionChange.Listener) {
       layoutModel
@@ -386,13 +379,27 @@ class DefaultVisualizationServer<V, E> extends JPanel
   }
 
   @Override
-  public VisualizationModel<V, E> getModel() {
-    return model;
+  public VisualizationModel<V, E> getVisualizationModel() {
+    return visualizationModel;
   }
 
   @Override
-  public void setModel(VisualizationModel<V, E> model) {
-    this.model = model;
+  public void setVisualizationModel(VisualizationModel<V, E> visualizationModel) {
+    if (this.visualizationModel != null) {
+      this.visualizationModel.getModelChangeSupport().removeModelChangeListener(this);
+      this.visualizationModel.getViewChangeSupport().removeViewChangeListener(this);
+      this.visualizationModel
+          .getLayoutModel()
+          .getLayoutStateChangeSupport()
+          .removeLayoutStateChangeListener(this);
+    }
+    this.visualizationModel = visualizationModel;
+    this.visualizationModel.getModelChangeSupport().addModelChangeListener(this);
+    this.visualizationModel.getViewChangeSupport().addViewChangeListener(this);
+    this.visualizationModel
+        .getLayoutModel()
+        .getLayoutStateChangeSupport()
+        .addLayoutStateChangeListener(this);
   }
 
   @Override
@@ -417,7 +424,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
       vd = getSize();
       log.trace("actual vd {}", vd);
     }
-    Dimension ld = model.getLayoutSize();
+    Dimension ld = visualizationModel.getLayoutSize();
     if (!vd.equals(ld)) {
       log.trace("vd.getWidth() {} ld.getWidth() {} ", vd.getWidth(), ld.getWidth());
       //      getRenderContext().getMultiLayerTransformer().setToIdentity();
@@ -505,11 +512,11 @@ class DefaultVisualizationServer<V, E> extends JPanel
       }
     }
 
-    if (model instanceof Caching) {
-      ((Caching) model).clear();
+    if (visualizationModel instanceof Caching) {
+      ((Caching) visualizationModel).clear();
     }
 
-    renderer.render(renderContext, model, vertexSpatial, edgeSpatial);
+    renderer.render(renderContext, visualizationModel, vertexSpatial, edgeSpatial);
 
     // if there are postRenderers set, do it
     for (Paintable paintable : postRenderers) {
@@ -525,17 +532,26 @@ class DefaultVisualizationServer<V, E> extends JPanel
     g2d.setTransform(oldXform);
   }
 
-  /** a LayoutChange.Event from the LayoutModel will trigger a repaint of the visualization */
+  /** a ModelChange.Event from the LayoutModel will trigger a repaint of the visualization */
   @Override
-  public void layoutChanged() {
+  public void modelChanged() {
+    log.trace("modelChanged");
     if (renderContext instanceof DefaultRenderContext) {
-      ((DefaultRenderContext) renderContext).setupArrows(model.getGraph().getType().isDirected());
+      ((DefaultRenderContext) renderContext)
+          .setupArrows(visualizationModel.getGraph().getType().isDirected());
     }
-    renderer.setCountSupplier(model.getGraph().vertexSet()::size);
+    renderer.setCountSupplier(visualizationModel.getGraph().vertexSet()::size);
     repaint();
   }
 
+  @Override
+  public void viewChanged() {
+    repaint();
+  }
+
+  @Override
   public void layoutStateChanged(LayoutStateChange.Event evt) {
+    //    repaint();
     //    no op
   }
 
@@ -784,20 +800,22 @@ class DefaultVisualizationServer<V, E> extends JPanel
     switch (getVertexSpatialSupportPreference()) {
       case RTREE:
         return SpatialRTree.Vertices.builder()
-            .visualizationModel(visualizationServer.getModel())
+            .visualizationModel(visualizationServer.getVisualizationModel())
             .boundingRectangleCollector(
                 new BoundingRectangleCollector.Vertices<>(
-                    visualizationServer.getRenderContext(), visualizationServer.getModel()))
+                    visualizationServer.getRenderContext(),
+                    visualizationServer.getVisualizationModel()))
             .splitterContext(SplitterContext.of(new RStarLeafSplitter<>(), new RStarSplitter<>()))
             .reinsert(true)
             .build();
       case GRID:
-        return new SpatialGrid<>(visualizationServer.getModel().getLayoutModel());
+        return new SpatialGrid<>(visualizationServer.getVisualizationModel().getLayoutModel());
       case QUADTREE:
-        return new SpatialQuadTree<>(visualizationServer.getModel().getLayoutModel());
+        return new SpatialQuadTree<>(visualizationServer.getVisualizationModel().getLayoutModel());
       case NONE:
       default:
-        return new Spatial.NoOp.Vertex<>(visualizationServer.getModel().getLayoutModel());
+        return new Spatial.NoOp.Vertex<>(
+            visualizationServer.getVisualizationModel().getLayoutModel());
     }
   }
 
@@ -805,66 +823,18 @@ class DefaultVisualizationServer<V, E> extends JPanel
     switch (getEdgeSpatialSupportPreference()) {
       case RTREE:
         return SpatialRTree.Edges.builder()
-            .visualizationModel(visualizationServer.getModel())
+            .visualizationModel(visualizationServer.getVisualizationModel())
             .boundingRectangleCollector(
                 new BoundingRectangleCollector.Edges<>(
-                    visualizationServer.getRenderContext(), visualizationServer.getModel()))
+                    visualizationServer.getRenderContext(),
+                    visualizationServer.getVisualizationModel()))
             .splitterContext(
                 SplitterContext.of(new QuadraticLeafSplitter(), new QuadraticSplitter()))
             .reinsert(false)
             .build();
       case NONE:
       default:
-        return new Spatial.NoOp.Edge<>(visualizationServer.getModel());
+        return new Spatial.NoOp.Edge<>(visualizationServer.getVisualizationModel());
     }
   }
-
-  //  class LightweightRenderingListener implements ChangeListener {
-  //
-  //    private Timer timer;
-  //
-  //    @Override
-  //    public void stateChanged(ChangeEvent e) {
-  //      if (getModel().getGraph().vertexSet().size() < lightweightRenderingVertexCountThreshold) {
-  //        return;
-  //      }
-  //      if (timer == null || timer.done) {
-  //        timer = new Timer(DefaultVisualizationServer.this);
-  //        timer.start();
-  //      } else {
-  //        timer.incrementValue();
-  //      }
-  //    }
-  //
-  //    class Timer extends Thread {
-  //      long value = 10;
-  //      boolean done;
-  //      VisualizationServer visualizationServer;
-  //
-  //      public Timer(VisualizationServer visualizationServer) {
-  //        this.visualizationServer = visualizationServer;
-  //        visualizationServer.simplifyRenderer(true);
-  //        visualizationServer.repaint();
-  //      }
-  //
-  //      public void incrementValue() {
-  //        value = 10;
-  //      }
-  //
-  //      public void run() {
-  //        done = false;
-  //        while (value > 0) {
-  //          value--;
-  //          try {
-  //            Thread.sleep(10);
-  //          } catch (InterruptedException ex) {
-  //            ex.printStackTrace();
-  //          }
-  //        }
-  //        visualizationServer.simplifyRenderer(false);
-  //        done = true;
-  //        visualizationServer.repaint();
-  //      }
-  //    }
-  //  }
 }

@@ -16,9 +16,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
-import org.jungrapht.visualization.layout.event.LayoutChange;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
 import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
+import org.jungrapht.visualization.layout.event.ModelChange;
+import org.jungrapht.visualization.layout.event.ViewChange;
 
 /**
  * two dimensional layout model. Acts as a Mediator between the Graph vertices and their locations
@@ -28,7 +29,8 @@ import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
  */
 public interface LayoutModel<V>
     extends Function<V, Point>,
-        LayoutChange.Producer,
+        ModelChange.Producer,
+        ViewChange.Producer,
         LayoutVertexPositionChange.Producer<V>,
         LayoutStateChange.Producer,
         LayoutVertexPositionChange.Listener<V> {

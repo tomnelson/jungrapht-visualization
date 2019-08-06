@@ -141,7 +141,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     vertexSpatialActiveInitialState = vv.getVertexSpatial().isActive();
     edgeSpatialActiveInitialState = vv.getEdgeSpatial().isActive();
     TransformSupport<V, E> transformSupport = vv.getTransformSupport();
-    LayoutModel<V> layoutModel = vv.getModel().getLayoutModel();
+    LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
     GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
     MutableSelectedState<V> selectedVertexState = vv.getSelectedVertexState();
     MutableSelectedState<E> selectedEdgeState = vv.getSelectedEdgeState();
@@ -266,7 +266,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
       log.trace("p in graph coords is {}", graphPoint);
       Point2D graphDown = multiLayerTransformer.inverseTransform(deltaDown);
       log.trace("graphDown (down in graph coords) is {}", graphDown);
-      VisualizationModel<V, E> visualizationModel = vv.getModel();
+      VisualizationModel<V, E> visualizationModel = vv.getVisualizationModel();
       LayoutModel<V> layoutModel = visualizationModel.getLayoutModel();
       double dx = graphPoint.getX() - graphDown.getX();
       double dy = graphPoint.getY() - graphDown.getY();
@@ -319,7 +319,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
         log.trace("p in graph coords is {}", graphPoint);
         Point2D graphDown = multiLayerTransformer.inverseTransform(deltaDown);
         log.trace("graphDown (down in graph coords) is {}", graphDown);
-        VisualizationModel<V, E> visualizationModel = vv.getModel();
+        VisualizationModel<V, E> visualizationModel = vv.getVisualizationModel();
         LayoutModel<V> layoutModel = visualizationModel.getLayoutModel();
         double dx = graphPoint.getX() - graphDown.getX();
         double dy = graphPoint.getY() - graphDown.getY();
@@ -417,7 +417,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
       VisualizationViewer<V, E> vv, Shape pickTarget, boolean clear) {
     MutableSelectedState<V> selectedVertexState = vv.getSelectedVertexState();
     GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
-    LayoutModel<V> layoutModel = vv.getModel().getLayoutModel();
+    LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
     Collection<V> picked = pickSupport.getVertices(layoutModel, pickTarget);
     if (clear) {
       selectedVertexState.clear();

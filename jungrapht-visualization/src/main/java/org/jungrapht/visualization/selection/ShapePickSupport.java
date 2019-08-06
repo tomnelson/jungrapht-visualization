@@ -592,10 +592,10 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
    * @return the transformed shape
    */
   private Shape getTransformedEdgeShape(E e) {
-    V v1 = vv.getModel().getGraph().getEdgeSource(e);
-    V v2 = vv.getModel().getGraph().getEdgeTarget(e);
+    V v1 = vv.getVisualizationModel().getGraph().getEdgeSource(e);
+    V v2 = vv.getVisualizationModel().getGraph().getEdgeTarget(e);
     boolean isLoop = v1.equals(v2);
-    LayoutModel<V> layoutModel = vv.getModel().getLayoutModel();
+    LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
     org.jungrapht.visualization.layout.model.Point p1 = layoutModel.apply(v1);
     Point p2 = layoutModel.apply(v2);
     if (p1 == null || p2 == null) {
@@ -612,7 +612,7 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
     Shape edgeShape =
         vv.getRenderContext()
             .getEdgeShapeFunction()
-            .apply(Context.getInstance(vv.getModel().getGraph(), e));
+            .apply(Context.getInstance(vv.getVisualizationModel().getGraph(), e));
     if (isLoop) {
       // make the loops proportional to the layoutSize of the vertex
       Shape s2 = vv.getRenderContext().getVertexShapeFunction().apply(v2);
@@ -637,14 +637,14 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
   }
 
   protected Collection<V> getFilteredVertices() {
-    Set<V> vertices = vv.getModel().getGraph().vertexSet();
+    Set<V> vertices = vv.getVisualizationModel().getGraph().vertexSet();
     return verticesAreFiltered()
         ? Sets.filter(vertices, vv.getRenderContext().getVertexIncludePredicate()::test)
         : vertices;
   }
 
   protected Collection<E> getFilteredEdges() {
-    Set<E> edges = vv.getModel().getGraph().edgeSet();
+    Set<E> edges = vv.getVisualizationModel().getGraph().edgeSet();
     return edgesAreFiltered()
         ? Sets.filter(edges, vv.getRenderContext().getEdgeIncludePredicate()::test)
         : edges;
@@ -695,7 +695,7 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
   protected boolean isEdgeRendered(E edge) {
     Predicate<V> vertexIncludePredicate = vv.getRenderContext().getVertexIncludePredicate();
     Predicate<E> edgeIncludePredicate = vv.getRenderContext().getEdgeIncludePredicate();
-    Graph<V, E> g = vv.getModel().getGraph();
+    Graph<V, E> g = vv.getVisualizationModel().getGraph();
     if (edgeIncludePredicate != null && !edgeIncludePredicate.test(edge)) {
       return false;
     }

@@ -49,11 +49,11 @@ public class DefaultModalRenderer<V, E> implements LightweightModalRenderer<V, E
   protected double lightweightRenderingScaleThreshold =
       Double.parseDouble(System.getProperty(LIGHTWEIGHT_SCALE_THRESHOLD, "0.5"));
 
-  protected Supplier<Double> scaleSupplier;
+  protected Supplier<Double> scaleSupplier = () -> 0.5;
   protected Predicate<Supplier<Double>> scalePredicate =
       t -> scaleSupplier.get() < lightweightRenderingScaleThreshold;
 
-  protected Supplier<Integer> countSupplier;
+  protected Supplier<Integer> countSupplier = () -> 0;
   protected Predicate<Supplier<Integer>> countPredicate =
       t -> countSupplier.get() > lightweightRenderingCountThreshold;
 
@@ -83,6 +83,7 @@ public class DefaultModalRenderer<V, E> implements LightweightModalRenderer<V, E
 
   public void setCountSupplier(Supplier<Integer> countSupplier) {
     this.countSupplier = countSupplier;
+    stateChanged(null);
   }
 
   @Override

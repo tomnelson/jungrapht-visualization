@@ -21,8 +21,9 @@ import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.control.TransformSupport;
 import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
-import org.jungrapht.visualization.layout.event.LayoutChange;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
+import org.jungrapht.visualization.layout.event.ModelChange;
+import org.jungrapht.visualization.layout.event.ViewChange;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 import org.jungrapht.visualization.spatial.Spatial;
@@ -36,7 +37,8 @@ import org.jungrapht.visualization.spatial.Spatial;
  */
 public interface VisualizationServer<V, E>
     extends VisualizationComponent,
-        LayoutChange.Listener,
+        ViewChange.Listener,
+        ModelChange.Listener,
         ChangeListener,
         LayoutStateChange.Listener {
 
@@ -169,10 +171,10 @@ public interface VisualizationServer<V, E>
   void setTransformSupport(TransformSupport<V, E> transformSupport);
 
   /** @return the model. */
-  VisualizationModel<V, E> getModel();
+  VisualizationModel<V, E> getVisualizationModel();
 
-  /** @param model the model for this class to use */
-  void setModel(VisualizationModel<V, E> model);
+  /** @param visualizationModel the model for this class to use */
+  void setVisualizationModel(VisualizationModel<V, E> visualizationModel);
 
   /**
    * In response to changes from the model, repaint the view, then fire an event to any listeners.

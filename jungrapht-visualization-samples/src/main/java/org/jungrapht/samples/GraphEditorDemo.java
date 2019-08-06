@@ -134,8 +134,8 @@ public class GraphEditorDemo extends JPanel implements Printable {
         .setEdgeLabelFunction(
             e -> edgeLabelMap.containsKey(e) ? edgeLabelMap.get(e) : e.toString());
 
-    vv.setVertexSpatial(new Spatial.NoOp.Vertex(vv.getModel().getLayoutModel()));
-    vv.setEdgeSpatial(new Spatial.NoOp.Edge(vv.getModel()));
+    vv.setVertexSpatial(new Spatial.NoOp.Vertex(vv.getVisualizationModel().getLayoutModel()));
+    vv.setEdgeSpatial(new Spatial.NoOp.Edge(vv.getVisualizationModel()));
 
     vv.setVertexToolTipFunction(vv.getRenderContext().getVertexLabelFunction());
 

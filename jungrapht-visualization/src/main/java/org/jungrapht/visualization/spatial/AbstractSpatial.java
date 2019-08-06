@@ -98,7 +98,7 @@ public abstract class AbstractSpatial<T, NT> implements Spatial<T> {
     if (!evt.active) {
       log.trace("will recalcluate");
       recalculate();
-      layoutModel.getLayoutChangeSupport().fireLayoutChanged(); // this will cause a repaint
+      layoutModel.getModelChangeSupport().fireModelChanged(); // this will cause a repaint
     }
   }
 }

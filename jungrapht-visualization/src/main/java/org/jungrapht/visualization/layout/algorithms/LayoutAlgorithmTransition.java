@@ -17,19 +17,19 @@ public class LayoutAlgorithmTransition {
 
   public static <V, E> void animate(
       VisualizationServer<V, E> visualizationServer, LayoutAlgorithm<V> endLayoutAlgorithm) {
-    fireLayoutStateChanged(visualizationServer.getModel().getLayoutModel(), true);
+    fireLayoutStateChanged(visualizationServer.getVisualizationModel().getLayoutModel(), true);
     LayoutAlgorithm<V> transitionLayoutAlgorithm =
         AnimationLayoutAlgorithm.<V>builder()
             .visualizationServer(visualizationServer)
             .endLayoutAlgorithm(endLayoutAlgorithm)
             .prerelax(false)
             .build();
-    visualizationServer.getModel().setLayoutAlgorithm(transitionLayoutAlgorithm);
+    visualizationServer.getVisualizationModel().setLayoutAlgorithm(transitionLayoutAlgorithm);
   }
 
   public static <V, E> void apply(
       VisualizationServer<V, E> visualizationServer, LayoutAlgorithm<V> endLayoutAlgorithm) {
-    visualizationServer.getModel().setLayoutAlgorithm(endLayoutAlgorithm);
+    visualizationServer.getVisualizationModel().setLayoutAlgorithm(endLayoutAlgorithm);
   }
 
   private static void fireLayoutStateChanged(LayoutModel layoutModel, boolean state) {

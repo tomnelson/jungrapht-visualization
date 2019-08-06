@@ -11,11 +11,11 @@ import java.util.List;
  *
  * @author Tom Nelson
  */
-public interface LayoutChange {
+public interface ModelChange {
 
   /** indicates support for this type of event dispatch */
   interface Producer {
-    LayoutChange.Support getLayoutChangeSupport();
+    ModelChange.Support getModelChangeSupport();
   }
 
   /** method signatures to add/remove listeners and fire events */
@@ -29,13 +29,13 @@ public interface LayoutChange {
 
     void setFireEvents(boolean fireEvents);
 
-    void addLayoutChangeListener(LayoutChange.Listener l);
+    void addModelChangeListener(ModelChange.Listener l);
 
-    void removeLayoutChangeListener(LayoutChange.Listener l);
+    void removeModelChangeListener(ModelChange.Listener l);
 
-    List<Listener> getLayoutChangeListeners();
+    List<Listener> getModelChangeListeners();
 
-    void fireLayoutChanged();
+    void fireModelChanged();
   }
 
   /** implementation of support. Manages a List of listeners */
@@ -47,7 +47,7 @@ public interface LayoutChange {
     protected boolean fireEvents = true;
 
     /** listeners for these changes */
-    protected List<Listener> changeListeners = Collections.synchronizedList(new ArrayList<>());
+    protected List<Listener> modelChangeListeners = Collections.synchronizedList(new ArrayList<>());
 
     @Override
     public boolean isFireEvents() {
@@ -59,30 +59,30 @@ public interface LayoutChange {
       this.fireEvents = fireEvents;
       // fire an event in case anything was missed while inactive
       if (fireEvents) {
-        fireLayoutChanged();
+        this.fireModelChanged();
       }
     }
 
     @Override
-    public void addLayoutChangeListener(LayoutChange.Listener l) {
-      changeListeners.add(l);
+    public void addModelChangeListener(ModelChange.Listener l) {
+      modelChangeListeners.add(l);
     }
 
     @Override
-    public void removeLayoutChangeListener(LayoutChange.Listener l) {
-      changeListeners.remove(l);
+    public void removeModelChangeListener(ModelChange.Listener l) {
+      modelChangeListeners.remove(l);
     }
 
     @Override
-    public List<LayoutChange.Listener> getLayoutChangeListeners() {
-      return changeListeners;
+    public List<ModelChange.Listener> getModelChangeListeners() {
+      return modelChangeListeners;
     }
 
     @Override
-    public void fireLayoutChanged() {
+    public void fireModelChanged() {
       if (fireEvents) {
-        for (int i = changeListeners.size() - 1; i >= 0; i--) {
-          changeListeners.get(i).layoutChanged();
+        for (int i = modelChangeListeners.size() - 1; i >= 0; i--) {
+          modelChangeListeners.get(i).modelChanged();
         }
       }
     }
@@ -90,6 +90,6 @@ public interface LayoutChange {
 
   /** implemented by a consumer of this type of event */
   interface Listener {
-    void layoutChanged();
+    void modelChanged();
   }
 }

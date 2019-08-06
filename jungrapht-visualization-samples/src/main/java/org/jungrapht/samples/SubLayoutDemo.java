@@ -156,7 +156,9 @@ public class SubLayoutDemo extends JPanel {
     layoutTypeComboBox.addItemListener(
         e -> {
           if (e.getStateChange() == ItemEvent.SELECTED) {
-            vv.getModel().getLayoutModel().accept(((Layouts) e.getItem()).getLayoutAlgorithm());
+            vv.getVisualizationModel()
+                .getLayoutModel()
+                .accept(((Layouts) e.getItem()).getLayoutAlgorithm());
           }
         });
 
@@ -324,7 +326,7 @@ public class SubLayoutDemo extends JPanel {
           if (subLayoutAlgorithm instanceof TreeLayoutAlgorithm) {
             LayoutModel positionModel =
                 this.getTreeLayoutPositions(
-                    SpanningTreeAdapter.getSpanningTree(vv.getModel().getGraph()),
+                    SpanningTreeAdapter.getSpanningTree(vv.getVisualizationModel().getGraph()),
                     subLayoutAlgorithm);
             newLayoutModel.setInitializer(positionModel);
             subLayoutAlgorithm = new StaticLayoutAlgorithm();

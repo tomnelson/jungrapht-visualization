@@ -66,7 +66,7 @@ public class LensTransformSupport<V, E> extends TransformSupport<V, E> {
         multiLayerTransformer.getTransformer(MultiLayerTransformer.Layer.VIEW);
     MutableTransformer layoutTransformer =
         multiLayerTransformer.getTransformer(MultiLayerTransformer.Layer.LAYOUT);
-    VisualizationModel<V, E> model = vv.getModel();
+    VisualizationModel<V, E> model = vv.getVisualizationModel();
 
     if (viewTransformer instanceof LensTransformer) {
       shape = multiLayerTransformer.transform(shape);
@@ -93,7 +93,7 @@ public class LensTransformSupport<V, E> extends TransformSupport<V, E> {
         multiLayerTransformer.getTransformer(MultiLayerTransformer.Layer.VIEW);
     MutableTransformer layoutTransformer =
         multiLayerTransformer.getTransformer(MultiLayerTransformer.Layer.LAYOUT);
-    VisualizationModel<V, E> model = vv.getModel();
+    VisualizationModel<V, E> model = vv.getVisualizationModel();
 
     if (viewTransformer instanceof LensTransformer) {
       shape = multiLayerTransformer.transform(shape);
@@ -119,7 +119,7 @@ public class LensTransformSupport<V, E> extends TransformSupport<V, E> {
         multiLayerTransformer.getTransformer(MultiLayerTransformer.Layer.VIEW);
     MutableTransformer layoutTransformer =
         multiLayerTransformer.getTransformer(MultiLayerTransformer.Layer.LAYOUT);
-    VisualizationModel<V, E> model = vv.getModel();
+    VisualizationModel<V, E> model = vv.getVisualizationModel();
 
     if (viewTransformer instanceof LensTransformer) {
       // use all layers
@@ -149,7 +149,7 @@ public class LensTransformSupport<V, E> extends TransformSupport<V, E> {
         multiLayerTransformer.getTransformer(MultiLayerTransformer.Layer.VIEW);
     MutableTransformer layoutTransformer =
         multiLayerTransformer.getTransformer(MultiLayerTransformer.Layer.LAYOUT);
-    VisualizationModel<V, E> model = vv.getModel();
+    VisualizationModel<V, E> model = vv.getVisualizationModel();
 
     if (viewTransformer instanceof LensTransformer) {
       // use all layers
@@ -188,7 +188,7 @@ public class LensTransformSupport<V, E> extends TransformSupport<V, E> {
 
     if (layoutTransformer instanceof LensTransformer) {
       // apply the shape changer
-      LayoutModel<V> layoutModel = vv.getModel().getLayoutModel();
+      LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
       Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
       HyperbolicShapeTransformer shapeChanger = new HyperbolicShapeTransformer(d, viewTransformer);
       LensTransformer lensTransformer = (LensTransformer) layoutTransformer;

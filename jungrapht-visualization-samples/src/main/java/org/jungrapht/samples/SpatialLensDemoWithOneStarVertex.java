@@ -123,7 +123,7 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
     vv.addKeyListener(graphMouse.getModeKeyListener());
 
     // create a lens to share between the two hyperbolic transformers
-    LayoutModel<String> layoutModel = vv.getModel().getLayoutModel();
+    LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
     layoutModel.set("A", 300, 300);
     Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
     Lens lens = new Lens(d);

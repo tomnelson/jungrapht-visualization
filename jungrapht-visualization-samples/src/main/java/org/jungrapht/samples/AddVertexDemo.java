@@ -98,7 +98,7 @@ public class AddVertexDemo extends JPanel {
               public void componentResized(ComponentEvent e) {
                 super.componentResized(e);
                 VisualizationViewer vv = (VisualizationViewer) e.getComponent();
-                VisualizationModel model = vv.getModel();
+                VisualizationModel model = vv.getVisualizationModel();
                 LayoutModel layoutModel = model.getLayoutModel();
                 layoutModel.setSize(vv.getWidth(), vv.getHeight());
                 layoutModel.accept(model.getLayoutAlgorithm());
@@ -168,7 +168,7 @@ public class AddVertexDemo extends JPanel {
         v_prev = v1;
 
         // accept the algorithm again so that it will turn off the old relaxer and start a new one
-        vv.getModel().getLayoutModel().accept(layoutAlgorithm);
+        vv.getVisualizationModel().getLayoutModel().accept(layoutAlgorithm);
 
         vv.repaint();
 

@@ -1,21 +1,16 @@
-/*
- * Copyright (c) 2003, The JUNG Authors
- * All rights reserved.
- *
- * This software is open-source under the BSD license; see either "license.txt"
- * or https://github.com/tomnelson/jungrapht-visualization/blob/master/LICENSE for a description.
- */
 package org.jungrapht.samples;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridLayout;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
+import java.awt.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipInputStream;
 import javax.swing.*;
 import org.jgrapht.Graph;
@@ -24,6 +19,7 @@ import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 import org.jgrapht.io.EdgeProvider;
 import org.jgrapht.io.GmlImporter;
+import org.jgrapht.io.ImportException;
 import org.jgrapht.io.VertexProvider;
 import org.jungrapht.samples.util.LayoutHelper;
 import org.jungrapht.samples.util.SpanningTreeAdapter;
@@ -41,17 +37,37 @@ import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.LoadingCacheLayoutModel;
 import org.jungrapht.visualization.util.BalloonLayoutRings;
 import org.jungrapht.visualization.util.RadialLayoutRings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Demonstrates several of the graph layout algorithms. Allows the user to interactively select one
  * of several graphs, and one of several layouts, and visualizes the combination.
  *
- * @author Danyel Fisher
- * @author Joshua O'Madadhain
- * @author Tom Nelson - extensive modification
+ * @author Tom Nelson
  */
 @SuppressWarnings("serial")
-public class ShowLayoutsWithJGraphtIO extends JPanel {
+public class ShowLayoutsWithJGraphtIO extends JFrame {
+
+  private static final Logger log = LoggerFactory.getLogger(ShowLayoutsWithJGraphtIO.class);
+
+  enum GraphLinks {
+    ROUTERS("https://gephi.org/datasets/internet_routers-22july06.gml.zip"),
+    LES_MISERABLES("https://gephi.org/datasets/lesmiserables.gml.zip"),
+    KARATE("https://gephi.org/datasets/karate.gml.zip"),
+    NETSCIENCE("https://gephi.org/datasets/netscience.gml.zip"),
+    WORD_ADJACENCIES("https://gephi.org/datasets/word_adjacencies.gml.zip"),
+    POWER("https://gephi.org/datasets/power.gml.zip");
+    private final String url;
+
+    GraphLinks(String url) {
+      this.url = url;
+    }
+  }
+
+  public static GraphLinks[] getCombos() {
+    return GraphLinks.values();
+  }
 
   BalloonLayoutRings balloonLayoutRings;
   RadialLayoutRings radialLayoutRings;
@@ -59,25 +75,16 @@ public class ShowLayoutsWithJGraphtIO extends JPanel {
   public ShowLayoutsWithJGraphtIO() throws Exception {
 
     Graph<String, DefaultEdge> graph = new SimpleGraph<>(DefaultEdge.class);
+    JPanel container = new JPanel(new BorderLayout());
 
-    VertexProvider<String> vp = (label, attributes) -> attributes.toString();
+    VertexProvider<String> vp = (label, attributes) -> label;
     EdgeProvider<String, DefaultEdge> ep =
         (from, to, label, attributes) -> graph.getEdgeSupplier().get();
 
-    GmlImporter gmlImporter = new GmlImporter(vp, ep);
-    URL url = new URL("https://gephi.org/datasets/netscience.gml.zip");
-    ZipInputStream zipInputStream = new ZipInputStream(url.openStream());
-
-    if (zipInputStream.getNextEntry() != null) {
-      InputStreamReader inputStreamReader = new InputStreamReader(zipInputStream);
-      gmlImporter.importGraph(graph, inputStreamReader);
-      inputStreamReader.close();
-    }
-
     final VisualizationViewer<String, DefaultEdge> vv =
         VisualizationViewer.builder(graph)
-            .layoutSize(new Dimension(1300, 1300))
-            .viewSize(new Dimension(600, 600))
+            .layoutSize(new Dimension(3000, 3000))
+            .viewSize(new Dimension(1000, 1000))
             .build();
 
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
@@ -89,7 +96,7 @@ public class ShowLayoutsWithJGraphtIO extends JPanel {
         vertex ->
             vertex.toString()
                 + ". with neighbors:"
-                + Graphs.neighborListOf(vv.getModel().getGraph(), vertex));
+                + Graphs.neighborListOf(vv.getVisualizationModel().getGraph(), vertex));
 
     final ScalingControl scaler = new CrossoverScalingControl();
     vv.scaleToLayout(scaler);
@@ -105,8 +112,37 @@ public class ShowLayoutsWithJGraphtIO extends JPanel {
 
     vv.setBackground(Color.WHITE);
 
-    setLayout(new BorderLayout());
-    add(vv.getComponent(), BorderLayout.CENTER);
+    final JComboBox graphComboBox = new JComboBox(getCombos());
+    graphComboBox.addActionListener(
+        e ->
+            SwingUtilities.invokeLater(
+                () -> {
+                  clear(graph);
+                  String urlString = ((GraphLinks) graphComboBox.getSelectedItem()).url;
+                  try (InputStreamReader inputStreamReader = get(urlString)) {
+                    GmlImporter gmlImporter = new GmlImporter(vp, ep);
+                    try {
+                      gmlImporter.importGraph(graph, inputStreamReader);
+                    } catch (ImportException ex) {
+                      ex.printStackTrace();
+                    }
+                  } catch (IOException ex) {
+                    ex.printStackTrace();
+                  } catch (Exception ex) {
+                    ex.printStackTrace();
+                  }
+                  vv.getVisualizationModel().setGraph(graph);
+                  setTitle(
+                      "Graph With "
+                          + graph.vertexSet().size()
+                          + " vertices and "
+                          + graph.edgeSet().size()
+                          + " edges");
+                }));
+
+    graphComboBox.setSelectedItem(GraphLinks.NETSCIENCE);
+
+    container.add(vv.getComponent(), BorderLayout.CENTER);
     LayoutHelper.Layouts[] combos = LayoutHelper.getCombos();
     final JRadioButton animateLayoutTransition = new JRadioButton("Animate Layout Transition");
 
@@ -120,10 +156,11 @@ public class ShowLayoutsWithJGraphtIO extends JPanel {
                   vv.removePreRenderPaintable(balloonLayoutRings);
                   vv.removePreRenderPaintable(radialLayoutRings);
                   if ((layoutAlgorithm instanceof TreeLayoutAlgorithm)
-                      && vv.getModel().getGraph().getType().isUndirected()) {
-                    Graph tree = SpanningTreeAdapter.getSpanningTree(vv.getModel().getGraph());
+                      && vv.getVisualizationModel().getGraph().getType().isUndirected()) {
+                    Graph tree =
+                        SpanningTreeAdapter.getSpanningTree(vv.getVisualizationModel().getGraph());
                     LayoutModel positionModel = this.getTreeLayoutPositions(tree, layoutAlgorithm);
-                    vv.getModel().getLayoutModel().setInitializer(positionModel);
+                    vv.getVisualizationModel().getLayoutModel().setInitializer(positionModel);
                     layoutAlgorithm = new StaticLayoutAlgorithm();
                   }
                   if (animateLayoutTransition.isSelected()) {
@@ -141,26 +178,62 @@ public class ShowLayoutsWithJGraphtIO extends JPanel {
                         new RadialLayoutRings(vv, (RadialTreeLayoutAlgorithm) layoutAlgorithm);
                     vv.addPreRenderPaintable(radialLayoutRings);
                   }
+
+                  Preconditions.checkState(
+                      true,
+                      "oops3",
+                      vv.getVisualizationModel()
+                          .getModelChangeSupport()
+                          .getModelChangeListeners()
+                          .contains(this));
+
+                  Preconditions.checkState(
+                      true,
+                      "oops4",
+                      vv.getVisualizationModel()
+                          .getLayoutModel()
+                          .getModelChangeSupport()
+                          .getModelChangeListeners()
+                          .contains(vv.getVisualizationModel()));
                 }));
 
-    jcb.setSelectedItem(LayoutHelper.Layouts.FR);
+    jcb.setSelectedItem(LayoutHelper.Layouts.FR_BH_VISITOR);
 
     JPanel control_panel = new JPanel(new GridLayout(2, 1));
     JPanel topControls = new JPanel();
     JPanel bottomControls = new JPanel();
     control_panel.add(topControls);
     control_panel.add(bottomControls);
-    add(control_panel, BorderLayout.NORTH);
+    container.add(control_panel, BorderLayout.NORTH);
 
     JButton showRTree = new JButton("Show RTree");
     showRTree.addActionListener(e -> RTreeVisualization.showRTree(vv));
 
     topControls.add(jcb);
+    topControls.add(graphComboBox);
     bottomControls.add(animateLayoutTransition);
     bottomControls.add(plus);
     bottomControls.add(minus);
     bottomControls.add(modeBox);
     bottomControls.add(showRTree);
+
+    setTitle(
+        "Graph With "
+            + graph.vertexSet().size()
+            + " vertices and "
+            + graph.edgeSet().size()
+            + " edges");
+    getContentPane().add(container);
+    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    pack();
+    setVisible(true);
+  }
+
+  void clear(Graph graph) {
+    Set edges = Sets.newHashSet(graph.edgeSet());
+    Set vertices = Sets.newHashSet(graph.vertexSet());
+    edges.stream().forEach(e -> graph.removeEdge(e));
+    vertices.stream().forEach(v -> graph.removeVertex(v));
   }
 
   LayoutModel getTreeLayoutPositions(Graph tree, LayoutAlgorithm treeLayout) {
@@ -179,14 +252,19 @@ public class ShowLayoutsWithJGraphtIO extends JPanel {
     return roots;
   }
 
-  public static void main(String[] args) throws Exception {
-    JPanel jp = new ShowLayoutsWithJGraphtIO();
+  static InputStreamReader get(String urlString) throws Exception {
+    URL url = new URL(urlString);
+    InputStream inputStream = url.openStream();
+    if (urlString.endsWith(".zip")) {
+      inputStream = new ZipInputStream(inputStream);
+      ((ZipInputStream) inputStream).getNextEntry();
+    } else if (urlString.endsWith(".gz")) {
+      inputStream = new GZIPInputStream(inputStream);
+    }
+    return new InputStreamReader(inputStream);
+  }
 
-    JFrame jf = new JFrame();
-    jf.setTitle("Guava Graph Visualization");
-    jf.getContentPane().add(jp);
-    jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-    jf.pack();
-    jf.setVisible(true);
+  public static void main(String[] args) throws Exception {
+    new ShowLayoutsWithJGraphtIO();
   }
 }

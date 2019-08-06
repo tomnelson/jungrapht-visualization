@@ -36,7 +36,7 @@ public interface SatelliteVisualizationViewer<V, E> extends VisualizationViewer<
     protected VisualizationViewer<V, E> master;
 
     protected Builder(VisualizationViewer<V, E> master) {
-      super(master.getModel());
+      super(master.getVisualizationModel());
       this.master = master;
     }
 

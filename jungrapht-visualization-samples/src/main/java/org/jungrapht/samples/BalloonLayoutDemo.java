@@ -84,7 +84,7 @@ public class BalloonLayoutDemo extends JPanel {
 
     vv.setGraphMouse(graphMouse);
     vv.addKeyListener(graphMouse.getModeKeyListener());
-    LayoutModel layoutModel = vv.getModel().getLayoutModel();
+    LayoutModel layoutModel = vv.getVisualizationModel().getLayoutModel();
     Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
     Lens lens = new Lens(d);
     hyperbolicViewSupport =

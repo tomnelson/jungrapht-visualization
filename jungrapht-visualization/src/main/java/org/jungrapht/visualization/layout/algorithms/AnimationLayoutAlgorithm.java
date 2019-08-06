@@ -58,7 +58,7 @@ public class AnimationLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorith
     // create a LayoutModel to hold points for the transition
     this.transitionLayoutModel =
         LoadingCacheLayoutModel.<V>builder()
-            .graph(visualizationServer.getModel().getGraph())
+            .graph(visualizationServer.getVisualizationModel().getGraph())
             .layoutModel(layoutModel)
             .initializer(layoutModel)
             .build();
@@ -83,7 +83,7 @@ public class AnimationLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorith
     if (counter >= count) {
       done = true;
       this.transitionLayoutModel.stopRelaxer();
-      this.visualizationServer.getModel().setLayoutAlgorithm(endLayoutAlgorithm);
+      this.visualizationServer.getVisualizationModel().setLayoutAlgorithm(endLayoutAlgorithm);
     }
   }
 
