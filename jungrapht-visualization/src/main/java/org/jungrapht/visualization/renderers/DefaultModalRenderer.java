@@ -4,6 +4,7 @@ import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 import static org.jungrapht.visualization.renderers.LightweightModalRenderer.Mode.DEFAULT;
 import static org.jungrapht.visualization.renderers.LightweightModalRenderer.Mode.LIGHTWEIGHT;
 
+import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -60,7 +61,7 @@ public class DefaultModalRenderer<V, E> implements LightweightModalRenderer<V, E
   protected Mode mode;
 
   private Map<Mode, Renderer<V, E>> rendererMap =
-      Map.of(DEFAULT, new DefaultRenderer<>(), LIGHTWEIGHT, new LightweightRenderer<>());
+      ImmutableMap.of(DEFAULT, new DefaultRenderer<>(), LIGHTWEIGHT, new LightweightRenderer<>());
 
   Timer timer;
   JComponent component;

@@ -1,12 +1,10 @@
 package org.jungrapht.visualization.spatial;
 
-import com.google.common.collect.Sets;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.jungrapht.visualization.VisualizationModel;
@@ -254,7 +252,7 @@ public interface Spatial<T> extends LayoutStateChange.Listener {
 
       @Override
       public Set<V> getVisibleElements(Shape shape) {
-        return new HashSet<>(layoutModel.getGraph().vertexSet());
+        return layoutModel.getGraph().vertexSet();
       }
 
       @Override
@@ -286,7 +284,7 @@ public interface Spatial<T> extends LayoutStateChange.Listener {
 
       @Override
       public Set<E> getVisibleElements(Shape shape) {
-        return Sets.newHashSet(visualizationModel.getGraph().edgeSet());
+        return visualizationModel.getGraph().edgeSet();
       }
 
       @Override

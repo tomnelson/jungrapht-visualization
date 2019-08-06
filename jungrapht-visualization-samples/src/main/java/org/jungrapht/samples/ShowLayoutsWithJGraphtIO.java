@@ -3,7 +3,6 @@ package org.jungrapht.samples;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import java.awt.*;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -19,7 +18,6 @@ import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 import org.jgrapht.io.EdgeProvider;
 import org.jgrapht.io.GmlImporter;
-import org.jgrapht.io.ImportException;
 import org.jgrapht.io.VertexProvider;
 import org.jungrapht.samples.util.LayoutHelper;
 import org.jungrapht.samples.util.SpanningTreeAdapter;
@@ -121,13 +119,7 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
                   String urlString = ((GraphLinks) graphComboBox.getSelectedItem()).url;
                   try (InputStreamReader inputStreamReader = get(urlString)) {
                     GmlImporter gmlImporter = new GmlImporter(vp, ep);
-                    try {
-                      gmlImporter.importGraph(graph, inputStreamReader);
-                    } catch (ImportException ex) {
-                      ex.printStackTrace();
-                    }
-                  } catch (IOException ex) {
-                    ex.printStackTrace();
+                    gmlImporter.importGraph(graph, inputStreamReader);
                   } catch (Exception ex) {
                     ex.printStackTrace();
                   }

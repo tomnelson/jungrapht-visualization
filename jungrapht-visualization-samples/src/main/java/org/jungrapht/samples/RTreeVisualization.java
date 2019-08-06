@@ -89,8 +89,8 @@ public class RTreeVisualization<V> extends JPanel {
     graph = createTreeFromRTree(rtree);
 
     treeLayoutAlgorithm = TreeLayoutAlgorithm.builder().build();
-    radialLayoutAlgorithm = RadialTreeLayoutAlgorithm.builder().build();
-    balloonLayoutAlgorithm = BalloonLayoutAlgorithm.builder().build();
+    radialLayoutAlgorithm = RadialTreeLayoutAlgorithm.builder().expandLayout(false).build();
+    balloonLayoutAlgorithm = BalloonLayoutAlgorithm.builder().expandLayout(false).build();
 
     vv =
         VisualizationViewer.builder(graph)
@@ -161,7 +161,6 @@ public class RTreeVisualization<V> extends JPanel {
 
     JRadioButton animate = new JRadioButton("Animate Transition");
     JRadioButton treeLayout = new JRadioButton("Tree Layout");
-    treeLayout.setSelected(true);
     treeLayout.addItemListener(
         e -> {
           if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -221,6 +220,7 @@ public class RTreeVisualization<V> extends JPanel {
     radio.add(treeLayout);
     radio.add(radialLayout);
     radio.add(balloonLayout);
+    balloonLayout.setSelected(true);
 
     JPanel layoutPanel = new JPanel(new GridLayout(2, 1));
     layoutPanel.add(treeLayout);
@@ -380,7 +380,7 @@ public class RTreeVisualization<V> extends JPanel {
         rtreeField.setAccessible(true);
         RTree rtree = (RTree) rtreeField.get(spatial);
         content.add(new RTreeVisualization<>(rtree, vv));
-        // where is the caling visualization:
+        // where is the calling visualization:
         Point2D callerLocation = vv.getComponent().getLocationOnScreen();
         int callerWidth = vv.getComponent().getWidth();
         frame.setLocation(

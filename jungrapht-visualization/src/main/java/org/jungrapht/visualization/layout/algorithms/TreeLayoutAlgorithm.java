@@ -35,6 +35,8 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
   public static class Builder<V, T extends TreeLayoutAlgorithm<V>, B extends Builder<V, T, B>> {
     protected int horizontalVertexSpacing = DEFAULT_HORIZONTAL_VERTEX_SPACING;
     protected int verticalVertexSpacing = DEFAULT_VERTICAL_VERTEX_SPACING;
+    protected boolean expandLayout = true;
+    protected int initialVerticalOffset;
 
     protected B self() {
       return (B) this;
@@ -54,6 +56,11 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
       return self();
     }
 
+    public B expandLayout(boolean expandLayout) {
+      this.expandLayout = expandLayout;
+      return self();
+    }
+
     public T build() {
       return (T) new TreeLayoutAlgorithm<>(this);
     }
@@ -64,7 +71,7 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
   }
 
   protected TreeLayoutAlgorithm(Builder<V, ?, ?> builder) {
-    this(builder.horizontalVertexSpacing, builder.verticalVertexSpacing);
+    this(builder.horizontalVertexSpacing, builder.verticalVertexSpacing, builder.expandLayout);
   }
 
   /**
@@ -73,9 +80,11 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
    * @param horizontalVertexSpacing the horizontal spacing between adjacent siblings
    * @param verticalVertexSpacing the vertical spacing between adjacent siblings
    */
-  protected TreeLayoutAlgorithm(int horizontalVertexSpacing, int verticalVertexSpacing) {
+  protected TreeLayoutAlgorithm(
+      int horizontalVertexSpacing, int verticalVertexSpacing, boolean expandLayout) {
     this.horizontalVertexSpacing = horizontalVertexSpacing;
     this.verticalVertexSpacing = verticalVertexSpacing;
+    this.expandLayout = expandLayout;
   }
 
   protected Map<V, Integer> basePositions = new HashMap<>();
@@ -93,6 +102,8 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
 
   /** The vertical vertex spacing. Defaults to {@code DEFAULT_VERTICAL_VERTEX_SPACING}. */
   protected int verticalVertexSpacing = DEFAULT_VERTICAL_VERTEX_SPACING;
+
+  protected boolean expandLayout;
 
   @Override
   public void visit(LayoutModel<V> layoutModel) {
@@ -125,7 +136,9 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
     log.trace("overallWidth {}", overallWidth);
     int largerWidth = Math.max(layoutModel.getWidth(), overallWidth);
     int largerHeight = Math.max(layoutModel.getHeight(), overallHeight);
-    layoutModel.setSize(largerWidth, largerHeight);
+    if (expandLayout) {
+      layoutModel.setSize(largerWidth, largerHeight);
+    }
     log.trace("layoutModel.getHeight() {}", layoutModel.getHeight());
     log.trace("overallHeight {}", overallHeight);
 
@@ -133,7 +146,7 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
     int y = getInitialY(layoutModel.getHeight(), overallHeight);
     log.trace("got initial y of {}", y);
 
-    Set<V> seen = new HashSet<>();
+    //    Set<V> seen = new HashSet<>();
     for (V vertex : roots) {
       int w = this.basePositions.get(vertex);
       log.trace("w is {} and basePositions.get(vertex) = {}", w, basePositions.get(vertex));

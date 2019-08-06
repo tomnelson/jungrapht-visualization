@@ -99,6 +99,7 @@ public class EdgeSortingTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
         builder.horizontalVertexSpacing,
         builder.verticalVertexSpacing,
         builder.edgeComparator,
+        builder.expandLayout,
         builder.adjustProportions);
   }
 
@@ -111,8 +112,9 @@ public class EdgeSortingTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
       int horizontalVertexSpacing,
       int verticalVertexSpacing,
       Comparator<E> edgeComparator,
+      boolean expandLayout,
       boolean adjustProportions) {
-    super(horizontalVertexSpacing, verticalVertexSpacing);
+    super(horizontalVertexSpacing, verticalVertexSpacing, expandLayout);
     this.edgeComparator = edgeComparator;
     this.adjustProportions = adjustProportions;
   }
