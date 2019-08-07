@@ -116,7 +116,6 @@ public class EdgeSortingTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
       boolean adjustProportions) {
     super(horizontalVertexSpacing, verticalVertexSpacing, expandLayout);
     this.edgeComparator = edgeComparator;
-    this.expandLayout = expandLayout;
     this.adjustProportions = adjustProportions;
   }
 

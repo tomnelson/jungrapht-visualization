@@ -41,7 +41,7 @@ public class RadialTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V> {
   }
 
   public static <V> Builder<V, ?, ?> builder() {
-    return new Builder<>();
+    return (Builder<V, ?, ?>) new Builder<>().expandLayout(false);
   }
 
   protected RadialTreeLayoutAlgorithm(Builder<V, ?, ?> builder) {

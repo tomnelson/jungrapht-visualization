@@ -28,10 +28,18 @@ public class TreeLayoutSelector<V, E> extends JPanel {
   final JRadioButton animateTransition = new JRadioButton("Animate Transition", true);
 
   public TreeLayoutSelector(VisualizationServer<V, E> vv) {
-    this(vv, 0);
+    this(vv, 0, null);
+  }
+
+  public TreeLayoutSelector(VisualizationServer<V, E> vv, Runnable after) {
+    this(vv, 0, after);
   }
 
   public TreeLayoutSelector(VisualizationServer<V, E> vv, int initialSelection) {
+    this(vv, initialSelection, null);
+  }
+
+  public TreeLayoutSelector(VisualizationServer<V, E> vv, int initialSelection, Runnable after) {
     super(new GridLayout(0, 1));
     this.vv = vv;
     JRadioButton treeButton = new JRadioButton("Tree");
@@ -39,9 +47,10 @@ public class TreeLayoutSelector<V, E> extends JPanel {
         e -> {
           if (e.getStateChange() == ItemEvent.SELECTED) {
             if (animateTransition.isSelected()) {
-              LayoutAlgorithmTransition.animate(vv, treeLayoutAlgorithm);
+              LayoutAlgorithmTransition.animate(vv, treeLayoutAlgorithm, after);
             } else {
-              LayoutAlgorithmTransition.apply(vv, treeLayoutAlgorithm);
+              LayoutAlgorithmTransition.apply(vv, treeLayoutAlgorithm, after);
+              //              vv.scaleToLayout();
             }
           }
           vv.repaint();
@@ -52,9 +61,10 @@ public class TreeLayoutSelector<V, E> extends JPanel {
         e -> {
           if (e.getStateChange() == ItemEvent.SELECTED) {
             if (animateTransition.isSelected()) {
-              LayoutAlgorithmTransition.animate(vv, balloonLayoutAlgorithm);
+              LayoutAlgorithmTransition.animate(vv, balloonLayoutAlgorithm, after);
             } else {
-              LayoutAlgorithmTransition.apply(vv, balloonLayoutAlgorithm);
+              LayoutAlgorithmTransition.apply(vv, balloonLayoutAlgorithm, after);
+              //                vv.scaleToLayout();
             }
             balloonPaintable = new BalloonLayoutRings(vv, balloonLayoutAlgorithm);
             vv.addPreRenderPaintable(balloonPaintable);
@@ -69,9 +79,10 @@ public class TreeLayoutSelector<V, E> extends JPanel {
         e -> {
           if (e.getStateChange() == ItemEvent.SELECTED) {
             if (animateTransition.isSelected()) {
-              LayoutAlgorithmTransition.animate(vv, radialTreeLayoutAlgorithm);
+              LayoutAlgorithmTransition.animate(vv, radialTreeLayoutAlgorithm, after);
             } else {
-              LayoutAlgorithmTransition.apply(vv, radialTreeLayoutAlgorithm);
+              LayoutAlgorithmTransition.apply(vv, radialTreeLayoutAlgorithm, after);
+              //                vv.scaleToLayout();
             }
             radialPaintable = new RadialLayoutRings<>(vv, radialTreeLayoutAlgorithm);
             vv.addPreRenderPaintable(radialPaintable);

@@ -35,7 +35,7 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
   public static class Builder<V, T extends TreeLayoutAlgorithm<V>, B extends Builder<V, T, B>> {
     protected int horizontalVertexSpacing = DEFAULT_HORIZONTAL_VERTEX_SPACING;
     protected int verticalVertexSpacing = DEFAULT_VERTICAL_VERTEX_SPACING;
-    protected boolean expandLayout;
+    protected boolean expandLayout = true; //default expand tree
 
     protected B self() {
       return (B) this;
@@ -208,7 +208,6 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
   protected int calculateWidth(LayoutModel<V> layoutModel, Collection<V> roots, Set<V> seen) {
     int width = roots.stream().mapToInt(vertex -> calculateWidth(layoutModel, vertex, seen)).sum();
     log.trace("entire width from {} is {}", roots, width);
-    //    log.info("basePositions {}", basePositions);
     return width;
   }
 

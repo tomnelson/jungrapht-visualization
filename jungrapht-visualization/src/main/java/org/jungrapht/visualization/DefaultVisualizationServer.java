@@ -418,6 +418,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
   }
 
   public void scaleToLayout(ScalingControl scaler) {
+    getRenderContext().getMultiLayerTransformer().setToIdentity();
     Dimension vd = getPreferredSize();
     log.trace("pref vd {}", vd);
     if (this.isShowing()) {
@@ -426,9 +427,11 @@ class DefaultVisualizationServer<V, E> extends JPanel
     }
     Dimension ld = visualizationModel.getLayoutSize();
     if (!vd.equals(ld)) {
+      double widthRatio = vd.getWidth() / ld.getWidth();
+      double heightRatio = vd.getHeight() / ld.getHeight();
+      double ratio = Math.min(widthRatio, heightRatio);
       log.trace("vd.getWidth() {} ld.getWidth() {} ", vd.getWidth(), ld.getWidth());
-      //      getRenderContext().getMultiLayerTransformer().setToIdentity();
-      scaler.scale(this, (float) (vd.getWidth() / ld.getWidth()), new Point2D.Double());
+      scaler.scale(this, (float) (ratio), new Point2D.Double());
       log.trace("scaled by {}", vd.getWidth() / ld.getWidth());
     }
   }

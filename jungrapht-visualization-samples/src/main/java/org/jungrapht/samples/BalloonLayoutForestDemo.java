@@ -139,7 +139,7 @@ public class BalloonLayoutForestDemo extends JPanel {
     graphMouse.setMode(ModalGraphMouse.Mode.TRANSFORMING);
 
     final ScalingControl scaler = new CrossoverScalingControl();
-    //    vv.scaleToLayout(new CrossoverScalingControl());
+    vv.scaleToLayout(new CrossoverScalingControl());
 
     JButton plus = new JButton("+");
     plus.addActionListener(e -> scaler.scale(vv, 1.1f, vv.getCenter()));
@@ -169,7 +169,7 @@ public class BalloonLayoutForestDemo extends JPanel {
     scaleGrid.add(plus);
     scaleGrid.add(minus);
     JPanel layoutControls = new JPanel();
-    layoutControls.add(new TreeLayoutSelector(vv, 1));
+    layoutControls.add(new TreeLayoutSelector(vv, vv::scaleToLayout));
     controls.add(layoutControls);
     controls.add(scaleGrid);
     controls.add(modeBox);

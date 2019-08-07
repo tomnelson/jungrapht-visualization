@@ -14,42 +14,51 @@ public class AnimationLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorith
 
   private static final Logger log = LoggerFactory.getLogger(AnimationLayoutAlgorithm.class);
 
-  public static class Builder<V> extends AbstractIterativeLayoutAlgorithm.Builder {
+  public static class Builder<V, T extends AnimationLayoutAlgorithm<V>, B extends Builder<V, T, B>>
+      extends AbstractIterativeLayoutAlgorithm.Builder<V, T, B> {
     protected VisualizationServer<V, ?> visualizationServer;
     protected LayoutAlgorithm<V> endLayoutAlgorithm;
+    protected Runnable after = null;
 
-    public Builder visualizationServer(VisualizationServer<V, ?> visualizationServer) {
+    public B visualizationServer(VisualizationServer<V, ?> visualizationServer) {
       this.visualizationServer = visualizationServer;
-      return this;
+      return self();
     }
 
-    public Builder endLayoutAlgorithm(LayoutAlgorithm<V> endLayoutAlgorithm) {
+    public B endLayoutAlgorithm(LayoutAlgorithm<V> endLayoutAlgorithm) {
       this.endLayoutAlgorithm = endLayoutAlgorithm;
-      return this;
+      return self();
     }
 
-    public AnimationLayoutAlgorithm<V> build() {
-      return new AnimationLayoutAlgorithm<>(this);
+    public B after(Runnable after) {
+      this.after = after;
+      return self();
+    }
+
+    public T build() {
+      return (T) new AnimationLayoutAlgorithm<>(this);
     }
   }
 
-  public static <V> Builder<V> builder() {
-    return new Builder();
+  public static <V> Builder<V, ?, ?> builder() {
+    return new Builder<>();
   }
 
   protected boolean done = false;
   protected int count = 20;
   protected int counter = 0;
+  protected Runnable after;
 
   LayoutModel<V> transitionLayoutModel;
   VisualizationServer<V, ?> visualizationServer;
   LayoutAlgorithm<V> endLayoutAlgorithm;
   LayoutModel<V> layoutModel;
 
-  protected AnimationLayoutAlgorithm(Builder<V> builder) {
+  protected AnimationLayoutAlgorithm(Builder<V, ?, ?> builder) {
     super(builder);
     this.visualizationServer = builder.visualizationServer;
     this.endLayoutAlgorithm = builder.endLayoutAlgorithm;
+    this.after = builder.after;
   }
 
   public void visit(LayoutModel<V> layoutModel) {
@@ -88,6 +97,7 @@ public class AnimationLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorith
   }
 
   public boolean done() {
+    after.run();
     return done;
   }
 }

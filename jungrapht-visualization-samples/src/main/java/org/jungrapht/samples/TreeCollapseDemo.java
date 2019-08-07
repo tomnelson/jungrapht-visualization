@@ -67,7 +67,7 @@ public class TreeCollapseDemo extends JPanel {
       this.graph.addEdge(source, target, edge);
     }
 
-    Dimension viewSize = new Dimension(1200, 600);
+    Dimension viewSize = new Dimension(600, 600);
     Dimension layoutSize = new Dimension(600, 600);
 
     vv = VisualizationViewer.builder(graph).layoutSize(layoutSize).viewSize(viewSize).build();
@@ -77,7 +77,7 @@ public class TreeCollapseDemo extends JPanel {
     // add a listener for ToolTips
     vv.setVertexToolTipFunction(Object::toString);
     vv.getRenderContext().setArrowFillPaintFunction(n -> Color.lightGray);
-
+    vv.scaleToLayout();
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
 

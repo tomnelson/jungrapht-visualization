@@ -30,9 +30,7 @@ import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultGraphMouse;
-import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
@@ -89,7 +87,7 @@ public class RTreeVisualization<V> extends JPanel {
     // create a simple graph for the demo
     graph = createTreeFromRTree(rtree);
 
-    treeLayoutAlgorithm = TreeLayoutAlgorithm.builder().build();
+    treeLayoutAlgorithm = TreeLayoutAlgorithm.builder().verticalVertexSpacing(200).build();
     radialLayoutAlgorithm = RadialTreeLayoutAlgorithm.builder().build();
     balloonLayoutAlgorithm = BalloonLayoutAlgorithm.builder().build();
 
@@ -109,9 +107,7 @@ public class RTreeVisualization<V> extends JPanel {
     vv.setVertexSpatial(new Spatial.NoOp.Vertex(vv.getVisualizationModel().getLayoutModel()));
     vv.setEdgeSpatial(new Spatial.NoOp.Edge(vv.getVisualizationModel()));
 
-    final ScalingControl scaler = new CrossoverScalingControl();
-
-    vv.scaleToLayout(scaler);
+    vv.scaleToLayout();
 
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
@@ -169,9 +165,9 @@ public class RTreeVisualization<V> extends JPanel {
           if (e.getStateChange() == ItemEvent.SELECTED) {
             vv.getRenderContext().setEdgeShapeFunction(EdgeShape.orthogonal());
             if (animate.isSelected()) {
-              LayoutAlgorithmTransition.animate(vv, treeLayoutAlgorithm);
+              LayoutAlgorithmTransition.animate(vv, treeLayoutAlgorithm, () -> {});
             } else {
-              LayoutAlgorithmTransition.apply(vv, treeLayoutAlgorithm);
+              LayoutAlgorithmTransition.apply(vv, treeLayoutAlgorithm, () -> {});
             }
             if (rings != null) {
               vv.removePreRenderPaintable(rings);
@@ -187,9 +183,9 @@ public class RTreeVisualization<V> extends JPanel {
           if (e.getStateChange() == ItemEvent.SELECTED) {
             vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
             if (animate.isSelected()) {
-              LayoutAlgorithmTransition.animate(vv, radialLayoutAlgorithm);
+              LayoutAlgorithmTransition.animate(vv, radialLayoutAlgorithm, vv::scaleToLayout);
             } else {
-              LayoutAlgorithmTransition.apply(vv, radialLayoutAlgorithm);
+              LayoutAlgorithmTransition.apply(vv, radialLayoutAlgorithm, vv::scaleToLayout);
             }
             if (rings == null) {
               rings = new Rings(vv.getVisualizationModel().getLayoutModel());
@@ -206,9 +202,9 @@ public class RTreeVisualization<V> extends JPanel {
           if (e.getStateChange() == ItemEvent.SELECTED) {
             vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
             if (animate.isSelected()) {
-              LayoutAlgorithmTransition.animate(vv, balloonLayoutAlgorithm);
+              LayoutAlgorithmTransition.animate(vv, balloonLayoutAlgorithm, vv::scaleToLayout);
             } else {
-              LayoutAlgorithmTransition.apply(vv, balloonLayoutAlgorithm);
+              LayoutAlgorithmTransition.apply(vv, balloonLayoutAlgorithm, vv::scaleToLayout);
             }
             if (balloonRings == null) {
               balloonRings = new BalloonRings(balloonLayoutAlgorithm);

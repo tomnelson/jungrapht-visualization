@@ -272,6 +272,7 @@ public class DefaultModalRenderer<V, E> implements LightweightModalRenderer<V, E
     boolean done;
 
     Timer() {
+      log.trace("timer start mode");
       setMode(LIGHTWEIGHT);
       component.repaint();
     }
@@ -291,7 +292,14 @@ public class DefaultModalRenderer<V, E> implements LightweightModalRenderer<V, E
           // ignore
         }
       }
-      setMode(DEFAULT);
+      log.trace("timer end mode");
+
+      if (scalePredicate.test(scaleSupplier)) {
+        // the scale is small, use lightweight
+        setMode(LIGHTWEIGHT);
+      } else {
+        setMode(DEFAULT);
+      }
       done = true;
       component.repaint();
     }

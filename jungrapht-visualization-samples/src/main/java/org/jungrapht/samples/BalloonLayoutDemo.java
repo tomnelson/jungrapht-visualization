@@ -138,7 +138,7 @@ public class BalloonLayoutDemo extends JPanel {
     scaleGrid.add(plus);
     scaleGrid.add(minus);
     JPanel layoutControls = new JPanel();
-    layoutControls.add(new TreeLayoutSelector<>(vv));
+    layoutControls.add(new TreeLayoutSelector<>(vv, vv::scaleToLayout));
     controls.add(layoutControls);
     controls.add(scaleGrid);
     controls.add(modeBox);
@@ -150,6 +150,7 @@ public class BalloonLayoutDemo extends JPanel {
   }
 
   public static void main(String[] args) {
+
     JFrame frame = new JFrame();
     Container content = frame.getContentPane();
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

@@ -287,7 +287,7 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
             JOptionPane.showMessageDialog(
                 (JComponent) e.getSource(), instructions, "Help", JOptionPane.PLAIN_MESSAGE));
 
-    JPanel controls = new JPanel();
+    JPanel controls = new JPanel(new GridLayout(0, 1));
     controls.setLayout(new BoxLayout(controls, BoxLayout.Y_AXIS));
     controls.add(ControlHelpers.getZoomControls(vv, "Zoom"));
     JPanel collapseControls = new JPanel(new GridLayout(0, 1));
@@ -301,7 +301,7 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
     JPanel modePanel = new JPanel();
     modePanel.add(modeBox);
     controls.add(modePanel);
-    JPanel jcbPanel = new JPanel();
+    JPanel jcbPanel = new JPanel(new GridLayout(0, 1));
     jcbPanel.add(jcb);
     jcbPanel.add(animateLayoutTransition);
     controls.add(jcbPanel);

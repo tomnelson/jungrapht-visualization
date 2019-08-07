@@ -91,8 +91,6 @@ public class SpatialLensDemo extends JPanel {
   /** provides a magnification lens for the model */
   LensSupport<ModalLensGraphMouse> magnifyLayoutSupport;
 
-  ScalingControl scaler;
-
   /** create an instance of a simple graph with controls to demo the zoomand hyperbolic features. */
   public SpatialLensDemo() {
     setLayout(new BorderLayout());

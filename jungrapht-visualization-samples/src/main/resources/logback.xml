@@ -14,8 +14,8 @@
 
   <Logger name="org.jungrapht.visualization.layout.spatial.rtree" level="info"/>
 
-  <Logger name="org.junggrapht.visualization.BasicVisualizationServer" level="info"/>
-  <Logger name="org.junggrapht.visualization.BasicVisualizationViewer" level="info"/>
+  <Logger name="org.jungrapht.visualization.DefaultVisualizationServer" level="info"/>
+  <Logger name="org.jungrapht.visualization.DefaultVisualizationViewer" level="info"/>
   <Logger name="org.jungrapht.visualization.layout.event.ModelChange$SupportImpl" level="info"/>
   <Logger name="org.jungrapht.visualization.layout.event.ViewChange$SupportImpl" level="info"/>
   <Logger name="org.jungrapht.visualization.layout.model.AbstractLayoutModel" level="info"/>
@@ -26,6 +26,8 @@
   <Logger name="org.jungrapht.visualization.layout.spatial" level="info"/>
 
   <Logger name="org.jungrapht.visualization.layout.algorithms" level="info"/>
+  <Logger name="org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm" level="info"/>
+
 
 
   <Logger name="ch.qos.logback" level="WARN" />

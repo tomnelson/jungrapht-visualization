@@ -61,7 +61,7 @@ public class BalloonLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V> {
   protected Map<V, Double> radii = new HashMap<>();
 
   public static <V> Builder<V, ?, ?> builder() {
-    return new Builder<>();
+    return (Builder<V, ?, ?>) new Builder<>().expandLayout(false);
   }
 
   protected BalloonLayoutAlgorithm(Builder<V, ?, ?> builder) {
@@ -76,6 +76,13 @@ public class BalloonLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V> {
     }
     setRootPolars(layoutModel);
   }
+
+  //  protected int getInitialY(int layoutHeight, int treeHeight) {
+  ////    if (layoutHeight == treeHeight) {
+  ////      return this.verticalVertexSpacing;
+  ////    }
+  //    return layoutHeight / 2;
+  //  }
 
   protected void setRootPolars(LayoutModel<V> layoutModel) {
     Graph<V, ?> graph = layoutModel.getGraph();
@@ -110,7 +117,7 @@ public class BalloonLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V> {
     polarLocations.put(root, pp);
     log.trace(
         "putting the root at {} in model of size {},{}",
-        pp,
+        p,
         layoutModel.getWidth(),
         layoutModel.getHeight());
     layoutModel.set(root, p);

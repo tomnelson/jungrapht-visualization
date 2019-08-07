@@ -40,38 +40,39 @@ public class KKLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
 
   private static final Logger log = LoggerFactory.getLogger(KKLayoutAlgorithm.class);
 
-  public static class Builder<V> extends AbstractIterativeLayoutAlgorithm.Builder {
+  public static class Builder<V, T extends KKLayoutAlgorithm<V>, B extends Builder<V, T, B>>
+      extends AbstractIterativeLayoutAlgorithm.Builder<V, T, B> {
     protected Map<Pair<V>, Integer> distance;
     protected int maxIterations = 2000;
     protected boolean adjustForGravity = true;
     protected boolean exchangeVertices = true;
 
-    public Builder<V> distance(Map<Pair<V>, Integer> distance) {
+    public B distance(Map<Pair<V>, Integer> distance) {
       this.distance = distance;
-      return this;
+      return self();
     }
 
-    public Builder<V> maxIterations(int maxIterations) {
+    public B maxIterations(int maxIterations) {
       this.maxIterations = maxIterations;
-      return this;
+      return self();
     }
 
-    public Builder<V> adjustForGravity(boolean adjustForGravity) {
+    public B adjustForGravity(boolean adjustForGravity) {
       this.adjustForGravity = adjustForGravity;
-      return this;
+      return self();
     }
 
-    public Builder<V> exchangeVertices(boolean exchangeVertices) {
+    public B exchangeVertices(boolean exchangeVertices) {
       this.exchangeVertices = exchangeVertices;
-      return this;
+      return self();
     }
 
-    public KKLayoutAlgorithm<V> build() {
-      return new KKLayoutAlgorithm<>(this);
+    public T build() {
+      return (T) new KKLayoutAlgorithm<>(this);
     }
   }
 
-  public static <V> Builder<V> builder() {
+  public static <V> Builder<V, ?, ?> builder() {
     return new Builder<>();
   }
 
@@ -110,7 +111,7 @@ public class KKLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
    */
   private double disconnected_multiplier = 0.5;
 
-  protected KKLayoutAlgorithm(Builder<V> builder) {
+  protected KKLayoutAlgorithm(Builder<V, ?, ?> builder) {
     super(builder);
     //    this.distance = (x, y) -> builder.distance.getDistance(x, y);
     this.maxIterations = builder.maxIterations;

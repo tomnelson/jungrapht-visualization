@@ -60,6 +60,9 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
   protected boolean locked;
   protected int width;
   protected int height;
+  protected int preferredWidth;
+  protected int preferredHeight;
+
   protected Graph<V, ?> graph;
   protected VisRunnable visRunnable;
   /** @value relaxing true is this layout model is being accessed by a running relaxer */
@@ -75,6 +78,7 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
   protected AbstractLayoutModel(Builder builder) {
     this.graph = checkNotNull(builder.graph);
     setSize(builder.width, builder.height);
+    setPreferredSize(builder.width, builder.height);
   }
 
   protected AbstractLayoutModel(Graph<V, ?> graph, int width, int height) {
@@ -105,6 +109,8 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
    */
   @Override
   public void accept(LayoutAlgorithm<V> layoutAlgorithm) {
+    setSize(preferredWidth, preferredHeight);
+    log.trace("reset the model size to {},{}", preferredWidth, preferredHeight);
     // the layoutMode is active with a new LayoutAlgorithm
     layoutStateChangeSupport.fireLayoutStateChanged(this, true);
     log.trace("accepting {}", layoutAlgorithm);
@@ -253,6 +259,15 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
     }
     this.width = width;
     this.height = height;
+  }
+
+  protected void setPreferredSize(int preferredWidth, int preferredHeight) {
+    if (preferredWidth == 0 || preferredHeight == 0) {
+      throw new IllegalArgumentException(
+          "Can't be zeros " + preferredWidth + "/" + preferredHeight);
+    }
+    this.preferredWidth = preferredWidth;
+    this.preferredHeight = preferredHeight;
   }
 
   /** */
