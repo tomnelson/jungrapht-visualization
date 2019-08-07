@@ -79,7 +79,7 @@ public class SubLayoutDemo extends JPanel {
   MutableSelectedState<String> ps;
 
   @SuppressWarnings("rawtypes")
-  LayoutAlgorithm<String> subLayoutType = CircleLayoutAlgorithm.builder().build();
+  LayoutAlgorithm<String> subLayoutType = CircleLayoutAlgorithm.<String>builder().build();
 
   public SubLayoutDemo() {
 

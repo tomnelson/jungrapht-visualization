@@ -45,7 +45,7 @@ public class ISOMLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
     }
   }
 
-  public static Builder builder() {
+  public static <V> Builder<V> builder() {
     return new Builder<>();
   }
 

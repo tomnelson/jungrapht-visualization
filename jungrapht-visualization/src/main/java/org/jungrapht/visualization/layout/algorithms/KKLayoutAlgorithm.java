@@ -113,28 +113,18 @@ public class KKLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
 
   protected KKLayoutAlgorithm(Builder<V, ?, ?> builder) {
     super(builder);
-    //    this.distance = (x, y) -> builder.distance.getDistance(x, y);
     this.maxIterations = builder.maxIterations;
     this.adjustForGravity = builder.adjustForGravity;
     this.exchangevertices = builder.exchangeVertices;
   }
 
-  //  private KKLayoutAlgorithm() {}
-  //
-  //  private KKLayoutAlgorithm(Distance<V> distance) {
-  //    this.distance = (x, y) -> distance.getDistance(x, y);
-  //  }
-  //
   @Override
   public void visit(LayoutModel<V> layoutModel) {
     super.visit(layoutModel);
 
     Graph<V, ?> graph = layoutModel.getGraph();
     if (graph != null) {
-      //      Distance distance = new UnweightedShortestPath<V>(graph);
       this.distance = getDistances(graph);
-      //              new Dijkstra<>(graph).getAllDistances();
-      //(x, y) -> distance.getDistance(x, y);
     }
     initialize();
   }
