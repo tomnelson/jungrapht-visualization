@@ -145,7 +145,7 @@ public class RadialTreeLensDemo extends JPanel {
     controls.add(modeControls);
     JPanel layoutControls = new JPanel(new GridLayout(0, 1));
     layoutControls.setBorder(BorderFactory.createTitledBorder("Layouts"));
-    layoutControls.add(new TreeLayoutSelector<>(vv, 2));
+    layoutControls.add(TreeLayoutSelector.builder(vv).initialSelection(2).build());
     controls.add(layoutControls);
     add(controls, BorderLayout.SOUTH);
   }

@@ -1,12 +1,21 @@
 package org.jungrapht.samples.util;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Supplier;
+import java.util.stream.IntStream;
 import org.jgrapht.Graph;
+import org.jgrapht.generate.BarabasiAlbertForestGenerator;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphBuilder;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** @author Tom Nelson */
 public class DemoTreeSupplier {
+
+  private static final Logger log = LoggerFactory.getLogger(DemoTreeSupplier.class);
 
   public static Graph<String, Integer> createSmallTree() {
     GraphBuilder<String, Integer, ?> treeBuilder =
@@ -178,5 +187,124 @@ public class DemoTreeSupplier {
     tree.addEdge("B6", "B9", edgeId++);
 
     return tree.build();
+  }
+
+  public static Graph<String, Integer> createForest2() {
+    GraphBuilder<String, Integer, Graph<String, Integer>> builder =
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.simple())
+            .buildGraphBuilder();
+
+    Integer edgeId = 0;
+    builder.addEdge("A0", "A1", edgeId++);
+    builder.addEdge("A0", "A2", edgeId++);
+    //    builder.addEdge("A1", "A4", edgeId++);
+    //    builder.addEdge("A2", "A3", edgeId++);
+    //    builder.addEdge("A2", "A5", edgeId++);
+    //    builder.addEdge("A4", "A6", edgeId++);
+    //    builder.addEdge("A4", "A7", edgeId++);
+    //    builder.addEdge("A3", "A8", edgeId++);
+    //    builder.addEdge("A6", "A9", edgeId++);
+    //    builder.addEdge("A4", "A10", edgeId++);
+
+    builder.addEdge("G0", "G1", edgeId++);
+    builder.addEdge("G0", "G2", edgeId++);
+    //    builder.addEdge("G1", "G4", edgeId++);
+    //    builder.addEdge("G2", "G3", edgeId++);
+    //    builder.addEdge("G2", "G5", edgeId++);
+    //    builder.addEdge("G4", "G6", edgeId++);
+    //    builder.addEdge("G4", "G7", edgeId++);
+    //    builder.addEdge("G3", "G8", edgeId++);
+    //    builder.addEdge("G6", "G9", edgeId++);
+
+    builder.addEdge("B0", "B1", edgeId++);
+    builder.addEdge("B0", "B2", edgeId++);
+    builder.addEdge("B0", "B3", edgeId++);
+
+    builder.addEdge("C0", "C1", edgeId++);
+    builder.addEdge("C0", "C2", edgeId++);
+    builder.addEdge("C0", "C3", edgeId++);
+
+    builder.addEdge("D0", "D1", edgeId++);
+    builder.addEdge("D0", "D2", edgeId++);
+
+    builder.addEdge("E0", "E1", edgeId++);
+
+    builder.addEdge("F0", "F1", edgeId++);
+
+    int i = 0;
+    char c = (char) ('H' + i);
+    for (; i < 8; i++) {
+      System.err.println("char is " + c);
+      builder.addEdge(c + "0", c + "1", edgeId++);
+      builder.addEdge(c + "0", c + "2", edgeId++);
+      builder.addEdge(c + "1", c + "4", edgeId++);
+      builder.addEdge(c + "2", c + "3", edgeId++);
+      builder.addEdge(c + "2", c + "5", edgeId++);
+      builder.addEdge(c + "4", c + "6", edgeId++);
+      builder.addEdge(c + "4", c + "7", edgeId++);
+      builder.addEdge(c + "3", c + "8", edgeId++);
+      builder.addEdge(c + "6", c + "9", edgeId++);
+      builder.addEdge(c + "6", c + "10", edgeId++);
+      builder.addEdge(c + "9", c + "11", edgeId++);
+      builder.addEdge(c + "9", c + "12", edgeId++);
+      c++;
+    }
+
+    for (; i < 14; i++) {
+      //      char c = (char) (i);
+      System.err.println("char is " + c);
+      builder.addEdge(c + "0", c + "1", edgeId++);
+      builder.addEdge(c + "0", c + "2", edgeId++);
+      builder.addEdge(c + "0", c + "3", edgeId++);
+      c++;
+    }
+
+    return SpanningTreeAdapter.getSpanningTree(builder.build());
+  }
+
+  public static Graph<String, Integer> generateForest(int roots, int nodes) {
+    Graph<String, Integer> graph =
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.simple())
+            .vertexSupplier(new VertexSupplier())
+            .edgeSupplier(new EdgeSupplier())
+            .buildGraphBuilder()
+            .build();
+    BarabasiAlbertForestGenerator gen = new BarabasiAlbertForestGenerator(roots, nodes);
+
+    gen.generateGraph(graph);
+    System.err.println("generated " + graph);
+    Graph<String, Integer> directedGraph =
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.directedSimple())
+            .buildGraph();
+    graph.vertexSet().stream().forEach(v -> directedGraph.addVertex(v));
+    graph
+        .edgeSet()
+        .stream()
+        .forEach(e -> directedGraph.addEdge(graph.getEdgeTarget(e), graph.getEdgeSource(e), e));
+    log.info("graph is {}, directedGraph is {}", graph, directedGraph);
+    return directedGraph;
+  }
+
+  public static class VertexSupplier implements Supplier<String> {
+    char a = 'a';
+
+    public String get() {
+      return Character.toString(a++);
+    }
+
+    public static Set<String> get(int count) {
+      VertexSupplier supplier = new VertexSupplier();
+      Set<String> set = new HashSet<>();
+      IntStream.range(0, count).forEach(s -> set.add(supplier.get()));
+      return set;
+    }
+  }
+
+  public static class EdgeSupplier implements Supplier<Integer> {
+    int count;
+
+    public Integer get() {
+      return count++;
+    }
   }
 }

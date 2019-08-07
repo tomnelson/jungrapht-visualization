@@ -77,7 +77,7 @@ public class TreeDAGLayoutDemo extends JPanel {
     graphMouse.setMode(Mode.TRANSFORMING);
 
     JPanel layoutPanel = new JPanel(new GridLayout(2, 1));
-    layoutPanel.add(new TreeLayoutSelector(vv));
+    layoutPanel.add(TreeLayoutSelector.builder(vv).build());
     JPanel controls = new JPanel();
     controls.add(layoutPanel);
     controls.add(ControlHelpers.getZoomControls(vv, "Zoom"));

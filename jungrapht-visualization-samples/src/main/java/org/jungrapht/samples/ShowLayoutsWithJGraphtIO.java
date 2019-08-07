@@ -82,7 +82,7 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
     final VisualizationViewer<String, DefaultEdge> vv =
         VisualizationViewer.builder(graph)
             .layoutSize(new Dimension(3000, 3000))
-            .viewSize(new Dimension(1000, 1000))
+            .viewSize(new Dimension(900, 900))
             .build();
 
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
@@ -92,7 +92,7 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
 
     vv.setVertexToolTipFunction(
         vertex ->
-            vertex.toString()
+            vertex
                 + ". with neighbors:"
                 + Graphs.neighborListOf(vv.getVisualizationModel().getGraph(), vertex));
 
@@ -151,14 +151,16 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
                       && vv.getVisualizationModel().getGraph().getType().isUndirected()) {
                     Graph tree =
                         SpanningTreeAdapter.getSpanningTree(vv.getVisualizationModel().getGraph());
-                    LayoutModel positionModel = this.getTreeLayoutPositions(tree, layoutAlgorithm);
+                    LayoutModel positionModel =
+                        this.getTreeLayoutPositions(
+                            tree, layoutAlgorithm, vv.getVisualizationModel().getLayoutModel());
                     vv.getVisualizationModel().getLayoutModel().setInitializer(positionModel);
                     layoutAlgorithm = new StaticLayoutAlgorithm();
                   }
                   if (animateLayoutTransition.isSelected()) {
-                    LayoutAlgorithmTransition.animate(vv, layoutAlgorithm);
+                    LayoutAlgorithmTransition.animate(vv, layoutAlgorithm, vv::scaleToLayout);
                   } else {
-                    LayoutAlgorithmTransition.apply(vv, layoutAlgorithm);
+                    LayoutAlgorithmTransition.apply(vv, layoutAlgorithm, vv::scaleToLayout);
                   }
                   if (layoutAlgorithm instanceof BalloonLayoutAlgorithm) {
                     balloonLayoutRings =
@@ -228,8 +230,13 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
     vertices.stream().forEach(v -> graph.removeVertex(v));
   }
 
-  LayoutModel getTreeLayoutPositions(Graph tree, LayoutAlgorithm treeLayout) {
-    LayoutModel model = LoadingCacheLayoutModel.builder().size(600, 600).graph(tree).build();
+  LayoutModel getTreeLayoutPositions(
+      Graph tree, LayoutAlgorithm treeLayout, LayoutModel layoutModel) {
+    LayoutModel model =
+        LoadingCacheLayoutModel.builder()
+            .size(layoutModel.getWidth(), layoutModel.getHeight())
+            .graph(tree)
+            .build();
     model.accept(treeLayout);
     return model;
   }

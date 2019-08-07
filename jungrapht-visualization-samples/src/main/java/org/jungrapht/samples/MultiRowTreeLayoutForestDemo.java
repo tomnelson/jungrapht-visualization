@@ -8,7 +8,11 @@
  */
 package org.jungrapht.samples;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import javax.swing.*;
 import org.jgrapht.Graph;
@@ -16,7 +20,6 @@ import org.jungrapht.samples.util.DemoTreeSupplier;
 import org.jungrapht.samples.util.TreeLayoutSelector;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationScrollPane;
-import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
@@ -44,14 +47,11 @@ import org.slf4j.LoggerFactory;
  * @author Tom Nelson
  */
 @SuppressWarnings("serial")
-public class BalloonLayoutForestDemo extends JPanel {
+public class MultiRowTreeLayoutForestDemo extends JPanel {
 
-  private static final Logger log = LoggerFactory.getLogger(BalloonLayoutForestDemo.class);
+  private static final Logger log = LoggerFactory.getLogger(MultiRowTreeLayoutForestDemo.class);
 
   Graph<String, Integer> graph;
-
-  VisualizationServer.Paintable balloonPaintable;
-  VisualizationServer.Paintable radialPaintable;
 
   /** the visual component and renderer for the graph */
   VisualizationViewer<String, Integer> vv;
@@ -61,13 +61,12 @@ public class BalloonLayoutForestDemo extends JPanel {
 
   LensSupport<ModalLensGraphMouse> hyperbolicSupport;
 
-  Dimension layoutSize = new Dimension(600, 600);
+  Dimension layoutSize = new Dimension(900, 900);
   Dimension viewSize = new Dimension(600, 600);
 
-  public BalloonLayoutForestDemo() {
+  public MultiRowTreeLayoutForestDemo() {
     setLayout(new BorderLayout());
-    // create a simple graph for the demo
-    graph = DemoTreeSupplier.createForest();
+    graph = DemoTreeSupplier.createForest2();
 
     vv =
         VisualizationViewer.builder(graph)
@@ -121,7 +120,7 @@ public class BalloonLayoutForestDemo extends JPanel {
     graphMouse.setMode(ModalGraphMouse.Mode.TRANSFORMING);
 
     final ScalingControl scaler = new CrossoverScalingControl();
-    vv.scaleToLayout(new CrossoverScalingControl());
+    vv.scaleToLayout();
 
     JButton plus = new JButton("+");
     plus.addActionListener(e -> scaler.scale(vv, 1.1f, vv.getCenter()));
@@ -151,7 +150,11 @@ public class BalloonLayoutForestDemo extends JPanel {
     scaleGrid.add(plus);
     scaleGrid.add(minus);
     JPanel layoutControls = new JPanel();
-    layoutControls.add(TreeLayoutSelector.builder(vv).after(vv::scaleToLayout).build());
+    TreeLayoutSelector<String, Integer> treeLayoutSelector =
+        TreeLayoutSelector.<String, Integer>builder(vv)
+            .after(vv::scaleToLayout)
+            .build();
+    layoutControls.add(treeLayoutSelector);
     controls.add(layoutControls);
     controls.add(scaleGrid);
     controls.add(modeBox);
@@ -163,11 +166,11 @@ public class BalloonLayoutForestDemo extends JPanel {
   }
 
   private void selected(Object o) {
-    log.info("selected was {}", o);
+    log.debug("selected was {}", o);
   }
 
   private void deselected(Object o) {
-    log.info("deselected: {}", o);
+    log.debug("deselected: {}", o);
   }
 
   public static void main(String[] args) {
@@ -175,7 +178,7 @@ public class BalloonLayoutForestDemo extends JPanel {
     Container content = frame.getContentPane();
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-    content.add(new BalloonLayoutForestDemo());
+    content.add(new MultiRowTreeLayoutForestDemo());
     frame.pack();
     frame.setVisible(true);
   }

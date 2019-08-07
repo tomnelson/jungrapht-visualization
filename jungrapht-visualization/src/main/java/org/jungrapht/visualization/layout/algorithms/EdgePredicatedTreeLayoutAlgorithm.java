@@ -120,14 +120,17 @@ public class EdgePredicatedTreeLayoutAlgorithm<V, E> implements LayoutAlgorithm<
     alreadyDone = Sets.newHashSet();
     this.currentX = 0;
     this.currentY = 0;
-    Set<V> roots =
-        layoutModel
-            .getGraph()
-            .vertexSet()
-            .stream()
-            .filter(vertex -> Graphs.predecessorListOf(layoutModel.getGraph(), vertex).isEmpty())
-            .collect(toImmutableSet());
-    this.roots = roots;
+    if (roots.isEmpty()) {
+      Set<V> roots =
+          layoutModel
+              .getGraph()
+              .vertexSet()
+              .stream()
+              .filter(vertex -> Graphs.predecessorListOf(layoutModel.getGraph(), vertex).isEmpty())
+              .collect(toImmutableSet());
+
+      this.roots = roots;
+    }
 
     Preconditions.checkArgument(roots.size() > 0);
     // the width of the tree under 'roots'. Includes one 'horizontalVertexSpacing' per child vertex
@@ -223,7 +226,7 @@ public class EdgePredicatedTreeLayoutAlgorithm<V, E> implements LayoutAlgorithm<
                 element -> calculateWidth(layoutModel, element, seen) + horizontalVertexSpacing)
             .sum();
     size = Math.max(0, size - horizontalVertexSpacing);
-    log.trace("calcWidth basePositions put {} {}", vertex, size);
+    log.trace("calcWidth baseWidths put {} {}", vertex, size);
     basePositions.put(vertex, size);
 
     return size;

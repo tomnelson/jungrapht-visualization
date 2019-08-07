@@ -41,6 +41,10 @@ public interface LayoutModel<V>
   /** @return the height of the layout area */
   int getHeight();
 
+  int getPreferredWidth();
+
+  int getPreferredHeight();
+
   /**
    * allow the passed LayoutAlgorithm to operate on this LayoutModel
    *

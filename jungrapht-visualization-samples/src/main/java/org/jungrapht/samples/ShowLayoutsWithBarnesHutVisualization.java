@@ -26,7 +26,7 @@ import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.samples.util.LayoutHelper;
 import org.jungrapht.samples.util.SpanningTreeAdapter;
 import org.jungrapht.samples.util.TestGraphs;
-import org.jungrapht.visualization.DelegateVisualizationViewer;
+import org.jungrapht.visualization.AbstractVisualizationViewer;
 import org.jungrapht.visualization.VisualizationComponent;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
@@ -93,8 +93,8 @@ public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
     Graph<String, Number> g = g_array[2]; // initial graph
 
     final VisualizationViewer<String, Number> vv =
-        new DecoratedVisualizationViewer(
-            VisualizationViewer.builder(g).viewSize(new Dimension(600, 600)).build());
+        new DecoratedVisualizationViewer<>(
+            VisualizationViewer.builder(g).viewSize(new Dimension(600, 600)));
 
     vv.setBackground(Color.white);
 
@@ -182,12 +182,12 @@ public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
     bottomControls.add(modeBox);
   }
 
-  static class DecoratedVisualizationViewer<V, E> extends DelegateVisualizationViewer<V, E>
+  static class DecoratedVisualizationViewer<V, E> extends AbstractVisualizationViewer<V, E>
       implements VisualizationViewer<V, E>, VisualizationComponent {
     VisualizationServer.Paintable paintable = null;
 
-    DecoratedVisualizationViewer(VisualizationViewer<V, E> delegate) {
-      super(delegate);
+    DecoratedVisualizationViewer(VisualizationViewer.Builder<V, E, ?, ?> builder) {
+      super(builder);
     }
 
     @Override

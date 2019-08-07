@@ -28,10 +28,11 @@ import org.slf4j.LoggerFactory;
  * @param <E> the edge type
  * @author Tom Nelson
  */
-public class EdgeSortingTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
+public class MultiRowEdgeSortingTreeLayoutAlgorithm<V, E> extends MultiRowTreeLayoutAlgorithm<V>
     implements LayoutAlgorithm<V>, EdgeSorting<E> {
 
-  private static final Logger log = LoggerFactory.getLogger(EdgeSortingTreeLayoutAlgorithm.class);
+  private static final Logger log =
+      LoggerFactory.getLogger(MultiRowEdgeSortingTreeLayoutAlgorithm.class);
 
   /**
    * a builder to create an instance of a {@code} EdgeSortingTreeLayoutAlgorithm.
@@ -42,8 +43,11 @@ public class EdgeSortingTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
    * @param <B> the builder type
    */
   public static class Builder<
-          V, E, T extends EdgeSortingTreeLayoutAlgorithm<V, E>, B extends Builder<V, E, T, B>>
-      extends TreeLayoutAlgorithm.Builder<V, T, B> {
+          V,
+          E,
+          T extends MultiRowEdgeSortingTreeLayoutAlgorithm<V, E>,
+          B extends Builder<V, E, T, B>>
+      extends MultiRowTreeLayoutAlgorithm.Builder<V, T, B> {
 
     /**
      * a comparator to sort edges
@@ -51,15 +55,6 @@ public class EdgeSortingTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
      * @param <E> the edge type
      */
     private Comparator<E> edgeComparator = (e1, e2) -> 0;
-
-    /**
-     * self reference with typecase
-     *
-     * @return this builder cast to B
-     */
-    protected B self() {
-      return (B) this;
-    }
 
     /**
      * use the supplied comparator to sort edges
@@ -74,7 +69,7 @@ public class EdgeSortingTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
 
     /** @return the instance */
     public T build() {
-      return (T) new EdgeSortingTreeLayoutAlgorithm<>(this);
+      return (T) new MultiRowEdgeSortingTreeLayoutAlgorithm<>(this);
     }
   }
 
@@ -89,7 +84,7 @@ public class EdgeSortingTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
     return new Builder<>();
   }
 
-  protected EdgeSortingTreeLayoutAlgorithm(Builder<V, E, ?, ?> builder) {
+  protected MultiRowEdgeSortingTreeLayoutAlgorithm(Builder<V, E, ?, ?> builder) {
     this(
         builder.roots,
         builder.horizontalVertexSpacing,
@@ -103,7 +98,7 @@ public class EdgeSortingTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
    *
    * @param edgeComparator sorts the edges
    */
-  protected EdgeSortingTreeLayoutAlgorithm(
+  protected MultiRowEdgeSortingTreeLayoutAlgorithm(
       Set<V> roots,
       int horizontalVertexSpacing,
       int verticalVertexSpacing,
@@ -119,9 +114,19 @@ public class EdgeSortingTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
     this.edgeComparator = edgeComparator;
   }
 
+  private void adjustProportions(LayoutModel<V> layoutModel) {
+    int overallWidth = layoutModel.getWidth();
+    int overallHeight = layoutModel.getHeight();
+    // if the tree is way wider than it is high, adjust the verticalVertexSpacing and the layoutModel height
+    if (overallWidth > 2 * overallHeight) {
+      double ratio = overallWidth / (2 * overallHeight);
+      verticalVertexSpacing *= ratio;
+      layoutModel.setSize(overallWidth, (int) (overallHeight * ratio));
+    }
+  }
+
   @Override
   protected void buildTree(LayoutModel<V> layoutModel, V vertex, int x, int y) {
-
     Graph<V, E> graph = layoutModel.getGraph();
     if (alreadyDone.add(vertex)) {
       //go one level further down

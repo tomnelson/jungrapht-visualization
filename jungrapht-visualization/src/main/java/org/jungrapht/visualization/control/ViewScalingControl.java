@@ -27,7 +27,7 @@ import org.jungrapht.visualization.transform.MutableTransformer;
 public class ViewScalingControl implements ScalingControl {
 
   /** zoom the display in or out, depending on the direction of the mouse wheel motion. */
-  public void scale(VisualizationServer<?, ?> vv, float amount, Point2D from) {
+  public void scale(VisualizationServer<?, ?> vv, double amount, Point2D from) {
     MutableTransformer viewTransformer =
         vv.getRenderContext()
             .getMultiLayerTransformer()
@@ -38,7 +38,7 @@ public class ViewScalingControl implements ScalingControl {
 
   @Override
   public void scale(
-      VisualizationServer<?, ?> vv, float horizontalAmount, float verticalAmount, Point2D from) {
+      VisualizationServer<?, ?> vv, double horizontalAmount, double verticalAmount, Point2D from) {
     MutableTransformer viewTransformer =
         vv.getRenderContext()
             .getMultiLayerTransformer()

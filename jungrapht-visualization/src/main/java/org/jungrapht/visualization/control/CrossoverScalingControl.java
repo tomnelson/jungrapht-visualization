@@ -45,7 +45,7 @@ public class CrossoverScalingControl implements ScalingControl {
   }
 
   public void scale(
-      VisualizationServer<?, ?> vv, float horizontalAmount, float verticalAmount, Point2D at) {
+      VisualizationServer<?, ?> vv, double horizontalAmount, double verticalAmount, Point2D at) {
     MutableTransformer layoutTransformer =
         vv.getRenderContext()
             .getMultiLayerTransformer()
@@ -91,7 +91,7 @@ public class CrossoverScalingControl implements ScalingControl {
     vv.repaint();
   }
 
-  public void scale(VisualizationServer<?, ?> vv, float amount, Point2D at) {
+  public void scale(VisualizationServer<?, ?> vv, double amount, Point2D at) {
 
     MutableTransformer layoutTransformer =
         vv.getRenderContext()

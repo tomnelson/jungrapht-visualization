@@ -175,6 +175,16 @@ public class AggregateLayoutModel<V> implements LayoutModel<V> {
     return delegate.getHeight();
   }
 
+  @Override
+  public int getPreferredWidth() {
+    return delegate.getPreferredWidth();
+  }
+
+  @Override
+  public int getPreferredHeight() {
+    return delegate.getPreferredHeight();
+  }
+
   /**
    * @param vertex the vertex whose locked state is to be returned
    * @return true if v is locked in any of the layouts, and false otherwise

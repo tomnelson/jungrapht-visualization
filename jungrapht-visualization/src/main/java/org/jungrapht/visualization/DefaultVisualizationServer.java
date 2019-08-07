@@ -430,9 +430,12 @@ class DefaultVisualizationServer<V, E> extends JPanel
       double widthRatio = vd.getWidth() / ld.getWidth();
       double heightRatio = vd.getHeight() / ld.getHeight();
       double ratio = Math.min(widthRatio, heightRatio);
-      log.trace("vd.getWidth() {} ld.getWidth() {} ", vd.getWidth(), ld.getWidth());
+      log.debug(
+          "scaling with {} {}", (widthRatio < heightRatio ? "widthRatio" : "heightRatio"), ratio);
+      log.debug("vd.getWidth() {} ld.getWidth() {} ", vd.getWidth(), ld.getWidth());
+      log.debug("vd.getHeight() {} ld.getHeight() {} ", vd.getHeight(), ld.getHeight());
       scaler.scale(this, (float) (ratio), new Point2D.Double());
-      log.trace("scaled by {}", vd.getWidth() / ld.getWidth());
+      log.debug("scaled by double {}, float {}", ratio, (float) ratio);
     }
   }
 

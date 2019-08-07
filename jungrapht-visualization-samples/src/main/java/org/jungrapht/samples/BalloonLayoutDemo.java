@@ -138,7 +138,7 @@ public class BalloonLayoutDemo extends JPanel {
     scaleGrid.add(plus);
     scaleGrid.add(minus);
     JPanel layoutControls = new JPanel();
-    layoutControls.add(new TreeLayoutSelector<>(vv, vv::scaleToLayout));
+    layoutControls.add(TreeLayoutSelector.builder(vv).after(vv::scaleToLayout).build());
     controls.add(layoutControls);
     controls.add(scaleGrid);
     controls.add(modeBox);

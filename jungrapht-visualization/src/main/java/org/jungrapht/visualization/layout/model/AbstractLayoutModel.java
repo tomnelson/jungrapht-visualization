@@ -110,7 +110,7 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
   @Override
   public void accept(LayoutAlgorithm<V> layoutAlgorithm) {
     setSize(preferredWidth, preferredHeight);
-    log.trace("reset the model size to {},{}", preferredWidth, preferredHeight);
+    log.debug("reset the model size to {},{}", preferredWidth, preferredHeight);
     // the layoutMode is active with a new LayoutAlgorithm
     layoutStateChangeSupport.fireLayoutStateChanged(this, true);
     log.trace("accepting {}", layoutAlgorithm);
@@ -327,6 +327,18 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
   @Override
   public int getHeight() {
     return height;
+  }
+
+  /** @return the width of the layout domain */
+  @Override
+  public int getPreferredWidth() {
+    return preferredWidth;
+  }
+
+  /** @return the height of the layout domain */
+  @Override
+  public int getPreferredHeight() {
+    return preferredHeight;
   }
 
   @Override
