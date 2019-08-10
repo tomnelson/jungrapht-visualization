@@ -5,24 +5,32 @@
  * This software is open-source under the BSD license; see either "license.txt"
  * or https://github.com/tomnelson/jungrapht-visualization/blob/master/LICENSE for a description.
  */
-package org.jungrapht.samples;
+package org.jungrapht.samples.large;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.zip.ZipInputStream;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
-import org.jgrapht.graph.DefaultGraphType;
-import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.SimpleGraph;
+import org.jgrapht.io.EdgeProvider;
+import org.jgrapht.io.GmlImporter;
+import org.jgrapht.io.VertexProvider;
 import org.jungrapht.samples.spatial.RTreeVisualization;
 import org.jungrapht.samples.util.LayoutHelper;
 import org.jungrapht.samples.util.SpanningTreeAdapter;
-import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
-import org.jungrapht.visualization.control.DefaultGraphMouse;
+import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -38,60 +46,41 @@ import org.jungrapht.visualization.layout.model.LoadingCacheLayoutModel;
  * Demonstrates several of the graph layout algorithms. Allows the user to interactively select one
  * of several graphs, and one of several layouts, and visualizes the combination.
  *
- * @author Danyel Fisher
- * @author Joshua O'Madadhain
- * @author Tom Nelson - extensive modification
+ * @author Tom Nelson
  */
 @SuppressWarnings("serial")
-public class ShowLayouts extends JPanel {
-
-  protected static Graph<String, Number>[] g_array;
-  protected static int graph_index;
-  protected static String[] graph_names = {
-    "Two component graph",
-    "Random mixed-mode graph",
-    "Miscellaneous multicomponent graph",
-    "One component graph",
-    "Chain+isolate graph",
-    "Trivial (disconnected) graph",
-    "Little Graph",
-    "Bipartite Graph"
-  };
+public class ShowLayoutsWithOneJGraphtIO extends JPanel {
 
   LayoutPaintable.BalloonRings balloonLayoutRings;
   LayoutPaintable.RadialRings radialLayoutRings;
 
-  public ShowLayouts() {
+  public ShowLayoutsWithOneJGraphtIO() throws Exception {
 
-    g_array = new Graph[graph_names.length];
+    Graph<String, DefaultEdge> graph = new SimpleGraph<>(DefaultEdge.class);
 
-    g_array[0] = TestGraphs.createTestGraph(false);
-    g_array[1] = TestGraphs.getGeneratedGraph();
-    g_array[2] = TestGraphs.getDemoGraph();
-    g_array[3] = TestGraphs.getOneComponentGraph();
-    g_array[4] = TestGraphs.createChainPlusIsolates(18, 5);
-    g_array[5] = TestGraphs.createChainPlusIsolates(0, 20);
-    Graph<String, Number> graph =
-        GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.directedMultigraph())
-            .buildGraph();
+    VertexProvider<String> vp = (label, attributes) -> attributes.toString();
+    EdgeProvider<String, DefaultEdge> ep =
+        (from, to, label, attributes) -> graph.getEdgeSupplier().get();
 
-    graph.addVertex("A");
-    graph.addVertex("B");
-    graph.addVertex("C");
-    graph.addEdge("A", "B", 1);
-    graph.addEdge("A", "C", 2);
+    GmlImporter gmlImporter = new GmlImporter(vp, ep);
+    URL url = new URL("https://gephi.org/datasets/netscience.gml.zip");
+    ZipInputStream zipInputStream = new ZipInputStream(url.openStream());
 
-    g_array[6] = graph;
-    g_array[7] = TestGraphs.getGeneratedBipartiteGraph();
+    if (zipInputStream.getNextEntry() != null) {
+      InputStreamReader inputStreamReader = new InputStreamReader(zipInputStream);
+      gmlImporter.importGraph(graph, inputStreamReader);
+      inputStreamReader.close();
+    }
 
-    Graph<String, Number> g = g_array[3]; // initial graph
-
-    final VisualizationViewer<String, Number> vv =
-        VisualizationViewer.builder(g).viewSize(new Dimension(600, 600)).build();
+    final VisualizationViewer<String, DefaultEdge> vv =
+        VisualizationViewer.builder(graph)
+            .layoutSize(new Dimension(1300, 1300))
+            .viewSize(new Dimension(600, 600))
+            .build();
 
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
 
-    final DefaultGraphMouse<Integer, Number> graphMouse = new DefaultGraphMouse<>();
+    final DefaultModalGraphMouse<Integer, DefaultEdge> graphMouse = new DefaultModalGraphMouse<>();
     vv.setGraphMouse(graphMouse);
 
     vv.setVertexToolTipFunction(
@@ -101,15 +90,16 @@ public class ShowLayouts extends JPanel {
                 + Graphs.neighborListOf(vv.getVisualizationModel().getGraph(), vertex));
 
     final ScalingControl scaler = new CrossoverScalingControl();
+    vv.scaleToLayout(scaler);
 
     JButton plus = new JButton("+");
     plus.addActionListener(e -> scaler.scale(vv, 1.1f, vv.getCenter()));
     JButton minus = new JButton("-");
     minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
 
-    //    JComboBox modeBox = graphMouse.getModeComboBox();
-    //    modeBox.addItemListener(
-    //        ((DefaultModalGraphMouse<Integer, Number>) vv.getGraphMouse()).getModeListener());
+    JComboBox modeBox = graphMouse.getModeComboBox();
+    modeBox.addItemListener(
+        ((DefaultModalGraphMouse<Integer, DefaultEdge>) vv.getGraphMouse()).getModeListener());
 
     vv.setBackground(Color.WHITE);
 
@@ -163,29 +153,14 @@ public class ShowLayouts extends JPanel {
     control_panel.add(bottomControls);
     add(control_panel, BorderLayout.NORTH);
 
-    final JComboBox graph_chooser = new JComboBox(graph_names);
-    // do this before adding the listener so there is no event fired
-    graph_chooser.setSelectedIndex(2);
-
-    graph_chooser.addActionListener(
-        e ->
-            SwingUtilities.invokeLater(
-                () -> {
-                  graph_index = graph_chooser.getSelectedIndex();
-                  vv.getVertexSpatial().clear();
-                  vv.getEdgeSpatial().clear();
-                  vv.getVisualizationModel().setGraph(g_array[graph_index]);
-                }));
-
     JButton showRTree = new JButton("Show RTree");
     showRTree.addActionListener(e -> RTreeVisualization.showRTree(vv));
 
     topControls.add(jcb);
-    topControls.add(graph_chooser);
     bottomControls.add(animateLayoutTransition);
     bottomControls.add(plus);
     bottomControls.add(minus);
-    //    bottomControls.add(modeBox);
+    bottomControls.add(modeBox);
     bottomControls.add(showRTree);
   }
 
@@ -205,10 +180,11 @@ public class ShowLayouts extends JPanel {
     return roots;
   }
 
-  public static void main(String[] args) {
-    JPanel jp = new ShowLayouts();
+  public static void main(String[] args) throws Exception {
+    JPanel jp = new ShowLayoutsWithOneJGraphtIO();
 
     JFrame jf = new JFrame();
+    jf.setTitle("Guava Graph Visualization");
     jf.getContentPane().add(jp);
     jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     jf.pack();

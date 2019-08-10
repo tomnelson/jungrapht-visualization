@@ -231,6 +231,13 @@ public class DemoTreeSupplier {
 
     builder.addEdge("F0", "F1", edgeId++);
 
+    builder.addEdge("E10", "E11", edgeId++);
+
+    builder.addEdge("F10", "F11", edgeId++);
+
+    builder.addEdge("E20", "E21", edgeId++);
+
+    builder.addEdge("F20", "F21", edgeId++);
     int i = 0;
     char c = (char) ('H' + i);
     for (; i < 8; i++) {
@@ -260,6 +267,70 @@ public class DemoTreeSupplier {
     }
 
     return SpanningTreeAdapter.getSpanningTree(builder.build());
+  }
+
+  public static Graph<String, Integer> generateProgramGraph() {
+    GraphBuilder<String, Integer, Graph<String, Integer>> builder =
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.dag()).buildGraphBuilder();
+    builder.addEdge("A0", "A1", (Integer) 0);
+    builder.addEdge("A1", "A2", (Integer) 1);
+    builder.addEdge("A2", "A3", (Integer) 3);
+    builder.addEdge("A3", "A4", (Integer) 4);
+    builder.addEdge("A3", "A5", (Integer) 100);
+    builder.addEdge("A1", "A6", (Integer) 101);
+    builder.addEdge("A6", "A7", (Integer) 102);
+    builder.addEdge("A6", "A8", (Integer) 103);
+    builder.addEdge("A0", "A9", (Integer) 104);
+    return builder.build();
+  }
+
+  public static Graph<String, Integer> generateProgramGraph2() {
+    GraphBuilder<String, Integer, Graph<String, Integer>> builder =
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.dag()).buildGraphBuilder();
+    builder.addEdge("A0", "A1", (Integer) 0);
+    builder.addEdge("A1", "A2", (Integer) 1);
+    builder.addEdge("A2", "A3", (Integer) 3);
+    builder.addEdge("A3", "A4", (Integer) 4);
+    builder.addEdge("A3", "A5", (Integer) 10);
+    builder.addEdge("A1", "A6", (Integer) 11);
+    builder.addEdge("A6", "A7", (Integer) 12);
+    builder.addEdge("A6", "A8", (Integer) 13);
+    builder.addEdge("A0", "A9", (Integer) 14);
+
+    builder.addEdge("B0", "B1", (Integer) 5);
+    builder.addEdge("B1", "B2", (Integer) 6);
+    builder.addEdge("B2", "B3", (Integer) 7);
+    builder.addEdge("B3", "B4", (Integer) 8);
+    builder.addEdge("B3", "B5", (Integer) 15);
+    builder.addEdge("B1", "B6", (Integer) 16);
+    builder.addEdge("B6", "B7", (Integer) 17);
+    builder.addEdge("B6", "B8", (Integer) 18);
+    builder.addEdge("B0", "B9", (Integer) 19);
+
+    return builder.build();
+  }
+
+  public static Graph<String, Integer> generateProgramGraph3() {
+    GraphBuilder<String, Integer, Graph<String, Integer>> builder =
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.dag()).buildGraphBuilder();
+
+    Integer e = 0;
+    IntStream.range(0, 5)
+        .forEach(
+            i -> {
+              Integer edge = e + i * 5;
+              char c = (char) ('A' + i);
+              builder.addEdge(c + "0", c + "1", (Integer) (edge + 0));
+              builder.addEdge(c + "1", c + "2", (Integer) (edge + 1));
+              builder.addEdge(c + "2", c + "3", (Integer) (edge + 2));
+              builder.addEdge(c + "3", c + "4", (Integer) (edge + 3));
+              builder.addEdge(c + "3", c + "5", (Integer) (100 + edge + 0));
+              builder.addEdge(c + "1", c + "6", (Integer) (100 + edge + 1));
+              builder.addEdge(c + "6", c + "7", (Integer) (100 + edge + 2));
+              builder.addEdge(c + "6", c + "8", (Integer) (100 + edge + 3));
+              builder.addEdge(c + "0", c + "9", (Integer) (100 + edge + 4));
+            });
+    return builder.build();
   }
 
   public static Graph<String, Integer> generateForest(int roots, int nodes) {

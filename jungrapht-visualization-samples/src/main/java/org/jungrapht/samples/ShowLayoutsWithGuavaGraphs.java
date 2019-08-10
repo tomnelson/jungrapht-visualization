@@ -20,6 +20,7 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.guava.MutableGraphAdapter;
+import org.jungrapht.samples.spatial.RTreeVisualization;
 import org.jungrapht.samples.util.LayoutHelper;
 import org.jungrapht.samples.util.SpanningTreeAdapter;
 import org.jungrapht.samples.util.TestGuavaGraphs;
@@ -33,10 +34,9 @@ import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
 import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.LoadingCacheLayoutModel;
-import org.jungrapht.visualization.util.BalloonLayoutRings;
-import org.jungrapht.visualization.util.RadialLayoutRings;
 
 /**
  * Demonstrates several of the graph layout algorithms. Allows the user to interactively select one
@@ -59,8 +59,8 @@ public class ShowLayoutsWithGuavaGraphs extends JPanel {
     "Generated Graph"
   };
 
-  BalloonLayoutRings balloonLayoutRings;
-  RadialLayoutRings radialLayoutRings;
+  LayoutPaintable.BalloonRings balloonLayoutRings;
+  LayoutPaintable.RadialRings radialLayoutRings;
 
   public ShowLayoutsWithGuavaGraphs() {
 
@@ -137,12 +137,14 @@ public class ShowLayoutsWithGuavaGraphs extends JPanel {
                   }
                   if (layoutAlgorithm instanceof BalloonLayoutAlgorithm) {
                     balloonLayoutRings =
-                        new BalloonLayoutRings(vv, (BalloonLayoutAlgorithm) layoutAlgorithm);
+                        new LayoutPaintable.BalloonRings(
+                            vv, (BalloonLayoutAlgorithm) layoutAlgorithm);
                     vv.addPreRenderPaintable(balloonLayoutRings);
                   }
                   if (layoutAlgorithm instanceof RadialTreeLayoutAlgorithm) {
                     radialLayoutRings =
-                        new RadialLayoutRings(vv, (RadialTreeLayoutAlgorithm) layoutAlgorithm);
+                        new LayoutPaintable.RadialRings(
+                            vv, (RadialTreeLayoutAlgorithm) layoutAlgorithm);
                     vv.addPreRenderPaintable(radialLayoutRings);
                   }
                 }));

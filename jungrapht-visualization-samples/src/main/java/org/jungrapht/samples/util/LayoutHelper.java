@@ -8,6 +8,7 @@ import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.ISOMLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.MultiRowTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.SpringLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
@@ -33,6 +34,7 @@ public class LayoutHelper {
             .repulsionContractBuilder(BarnesHutSpringRepulsion.barnesHutBuilder())
             .build()),
     TREE("Tree", TreeLayoutAlgorithm.builder().build()),
+    MULTI_ROW_TREE("Multirow Tree", MultiRowTreeLayoutAlgorithm.builder().build()),
     BALLOON("Balloon", BalloonLayoutAlgorithm.builder().build()),
     RADIAL("Radial", RadialTreeLayoutAlgorithm.builder().build());
 

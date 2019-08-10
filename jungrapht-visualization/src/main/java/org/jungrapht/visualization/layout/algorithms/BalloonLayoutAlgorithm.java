@@ -77,23 +77,14 @@ public class BalloonLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V> {
     setRootPolars(layoutModel);
   }
 
-  //  protected int getInitialY(int layoutHeight, int treeHeight) {
-  ////    if (layoutHeight == treeHeight) {
-  ////      return this.verticalVertexSpacing;
-  ////    }
-  //    return layoutHeight / 2;
-  //  }
-
   protected void setRootPolars(LayoutModel<V> layoutModel) {
     Graph<V, ?> graph = layoutModel.getGraph();
-    if (roots.isEmpty()) {
-      roots =
-          graph
-              .vertexSet()
-              .stream()
-              .filter(vertex -> Graphs.predecessorListOf(graph, vertex).isEmpty())
-              .collect(toImmutableSet());
-    }
+    Set<V> roots =
+        graph
+            .vertexSet()
+            .stream()
+            .filter(vertex -> Graphs.predecessorListOf(graph, vertex).isEmpty())
+            .collect(toImmutableSet());
     log.trace("roots: {}", roots);
     int width = layoutModel.getWidth();
     if (roots.size() == 1) {

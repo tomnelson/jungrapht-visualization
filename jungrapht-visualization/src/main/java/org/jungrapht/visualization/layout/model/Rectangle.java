@@ -16,6 +16,14 @@ public class Rectangle {
   public final double maxX;
   public final double maxY;
 
+  public static Rectangle of(int x, int y, int width, int height) {
+    return new Rectangle(x, y, width, height);
+  }
+
+  public static Rectangle of(double x, double y, double width, double height) {
+    return new Rectangle(x, y, width, height);
+  }
+
   /**
    * @param x left most x location
    * @param y top most y location

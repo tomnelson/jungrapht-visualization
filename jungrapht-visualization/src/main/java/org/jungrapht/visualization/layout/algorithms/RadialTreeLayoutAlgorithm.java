@@ -26,25 +26,26 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-public class RadialTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V> {
+public class RadialTreeLayoutAlgorithm<V, E> extends EdgeAwareTreeLayoutAlgorithm<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(RadialTreeLayoutAlgorithm.class);
 
   protected Map<V, PolarPoint> polarLocations = new HashMap<>();
 
-  public static class Builder<V, T extends RadialTreeLayoutAlgorithm<V>, B extends Builder<V, T, B>>
-      extends TreeLayoutAlgorithm.Builder<V, T, B> {
+  public static class Builder<
+          V, E, T extends RadialTreeLayoutAlgorithm<V, E>, B extends Builder<V, E, T, B>>
+      extends EdgeAwareTreeLayoutAlgorithm.Builder<V, E, T, B> {
 
     public T build() {
       return (T) new RadialTreeLayoutAlgorithm<>(this);
     }
   }
 
-  public static <V> Builder<V, ?, ?> builder() {
-    return (Builder<V, ?, ?>) new Builder<>().expandLayout(false);
+  public static <V, E> Builder<V, E, ?, ?> builder() {
+    return (Builder<V, E, ?, ?>) new Builder<>().expandLayout(false);
   }
 
-  protected RadialTreeLayoutAlgorithm(Builder<V, ?, ?> builder) {
+  protected RadialTreeLayoutAlgorithm(Builder<V, E, ?, ?> builder) {
     super(builder);
   }
 
@@ -106,7 +107,7 @@ public class RadialTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V> {
     maxx = Math.max(maxx, width);
     double theta = 2 * Math.PI / maxx;
 
-    double deltaRadius = width / 2 / maxy;
+    double deltaRadius = 1; //width / 2 / maxy;
     double offset = 0;
     if (roots.size() > 1) {
       offset = verticalVertexSpacing;

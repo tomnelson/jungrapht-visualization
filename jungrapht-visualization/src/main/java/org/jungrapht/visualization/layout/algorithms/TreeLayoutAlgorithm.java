@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
+import org.jungrapht.visualization.layout.model.Dimension;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.slf4j.Logger;
@@ -33,18 +34,12 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
   private static final Logger log = LoggerFactory.getLogger(TreeLayoutAlgorithm.class);
 
   public static class Builder<V, T extends TreeLayoutAlgorithm<V>, B extends Builder<V, T, B>> {
-    protected Set<V> roots = new HashSet<>();
     protected int horizontalVertexSpacing = DEFAULT_HORIZONTAL_VERTEX_SPACING;
     protected int verticalVertexSpacing = DEFAULT_VERTICAL_VERTEX_SPACING;
-    protected boolean expandLayout = true; //default expand tree
+    protected boolean expandLayout = true;
 
     protected B self() {
       return (B) this;
-    }
-
-    public B roots(Set<V> roots) {
-      this.roots = roots;
-      return self();
     }
 
     public B horizontalVertexSpacing(int horizontalVertexSpacing) {
@@ -76,11 +71,7 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
   }
 
   protected TreeLayoutAlgorithm(Builder<V, ?, ?> builder) {
-    this(
-        builder.roots,
-        builder.horizontalVertexSpacing,
-        builder.verticalVertexSpacing,
-        builder.expandLayout);
+    this(builder.horizontalVertexSpacing, builder.verticalVertexSpacing, builder.expandLayout);
   }
 
   /**
@@ -90,20 +81,15 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
    * @param verticalVertexSpacing the vertical spacing between adjacent siblings
    */
   protected TreeLayoutAlgorithm(
-      Set<V> roots, int horizontalVertexSpacing, int verticalVertexSpacing, boolean expandLayout) {
-    this.roots = roots;
+      int horizontalVertexSpacing, int verticalVertexSpacing, boolean expandLayout) {
     this.horizontalVertexSpacing = horizontalVertexSpacing;
     this.verticalVertexSpacing = verticalVertexSpacing;
     this.expandLayout = expandLayout;
   }
 
-  protected Set<V> roots;
-
-  protected Map<V, Integer> baseWidths = new HashMap<>();
-
-  protected Map<V, Integer> baseHeights = new HashMap<>();
-
   protected transient Set<V> alreadyDone = new HashSet<>();
+
+  protected Map<V, Dimension> baseBounds = new HashMap<>();
 
   /** The default horizontal vertex spacing. Initialized to 50. */
   protected static final int DEFAULT_HORIZONTAL_VERTEX_SPACING = 50;
@@ -119,27 +105,13 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
 
   protected boolean expandLayout;
 
-  protected int maxHeight = 0;
-
   @Override
   public void visit(LayoutModel<V> layoutModel) {
     buildTree(layoutModel);
   }
 
-  public Map<V, Integer> getBaseWidths() {
-    return baseWidths;
-  }
-
-  public Map<V, Integer> getBaseHeights() {
-    return baseHeights;
-  }
-
-  public Set<V> getRoots() {
-    return roots;
-  }
-
-  public void setRoots(Set<V> roots) {
-    this.roots = roots;
+  public Map<V, Dimension> getBaseBounds() {
+    return baseBounds;
   }
 
   /**
@@ -148,15 +120,13 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
    */
   protected Set<V> buildTree(LayoutModel<V> layoutModel) {
     alreadyDone = Sets.newHashSet();
-    if (this.roots.isEmpty()) {
-      this.roots =
-          layoutModel
-              .getGraph()
-              .vertexSet()
-              .stream()
-              .filter(vertex -> Graphs.predecessorListOf(layoutModel.getGraph(), vertex).isEmpty())
-              .collect(toImmutableSet());
-    }
+    Set<V> roots =
+        layoutModel
+            .getGraph()
+            .vertexSet()
+            .stream()
+            .filter(vertex -> Graphs.predecessorListOf(layoutModel.getGraph(), vertex).isEmpty())
+            .collect(toImmutableSet());
 
     Preconditions.checkArgument(roots.size() > 0);
     // the width of the tree under 'roots'. Includes one 'horizontalVertexSpacing' per child vertex
@@ -166,23 +136,22 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
     int overallHeight = calculateHeight(layoutModel, roots);
     overallHeight += 2 * verticalVertexSpacing;
 
-    log.debug("layoutModel.getWidth() {}", layoutModel.getWidth());
-    log.debug("overallWidth {}", overallWidth);
+    log.trace("layoutModel.getWidth() {} overallWidth {}", layoutModel.getWidth(), overallWidth);
+    log.trace(
+        "layoutModel.getHeight() {} overallHeight {}", layoutModel.getHeight(), overallHeight);
     int largerWidth = Math.max(layoutModel.getWidth(), overallWidth);
     int largerHeight = Math.max(layoutModel.getHeight(), overallHeight);
     if (expandLayout) {
       layoutModel.setSize(largerWidth, largerHeight);
     }
-    log.debug("layoutModel.getHeight() {}", layoutModel.getHeight());
-    log.debug("overallHeight {}", overallHeight);
 
     int x = horizontalVertexSpacing;
     int y = getInitialY(layoutModel.getHeight(), overallHeight);
     log.trace("got initial y of {}", y);
 
     for (V vertex : roots) {
-      int w = this.baseWidths.get(vertex);
-      log.trace("w is {} and baseWidths.get(vertex) = {}", w, baseWidths.get(vertex));
+      int w = this.baseBounds.get(vertex).width;
+      log.trace("w is {} and baseWidths.get(vertex) = {}", w, baseBounds.get(vertex).width);
       x += w / 2;
       log.trace("currentX after vertex {} is now {}", vertex, x);
       buildTree(layoutModel, vertex, x, y);
@@ -205,11 +174,12 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
       log.trace("Set vertex {} to {}", vertex, Point.of(x, y));
       layoutModel.set(vertex, x, y);
 
-      int sizeXofCurrent = baseWidths.get(vertex);
+      double sizeXofCurrent = baseBounds.get(vertex).width;
       x -= sizeXofCurrent / 2;
 
       for (V element : Graphs.successorListOf(layoutModel.getGraph(), vertex)) {
-        int sizeXofChild = this.baseWidths.get(element);
+        log.trace("get base position of {} from {}", element, baseBounds);
+        double sizeXofChild = this.baseBounds.get(element).width;
         x += sizeXofChild / 2;
         buildTree(layoutModel, element, x, y);
         x += sizeXofChild / 2 + horizontalVertexSpacing;
@@ -226,30 +196,20 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
     log.trace("filtered successors of {} are {}", vertex, successors);
     seen.addAll(successors);
 
-    int size =
-        successors
-            .stream()
-            .mapToInt(
-                element -> calculateWidth(layoutModel, element, seen) + horizontalVertexSpacing)
-            .sum();
-    size = Math.max(0, size - horizontalVertexSpacing);
+    final int size =
+        Math.max(
+            0,
+            successors
+                    .stream()
+                    .mapToInt(
+                        element ->
+                            calculateWidth(layoutModel, element, seen) + horizontalVertexSpacing)
+                    .sum()
+                - horizontalVertexSpacing);
     log.trace("calcWidth baseWidths put {} {}", vertex, size);
-    baseWidths.put(vertex, size);
-
+    //    baseBounds.merge(vertex, Dimension.of(0, size), (r, t) -> Dimension.of(size, r.height));
+    baseBounds.merge(vertex, Dimension.of(size, 0), (r, t) -> Dimension.of(size, r.height));
     return size;
-  }
-
-  private int leafCount(Graph<V, ?> graph, V root) {
-    int count = 0;
-    List<V> successors = Graphs.successorListOf(graph, root);
-    for (V s : successors) {
-      if (graph.outgoingEdgesOf(s).isEmpty()) {
-        count++;
-      } else {
-        count += leafCount(graph, s);
-      }
-    }
-    return count;
   }
 
   protected int calculateWidth(LayoutModel<V> layoutModel, Collection<V> roots, Set<V> seen) {
@@ -259,7 +219,6 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
   }
 
   protected int calculateHeight(LayoutModel<V> layoutModel, V vertex, Set<V> seen) {
-
     Graph<V, ?> graph = layoutModel.getGraph();
     List<V> successors = Graphs.successorListOf(graph, vertex);
     log.trace("graph is {}", graph);
@@ -269,14 +228,14 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
 
     seen.addAll(successors);
 
-    int height =
+    final int height =
         successors
             .stream()
             .mapToInt(
                 element -> calculateHeight(layoutModel, element, seen) + verticalVertexSpacing)
             .max()
             .orElse(0);
-    baseHeights.put(vertex, height);
+    baseBounds.merge(vertex, Dimension.of(0, height), (r, t) -> Dimension.of(r.width, height));
     return height;
   }
 
