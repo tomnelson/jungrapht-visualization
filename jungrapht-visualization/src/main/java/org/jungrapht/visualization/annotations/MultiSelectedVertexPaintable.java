@@ -133,8 +133,7 @@ public class MultiSelectedVertexPaintable<V> implements VisualizationServer.Pain
         visualizationServer.getRenderContext().getMultiLayerTransformer();
     // if there is only one selected vertex, make a big arrow pointing to it
     if (selectedVertices.size() == 1) {
-      // set the transform to identity
-      g2d.setTransform(new AffineTransform());
+
       V vertex = selectedVertices.stream().findFirst().get();
       // find the layout coords
       Point location = layoutModel.apply(vertex);
@@ -149,11 +148,23 @@ public class MultiSelectedVertexPaintable<V> implements VisualizationServer.Pain
       transform.concatenate(translateTransform);
       transform.concatenate(rotationTransform);
       Shape shape = transform.createTransformedShape(selectionShape);
+
       g2d.draw(shape);
       g2d.fill(shape);
     } else {
+
+      AffineTransform viewTransform =
+          visualizationServer
+              .getRenderContext()
+              .getMultiLayerTransformer()
+              .getTransformer(MultiLayerTransformer.Layer.VIEW)
+              .getTransform();
+      // allow for when view transform is offset by container (menubar)
+      AffineTransform gTransform = g2d.getTransform();
+      viewTransform.preConcatenate(gTransform);
+      g2d.setTransform(viewTransform);
+
       // if there are a bunch that are selected, highlight them with a drawn border
-      ((JComponent) visualizationServer).revalidate();
       for (V vertex : selectedVertices) {
         paintIconForVertex(
             visualizationServer.getRenderContext(),
@@ -214,12 +225,6 @@ public class MultiSelectedVertexPaintable<V> implements VisualizationServer.Pain
     GraphicsDecorator g = renderContext.getGraphicsContext();
     Paint oldPaint = g.getPaint();
 
-    AffineTransform viewTransform =
-        renderContext
-            .getMultiLayerTransformer()
-            .getTransformer(MultiLayerTransformer.Layer.VIEW)
-            .getTransform();
-    g.setTransform(viewTransform);
     Paint drawPaint = Color.red;
     if (drawPaint != null) {
       g.setPaint(drawPaint);
@@ -236,7 +241,6 @@ public class MultiSelectedVertexPaintable<V> implements VisualizationServer.Pain
 
   protected void paintIconForVertex(
       RenderContext<V, ?> renderContext, VisualizationModel<V, ?> visualizationModel, V v) {
-    GraphicsDecorator g = renderContext.getGraphicsContext();
     int[] coords = new int[2];
     Shape shape = prepareFinalVertexShape(renderContext, visualizationModel, v, coords);
 
