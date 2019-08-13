@@ -87,7 +87,7 @@ public class MultiRowTreeLayoutForestDemo extends JPanel {
 
     final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
 
-    Predicate<Integer> edgePredicate = e -> true; //e -> e % 5 == 0;
+    Predicate<Integer> edgePredicate = e -> false;
     vv.setGraphMouse(graphMouse);
     vv.addKeyListener(graphMouse.getModeKeyListener());
     vv.addPreRenderPaintable(

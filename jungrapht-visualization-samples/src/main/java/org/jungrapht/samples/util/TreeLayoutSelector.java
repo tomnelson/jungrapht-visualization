@@ -33,9 +33,9 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     VisualizationServer<V, E> visualizationServer;
     int intialialSelection;
     Runnable after = () -> {};
-    Predicate<E> edgePredicate = e -> true;
+    Predicate<E> edgePredicate = e -> false;
     Comparator<E> edgeComparator = (e1, e2) -> 0;
-    Predicate<V> vertexPredicate = e -> true;
+    Predicate<V> vertexPredicate = e -> false;
     Comparator<V> vertexComparator = (e1, e2) -> 0;
 
     Builder(VisualizationServer<V, E> visualizationServer) {
@@ -167,7 +167,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     edgeAwareTreeButton.addItemListener(new LayoutItemListener(edgeAwareTreeLayoutAlgorithm, vv));
     edgeAwareTreeButton.setSelected(initialSelection == layoutNumber++);
 
-    JRadioButton multiRowEdgeAwareTreeButton = new JRadioButton("MultiROw Edge aware");
+    JRadioButton multiRowEdgeAwareTreeButton = new JRadioButton("MultiRow Edge aware");
     multiRowEdgeAwareTreeButton.addItemListener(
         new LayoutItemListener(multiRowEdgeAwareTreeLayoutAlgorithm, vv));
     multiRowEdgeAwareTreeButton.setSelected(initialSelection == layoutNumber++);
