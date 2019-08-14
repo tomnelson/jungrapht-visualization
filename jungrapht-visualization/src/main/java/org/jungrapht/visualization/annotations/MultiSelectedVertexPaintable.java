@@ -153,16 +153,19 @@ public class MultiSelectedVertexPaintable<V> implements VisualizationServer.Pain
       g2d.fill(shape);
     } else {
 
+      // get a copy of the current transform used by g2d
+      AffineTransform graphicsTransformCopy = new AffineTransform(g2d.getTransform());
+
       AffineTransform viewTransform =
           visualizationServer
               .getRenderContext()
               .getMultiLayerTransformer()
               .getTransformer(MultiLayerTransformer.Layer.VIEW)
               .getTransform();
-      // allow for when view transform is offset by container (menubar)
-      AffineTransform gTransform = g2d.getTransform();
-      viewTransform.preConcatenate(gTransform);
-      g2d.setTransform(viewTransform);
+
+      // don't mutate the viewTransform!
+      graphicsTransformCopy.concatenate(viewTransform);
+      g2d.setTransform(graphicsTransformCopy);
 
       // if there are a bunch that are selected, highlight them with a drawn border
       for (V vertex : selectedVertices) {
