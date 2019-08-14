@@ -38,18 +38,20 @@ public class ISOMLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
 
   private static final Logger log = LoggerFactory.getLogger(ISOMLayoutAlgorithm.class);
 
-  public static class Builder<V> extends AbstractIterativeLayoutAlgorithm.Builder {
+  public static class Builder<V, T extends ISOMLayoutAlgorithm<V>, B extends Builder<V, T, B>>
+      extends AbstractIterativeLayoutAlgorithm.Builder<V, T, B>
+      implements LayoutAlgorithm.Builder<V, T, B> {
 
-    public ISOMLayoutAlgorithm<V> build() {
-      return new ISOMLayoutAlgorithm<>(this);
+    public T build() {
+      return (T) new ISOMLayoutAlgorithm<>(this);
     }
   }
 
-  public static <V> Builder<V> builder() {
+  public static <V> Builder<V, ?, ?> builder() {
     return new Builder<>();
   }
 
-  protected ISOMLayoutAlgorithm(Builder builder) {
+  protected ISOMLayoutAlgorithm(Builder<V, ?, ?> builder) {
     super(builder);
   }
 

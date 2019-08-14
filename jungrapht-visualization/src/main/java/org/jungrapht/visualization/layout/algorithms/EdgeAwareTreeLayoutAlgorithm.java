@@ -10,14 +10,13 @@
 
 package org.jungrapht.visualization.layout.algorithms;
 
-import static com.google.common.collect.ImmutableSet.toImmutableSet;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,7 +37,9 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E>
   private static final Logger log = LoggerFactory.getLogger(EdgeAwareTreeLayoutAlgorithm.class);
 
   public static class Builder<
-      V, E, T extends EdgeAwareTreeLayoutAlgorithm<V, E>, B extends Builder<V, E, T, B>> {
+          V, E, T extends EdgeAwareTreeLayoutAlgorithm<V, E>, B extends Builder<V, E, T, B>>
+      implements EdgeAwareLayoutAlgorithm.Builder<V, E, T, B> {
+    protected Predicate<V> rootPredicate;
     protected int horizontalVertexSpacing = DEFAULT_HORIZONTAL_VERTEX_SPACING;
     protected int verticalVertexSpacing = DEFAULT_VERTICAL_VERTEX_SPACING;
     protected Predicate<V> vertexPredicate = v -> false;
@@ -49,6 +50,11 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E>
 
     protected B self() {
       return (B) this;
+    }
+
+    public B rootPredicate(Predicate<V> rootPredicate) {
+      this.rootPredicate = rootPredicate;
+      return self();
     }
 
     public B horizontalVertexSpacing(int horizontalVertexSpacing) {
@@ -101,6 +107,7 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E>
 
   protected EdgeAwareTreeLayoutAlgorithm(Builder<V, E, ?, ?> builder) {
     this(
+        builder.rootPredicate,
         builder.horizontalVertexSpacing,
         builder.verticalVertexSpacing,
         builder.vertexPredicate,
@@ -117,6 +124,7 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E>
    * @param verticalVertexSpacing the vertical spacing between adjacent siblings
    */
   protected EdgeAwareTreeLayoutAlgorithm(
+      Predicate<V> rootPredicate,
       int horizontalVertexSpacing,
       int verticalVertexSpacing,
       Predicate<V> vertexPredicate,
@@ -124,6 +132,7 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E>
       Comparator<V> vertexComparator,
       Comparator<E> edgeComparator,
       boolean expandLayout) {
+    this.rootPredicate = rootPredicate;
     this.horizontalVertexSpacing = horizontalVertexSpacing;
     this.verticalVertexSpacing = verticalVertexSpacing;
     this.vertexPredicate = vertexPredicate;
@@ -132,6 +141,8 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E>
     this.edgeComparator = edgeComparator;
     this.expandLayout = expandLayout;
   }
+
+  protected Predicate<V> rootPredicate;
 
   protected transient Set<V> alreadyDone = new HashSet<>();
 
@@ -195,15 +206,19 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E>
   protected Set<V> buildTree(LayoutModel<V> layoutModel) {
     Graph<V, E> graph = layoutModel.getGraph();
     alreadyDone = Sets.newHashSet();
+    if (this.rootPredicate == null) {
+      rootPredicate = v -> layoutModel.getGraph().incomingEdgesOf(v).isEmpty();
+    }
 
-    // discover roots of the tree(s)
     Set<V> roots =
-        layoutModel
-            .getGraph()
-            .vertexSet()
+        graph
+            .edgeSet()
             .stream()
-            .filter(vertex -> Graphs.predecessorListOf(layoutModel.getGraph(), vertex).isEmpty())
-            .collect(toImmutableSet());
+            .sorted(edgeComparator)
+            .map(graph::getEdgeSource)
+            .sorted(vertexComparator)
+            .filter(rootPredicate)
+            .collect(Collectors.toCollection(LinkedHashSet::new));
 
     Preconditions.checkArgument(roots.size() > 0);
 
@@ -221,12 +236,18 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E>
         "layoutModel.getHeight() {} overallHeight {}", layoutModel.getHeight(), overallHeight);
     int largerWidth = Math.max(layoutModel.getWidth(), overallWidth);
     int largerHeight = Math.max(layoutModel.getHeight(), overallHeight);
+
     if (expandLayout) {
       layoutModel.setSize(largerWidth, largerHeight);
     }
 
-    // position the vertices
     int x = horizontalVertexSpacing;
+    if (overallWidth < layoutModel.getWidth()) {
+      // start later
+      x += layoutModel.getWidth() / 2 - overallWidth / 2;
+    }
+
+    // position the vertices
     int y = getInitialY(layoutModel.getHeight(), overallHeight);
     log.trace("got initial y of {}", y);
 

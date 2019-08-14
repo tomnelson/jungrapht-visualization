@@ -15,7 +15,8 @@ public class AnimationLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorith
   private static final Logger log = LoggerFactory.getLogger(AnimationLayoutAlgorithm.class);
 
   public static class Builder<V, T extends AnimationLayoutAlgorithm<V>, B extends Builder<V, T, B>>
-      extends AbstractIterativeLayoutAlgorithm.Builder<V, T, B> {
+      extends AbstractIterativeLayoutAlgorithm.Builder<V, T, B>
+      implements LayoutAlgorithm.Builder<V, T, B> {
     protected VisualizationServer<V, ?> visualizationServer;
     protected LayoutAlgorithm<V> endLayoutAlgorithm;
     protected Runnable after = null;

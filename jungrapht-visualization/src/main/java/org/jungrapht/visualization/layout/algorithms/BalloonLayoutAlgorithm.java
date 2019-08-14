@@ -42,7 +42,7 @@ public class BalloonLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V> {
   private static final Logger log = LoggerFactory.getLogger(BalloonLayoutAlgorithm.class);
 
   public static class Builder<V, T extends BalloonLayoutAlgorithm<V>, B extends Builder<V, T, B>>
-      extends TreeLayoutAlgorithm.Builder<V, T, B> {
+      extends TreeLayoutAlgorithm.Builder<V, T, B> implements LayoutAlgorithm.Builder<V, T, B> {
 
     public T build() {
       return (T) new BalloonLayoutAlgorithm(this);

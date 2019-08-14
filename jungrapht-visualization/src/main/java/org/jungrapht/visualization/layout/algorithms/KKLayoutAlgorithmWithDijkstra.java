@@ -36,38 +36,41 @@ public class KKLayoutAlgorithmWithDijkstra<V> extends AbstractIterativeLayoutAlg
 
   private static final Logger log = LoggerFactory.getLogger(KKLayoutAlgorithmWithDijkstra.class);
 
-  public static class Builder<V> extends AbstractIterativeLayoutAlgorithm.Builder {
+  public static class Builder<
+          V, T extends KKLayoutAlgorithmWithDijkstra<V>, B extends Builder<V, T, B>>
+      extends AbstractIterativeLayoutAlgorithm.Builder<V, T, B>
+      implements LayoutAlgorithm.Builder<V, T, B> {
     protected Map<Dijkstra.Pair<V>, Integer> distance;
     protected int maxIterations = 2000;
     protected boolean adjustForGravity = true;
     protected boolean exchangeVertices = true;
 
-    public Builder<V> distance(Map<Dijkstra.Pair<V>, Integer> distance) {
+    public B distance(Map<Dijkstra.Pair<V>, Integer> distance) {
       this.distance = distance;
-      return this;
+      return self();
     }
 
-    public Builder<V> maxIterations(int maxIterations) {
+    public B maxIterations(int maxIterations) {
       this.maxIterations = maxIterations;
-      return this;
+      return self();
     }
 
-    public Builder<V> adjustForGravity(boolean adjustForGravity) {
+    public B adjustForGravity(boolean adjustForGravity) {
       this.adjustForGravity = adjustForGravity;
-      return this;
+      return self();
     }
 
-    public Builder<V> exchangeVertices(boolean exchangeVertices) {
+    public B exchangeVertices(boolean exchangeVertices) {
       this.exchangeVertices = exchangeVertices;
-      return this;
+      return self();
     }
 
-    public KKLayoutAlgorithmWithDijkstra<V> build() {
-      return new KKLayoutAlgorithmWithDijkstra<>(this);
+    public T build() {
+      return (T) new KKLayoutAlgorithmWithDijkstra<>(this);
     }
   }
 
-  public static <V> Builder<V> builder() {
+  public static <V> Builder<V, ?, ?> builder() {
     return new Builder<>();
   }
 
@@ -106,7 +109,7 @@ public class KKLayoutAlgorithmWithDijkstra<V> extends AbstractIterativeLayoutAlg
    */
   private double disconnected_multiplier = 0.5;
 
-  protected KKLayoutAlgorithmWithDijkstra(Builder<V> builder) {
+  protected KKLayoutAlgorithmWithDijkstra(Builder<V, ?, ?> builder) {
     super(builder);
     //    this.distance = (x, y) -> builder.distance.getDistance(x, y);
     this.maxIterations = builder.maxIterations;

@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jungrapht.visualization.layout.model.Dimension;
@@ -33,13 +34,20 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
 
   private static final Logger log = LoggerFactory.getLogger(TreeLayoutAlgorithm.class);
 
-  public static class Builder<V, T extends TreeLayoutAlgorithm<V>, B extends Builder<V, T, B>> {
+  public static class Builder<V, T extends TreeLayoutAlgorithm<V>, B extends Builder<V, T, B>>
+      implements LayoutAlgorithm.Builder<V, T, B> {
+    protected Predicate<V> rootPredicate;
     protected int horizontalVertexSpacing = DEFAULT_HORIZONTAL_VERTEX_SPACING;
     protected int verticalVertexSpacing = DEFAULT_VERTICAL_VERTEX_SPACING;
     protected boolean expandLayout = true;
 
     protected B self() {
       return (B) this;
+    }
+
+    public B rootPredicate(Predicate<V> rootPredicate) {
+      this.rootPredicate = rootPredicate;
+      return self();
     }
 
     public B horizontalVertexSpacing(int horizontalVertexSpacing) {
@@ -71,7 +79,11 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
   }
 
   protected TreeLayoutAlgorithm(Builder<V, ?, ?> builder) {
-    this(builder.horizontalVertexSpacing, builder.verticalVertexSpacing, builder.expandLayout);
+    this(
+        builder.rootPredicate,
+        builder.horizontalVertexSpacing,
+        builder.verticalVertexSpacing,
+        builder.expandLayout);
   }
 
   /**
@@ -81,11 +93,17 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
    * @param verticalVertexSpacing the vertical spacing between adjacent siblings
    */
   protected TreeLayoutAlgorithm(
-      int horizontalVertexSpacing, int verticalVertexSpacing, boolean expandLayout) {
+      Predicate<V> rootPredicate,
+      int horizontalVertexSpacing,
+      int verticalVertexSpacing,
+      boolean expandLayout) {
+    this.rootPredicate = rootPredicate;
     this.horizontalVertexSpacing = horizontalVertexSpacing;
     this.verticalVertexSpacing = verticalVertexSpacing;
     this.expandLayout = expandLayout;
   }
+
+  protected Predicate<V> rootPredicate;
 
   protected transient Set<V> alreadyDone = new HashSet<>();
 
@@ -120,13 +138,11 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
    */
   protected Set<V> buildTree(LayoutModel<V> layoutModel) {
     alreadyDone = Sets.newHashSet();
+    if (this.rootPredicate == null) {
+      rootPredicate = v -> layoutModel.getGraph().incomingEdgesOf(v).isEmpty();
+    }
     Set<V> roots =
-        layoutModel
-            .getGraph()
-            .vertexSet()
-            .stream()
-            .filter(vertex -> Graphs.predecessorListOf(layoutModel.getGraph(), vertex).isEmpty())
-            .collect(toImmutableSet());
+        layoutModel.getGraph().vertexSet().stream().filter(rootPredicate).collect(toImmutableSet());
 
     Preconditions.checkArgument(roots.size() > 0);
     // the width of the tree under 'roots'. Includes one 'horizontalVertexSpacing' per child vertex
@@ -144,8 +160,12 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
     if (expandLayout) {
       layoutModel.setSize(largerWidth, largerHeight);
     }
-
     int x = horizontalVertexSpacing;
+    if (overallWidth < layoutModel.getWidth()) {
+      // start later
+      x += layoutModel.getWidth() / 2 - overallWidth / 2;
+    }
+
     int y = getInitialY(layoutModel.getHeight(), overallHeight);
     log.trace("got initial y of {}", y);
 

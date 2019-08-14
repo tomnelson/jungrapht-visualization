@@ -10,13 +10,12 @@
 
 package org.jungrapht.visualization.layout.algorithms;
 
-import static com.google.common.collect.ImmutableSet.toImmutableSet;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -31,14 +30,15 @@ import org.slf4j.LoggerFactory;
 
 /** @author Tom Nelson */
 public class MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> extends EdgeAwareTreeLayoutAlgorithm<V, E>
-    implements EdgeAwareLayoutAlgorithm<V, E> {
+    implements EdgeAwareLayoutAlgorithm<V, E>, EdgeSorting<E>, EdgePredicated<E> {
 
   private static final Logger log =
       LoggerFactory.getLogger(MultiRowEdgeAwareTreeLayoutAlgorithm.class);
 
   public static class Builder<
           V, E, T extends MultiRowEdgeAwareTreeLayoutAlgorithm<V, E>, B extends Builder<V, E, T, B>>
-      extends EdgeAwareTreeLayoutAlgorithm.Builder<V, E, T, B> {
+      extends EdgeAwareTreeLayoutAlgorithm.Builder<V, E, T, B>
+      implements EdgeAwareLayoutAlgorithm.Builder<V, E, T, B> {
 
     public T build() {
       return (T) new MultiRowEdgeAwareTreeLayoutAlgorithm<>(this);
@@ -60,6 +60,7 @@ public class MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> extends EdgeAwareTreeLay
    * @param verticalVertexSpacing the vertical spacing between adjacent siblings
    */
   protected MultiRowEdgeAwareTreeLayoutAlgorithm(
+      Predicate<V> rootPredicate,
       int horizontalVertexSpacing,
       int verticalVertexSpacing,
       Predicate<V> vertexPredicate,
@@ -68,6 +69,7 @@ public class MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> extends EdgeAwareTreeLay
       Comparator<E> edgeComparator,
       boolean expandLayout) {
     super(
+        rootPredicate,
         horizontalVertexSpacing,
         verticalVertexSpacing,
         vertexPredicate,
@@ -88,12 +90,22 @@ public class MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> extends EdgeAwareTreeLay
     rowCount = 1;
     alreadyDone = Sets.newHashSet();
     Graph<V, E> graph = layoutModel.getGraph();
+    if (this.rootPredicate == null) {
+      for (V v : graph.vertexSet()) {
+        System.err.println("got: " + v + "with hashCode: " + v.hashCode());
+        System.err.println("graph.incomingEdgesOf(v): " + graph.incomingEdgesOf(v));
+      }
+      rootPredicate = v -> layoutModel.getGraph().incomingEdgesOf(v).isEmpty();
+    }
     Set<V> roots =
         graph
-            .vertexSet()
+            .edgeSet()
             .stream()
-            .filter(vertex -> Graphs.predecessorListOf(graph, vertex).isEmpty())
-            .collect(toImmutableSet());
+            .sorted(edgeComparator)
+            .map(graph::getEdgeSource)
+            .sorted(vertexComparator)
+            .filter(rootPredicate)
+            .collect(Collectors.toCollection(LinkedHashSet::new));
 
     Preconditions.checkArgument(roots.size() > 0);
 

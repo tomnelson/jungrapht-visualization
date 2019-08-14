@@ -65,9 +65,10 @@ public class DAGLayoutAlgorithm<V> extends SpringLayoutAlgorithm<V> {
   int incrementsLeft;
   final int COOL_DOWN_INCREMENTS = 200;
 
-  public static class Builder<V> extends SpringLayoutAlgorithm.Builder<V> {}
+  public static class Builder<V, T extends DAGLayoutAlgorithm<V>, B extends Builder<V, T, B>>
+      extends SpringLayoutAlgorithm.Builder<V, T, B> implements LayoutAlgorithm.Builder<V, T, B> {}
 
-  protected DAGLayoutAlgorithm(Builder<V> builder) {
+  protected DAGLayoutAlgorithm(Builder<V, ?, ?> builder) {
     super(builder);
   }
 

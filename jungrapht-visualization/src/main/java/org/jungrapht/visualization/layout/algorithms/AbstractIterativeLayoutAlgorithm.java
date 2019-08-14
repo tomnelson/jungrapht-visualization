@@ -17,7 +17,8 @@ public abstract class AbstractIterativeLayoutAlgorithm<V> implements IterativeLa
   private static final Logger log = LoggerFactory.getLogger(AbstractIterativeLayoutAlgorithm.class);
 
   public abstract static class Builder<
-      V, T extends AbstractIterativeLayoutAlgorithm<V>, B extends Builder<V, T, B>> {
+          V, T extends AbstractIterativeLayoutAlgorithm<V>, B extends Builder<V, T, B>>
+      implements LayoutAlgorithm.Builder<V, T, B> {
     protected Random random = new Random();
     protected boolean shouldPrerelax = true;
     protected int preRelaxDurationMs = 500;

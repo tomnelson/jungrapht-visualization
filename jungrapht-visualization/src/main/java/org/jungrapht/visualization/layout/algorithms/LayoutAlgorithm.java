@@ -10,6 +10,9 @@ import org.jungrapht.visualization.layout.model.LayoutModel;
  */
 public interface LayoutAlgorithm<V> {
 
+  interface Builder<V, T extends LayoutAlgorithm<V>, B extends Builder<V, T, B>> {
+    T build();
+  }
   /**
    * visit the passed layoutModel and set its locations
    *

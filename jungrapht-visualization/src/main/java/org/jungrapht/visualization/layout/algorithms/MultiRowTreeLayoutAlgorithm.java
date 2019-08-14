@@ -17,8 +17,8 @@ import com.google.common.collect.Sets;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Predicate;
 import org.jgrapht.Graph;
-import org.jgrapht.Graphs;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,7 @@ public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
 
   public static class Builder<
           V, T extends MultiRowTreeLayoutAlgorithm<V>, B extends Builder<V, T, B>>
-      extends TreeLayoutAlgorithm.Builder<V, T, B> {
+      extends TreeLayoutAlgorithm.Builder<V, T, B> implements LayoutAlgorithm.Builder<V, T, B> {
 
     public T build() {
       return (T) new MultiRowTreeLayoutAlgorithm<>(this);
@@ -53,8 +53,11 @@ public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
    * @param verticalVertexSpacing the vertical spacing between adjacent siblings
    */
   protected MultiRowTreeLayoutAlgorithm(
-      int horizontalVertexSpacing, int verticalVertexSpacing, boolean expandLayout) {
-    super(horizontalVertexSpacing, verticalVertexSpacing, expandLayout);
+      Predicate<V> rootPredicate,
+      int horizontalVertexSpacing,
+      int verticalVertexSpacing,
+      boolean expandLayout) {
+    super(rootPredicate, horizontalVertexSpacing, verticalVertexSpacing, expandLayout);
   }
 
   protected int rowCount = 1;
@@ -68,12 +71,10 @@ public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
     rowCount = 1;
     alreadyDone = Sets.newHashSet();
     Graph<V, ?> graph = layoutModel.getGraph();
-    Set<V> roots =
-        graph
-            .vertexSet()
-            .stream()
-            .filter(vertex -> Graphs.predecessorListOf(graph, vertex).isEmpty())
-            .collect(toImmutableSet());
+    if (this.rootPredicate == null) {
+      this.rootPredicate = v -> graph.incomingEdgesOf(v).isEmpty();
+    }
+    Set<V> roots = graph.vertexSet().stream().filter(rootPredicate).collect(toImmutableSet());
 
     Preconditions.checkArgument(roots.size() > 0);
     // the width of the tree under 'roots'. Includes one 'horizontalVertexSpacing' per child vertex

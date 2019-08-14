@@ -32,24 +32,29 @@ public class CircleLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
   private double radius;
   private List<V> vertexOrderedList;
 
-  public static class Builder<V> {
+  public static class Builder<V, T extends CircleLayoutAlgorithm<V>, B extends Builder<V, T, B>>
+      implements LayoutAlgorithm.Builder<V, T, B> {
     protected int radius;
 
-    public Builder radius(int radius) {
-      this.radius = radius;
-      return this;
+    B self() {
+      return (B) this;
     }
 
-    public CircleLayoutAlgorithm<V> build() {
-      return new CircleLayoutAlgorithm(this);
+    public B radius(int radius) {
+      this.radius = radius;
+      return self();
+    }
+
+    public T build() {
+      return (T) new CircleLayoutAlgorithm(this);
     }
   }
 
-  public static <V> Builder<V> builder() {
+  public static <V> Builder<V, ?, ?> builder() {
     return new Builder<>();
   }
 
-  protected CircleLayoutAlgorithm(Builder<V> builder) {
+  protected CircleLayoutAlgorithm(Builder<V, ?, ?> builder) {
     this(builder.radius);
   }
 

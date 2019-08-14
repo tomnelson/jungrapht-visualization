@@ -12,6 +12,9 @@ import org.jungrapht.visualization.layout.model.LayoutModel;
  */
 public interface EdgeAwareLayoutAlgorithm<V, E> extends LayoutAlgorithm<V> {
 
+  interface Builder<V, E, T extends EdgeAwareLayoutAlgorithm<V, E>, B extends Builder<V, E, T, B>>
+      extends LayoutAlgorithm.Builder<V, T, B> {}
+
   /**
    * visit the passed layoutModel and set its locations
    *

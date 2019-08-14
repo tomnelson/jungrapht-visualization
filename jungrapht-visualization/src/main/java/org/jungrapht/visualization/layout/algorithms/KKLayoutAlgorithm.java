@@ -41,7 +41,8 @@ public class KKLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
   private static final Logger log = LoggerFactory.getLogger(KKLayoutAlgorithm.class);
 
   public static class Builder<V, T extends KKLayoutAlgorithm<V>, B extends Builder<V, T, B>>
-      extends AbstractIterativeLayoutAlgorithm.Builder<V, T, B> {
+      extends AbstractIterativeLayoutAlgorithm.Builder<V, T, B>
+      implements LayoutAlgorithm.Builder<V, T, B> {
     protected Map<Pair<V>, Integer> distance;
     protected int maxIterations = 2000;
     protected boolean adjustForGravity = true;

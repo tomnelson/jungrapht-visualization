@@ -34,7 +34,8 @@ public class RadialTreeLayoutAlgorithm<V, E> extends EdgeAwareTreeLayoutAlgorith
 
   public static class Builder<
           V, E, T extends RadialTreeLayoutAlgorithm<V, E>, B extends Builder<V, E, T, B>>
-      extends EdgeAwareTreeLayoutAlgorithm.Builder<V, E, T, B> {
+      extends EdgeAwareTreeLayoutAlgorithm.Builder<V, E, T, B>
+      implements EdgeAwareLayoutAlgorithm.Builder<V, E, T, B> {
 
     public T build() {
       return (T) new RadialTreeLayoutAlgorithm<>(this);
