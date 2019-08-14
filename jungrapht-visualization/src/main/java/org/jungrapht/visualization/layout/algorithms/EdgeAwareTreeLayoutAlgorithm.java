@@ -233,18 +233,20 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E>
     // test each root vertex to see if it is on the filtered path
     for (V vertex : roots) {
 
-      boolean onFilteredPath = false;
-      onFilteredPath |= vertexPredicate.test(vertex);
-      for (E edge : graph.outgoingEdgesOf(vertex)) {
-        onFilteredPath |= edgePredicate.test(edge);
-      }
+      boolean onFilteredPath =
+          vertexPredicate.test(vertex)
+              | graph
+                  .outgoingEdgesOf(vertex)
+                  .stream()
+                  .map(edge -> edgePredicate.test(edge))
+                  .reduce(false, (a, b) -> a || b);
 
       if (onFilteredPath) {
         int w = this.baseBounds.get(vertex).width;
         log.trace("w is {} and baseWidths.get(vertex) = {}", w, baseBounds.get(vertex).width);
         log.trace("currentX after vertex {} is now {}", vertex, x);
         buildTree(layoutModel, vertex, x, y);
-        x += w + horizontalVertexSpacing; //- w / 2;
+        x += w + horizontalVertexSpacing;
       } else {
         int w = this.baseBounds.get(vertex).width;
         log.trace("w is {} and baseWidths.get(vertex) = {}", w, baseBounds.get(vertex).width);
