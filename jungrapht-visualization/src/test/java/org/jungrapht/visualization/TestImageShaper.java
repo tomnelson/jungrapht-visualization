@@ -19,10 +19,6 @@ public class TestImageShaper extends TestCase {
     for (int i = 0; i < height; i++) {
       for (int j = 0; j < width; j++) {
         image.setRGB(j, i, 0x00000000);
-        //				System.err.println("["+j+","+i+"] = "+image.getRGB(j, i));
-        //				if((image.getRGB(j,i) & 0xff000000) != 0) {
-        //					System.err.println("got an opaque point at ["+j+","+i+"]");
-        //				}
       }
     }
     image.setRGB(3, 1, 0xffffffff);

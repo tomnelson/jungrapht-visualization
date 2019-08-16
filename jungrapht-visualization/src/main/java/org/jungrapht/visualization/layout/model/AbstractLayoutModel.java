@@ -109,7 +109,6 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
    */
   @Override
   public void accept(LayoutAlgorithm<V> layoutAlgorithm) {
-    System.err.println("accepting " + layoutAlgorithm);
     setSize(preferredWidth, preferredHeight);
     log.debug("reset the model size to {},{}", preferredWidth, preferredHeight);
     // the layoutMode is active with a new LayoutAlgorithm

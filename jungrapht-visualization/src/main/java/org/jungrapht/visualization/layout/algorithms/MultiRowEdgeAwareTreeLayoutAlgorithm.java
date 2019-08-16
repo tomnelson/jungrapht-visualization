@@ -30,7 +30,11 @@ import org.slf4j.LoggerFactory;
 
 /** @author Tom Nelson */
 public class MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> extends EdgeAwareTreeLayoutAlgorithm<V, E>
-    implements EdgeAwareLayoutAlgorithm<V, E>, EdgeSorting<E>, EdgePredicated<E> {
+    implements EdgeAwareLayoutAlgorithm<V, E>,
+        EdgeSorting<E>,
+        EdgePredicated<E>,
+        VertexSorting<V>,
+        VertexPredicated<V> {
 
   private static final Logger log =
       LoggerFactory.getLogger(MultiRowEdgeAwareTreeLayoutAlgorithm.class);
@@ -91,10 +95,6 @@ public class MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> extends EdgeAwareTreeLay
     alreadyDone = Sets.newHashSet();
     Graph<V, E> graph = layoutModel.getGraph();
     if (this.rootPredicate == null) {
-      for (V v : graph.vertexSet()) {
-        System.err.println("got: " + v + "with hashCode: " + v.hashCode());
-        System.err.println("graph.incomingEdgesOf(v): " + graph.incomingEdgesOf(v));
-      }
       rootPredicate = v -> layoutModel.getGraph().incomingEdgesOf(v).isEmpty();
     }
     Set<V> roots =
@@ -128,7 +128,11 @@ public class MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> extends EdgeAwareTreeLay
     log.trace("overallHeight {}", overallHeight);
 
     int cursor = horizontalVertexSpacing;
-    int y = 0;
+    if (rowCount == 1 && overallWidth < layoutModel.getWidth()) {
+      // start later
+      cursor += layoutModel.getWidth() / 2 - overallWidth / 2;
+    }
+    int y = getInitialY(layoutModel.getHeight(), overallHeight);
     log.trace("got initial y of {}", y);
 
     Set<V> rootsInRow = new HashSet<>();
@@ -200,13 +204,13 @@ public class MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> extends EdgeAwareTreeLay
         if (onFilteredPath) {
           x += sizeXofCurrent / 2;
           sizeXofChild = this.baseBounds.getOrDefault(targetVertex, Dimension.of(0, 0)).width;
-          log.info("get base position of {} from {}", targetVertex, baseBounds);
+          log.trace("get base position of {} from {}", targetVertex, baseBounds);
           buildTree(layoutModel, targetVertex, x, y);
           x += sizeXofChild + horizontalVertexSpacing;
         } else {
           sizeXofChild = this.baseBounds.getOrDefault(targetVertex, Dimension.of(0, 0)).width;
           x += sizeXofChild / 2;
-          log.info("get base position of {} from {}", targetVertex, baseBounds);
+          log.trace("get base position of {} from {}", targetVertex, baseBounds);
           buildTree(layoutModel, targetVertex, x, y);
           x += sizeXofChild / 2 + horizontalVertexSpacing;
         }

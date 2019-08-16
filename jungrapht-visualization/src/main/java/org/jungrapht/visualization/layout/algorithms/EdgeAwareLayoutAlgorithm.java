@@ -1,7 +1,5 @@
 package org.jungrapht.visualization.layout.algorithms;
 
-import java.util.Comparator;
-import java.util.function.Predicate;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 
 /**
@@ -10,7 +8,12 @@ import org.jungrapht.visualization.layout.model.LayoutModel;
  *
  * @author Tom Nelson.
  */
-public interface EdgeAwareLayoutAlgorithm<V, E> extends LayoutAlgorithm<V> {
+public interface EdgeAwareLayoutAlgorithm<V, E>
+    extends LayoutAlgorithm<V>,
+        EdgeSorting<E>,
+        EdgePredicated<E>,
+        VertexSorting<V>,
+        VertexPredicated<V> {
 
   interface Builder<V, E, T extends EdgeAwareLayoutAlgorithm<V, E>, B extends Builder<V, E, T, B>>
       extends LayoutAlgorithm.Builder<V, T, B> {}
@@ -22,12 +25,4 @@ public interface EdgeAwareLayoutAlgorithm<V, E> extends LayoutAlgorithm<V> {
    *     from Vertex to Point
    */
   void visit(LayoutModel<V> layoutModel);
-
-  void setVertexPredicate(Predicate<V> vertexPredicate);
-
-  void setEdgePredicate(Predicate<E> edgePredicate);
-
-  void setVertexComparator(Comparator<V> vertexComparator);
-
-  void setEdgeComparator(Comparator<E> edgeComparator);
 }

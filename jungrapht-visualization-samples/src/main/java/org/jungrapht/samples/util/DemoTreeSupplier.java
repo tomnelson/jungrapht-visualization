@@ -241,7 +241,6 @@ public class DemoTreeSupplier {
     int i = 0;
     char c = (char) ('H' + i);
     for (; i < 8; i++) {
-      System.err.println("char is " + c);
       builder.addEdge(c + "0", c + "1", edgeId++);
       builder.addEdge(c + "0", c + "2", edgeId++);
       builder.addEdge(c + "1", c + "4", edgeId++);
@@ -258,8 +257,6 @@ public class DemoTreeSupplier {
     }
 
     for (; i < 14; i++) {
-      //      char c = (char) (i);
-      System.err.println("char is " + c);
       builder.addEdge(c + "0", c + "1", edgeId++);
       builder.addEdge(c + "0", c + "2", edgeId++);
       builder.addEdge(c + "0", c + "3", edgeId++);
@@ -343,7 +340,6 @@ public class DemoTreeSupplier {
     BarabasiAlbertForestGenerator gen = new BarabasiAlbertForestGenerator(roots, nodes);
 
     gen.generateGraph(graph);
-    System.err.println("generated " + graph);
     Graph<String, Integer> directedGraph =
         GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.directedSimple())
             .buildGraph();
@@ -352,7 +348,7 @@ public class DemoTreeSupplier {
         .edgeSet()
         .stream()
         .forEach(e -> directedGraph.addEdge(graph.getEdgeTarget(e), graph.getEdgeSource(e), e));
-    log.info("graph is {}, directedGraph is {}", graph, directedGraph);
+    log.trace("graph is {}, directedGraph is {}", graph, directedGraph);
     return directedGraph;
   }
 

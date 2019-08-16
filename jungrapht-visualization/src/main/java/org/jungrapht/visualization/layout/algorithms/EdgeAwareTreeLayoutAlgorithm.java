@@ -322,7 +322,7 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E>
         if (onFilteredPath) {
           x += sizeXofCurrent / 2;
           sizeXofChild = this.baseBounds.getOrDefault(targetVertex, Dimension.of(0, 0)).width;
-          log.info("get base position of {} from {}", targetVertex, baseBounds);
+          log.trace("get base position of {} from {}", targetVertex, baseBounds);
           buildTree(layoutModel, targetVertex, x, y);
           x += sizeXofChild + horizontalVertexSpacing;
         } else {
@@ -350,7 +350,7 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E>
     List<V> successors = Graphs.successorListOf(graph, sourceVertex);
     log.trace("successors of {} are {}", sourceVertex, successors);
     successors.removeIf(seen::contains);
-    log.info("filtered successors of {} are {}", sourceVertex, successors);
+    log.trace("filtered successors of {} are {}", sourceVertex, successors);
     seen.addAll(successors);
 
     int size =
