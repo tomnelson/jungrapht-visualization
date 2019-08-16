@@ -61,7 +61,7 @@ public class BalloonLayoutForestDemo extends JPanel {
 
   LensSupport<ModalLensGraphMouse> hyperbolicSupport;
 
-  Dimension layoutSize = new Dimension(1600, 1600);
+  Dimension layoutSize = new Dimension(600, 600);
   Dimension viewSize = new Dimension(600, 600);
 
   public BalloonLayoutForestDemo() {

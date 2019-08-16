@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 /** @author Tom Nelson */
 public class EdgeAwareTreeLayoutAlgorithm<V, E>
-    implements EdgeAwareLayoutAlgorithm<V, E>, EdgeSorting<E>, EdgePredicated<E> {
+    implements TreeLayout<V>, EdgeAwareLayoutAlgorithm<V, E>, EdgeSorting<E>, EdgePredicated<E> {
 
   private static final Logger log = LoggerFactory.getLogger(EdgeAwareTreeLayoutAlgorithm.class);
 
@@ -242,13 +242,13 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E>
     }
 
     int x = horizontalVertexSpacing;
-    if (overallWidth < layoutModel.getWidth()) {
-      // start later
-      x += layoutModel.getWidth() / 2 - overallWidth / 2;
-    }
+    //    if (overallWidth < layoutModel.getWidth()) {
+    // start later
+    x = getInitialPosition(horizontalVertexSpacing, layoutModel.getWidth(), overallWidth);
+    //    }
 
     // position the vertices
-    int y = getInitialY(layoutModel.getHeight(), overallHeight);
+    int y = getInitialPosition(verticalVertexSpacing, layoutModel.getHeight(), overallHeight);
     log.trace("got initial y of {}", y);
 
     // test each root vertex to see if it is on the filtered path
@@ -280,11 +280,11 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E>
     return roots;
   }
 
-  protected int getInitialY(int layoutHeight, int treeHeight) {
-    if (layoutHeight == treeHeight) {
-      return this.verticalVertexSpacing;
+  protected int getInitialPosition(int initialSpacing, int layoutSpan, int treeSpan) {
+    if (layoutSpan <= treeSpan) {
+      return initialSpacing;
     }
-    return layoutHeight / 2 - treeHeight / 2;
+    return layoutSpan / 2 - treeSpan / 2;
   }
 
   /**

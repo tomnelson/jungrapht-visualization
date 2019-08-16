@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** @author Tom Nelson */
-public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
+public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V> {
 
   private static final Logger log = LoggerFactory.getLogger(TreeLayoutAlgorithm.class);
 
@@ -160,13 +160,13 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
     if (expandLayout) {
       layoutModel.setSize(largerWidth, largerHeight);
     }
-    int x = horizontalVertexSpacing;
-    if (overallWidth < layoutModel.getWidth()) {
-      // start later
-      x += layoutModel.getWidth() / 2 - overallWidth / 2;
-    }
+    int x =
+        //    if (overallWidth < layoutModel.getWidth()) {
+        // start later
+        getInitialPosition(horizontalVertexSpacing, layoutModel.getWidth(), overallWidth);
+    //    }
 
-    int y = getInitialY(layoutModel.getHeight(), overallHeight);
+    int y = getInitialPosition(verticalVertexSpacing, layoutModel.getHeight(), overallHeight);
     log.trace("got initial y of {}", y);
 
     for (V vertex : roots) {
@@ -180,11 +180,11 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
     return roots;
   }
 
-  protected int getInitialY(int layoutHeight, int treeHeight) {
-    if (layoutHeight == treeHeight) {
-      return this.verticalVertexSpacing;
+  protected int getInitialPosition(int initialPosition, int layoutSpan, int treeSpan) {
+    if (layoutSpan <= treeSpan) {
+      return initialPosition;
     }
-    return layoutHeight / 2 - treeHeight / 2;
+    return layoutSpan / 2 - treeSpan / 2;
   }
 
   protected void buildTree(LayoutModel<V> layoutModel, V vertex, int x, int y) {

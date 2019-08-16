@@ -66,7 +66,7 @@ public class RadialTreeLayoutAlgorithm<V, E> extends EdgeAwareTreeLayoutAlgorith
    * @return 0 for any supplied values
    */
   @Override
-  protected int getInitialY(int layoutHeight, int treeHeight) {
+  protected int getInitialPosition(int initialPosition, int layoutHeight, int treeHeight) {
     return 0;
   }
 

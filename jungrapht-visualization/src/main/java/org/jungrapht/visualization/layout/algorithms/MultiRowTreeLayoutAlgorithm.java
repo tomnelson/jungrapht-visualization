@@ -91,16 +91,16 @@ public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
       layoutModel.setSize(layoutModel.getWidth(), largerHeight);
     }
 
-    int cursor = horizontalVertexSpacing;
-    if (rowCount == 1 && overallWidth < layoutModel.getWidth()) {
-      // start later
-      cursor += layoutModel.getWidth() / 2 - overallWidth / 2;
-    }
+    int cursor =
+        //    if (overallWidth < layoutModel.getWidth()) {
+        // start later
+        getInitialPosition(horizontalVertexSpacing, layoutModel.getWidth(), overallWidth);
+    //    }
 
     log.trace("layoutModel.getHeight() {}", layoutModel.getHeight());
     log.trace("overallHeight {}", overallHeight);
 
-    int y = getInitialY(layoutModel.getHeight(), overallHeight);
+    int y = getInitialPosition(0, layoutModel.getHeight(), overallHeight);
     log.trace("got initial y of {}", y);
 
     Set<V> rootsInRow = new HashSet<>();
@@ -112,7 +112,7 @@ public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
       cursor += horizontalVertexSpacing;
 
       if (cursor > layoutModel.getWidth()) {
-        cursor = horizontalVertexSpacing;
+        cursor = getInitialPosition(horizontalVertexSpacing, layoutModel.getWidth(), overallWidth);
         cursor += w;
         cursor += horizontalVertexSpacing;
         int rowHeight = calculateHeight(layoutModel, rootsInRow);

@@ -435,7 +435,24 @@ class DefaultVisualizationServer<V, E> extends JPanel
       log.debug("vd.getWidth() {} ld.getWidth() {} ", vd.getWidth(), ld.getWidth());
       log.debug("vd.getHeight() {} ld.getHeight() {} ", vd.getHeight(), ld.getHeight());
       scaler.scale(this, (float) (ratio), new Point2D.Double());
-      log.debug("scaled by double {}, float {}", ratio, (float) ratio);
+      log.info("center of view is " + this.getCenter());
+      log.info(
+          "center of layout is "
+              + visualizationModel.getLayoutModel().getWidth() / 2
+              + ", "
+              + visualizationModel.getLayoutModel().getHeight() / 2);
+      Point2D centerOfView = this.getCenter();
+      // transform to layout coords
+      Point2D viewCenterOnLayout =
+          getRenderContext().getMultiLayerTransformer().inverseTransform(centerOfView);
+      org.jungrapht.visualization.layout.model.Point layoutCenter =
+          visualizationModel.getLayoutModel().getCenter();
+      double deltaX = viewCenterOnLayout.getX() - layoutCenter.x;
+      double deltaY = viewCenterOnLayout.getY() - layoutCenter.y;
+      getRenderContext()
+          .getMultiLayerTransformer()
+          .getTransformer(MultiLayerTransformer.Layer.LAYOUT)
+          .translate(deltaX, deltaY);
     }
   }
 

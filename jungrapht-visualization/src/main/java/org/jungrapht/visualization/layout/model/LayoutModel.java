@@ -45,6 +45,10 @@ public interface LayoutModel<V>
 
   int getPreferredHeight();
 
+  default Point getCenter() {
+    return Point.of(getWidth() / 2, getHeight() / 2);
+  }
+
   /**
    * allow the passed LayoutAlgorithm to operate on this LayoutModel
    *
