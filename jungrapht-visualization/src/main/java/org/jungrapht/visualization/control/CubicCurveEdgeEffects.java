@@ -42,7 +42,7 @@ public class CubicCurveEdgeEffects<V, E> implements EdgeEffects<V, E> {
     vv.removePostRenderPaintable(edgePaintable);
   }
 
-  //	@Override
+  @Override
   public void startArrowEffects(VisualizationServer<V, E> vv, Point2D down, Point2D out) {
     transformArrowShape(down, out);
     vv.addPostRenderPaintable(arrowPaintable);

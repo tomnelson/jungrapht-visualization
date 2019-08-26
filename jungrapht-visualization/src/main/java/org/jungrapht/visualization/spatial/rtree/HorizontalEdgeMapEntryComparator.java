@@ -27,9 +27,7 @@ public class HorizontalEdgeMapEntryComparator<T> implements Comparator<Map.Entry
    */
   public int compare(Rectangle2D left, Rectangle2D right) {
     if (left.getMinX() == right.getMinX()) {
-      if (left.getMaxX() == right.getMaxX()) return 0;
-      if (left.getMaxX() < right.getMaxX()) return -1;
-      else return 1;
+      return Double.compare(left.getMaxX(), right.getMaxX());
     } else {
       if (left.getMinX() < right.getMinX()) return -1;
       return 1;

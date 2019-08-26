@@ -8,7 +8,7 @@
  */
 package org.jungrapht.samples;
 
-import static org.jungrapht.visualization.renderers.LightweightModalRenderer.Mode.LIGHTWEIGHT;
+import static org.jungrapht.visualization.renderers.BiModalRenderer.Mode.LIGHTWEIGHT;
 
 import java.awt.*;
 import java.awt.event.ItemEvent;

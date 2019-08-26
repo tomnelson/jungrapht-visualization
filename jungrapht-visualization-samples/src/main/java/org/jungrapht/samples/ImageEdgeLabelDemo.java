@@ -68,7 +68,7 @@ public class ImageEdgeLabelDemo extends JPanel {
     vv.getRenderContext().setEdgeLabelRenderer(new JLabelEdgeLabelRenderer(Color.cyan));
     vv.getRenderContext()
         .setEdgeLabelFunction(
-            new Function<Number, String>() {
+            new Function<>() {
               URL url = getClass().getResource("/images/lightning-s.gif");
 
               public String apply(Number input) {

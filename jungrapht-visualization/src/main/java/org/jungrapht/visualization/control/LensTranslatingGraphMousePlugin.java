@@ -113,11 +113,12 @@ public class LensTranslatingGraphMousePlugin extends TranslatingGraphMousePlugin
    * @param point
    */
   private void testViewCenter(Lens lens, Point2D point) {
+    double closeness = lens.getRadius() / 10;
     double distanceFromCenter = lens.getDistanceFromCenter(point);
-    if (distanceFromCenter < 10) {
+    if (distanceFromCenter < closeness) {
       lens.setCenter(point);
       dragOnLens = true;
-    } else if (Math.abs(distanceFromCenter - lens.getRadius()) < 10) {
+    } else if (Math.abs(distanceFromCenter - lens.getRadius()) < closeness) {
       edgeOffset = lens.getRadius() - distanceFromCenter;
       lens.setRadius(distanceFromCenter + edgeOffset);
       dragOnEdge = true;

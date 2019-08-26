@@ -14,7 +14,7 @@ public class TransformSupport<V, E> extends MutableAffineTransformer {
   private static final Logger log = LoggerFactory.getLogger(TransformSupport.class);
 
   /**
-   * Overriden to apply lens effects to the transformation from view to layout coordinates
+   * Overridden to apply lens effects to the transformation from view to layout coordinates
    *
    * @param vv
    * @param p

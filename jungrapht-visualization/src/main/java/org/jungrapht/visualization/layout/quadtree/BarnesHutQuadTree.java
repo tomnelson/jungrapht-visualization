@@ -110,7 +110,7 @@ public class BarnesHutQuadTree<T> {
     clear();
     synchronized (lock) {
       for (Map.Entry<T, Point> entry : locations.entrySet()) {
-        ForceObject<T> forceObject = new ForceObject<T>(entry.getKey(), entry.getValue());
+        ForceObject<T> forceObject = new ForceObject<>(entry.getKey(), entry.getValue());
         insert(forceObject);
       }
     }

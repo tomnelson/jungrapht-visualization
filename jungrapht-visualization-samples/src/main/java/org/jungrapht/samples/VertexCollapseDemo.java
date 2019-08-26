@@ -306,7 +306,7 @@ public class VertexCollapseDemo extends JPanel {
    *
    * @author Tom Nelson
    */
-  class ClusterSizeFunction implements Function<Collapsable<?>, Integer> {
+  static class ClusterSizeFunction implements Function<Collapsable<?>, Integer> {
     int size;
 
     public ClusterSizeFunction(Integer size) {

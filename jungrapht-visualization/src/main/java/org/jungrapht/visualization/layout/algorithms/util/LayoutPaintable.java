@@ -15,11 +15,11 @@ import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
-import org.jungrapht.visualization.layout.model.Dimension;
+import org.jungrapht.visualization.layout.algorithms.RadialTreeLayout;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.PolarPoint;
+import org.jungrapht.visualization.layout.model.Rectangle;
 import org.jungrapht.visualization.transform.shape.ShapeTransformer;
 
 public interface LayoutPaintable {
@@ -96,19 +96,19 @@ public interface LayoutPaintable {
 
   class TreeCells<V> implements VisualizationServer.Paintable {
 
-    Map<V, Dimension> cellMap;
+    Map<V, Rectangle> cellMap;
     LayoutModel<V> layoutModel;
     private ShapeTransformer transformer;
     Color color = Color.cyan;
 
     public TreeCells(
-        LayoutModel<V> layoutModel, Map<V, Dimension> cellMap, ShapeTransformer transformer) {
+        LayoutModel<V> layoutModel, Map<V, Rectangle> cellMap, ShapeTransformer transformer) {
       this(layoutModel, cellMap, transformer, Color.cyan);
     }
 
     public TreeCells(
         LayoutModel<V> layoutModel,
-        Map<V, Dimension> cellMap,
+        Map<V, Rectangle> cellMap,
         ShapeTransformer transformer,
         Color color) {
       this.layoutModel = layoutModel;
@@ -121,9 +121,9 @@ public interface LayoutPaintable {
     public void paint(Graphics g) {
       Graphics2D g2d = (Graphics2D) g;
       for (V vertex : layoutModel.getGraph().vertexSet()) {
-        Dimension d = cellMap.getOrDefault(vertex, Dimension.of(0, 0));
+        Rectangle d = cellMap.getOrDefault(vertex, Rectangle.IDENTITY);
         Point p = layoutModel.apply(vertex);
-        Shape r = new Rectangle2D.Double(p.x - d.width / 2, p.y, d.width, d.height);
+        Shape r = new Rectangle2D.Double(d.x, d.y, d.width, d.height);
         r = transformer.transform(r);
         g2d.setPaint(color);
         g2d.draw(r);
@@ -170,15 +170,15 @@ public interface LayoutPaintable {
     }
   }
 
-  class RadialRings<V, E> implements VisualizationServer.Paintable {
+  class RadialRings<V> implements VisualizationServer.Paintable {
 
     Collection<Double> depths;
     LayoutModel<V> layoutModel;
-    VisualizationServer<V, E> vv;
-    RadialTreeLayoutAlgorithm<V, E> radialTreeLayoutAlgorithm;
+    VisualizationServer<V, ?> vv;
+    RadialTreeLayout<V> radialTreeLayoutAlgorithm;
 
     public RadialRings(
-        VisualizationServer<V, E> vv, RadialTreeLayoutAlgorithm<V, E> radialTreeLayoutAlgorithm) {
+        VisualizationServer<V, ?> vv, RadialTreeLayout<V> radialTreeLayoutAlgorithm) {
       this.vv = vv;
       this.layoutModel = vv.getVisualizationModel().getLayoutModel();
       this.radialTreeLayoutAlgorithm = radialTreeLayoutAlgorithm;

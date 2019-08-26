@@ -214,6 +214,7 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
   }
 
   /** @param vertexShapeFunction the vertexShapeFunction to set */
+  @Override
   public void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
     this.vertexShapeFunction = vertexShapeFunction;
   }
@@ -315,7 +316,6 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
   public void setEdgeShapeFunction(Function<Context<Graph<V, E>, E>, Shape> edgeShapeFunction) {
     this.edgeShapeFunction = edgeShapeFunction;
     if (edgeShapeFunction instanceof ParallelEdgeShapeFunction) {
-      @SuppressWarnings("unchecked")
       ParallelEdgeShapeFunction<V, E> function =
           (ParallelEdgeShapeFunction<V, E>) edgeShapeFunction;
       function.setEdgeIndexFunction(this.parallelEdgeIndexFunction);

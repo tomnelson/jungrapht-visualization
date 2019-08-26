@@ -20,7 +20,6 @@ import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@SuppressWarnings({"rawtypes", "unchecked"})
 public class GraphCollapser<E> {
 
   private static final Logger log = LoggerFactory.getLogger(GraphCollapser.class);
@@ -31,8 +30,7 @@ public class GraphCollapser<E> {
 
   public GraphCollapser(Graph<Collapsable<?>, E> originalGraph) {
     this.originalGraph = originalGraph;
-    this.graphBuilder =
-        GraphTypeBuilder.forGraphType(DefaultGraphType.<Collapsable<?>, E>pseudograph());
+    this.graphBuilder = GraphTypeBuilder.forGraphType(DefaultGraphType.pseudograph());
   }
 
   public Graph<Collapsable<?>, E> collapse(

@@ -43,7 +43,7 @@ public class SimpleEdgeSupport<V, E> implements EdgeSupport<V, E> {
   @Override
   public void endEdgeCreate(VisualizationServer<V, E> vv, V endVertex) {
     Preconditions.checkState(
-        vv.getVisualizationModel().getGraph() instanceof Graph<?, ?>, "graph must be mutable");
+        vv.getVisualizationModel().getGraph() != null, "graph must be non-null");
     if (startVertex != null) {
       Graph<V, E> graph = vv.getVisualizationModel().getGraph();
       graph.addEdge(startVertex, endVertex, edgeFactory.get());

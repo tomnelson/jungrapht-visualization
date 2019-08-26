@@ -14,6 +14,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Paint;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.RectangularShape;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
@@ -135,7 +136,20 @@ public abstract class AbstractLensSupport<V, E, T extends LensGraphMouse>
       g2d.draw(lensShape);
       int centerX = (int) Math.round(lensShape.getCenterX());
       int centerY = (int) Math.round(lensShape.getCenterY());
-      g.drawOval(centerX - 10, centerY - 10, 20, 20);
+      double controlSize = lensShape.getWidth() / 10;
+      g2d.draw(
+          new Ellipse2D.Double(
+              centerX - lensShape.getWidth() / 20,
+              centerY - lensShape.getHeight() / 20,
+              lensShape.getWidth() / 10,
+              lensShape.getHeight() / 10));
+
+      g2d.draw(
+          new Ellipse2D.Double(
+              lensShape.getMinX() + lensShape.getWidth() / 20,
+              lensShape.getMinY() + lensShape.getHeight() / 20,
+              lensShape.getWidth() - lensShape.getWidth() / 10,
+              lensShape.getHeight() - lensShape.getHeight() / 10));
     }
 
     public boolean useTransform() {

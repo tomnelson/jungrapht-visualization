@@ -2,6 +2,7 @@ package org.jungrapht.visualization.spatial.rtree;
 
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,15 +25,11 @@ public class NodeList<B extends Bounded> extends ArrayList<B> implements Bounded
   }
 
   public NodeList(Collection<B> list) {
-    for (B node : list) {
-      add(node);
-    }
+    this.addAll(list);
   }
 
   public NodeList(B... nodes) {
-    for (B node : nodes) {
-      add(node);
-    }
+    this.addAll(Arrays.asList(nodes));
   }
 
   @Override

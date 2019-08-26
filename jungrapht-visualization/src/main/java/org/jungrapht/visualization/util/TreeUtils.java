@@ -13,11 +13,11 @@ package org.jungrapht.visualization.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.ImmutableSet.toImmutableSet;
 
-import com.google.common.collect.ImmutableSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.DirectedPseudograph;
@@ -30,13 +30,13 @@ public class TreeUtils {
 
   private static Logger log = LoggerFactory.getLogger(TreeUtils.class);
 
-  public static <V> ImmutableSet<V> roots(Graph<V, ?> graph) {
+  public static <V> Set<V> roots(Graph<V, ?> graph) {
     checkNotNull(graph, "graph");
     return graph
         .vertexSet()
         .stream()
         .filter(vertex -> graph.incomingEdgesOf(vertex).isEmpty())
-        .collect(toImmutableSet());
+        .collect(Collectors.toCollection(LinkedHashSet::new));
   }
 
   /**

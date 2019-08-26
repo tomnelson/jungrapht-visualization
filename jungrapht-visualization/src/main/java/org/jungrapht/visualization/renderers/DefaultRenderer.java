@@ -28,10 +28,10 @@ import org.slf4j.LoggerFactory;
 class DefaultRenderer<V, E> implements Renderer<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(DefaultRenderer.class);
-  protected Vertex<V, E> vertexRenderer = new DefaultVertexRenderer<>();
-  protected VertexLabel<V, E> vertexLabelRenderer = new DefaultVertexLabelRenderer<>();
-  protected Renderer.Edge<V, E> edgeRenderer = new DefaultEdgeRenderer<>();
-  protected Renderer.EdgeLabel<V, E> edgeLabelRenderer = new DefaultEdgeLabelRenderer<>();
+  protected Vertex<V, E> vertexRenderer = new HeavyweightVertexRenderer<>();
+  protected VertexLabel<V, E> vertexLabelRenderer = new HeavyweightVertexLabelRenderer<>();
+  protected Edge<V, E> edgeRenderer = new HeavyweightEdgeRenderer<>();
+  protected EdgeLabel<V, E> edgeLabelRenderer = new HeayweightEdgeLabelRenderer<>();
 
   public void render(
       RenderContext<V, E> renderContext,
@@ -70,7 +70,7 @@ class DefaultRenderer<V, E> implements Renderer<V, E> {
           "layoutMode active: {}, edgeSpatial active {}, vertexSpatial active: {}",
           visualizationModel.getLayoutModel().isRelaxing(),
           edgeSpatial != null && edgeSpatial.isActive(),
-          vertexSpatial != null && vertexSpatial.isActive());
+          vertexSpatial.isActive());
       return;
     }
 
@@ -156,17 +156,17 @@ class DefaultRenderer<V, E> implements Renderer<V, E> {
     this.vertexRenderer = r;
   }
 
-  public void setEdgeRenderer(Renderer.Edge<V, E> r) {
+  public void setEdgeRenderer(Edge<V, E> r) {
     this.edgeRenderer = r;
   }
 
   /** @return the edgeLabelRenderer */
-  public Renderer.EdgeLabel<V, E> getEdgeLabelRenderer() {
+  public EdgeLabel<V, E> getEdgeLabelRenderer() {
     return edgeLabelRenderer;
   }
 
   /** @param edgeLabelRenderer the edgeLabelRenderer to set */
-  public void setEdgeLabelRenderer(Renderer.EdgeLabel<V, E> edgeLabelRenderer) {
+  public void setEdgeLabelRenderer(EdgeLabel<V, E> edgeLabelRenderer) {
     this.edgeLabelRenderer = edgeLabelRenderer;
   }
 
@@ -181,7 +181,7 @@ class DefaultRenderer<V, E> implements Renderer<V, E> {
   }
 
   /** @return the edgeRenderer */
-  public Renderer.Edge<V, E> getEdgeRenderer() {
+  public Edge<V, E> getEdgeRenderer() {
     return edgeRenderer;
   }
 

@@ -9,29 +9,28 @@
  */
 package org.jungrapht.visualization.renderers;
 
-import java.awt.Paint;
-import java.awt.Shape;
-import java.awt.Stroke;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import javax.swing.Icon;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationModel;
+import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultVertexRenderer<V, E> implements Renderer.Vertex<V, E> {
+public class HeavyweightVertexSelectionRenderer<V, E> extends HeavyweightVertexRenderer<V, E>
+    implements Renderer.Vertex<V, E> {
 
-  private static final Logger log = LoggerFactory.getLogger(DefaultVertexRenderer.class);
+  private static final Logger log =
+      LoggerFactory.getLogger(HeavyweightVertexSelectionRenderer.class);
 
-  public void paintVertex(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {
-    if (renderContext.getVertexIncludePredicate().test(v)) {
-      paintIconForVertex(renderContext, visualizationModel, v);
-    }
+  private VisualizationServer<V, E> visualizationServer;
+
+  public HeavyweightVertexSelectionRenderer(VisualizationServer<V, E> visualizationServer) {
+    this.visualizationServer = visualizationServer;
   }
 
   /**
@@ -48,10 +47,26 @@ public class DefaultVertexRenderer<V, E> implements Renderer.Vertex<V, E> {
       int[] coords) {
 
     // get the shape to be rendered
-    Shape shape = renderContext.getVertexShapeFunction().apply(v);
+    Shape shape;
+    Renderer<V, E> renderer = visualizationServer.getRenderer();
+    if (renderer instanceof ModalRenderer) {
+      ModalRenderer modalRenderer = (ModalRenderer) renderer;
+      Renderer.Vertex vertexRenderer = modalRenderer.getVertexRenderer();
+      if (vertexRenderer instanceof LightweightVertexSelectionRenderer) {
+        LightweightVertexSelectionRenderer<V, E> lightweightVertexRenderer =
+            (LightweightVertexSelectionRenderer) vertexRenderer;
+        shape = lightweightVertexRenderer.getVertexShapeFunction().apply(v);
+      } else {
+        shape = renderContext.getVertexShapeFunction().apply(v);
+      }
+
+    } else {
+      shape = renderContext.getVertexShapeFunction().apply(v);
+    }
+    log.trace("selection shape bounds: {}", shape.getBounds());
     Point p = visualizationModel.getLayoutModel().apply(v);
     // p is the vertex location in layout coordinates
-    log.trace("prepared a shape for " + v + " to go at " + p);
+
     Point2D p2d =
         renderContext
             .getMultiLayerTransformer()
@@ -65,57 +80,25 @@ public class DefaultVertexRenderer<V, E> implements Renderer.Vertex<V, E> {
     // create a transform that translates to the location of
     // the vertex to be rendered
     AffineTransform xform = AffineTransform.getTranslateInstance(x, y);
-    // return the transformed vertex shape
-    return xform.createTransformedShape(shape);
+    // transform the vertex shape with xtransform
+    shape = xform.createTransformedShape(shape);
+    return shape;
   }
 
-  /**
-   * Paint <code>v</code>'s icon on <code>g</code> at <code>(x,y)</code>.
-   *
-   * @param v the vertex to be painted
-   */
   protected void paintIconForVertex(
       RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {
-    GraphicsDecorator g = renderContext.getGraphicsContext();
     int[] coords = new int[2];
     Shape shape = prepareFinalVertexShape(renderContext, visualizationModel, v, coords);
-
-    if (renderContext.getVertexIconFunction() != null) {
-      Icon icon = renderContext.getVertexIconFunction().apply(v);
-      if (icon != null) {
-        g.draw(icon, renderContext.getScreenDevice(), shape, coords[0], coords[1]);
-      } else {
-        paintShapeForVertex(renderContext, visualizationModel, v, shape);
-      }
-    } else {
-      paintShapeForVertex(renderContext, visualizationModel, v, shape);
-    }
+    log.trace("shape bounds: {}", shape.getBounds());
+    paintShapeForVertex(renderContext, v, shape);
   }
 
-  protected void paintShapeForVertex(
-      RenderContext<V, E> renderContext,
-      VisualizationModel<V, E> visualizationModel,
-      V v,
-      Shape shape) {
+  protected void paintShapeForVertex(RenderContext<V, E> renderContext, V v, Shape shape) {
     GraphicsDecorator g = renderContext.getGraphicsContext();
-    Paint oldPaint = g.getPaint();
-    Paint fillPaint = renderContext.getVertexFillPaintFunction().apply(v);
-    if (fillPaint != null) {
-      g.setPaint(fillPaint);
-      g.fill(shape);
-      g.setPaint(oldPaint);
-    }
-    Paint drawPaint = renderContext.getVertexDrawPaintFunction().apply(v);
-    if (drawPaint != null) {
-      g.setPaint(drawPaint);
-      Stroke oldStroke = g.getStroke();
-      Stroke stroke = renderContext.getVertexStrokeFunction().apply(v);
-      if (stroke != null) {
-        g.setStroke(stroke);
-      }
-      g.draw(shape);
-      g.setPaint(oldPaint);
-      g.setStroke(oldStroke);
-    }
+    Stroke oldStroke = g.getStroke();
+    Stroke stroke = new BasicStroke(4.f);
+    g.setStroke(stroke);
+    g.draw(shape);
+    g.setStroke(oldStroke);
   }
 }

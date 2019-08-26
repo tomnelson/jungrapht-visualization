@@ -104,7 +104,7 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
 
     vv.getRenderContext()
         .setVertexShapeFunction(
-            new Function<String, Shape>() {
+            new Function<>() {
               ShapeFactory<String> shapeFactory = new ShapeFactory<>(n -> 30, n -> 1.0f);
 
               @Override

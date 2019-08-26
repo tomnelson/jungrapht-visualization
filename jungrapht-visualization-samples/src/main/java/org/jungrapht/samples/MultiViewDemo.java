@@ -190,7 +190,7 @@ public class MultiViewDemo extends JPanel {
     // create a GraphMouse for each view
     // each one has a different scaling plugin
     DefaultModalGraphMouse<String, Number> gm1 =
-        new DefaultModalGraphMouse<String, Number>() {
+        new DefaultModalGraphMouse<>() {
           protected void loadPlugins() {
             pickingPlugin = new SelectingGraphMousePlugin<String, Number>();
             animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<String, Number>();
@@ -205,7 +205,7 @@ public class MultiViewDemo extends JPanel {
         };
 
     DefaultModalGraphMouse<String, Number> gm2 =
-        new DefaultModalGraphMouse<String, Number>() {
+        new DefaultModalGraphMouse<>() {
           protected void loadPlugins() {
             pickingPlugin = new SelectingGraphMousePlugin<String, Number>();
             animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<String, Number>();
@@ -219,7 +219,7 @@ public class MultiViewDemo extends JPanel {
           }
         };
 
-    DefaultModalGraphMouse<String, Number> gm3 = new DefaultModalGraphMouse<String, Number>() {};
+    DefaultModalGraphMouse<String, Number> gm3 = new DefaultModalGraphMouse<>() {};
 
     vv1.setGraphMouse(gm1);
     vv2.setGraphMouse(gm2);
@@ -263,7 +263,7 @@ public class MultiViewDemo extends JPanel {
     add(panel);
   }
 
-  class BannerLabel implements VisualizationViewer.Paintable {
+  static class BannerLabel implements VisualizationViewer.Paintable {
     int x;
     int y;
     Font font;

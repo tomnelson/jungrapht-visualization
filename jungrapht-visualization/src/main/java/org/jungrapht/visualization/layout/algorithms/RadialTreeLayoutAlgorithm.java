@@ -26,27 +26,26 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-public class RadialTreeLayoutAlgorithm<V, E> extends EdgeAwareTreeLayoutAlgorithm<V, E> {
+public class RadialTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
+    implements RadialTreeLayout<V> {
 
   private static final Logger log = LoggerFactory.getLogger(RadialTreeLayoutAlgorithm.class);
 
   protected Map<V, PolarPoint> polarLocations = new HashMap<>();
 
-  public static class Builder<
-          V, E, T extends RadialTreeLayoutAlgorithm<V, E>, B extends Builder<V, E, T, B>>
-      extends EdgeAwareTreeLayoutAlgorithm.Builder<V, E, T, B>
-      implements EdgeAwareLayoutAlgorithm.Builder<V, E, T, B> {
+  public static class Builder<V, T extends RadialTreeLayoutAlgorithm<V>, B extends Builder<V, T, B>>
+      extends TreeLayoutAlgorithm.Builder<V, T, B> implements LayoutAlgorithm.Builder<V, T, B> {
 
     public T build() {
       return (T) new RadialTreeLayoutAlgorithm<>(this);
     }
   }
 
-  public static <V, E> Builder<V, E, ?, ?> builder() {
-    return (Builder<V, E, ?, ?>) new Builder<>().expandLayout(false);
+  public static <V> Builder<V, ?, ?> builder() {
+    return (Builder<V, ?, ?>) new Builder<>().expandLayout(false);
   }
 
-  protected RadialTreeLayoutAlgorithm(Builder<V, E, ?, ?> builder) {
+  protected RadialTreeLayoutAlgorithm(Builder<V, ?, ?> builder) {
     super(builder);
   }
 
@@ -70,7 +69,7 @@ public class RadialTreeLayoutAlgorithm<V, E> extends EdgeAwareTreeLayoutAlgorith
     return 0;
   }
 
-  private void putRadialPointsInModel(LayoutModel<V> layoutModel) {
+  protected void putRadialPointsInModel(LayoutModel<V> layoutModel) {
     polarLocations.forEach((key, value) -> layoutModel.set(key, getCartesian(layoutModel, key)));
   }
 
@@ -79,7 +78,7 @@ public class RadialTreeLayoutAlgorithm<V, E> extends EdgeAwareTreeLayoutAlgorith
     return polarLocations;
   }
 
-  private Point getCartesian(LayoutModel<V> layoutModel, V vertex) {
+  protected Point getCartesian(LayoutModel<V> layoutModel, V vertex) {
     PolarPoint pp = polarLocations.get(vertex);
     double centerX = layoutModel.getWidth() / 2;
     double centerY = layoutModel.getHeight() / 2;
@@ -88,7 +87,7 @@ public class RadialTreeLayoutAlgorithm<V, E> extends EdgeAwareTreeLayoutAlgorith
     return cartesian;
   }
 
-  private Point getMaxXY(LayoutModel<V> layoutModel) {
+  protected Point getMaxXY(LayoutModel<V> layoutModel) {
     double maxx = 0;
     double maxy = 0;
     Collection<V> vertices = layoutModel.getGraph().vertexSet();
@@ -100,11 +99,10 @@ public class RadialTreeLayoutAlgorithm<V, E> extends EdgeAwareTreeLayoutAlgorith
     return Point.of(maxx, maxy);
   }
 
-  private void setRadialLocations(Set<V> roots, LayoutModel<V> layoutModel) {
+  protected void setRadialLocations(Set<V> roots, LayoutModel<V> layoutModel) {
     int width = layoutModel.getWidth();
     Point max = getMaxXY(layoutModel);
-    double maxx = max.x;
-    double maxy = max.y;
+    double maxx = max.x + verticalVertexSpacing;
     maxx = Math.max(maxx, width);
     double theta = 2 * Math.PI / maxx;
 

@@ -15,7 +15,6 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
@@ -61,8 +60,8 @@ public class ShearingGraphMousePlugin extends AbstractGraphMousePlugin
     super(modifiers);
     Dimension cd = Toolkit.getDefaultToolkit().getBestCursorSize(16, 16);
     BufferedImage cursorImage = new BufferedImage(cd.width, cd.height, BufferedImage.TYPE_INT_ARGB);
-    Graphics g = cursorImage.createGraphics();
-    Graphics2D g2 = (Graphics2D) g;
+    Graphics2D g = cursorImage.createGraphics();
+    Graphics2D g2 = g;
     g2.addRenderingHints(
         Collections.singletonMap(
             RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON));

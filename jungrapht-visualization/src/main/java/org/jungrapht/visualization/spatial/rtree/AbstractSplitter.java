@@ -73,8 +73,8 @@ public abstract class AbstractSplitter<T> {
         winner = Optional.of(kid);
       }
     }
-    if (winner == null) {
-      log.error("winner was null");
+    if (winner.isEmpty()) {
+      log.error("winner was empty");
       winner = Optional.of(nodeToSplit);
     }
     return winner;

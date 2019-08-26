@@ -259,7 +259,7 @@ public class SpatialRTreeTest extends JPanel {
     }
   }
 
-  class VertexFactory implements Supplier<String> {
+  static class VertexFactory implements Supplier<String> {
 
     int i = 0;
 
@@ -268,7 +268,7 @@ public class SpatialRTreeTest extends JPanel {
     }
   }
 
-  class EdgeFactory implements Supplier<Number> {
+  static class EdgeFactory implements Supplier<Number> {
 
     int i = 0;
 

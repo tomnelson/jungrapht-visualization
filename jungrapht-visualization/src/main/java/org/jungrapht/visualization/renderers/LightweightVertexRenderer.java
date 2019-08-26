@@ -18,15 +18,15 @@ import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.layout.model.Point;
-import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LightweightVertexRenderer<V, E> implements Renderer.Vertex<V, E> {
+public class LightweightVertexRenderer<V, E> extends AbstractVertexRenderer<V, E>
+    implements Renderer.Vertex<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(LightweightVertexRenderer.class);
 
-  private Function<V, Shape> simpleVertexShapeFunction =
+  protected Function<V, Shape> simpleVertexShapeFunction =
       n -> new Ellipse2D.Float(-10.f, -10.f, 20, 20);
 
   public void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
@@ -37,15 +37,9 @@ public class LightweightVertexRenderer<V, E> implements Renderer.Vertex<V, E> {
     return this.simpleVertexShapeFunction;
   }
 
-  public void paintVertex(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {
-    if (renderContext.getVertexIncludePredicate().test(v)) {
-      paintIconForVertex(renderContext, visualizationModel, v);
-    }
-  }
-
   /**
-   * Returns the vertex shape in layout coordinates.
+   * Returns the vertex shape in layout coordinates. Uses the simpleVertexShapeFunction, unlike the
+   * superclass
    *
    * @param v the vertex whose shape is to be returned
    * @param coords the x and y view coordinates
@@ -80,43 +74,17 @@ public class LightweightVertexRenderer<V, E> implements Renderer.Vertex<V, E> {
   }
 
   /**
-   * Paint <code>v</code>'s icon on <code>g</code> at <code>(x,y)</code>.
+   * Paint <code>v</code>'s icon on <code>g</code> at <code>(x,y)</code>. Paints only the shape,
+   * unlike superclass
    *
    * @param v the vertex to be painted
    */
+  @Override
   protected void paintIconForVertex(
       RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {
-    GraphicsDecorator g = renderContext.getGraphicsContext();
     int[] coords = new int[2];
     Shape shape = prepareFinalVertexShape(renderContext, visualizationModel, v, coords);
 
-    paintShapeForVertex(renderContext, visualizationModel, v, shape);
-  }
-
-  protected void paintShapeForVertex(
-      RenderContext<V, E> renderContext,
-      VisualizationModel<V, E> visualizationModel,
-      V v,
-      Shape shape) {
-    GraphicsDecorator g = renderContext.getGraphicsContext();
-    Paint oldPaint = g.getPaint();
-    Paint fillPaint = renderContext.getVertexFillPaintFunction().apply(v);
-    if (fillPaint != null) {
-      g.setPaint(fillPaint);
-      g.fill(shape);
-      g.setPaint(oldPaint);
-    }
-    Paint drawPaint = renderContext.getVertexDrawPaintFunction().apply(v);
-    if (drawPaint != null) {
-      g.setPaint(drawPaint);
-      Stroke oldStroke = g.getStroke();
-      Stroke stroke = renderContext.getVertexStrokeFunction().apply(v);
-      if (stroke != null) {
-        g.setStroke(stroke);
-      }
-      g.draw(shape);
-      g.setPaint(oldPaint);
-      g.setStroke(oldStroke);
-    }
+    paintShapeForVertex(renderContext, v, shape);
   }
 }

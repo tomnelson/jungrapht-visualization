@@ -31,7 +31,7 @@ import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
 import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.TreeLayout;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.LoadingCacheLayoutModel;
@@ -147,7 +147,7 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
                   LayoutAlgorithm layoutAlgorithm = layoutType.getLayoutAlgorithm();
                   vv.removePreRenderPaintable(balloonLayoutRings);
                   vv.removePreRenderPaintable(radialLayoutRings);
-                  if ((layoutAlgorithm instanceof TreeLayoutAlgorithm)
+                  if ((layoutAlgorithm instanceof TreeLayout)
                       && vv.getVisualizationModel().getGraph().getType().isUndirected()) {
                     Graph tree =
                         SpanningTreeAdapter.getSpanningTree(vv.getVisualizationModel().getGraph());
@@ -228,8 +228,8 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
   void clear(Graph graph) {
     Set edges = Sets.newHashSet(graph.edgeSet());
     Set vertices = Sets.newHashSet(graph.vertexSet());
-    edges.stream().forEach(e -> graph.removeEdge(e));
-    vertices.stream().forEach(v -> graph.removeVertex(v));
+    edges.stream().forEach(graph::removeEdge);
+    vertices.stream().forEach(graph::removeVertex);
   }
 
   LayoutModel getTreeLayoutPositions(

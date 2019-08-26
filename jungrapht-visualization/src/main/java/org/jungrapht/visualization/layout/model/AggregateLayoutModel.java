@@ -25,8 +25,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@code Layout} implementation that combines multiple other layouts so that they may be
- * manipulated as one layout. The relaxer thread will step each layout in sequence.
+ * A {@code LayoutModel} implementation that combines multiple other layoutModels so that they may
+ * be manipulated as one layoutModel. The relaxer thread will step each layoutmodel's algorithm in
+ * sequence.
  *
  * @author Tom Nelson
  * @param <V> the vertex type

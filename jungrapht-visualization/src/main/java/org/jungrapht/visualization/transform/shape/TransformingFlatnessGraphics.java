@@ -24,8 +24,6 @@ import org.jungrapht.visualization.transform.HyperbolicTransformer;
  */
 public class TransformingFlatnessGraphics extends TransformingGraphics {
 
-  float flatness = 0;
-
   public TransformingFlatnessGraphics(BidirectionalTransformer transformer) {
     this(transformer, null);
   }

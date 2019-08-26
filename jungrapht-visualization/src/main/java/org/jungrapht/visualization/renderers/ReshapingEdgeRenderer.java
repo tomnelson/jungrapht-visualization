@@ -34,7 +34,7 @@ import org.jungrapht.visualization.util.Context;
  * @param <V> the vertex type
  * @param <E> the edge type
  */
-public class ReshapingEdgeRenderer<V, E> extends DefaultEdgeRenderer<V, E>
+public class ReshapingEdgeRenderer<V, E> extends HeavyweightEdgeRenderer<V, E>
     implements Renderer.Edge<V, E> {
 
   /**

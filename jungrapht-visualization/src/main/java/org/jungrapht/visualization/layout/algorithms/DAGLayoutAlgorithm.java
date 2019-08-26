@@ -263,7 +263,7 @@ public class DAGLayoutAlgorithm<V> extends SpringLayoutAlgorithm<V> {
    */
   @Override
   protected void relaxEdges() {
-    Graph<V, Object> graph = (Graph<V, Object>) layoutModel.getGraph();
+    Graph<V, Object> graph = layoutModel.getGraph();
     for (Object edge : graph.edgeSet()) {
       V vertex1 = graph.getEdgeSource(edge);
       V vertex2 = graph.getEdgeTarget(edge);

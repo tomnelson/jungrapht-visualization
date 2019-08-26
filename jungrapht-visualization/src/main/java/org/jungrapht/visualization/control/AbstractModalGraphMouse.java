@@ -236,7 +236,7 @@ public abstract class AbstractModalGraphMouse extends AbstractGraphMouse
     if (mode == null) {
       return new Object[0];
     } else {
-      Object result[] = new Object[1];
+      Object[] result = new Object[1];
       result[0] = mode;
       return result;
     }

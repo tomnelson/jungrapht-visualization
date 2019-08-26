@@ -17,6 +17,7 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Objects;
 import javax.imageio.ImageIO;
 import org.jungrapht.visualization.FourPassImageShaper;
 
@@ -49,7 +50,7 @@ public class ImageShapeUtils {
     } catch (IOException ex) {
       ex.printStackTrace();
     }
-    return getShape(image, max);
+    return getShape(Objects.requireNonNull(image), max);
   }
 
   /**
@@ -89,10 +90,10 @@ public class ImageShapeUtils {
     float height = image.getHeight();
     if (width > max || height > max) {
       BufferedImage smaller = new BufferedImage(max, max, BufferedImage.TYPE_INT_ARGB);
-      Graphics g = smaller.createGraphics();
+      Graphics2D g = smaller.createGraphics();
       AffineTransform at = AffineTransform.getScaleInstance(max / width, max / height);
       AffineTransform back = AffineTransform.getScaleInstance(width / max, height / max);
-      Graphics2D g2 = (Graphics2D) g;
+      Graphics2D g2 = g;
       g2.drawImage(image, at, null);
       g2.dispose();
       return back.createTransformedShape(getShape(smaller));

@@ -31,7 +31,7 @@ import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.TreeLayout;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.LoadingCacheLayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
@@ -153,7 +153,7 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
                   LayoutHelper.Layouts layoutType = (LayoutHelper.Layouts) jcb.getSelectedItem();
                   LayoutAlgorithm layoutAlgorithm = layoutType.getLayoutAlgorithm();
                   log.trace("got a {}", layoutAlgorithm);
-                  if ((layoutAlgorithm instanceof TreeLayoutAlgorithm)
+                  if ((layoutAlgorithm instanceof TreeLayout)
                       && vv.getVisualizationModel().getGraph().getType().isUndirected()) {
                     Graph tree =
                         SpanningTreeAdapter.getSpanningTree(vv.getVisualizationModel().getGraph());
@@ -227,9 +227,7 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
                       Graph<Collapsable<?>, Number> inGraph = vv.getVisualizationModel().getGraph();
                       LayoutModel<Collapsable<?>> layoutModel =
                           vv.getVisualizationModel().getLayoutModel();
-                      Graph<Collapsable<?>, Number> g =
-                          collapser.expand(
-                              graph, inGraph, (Collapsable<Graph<Collapsable<?>, Number>>) v);
+                      Graph<Collapsable<?>, Number> g = collapser.expand(graph, inGraph, v);
 
                       layoutModel.lock(false);
                       vv.getVisualizationModel().setGraph(g);
@@ -352,7 +350,7 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
    * A demo class that will make vertices larger if they represent a collapsed collection of
    * original vertices
    */
-  class ClusterSizeFunction implements Function<Collapsable<?>, Integer> {
+  static class ClusterSizeFunction implements Function<Collapsable<?>, Integer> {
     int size;
 
     public ClusterSizeFunction(Integer size) {

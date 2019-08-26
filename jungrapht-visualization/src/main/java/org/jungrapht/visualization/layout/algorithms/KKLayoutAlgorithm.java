@@ -257,17 +257,17 @@ public class KKLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
   public void step() {
     Graph<V, ?> graph = layoutModel.getGraph();
     currentIteration++;
-    double energy = calcEnergy();
-    status =
-        "Kamada-Kawai N="
-            + graph.vertexSet().size()
-            + "("
-            + graph.vertexSet().size()
-            + ")"
-            + " IT: "
-            + currentIteration
-            + " E="
-            + energy;
+    double energy; // = calcEnergy();
+    //    status =
+    //        "Kamada-Kawai N="
+    //            + graph.vertexSet().size()
+    //            + "("
+    //            + graph.vertexSet().size()
+    //            + ")"
+    //            + " IT: "
+    //            + currentIteration
+    //            + " E="
+    //            + energy;
 
     int n = graph.vertexSet().size();
     if (n == 0) {

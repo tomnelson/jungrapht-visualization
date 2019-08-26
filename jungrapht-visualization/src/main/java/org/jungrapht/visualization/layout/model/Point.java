@@ -3,20 +3,33 @@ package org.jungrapht.visualization.layout.model;
 import java.util.Objects;
 
 /**
- * Simple, immutable Point class used for Graph layout
+ * Simple, immutable Point class used for Graph layout. Included to reduce dependency on awt classes
  *
  * @author Tom Nelson
  */
 public class Point {
 
+  /** x coordinate */
   public final double x;
+  /** y coordinate */
   public final double y;
+  /** Point at location (0,0) */
   public static final Point ORIGIN = new Point(0, 0);
 
+  /**
+   * @param x coordinate
+   * @param y coordinate
+   * @return a new Point with the passed coordinates
+   */
   public static Point of(double x, double y) {
     return new Point(x, y);
   }
 
+  /**
+   * @param x coordinate
+   * @param y coordinate
+   * @return a new Point with the passed coordinates
+   */
   protected Point(double x, double y) {
     this.x = x;
     this.y = y;
@@ -109,6 +122,12 @@ public class Point {
     return Math.sqrt(distanceSquared(other));
   }
 
+  /**
+   * Compare with another object for equality
+   *
+   * @param o other object
+   * @return true if the other object is a Point at the same coordinates
+   */
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -123,11 +142,13 @@ public class Point {
     return (Double.compare(other.x, x) == 0 && Double.compare(other.y, y) == 0);
   }
 
+  /** @return hash value of properties (x, y) */
   @Override
   public int hashCode() {
     return Objects.hash(x, y);
   }
 
+  /** @return String representation of this Point */
   @Override
   public String toString() {
     return "Point{" + "x=" + x + ", y=" + y + '}';

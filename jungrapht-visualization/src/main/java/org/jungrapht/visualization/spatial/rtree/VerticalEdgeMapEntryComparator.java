@@ -27,9 +27,7 @@ public class VerticalEdgeMapEntryComparator<T> implements Comparator<Map.Entry<T
    */
   public int compare(Rectangle2D left, Rectangle2D right) {
     if (left.getMinY() == right.getMinY()) {
-      if (left.getMaxY() == right.getMaxY()) return 0;
-      if (left.getMaxY() < right.getMaxY()) return -1;
-      else return 1;
+      return Double.compare(left.getMaxY(), right.getMaxY());
     } else {
       if (left.getMinY() < right.getMinY()) return -1;
       return 1;

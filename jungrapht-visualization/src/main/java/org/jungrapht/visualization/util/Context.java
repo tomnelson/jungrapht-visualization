@@ -32,7 +32,6 @@ public class Context<G, E> {
     return graph.hashCode() ^ element.hashCode();
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public boolean equals(Object o) {
     if (!(o instanceof Context)) return false;

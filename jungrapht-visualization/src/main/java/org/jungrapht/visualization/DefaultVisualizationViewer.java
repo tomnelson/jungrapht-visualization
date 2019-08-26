@@ -117,7 +117,7 @@ class DefaultVisualizationViewer<V, E> extends DefaultVisualizationServer<V, E>
    * @param graphMouseListener the mouse listener to add
    */
   public void addGraphMouseListener(GraphMouseListener<V> graphMouseListener) {
-    addMouseListener(new MouseListenerTranslator<V, E>(graphMouseListener, this));
+    addMouseListener(new MouseListenerTranslator<>(graphMouseListener, this));
   }
 
   /**

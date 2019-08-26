@@ -267,43 +267,71 @@ public class DemoTreeSupplier {
   }
 
   public static Graph<String, Integer> generateProgramGraph() {
+    Integer edgeCounter = 100;
     GraphBuilder<String, Integer, Graph<String, Integer>> builder =
         GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.dag()).buildGraphBuilder();
     builder.addEdge("A0", "A1", (Integer) 0);
     builder.addEdge("A1", "A2", (Integer) 1);
     builder.addEdge("A2", "A3", (Integer) 3);
     builder.addEdge("A3", "A4", (Integer) 4);
-    builder.addEdge("A3", "A5", (Integer) 100);
-    builder.addEdge("A1", "A6", (Integer) 101);
-    builder.addEdge("A6", "A7", (Integer) 102);
-    builder.addEdge("A6", "A8", (Integer) 103);
-    builder.addEdge("A0", "A9", (Integer) 104);
+    builder.addEdge("A3", "A5", edgeCounter++);
+    builder.addEdge("A1", "A6", edgeCounter++);
+    builder.addEdge("A6", "A7", edgeCounter++);
+    builder.addEdge("A6", "A8", edgeCounter++);
+    builder.addEdge("A0", "A9", edgeCounter++);
+    builder.addEdge("A9", "A10", edgeCounter++);
+    builder.addEdge("A9", "A11", edgeCounter++);
+    builder.addEdge("A10", "A12", edgeCounter++);
+    builder.addEdge("A7", "A1", edgeCounter++);
+    builder.addEdge("A12", "A2", edgeCounter++);
+    builder.addEdge("A11", "A13", edgeCounter++);
+    builder.addEdge("A11", "A14", edgeCounter++);
     return builder.build();
   }
 
   public static Graph<String, Integer> generateProgramGraph2() {
+    Integer edgeCounter = 100;
+    Integer zeroCounter = 0;
     GraphBuilder<String, Integer, Graph<String, Integer>> builder =
         GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.dag()).buildGraphBuilder();
-    builder.addEdge("A0", "A1", (Integer) 0);
-    builder.addEdge("A1", "A2", (Integer) 1);
-    builder.addEdge("A2", "A3", (Integer) 3);
-    builder.addEdge("A3", "A4", (Integer) 4);
-    builder.addEdge("A3", "A5", (Integer) 10);
-    builder.addEdge("A1", "A6", (Integer) 11);
-    builder.addEdge("A6", "A7", (Integer) 12);
-    builder.addEdge("A6", "A8", (Integer) 13);
-    builder.addEdge("A0", "A9", (Integer) 14);
+    builder.addEdge("A0", "A1", zeroCounter++);
+    builder.addEdge("A1", "A2", zeroCounter++);
+    builder.addEdge("A2", "A3", zeroCounter++);
+    builder.addEdge("A3", "A4", zeroCounter++);
+    builder.addEdge("A3", "A5", edgeCounter++);
+    builder.addEdge("A1", "A6", edgeCounter++);
+    builder.addEdge("A6", "A7", edgeCounter++);
+    builder.addEdge("A6", "A8", edgeCounter++);
+    builder.addEdge("A0", "A9", edgeCounter++);
+    builder.addEdge("A9", "A10", edgeCounter++);
+    builder.addEdge("A9", "A11", edgeCounter++);
+    builder.addEdge("A10", "A12", edgeCounter++);
+    builder.addEdge("A7", "A1", edgeCounter++);
+    builder.addEdge("A12", "A2", edgeCounter++);
+    builder.addEdge("A11", "A13", edgeCounter++);
+    builder.addEdge("A11", "A14", edgeCounter++);
 
-    builder.addEdge("B0", "B1", (Integer) 5);
-    builder.addEdge("B1", "B2", (Integer) 6);
-    builder.addEdge("B2", "B3", (Integer) 7);
-    builder.addEdge("B3", "B4", (Integer) 8);
-    builder.addEdge("B3", "B5", (Integer) 15);
-    builder.addEdge("B1", "B6", (Integer) 16);
-    builder.addEdge("B6", "B7", (Integer) 17);
-    builder.addEdge("B6", "B8", (Integer) 18);
-    builder.addEdge("B0", "B9", (Integer) 19);
+    builder.addEdge("B0", "B1", zeroCounter++);
+    builder.addEdge("B1", "B2", zeroCounter++);
+    builder.addEdge("B2", "B3", zeroCounter++);
+    builder.addEdge("B3", "B4", zeroCounter++);
+    builder.addEdge("B3", "B5", edgeCounter++);
+    builder.addEdge("B1", "B6", edgeCounter++);
+    builder.addEdge("B6", "B7", edgeCounter++);
+    builder.addEdge("B6", "B8", edgeCounter++);
+    builder.addEdge("B0", "B9", edgeCounter++);
+    builder.addEdge("B9", "B10", edgeCounter++);
+    builder.addEdge("B9", "B11", edgeCounter++);
+    builder.addEdge("B10", "B12", edgeCounter++);
+    builder.addEdge("B7", "B1", edgeCounter++);
+    builder.addEdge("B12", "B2", edgeCounter++);
+    builder.addEdge("B11", "B13", edgeCounter++);
+    builder.addEdge("B11", "B14", edgeCounter++);
 
+    // edge to prior tree
+    builder.addEdge("B14", "A1", edgeCounter++);
+    //     edge to next tree
+    builder.addEdge("A14", "B1", edgeCounter++);
     return builder.build();
   }
 
@@ -326,6 +354,7 @@ public class DemoTreeSupplier {
               builder.addEdge(c + "6", c + "7", (Integer) (100 + edge + 2));
               builder.addEdge(c + "6", c + "8", (Integer) (100 + edge + 3));
               builder.addEdge(c + "0", c + "9", (Integer) (100 + edge + 4));
+              //              builder.addEdge(c + "7", c + "1", (Integer) (100 + edge + 5));
             });
     return builder.build();
   }
@@ -343,7 +372,7 @@ public class DemoTreeSupplier {
     Graph<String, Integer> directedGraph =
         GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.directedSimple())
             .buildGraph();
-    graph.vertexSet().stream().forEach(v -> directedGraph.addVertex(v));
+    graph.vertexSet().stream().forEach(directedGraph::addVertex);
     graph
         .edgeSet()
         .stream()

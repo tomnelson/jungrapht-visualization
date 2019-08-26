@@ -234,10 +234,7 @@ public class RTreeVisualizer extends JPanel {
 
   private Map<Rectangle2D, Color> getGridInColor() {
     Optional<Node<Object>> maybeRoot = rTree.getRoot();
-    if (maybeRoot.isPresent()) {
-      return getGridFor(maybeRoot.get());
-    }
-    return Collections.emptyMap();
+    return maybeRoot.map(this::getGridFor).orElse(Collections.emptyMap());
   }
 
   private Map<Rectangle2D, Color> getGridFor(TreeNode parent) {
@@ -271,18 +268,17 @@ public class RTreeVisualizer extends JPanel {
     if (e.getStateChange() == ItemEvent.SELECTED) {
       running = true;
       Thread timerAddThread =
-          new Thread() {
-            public void run() {
-              while (running) {
-                SwingUtilities.invokeLater(() -> addRandomShape());
-                try {
-                  Thread.sleep(100);
-                } catch (InterruptedException ex) {
-                  // who cares
+          new Thread(
+              () -> {
+                while (running) {
+                  SwingUtilities.invokeLater(() -> addRandomShape());
+                  try {
+                    Thread.sleep(100);
+                  } catch (InterruptedException ex) {
+                    // who cares
+                  }
                 }
-              }
-            }
-          };
+              });
       timerAddThread.start();
     } else {
       running = false;

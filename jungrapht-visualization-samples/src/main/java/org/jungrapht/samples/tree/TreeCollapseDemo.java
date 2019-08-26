@@ -156,7 +156,7 @@ public class TreeCollapseDemo extends JPanel {
    * A demo class that will make vertices larger if they represent a collapsed collection of
    * original vertices
    */
-  class ClusterSizeFunction implements Function<Collapsable<?>, Integer> {
+  static class ClusterSizeFunction implements Function<Collapsable<?>, Integer> {
     int size;
 
     public ClusterSizeFunction(Integer size) {

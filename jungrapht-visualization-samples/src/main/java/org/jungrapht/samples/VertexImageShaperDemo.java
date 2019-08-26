@@ -39,7 +39,7 @@ import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.util.RandomLocationTransformer;
 import org.jungrapht.visualization.renderers.Checkmark;
-import org.jungrapht.visualization.renderers.DefaultVertexRenderer;
+import org.jungrapht.visualization.renderers.HeavyweightVertexRenderer;
 import org.jungrapht.visualization.renderers.JLabelEdgeLabelRenderer;
 import org.jungrapht.visualization.renderers.JLabelVertexLabelRenderer;
 import org.jungrapht.visualization.selection.MutableSelectedState;
@@ -113,7 +113,7 @@ public class VertexImageShaperDemo extends JPanel {
     vv =
         VisualizationViewer.builder(
                 (VisualizationModel<Number, Number>)
-                    VisualizationModel.<Number, Number>builder(graph)
+                    VisualizationModel.builder(graph)
                         .layoutAlgorithm(layoutAlgorithm)
                         .initializer(new RandomLocationTransformer<>(400, 400, 0))
                         .layoutSize(new Dimension(400, 400))
@@ -443,11 +443,11 @@ public class VertexImageShaperDemo extends JPanel {
 
   /**
    * a special renderer that can turn outlines on and off in this demo. You won't need this for a
-   * real application. Use DefaultVertexRenderer instead
+   * real application. Use HeavyweightVertexRenderer instead
    *
    * @author Tom Nelson
    */
-  class DemoRenderer<V, E> extends DefaultVertexRenderer<V, E> {
+  static class DemoRenderer<V, E> extends HeavyweightVertexRenderer<V, E> {
 
     @Override
     public void paintIconForVertex(
@@ -474,7 +474,7 @@ public class VertexImageShaperDemo extends JPanel {
         Shape s =
             AffineTransform.getTranslateInstance(x, y)
                 .createTransformedShape(renderContext.getVertexShapeFunction().apply(v));
-        paintShapeForVertex(renderContext, model, v, s);
+        paintShapeForVertex(renderContext, v, s);
       }
       if (icon != null) {
         int xLoc = (int) (x - icon.getIconWidth() / 2);

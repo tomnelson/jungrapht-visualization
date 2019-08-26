@@ -1,29 +1,23 @@
-/*
- * Copyright (c) 2005, The JUNG Authors
- * All rights reserved.
- *
- * This software is open-source under the BSD license; see either "license.txt"
- * or https://github.com/tomnelson/jungrapht-visualization/blob/master/LICENSE for a description.
- *
- * Created on Jul 9, 2005
- */
-
 package org.jungrapht.visualization.layout.algorithms;
 
-import static com.google.common.collect.ImmutableSet.toImmutableSet;
-
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** @author Tom Nelson */
+/**
+ * A {@code TreeLayoutAlgorithm} that adheres to either an original width or to the width of the
+ * widest subtree in the forest by creating new rows of tree roots
+ *
+ * @author Tom Nelson
+ */
 public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
     implements LayoutAlgorithm<V> {
 
@@ -49,8 +43,11 @@ public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
   /**
    * Creates an instance for the specified graph, X distance, and Y distance.
    *
+   * @param rootPredicate the {@link Predicate} to determine root vertices
    * @param horizontalVertexSpacing the horizontal spacing between adjacent siblings
    * @param verticalVertexSpacing the vertical spacing between adjacent siblings
+   * @param expandLayout whether to expand the size of the layout area to accomodate the entire
+   *     forest
    */
   protected MultiRowTreeLayoutAlgorithm(
       Predicate<V> rootPredicate,
@@ -60,120 +57,142 @@ public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
     super(rootPredicate, horizontalVertexSpacing, verticalVertexSpacing, expandLayout);
   }
 
+  /** keeps track of how many rows have been created */
   protected int rowCount = 1;
 
   /**
+   * Build the entire forest, first measuring the width and height, then possibly expanding the
+   * layout area, then placing the vertices under rows of tree roots
+   *
    * @param layoutModel the model to hold vertex positions
    * @return the roots vertices of the tree
    */
   @Override
   protected Set<V> buildTree(LayoutModel<V> layoutModel) {
     rowCount = 1;
-    alreadyDone = Sets.newHashSet();
     Graph<V, ?> graph = layoutModel.getGraph();
     if (this.rootPredicate == null) {
       this.rootPredicate = v -> graph.incomingEdgesOf(v).isEmpty();
     }
-    Set<V> roots = graph.vertexSet().stream().filter(rootPredicate).collect(toImmutableSet());
+    Set<V> roots =
+        graph
+            .vertexSet()
+            .stream()
+            .filter(rootPredicate)
+            .collect(Collectors.toCollection(LinkedHashSet::new));
 
     Preconditions.checkArgument(roots.size() > 0);
     // the width of the tree under 'roots'. Includes one 'horizontalVertexSpacing' per child vertex
     int overallWidth = calculateWidth(layoutModel, roots, new HashSet<>());
-    log.debug("after calculating overallWidth {}, row count is {}", overallWidth, rowCount);
-    int tallestTreeHeight = calculateOverallHeight(layoutModel, roots);
-    int overallHeight = tallestTreeHeight; // * rowCount;
+    int tallestTreeHeight = calculateOverallHeight(layoutModel, roots, overallWidth);
+    int overallHeight = tallestTreeHeight;
     overallHeight += verticalVertexSpacing;
 
-    log.trace("layoutModel.getWidth() {}", layoutModel.getWidth());
-    log.trace("overallWidth {}", overallWidth);
     int largerHeight = Math.max(layoutModel.getHeight(), overallHeight);
+    int largerWidth = Math.max(layoutModel.getWidth(), overallWidth);
     if (expandLayout) {
-      layoutModel.setSize(layoutModel.getWidth(), largerHeight);
+      layoutModel.setSize(largerWidth, largerHeight);
     }
 
-    int cursor =
-        //    if (overallWidth < layoutModel.getWidth()) {
-        // start later
-        getInitialPosition(horizontalVertexSpacing, layoutModel.getWidth(), overallWidth);
-    //    }
-
-    log.trace("layoutModel.getHeight() {}", layoutModel.getHeight());
-    log.trace("overallHeight {}", overallHeight);
+    int cursor = getInitialPosition(horizontalVertexSpacing, layoutModel.getWidth(), overallWidth);
 
     int y = getInitialPosition(0, layoutModel.getHeight(), overallHeight);
-    log.trace("got initial y of {}", y);
 
     Set<V> rootsInRow = new HashSet<>();
+    Set<V> seen = new HashSet<>();
+    Set<V> seenForHeight = new HashSet<>();
     for (V vertex : roots) {
-
-      int w = this.baseBounds.get(vertex).width;
-      log.trace("w is {} and baseWidths.get({}) = {}", w, vertex, baseBounds.get(vertex));
-      cursor += w;
-      cursor += horizontalVertexSpacing;
-
-      if (cursor > layoutModel.getWidth()) {
-        cursor = getInitialPosition(horizontalVertexSpacing, layoutModel.getWidth(), overallWidth);
+      if (!seen.contains(vertex)) {
+        int w = (int) this.baseBounds.get(vertex).width;
         cursor += w;
         cursor += horizontalVertexSpacing;
-        int rowHeight = calculateHeight(layoutModel, rootsInRow);
-        log.trace("height for {} is {}", rootsInRow, rowHeight);
-        y += rowHeight;
-        rootsInRow.clear();
+
+        if (cursor > layoutModel.getWidth()) {
+          cursor =
+              getInitialPosition(horizontalVertexSpacing, layoutModel.getWidth(), overallWidth);
+          cursor += w;
+          cursor += horizontalVertexSpacing;
+          int rowHeight = calculateHeight(layoutModel, rootsInRow, seenForHeight);
+          y += rowHeight;
+          rootsInRow.clear();
+        }
+        rootsInRow.add(vertex);
+        int x = cursor - horizontalVertexSpacing - w / 2;
+        buildTree(layoutModel, vertex, x, y, seen);
+        merge(layoutModel, vertex);
       }
-      rootsInRow.add(vertex);
-      int x = cursor - horizontalVertexSpacing - w / 2;
-      buildTree(layoutModel, vertex, x, y);
     }
     // last row
-    int rowHeight = calculateHeight(layoutModel, rootsInRow);
-    log.trace("height for (last) {} is {}", rootsInRow, rowHeight);
-    log.debug("rowCount is {}", rowCount);
+    int rowHeight = calculateHeight(layoutModel, rootsInRow, seenForHeight);
     return roots;
   }
 
+  /**
+   * Calculate the width of the entire forest
+   *
+   * @param layoutModel the source of the graph and its vertices
+   * @param roots the root vertices of the forest
+   * @param seen a set of vertices that were already placed
+   * @return
+   */
   @Override
   protected int calculateWidth(LayoutModel<V> layoutModel, Collection<V> roots, Set<V> seen) {
     int overallWidth = 0;
     int cursor = horizontalVertexSpacing;
     for (V root : roots) {
-      int w = calculateWidth(layoutModel, root, seen);
-      cursor += w;
-      cursor += horizontalVertexSpacing;
-      log.trace("width of {} is {}", root, w);
-      if (cursor > layoutModel.getWidth()) {
-        cursor = horizontalVertexSpacing;
+      if (!seen.contains(root)) {
+        int w = calculateWidth(layoutModel, root, seen);
         cursor += w;
         cursor += horizontalVertexSpacing;
-        rowCount++;
-        log.trace("row count now {}", rowCount);
+        log.trace("width of {} is {}", root, w);
+        if (cursor > layoutModel.getWidth()) {
+          cursor = horizontalVertexSpacing;
+          cursor += w;
+          cursor += horizontalVertexSpacing;
+          rowCount++;
+          log.trace("row count now {}", rowCount);
+        }
+        overallWidth = Math.max(cursor, overallWidth);
       }
-      overallWidth = Math.max(cursor, overallWidth);
     }
     log.trace("entire width from {} is {}", roots, overallWidth);
     return overallWidth;
   }
 
-  protected int calculateOverallHeight(LayoutModel<V> layoutModel, Collection<V> roots) {
+  /**
+   * Calculate the overall height of the entire forest
+   *
+   * @param layoutModel the source of the graph and its vertices
+   * @param roots the roots of the trees in the forest
+   * @param overallWidth the previously measured overall width of the forest
+   * @return the overall height
+   */
+  protected int calculateOverallHeight(
+      LayoutModel<V> layoutModel, Collection<V> roots, int overallWidth) {
 
     int overallHeight = 0;
     int cursor = horizontalVertexSpacing;
     Set<V> rootsInRow = new HashSet<>();
+    Set<V> seenForWidth = new HashSet<>();
+    Set<V> seenForHeight = new HashSet<>();
     for (V root : roots) {
-      int w = calculateWidth(layoutModel, root, new HashSet<>());
-      cursor += w;
-      cursor += horizontalVertexSpacing;
-      log.trace("width of {} is {}", root, w);
-      if (cursor > layoutModel.getWidth()) {
-        cursor = horizontalVertexSpacing;
+      if (!seenForHeight.contains(root) && !seenForWidth.contains(root)) {
+        int w = calculateWidth(layoutModel, root, seenForWidth);
         cursor += w;
         cursor += horizontalVertexSpacing;
-        overallHeight += super.calculateHeight(layoutModel, rootsInRow);
-        rootsInRow.clear();
+        log.trace("width of {} is {}", root, w);
+        if (cursor > overallWidth) {
+          cursor = horizontalVertexSpacing;
+          cursor += w;
+          cursor += horizontalVertexSpacing;
+          overallHeight += super.calculateHeight(layoutModel, rootsInRow, seenForHeight);
+          rootsInRow.clear();
+        }
+        rootsInRow.add(root);
       }
-      rootsInRow.add(root);
     }
     // last row
-    overallHeight += super.calculateHeight(layoutModel, rootsInRow);
+    overallHeight += super.calculateHeight(layoutModel, rootsInRow, seenForHeight);
     return overallHeight;
   }
 }

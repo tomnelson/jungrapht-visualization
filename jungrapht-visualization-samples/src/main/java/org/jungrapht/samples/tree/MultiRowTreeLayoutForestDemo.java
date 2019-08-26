@@ -157,6 +157,10 @@ public class MultiRowTreeLayoutForestDemo extends JPanel {
     TreeLayoutSelector<String, Integer> treeLayoutSelector =
         TreeLayoutSelector.<String, Integer>builder(vv)
             .edgePredicate(edgePredicate)
+            .vertexPredicate(
+                v ->
+                    graph.incomingEdgesOf((String) v).stream().anyMatch(edgePredicate)
+                        | graph.outgoingEdgesOf((String) v).stream().anyMatch(edgePredicate))
             .after(vv::scaleToLayout)
             .build();
 

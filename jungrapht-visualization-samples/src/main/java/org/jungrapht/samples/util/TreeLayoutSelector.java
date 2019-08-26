@@ -18,10 +18,12 @@ import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
 import org.jungrapht.visualization.layout.algorithms.MultiRowEdgeAwareTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.MultiRowTreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.RadialEdgeAwareTreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.RadialTreeLayout;
 import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.TreeLayout;
 import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
-import org.jungrapht.visualization.layout.model.Dimension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -134,18 +136,36 @@ public class TreeLayoutSelector<V, E> extends JPanel {
 
     BalloonLayoutAlgorithm<V> balloonLayoutAlgorithm = BalloonLayoutAlgorithm.<V>builder().build();
 
-    RadialTreeLayoutAlgorithm<V, E> radialTreeLayoutAlgorithm =
-        RadialTreeLayoutAlgorithm.<V, E>builder()
+    RadialTreeLayoutAlgorithm<V> radialTreeLayoutAlgorithm =
+        RadialTreeLayoutAlgorithm.<V>builder()
+            .horizontalVertexSpacing(100)
+            .verticalVertexSpacing(100)
+            .build();
+
+    RadialEdgeAwareTreeLayoutAlgorithm<V, E> radialEdgeAwareTreeLayoutAlgorithm =
+        RadialEdgeAwareTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()
             .horizontalVertexSpacing(100)
             .verticalVertexSpacing(100)
             .edgePredicate(edgePredicate)
+            .vertexPredicate(vertexPredicate)
             .build();
 
     EdgeAwareTreeLayoutAlgorithm<V, E> edgeAwareTreeLayoutAlgorithm =
-        EdgeAwareTreeLayoutAlgorithm.<V, E>builder().edgePredicate(edgePredicate).build();
+        EdgeAwareTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()
+            .edgePredicate(edgePredicate)
+            .vertexPredicate(vertexPredicate)
+            .build();
+    //    EdgeAwareTwoPassTreeLayoutAlgorithm<V, E> edgeAwareTwoPassTreeLayoutAlgorithm =
+    //        EdgeAwareTwoPassTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()
+    //            .edgePredicate(edgePredicate)
+    //            .vertexPredicate(vertexPredicate)
+    //            .build();
 
     MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> multiRowEdgeAwareTreeLayoutAlgorithm =
-        MultiRowEdgeAwareTreeLayoutAlgorithm.<V, E>builder().edgePredicate(edgePredicate).build();
+        MultiRowEdgeAwareTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()
+            .edgePredicate(edgePredicate)
+            .vertexPredicate(vertexPredicate)
+            .build();
 
     JRadioButton treeButton = new JRadioButton("Tree");
     treeButton.addItemListener(new LayoutItemListener(treeLayoutAlgorithm, vv));
@@ -163,9 +183,19 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     radialButton.addItemListener(new LayoutItemListener(radialTreeLayoutAlgorithm, vv));
     radialButton.setSelected(initialSelection == layoutNumber++);
 
+    JRadioButton radialEdgeAwareButton = new JRadioButton("Radial Edge aware");
+    radialEdgeAwareButton.addItemListener(
+        new LayoutItemListener(radialEdgeAwareTreeLayoutAlgorithm, vv));
+    radialEdgeAwareButton.setSelected(initialSelection == layoutNumber++);
+
     JRadioButton edgeAwareTreeButton = new JRadioButton("Edge aware tree");
     edgeAwareTreeButton.addItemListener(new LayoutItemListener(edgeAwareTreeLayoutAlgorithm, vv));
     edgeAwareTreeButton.setSelected(initialSelection == layoutNumber++);
+
+    //    JRadioButton edgeAwareTwoPassTreeButton = new JRadioButton("Edge aware 2 pass tree");
+    //    edgeAwareTwoPassTreeButton.addItemListener(
+    //        new LayoutItemListener(edgeAwareTwoPassTreeLayoutAlgorithm, vv));
+    //    edgeAwareTwoPassTreeButton.setSelected(initialSelection == layoutNumber++);
 
     JRadioButton multiRowEdgeAwareTreeButton = new JRadioButton("MultiRow Edge aware");
     multiRowEdgeAwareTreeButton.addItemListener(
@@ -177,15 +207,19 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     layoutRadio.add(multiRowTreeButton);
     layoutRadio.add(balloonButton);
     layoutRadio.add(radialButton);
+    layoutRadio.add(radialEdgeAwareButton);
     layoutRadio.add(edgeAwareTreeButton);
+    //    layoutRadio.add(edgeAwareTwoPassTreeButton);
     layoutRadio.add(multiRowEdgeAwareTreeButton);
 
     this.add(treeButton);
-    this.add(multiRowTreeButton);
-    this.add(balloonButton);
-    this.add(radialButton);
     this.add(edgeAwareTreeButton);
+    //    this.add(edgeAwareTwoPassTreeButton);
+    this.add(multiRowTreeButton);
     this.add(multiRowEdgeAwareTreeButton);
+    this.add(radialButton);
+    this.add(radialEdgeAwareButton);
+    this.add(balloonButton);
     this.add(animateTransition);
   }
 
@@ -218,20 +252,11 @@ public class TreeLayoutSelector<V, E> extends JPanel {
           paintables.add(
               new LayoutPaintable.BalloonRings<>(vv, (BalloonLayoutAlgorithm) layoutAlgorithm));
 
-        } else if (layoutAlgorithm instanceof RadialTreeLayoutAlgorithm) {
-          paintables.add(
-              new LayoutPaintable.RadialRings<>(vv, (RadialTreeLayoutAlgorithm) layoutAlgorithm));
+        } else if (layoutAlgorithm instanceof RadialTreeLayout) {
+          paintables.add(new LayoutPaintable.RadialRings<>(vv, (RadialTreeLayout) layoutAlgorithm));
 
-        } else if (layoutAlgorithm instanceof TreeLayoutAlgorithm) {
-          Map<V, Dimension> cellMap = ((TreeLayoutAlgorithm) layoutAlgorithm).getBaseBounds();
-          paintables.add(
-              new LayoutPaintable.TreeCells(
-                  vv.getVisualizationModel().getLayoutModel(),
-                  cellMap,
-                  vv.getRenderContext().getMultiLayerTransformer()));
-        } else if (layoutAlgorithm instanceof EdgeAwareTreeLayoutAlgorithm) {
-          Map<V, Dimension> cellMap =
-              ((EdgeAwareTreeLayoutAlgorithm) layoutAlgorithm).getBaseBounds();
+        } else if (layoutAlgorithm instanceof TreeLayout) {
+          Map<V, Rectangle> cellMap = ((TreeLayout) layoutAlgorithm).getBaseBounds();
           paintables.add(
               new LayoutPaintable.TreeCells(
                   vv.getVisualizationModel().getLayoutModel(),

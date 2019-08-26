@@ -26,7 +26,6 @@ import org.jungrapht.visualization.transform.shape.ShapeTransformer;
  *
  * @author Tom Nelson
  */
-@SuppressWarnings("serial")
 public interface SatelliteVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 
   class Builder<

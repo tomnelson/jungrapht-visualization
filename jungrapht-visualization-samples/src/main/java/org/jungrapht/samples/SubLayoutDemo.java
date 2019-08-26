@@ -31,7 +31,7 @@ import org.jungrapht.visualization.layout.algorithms.CircleLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.TreeLayout;
 import org.jungrapht.visualization.layout.model.AggregateLayoutModel;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.LoadingCacheLayoutModel;
@@ -78,7 +78,6 @@ public class SubLayoutDemo extends JPanel {
 
   MutableSelectedState<String> ps;
 
-  @SuppressWarnings("rawtypes")
   LayoutAlgorithm<String> subLayoutType = CircleLayoutAlgorithm.<String>builder().build();
 
   public SubLayoutDemo() {
@@ -323,7 +322,7 @@ public class SubLayoutDemo extends JPanel {
                       new RandomLocationTransformer<>(subLayoutSize.width, subLayoutSize.height, 0))
                   .build();
 
-          if (subLayoutAlgorithm instanceof TreeLayoutAlgorithm) {
+          if (subLayoutAlgorithm instanceof TreeLayout) {
             LayoutModel positionModel =
                 this.getTreeLayoutPositions(
                     SpanningTreeAdapter.getSpanningTree(vv.getVisualizationModel().getGraph()),

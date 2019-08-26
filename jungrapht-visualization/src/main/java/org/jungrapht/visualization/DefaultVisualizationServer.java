@@ -188,9 +188,6 @@ class DefaultVisualizationServer<V, E> extends JPanel
     if (visualizationModel == null) {
       Preconditions.checkNotNull(graph);
       Preconditions.checkNotNull(viewSize);
-      if (viewSize == null) {
-        viewSize = getPreferredSize();
-      }
       if (layoutSize == null) {
         layoutSize = viewSize;
       }
@@ -205,7 +202,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
     setVisualizationModel(visualizationModel);
     renderContext = RenderContext.builder(this.visualizationModel.getGraph()).build();
     renderContext.setScreenDevice(this);
-    renderer = new DefaultModalRenderer<>(this);
+    renderer = DefaultModalRenderer.<V, E>builder().component(this).build();
     renderer.setCountSupplier(getVisualizationModel().getGraph().vertexSet()::size);
     renderer.setScaleSupplier(
         getRenderContext()
@@ -435,8 +432,8 @@ class DefaultVisualizationServer<V, E> extends JPanel
       log.debug("vd.getWidth() {} ld.getWidth() {} ", vd.getWidth(), ld.getWidth());
       log.debug("vd.getHeight() {} ld.getHeight() {} ", vd.getHeight(), ld.getHeight());
       scaler.scale(this, (float) (ratio), new Point2D.Double());
-      log.info("center of view is " + this.getCenter());
-      log.info(
+      log.trace("center of view is " + this.getCenter());
+      log.trace(
           "center of layout is "
               + visualizationModel.getLayoutModel().getWidth() / 2
               + ", "

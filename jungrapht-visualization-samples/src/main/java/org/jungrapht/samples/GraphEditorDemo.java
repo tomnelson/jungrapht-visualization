@@ -221,7 +221,7 @@ public class GraphEditorDemo extends JPanel implements Printable {
     else return number.toString();
   }
 
-  class VertexFactory implements Supplier<Number> {
+  static class VertexFactory implements Supplier<Number> {
 
     int i = 0;
 
@@ -230,7 +230,7 @@ public class GraphEditorDemo extends JPanel implements Printable {
     }
   }
 
-  class EdgeFactory implements Supplier<Number> {
+  static class EdgeFactory implements Supplier<Number> {
 
     int i = 0;
 

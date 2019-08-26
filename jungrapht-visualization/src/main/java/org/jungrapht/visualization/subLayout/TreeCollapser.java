@@ -27,7 +27,6 @@ public class TreeCollapser {
    * @param tree the tree whose subtree is to be collapsed
    * @param subRoot the root of the subtree to be collapsed
    */
-  @SuppressWarnings({"unchecked", "rawtypes"})
   public static <E> Graph<Collapsable<?>, E> collapse(
       Graph<Collapsable<?>, E> tree, Collapsable<?> subRoot) {
     // get the subtree rooted at subRoot

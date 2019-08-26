@@ -148,7 +148,7 @@ public class SpringLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V
   }
 
   protected void relaxEdges() {
-    Graph<V, Object> graph = (Graph<V, Object>) layoutModel.getGraph();
+    Graph<V, Object> graph = layoutModel.getGraph();
     try {
       for (Object edge : layoutModel.getGraph().edgeSet()) {
         V vertex1 = graph.getEdgeSource(edge);

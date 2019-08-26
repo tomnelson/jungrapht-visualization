@@ -1,25 +1,49 @@
 package org.jungrapht.visualization.layout.model;
 
 import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 /**
- * Simple, immutable Rectangle class.
+ * Simple, immutable Rectangle class, included to reduce dependency on awt classes
  *
  * @author Tom Nelson
  */
 public class Rectangle {
 
+  /** x location of upper-left corner */
   public final double x;
+  /** y location of upper left corner */
   public final double y;
+  /** width (x dimension) */
   public final double width;
+  /** height (y dimension */
   public final double height;
+  /** x location of lower right corner */
   public final double maxX;
+  /** y location of lower right corner */
   public final double maxY;
 
+  /** identity rectangle of zero size at origin */
+  public static Rectangle IDENTITY = new Rectangle(0, 0, 0, 0);
+
+  /**
+   * @param x location of upper left corner
+   * @param y location of upper left corner
+   * @param width size in x dimension
+   * @param height size in y dimension
+   * @return a new Rectangle with the passed properties
+   */
   public static Rectangle of(int x, int y, int width, int height) {
     return new Rectangle(x, y, width, height);
   }
 
+  /**
+   * @param x location of upper left corner
+   * @param y location of upper left corner
+   * @param width size in x dimension
+   * @param height size in y dimension
+   * @return a new Rectangle with the passed properties
+   */
   public static Rectangle of(double x, double y, double width, double height) {
     return new Rectangle(x, y, width, height);
   }
@@ -53,8 +77,8 @@ public class Rectangle {
   /**
    * fail-fast implementation to reduce computation
    *
-   * @param other
-   * @return
+   * @param other another Rectangle to compare
+   * @return whether there is a non-zero intersection of the 2 shapes
    */
   public boolean intersects(Rectangle other) {
     return maxX >= other.x && other.maxX >= x && maxY >= other.y && other.maxY >= y;
@@ -83,6 +107,13 @@ public class Rectangle {
     return !(oy > maxY);
   }
 
+  /**
+   * return a new Rectangle that is is the expansion of this Rectangle to contain the passed Point
+   *
+   * @param newX x coordinate of expansion point
+   * @param newY y coordinate of expansion point
+   * @return a new Rectangle that was expanded to include the passed coordinates
+   */
   public Rectangle add(double newX, double newY) {
     double x1 = Math.min(x, newX);
     double x2 = Math.max(maxX, newX);
@@ -91,6 +122,32 @@ public class Rectangle {
     return new Rectangle(x1, y1, x2 - x1, y2 - y1);
   }
 
+  /**
+   * Compare for equality
+   *
+   * @param o the object to compare
+   * @return true if the other Object is a Rectangle with identical properties to this Rectangle
+   */
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Rectangle rectangle = (Rectangle) o;
+    return Double.compare(rectangle.x, x) == 0
+        && Double.compare(rectangle.y, y) == 0
+        && Double.compare(rectangle.width, width) == 0
+        && Double.compare(rectangle.height, height) == 0
+        && Double.compare(rectangle.maxX, maxX) == 0
+        && Double.compare(rectangle.maxY, maxY) == 0;
+  }
+
+  /** @return a hash of the Rectangle properties */
+  @Override
+  public int hashCode() {
+    return Objects.hash(x, y, width, height, maxX, maxY);
+  }
+
+  /** @return a String representation of this Rectangle */
   @Override
   public String toString() {
     return "Rectangle{"

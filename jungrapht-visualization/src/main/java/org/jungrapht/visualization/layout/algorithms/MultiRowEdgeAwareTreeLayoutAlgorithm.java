@@ -1,36 +1,26 @@
-/*
- * Copyright (c) 2005, The JUNG Authors
- * All rights reserved.
- *
- * This software is open-source under the BSD license; see either "license.txt"
- * or https://github.com/tomnelson/jungrapht-visualization/blob/master/LICENSE for a description.
- *
- * Created on Jul 9, 2005
- */
-
 package org.jungrapht.visualization.layout.algorithms;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
-import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
-import org.jgrapht.Graphs;
-import org.jungrapht.visualization.layout.model.Dimension;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
+import org.jungrapht.visualization.layout.model.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** @author Tom Nelson */
-public class MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> extends EdgeAwareTreeLayoutAlgorithm<V, E>
+/**
+ * A Multi-Row {@code TreeLayoutAlgorithm} that can be modified with comparators and predicates for
+ * both vertices and edges
+ *
+ * @author Tom Nelson
+ */
+public class MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> extends MultiRowTreeLayoutAlgorithm<V>
     implements EdgeAwareLayoutAlgorithm<V, E>,
+        TreeLayout<V>,
         EdgeSorting<E>,
         EdgePredicated<E>,
         VertexSorting<V>,
@@ -39,29 +29,105 @@ public class MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> extends EdgeAwareTreeLay
   private static final Logger log =
       LoggerFactory.getLogger(MultiRowEdgeAwareTreeLayoutAlgorithm.class);
 
+  /**
+   * a Builder to create an instance of a {@code MultiRowEdgeAwareTreeLayoutAlgorithm}
+   *
+   * @param <V> the vertex type
+   * @param <E> the edge type
+   * @param <T> the type that is built
+   * @param <B> the builder type
+   */
   public static class Builder<
           V, E, T extends MultiRowEdgeAwareTreeLayoutAlgorithm<V, E>, B extends Builder<V, E, T, B>>
-      extends EdgeAwareTreeLayoutAlgorithm.Builder<V, E, T, B>
+      extends MultiRowTreeLayoutAlgorithm.Builder<V, T, B>
       implements EdgeAwareLayoutAlgorithm.Builder<V, E, T, B> {
+    protected Predicate<V> vertexPredicate = v -> false;
+    protected Predicate<E> edgePredicate = e -> false;
+    protected Comparator<V> vertexComparator = (v1, v2) -> 0;
+    protected Comparator<E> edgeComparator = (e1, e2) -> 0;
 
+    /**
+     * @param vertexPredicate a {@link Predicate} to filter vertices
+     * @return this builder
+     */
+    public B vertexPredicate(Predicate<V> vertexPredicate) {
+      this.vertexPredicate = vertexPredicate;
+      return self();
+    }
+
+    /**
+     * @param edgePredicate a {@link Predicate} to filter edges
+     * @return
+     */
+    public B edgePredicate(Predicate<E> edgePredicate) {
+      this.edgePredicate = edgePredicate;
+      return self();
+    }
+
+    /**
+     * @param vertexComparator a {@link Comparator} to sort vertices
+     * @return
+     */
+    public B vertexComparator(Comparator<V> vertexComparator) {
+      this.vertexComparator = vertexComparator;
+      return self();
+    }
+
+    /**
+     * @param edgeComparator a {@link Comparator} to sort edges
+     * @return
+     */
+    public B edgeComparator(Comparator<E> edgeComparator) {
+      this.edgeComparator = edgeComparator;
+      return self();
+    }
+
+    /**
+     * Build a configured instance
+     *
+     * @return a configured instance
+     */
     public T build() {
       return (T) new MultiRowEdgeAwareTreeLayoutAlgorithm<>(this);
     }
   }
 
-  public static <V, E> Builder<V, E, ?, ?> builder() {
+  /**
+   * @param <V>
+   * @param <E>
+   * @return a Builder for an {@code MultiRowEdgeAwareTreeLayoutAlgorithm}
+   */
+  public static <V, E> Builder<V, E, ?, ?> edgeAwareBuilder() {
     return new Builder<>();
   }
 
+  /**
+   * create an instance with the passed builder's parameters
+   *
+   * @param builder the builder that holds configuration parameters
+   */
   protected MultiRowEdgeAwareTreeLayoutAlgorithm(Builder<V, E, ?, ?> builder) {
-    super(builder);
+    this(
+        builder.rootPredicate,
+        builder.horizontalVertexSpacing,
+        builder.verticalVertexSpacing,
+        builder.vertexPredicate,
+        builder.edgePredicate,
+        builder.vertexComparator,
+        builder.edgeComparator,
+        builder.expandLayout);
   }
 
   /**
    * Creates an instance for the specified graph, X distance, and Y distance.
    *
+   * @param rootPredicate the {@link Predicate} to determine root vertices
    * @param horizontalVertexSpacing the horizontal spacing between adjacent siblings
    * @param verticalVertexSpacing the vertical spacing between adjacent siblings
+   * @param vertexPredicate a {@link Predicate} to filter vertices
+   * @param edgePredicate a {@link Predicate} to filter edges
+   * @param vertexComparator a {@link Comparator} to sort vertices
+   * @param edgeComparator a {@link Comparator} to sort edges
    */
   protected MultiRowEdgeAwareTreeLayoutAlgorithm(
       Predicate<V> rootPredicate,
@@ -72,18 +138,181 @@ public class MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> extends EdgeAwareTreeLay
       Comparator<V> vertexComparator,
       Comparator<E> edgeComparator,
       boolean expandLayout) {
-    super(
-        rootPredicate,
-        horizontalVertexSpacing,
-        verticalVertexSpacing,
-        vertexPredicate,
-        edgePredicate,
-        vertexComparator,
-        edgeComparator,
-        expandLayout);
+    super(rootPredicate, horizontalVertexSpacing, verticalVertexSpacing, expandLayout);
+    this.vertexPredicate = vertexPredicate;
+    this.edgePredicate = edgePredicate;
+    this.vertexComparator = vertexComparator;
+    this.edgeComparator = edgeComparator;
   }
 
-  protected int rowCount = 1;
+  /** a {@link Predicate} to filter vertices */
+  protected Predicate<V> vertexPredicate;
+
+  /** a {@link Predicate} to filter edges */
+  protected Predicate<E> edgePredicate;
+
+  /** a {@link Comparator} to sort vertices */
+  protected Comparator<V> vertexComparator;
+
+  /** a {@link Comparator} to sort edges */
+  protected Comparator<E> edgeComparator;
+
+  /** @param vertexPredicate property to set */
+  @Override
+  public void setVertexPredicate(Predicate<V> vertexPredicate) {
+    this.vertexPredicate = vertexPredicate;
+  }
+
+  /** @param edgePredicate property to set */
+  @Override
+  public void setEdgePredicate(Predicate<E> edgePredicate) {
+    this.edgePredicate = edgePredicate;
+  }
+
+  /** @param vertexComparator property to set */
+  @Override
+  public void setVertexComparator(Comparator<V> vertexComparator) {
+    this.vertexComparator = vertexComparator;
+  }
+
+  /** @param edgeComparator property to set */
+  @Override
+  public void setEdgeComparator(Comparator<E> edgeComparator) {
+    this.edgeComparator = edgeComparator;
+  }
+
+  /**
+   * Build a subtree rooted at the passed vertex, placed at passed coordinates (x,y)
+   *
+   * @param layoutModel the {@link LayoutModel} to hold the vertex positions
+   * @param vertex the vertex to place in position
+   * @param x the x position
+   * @param y the y position
+   * @param seen a set of vertices that were already 'seen' (and placed in the layoutModel)
+   */
+  protected void buildTree(LayoutModel<V> layoutModel, V vertex, int x, int y, Set<V> seen) {
+    if (seen.add(vertex)) {
+      Graph<V, E> graph = layoutModel.getGraph();
+      log.trace("buildTree placing {}", vertex);
+      // go one level further down
+      y += this.verticalVertexSpacing;
+      log.trace("Set vertex {} to {}", vertex, Point.of(x, y));
+      if (layoutModel.getWidth() < x) {
+        log.warn("placing vertex {} at {} which is beyond {} ", vertex, x, layoutModel.getWidth());
+      }
+      layoutModel.set(vertex, x, y);
+      merge(layoutModel, vertex);
+
+      double sizeXofCurrent = baseBounds.get(vertex).width;
+      x -= sizeXofCurrent / 2;
+
+      for (E edge :
+          graph
+              .outgoingEdgesOf(vertex)
+              .stream()
+              .sorted(edgeComparator)
+              .collect(Collectors.toCollection(LinkedHashSet::new))) {
+        if (edgePredicate.test(edge)
+            || graph.incomingEdgesOf(graph.getEdgeTarget(edge)).stream().noneMatch(edgePredicate)) {
+          V v = graph.getEdgeTarget(edge);
+          if (!seen.contains(v)) {
+            double sizeXofChild = this.baseBounds.getOrDefault(v, Rectangle.IDENTITY).width;
+            x += sizeXofChild / 2;
+
+            buildTree(layoutModel, v, x, y, seen);
+            merge(layoutModel, v);
+            x += sizeXofChild / 2 + horizontalVertexSpacing;
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Calculate the width of the subtree rooted at he passed vertex
+   *
+   * @param layoutModel the source of the graph vertices
+   * @param vertex the vertex at the root of the current subtree
+   * @param seen a set of vertices that were already measured
+   * @return
+   */
+  protected int calculateWidth(LayoutModel<V> layoutModel, V vertex, Set<V> seen) {
+    if (seen.add(vertex)) {
+      Graph<V, E> graph = layoutModel.getGraph();
+      int width =
+          Math.max(
+              0,
+              graph
+                      .outgoingEdgesOf(vertex)
+                      .stream()
+                      .sorted(edgeComparator)
+                      // skip over any edge that is not in the edgePredicate but also has a target with an
+                      // incoming edge that is in the edgePredicate
+                      .filter(
+                          e ->
+                              edgePredicate.test(e)
+                                  || graph
+                                      .incomingEdgesOf(graph.getEdgeTarget(e))
+                                      .stream()
+                                      .noneMatch(edgePredicate))
+                      .map(graph::getEdgeTarget)
+                      .filter(v -> !seen.contains(v))
+                      .mapToInt(
+                          element ->
+                              calculateWidth(layoutModel, element, seen) + horizontalVertexSpacing)
+                      .sum()
+                  - horizontalVertexSpacing);
+      log.trace("calcWidth baseWidths put {} {}", vertex, width);
+      baseBounds.merge(
+          vertex,
+          Rectangle.of(0, 0, width, 0),
+          (r, t) -> Rectangle.of(r.x, r.y, t.width, r.height));
+      return width;
+    }
+
+    return 0;
+  }
+
+  /**
+   * Calculate the height of the subtree rooted at the passed vertex
+   *
+   * @param layoutModel the source of the Graph and its vertices
+   * @param vertex the vertex at the top of the current subtree
+   * @param seen a set of vertices that were already counted
+   * @return
+   */
+  protected int calculateHeight(LayoutModel<V> layoutModel, V vertex, Set<V> seen) {
+    if (seen.add(vertex)) {
+      Graph<V, E> graph = layoutModel.getGraph();
+
+      int height =
+          graph
+              .outgoingEdgesOf(vertex)
+              .stream()
+              .sorted(edgeComparator)
+              // skip over any edge that is not in the edgePredicate but also has a target with an
+              // incoming edge that is in the edgePredicate
+              .filter(
+                  e ->
+                      edgePredicate.test(e)
+                          || graph
+                              .incomingEdgesOf(graph.getEdgeTarget(e))
+                              .stream()
+                              .noneMatch(edgePredicate))
+              .map(graph::getEdgeTarget)
+              .filter(v -> !seen.contains(v))
+              .mapToInt(
+                  element -> calculateHeight(layoutModel, element, seen) + verticalVertexSpacing)
+              .max()
+              .orElse(0);
+      baseBounds.merge(
+          vertex,
+          Rectangle.of(0, 0, 0, height),
+          (r, t) -> Rectangle.of(r.x, r.y, r.width, t.height));
+      return height;
+    }
+    return 0;
+  }
 
   /**
    * @param layoutModel the model to hold vertex positions
@@ -91,230 +320,31 @@ public class MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> extends EdgeAwareTreeLay
    */
   @Override
   protected Set<V> buildTree(LayoutModel<V> layoutModel) {
-    rowCount = 1;
-    alreadyDone = Sets.newHashSet();
-    Graph<V, E> graph = layoutModel.getGraph();
-    if (this.rootPredicate == null) {
-      rootPredicate = v -> layoutModel.getGraph().incomingEdgesOf(v).isEmpty();
-    }
-    Set<V> roots =
-        graph
-            .edgeSet()
-            .stream()
-            .sorted(edgeComparator)
-            .map(graph::getEdgeSource)
-            .sorted(vertexComparator)
-            .filter(rootPredicate)
-            .collect(Collectors.toCollection(LinkedHashSet::new));
-
-    Preconditions.checkArgument(roots.size() > 0);
-
-    // measure the tree
-
-    // the width of the tree under 'roots'. Includes one 'horizontalVertexSpacing' per child vertex
-    int overallWidth = calculateWidth(layoutModel, roots, new HashSet<>());
-    log.debug("after calculating overallWidth {}, row count is {}", overallWidth, rowCount);
-    int tallestTreeHeight = calculateOverallHeight(layoutModel, roots);
-    int overallHeight = tallestTreeHeight; // * rowCount;
-    overallHeight += verticalVertexSpacing;
-
-    log.trace("layoutModel.getWidth() {}", layoutModel.getWidth());
-    log.trace("overallWidth {}", overallWidth);
-    int largerHeight = Math.max(layoutModel.getHeight(), overallHeight);
-    if (expandLayout) {
-      layoutModel.setSize(layoutModel.getWidth(), largerHeight);
-    }
-    log.trace("layoutModel.getHeight() {}", layoutModel.getHeight());
-    log.trace("overallHeight {}", overallHeight);
-
-    //    int cursor = horizontalVertexSpacing;
-    //    if (overallWidth < layoutModel.getWidth()) {
-    // start later
-    int cursor = getInitialPosition(horizontalVertexSpacing, layoutModel.getWidth(), overallWidth);
-    //    }
-    int y = getInitialPosition(0, layoutModel.getHeight(), overallHeight);
-    log.trace("got initial y of {}", y);
-
-    Set<V> rootsInRow = new HashSet<>();
-    for (V vertex : roots) {
-
-      int w = this.baseBounds.get(vertex).width;
-      log.trace("w is {} and baseWidths.get({}) = {}", w, vertex, baseBounds.get(vertex));
-      cursor += w;
-      cursor += horizontalVertexSpacing;
-
-      if (cursor > layoutModel.getWidth()) {
-        cursor = getInitialPosition(horizontalVertexSpacing, layoutModel.getWidth(), overallWidth);
-        cursor += w;
-        cursor += horizontalVertexSpacing;
-        int rowHeight = calculateHeight(layoutModel, rootsInRow);
-        log.trace("height for {} is {}", rootsInRow, rowHeight);
-        y += rowHeight;
-        rootsInRow.clear();
-      }
-      rootsInRow.add(vertex);
-
-      boolean onFilteredPath = false;
-      onFilteredPath |= vertexPredicate.test(vertex);
-      for (E edge : graph.outgoingEdgesOf(vertex)) {
-        onFilteredPath |= edgePredicate.test(edge);
-      }
-
-      int x = cursor - horizontalVertexSpacing - w / 2;
-
-      if (onFilteredPath) {
-        x -= w / 2;
-        buildTree(layoutModel, vertex, x, y);
-      } else {
-        buildTree(layoutModel, vertex, x, y);
-      }
-    }
-    // last row
-    int rowHeight = calculateHeight(layoutModel, rootsInRow);
-    log.trace("height for (last) {} is {}", rootsInRow, rowHeight);
-    log.debug("rowCount is {}", rowCount);
+    Set<V> roots = super.buildTree(layoutModel);
+    roots.addAll(afterBuildTree(layoutModel));
     return roots;
   }
 
-  @Override
-  protected void buildTree(LayoutModel<V> layoutModel, V sourceVertex, int x, int y) {
-
+  /**
+   * After the tree is configured, visit all of the vertices that are on favored edges and adjust
+   * their position to the left side of their children's bounding box. This helps provide a more
+   * linear path for favored edge endpoints
+   *
+   * @param layoutModel the source of the graph and its vertices
+   * @return the Set of root vertices
+   */
+  protected Set<V> afterBuildTree(LayoutModel<V> layoutModel) {
+    Set<V> roots = super.buildTree(layoutModel);
     Graph<V, E> graph = layoutModel.getGraph();
-    if (alreadyDone.add(sourceVertex)) {
-      //go one level further down
-      y += this.verticalVertexSpacing;
-      log.trace("Set vertex {} to {}", sourceVertex, Point.of(x, y));
-      layoutModel.set(sourceVertex, x, y);
-
-      double sizeXofCurrent = baseBounds.getOrDefault(sourceVertex, Dimension.of(0, 0)).width;
-      x -= sizeXofCurrent / 2;
-
-      double sizeXofChild;
-
-      for (E outgoingEdge :
-          graph
-              .outgoingEdgesOf(sourceVertex)
-              .stream()
-              .sorted(edgeComparator)
-              .collect(Collectors.toList())) {
-        V targetVertex = graph.getEdgeTarget(outgoingEdge);
-
-        boolean onFilteredPath =
-            edgePredicate.test(outgoingEdge) || vertexPredicate.test(targetVertex);
-        if (onFilteredPath) {
-          x += sizeXofCurrent / 2;
-          sizeXofChild = this.baseBounds.getOrDefault(targetVertex, Dimension.of(0, 0)).width;
-          log.trace("get base position of {} from {}", targetVertex, baseBounds);
-          buildTree(layoutModel, targetVertex, x, y);
-          x += sizeXofChild + horizontalVertexSpacing;
-        } else {
-          sizeXofChild = this.baseBounds.getOrDefault(targetVertex, Dimension.of(0, 0)).width;
-          x += sizeXofChild / 2;
-          log.trace("get base position of {} from {}", targetVertex, baseBounds);
-          buildTree(layoutModel, targetVertex, x, y);
-          x += sizeXofChild / 2 + horizontalVertexSpacing;
-        }
+    // move all the predicated vertices or vertices with adjacent predicated edges
+    for (V vertex : layoutModel.getGraph().vertexSet()) {
+      if (vertexPredicate.test(vertex)
+          || graph.outgoingEdgesOf(vertex).stream().anyMatch(edgePredicate)
+          || graph.incomingEdgesOf(vertex).stream().anyMatch(edgePredicate)) {
+        Rectangle vertexRectangle = baseBounds.getOrDefault(vertex, Rectangle.IDENTITY);
+        layoutModel.set(vertex, vertexRectangle.x, vertexRectangle.y);
       }
     }
-  }
-
-  @Override
-  protected int calculateWidth(LayoutModel<V> layoutModel, Collection<V> roots, Set<V> seen) {
-    int overallWidth = 0;
-    int cursor = horizontalVertexSpacing;
-    for (V root : roots) {
-      int w = calculateWidth(layoutModel, root, seen);
-      cursor += w;
-      cursor += horizontalVertexSpacing;
-      log.trace("width of {} is {}", root, w);
-      if (cursor > layoutModel.getWidth()) {
-        cursor = horizontalVertexSpacing;
-        cursor += w;
-        cursor += horizontalVertexSpacing;
-        rowCount++;
-        log.trace("row count now {}", rowCount);
-      }
-      overallWidth = Math.max(cursor, overallWidth);
-    }
-    log.trace("entire width from {} is {}", roots, overallWidth);
-    return overallWidth;
-  }
-
-  protected int calculateWidth(LayoutModel<V> layoutModel, V sourceVertex, Set<V> seen) {
-    Graph<V, E> graph = layoutModel.getGraph();
-    log.trace("graph is {}", graph);
-    List<V> successors = Graphs.successorListOf(graph, sourceVertex);
-    log.trace("successors of {} are {}", sourceVertex, successors);
-    successors.removeIf(seen::contains);
-    log.trace("filtered successors of {} are {}", sourceVertex, successors);
-    seen.addAll(successors);
-
-    int size =
-        Math.max(
-            0,
-            graph
-                    .outgoingEdgesOf(sourceVertex)
-                    .stream()
-                    .sorted(edgeComparator)
-                    .map(graph::getEdgeTarget)
-                    .filter(successors::contains)
-                    .mapToInt(
-                        element ->
-                            calculateWidth(layoutModel, element, seen) + horizontalVertexSpacing)
-                    .sum()
-                - horizontalVertexSpacing);
-
-    log.trace("calcWidth baseWidths put {} {}", sourceVertex, size);
-    baseBounds.merge(sourceVertex, Dimension.of(size, 0), (r, s) -> Dimension.of(size, r.height));
-    return size;
-  }
-
-  protected int calculateHeight(LayoutModel<V> layoutModel, V vertex, Set<V> seen) {
-    Graph<V, E> graph = layoutModel.getGraph();
-    List<V> successors = Graphs.successorListOf(graph, vertex);
-    log.trace("graph is {}", graph);
-    log.trace("h successors of {} are {}", vertex, successors);
-    successors.removeIf(seen::contains);
-    log.trace("filtered h successors of {} are {}", vertex, successors);
-    seen.addAll(successors);
-
-    final int height =
-        graph
-            .outgoingEdgesOf(vertex)
-            .stream()
-            .sorted(edgeComparator)
-            .map(graph::getEdgeTarget)
-            .filter(successors::contains)
-            .sorted(vertexComparator)
-            .mapToInt(
-                element -> calculateHeight(layoutModel, element, seen) + verticalVertexSpacing)
-            .max()
-            .orElse(0);
-    baseBounds.merge(vertex, Dimension.of(0, height), (r, t) -> Dimension.of(r.width, height));
-    return height;
-  }
-
-  protected int calculateOverallHeight(LayoutModel<V> layoutModel, Collection<V> roots) {
-
-    int overallHeight = 0;
-    int cursor = horizontalVertexSpacing;
-    Set<V> rootsInRow = new HashSet<>();
-    for (V root : roots) {
-      int w = calculateWidth(layoutModel, root, new HashSet<>());
-      cursor += w;
-      cursor += horizontalVertexSpacing;
-      log.trace("width of {} is {}", root, w);
-      if (cursor > layoutModel.getWidth()) {
-        cursor = horizontalVertexSpacing;
-        cursor += w;
-        cursor += horizontalVertexSpacing;
-        overallHeight += super.calculateHeight(layoutModel, rootsInRow);
-        rootsInRow.clear();
-      }
-      rootsInRow.add(root);
-    }
-    // last row
-    overallHeight += super.calculateHeight(layoutModel, rootsInRow);
-    return overallHeight;
+    return roots;
   }
 }

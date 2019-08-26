@@ -1,13 +1,3 @@
-/*
- * Copyright (c) 2005, The JUNG Authors
- * All rights reserved.
- *
- * This software is open-source under the BSD license; see either "license.txt"
- * or https://github.com/tomnelson/jungrapht-visualization/blob/master/LICENSE for a description.
- *
- * Created on Aug 3, 2019
- */
-
 package org.jungrapht.visualization.control;
 
 import java.awt.event.InputEvent;
@@ -36,7 +26,7 @@ public class DefaultSatelliteGraphMouse<V, E> extends AbstractGraphMouse {
     loadPlugins();
   }
 
-  /** create the plugins, and load the plugins for TRANSFORMING mode */
+  /** create the plugins, and load them */
   protected void loadPlugins() {
     scalingPlugin = new SatelliteScalingGraphMousePlugin(new CrossoverScalingControl(), 0, in, out);
     add(

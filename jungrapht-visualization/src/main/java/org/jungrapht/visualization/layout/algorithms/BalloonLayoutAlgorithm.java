@@ -10,8 +10,6 @@
 
 package org.jungrapht.visualization.layout.algorithms;
 
-import static com.google.common.collect.ImmutableSet.toImmutableSet;
-
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -19,9 +17,11 @@ import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-public class BalloonLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V> {
+public class BalloonLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V> implements TreeLayout<V> {
 
   private static final Logger log = LoggerFactory.getLogger(BalloonLayoutAlgorithm.class);
 
@@ -52,7 +52,7 @@ public class BalloonLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V> {
   protected LoadingCache<V, PolarPoint> polarLocations =
       CacheBuilder.newBuilder()
           .build(
-              new CacheLoader<V, PolarPoint>() {
+              new CacheLoader<>() {
                 public PolarPoint load(V vertex) {
                   return PolarPoint.ORIGIN;
                 }
@@ -84,7 +84,7 @@ public class BalloonLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V> {
             .vertexSet()
             .stream()
             .filter(vertex -> Graphs.predecessorListOf(graph, vertex).isEmpty())
-            .collect(toImmutableSet());
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     log.trace("roots: {}", roots);
     int width = layoutModel.getWidth();
     if (roots.size() == 1) {

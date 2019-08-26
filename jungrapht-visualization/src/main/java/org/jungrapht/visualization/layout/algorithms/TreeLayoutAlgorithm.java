@@ -10,22 +10,20 @@
 
 package org.jungrapht.visualization.layout.algorithms;
 
-import static com.google.common.collect.ImmutableSet.toImmutableSet;
-
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
-import org.jungrapht.visualization.layout.model.Dimension;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
+import org.jungrapht.visualization.layout.model.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +32,13 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
 
   private static final Logger log = LoggerFactory.getLogger(TreeLayoutAlgorithm.class);
 
+  /**
+   * A {@code Builder} to create instances of {@link TreeLayoutAlgorithm}
+   *
+   * @param <V> the vertex type
+   * @param <T> the type of TreeLayoutAlgorithm that is built
+   * @param <B> the builder type
+   */
   public static class Builder<V, T extends TreeLayoutAlgorithm<V>, B extends Builder<V, T, B>>
       implements LayoutAlgorithm.Builder<V, T, B> {
     protected Predicate<V> rootPredicate;
@@ -41,15 +46,25 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
     protected int verticalVertexSpacing = DEFAULT_VERTICAL_VERTEX_SPACING;
     protected boolean expandLayout = true;
 
+    /** @return this builder cast to type B */
     protected B self() {
       return (B) this;
     }
 
+    /**
+     * @param rootPredicate the predicate function to determine root vertices. Default is to
+     *     consider all vertices with no incoming edges as root vertices
+     * @return this Builder
+     */
     public B rootPredicate(Predicate<V> rootPredicate) {
       this.rootPredicate = rootPredicate;
       return self();
     }
 
+    /**
+     * @param horizontalVertexSpacing horizontal spacing between tree elements
+     * @return this Builder
+     */
     public B horizontalVertexSpacing(int horizontalVertexSpacing) {
       Preconditions.checkArgument(
           horizontalVertexSpacing > 0, "horizontalVertexSpacing must be positive");
@@ -57,6 +72,10 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
       return self();
     }
 
+    /**
+     * @param verticalVertexSpacing vertical spacing between tree elements
+     * @return this Builder
+     */
     public B verticalVertexSpacing(int verticalVertexSpacing) {
       Preconditions.checkArgument(
           verticalVertexSpacing > 0, "verticalVertexSpacing must be positive");
@@ -64,20 +83,35 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
       return self();
     }
 
+    /**
+     * @param expandLayout if {@code true} expand the layout width and height to accomodate the
+     *     entire tree
+     * @return
+     */
     public B expandLayout(boolean expandLayout) {
       this.expandLayout = expandLayout;
       return self();
     }
 
+    /** @return the Builder with its set parameters */
     public T build() {
       return (T) new TreeLayoutAlgorithm<>(this);
     }
   }
 
+  /**
+   * @param <V> the vertex type
+   * @return a {@code Builder} ready to configure
+   */
   public static <V> Builder<V, ?, ?> builder() {
     return new Builder<>();
   }
 
+  /**
+   * Create a {@link TreeLayoutAlgorithm} instance with the passed {@code Builder}
+   *
+   * @param builder the {@code Builder} with configuration properties
+   */
   protected TreeLayoutAlgorithm(Builder<V, ?, ?> builder) {
     this(
         builder.rootPredicate,
@@ -87,10 +121,12 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
   }
 
   /**
-   * Creates an instance for the specified graph, X distance, and Y distance.
+   * Creates an instance for the specified parameters
    *
+   * @param rootPredicate the {@link Predicate} function to determine root vertices
    * @param horizontalVertexSpacing the horizontal spacing between adjacent siblings
    * @param verticalVertexSpacing the vertical spacing between adjacent siblings
+   * @param expandLayout whether to expand the layout size to accomodate the entire tree
    */
   protected TreeLayoutAlgorithm(
       Predicate<V> rootPredicate,
@@ -103,11 +139,14 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
     this.expandLayout = expandLayout;
   }
 
+  /** the {}@link Predicate} to determine root vertices */
   protected Predicate<V> rootPredicate;
 
-  protected transient Set<V> alreadyDone = new HashSet<>();
-
-  protected Map<V, Dimension> baseBounds = new HashMap<>();
+  /**
+   * a {}@link Map} of vertex to a {@link Rectangle} that will contain the vertex and all of its
+   * children
+   */
+  protected Map<V, Rectangle> baseBounds = new HashMap<>();
 
   /** The default horizontal vertex spacing. Initialized to 50. */
   protected static final int DEFAULT_HORIZONTAL_VERTEX_SPACING = 50;
@@ -116,19 +155,31 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
   protected static final int DEFAULT_VERTICAL_VERTEX_SPACING = 50;
 
   /** The horizontal vertex spacing. Defaults to {@code DEFAULT_HORIZONTAL_VERTEX_SPACING}. */
-  protected int horizontalVertexSpacing = DEFAULT_HORIZONTAL_VERTEX_SPACING;
+  protected int horizontalVertexSpacing;
 
   /** The vertical vertex spacing. Defaults to {@code DEFAULT_VERTICAL_VERTEX_SPACING}. */
-  protected int verticalVertexSpacing = DEFAULT_VERTICAL_VERTEX_SPACING;
+  protected int verticalVertexSpacing;
 
+  /** if {@code true} then expand the layout size to accomodate the entire tree. */
   protected boolean expandLayout;
 
+  /**
+   * visit a {@link LayoutModel} to set all of the graph vertex positions according to the
+   * LayoutAlgorithm logic.
+   *
+   * @param layoutModel the mediator between the container for vertices (the Graph) and the mapping
+   */
   @Override
   public void visit(LayoutModel<V> layoutModel) {
     buildTree(layoutModel);
   }
 
-  public Map<V, Dimension> getBaseBounds() {
+  /**
+   * @return the {@link Map} of vertex to {@link Rectangle} that will hold all of the subtree rooted
+   *     at the vertex
+   */
+  @Override
+  public Map<V, Rectangle> getBaseBounds() {
     return baseBounds;
   }
 
@@ -137,19 +188,23 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
    * @return the roots vertices of the tree
    */
   protected Set<V> buildTree(LayoutModel<V> layoutModel) {
-    alreadyDone = Sets.newHashSet();
+    Graph<V, ?> graph = layoutModel.getGraph();
     if (this.rootPredicate == null) {
-      rootPredicate = v -> layoutModel.getGraph().incomingEdgesOf(v).isEmpty();
+      rootPredicate = v -> graph.incomingEdgesOf(v).isEmpty();
     }
     Set<V> roots =
-        layoutModel.getGraph().vertexSet().stream().filter(rootPredicate).collect(toImmutableSet());
+        graph
+            .vertexSet()
+            .stream()
+            .filter(rootPredicate)
+            .collect(Collectors.toCollection(LinkedHashSet::new));
 
     Preconditions.checkArgument(roots.size() > 0);
     // the width of the tree under 'roots'. Includes one 'horizontalVertexSpacing' per child vertex
     int overallWidth = calculateWidth(layoutModel, roots, new HashSet<>());
     // add one additional 'horizontalVertexSpacing' for each tree (each root) + 1
     overallWidth += (roots.size() + 1) * horizontalVertexSpacing;
-    int overallHeight = calculateHeight(layoutModel, roots);
+    int overallHeight = calculateHeight(layoutModel, roots, new HashSet<>());
     overallHeight += 2 * verticalVertexSpacing;
 
     log.trace("layoutModel.getWidth() {} overallWidth {}", layoutModel.getWidth(), overallWidth);
@@ -160,26 +215,31 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
     if (expandLayout) {
       layoutModel.setSize(largerWidth, largerHeight);
     }
-    int x =
-        //    if (overallWidth < layoutModel.getWidth()) {
-        // start later
-        getInitialPosition(horizontalVertexSpacing, layoutModel.getWidth(), overallWidth);
-    //    }
+    int x = getInitialPosition(horizontalVertexSpacing, layoutModel.getWidth(), overallWidth);
 
     int y = getInitialPosition(verticalVertexSpacing, layoutModel.getHeight(), overallHeight);
     log.trace("got initial y of {}", y);
 
+    Set<V> seen = new HashSet<>();
     for (V vertex : roots) {
-      int w = this.baseBounds.get(vertex).width;
+      int w = (int) this.baseBounds.get(vertex).width;
       log.trace("w is {} and baseWidths.get(vertex) = {}", w, baseBounds.get(vertex).width);
       x += w / 2;
       log.trace("currentX after vertex {} is now {}", vertex, x);
-      buildTree(layoutModel, vertex, x, y);
+      buildTree(layoutModel, vertex, x, y, seen);
+      merge(layoutModel, vertex);
       x += w / 2 + horizontalVertexSpacing;
     }
     return roots;
   }
 
+  /**
+   * @param initialPosition default initial position for when the layoutSpan is greater than the
+   *     tree span
+   * @param layoutSpan the dimension (width or height) of the layout
+   * @param treeSpan the dimension (width or height) of the current subtree
+   * @return the average of the layoutSpan and treeSpan or the passed initial position
+   */
   protected int getInitialPosition(int initialPosition, int layoutSpan, int treeSpan) {
     if (layoutSpan <= treeSpan) {
       return initialPosition;
@@ -187,83 +247,154 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
     return layoutSpan / 2 - treeSpan / 2;
   }
 
-  protected void buildTree(LayoutModel<V> layoutModel, V vertex, int x, int y) {
-    if (alreadyDone.add(vertex)) {
-      //go one level further down
+  /**
+   * Place the passed vertex and descend into the child vertices, recursively placing each child
+   * vertex
+   *
+   * @param layoutModel the {@link LayoutModel} to hold the vertex positions
+   * @param vertex the vertex to place in position
+   * @param x the x position
+   * @param y the y position
+   * @param seen a set of vertices that were already 'seen' (and placed in the layoutModel)
+   */
+  protected void buildTree(LayoutModel<V> layoutModel, V vertex, int x, int y, Set<V> seen) {
+    if (seen.add(vertex)) {
+      log.trace("buildTree placing {}", vertex);
+      // go one level further down
       y += this.verticalVertexSpacing;
       log.trace("Set vertex {} to {}", vertex, Point.of(x, y));
+      if (layoutModel.getWidth() < x) {
+        log.warn("placing vertex {} at {} which is beyond {} ", vertex, x, layoutModel.getWidth());
+      }
       layoutModel.set(vertex, x, y);
+      merge(layoutModel, vertex);
 
       double sizeXofCurrent = baseBounds.get(vertex).width;
       x -= sizeXofCurrent / 2;
 
       for (V element : Graphs.successorListOf(layoutModel.getGraph(), vertex)) {
-        log.trace("get base position of {} from {}", element, baseBounds);
-        double sizeXofChild = this.baseBounds.get(element).width;
-        x += sizeXofChild / 2;
-        buildTree(layoutModel, element, x, y);
-        x += sizeXofChild / 2 + horizontalVertexSpacing;
+        if (!seen.contains(element)) {
+          log.trace("get base position of {} from {}", element, baseBounds);
+          double sizeXofChild = this.baseBounds.get(element).width;
+          x += sizeXofChild / 2;
+          buildTree(layoutModel, element, x, y, seen);
+          merge(layoutModel, element);
+          x += sizeXofChild / 2 + horizontalVertexSpacing;
+        }
       }
     }
   }
 
-  protected int calculateWidth(LayoutModel<V> layoutModel, V vertex, Set<V> seen) {
-    Graph<V, ?> graph = layoutModel.getGraph();
-    log.trace("graph is {}", graph);
-    List<V> successors = Graphs.successorListOf(graph, vertex);
-    log.trace("successors of {} are {}", vertex, successors);
-    successors.removeIf(seen::contains);
-    log.trace("filtered successors of {} are {}", vertex, successors);
-    seen.addAll(successors);
-
-    final int size =
-        Math.max(
-            0,
-            successors
-                    .stream()
-                    .mapToInt(
-                        element ->
-                            calculateWidth(layoutModel, element, seen) + horizontalVertexSpacing)
-                    .sum()
-                - horizontalVertexSpacing);
-    log.trace("calcWidth baseWidths put {} {}", vertex, size);
-    //    baseBounds.merge(vertex, Dimension.of(0, size), (r, t) -> Dimension.of(size, r.height));
-    baseBounds.merge(vertex, Dimension.of(size, 0), (r, t) -> Dimension.of(size, r.height));
-    return size;
+  /**
+   * update the baseBounds Map value for the passed vertex, with the (x,y) position of this vertex
+   *
+   * @param layoutModel the source of the vertex coordinates
+   * @param vertex the vertex key to update in the baseBounds map
+   */
+  protected void merge(LayoutModel<V> layoutModel, V vertex) {
+    Point p = layoutModel.apply(vertex);
+    baseBounds.merge(
+        vertex,
+        Rectangle.of(p.x, p.y, 0, 0),
+        (r, s) -> Rectangle.of(s.x - r.width / 2, s.y, r.width, r.height));
   }
 
+  /**
+   * calculate the width of the subtree descended from the passed vertex
+   *
+   * @param layoutModel the source of the graph vertices
+   * @param vertex the vertex at the root of the current subtree
+   * @param seen a set of vertices that were already measured
+   * @return the width of the subtree rooted at the passed vertex
+   */
+  protected int calculateWidth(LayoutModel<V> layoutModel, V vertex, Set<V> seen) {
+    if (seen.add(vertex)) {
+      Graph<V, ?> graph = layoutModel.getGraph();
+
+      int width =
+          Math.max(
+              0,
+              Graphs.successorListOf(graph, vertex)
+                      .stream()
+                      .filter(v -> !seen.contains(v))
+                      .mapToInt(
+                          element ->
+                              calculateWidth(layoutModel, element, seen) + horizontalVertexSpacing)
+                      .sum()
+                  - horizontalVertexSpacing);
+      log.trace("calcWidth baseWidths put {} {}", vertex, width);
+      baseBounds.merge(
+          vertex,
+          Rectangle.of(0, 0, width, 0),
+          (r, t) -> Rectangle.of(r.x, r.y, t.width, r.height));
+      return width;
+    }
+    return 0;
+  }
+
+  /**
+   * Calculate the width of the forest as the sum of the width of each tree (plus offsets)
+   *
+   * @param layoutModel the source of the graph and its vertices
+   * @param roots the root vertices of the forest
+   * @param seen a set of vertices that were already placed
+   * @return the overall width
+   */
   protected int calculateWidth(LayoutModel<V> layoutModel, Collection<V> roots, Set<V> seen) {
-    int width = roots.stream().mapToInt(vertex -> calculateWidth(layoutModel, vertex, seen)).sum();
+
+    int width =
+        roots
+            .stream()
+            .filter(v -> !seen.contains(v))
+            .mapToInt(vertex -> calculateWidth(layoutModel, vertex, seen))
+            .sum();
     log.debug("entire width from {} is {}", roots, width);
     return width;
   }
 
+  /**
+   * Calculate the height of the subtree under the passed vertex
+   *
+   * @param layoutModel the source of the Graph and its vertices
+   * @param vertex the vertex at the top of the current subtree
+   * @param seen a set of vertices that were already counted
+   * @return the height of the subtree rooted at the passed vertex
+   */
   protected int calculateHeight(LayoutModel<V> layoutModel, V vertex, Set<V> seen) {
-    Graph<V, ?> graph = layoutModel.getGraph();
-    List<V> successors = Graphs.successorListOf(graph, vertex);
-    log.trace("graph is {}", graph);
-    log.trace("h successors of {} are {}", vertex, successors);
-    successors.removeIf(seen::contains);
-    log.trace("filtered h successors of {} are {}", vertex, successors);
+    if (seen.add(vertex)) {
+      Graph<V, ?> graph = layoutModel.getGraph();
 
-    seen.addAll(successors);
-
-    final int height =
-        successors
-            .stream()
-            .mapToInt(
-                element -> calculateHeight(layoutModel, element, seen) + verticalVertexSpacing)
-            .max()
-            .orElse(0);
-    baseBounds.merge(vertex, Dimension.of(0, height), (r, t) -> Dimension.of(r.width, height));
-    return height;
+      int height =
+          Graphs.successorListOf(graph, vertex)
+              .stream()
+              .filter(v -> !seen.contains(v))
+              .mapToInt(
+                  element -> calculateHeight(layoutModel, element, seen) + verticalVertexSpacing)
+              .max()
+              .orElse(0);
+      baseBounds.merge(
+          vertex,
+          Rectangle.of(0, 0, 0, height),
+          (r, t) -> Rectangle.of(r.x, r.y, r.width, t.height));
+      return height;
+    }
+    return 0;
   }
 
-  protected int calculateHeight(LayoutModel<V> layoutModel, Collection<V> roots) {
+  /**
+   * Calculate the height of the forest as the max height of all of its subtrees
+   *
+   * @param layoutModel the source of the graph and vertices
+   * @param roots the root vertices of the forest
+   * @param seen a set of vertices that were already measured
+   * @return the height that will accomodate the entire forest
+   */
+  protected int calculateHeight(LayoutModel<V> layoutModel, Collection<V> roots, Set<V> seen) {
 
     return roots
             .stream()
-            .mapToInt(vertex -> calculateHeight(layoutModel, vertex, new HashSet<V>()))
+            .filter(v -> !seen.contains(v))
+            .mapToInt(vertex -> calculateHeight(layoutModel, vertex, seen))
             .max()
             .orElse(verticalVertexSpacing)
         + verticalVertexSpacing;

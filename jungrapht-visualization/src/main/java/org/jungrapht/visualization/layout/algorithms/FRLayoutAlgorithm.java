@@ -54,7 +54,7 @@ public class FRLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
   protected LoadingCache<V, Point> frVertexData =
       CacheBuilder.newBuilder()
           .build(
-              new CacheLoader<V, Point>() {
+              new CacheLoader<>() {
                 public Point load(V vertex) {
                   return Point.ORIGIN;
                 }
@@ -229,7 +229,7 @@ public class FRLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
   }
 
   protected void calcAttraction(Object edge) {
-    Graph<V, Object> graph = (Graph<V, Object>) layoutModel.getGraph();
+    Graph<V, Object> graph = layoutModel.getGraph();
     V vertex1 = graph.getEdgeSource(edge);
     V vertex2 = graph.getEdgeTarget(edge);
     boolean v1_locked = layoutModel.isLocked(vertex1);

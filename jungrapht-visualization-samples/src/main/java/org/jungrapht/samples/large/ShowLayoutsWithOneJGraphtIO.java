@@ -37,7 +37,7 @@ import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
 import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.TreeLayout;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.LoadingCacheLayoutModel;
@@ -85,7 +85,7 @@ public class ShowLayoutsWithOneJGraphtIO extends JPanel {
 
     vv.setVertexToolTipFunction(
         vertex ->
-            vertex.toString()
+            vertex
                 + ". with neighbors:"
                 + Graphs.neighborListOf(vv.getVisualizationModel().getGraph(), vertex));
 
@@ -117,7 +117,7 @@ public class ShowLayoutsWithOneJGraphtIO extends JPanel {
                   LayoutAlgorithm layoutAlgorithm = layoutType.getLayoutAlgorithm();
                   vv.removePreRenderPaintable(balloonLayoutRings);
                   vv.removePreRenderPaintable(radialLayoutRings);
-                  if ((layoutAlgorithm instanceof TreeLayoutAlgorithm)
+                  if ((layoutAlgorithm instanceof TreeLayout)
                       && vv.getVisualizationModel().getGraph().getType().isUndirected()) {
                     Graph tree =
                         SpanningTreeAdapter.getSpanningTree(vv.getVisualizationModel().getGraph());

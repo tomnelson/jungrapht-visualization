@@ -14,7 +14,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.function.Predicate;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
@@ -26,40 +25,11 @@ import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.util.Context;
 import org.jungrapht.visualization.util.EdgeIndexFunction;
 
-public class DefaultEdgeRenderer<V, E> implements Renderer.Edge<V, E> {
+public class HeavyweightEdgeRenderer<V, E> extends AbstractEdgeRenderer<V, E>
+    implements Renderer.Edge<V, E> {
 
   protected EdgeArrowRenderingSupport<V, E> edgeArrowRenderingSupport =
       new DefaultEdgeArrowRenderingSupport<>();
-
-  @Override
-  public void paintEdge(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e) {
-    GraphicsDecorator g2d = renderContext.getGraphicsContext();
-    if (!renderContext.getEdgeIncludePredicate().test(e)) {
-      return;
-    }
-
-    // don't draw edge if either incident vertex is not drawn
-    V u = visualizationModel.getGraph().getEdgeSource(e);
-    V v = visualizationModel.getGraph().getEdgeTarget(e);
-    Predicate<V> vertexIncludePredicate = renderContext.getVertexIncludePredicate();
-    if (!vertexIncludePredicate.test(u) || !vertexIncludePredicate.test(v)) {
-      return;
-    }
-
-    Stroke new_stroke = renderContext.edgeStrokeFunction().apply(e);
-    Stroke old_stroke = g2d.getStroke();
-    if (new_stroke != null) {
-      g2d.setStroke(new_stroke);
-    }
-
-    drawSimpleEdge(renderContext, visualizationModel, e);
-
-    // restore paint and stroke
-    if (new_stroke != null) {
-      g2d.setStroke(old_stroke);
-    }
-  }
 
   protected Shape prepareFinalEdgeShape(
       RenderContext<V, E> renderContext,
@@ -160,7 +130,6 @@ public class DefaultEdgeRenderer<V, E> implements Renderer.Edge<V, E> {
       float dist = (float) Math.sqrt(dx * dx + dy * dy);
       xform.scale(dist, 1.0);
     }
-
     edgeShape = xform.createTransformedShape(edgeShape);
 
     return edgeShape;

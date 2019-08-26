@@ -17,8 +17,8 @@ import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.visualization.VisualizationImageServer;
 import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
-import org.jungrapht.visualization.renderers.DefaultVertexLabelRenderer;
 import org.jungrapht.visualization.renderers.GradientVertexRenderer;
+import org.jungrapht.visualization.renderers.HeavyweightVertexLabelRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
 
 /**
@@ -62,7 +62,7 @@ public class VisualizationImageServerDemo {
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.getRenderer()
         .getVertexLabelRenderer()
-        .setPositioner(new DefaultVertexLabelRenderer.InsidePositioner());
+        .setPositioner(new HeavyweightVertexLabelRenderer.InsidePositioner());
     vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.AUTO);
 
     // create a frome to hold the graph

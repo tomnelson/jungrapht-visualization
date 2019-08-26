@@ -205,7 +205,6 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
 
   @Override
   public void setGraph(Graph<V, ?> graph) {
-    System.err.println("setting the graph to " + graph);
     this.graph = graph;
     this.modelChangeSupport.fireModelChanged();
     if (log.isTraceEnabled()) {

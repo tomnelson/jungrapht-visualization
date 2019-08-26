@@ -127,7 +127,7 @@ public class RTree<T> {
       Collection<Map.Entry<T, Rectangle2D>> items) {
     // sort the items
     List<Map.Entry<T, Rectangle2D>> sortedList = new ArrayList<>(items);
-    sortedList.sort(new HorizontalCenterNodeComparator<T>());
+    sortedList.sort(new HorizontalCenterNodeComparator<>());
     for (Map.Entry<T, Rectangle2D> entry : sortedList) {
       rtree = RTree.add(rtree, splitterContext, entry.getKey(), entry.getValue());
     }
@@ -152,9 +152,8 @@ public class RTree<T> {
       if (node instanceof LeafNode) {
         LeafNode leafVertex = (LeafNode) node;
         NodeMap<T> nodeMap = leafVertex.map;
-        List<Map.Entry<T, Rectangle2D>> entryList = new ArrayList<>();
         // will be sorted at the end
-        entryList.addAll(nodeMap.entrySet());
+        List<Map.Entry<T, Rectangle2D>> entryList = new ArrayList<>(nodeMap.entrySet());
         entryList.sort(new DistanceComparator(leafVertex.centerOfGravity()));
 
         // now take 30% from the beginning of the sortedList, remove them all from the tree, then re-insert them all
@@ -199,9 +198,8 @@ public class RTree<T> {
             new Point2D.Double(boundsOfLeafVertex.getCenterX(), boundsOfLeafVertex.getCenterY());
         LeafNode leafVertex = (LeafNode) node;
         NodeMap<T> nodeMap = leafVertex.map;
-        List<Map.Entry<T, Rectangle2D>> entryList = new ArrayList<>();
         // will be sorted at the end
-        entryList.addAll(nodeMap.entrySet());
+        List<Map.Entry<T, Rectangle2D>> entryList = new ArrayList<>(nodeMap.entrySet());
         entryList.sort(new DistanceComparator(centerOfLeafVertex));
 
         // now take 30% from the beginning of the sortedList, remove them all from the tree, then re-insert them all
@@ -242,13 +240,7 @@ public class RTree<T> {
           new Point2D.Double(o1.getValue().getCenterX(), o1.getValue().getCenterY());
       Point2D centerOfO2 =
           new Point2D.Double(o2.getValue().getCenterX(), o2.getValue().getCenterY());
-      if (center.distanceSq(centerOfO1) > center.distanceSq(centerOfO2)) {
-        return -1;
-      } else if (center.distanceSq(centerOfO1) < center.distanceSq(centerOfO2)) {
-        return 1;
-      } else {
-        return 0;
-      }
+      return Double.compare(center.distanceSq(centerOfO2), center.distanceSq(centerOfO1));
     }
   }
 

@@ -23,7 +23,7 @@ import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.transform.shape.ShapeTransformer;
 import org.jungrapht.visualization.transform.shape.TransformingGraphics;
 
-public class DefaultVertexLabelRenderer<V, E> implements Renderer.VertexLabel<V, E> {
+public class HeavyweightVertexLabelRenderer<V, E> implements Renderer.VertexLabel<V, E> {
 
   //  protected Position position = Position.SE;
   private Positioner positioner = new OutsidePositioner();

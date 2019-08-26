@@ -1,5 +1,6 @@
 package org.jungrapht.visualization.layout.quadtree;
 
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,8 +77,8 @@ public class ForceObject<T> {
     ForceObject<?> that = (ForceObject<?>) o;
 
     if (Double.compare(that.mass, mass) != 0) return false;
-    if (p != null ? !p.equals(that.p) : that.p != null) return false;
-    return element != null ? element.equals(that.element) : that.element == null;
+    if (!Objects.equals(p, that.p)) return false;
+    return Objects.equals(element, that.element);
   }
 
   @Override

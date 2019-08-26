@@ -82,6 +82,7 @@ public class LoadingCacheLayoutModel<V> extends AbstractLayoutModel<V>
 
   private LoadingCacheLayoutModel(LoadingCacheLayoutModel<V> other) {
     super(other.graph, other.width, other.height);
+    this.locations = other.locations;
   }
 
   public void setInitializer(Function<V, Point> initializer) {

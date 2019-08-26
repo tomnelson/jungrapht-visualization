@@ -45,7 +45,7 @@ public class EdgePrioritizedTreeDAGLayoutDemo extends JFrame {
 
     JPanel container = new JPanel(new BorderLayout());
     // create a simple graph for the demo
-    graph = DemoTreeSupplier.generateProgramGraph3();
+    graph = DemoTreeSupplier.generateProgramGraph2();
 
     vv =
         VisualizationViewer.builder(graph)

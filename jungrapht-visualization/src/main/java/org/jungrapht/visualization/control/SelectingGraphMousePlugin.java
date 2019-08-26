@@ -221,7 +221,6 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
       }
     }
     e.consume();
-    return;
   }
 
   /**

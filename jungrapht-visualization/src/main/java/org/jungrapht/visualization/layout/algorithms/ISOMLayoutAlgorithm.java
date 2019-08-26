@@ -58,7 +58,7 @@ public class ISOMLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
   private LoadingCache<V, ISOMVertexData> isomVertexData =
       CacheBuilder.newBuilder()
           .build(
-              new CacheLoader<V, ISOMVertexData>() {
+              new CacheLoader<>() {
                 public ISOMVertexData load(V vertex) {
                   return new ISOMVertexData();
                 }

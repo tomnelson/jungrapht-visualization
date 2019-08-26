@@ -54,7 +54,7 @@ public class L2RTreeLayoutDemo extends JPanel {
 
   TreeLayoutAlgorithm<String> treeLayoutAlgorithm;
 
-  RadialTreeLayoutAlgorithm<String, Integer> radialLayoutAlgorithm;
+  RadialTreeLayoutAlgorithm<String> radialLayoutAlgorithm;
 
   public L2RTreeLayoutDemo() {
 
@@ -64,7 +64,7 @@ public class L2RTreeLayoutDemo extends JPanel {
     graph = DemoTreeSupplier.createTreeOne();
 
     treeLayoutAlgorithm = TreeLayoutAlgorithm.<String>builder().build();
-    radialLayoutAlgorithm = RadialTreeLayoutAlgorithm.<String, Integer>builder().build();
+    radialLayoutAlgorithm = RadialTreeLayoutAlgorithm.<String>builder().build();
     vv =
         VisualizationViewer.builder(graph)
             .layoutAlgorithm(treeLayoutAlgorithm)

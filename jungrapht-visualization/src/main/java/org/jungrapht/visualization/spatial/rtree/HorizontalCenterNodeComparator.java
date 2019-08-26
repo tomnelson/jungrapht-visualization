@@ -27,9 +27,7 @@ public class HorizontalCenterNodeComparator<T> implements Comparator<Map.Entry<T
    *     comparator.
    */
   public int compare(Rectangle2D left, Rectangle2D right) {
-    if (left.getCenterX() == right.getCenterX()) return 0;
-    if (left.getCenterX() < right.getCenterX()) return -1;
-    return 1;
+    return Double.compare(left.getCenterX(), right.getCenterX());
   }
 
   @Override

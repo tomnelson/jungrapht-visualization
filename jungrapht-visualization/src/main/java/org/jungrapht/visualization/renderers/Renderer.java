@@ -9,7 +9,7 @@
  */
 package org.jungrapht.visualization.renderers;
 
-import java.awt.Dimension;
+import java.awt.*;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.spatial.Spatial;
@@ -23,7 +23,7 @@ public interface Renderer<V, E> {
   class Builder<V, E, T extends Renderer<V, E>, B extends Builder<V, E, T, B>> {
 
     public T build() {
-      return (T) new DefaultRenderer<>();
+      return (T) new HeavyweightRenderer<>();
     }
   }
 
@@ -71,7 +71,6 @@ public interface Renderer<V, E> {
     void paintVertex(
         RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v);
 
-    @SuppressWarnings("rawtypes")
     class NOOP<V, E> implements Vertex<V, E> {
       public void paintVertex(
           RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {}
@@ -111,7 +110,6 @@ public interface Renderer<V, E> {
 
     Positioner getPositioner();
 
-    @SuppressWarnings("rawtypes")
     class NOOP<V, E> implements VertexLabel<V, E> {
       public void labelVertex(
           RenderContext<V, E> renderContext,
@@ -157,7 +155,6 @@ public interface Renderer<V, E> {
         E e,
         String label);
 
-    @SuppressWarnings("rawtypes")
     class NOOP<V, E> implements EdgeLabel<V, E> {
       public void labelEdge(
           RenderContext<V, E> renderContext,

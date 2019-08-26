@@ -59,7 +59,7 @@ public class LensMagnificationGraphMousePlugin extends AbstractGraphMousePlugin
    * @param modifiers the mouse event modifiers to specify
    */
   public LensMagnificationGraphMousePlugin(int modifiers) {
-    this(modifiers, 0.5f, 4.0f, .2f);
+    this(modifiers, 0.5f, 50.0f, .2f);
   }
 
   /**
@@ -114,7 +114,7 @@ public class LensMagnificationGraphMousePlugin extends AbstractGraphMousePlugin
                   ? ((LensTransformer) viewTransformer).getLens()
                   : null;
       if (lens != null) {
-        changeMagnification(lens, delta);
+        changeMagnification(lens, -delta);
       }
       vv.repaint();
       e.consume();

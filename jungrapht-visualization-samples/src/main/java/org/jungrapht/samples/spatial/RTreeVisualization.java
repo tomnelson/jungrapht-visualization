@@ -71,7 +71,7 @@ public class RTreeVisualization<V> extends JPanel {
 
   RTree rtree;
 
-  RadialTreeLayoutAlgorithm<Object, Object> radialLayoutAlgorithm;
+  RadialTreeLayoutAlgorithm<Object> radialLayoutAlgorithm;
 
   BalloonLayoutAlgorithm<Object> balloonLayoutAlgorithm;
 

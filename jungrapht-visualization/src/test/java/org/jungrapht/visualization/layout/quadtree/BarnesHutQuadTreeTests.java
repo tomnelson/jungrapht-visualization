@@ -55,10 +55,10 @@ public class BarnesHutQuadTreeTests {
     log.info("tree: {}", tree);
     Assert.assertTrue(tree.getRoot() != null);
     Node<String> root = tree.getRoot();
-    Assert.assertTrue(root.isLeaf() == false);
+    Assert.assertTrue(!root.isLeaf());
     Node<String> NW = root.NW;
     Assert.assertTrue(NW.forceObject.equals(forceObjectA.add(forceObjectB).add(forceObjectC)));
-    Assert.assertTrue(NW.isLeaf() == false);
+    Assert.assertTrue(!NW.isLeaf());
     Assert.assertTrue(NW.NW.forceObject.equals(forceObjectC));
     Assert.assertTrue(NW.NE.forceObject.equals(forceObjectA));
     Assert.assertTrue(NW.SW.forceObject.equals(forceObjectB));

@@ -43,7 +43,7 @@ public class TestTreeLayouts {
     TreeLayoutAlgorithm<String> treeLayoutAlgorithm = TreeLayoutAlgorithm.<String>builder().build();
 
     EdgeAwareTreeLayoutAlgorithm<String, Integer> multiRowEdgeAwareTreeLayoutAlgorithm =
-        EdgeAwareTreeLayoutAlgorithm.<String, Integer>builder().build();
+        EdgeAwareTreeLayoutAlgorithm.<String, Integer>edgeAwareBuilder().build();
 
     testEdgeAwareTrees(graph, treeLayoutAlgorithm, multiRowEdgeAwareTreeLayoutAlgorithm);
   }
@@ -65,7 +65,7 @@ public class TestTreeLayouts {
         MultiRowTreeLayoutAlgorithm.<String>builder().build();
 
     MultiRowEdgeAwareTreeLayoutAlgorithm<String, Integer> multiRowEdgeAwareTreeLayoutAlgorithm =
-        MultiRowEdgeAwareTreeLayoutAlgorithm.<String, Integer>builder().build();
+        MultiRowEdgeAwareTreeLayoutAlgorithm.<String, Integer>edgeAwareBuilder().build();
 
     testEdgeAwareTrees(graph, treeLayoutAlgorithm, multiRowEdgeAwareTreeLayoutAlgorithm);
   }
@@ -73,7 +73,7 @@ public class TestTreeLayouts {
   private <V, E> void testEdgeAwareTrees(
       Graph<V, E> graph,
       TreeLayoutAlgorithm<V> layoutAlgorithmOne,
-      EdgeAwareTreeLayoutAlgorithm<V, E> layoutAlgorithmTwo) {
+      TreeLayout<V> layoutAlgorithmTwo) {
     LayoutModel<V> layoutModelOne = new TestLayoutModel<>(graph, 100, 100);
     LayoutModel<V> layoutModelTwo = new TestLayoutModel<>(graph, 100, 100);
     layoutAlgorithmOne.visit(layoutModelOne);
@@ -91,9 +91,7 @@ public class TestTreeLayouts {
   }
 
   private <V> void testTrees(
-      Graph<V, ?> graph,
-      TreeLayoutAlgorithm<V> layoutAlgorithmOne,
-      TreeLayoutAlgorithm<V> layoutAlgorithmTwo) {
+      Graph<V, ?> graph, TreeLayout<V> layoutAlgorithmOne, TreeLayout<V> layoutAlgorithmTwo) {
 
     LayoutModel<V> layoutModelOne = new TestLayoutModel<>(graph, 100, 100);
     LayoutModel<V> layoutModelTwo = new TestLayoutModel<>(graph, 100, 100);
