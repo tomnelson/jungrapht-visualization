@@ -76,7 +76,9 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
 
   /** create an instance with default settings */
   public SelectingGraphMousePlugin() {
-    this(InputEvent.BUTTON1_DOWN_MASK, InputEvent.SHIFT_DOWN_MASK);
+    this(
+        InputEvent.BUTTON1_DOWN_MASK | InputEvent.CTRL_DOWN_MASK,
+        InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK);
   }
 
   /**
