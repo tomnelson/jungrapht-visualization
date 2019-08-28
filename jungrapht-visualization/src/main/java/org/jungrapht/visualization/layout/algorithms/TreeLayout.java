@@ -1,6 +1,7 @@
 package org.jungrapht.visualization.layout.algorithms;
 
 import java.util.Map;
+import java.util.function.Predicate;
 import org.jungrapht.visualization.layout.model.Rectangle;
 
 /**
@@ -11,4 +12,6 @@ import org.jungrapht.visualization.layout.model.Rectangle;
 public interface TreeLayout<V> extends LayoutAlgorithm<V> {
 
   Map<V, Rectangle> getBaseBounds();
+
+  void setRootPredicate(Predicate<V> rootPredicate);
 }

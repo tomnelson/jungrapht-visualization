@@ -141,9 +141,9 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
     MultiLayerTransformer multiLayerTransformer =
         visualizationServer.getRenderContext().getMultiLayerTransformer();
     // if there is only one selected vertex, make a big arrow pointing to it
-    if (selectedVertices.size() == 1) {
-
-      V vertex = selectedVertices.stream().findFirst().get();
+    //    if (selectedVertices.size() == 1) {
+    for (V vertex : selectedVertices) {
+      //      V vertex = selectedVertices.stream().findFirst().get();
       // find the layout coords
       Point location = layoutModel.apply(vertex);
       // translate to view coords

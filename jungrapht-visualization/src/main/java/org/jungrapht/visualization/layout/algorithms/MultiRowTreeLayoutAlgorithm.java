@@ -84,8 +84,15 @@ public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
     Preconditions.checkArgument(roots.size() > 0);
     // the width of the tree under 'roots'. Includes one 'horizontalVertexSpacing' per child vertex
     int overallWidth = calculateWidth(layoutModel, roots, new HashSet<>());
-    int tallestTreeHeight = calculateOverallHeight(layoutModel, roots, overallWidth);
-    int overallHeight = tallestTreeHeight;
+    int overallHeight = calculateOverallHeight(layoutModel, roots, overallWidth);
+    //   if the overall height is more that twice the size of the overall width, then
+    // widen the layout area and recompute
+    if (overallHeight > overallWidth * 2) {
+      int factor = overallHeight / overallWidth / 2;
+      layoutModel.setSize(layoutModel.getWidth() * factor, layoutModel.getHeight());
+      overallWidth = calculateWidth(layoutModel, roots, new HashSet<>());
+      overallHeight = calculateOverallHeight(layoutModel, roots, overallWidth);
+    }
     overallHeight += verticalVertexSpacing;
 
     int largerHeight = Math.max(layoutModel.getHeight(), overallHeight);

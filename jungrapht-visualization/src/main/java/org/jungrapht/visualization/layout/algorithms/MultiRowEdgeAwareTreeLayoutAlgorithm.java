@@ -215,7 +215,7 @@ public class MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> extends MultiRowTreeLayo
         if (edgePredicate.test(edge)
             || graph.incomingEdgesOf(graph.getEdgeTarget(edge)).stream().noneMatch(edgePredicate)) {
           V v = graph.getEdgeTarget(edge);
-          if (!seen.contains(v)) {
+          if (!rootPredicate.test(v) && !seen.contains(v)) {
             double sizeXofChild = this.baseBounds.getOrDefault(v, Rectangle.IDENTITY).width;
             x += sizeXofChild / 2;
 
@@ -256,7 +256,7 @@ public class MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> extends MultiRowTreeLayo
                                       .stream()
                                       .noneMatch(edgePredicate))
                       .map(graph::getEdgeTarget)
-                      .filter(v -> !seen.contains(v))
+                      .filter(v -> !rootPredicate.test(v) && !seen.contains(v))
                       .mapToInt(
                           element ->
                               calculateWidth(layoutModel, element, seen) + horizontalVertexSpacing)
@@ -300,7 +300,7 @@ public class MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> extends MultiRowTreeLayo
                               .stream()
                               .noneMatch(edgePredicate))
               .map(graph::getEdgeTarget)
-              .filter(v -> !seen.contains(v))
+              .filter(v -> !rootPredicate.test(v) && !seen.contains(v))
               .mapToInt(
                   element -> calculateHeight(layoutModel, element, seen) + verticalVertexSpacing)
               .max()

@@ -34,9 +34,7 @@ public class DefaultLensGraphMouse<V, E> extends AbstractGraphMouse implements L
   }
 
   protected void loadPlugins() {
-    add(
-        new LensTranslatingGraphMousePlugin(
-            InputEvent.BUTTON1_DOWN_MASK | InputEvent.CTRL_DOWN_MASK));
+    add(new LensTranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK));
     add(new LensSelectingGraphMousePlugin<V, E>());
     add(magnificationPlugin);
     add(scalingPlugin);

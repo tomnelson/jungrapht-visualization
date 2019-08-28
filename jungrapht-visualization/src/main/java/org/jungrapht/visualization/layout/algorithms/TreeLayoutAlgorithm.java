@@ -142,6 +142,10 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
   /** the {}@link Predicate} to determine root vertices */
   protected Predicate<V> rootPredicate;
 
+  public void setRootPredicate(Predicate<V> rootPredicate) {
+    this.rootPredicate = rootPredicate;
+  }
+
   /**
    * a {}@link Map} of vertex to a {@link Rectangle} that will contain the vertex and all of its
    * children
@@ -273,7 +277,7 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
       x -= sizeXofCurrent / 2;
 
       for (V element : Graphs.successorListOf(layoutModel.getGraph(), vertex)) {
-        if (!seen.contains(element)) {
+        if (!rootPredicate.test(element) && !seen.contains(element)) {
           log.trace("get base position of {} from {}", element, baseBounds);
           double sizeXofChild = this.baseBounds.get(element).width;
           x += sizeXofChild / 2;
@@ -316,7 +320,7 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
               0,
               Graphs.successorListOf(graph, vertex)
                       .stream()
-                      .filter(v -> !seen.contains(v))
+                      .filter(v -> !rootPredicate.test(v) && !seen.contains(v))
                       .mapToInt(
                           element ->
                               calculateWidth(layoutModel, element, seen) + horizontalVertexSpacing)
@@ -367,7 +371,8 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
       int height =
           Graphs.successorListOf(graph, vertex)
               .stream()
-              .filter(v -> !seen.contains(v))
+              //              .filter(v -> !seen.contains(v))
+              .filter(v -> !rootPredicate.test(v) && !seen.contains(v))
               .mapToInt(
                   element -> calculateHeight(layoutModel, element, seen) + verticalVertexSpacing)
               .max()
