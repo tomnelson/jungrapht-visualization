@@ -10,9 +10,9 @@ import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.transform.BidirectionalTransformer;
 import org.jungrapht.visualization.transform.Lens;
-import org.jungrapht.visualization.transform.MagnifyTransformer;
+import org.jungrapht.visualization.transform.LensTransformer;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
-import org.jungrapht.visualization.transform.shape.MagnifyIconGraphics;
+import org.jungrapht.visualization.transform.shape.TransformingGraphics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,11 +78,11 @@ public class BiModalSelectionRenderer<V, E> extends BiModalRenderer<V, E> {
      * depending on whether the vertex is in the lens, and according to what the magnification is for the lens at
      * that location (typically uniform accross the entire lens)
      */
-    if (graphicsDecorator instanceof MagnifyIconGraphics) {
-      MagnifyIconGraphics magnifyIconGraphics = (MagnifyIconGraphics) graphicsDecorator;
-      BidirectionalTransformer bidirectionalTransformer = magnifyIconGraphics.getTransformer();
-      if (bidirectionalTransformer instanceof MagnifyTransformer) {
-        MagnifyTransformer magnifyTransformer = (MagnifyTransformer) bidirectionalTransformer;
+    if (graphicsDecorator instanceof TransformingGraphics) {
+      TransformingGraphics transformingGraphics = (TransformingGraphics) graphicsDecorator;
+      BidirectionalTransformer bidirectionalTransformer = transformingGraphics.getTransformer();
+      if (bidirectionalTransformer instanceof LensTransformer) {
+        LensTransformer magnifyTransformer = (LensTransformer) bidirectionalTransformer;
         Lens lens = magnifyTransformer.getLens();
         // layoutLocation
         Point p = visualizationModel.getLayoutModel().apply(v);

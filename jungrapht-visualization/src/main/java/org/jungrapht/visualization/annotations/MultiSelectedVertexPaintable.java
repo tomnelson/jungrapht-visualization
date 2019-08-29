@@ -15,8 +15,10 @@ import org.jungrapht.visualization.renderers.HeavyweightVertexSelectionRenderer;
 import org.jungrapht.visualization.renderers.LightweightVertexSelectionRenderer;
 import org.jungrapht.visualization.renderers.SelectionRenderer;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
-import org.jungrapht.visualization.transform.shape.MagnifyIconGraphics;
+import org.jungrapht.visualization.transform.shape.TransformingGraphics;
 import org.jungrapht.visualization.util.ArrowFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Paints a shape at the location of all selected vertices. The shape does not change size as the
@@ -27,6 +29,7 @@ import org.jungrapht.visualization.util.ArrowFactory;
  */
 public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.Paintable {
 
+  private static final Logger log = LoggerFactory.getLogger(MultiSelectedVertexPaintable.class);
   /**
    * builder for the {@code SelectedVertexPaintable}
    *
@@ -151,10 +154,11 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
 
       GraphicsDecorator graphicsDecorator =
           visualizationServer.getRenderContext().getGraphicsContext();
-      if (graphicsDecorator instanceof MagnifyIconGraphics) {
+      if (graphicsDecorator instanceof TransformingGraphics) {
 
         // get a copy of the current transform used by g2d
         AffineTransform graphicsTransformCopy = new AffineTransform(g2d.getTransform());
+        log.info("graphics transform is {}", g2d.getTransform());
 
         AffineTransform viewTransform =
             visualizationServer
@@ -187,6 +191,8 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
                 biModalRenderer.getVertexRenderer(BiModalRenderer.Mode.LIGHTWEIGHT))
             .setVertexShapeFunction(oldLightweightShapeFunction);
       } else {
+        AffineTransform graphicsTransform = g2d.getTransform();
+        log.info("graphics transform is {}", graphicsTransform);
         // move the shape to the right place in the view
         Shape shape =
             AffineTransform.getTranslateInstance(viewLocation.getX(), viewLocation.getY())

@@ -140,6 +140,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
         RadialTreeLayoutAlgorithm.<V>builder()
             .horizontalVertexSpacing(100)
             .verticalVertexSpacing(100)
+            .expandLayout(true)
             .build();
 
     RadialEdgeAwareTreeLayoutAlgorithm<V, E> radialEdgeAwareTreeLayoutAlgorithm =
@@ -148,6 +149,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
             .verticalVertexSpacing(100)
             .edgePredicate(edgePredicate)
             .vertexPredicate(vertexPredicate)
+            .expandLayout(true)
             .build();
 
     EdgeAwareTreeLayoutAlgorithm<V, E> edgeAwareTreeLayoutAlgorithm =
@@ -155,11 +157,6 @@ public class TreeLayoutSelector<V, E> extends JPanel {
             .edgePredicate(edgePredicate)
             .vertexPredicate(vertexPredicate)
             .build();
-    //    EdgeAwareTwoPassTreeLayoutAlgorithm<V, E> edgeAwareTwoPassTreeLayoutAlgorithm =
-    //        EdgeAwareTwoPassTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()
-    //            .edgePredicate(edgePredicate)
-    //            .vertexPredicate(vertexPredicate)
-    //            .build();
 
     MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> multiRowEdgeAwareTreeLayoutAlgorithm =
         MultiRowEdgeAwareTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()
@@ -192,11 +189,6 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     edgeAwareTreeButton.addItemListener(new LayoutItemListener(edgeAwareTreeLayoutAlgorithm, vv));
     edgeAwareTreeButton.setSelected(initialSelection == layoutNumber++);
 
-    //    JRadioButton edgeAwareTwoPassTreeButton = new JRadioButton("Edge aware 2 pass tree");
-    //    edgeAwareTwoPassTreeButton.addItemListener(
-    //        new LayoutItemListener(edgeAwareTwoPassTreeLayoutAlgorithm, vv));
-    //    edgeAwareTwoPassTreeButton.setSelected(initialSelection == layoutNumber++);
-
     JRadioButton multiRowEdgeAwareTreeButton = new JRadioButton("MultiRow Edge aware");
     multiRowEdgeAwareTreeButton.addItemListener(
         new LayoutItemListener(multiRowEdgeAwareTreeLayoutAlgorithm, vv));
@@ -209,12 +201,10 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     layoutRadio.add(radialButton);
     layoutRadio.add(radialEdgeAwareButton);
     layoutRadio.add(edgeAwareTreeButton);
-    //    layoutRadio.add(edgeAwareTwoPassTreeButton);
     layoutRadio.add(multiRowEdgeAwareTreeButton);
 
     this.add(treeButton);
     this.add(edgeAwareTreeButton);
-    //    this.add(edgeAwareTwoPassTreeButton);
     this.add(multiRowTreeButton);
     this.add(multiRowEdgeAwareTreeButton);
     this.add(radialButton);

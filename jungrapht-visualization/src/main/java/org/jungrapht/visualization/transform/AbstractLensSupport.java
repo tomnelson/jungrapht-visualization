@@ -79,7 +79,8 @@ public abstract class AbstractLensSupport<V, E, T extends LensGraphMouse>
    */
   public static class LensPaintable implements VisualizationServer.Paintable {
     RectangularShape lensShape;
-    Paint paint = Color.decode("0xdddddd");
+
+    Paint paint = Color.getColor("jungrapht.lensColor", Color.decode("0xdddddd"));
 
     public LensPaintable(LensTransformer lensTransformer) {
       this.lensShape = lensTransformer.getLens().getLensShape();
@@ -113,7 +114,7 @@ public abstract class AbstractLensSupport<V, E, T extends LensGraphMouse>
    */
   public static class LensControls implements VisualizationServer.Paintable {
     RectangularShape lensShape;
-    Paint paint = Color.gray;
+    Paint paint = Color.getColor("jungrapht.lensControlsColor", Color.gray);
 
     public LensControls(LensTransformer lensTransformer) {
       this.lensShape = lensTransformer.getLens().getLensShape();
@@ -136,7 +137,6 @@ public abstract class AbstractLensSupport<V, E, T extends LensGraphMouse>
       g2d.draw(lensShape);
       int centerX = (int) Math.round(lensShape.getCenterX());
       int centerY = (int) Math.round(lensShape.getCenterY());
-      double controlSize = lensShape.getWidth() / 10;
       g2d.draw(
           new Ellipse2D.Double(
               centerX - lensShape.getWidth() / 20,
