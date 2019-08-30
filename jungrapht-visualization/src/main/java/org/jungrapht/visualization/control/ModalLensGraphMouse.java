@@ -28,6 +28,9 @@ public class ModalLensGraphMouse extends AbstractModalGraphMouse
   /** not included in the base class */
   protected LensMagnificationGraphMousePlugin magnificationPlugin;
 
+  protected LensSelectingGraphMousePlugin lensSelectingGraphMousePlugin;
+  protected LensKillingGraphMousePlugin lensKillingGraphMousePlugin;
+
   public ModalLensGraphMouse() {
     this(1.1f, 1 / 1.1f);
   }
@@ -46,12 +49,19 @@ public class ModalLensGraphMouse extends AbstractModalGraphMouse
     this.in = in;
     this.out = out;
     this.magnificationPlugin = magnificationPlugin;
+    this.lensSelectingGraphMousePlugin = new LensSelectingGraphMousePlugin<>();
+    this.lensKillingGraphMousePlugin = new LensKillingGraphMousePlugin();
     loadPlugins();
     setModeKeyListener(new ModeKeyAdapter(this));
   }
 
+  public void setKillSwitch(Runnable killSwitch) {
+    this.lensKillingGraphMousePlugin.setKillSwitch(killSwitch);
+  }
+
   protected void loadPlugins() {
-    pickingPlugin = new LensSelectingGraphMousePlugin<>();
+    add(lensKillingGraphMousePlugin);
+    pickingPlugin = lensSelectingGraphMousePlugin;
     //    animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<>();
     translatingPlugin = new LensTranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
     scalingPlugin = new ScalingGraphMousePlugin(new CrossoverScalingControl(), 0, in, out);

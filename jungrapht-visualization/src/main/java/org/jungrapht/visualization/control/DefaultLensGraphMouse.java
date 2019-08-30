@@ -13,6 +13,9 @@ public class DefaultLensGraphMouse<V, E> extends AbstractGraphMouse implements L
   /** not included in the base class */
   protected LensMagnificationGraphMousePlugin magnificationPlugin;
 
+  protected LensSelectingGraphMousePlugin<V, E> lensSelectingGraphMousePlugin;
+  protected LensKillingGraphMousePlugin lensKillingGraphMousePlugin;
+
   public DefaultLensGraphMouse() {
     this(1.1f, 1 / 1.1f);
   }
@@ -29,13 +32,20 @@ public class DefaultLensGraphMouse<V, E> extends AbstractGraphMouse implements L
       float in, float out, LensMagnificationGraphMousePlugin magnificationPlugin) {
     super(in, out);
     this.magnificationPlugin = magnificationPlugin;
-    scalingPlugin = new ScalingGraphMousePlugin(new CrossoverScalingControl(), 0, in, out);
+    this.scalingPlugin = new ScalingGraphMousePlugin(new CrossoverScalingControl(), 0, in, out);
+    this.lensSelectingGraphMousePlugin = new LensSelectingGraphMousePlugin<>();
+    this.lensKillingGraphMousePlugin = new LensKillingGraphMousePlugin();
     loadPlugins();
   }
 
+  public void setKillSwitch(Runnable killSwitch) {
+    this.lensKillingGraphMousePlugin.setKillSwitch(killSwitch);
+  }
+
   protected void loadPlugins() {
+    add(lensKillingGraphMousePlugin);
     add(new LensTranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK));
-    add(new LensSelectingGraphMousePlugin<V, E>());
+    add(lensSelectingGraphMousePlugin);
     add(magnificationPlugin);
     add(scalingPlugin);
   }

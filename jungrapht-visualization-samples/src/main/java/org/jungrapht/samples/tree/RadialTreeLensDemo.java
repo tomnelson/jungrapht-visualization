@@ -9,7 +9,6 @@
 package org.jungrapht.samples.tree;
 
 import java.awt.*;
-import java.awt.event.ItemEvent;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.ControlHelpers;
@@ -26,10 +25,7 @@ import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.selection.MutableSelectedState;
-import org.jungrapht.visualization.transform.HyperbolicTransformer;
-import org.jungrapht.visualization.transform.LayoutLensSupport;
-import org.jungrapht.visualization.transform.Lens;
-import org.jungrapht.visualization.transform.LensSupport;
+import org.jungrapht.visualization.transform.*;
 import org.jungrapht.visualization.transform.shape.HyperbolicShapeTransformer;
 import org.jungrapht.visualization.transform.shape.ViewLensSupport;
 
@@ -94,27 +90,26 @@ public class RadialTreeLensDemo extends JPanel {
     LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
     Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
 
-    Lens lens = new Lens(d);
+    //    Lens lens = new Lens(d);
     hyperbolicViewSupport =
         new ViewLensSupport<>(
             vv,
             new HyperbolicShapeTransformer(
-                lens, vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW)),
+                new Lens(d),
+                vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW)),
             new ModalLensGraphMouse());
     hyperbolicLayoutSupport =
         new LayoutLensSupport<>(
             vv,
             new HyperbolicTransformer(
-                lens,
+                new Lens(d),
                 vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT)),
             new ModalLensGraphMouse());
 
-    final JRadioButton hyperView = new JRadioButton("Hyperbolic View");
-    hyperView.addItemListener(
-        e -> hyperbolicViewSupport.activate(e.getStateChange() == ItemEvent.SELECTED));
-    final JRadioButton hyperLayout = new JRadioButton("Hyperbolic Layout");
-    hyperLayout.addItemListener(
-        e -> hyperbolicLayoutSupport.activate(e.getStateChange() == ItemEvent.SELECTED));
+    final JButton hyperView = new JButton("Hyperbolic View");
+    hyperView.addActionListener(e -> hyperbolicViewSupport.activate(true));
+    final JButton hyperLayout = new JButton("Hyperbolic Layout");
+    hyperLayout.addActionListener(e -> hyperbolicLayoutSupport.activate(true));
     final JRadioButton noLens = new JRadioButton("No Lens");
     noLens.setSelected(true);
 
@@ -138,7 +133,7 @@ public class RadialTreeLensDemo extends JPanel {
     modeControls.add(graphMouse.getModeComboBox());
     hyperControls.add(hyperView);
     hyperControls.add(hyperLayout);
-    hyperControls.add(noLens);
+    //    hyperControls.add(noLens);
 
     controls.add(ControlHelpers.getZoomControls(vv, "Zoom"));
     controls.add(hyperControls);

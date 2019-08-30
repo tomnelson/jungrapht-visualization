@@ -25,6 +25,10 @@ public interface LensSupport<T extends LensGraphMouse> {
 
   void activate(boolean state);
 
+  boolean isActive();
+
+  void setManager(Runnable manager);
+
   LensTransformer getLensTransformer();
 
   T getGraphMouse();

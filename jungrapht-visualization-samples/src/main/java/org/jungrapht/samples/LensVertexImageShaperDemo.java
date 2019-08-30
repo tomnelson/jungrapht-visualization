@@ -236,31 +236,22 @@ public class LensVertexImageShaperDemo extends JPanel {
     graphMouse.addItemListener(magnifyLayoutSupport.getGraphMouse().getModeListener());
     graphMouse.addItemListener(magnifyViewSupport.getGraphMouse().getModeListener());
 
-    ButtonGroup radio = new ButtonGroup();
-    JRadioButton none = new JRadioButton("None");
-    none.addItemListener(
+    JButton none = new JButton("None");
+    none.addActionListener(
         e -> {
-          if (e.getStateChange() == ItemEvent.SELECTED) {
-            if (magnifyViewSupport != null) {
-              magnifyViewSupport.deactivate();
-            }
-            if (magnifyLayoutSupport != null) {
-              magnifyLayoutSupport.deactivate();
-            }
+          if (magnifyViewSupport != null) {
+            magnifyViewSupport.deactivate();
+          }
+          if (magnifyLayoutSupport != null) {
+            magnifyLayoutSupport.deactivate();
           }
         });
 
-    final JRadioButton magnifyView = new JRadioButton("Magnified View");
-    magnifyView.addItemListener(
-        e -> magnifyViewSupport.activate(e.getStateChange() == ItemEvent.SELECTED));
+    final JButton magnifyView = new JButton("Magnified View");
+    magnifyView.addActionListener(e -> magnifyViewSupport.activate());
 
-    final JRadioButton magnifyModel = new JRadioButton("Magnified Layout");
-    magnifyModel.addItemListener(
-        e -> magnifyLayoutSupport.activate(e.getStateChange() == ItemEvent.SELECTED));
-
-    radio.add(none);
-    radio.add(magnifyView);
-    radio.add(magnifyModel);
+    final JButton magnifyModel = new JButton("Magnified Layout");
+    magnifyModel.addActionListener(e -> magnifyLayoutSupport.activate());
 
     JMenuBar menubar = new JMenuBar();
     JMenu modeMenu = graphMouse.getModeMenu();

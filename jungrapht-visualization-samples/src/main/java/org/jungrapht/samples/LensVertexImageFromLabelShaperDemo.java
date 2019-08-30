@@ -11,7 +11,6 @@ package org.jungrapht.samples;
 import static org.jungrapht.visualization.renderers.BiModalRenderer.Mode.LIGHTWEIGHT;
 
 import java.awt.*;
-import java.awt.event.ItemEvent;
 import java.awt.geom.Rectangle2D;
 import java.util.function.Function;
 import javax.swing.*;
@@ -172,35 +171,24 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
                 vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT)),
             new DefaultLensGraphMouse<>(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)));
 
-    ButtonGroup radio = new ButtonGroup();
-    JRadioButton none = new JRadioButton("None");
-    none.addItemListener(
+    JButton none = new JButton("None");
+    none.addActionListener(
         e -> {
-          if (e.getStateChange() == ItemEvent.SELECTED) {
-            if (magnifyViewSupport != null) {
-              magnifyViewSupport.deactivate();
-            }
-            if (magnifyLayoutSupport != null) {
-              magnifyLayoutSupport.deactivate();
-            }
+          if (magnifyViewSupport != null) {
+            magnifyViewSupport.deactivate();
+          }
+          if (magnifyLayoutSupport != null) {
+            magnifyLayoutSupport.deactivate();
           }
         });
 
-    final JRadioButton magnifyView = new JRadioButton("Magnified View");
-    magnifyView.addItemListener(
-        e ->
-            SwingUtilities.invokeLater(
-                () -> magnifyViewSupport.activate(e.getStateChange() == ItemEvent.SELECTED)));
+    final JButton magnifyView = new JButton("Magnified View");
+    magnifyView.addActionListener(
+        e -> SwingUtilities.invokeLater(() -> magnifyViewSupport.activate()));
 
-    final JRadioButton magnifyModel = new JRadioButton("Magnified Layout");
-    magnifyModel.addItemListener(
-        e ->
-            SwingUtilities.invokeLater(
-                () -> magnifyLayoutSupport.activate(e.getStateChange() == ItemEvent.SELECTED)));
-
-    radio.add(none);
-    radio.add(magnifyView);
-    radio.add(magnifyModel);
+    final JButton magnifyModel = new JButton("Magnified Layout");
+    magnifyModel.addActionListener(
+        e -> SwingUtilities.invokeLater(() -> magnifyLayoutSupport.activate()));
 
     JPanel lensPanel = new JPanel(new GridLayout(2, 0));
     lensPanel.setBorder(BorderFactory.createTitledBorder("Lens"));

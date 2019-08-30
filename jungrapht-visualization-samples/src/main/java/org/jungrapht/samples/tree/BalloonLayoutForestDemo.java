@@ -9,7 +9,6 @@
 package org.jungrapht.samples.tree;
 
 import java.awt.*;
-import java.awt.event.ItemEvent;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.DemoTreeSupplier;
@@ -129,12 +128,15 @@ public class BalloonLayoutForestDemo extends JPanel {
     JButton minus = new JButton("-");
     minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
     final JRadioButton hyperView = new JRadioButton("Hyperbolic View");
-    hyperView.addItemListener(
-        e -> hyperbolicViewSupport.activate(e.getStateChange() == ItemEvent.SELECTED));
-    final JRadioButton hyperLayout = new JRadioButton("Hyperbolic Layout");
-    hyperLayout.addItemListener(
-        e -> hyperbolicSupport.activate(e.getStateChange() == ItemEvent.SELECTED));
-    final JRadioButton noLens = new JRadioButton("No Lens");
+    hyperView.addActionListener(e -> hyperbolicViewSupport.activate());
+    final JButton hyperLayout = new JButton("Hyperbolic Layout");
+    hyperLayout.addActionListener(e -> hyperbolicSupport.activate());
+    final JButton noLens = new JButton("No Lens");
+    noLens.addActionListener(
+        e -> {
+          hyperbolicSupport.deactivate();
+          hyperbolicViewSupport.deactivate();
+        });
     noLens.setSelected(true);
 
     ButtonGroup radio = new ButtonGroup();

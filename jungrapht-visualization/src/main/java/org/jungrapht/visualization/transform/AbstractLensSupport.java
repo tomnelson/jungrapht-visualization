@@ -10,15 +10,14 @@
 
 package org.jungrapht.visualization.transform;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Paint;
+import java.awt.*;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
 import java.awt.geom.RectangularShape;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.LensGraphMouse;
+import org.jungrapht.visualization.control.LensTransformSupport;
 
 /**
  * A class to make it easy to add an examining lens to a jung graph application. See
@@ -36,6 +35,8 @@ public abstract class AbstractLensSupport<V, E, T extends LensGraphMouse>
   protected LensPaintable lensPaintable;
   protected LensControls lensControls;
   protected String defaultToolTipText;
+  boolean active;
+  Runnable manager;
 
   protected static final String instructions =
       "<html><center>Mouse-Drag the Lens center to move it<p>"
@@ -53,14 +54,29 @@ public abstract class AbstractLensSupport<V, E, T extends LensGraphMouse>
     this.graphMouse = vv.getGraphMouse();
     this.defaultToolTipText = vv.getToolTipText();
     this.lensGraphMouse = lensGraphMouse;
+    this.lensGraphMouse.setKillSwitch(this::deactivate);
+  }
+
+  public void setManager(Runnable manager) {
+    this.manager = manager;
+  }
+
+  public boolean allowed() {
+    return !(vv.getTransformSupport() instanceof LensTransformSupport);
   }
 
   public void activate(boolean state) {
+    active = state;
     if (state) {
       activate();
+      //      manager.run();
     } else {
       deactivate();
     }
+  }
+
+  public boolean isActive() {
+    return active;
   }
 
   public LensTransformer getLensTransformer() {
@@ -80,7 +96,7 @@ public abstract class AbstractLensSupport<V, E, T extends LensGraphMouse>
   public static class LensPaintable implements VisualizationServer.Paintable {
     RectangularShape lensShape;
 
-    Paint paint = Color.getColor("jungrapht.lensColor", Color.decode("0xdddddd"));
+    Paint paint = Color.getColor("jungrapht.lensColor", Color.decode("0xFAFAFA"));
 
     public LensPaintable(LensTransformer lensTransformer) {
       this.lensShape = lensTransformer.getLens().getLensShape();
@@ -139,17 +155,34 @@ public abstract class AbstractLensSupport<V, E, T extends LensGraphMouse>
       int centerY = (int) Math.round(lensShape.getCenterY());
       g2d.draw(
           new Ellipse2D.Double(
-              centerX - lensShape.getWidth() / 20,
-              centerY - lensShape.getHeight() / 20,
-              lensShape.getWidth() / 10,
-              lensShape.getHeight() / 10));
+              centerX - lensShape.getWidth() / 40,
+              centerY - lensShape.getHeight() / 40,
+              lensShape.getWidth() / 20,
+              lensShape.getHeight() / 20));
 
       g2d.draw(
           new Ellipse2D.Double(
-              lensShape.getMinX() + lensShape.getWidth() / 20,
-              lensShape.getMinY() + lensShape.getHeight() / 20,
-              lensShape.getWidth() - lensShape.getWidth() / 10,
-              lensShape.getHeight() - lensShape.getHeight() / 10));
+              lensShape.getMinX() + lensShape.getWidth() / 40,
+              lensShape.getMinY() + lensShape.getHeight() / 40,
+              lensShape.getWidth() - lensShape.getWidth() / 20,
+              lensShape.getHeight() - lensShape.getHeight() / 20));
+      // kill 'button' shape
+      Ellipse2D killShape =
+          new Ellipse2D.Double(
+              lensShape.getMinX() + lensShape.getWidth(),
+              lensShape.getMinY(),
+              lensShape.getWidth() / 20,
+              lensShape.getHeight() / 20);
+
+      g2d.draw(killShape);
+      // kill button 'X'
+      double radius = killShape.getWidth() / 2;
+      double xmin = killShape.getCenterX() - radius * Math.cos(Math.PI / 4);
+      double ymin = killShape.getCenterY() - radius * Math.sin(Math.PI / 4);
+      double xmax = killShape.getCenterX() + radius * Math.cos(Math.PI / 4);
+      double ymax = killShape.getCenterY() + radius * Math.sin(Math.PI / 4);
+      g2d.draw(new Line2D.Double(xmin, ymin, xmax, ymax));
+      g2d.draw(new Line2D.Double(xmin, ymax, xmax, ymin));
     }
 
     public boolean useTransform() {

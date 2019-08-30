@@ -1,5 +1,6 @@
 package org.jungrapht.visualization.layout.model;
 
+import java.util.Collection;
 import java.util.Objects;
 
 /**
@@ -36,11 +37,30 @@ public class Point {
   }
 
   /**
+   * @param points a collection of {@code Point} to consider
+   * @return the centroid of the {@code Point} collection
+   */
+  public static Point centroidOf(Collection<Point> points) {
+    return points
+        .stream()
+        .reduce(Point.of(0, 0), (a, b) -> a.add(b))
+        .multiply((double) 1 / points.size());
+  }
+
+  /**
    * @param other the Point with values to add
    * @return a new Point with the sum of this Point and other Point's values
    */
   public Point add(Point other) {
     return add(other.x, other.y);
+  }
+
+  /**
+   * @param factor the value to multiply
+   * @return a new Point with the sum of this Point and other Point's values
+   */
+  public Point multiply(double factor) {
+    return Point.of(this.x * factor, this.y * factor);
   }
 
   /**

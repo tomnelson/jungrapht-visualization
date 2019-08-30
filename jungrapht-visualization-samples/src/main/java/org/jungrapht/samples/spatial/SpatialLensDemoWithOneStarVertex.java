@@ -179,50 +179,37 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
     JButton minus = new JButton("-");
     minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
 
-    ButtonGroup radio = new ButtonGroup();
-    JRadioButton normal = new JRadioButton("None");
-    normal.addItemListener(
+    JButton normal = new JButton("None");
+    normal.addActionListener(
         e -> {
-          if (e.getStateChange() == ItemEvent.SELECTED) {
-            if (hyperbolicViewSupport != null) {
-              hyperbolicViewSupport.deactivate();
-            }
-            if (hyperbolicLayoutSupport != null) {
-              hyperbolicLayoutSupport.deactivate();
-            }
-            if (magnifyViewSupport != null) {
-              magnifyViewSupport.deactivate();
-            }
-            if (magnifyLayoutSupport != null) {
-              magnifyLayoutSupport.deactivate();
-            }
+          if (hyperbolicViewSupport != null) {
+            hyperbolicViewSupport.deactivate();
+          }
+          if (hyperbolicLayoutSupport != null) {
+            hyperbolicLayoutSupport.deactivate();
+          }
+          if (magnifyViewSupport != null) {
+            magnifyViewSupport.deactivate();
+          }
+          if (magnifyLayoutSupport != null) {
+            magnifyLayoutSupport.deactivate();
           }
         });
 
-    final JRadioButton hyperView = new JRadioButton("Hyperbolic View");
-    hyperView.addItemListener(
-        e -> hyperbolicViewSupport.activate(e.getStateChange() == ItemEvent.SELECTED));
+    final JButton hyperView = new JButton("Hyperbolic View");
+    hyperView.addActionListener(e -> hyperbolicViewSupport.activate());
 
-    final JRadioButton hyperModel = new JRadioButton("Hyperbolic Layout");
-    hyperModel.addItemListener(
-        e -> hyperbolicLayoutSupport.activate(e.getStateChange() == ItemEvent.SELECTED));
+    final JButton hyperModel = new JButton("Hyperbolic Layout");
+    hyperModel.addActionListener(e -> hyperbolicLayoutSupport.activate());
 
-    final JRadioButton magnifyView = new JRadioButton("Magnified View");
-    magnifyView.addItemListener(
-        e -> magnifyViewSupport.activate(e.getStateChange() == ItemEvent.SELECTED));
+    final JButton magnifyView = new JButton("Magnified View");
+    magnifyView.addActionListener(e -> magnifyViewSupport.activate());
 
-    final JRadioButton magnifyModel = new JRadioButton("Magnified Layout");
-    magnifyModel.addItemListener(
-        e -> magnifyLayoutSupport.activate(e.getStateChange() == ItemEvent.SELECTED));
+    final JButton magnifyModel = new JButton("Magnified Layout");
+    magnifyModel.addActionListener(e -> magnifyLayoutSupport.activate());
 
     JLabel modeLabel = new JLabel("     Mode Menu >>");
     modeLabel.setUI(new VerticalLabelUI(false));
-    radio.add(normal);
-    radio.add(hyperModel);
-    radio.add(hyperView);
-    radio.add(magnifyModel);
-    radio.add(magnifyView);
-    normal.setSelected(true);
 
     graphMouse.addItemListener(
         ((ModalGraphMouse) hyperbolicLayoutSupport.getGraphMouse()).getModeListener());
