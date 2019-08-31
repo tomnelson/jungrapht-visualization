@@ -16,8 +16,12 @@ import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import java.util.function.Predicate;
 import javax.swing.*;
+
+import com.google.common.collect.ImmutableSortedMap;
 import org.jgrapht.Graph;
+import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.DemoTreeSupplier;
+import org.jungrapht.samples.util.LensControlHelper;
 import org.jungrapht.samples.util.TreeLayoutSelector;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -126,34 +130,11 @@ public class MultiRowTreeLayoutForestDemo extends JPanel {
     final ScalingControl scaler = new CrossoverScalingControl();
     vv.scaleToLayout();
 
-    JButton plus = new JButton("+");
-    plus.addActionListener(e -> scaler.scale(vv, 1.1f, vv.getCenter()));
 
-    JButton minus = new JButton("-");
-    minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
-    final JRadioButton hyperView = new JRadioButton("Hyperbolic View");
-    hyperView.addItemListener(
-        e -> hyperbolicViewSupport.activate(e.getStateChange() == ItemEvent.SELECTED));
-    final JRadioButton hyperLayout = new JRadioButton("Hyperbolic Layout");
-    hyperLayout.addItemListener(
-        e -> hyperbolicSupport.activate(e.getStateChange() == ItemEvent.SELECTED));
-    final JRadioButton noLens = new JRadioButton("No Lens");
-    noLens.setSelected(true);
+//    JPanel viewControls = new JPanel();
+//    viewControls.setLayout(new GridLayout(0, 1));
 
-    ButtonGroup radio = new ButtonGroup();
-    radio.add(hyperView);
-    radio.add(hyperLayout);
-    radio.add(noLens);
-
-    JPanel scaleGrid = new JPanel(new GridLayout(1, 0));
-    scaleGrid.setBorder(BorderFactory.createTitledBorder("Zoom"));
-    JPanel viewControls = new JPanel();
-    viewControls.setLayout(new GridLayout(0, 1));
-
-    JPanel controls = new JPanel();
-    scaleGrid.add(plus);
-    scaleGrid.add(minus);
-    JPanel layoutControls = new JPanel();
+    Box controls = Box.createHorizontalBox();
     TreeLayoutSelector<String, Integer> treeLayoutSelector =
         TreeLayoutSelector.<String, Integer>builder(vv)
             .edgePredicate(edgePredicate)
@@ -164,14 +145,15 @@ public class MultiRowTreeLayoutForestDemo extends JPanel {
             .after(vv::scaleToLayout)
             .build();
 
-    layoutControls.add(treeLayoutSelector);
-    controls.add(layoutControls);
-    controls.add(scaleGrid);
-    controls.add(modeBox);
-    viewControls.add(hyperView);
-    viewControls.add(hyperLayout);
-    viewControls.add(noLens);
-    controls.add(viewControls);
+    controls.add(ControlHelpers.getCenteredContainer("Layout Controls", treeLayoutSelector));
+    controls.add(ControlHelpers.getZoomControls("Scale", vv));
+    controls.add(ControlHelpers.getCenteredContainer("Mouse Mode",ControlHelpers.getModeRadio(graphMouse)));
+    controls.add(           LensControlHelper.with(Box.createVerticalBox(),
+            ImmutableSortedMap.of(
+                    "Hyperbolic View", hyperbolicViewSupport,
+                    "Hyperbolic Layout", hyperbolicSupport)
+    ).container("Lens Controls"));
+
     add(controls, BorderLayout.SOUTH);
   }
 

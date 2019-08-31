@@ -228,7 +228,7 @@ public class RTreeVisualization<V> extends JPanel {
     layoutPanel.add(animate);
     JPanel controls = new JPanel();
     controls.add(layoutPanel);
-    controls.add(ControlHelpers.getZoomControls(vv, "Zoom"));
+    controls.add(ControlHelpers.getCenteredContainer("Zoom",ControlHelpers.getZoomControls(vv)));
 
     add(controls, BorderLayout.SOUTH);
   }

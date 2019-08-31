@@ -83,7 +83,7 @@ public class TreeLayoutDemo extends JPanel {
     layoutPanel.add(TreeLayoutSelector.builder(vv).build());
     JPanel controls = new JPanel();
     controls.add(layoutPanel);
-    controls.add(ControlHelpers.getZoomControls(vv, "Zoom"));
+    controls.add(ControlHelpers.getZoomControls(vv));
     controls.add(modeBox);
 
     add(controls, BorderLayout.SOUTH);

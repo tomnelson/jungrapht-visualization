@@ -225,7 +225,7 @@ public class SubLayoutDemo extends JPanel {
     Box controls = Box.createHorizontalBox();
     controls.add(Box.createRigidArea(space));
 
-    JComponent zoomControls = ControlHelpers.getZoomControls(vv, "Zoom", new GridLayout(0, 1));
+    JComponent zoomControls = ControlHelpers.getZoomControls("Scale", vv);//, new GridLayout(0, 1));
     heightConstrain(zoomControls);
     controls.add(zoomControls);
     controls.add(Box.createRigidArea(space));

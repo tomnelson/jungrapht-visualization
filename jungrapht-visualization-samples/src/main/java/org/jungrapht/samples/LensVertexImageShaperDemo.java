@@ -20,6 +20,7 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.visualization.LayeredIcon;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -204,12 +205,8 @@ public class LensVertexImageShaperDemo extends JPanel {
     modePanel.setBorder(BorderFactory.createTitledBorder("Mouse Mode"));
     modePanel.add(modeBox);
 
-    JPanel scaleGrid = new JPanel(new GridLayout(1, 0));
-    scaleGrid.setBorder(BorderFactory.createTitledBorder("Zoom"));
     JPanel controls = new JPanel();
-    scaleGrid.add(plus);
-    scaleGrid.add(minus);
-    controls.add(scaleGrid);
+    controls.add(ControlHelpers.getZoomControls("Scale", vv));
 
     controls.add(modePanel);
     add(controls, BorderLayout.SOUTH);

@@ -96,9 +96,9 @@ public class UnicodeLabelDemo {
     lo.setSelected(true);
 
     JPanel controls = new JPanel();
-    controls.add(ControlHelpers.getZoomControls(vv, ""));
+    controls.add(ControlHelpers.getZoomControls("Zoom",vv));
     controls.add(lo);
-    controls.add(gm.getModeComboBox());
+    controls.add(ControlHelpers.getCenteredContainer("Mouse Mode", gm.getModeComboBox()));
     content.add(controls, BorderLayout.SOUTH);
 
     frame.pack();

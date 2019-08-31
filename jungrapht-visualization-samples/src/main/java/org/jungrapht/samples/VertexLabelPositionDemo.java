@@ -11,6 +11,7 @@ package org.jungrapht.samples;
 import java.awt.*;
 import javax.swing.*;
 import org.jgrapht.Graph;
+import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -96,7 +97,6 @@ public class VertexLabelPositionDemo extends JPanel {
     minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
 
     JPanel positionPanel = new JPanel();
-    positionPanel.setBorder(BorderFactory.createTitledBorder("Label Position"));
     JMenuBar menubar = new JMenuBar();
     menubar.add(graphMouse.getModeMenu());
     visualizationScrollPane.setCorner(menubar);
@@ -122,13 +122,9 @@ public class VertexLabelPositionDemo extends JPanel {
     cb.setSelectedItem(Renderer.VertexLabel.Position.SE);
     positionPanel.add(cb);
     JPanel controls = new JPanel();
-    JPanel zoomControls = new JPanel(new GridLayout(2, 1));
-    zoomControls.setBorder(BorderFactory.createTitledBorder("Zoom"));
-    zoomControls.add(plus);
-    zoomControls.add(minus);
 
-    controls.add(zoomControls);
-    controls.add(positionPanel);
+    controls.add(ControlHelpers.getZoomControls("Zoom", vv));
+    controls.add(ControlHelpers.getCenteredContainer("Label", positionPanel));
     add(controls, BorderLayout.SOUTH);
   }
 

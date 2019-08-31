@@ -257,17 +257,11 @@ public class VertexCollapseDemo extends JPanel {
             JOptionPane.showMessageDialog(
                 (JComponent) e.getSource(), instructions, "Help", JOptionPane.PLAIN_MESSAGE));
 
-    JPanel controls = new JPanel();
-    controls.add(ControlHelpers.getZoomControls(vv, "Zoom"));
-    JPanel collapseControls = new JPanel(new GridLayout(3, 1));
-    collapseControls.setBorder(BorderFactory.createTitledBorder("Picked"));
-    collapseControls.add(collapse);
-    collapseControls.add(expand);
-    collapseControls.add(compressEdges);
-    collapseControls.add(expandEdges);
-    collapseControls.add(reset);
-    controls.add(collapseControls);
-    controls.add(modeBox);
+    Box controls = Box.createHorizontalBox();
+    controls.add(ControlHelpers.getZoomControls("Zoom",vv));
+    controls.add(ControlHelpers.getCenteredContainer("Picked",
+            Box.createVerticalBox(), collapse, expand, compressEdges, expandEdges, reset));
+    controls.add(ControlHelpers.getCenteredContainer("Mouse Mode", modeBox));
     controls.add(help);
     add(controls, BorderLayout.SOUTH);
   }

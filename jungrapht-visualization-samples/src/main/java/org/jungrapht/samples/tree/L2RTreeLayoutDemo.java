@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 import javax.swing.*;
 import org.jgrapht.Graph;
+import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.DemoTreeSupplier;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -121,13 +122,10 @@ public class L2RTreeLayoutDemo extends JPanel {
     JPanel scaleGrid = new JPanel(new GridLayout(1, 0));
     scaleGrid.setBorder(BorderFactory.createTitledBorder("Zoom"));
 
-    JPanel controls = new JPanel();
-    scaleGrid.add(plus);
-    scaleGrid.add(minus);
-    controls.add(radial);
-    controls.add(scaleGrid);
-    controls.add(modeBox);
-
+    Box controls = Box.createHorizontalBox();
+    controls.add(ControlHelpers.getCenteredContainer("Layout Control", radial));
+    controls.add(ControlHelpers.getCenteredContainer("Scale",ControlHelpers.getZoomControls(vv)));
+    controls.add(ControlHelpers.getCenteredContainer("Mouse Mode",ControlHelpers.getModeRadio(graphMouse)));
     add(controls, BorderLayout.SOUTH);
   }
 

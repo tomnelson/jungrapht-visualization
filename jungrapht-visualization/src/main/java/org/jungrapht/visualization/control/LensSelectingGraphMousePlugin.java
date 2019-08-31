@@ -1,6 +1,7 @@
 package org.jungrapht.visualization.control;
 
 import java.awt.*;
+import java.awt.event.InputEvent;
 import java.awt.geom.Point2D;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationViewer;
@@ -18,6 +19,23 @@ public class LensSelectingGraphMousePlugin<V, E> extends SelectingGraphMousePlug
   private static final Logger log = LoggerFactory.getLogger(LensSelectingGraphMousePlugin.class);
 
   protected TransformSupport transformSupport = new LensTransformSupport();
+
+  /** create an instance with default settings */
+  public LensSelectingGraphMousePlugin() {
+    super(
+            InputEvent.BUTTON1_DOWN_MASK | InputEvent.CTRL_DOWN_MASK,
+            InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK);
+  }
+
+  /**
+   * create an instance with overides
+   *
+   * @param selectionModifiers for primary selection
+   * @param addToSelectionModifiers for additional selection
+   */
+  public LensSelectingGraphMousePlugin(int selectionModifiers, int addToSelectionModifiers) {
+    super(selectionModifiers, addToSelectionModifiers);
+  }
 
   /**
    * Overriden to apply lens effects to the transformation from view to layout coordinates

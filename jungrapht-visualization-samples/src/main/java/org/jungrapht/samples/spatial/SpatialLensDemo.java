@@ -10,43 +10,20 @@ package org.jungrapht.samples.spatial;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.Rectangle;
-import java.awt.event.ItemEvent;
-import java.awt.geom.AffineTransform;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenuBar;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.WindowConstants;
-import javax.swing.plaf.basic.BasicLabelUI;
+import com.google.common.collect.ImmutableSortedMap;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jungrapht.samples.util.ControlHelpers;
+import org.jungrapht.samples.util.LensControlHelper;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.LensMagnificationGraphMousePlugin;
 import org.jungrapht.visualization.control.ModalLensGraphMouse;
-import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -60,6 +37,12 @@ import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
 import org.jungrapht.visualization.transform.shape.ViewLensSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
+import javax.swing.plaf.basic.BasicLabelUI;
+import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.geom.AffineTransform;
 
 /**
  * Demonstrates the use of <code>HyperbolicTransform</code> and <code>MagnifyTransform</code>
@@ -99,7 +82,6 @@ public class SpatialLensDemo extends JPanel {
     graphLayoutAlgorithm = FRLayoutAlgorithm.<String>builder().build();
 
     Dimension preferredSize = new Dimension(600, 600);
-    //    Map<String, Point2D> map = new HashMap<>();
 
     final VisualizationModel<String, Number> visualizationModel =
         VisualizationModel.builder(graph)
@@ -169,43 +151,6 @@ public class SpatialLensDemo extends JPanel {
         .getLens()
         .setLensShape(magnifyViewSupport.getLensTransformer().getLens().getLensShape());
 
-    final ScalingControl scaler = new CrossoverScalingControl();
-
-    JButton plus = new JButton("+");
-    plus.addActionListener(e -> scaler.scale(vv, 1.1f, vv.getCenter()));
-
-    JButton minus = new JButton("-");
-    minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
-
-    JButton normal = new JButton("None");
-    normal.addActionListener(
-        e -> {
-          if (hyperbolicViewSupport != null) {
-            hyperbolicViewSupport.deactivate();
-          }
-          if (hyperbolicLayoutSupport != null) {
-            hyperbolicLayoutSupport.deactivate();
-          }
-          if (magnifyViewSupport != null) {
-            magnifyViewSupport.deactivate();
-          }
-          if (magnifyLayoutSupport != null) {
-            magnifyLayoutSupport.deactivate();
-          }
-        });
-
-    final JButton hyperView = new JButton("Hyperbolic View");
-    hyperView.addActionListener(e -> hyperbolicViewSupport.activate());
-
-    final JButton hyperModel = new JButton("Hyperbolic Layout");
-    hyperModel.addActionListener(e -> hyperbolicLayoutSupport.activate());
-
-    final JButton magnifyView = new JButton("Magnified View");
-    magnifyView.addActionListener(e -> magnifyViewSupport.activate());
-
-    final JRadioButton magnifyModel = new JRadioButton("Magnified Layout");
-    magnifyModel.addActionListener(e -> magnifyLayoutSupport.activate());
-
     JLabel modeLabel = new JLabel("     Mode Menu >>");
     modeLabel.setUI(new VerticalLabelUI(false));
 
@@ -255,32 +200,16 @@ public class SpatialLensDemo extends JPanel {
     showRTree.addActionListener(e -> RTreeVisualization.showRTree(vv));
 
     Box controls = Box.createHorizontalBox();
-    JPanel zoomControls = new JPanel(new GridLayout(2, 1));
-    JPanel modeControls = new JPanel(new GridLayout(3, 1));
     JPanel leftControls = new JPanel();
-    JPanel hyperControls = new JPanel(new GridLayout(3, 2));
-    hyperControls.setBorder(BorderFactory.createTitledBorder("Examiner Lens"));
-    zoomControls.add(plus);
-    zoomControls.add(minus);
-    modeControls.add(showSpatialEffects);
-    modeControls.add(modeBox);
-    modeControls.add(showRTree);
-    leftControls.add(zoomControls);
-    leftControls.add(modeControls);
-
-    hyperControls.add(normal);
-    hyperControls.add(new JLabel());
-
-    hyperControls.add(hyperModel);
-    hyperControls.add(magnifyModel);
-
-    hyperControls.add(hyperView);
-    hyperControls.add(magnifyView);
-
+    controls.add(ControlHelpers.getZoomControls("Scale", vv));
+    controls.add(ControlHelpers.getCenteredContainer("Spatial Effects", Box.createVerticalBox(), showSpatialEffects, showRTree));
     controls.add(leftControls);
-    controls.add(hyperControls);
+    controls.add(LensControlHelper.with(Box.createVerticalBox(), ImmutableSortedMap.of(
+            "Hyperbolic Layout", hyperbolicLayoutSupport,
+            "Hyperbolic View", hyperbolicViewSupport,
+            "Magnify Layout", magnifyLayoutSupport,
+            "Magnify View", magnifyViewSupport)).container("Lens Controls"));
     controls.add(modeLabel);
-
     add(controls, BorderLayout.SOUTH);
   }
 

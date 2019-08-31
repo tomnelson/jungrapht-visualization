@@ -10,9 +10,12 @@ package org.jungrapht.samples.tree;
 
 import java.awt.*;
 import javax.swing.*;
+
+import com.google.common.collect.ImmutableSortedMap;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.DemoTreeSupplier;
+import org.jungrapht.samples.util.LensControlHelper;
 import org.jungrapht.samples.util.TreeLayoutSelector;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationModel;
@@ -136,22 +139,21 @@ public class RadialTreeLensDemo extends JPanel {
     visualizationScrollPane.setCorner(menubar);
 
     Box controls = Box.createHorizontalBox();
-    Box hyperControls = Box.createVerticalBox();
-    hyperControls.setBorder(BorderFactory.createTitledBorder("Examiner Lens"));
-    JPanel modeControls = new JPanel();
-    modeControls.setBorder(BorderFactory.createTitledBorder("Mouse Mode"));
-    modeControls.add(graphMouse.getModeComboBox());
-    hyperControls.add(hyperView);
-    hyperControls.add(hyperLayout);
-    hyperControls.add(noLens);
 
-    controls.add(ControlHelpers.getZoomControls(vv, "Zoom"));
-    controls.add(hyperControls);
-    controls.add(modeControls);
+    JComponent lensBox =
+            LensControlHelper.with(Box.createVerticalBox(),
+                    ImmutableSortedMap.of(
+                            "Hyperbolic View", hyperbolicViewSupport,
+                            "Hyperbolic Layout", hyperbolicLayoutSupport)
+            ).container();
+
+
+    controls.add(ControlHelpers.getZoomControls("Scale", vv));
+    controls.add(ControlHelpers.getCenteredContainer("Lens Controls", lensBox));
+    controls.add(ControlHelpers.getModeControls("Mouse Mode", vv));
     JPanel layoutControls = new JPanel(new GridLayout(0, 1));
-    layoutControls.setBorder(BorderFactory.createTitledBorder("Layouts"));
     layoutControls.add(TreeLayoutSelector.builder(vv).initialSelection(2).build());
-    controls.add(layoutControls);
+    controls.add(ControlHelpers.getCenteredContainer("Layouts", layoutControls));
     add(controls, BorderLayout.SOUTH);
   }
 

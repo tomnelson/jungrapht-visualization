@@ -152,6 +152,9 @@ public class AnnotatingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     } else if (e.getModifiersEx() == (modifiers | additionalModifiers)) {
       Annotation<?> annotation = annotationManager.getAnnotation(down);
       annotationManager.remove(annotation);
+    } else if (e.getModifiersEx() == modifiers) {
+      rectangularShape.setFrameFromDiagonal(down, down);
+      vv.addPostRenderPaintable(lensPaintable);
     }
     vv.repaint();
   }

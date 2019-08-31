@@ -184,7 +184,7 @@ public class SatelliteViewTreeDemo extends JPanel {
         });
 
     JPanel controls = new JPanel();
-    controls.add(ControlHelpers.getZoomControls(mainVisualizationViewer, ""));
+    controls.add(ControlHelpers.getCenteredContainer("Scale",ControlHelpers.getZoomControls(mainVisualizationViewer)));
     controls.add(gridBox);
     controls.add(help);
     add(panel);

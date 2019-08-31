@@ -127,7 +127,7 @@ public class TwoModelDemo extends JPanel {
     modePanel.add(gm1.getModeComboBox());
 
     JPanel controls = new JPanel();
-    controls.add(ControlHelpers.getZoomControls(vv1, "Zoom"));
+    controls.add(ControlHelpers.getZoomControls("Zoom",vv1));
     controls.add(modePanel);
     add(controls, BorderLayout.SOUTH);
   }

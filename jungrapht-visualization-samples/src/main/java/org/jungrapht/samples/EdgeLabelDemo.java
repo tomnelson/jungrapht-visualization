@@ -16,6 +16,7 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
@@ -173,11 +174,6 @@ public class EdgeLabelDemo extends JPanel {
 
     Box controls = Box.createHorizontalBox();
 
-    JPanel zoomPanel = new JPanel(new GridLayout(0, 1));
-    zoomPanel.setBorder(BorderFactory.createTitledBorder("Scale"));
-    zoomPanel.add(plus);
-    zoomPanel.add(minus);
-
     JPanel edgePanel = new JPanel(new GridLayout(0, 1));
     edgePanel.setBorder(BorderFactory.createTitledBorder("Edge Shape"));
     edgePanel.add(lineButton);
@@ -206,7 +202,7 @@ public class EdgeLabelDemo extends JPanel {
     modePanel.setBorder(BorderFactory.createTitledBorder("Mouse Mode"));
     modePanel.add(graphMouse.getModeComboBox());
 
-    controls.add(zoomPanel);
+    controls.add(ControlHelpers.getZoomControls("Zoom", vv));
     controls.add(edgePanel);
     controls.add(labelPanel);
     controls.add(modePanel);

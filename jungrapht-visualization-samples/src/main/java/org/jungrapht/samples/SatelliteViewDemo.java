@@ -183,7 +183,7 @@ public class SatelliteViewDemo extends JPanel {
         });
 
     JPanel controls = new JPanel();
-    controls.add(ControlHelpers.getZoomControls(mainVisualizationViewer, ""));
+    controls.add(ControlHelpers.getZoomControls(mainVisualizationViewer));
     //    controls.add(minus);
     controls.add(modeBox);
     controls.add(gridBox);

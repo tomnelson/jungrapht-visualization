@@ -116,7 +116,7 @@ public class AnnotationsDemo extends JPanel {
         });
 
     JPanel controls = new JPanel();
-    controls.add(ControlHelpers.getZoomControls(vv, "Zoom"));
+    controls.add(ControlHelpers.getZoomControls("Scale", vv));
 
     JPanel modeControls = new JPanel();
     modeControls.setBorder(BorderFactory.createTitledBorder("Mouse Mode"));

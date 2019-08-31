@@ -105,7 +105,7 @@ public class DrawnIconVertexDemo {
     vv.setGraphMouse(gm);
 
     JPanel controls = new JPanel();
-    controls.add(ControlHelpers.getZoomControls(vv, ""));
+    controls.add(ControlHelpers.getZoomControls(vv));
     controls.add(gm.getModeComboBox());
     content.add(controls, BorderLayout.SOUTH);
 

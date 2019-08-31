@@ -15,14 +15,17 @@ import java.awt.event.ItemEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
-import java.util.List;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicLabelUI;
+
+import com.google.common.collect.ImmutableSortedMap;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphBuilder;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.samples.spatial.RTreeVisualization;
+import org.jungrapht.samples.util.ControlHelpers;
+import org.jungrapht.samples.util.LensControlHelper;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -167,38 +170,17 @@ public class SpatialLensLargeGraphDemo extends JPanel {
     JButton minus = new JButton("-");
     minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
 
-    List<LensSupport> lenses = List.of(hyperbolicLayoutSupport, hyperbolicViewSupport,magnifyViewSupport, magnifyLayoutSupport);
-    JButton normal = new JButton("None");
-    normal.addActionListener(
-        e -> lenses.stream().forEach(LensSupport::deactivate));
-
-    final JButton hyperView = new JButton("Hyperbolic View");
-    hyperView.addActionListener(e -> {
-      lenses.stream().forEach(LensSupport::deactivate);
-      hyperbolicViewSupport.activate();
-    });
-
-    final JButton hyperModel = new JButton("Hyperbolic Layout");
-    hyperModel.addActionListener(e -> {
-      lenses.stream().forEach(LensSupport::deactivate);
-      hyperbolicLayoutSupport.activate();
-    });
-
-    final JButton magnifyView = new JButton("Magnified View");
-    magnifyView.addActionListener(e -> {
-      lenses.stream().forEach(LensSupport::deactivate);
-      magnifyViewSupport.activate();
-    });
-
-    final JButton magnifyModel = new JButton("Magnified Layout");
-    magnifyModel.addActionListener(e -> {
-      lenses.stream().forEach(LensSupport::deactivate);
-      magnifyLayoutSupport.activate();
-    });
+    JComponent lensBox =
+            LensControlHelper.with(Box.createVerticalBox(),
+                    ImmutableSortedMap.of(
+                            "Hyperbolic View", hyperbolicViewSupport,
+                            "Hyperbolic Layout", hyperbolicLayoutSupport,
+                            "Magnified View", magnifyViewSupport,
+                            "Magnified Layout", magnifyLayoutSupport)
+            ).container("Lens Controls");
 
     JLabel modeLabel = new JLabel("     Mode Menu >>");
     modeLabel.setUI(new VerticalLabelUI(false));
-    normal.setSelected(true);
 
     graphMouse.addItemListener(hyperbolicLayoutSupport.getGraphMouse().getModeListener());
     graphMouse.addItemListener(hyperbolicViewSupport.getGraphMouse().getModeListener());
@@ -213,7 +195,7 @@ public class SpatialLensLargeGraphDemo extends JPanel {
     modeBox.addItemListener(
         ((DefaultModalGraphMouse<Integer, Number>) vv.getGraphMouse()).getModeListener());
 
-    JRadioButton showSpatialEffects = new JRadioButton("Spatial Structure");
+    JToggleButton showSpatialEffects = new JToggleButton("Spatial Structure");
     showSpatialEffects.addItemListener(
         e -> {
           if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -248,33 +230,12 @@ public class SpatialLensLargeGraphDemo extends JPanel {
     showRTree.addActionListener(e -> RTreeVisualization.showRTree(vv));
 
     Box controls = Box.createHorizontalBox();
-    JPanel zoomControls = new JPanel();
     JPanel modeControls = new JPanel(new GridLayout(3, 1));
-    JPanel leftControls = new JPanel();
-    JPanel hyperControls = new JPanel(new GridLayout(2, 0));
-    hyperControls.setBorder(BorderFactory.createTitledBorder("Examiner Lens"));
-    zoomControls.add(plus);
-    zoomControls.add(minus);
     modeControls.add(showSpatialEffects);
-    modeControls.add(modeBox);
     modeControls.add(showRTree);
-    leftControls.add(zoomControls);
-    leftControls.add(modeControls);
-
-    JPanel upper = new JPanel();
-    JPanel lower = new JPanel();
-    hyperControls.add(upper);
-    hyperControls.add(lower);
-    upper.add(normal);
-
-    upper.add(hyperModel);
-    lower.add(magnifyModel);
-
-    upper.add(hyperView);
-    lower.add(magnifyView);
-
-    controls.add(leftControls);
-    controls.add(hyperControls);
+    controls.add(ControlHelpers.getZoomControls("Scale", vv));
+    controls.add(lensBox);
+    controls.add(ControlHelpers.getCenteredContainer("Spatial Effects", modeControls));
     controls.add(modeLabel);
     add(controls, BorderLayout.SOUTH);
     vv.setVertexToolTipFunction(n -> n);

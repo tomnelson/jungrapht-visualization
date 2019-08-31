@@ -14,6 +14,7 @@ import java.awt.*;
 import java.util.function.Function;
 import javax.swing.*;
 import org.jgrapht.Graph;
+import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -94,25 +95,9 @@ public class VertexLabelAsShapeDemo extends JPanel {
     VisualizationScrollPane visualizationScrollPane = new VisualizationScrollPane(vv);
     add(visualizationScrollPane);
 
-    JComboBox<?> modeBox = graphMouse.getModeComboBox();
-    modeBox.addItemListener(graphMouse.getModeListener());
-    graphMouse.setMode(ModalGraphMouse.Mode.TRANSFORMING);
-
-    final ScalingControl scaler = new CrossoverScalingControl();
-
-    JButton plus = new JButton("+");
-    plus.addActionListener(e -> scaler.scale(vv, 1.1f, vv.getCenter()));
-
-    JButton minus = new JButton("-");
-    minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
-
     JPanel controls = new JPanel();
-    JPanel zoomControls = new JPanel(new GridLayout(2, 1));
-    zoomControls.setBorder(BorderFactory.createTitledBorder("Zoom"));
-    zoomControls.add(plus);
-    zoomControls.add(minus);
-    controls.add(zoomControls);
-    controls.add(modeBox);
+    controls.add(ControlHelpers.getZoomControls("Zoom", vv));
+    controls.add(ControlHelpers.getModeControls("Mouse Mode", vv));
     add(controls, BorderLayout.SOUTH);
   }
 
