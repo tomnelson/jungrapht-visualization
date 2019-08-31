@@ -49,7 +49,9 @@ public class ModalLensGraphMouse extends AbstractModalGraphMouse
     this.in = in;
     this.out = out;
     this.magnificationPlugin = magnificationPlugin;
-    this.lensSelectingGraphMousePlugin = new LensSelectingGraphMousePlugin<>(InputEvent.BUTTON1_DOWN_MASK, InputEvent.SHIFT_DOWN_MASK);
+    this.lensSelectingGraphMousePlugin =
+        new LensSelectingGraphMousePlugin<>(
+            InputEvent.BUTTON1_DOWN_MASK, InputEvent.SHIFT_DOWN_MASK);
     this.lensKillingGraphMousePlugin = new LensKillingGraphMousePlugin();
     loadPlugins();
     setModeKeyListener(new ModeKeyAdapter(this));

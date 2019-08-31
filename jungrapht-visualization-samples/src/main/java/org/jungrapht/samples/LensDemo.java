@@ -12,9 +12,8 @@ import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import javax.swing.*;
@@ -183,7 +182,12 @@ public class LensDemo extends JPanel {
         .getLens()
         .setLensShape(magnifyViewSupport.getLensTransformer().getLens().getLensShape());
 
-    List<LensSupport> lenses = List.of(hyperbolicLayoutSupport,hyperbolicViewSupport,magnifyViewSupport,magnifyLayoutSupport);
+    List<LensSupport> lenses =
+        List.of(
+            hyperbolicLayoutSupport,
+            hyperbolicViewSupport,
+            magnifyViewSupport,
+            magnifyLayoutSupport);
     final ScalingControl scaler = new CrossoverScalingControl();
 
     JButton plus = new JButton("+");
@@ -193,32 +197,35 @@ public class LensDemo extends JPanel {
     minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
 
     JButton normal = new JButton("None");
-    normal.addActionListener(
-            e -> lenses.stream().forEach(LensSupport::deactivate));
+    normal.addActionListener(e -> lenses.stream().forEach(LensSupport::deactivate));
 
     final JButton hyperView = new JButton("Hyperbolic View");
-    hyperView.addActionListener(e -> {
-      lenses.stream().forEach(LensSupport::deactivate);
-      hyperbolicViewSupport.activate();
-    });
+    hyperView.addActionListener(
+        e -> {
+          lenses.stream().forEach(LensSupport::deactivate);
+          hyperbolicViewSupport.activate();
+        });
 
     final JButton hyperModel = new JButton("Hyperbolic Layout");
-    hyperModel.addActionListener(e -> {
-      lenses.stream().forEach(LensSupport::deactivate);
-      hyperbolicLayoutSupport.activate();
-    });
+    hyperModel.addActionListener(
+        e -> {
+          lenses.stream().forEach(LensSupport::deactivate);
+          hyperbolicLayoutSupport.activate();
+        });
 
     final JButton magnifyView = new JButton("Magnified View");
-    magnifyView.addActionListener(e -> {
-      lenses.stream().forEach(LensSupport::deactivate);
-      magnifyViewSupport.activate();
-    });
+    magnifyView.addActionListener(
+        e -> {
+          lenses.stream().forEach(LensSupport::deactivate);
+          magnifyViewSupport.activate();
+        });
 
     final JButton magnifyModel = new JButton("Magnified Layout");
-    magnifyModel.addActionListener(e -> {
-      lenses.stream().forEach(LensSupport::deactivate);
-      magnifyLayoutSupport.activate();
-    });
+    magnifyModel.addActionListener(
+        e -> {
+          lenses.stream().forEach(LensSupport::deactivate);
+          magnifyLayoutSupport.activate();
+        });
 
     JLabel modeLabel = new JLabel("     Mode Menu >>");
     modeLabel.setUI(new VerticalLabelUI(false));

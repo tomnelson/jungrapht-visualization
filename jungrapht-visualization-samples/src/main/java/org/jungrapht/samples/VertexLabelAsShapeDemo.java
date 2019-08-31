@@ -14,19 +14,16 @@ import java.awt.*;
 import java.util.function.Function;
 import javax.swing.*;
 import org.jgrapht.Graph;
-import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
-import org.jungrapht.visualization.control.ModalGraphMouse;
-import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.renderers.GradientVertexRenderer;
 import org.jungrapht.visualization.renderers.VertexLabelAsShapeRenderer;
+import org.jungrapht.visualization.util.helpers.ControlHelpers;
 
 /**
  * This demo shows how to use the vertex labels themselves as the vertex shapes. Additionally, it
@@ -72,7 +69,6 @@ public class VertexLabelAsShapeDemo extends JPanel {
             ((Function<String, String>) Object::toString)
                 .andThen(input -> "<html><center>Node<p>" + input));
     vv.getRenderContext().setVertexShapeFunction(vlasr);
-    //    vv.getRenderContext().setVertexLabelRenderer(new JLabelVertexLabelRenderer(Color.red));
     vv.getRenderContext().setEdgeDrawPaintFunction(e -> Color.yellow);
     vv.getRenderContext().setEdgeStrokeFunction(e -> new BasicStroke(2.5f));
 

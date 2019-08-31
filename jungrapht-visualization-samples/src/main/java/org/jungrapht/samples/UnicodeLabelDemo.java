@@ -18,7 +18,6 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
-import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
@@ -28,6 +27,7 @@ import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.JLabelEdgeLabelRenderer;
 import org.jungrapht.visualization.renderers.JLabelVertexLabelRenderer;
+import org.jungrapht.visualization.util.helpers.ControlHelpers;
 
 /**
  * A demo that shows flag images as vertices, and uses unicode to render vertex labels.
@@ -96,7 +96,7 @@ public class UnicodeLabelDemo {
     lo.setSelected(true);
 
     JPanel controls = new JPanel();
-    controls.add(ControlHelpers.getZoomControls("Zoom",vv));
+    controls.add(ControlHelpers.getZoomControls("Zoom", vv));
     controls.add(lo);
     controls.add(ControlHelpers.getCenteredContainer("Mouse Mode", gm.getModeComboBox()));
     content.add(controls, BorderLayout.SOUTH);

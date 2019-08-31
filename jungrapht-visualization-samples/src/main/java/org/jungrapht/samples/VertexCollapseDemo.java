@@ -18,7 +18,6 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
-import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -33,6 +32,7 @@ import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.subLayout.Collapsable;
 import org.jungrapht.visualization.subLayout.GraphCollapser;
 import org.jungrapht.visualization.util.PredicatedParallelEdgeIndexFunction;
+import org.jungrapht.visualization.util.helpers.ControlHelpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -258,9 +258,16 @@ public class VertexCollapseDemo extends JPanel {
                 (JComponent) e.getSource(), instructions, "Help", JOptionPane.PLAIN_MESSAGE));
 
     Box controls = Box.createHorizontalBox();
-    controls.add(ControlHelpers.getZoomControls("Zoom",vv));
-    controls.add(ControlHelpers.getCenteredContainer("Picked",
-            Box.createVerticalBox(), collapse, expand, compressEdges, expandEdges, reset));
+    controls.add(ControlHelpers.getZoomControls("Zoom", vv));
+    controls.add(
+        ControlHelpers.getCenteredContainer(
+            "Picked",
+            Box.createVerticalBox(),
+            collapse,
+            expand,
+            compressEdges,
+            expandEdges,
+            reset));
     controls.add(ControlHelpers.getCenteredContainer("Mouse Mode", modeBox));
     controls.add(help);
     add(controls, BorderLayout.SOUTH);

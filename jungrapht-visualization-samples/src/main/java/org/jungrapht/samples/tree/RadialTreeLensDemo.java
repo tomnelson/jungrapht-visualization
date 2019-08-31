@@ -8,15 +8,11 @@
  */
 package org.jungrapht.samples.tree;
 
+import com.google.common.collect.ImmutableSortedMap;
 import java.awt.*;
 import javax.swing.*;
-
-import com.google.common.collect.ImmutableSortedMap;
 import org.jgrapht.Graph;
-import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.DemoTreeSupplier;
-import org.jungrapht.samples.util.LensControlHelper;
-import org.jungrapht.samples.util.TreeLayoutSelector;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -31,6 +27,9 @@ import org.jungrapht.visualization.selection.MutableSelectedState;
 import org.jungrapht.visualization.transform.*;
 import org.jungrapht.visualization.transform.shape.HyperbolicShapeTransformer;
 import org.jungrapht.visualization.transform.shape.ViewLensSupport;
+import org.jungrapht.visualization.util.helpers.ControlHelpers;
+import org.jungrapht.visualization.util.helpers.LensControlHelper;
+import org.jungrapht.visualization.util.helpers.TreeLayoutSelector;
 
 /**
  * Shows a RadialTreeLayout view of a Forest. A hyperbolic projection lens may also be applied to
@@ -110,20 +109,23 @@ public class RadialTreeLensDemo extends JPanel {
             new ModalLensGraphMouse());
 
     final JButton hyperView = new JButton("Hyperbolic View");
-    hyperView.addActionListener(e -> {
-      hyperbolicLayoutSupport.deactivate();
-      hyperbolicViewSupport.activate(true);
-    });
+    hyperView.addActionListener(
+        e -> {
+          hyperbolicLayoutSupport.deactivate();
+          hyperbolicViewSupport.activate(true);
+        });
     final JButton hyperLayout = new JButton("Hyperbolic Layout");
-    hyperLayout.addActionListener(e -> {
-      hyperbolicViewSupport.deactivate();
-      hyperbolicLayoutSupport.activate(true);
-    });
+    hyperLayout.addActionListener(
+        e -> {
+          hyperbolicViewSupport.deactivate();
+          hyperbolicLayoutSupport.activate(true);
+        });
     final JButton noLens = new JButton("No Lens");
-    noLens.addActionListener(e -> {
-      hyperbolicLayoutSupport.deactivate();
-      hyperbolicViewSupport.deactivate();
-    });
+    noLens.addActionListener(
+        e -> {
+          hyperbolicLayoutSupport.deactivate();
+          hyperbolicViewSupport.deactivate();
+        });
     noLens.setSelected(true);
 
     ButtonGroup radio = new ButtonGroup();
@@ -141,18 +143,19 @@ public class RadialTreeLensDemo extends JPanel {
     Box controls = Box.createHorizontalBox();
 
     JComponent lensBox =
-            LensControlHelper.with(Box.createVerticalBox(),
-                    ImmutableSortedMap.of(
-                            "Hyperbolic View", hyperbolicViewSupport,
-                            "Hyperbolic Layout", hyperbolicLayoutSupport)
-            ).container();
-
+        LensControlHelper.with(
+                Box.createVerticalBox(),
+                ImmutableSortedMap.of(
+                    "Hyperbolic View", hyperbolicViewSupport,
+                    "Hyperbolic Layout", hyperbolicLayoutSupport))
+            .container();
 
     controls.add(ControlHelpers.getZoomControls("Scale", vv));
     controls.add(ControlHelpers.getCenteredContainer("Lens Controls", lensBox));
     controls.add(ControlHelpers.getModeControls("Mouse Mode", vv));
     JPanel layoutControls = new JPanel(new GridLayout(0, 1));
-    layoutControls.add(TreeLayoutSelector.builder(vv).initialSelection(2).build());
+    layoutControls.add(
+        TreeLayoutSelector.builder(vv).initialSelection(2).after(vv::scaleToLayout).build());
     controls.add(ControlHelpers.getCenteredContainer("Layouts", layoutControls));
     add(controls, BorderLayout.SOUTH);
   }

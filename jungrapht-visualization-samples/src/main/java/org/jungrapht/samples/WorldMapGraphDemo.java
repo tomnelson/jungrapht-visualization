@@ -8,6 +8,8 @@
  */
 package org.jungrapht.samples;
 
+import static org.jungrapht.visualization.renderers.BiModalRenderer.HEAVYWEIGHT;
+
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
@@ -32,8 +34,6 @@ import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.renderers.GradientVertexRenderer;
 import org.jungrapht.visualization.renderers.HeavyweightVertexLabelRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
-
-import static org.jungrapht.visualization.renderers.BiModalRenderer.HEAVYWEIGHT;
 
 /**
  * Shows a graph overlaid on a world map image. Scaling of the graph also scales the image

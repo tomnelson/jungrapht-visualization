@@ -205,8 +205,6 @@ public abstract class AbstractModalGraphMouse extends AbstractGraphMouse
     return modeMenu;
   }
 
-
-
   /** add a listener for mode changes */
   public void addItemListener(ItemListener aListener) {
     listenerList.add(ItemListener.class, aListener);

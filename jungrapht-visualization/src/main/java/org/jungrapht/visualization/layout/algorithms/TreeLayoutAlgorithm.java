@@ -267,9 +267,6 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
       // go one level further down
       y += this.verticalVertexSpacing;
       log.trace("Set vertex {} to {}", vertex, Point.of(x, y));
-      if (layoutModel.getWidth() < x) {
-        log.warn("placing vertex {} at {} which is beyond {} ", vertex, x, layoutModel.getWidth());
-      }
       layoutModel.set(vertex, x, y);
       merge(layoutModel, vertex);
 

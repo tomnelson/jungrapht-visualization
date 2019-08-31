@@ -10,6 +10,7 @@ package org.jungrapht.samples.large;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
+import com.google.common.collect.ImmutableSortedMap;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.geom.AffineTransform;
@@ -17,15 +18,11 @@ import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicLabelUI;
-
-import com.google.common.collect.ImmutableSortedMap;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphBuilder;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.samples.spatial.RTreeVisualization;
-import org.jungrapht.samples.util.ControlHelpers;
-import org.jungrapht.samples.util.LensControlHelper;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -47,6 +44,8 @@ import org.jungrapht.visualization.transform.MagnifyTransformer;
 import org.jungrapht.visualization.transform.shape.HyperbolicShapeTransformer;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
 import org.jungrapht.visualization.transform.shape.ViewLensSupport;
+import org.jungrapht.visualization.util.helpers.ControlHelpers;
+import org.jungrapht.visualization.util.helpers.LensControlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -171,13 +170,14 @@ public class SpatialLensLargeGraphDemo extends JPanel {
     minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
 
     JComponent lensBox =
-            LensControlHelper.with(Box.createVerticalBox(),
-                    ImmutableSortedMap.of(
-                            "Hyperbolic View", hyperbolicViewSupport,
-                            "Hyperbolic Layout", hyperbolicLayoutSupport,
-                            "Magnified View", magnifyViewSupport,
-                            "Magnified Layout", magnifyLayoutSupport)
-            ).container("Lens Controls");
+        LensControlHelper.with(
+                Box.createVerticalBox(),
+                ImmutableSortedMap.of(
+                    "Hyperbolic View", hyperbolicViewSupport,
+                    "Hyperbolic Layout", hyperbolicLayoutSupport,
+                    "Magnified View", magnifyViewSupport,
+                    "Magnified Layout", magnifyLayoutSupport))
+            .container("Lens Controls");
 
     JLabel modeLabel = new JLabel("     Mode Menu >>");
     modeLabel.setUI(new VerticalLabelUI(false));

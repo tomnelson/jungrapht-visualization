@@ -23,8 +23,8 @@ public class LensSelectingGraphMousePlugin<V, E> extends SelectingGraphMousePlug
   /** create an instance with default settings */
   public LensSelectingGraphMousePlugin() {
     super(
-            InputEvent.BUTTON1_DOWN_MASK | InputEvent.CTRL_DOWN_MASK,
-            InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK);
+        InputEvent.BUTTON1_DOWN_MASK | InputEvent.CTRL_DOWN_MASK,
+        InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK);
   }
 
   /**

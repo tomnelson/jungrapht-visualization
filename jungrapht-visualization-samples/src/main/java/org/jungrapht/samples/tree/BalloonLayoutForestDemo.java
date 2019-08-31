@@ -8,15 +8,11 @@
  */
 package org.jungrapht.samples.tree;
 
+import com.google.common.collect.ImmutableSortedMap;
 import java.awt.*;
 import javax.swing.*;
-
-import com.google.common.collect.ImmutableSortedMap;
 import org.jgrapht.Graph;
-import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.DemoTreeSupplier;
-import org.jungrapht.samples.util.LensControlHelper;
-import org.jungrapht.samples.util.TreeLayoutSelector;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationServer;
@@ -37,6 +33,9 @@ import org.jungrapht.visualization.transform.Lens;
 import org.jungrapht.visualization.transform.LensSupport;
 import org.jungrapht.visualization.transform.shape.HyperbolicShapeTransformer;
 import org.jungrapht.visualization.transform.shape.ViewLensSupport;
+import org.jungrapht.visualization.util.helpers.ControlHelpers;
+import org.jungrapht.visualization.util.helpers.LensControlHelper;
+import org.jungrapht.visualization.util.helpers.TreeLayoutSelector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -133,16 +132,20 @@ public class BalloonLayoutForestDemo extends JPanel {
     minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
 
     JComponent lensBox =
-            LensControlHelper.with(Box.createVerticalBox(),
-                    ImmutableSortedMap.of(
-                            "Hyperbolic View", hyperbolicViewSupport,
-                            "Hyperbolic Layout", hyperbolicSupport)
-            ).container();
+        LensControlHelper.with(
+                Box.createVerticalBox(),
+                ImmutableSortedMap.of(
+                    "Hyperbolic View", hyperbolicViewSupport,
+                    "Hyperbolic Layout", hyperbolicSupport))
+            .container();
 
     Box controls = Box.createHorizontalBox();
-    controls.add(ControlHelpers.getCenteredContainer("Layout Controls", TreeLayoutSelector.builder(vv).after(vv::scaleToLayout).build()));
+    controls.add(
+        ControlHelpers.getCenteredContainer(
+            "Layout Controls", TreeLayoutSelector.builder(vv).after(vv::scaleToLayout).build()));
     controls.add(ControlHelpers.getCenteredContainer("Scale", ControlHelpers.getZoomControls(vv)));
-    controls.add(ControlHelpers.getCenteredContainer("Mouse Mode", ControlHelpers.getModeRadio(graphMouse)));
+    controls.add(
+        ControlHelpers.getCenteredContainer("Mouse Mode", ControlHelpers.getModeRadio(graphMouse)));
     controls.add(ControlHelpers.getCenteredContainer("Lens Controls", lensBox));
     add(controls, BorderLayout.SOUTH);
   }

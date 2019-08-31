@@ -8,21 +8,15 @@
  */
 package org.jungrapht.samples.tree;
 
+import com.google.common.collect.ImmutableSortedMap;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.event.ItemEvent;
 import java.util.function.Predicate;
 import javax.swing.*;
-
-import com.google.common.collect.ImmutableSortedMap;
 import org.jgrapht.Graph;
-import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.DemoTreeSupplier;
-import org.jungrapht.samples.util.LensControlHelper;
-import org.jungrapht.samples.util.TreeLayoutSelector;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
@@ -42,6 +36,9 @@ import org.jungrapht.visualization.transform.Lens;
 import org.jungrapht.visualization.transform.LensSupport;
 import org.jungrapht.visualization.transform.shape.HyperbolicShapeTransformer;
 import org.jungrapht.visualization.transform.shape.ViewLensSupport;
+import org.jungrapht.visualization.util.helpers.ControlHelpers;
+import org.jungrapht.visualization.util.helpers.LensControlHelper;
+import org.jungrapht.visualization.util.helpers.TreeLayoutSelector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,10 +127,6 @@ public class MultiRowTreeLayoutForestDemo extends JPanel {
     final ScalingControl scaler = new CrossoverScalingControl();
     vv.scaleToLayout();
 
-
-//    JPanel viewControls = new JPanel();
-//    viewControls.setLayout(new GridLayout(0, 1));
-
     Box controls = Box.createHorizontalBox();
     TreeLayoutSelector<String, Integer> treeLayoutSelector =
         TreeLayoutSelector.<String, Integer>builder(vv)
@@ -147,12 +140,15 @@ public class MultiRowTreeLayoutForestDemo extends JPanel {
 
     controls.add(ControlHelpers.getCenteredContainer("Layout Controls", treeLayoutSelector));
     controls.add(ControlHelpers.getZoomControls("Scale", vv));
-    controls.add(ControlHelpers.getCenteredContainer("Mouse Mode",ControlHelpers.getModeRadio(graphMouse)));
-    controls.add(           LensControlHelper.with(Box.createVerticalBox(),
-            ImmutableSortedMap.of(
+    controls.add(
+        ControlHelpers.getCenteredContainer("Mouse Mode", ControlHelpers.getModeRadio(graphMouse)));
+    controls.add(
+        LensControlHelper.with(
+                Box.createVerticalBox(),
+                ImmutableSortedMap.of(
                     "Hyperbolic View", hyperbolicViewSupport,
-                    "Hyperbolic Layout", hyperbolicSupport)
-    ).container("Lens Controls"));
+                    "Hyperbolic Layout", hyperbolicSupport))
+            .container("Lens Controls"));
 
     add(controls, BorderLayout.SOUTH);
   }

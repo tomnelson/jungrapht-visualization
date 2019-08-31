@@ -84,7 +84,9 @@ public class AnnotatingModalGraphMouse<V, E> extends AbstractModalGraphMouse
   /** create the plugins, and load the plugins for TRANSFORMING mode */
   @Override
   protected void loadPlugins() {
-    this.pickingPlugin = new SelectingGraphMousePlugin<V, E>(InputEvent.BUTTON1_DOWN_MASK, InputEvent.SHIFT_DOWN_MASK);
+    this.pickingPlugin =
+        new SelectingGraphMousePlugin<V, E>(
+            InputEvent.BUTTON1_DOWN_MASK, InputEvent.SHIFT_DOWN_MASK);
     this.animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<V, E>();
     this.translatingPlugin = new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
     this.scalingPlugin = new ScalingGraphMousePlugin(new CrossoverScalingControl(), 0, in, out);

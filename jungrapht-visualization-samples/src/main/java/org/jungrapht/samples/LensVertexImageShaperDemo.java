@@ -20,7 +20,6 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
-import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.visualization.LayeredIcon;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -46,6 +45,7 @@ import org.jungrapht.visualization.transform.LensSupport;
 import org.jungrapht.visualization.transform.MagnifyTransformer;
 import org.jungrapht.visualization.transform.shape.MagnifyImageLensSupport;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
+import org.jungrapht.visualization.util.helpers.ControlHelpers;
 
 /**
  * Demonstrates the use of images to represent graph vertices. The images are added to the
@@ -236,21 +236,23 @@ public class LensVertexImageShaperDemo extends JPanel {
     JButton none = new JButton("None");
     none.addActionListener(
         e -> {
-            magnifyViewSupport.deactivate();
-            magnifyLayoutSupport.deactivate();
+          magnifyViewSupport.deactivate();
+          magnifyLayoutSupport.deactivate();
         });
 
     final JButton magnifyView = new JButton("Magnified View");
-    magnifyView.addActionListener(e -> {
-      magnifyLayoutSupport.deactivate();
-      magnifyViewSupport.activate();
-    });
+    magnifyView.addActionListener(
+        e -> {
+          magnifyLayoutSupport.deactivate();
+          magnifyViewSupport.activate();
+        });
 
     final JButton magnifyModel = new JButton("Magnified Layout");
-    magnifyModel.addActionListener(e -> {
-      magnifyViewSupport.deactivate();
-      magnifyLayoutSupport.activate();
-    });
+    magnifyModel.addActionListener(
+        e -> {
+          magnifyViewSupport.deactivate();
+          magnifyLayoutSupport.activate();
+        });
 
     JMenuBar menubar = new JMenuBar();
     JMenu modeMenu = graphMouse.getModeMenu();

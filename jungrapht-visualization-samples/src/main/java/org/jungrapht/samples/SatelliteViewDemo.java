@@ -13,7 +13,6 @@ import java.awt.event.ItemEvent;
 import java.awt.geom.GeneralPath;
 import javax.swing.*;
 import org.jgrapht.Graph;
-import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.SatelliteVisualizationViewer;
@@ -28,6 +27,7 @@ import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.GradientVertexRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.transform.shape.ShapeTransformer;
+import org.jungrapht.visualization.util.helpers.ControlHelpers;
 
 /**
  * Demonstrates the construction of a graph visualization with a main and a satellite view. The
