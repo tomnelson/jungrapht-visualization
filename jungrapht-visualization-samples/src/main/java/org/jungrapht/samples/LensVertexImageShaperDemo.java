@@ -239,25 +239,27 @@ public class LensVertexImageShaperDemo extends JPanel {
     JButton none = new JButton("None");
     none.addActionListener(
         e -> {
-          if (magnifyViewSupport != null) {
             magnifyViewSupport.deactivate();
-          }
-          if (magnifyLayoutSupport != null) {
             magnifyLayoutSupport.deactivate();
-          }
         });
 
     final JButton magnifyView = new JButton("Magnified View");
-    magnifyView.addActionListener(e -> magnifyViewSupport.activate());
+    magnifyView.addActionListener(e -> {
+      magnifyLayoutSupport.deactivate();
+      magnifyViewSupport.activate();
+    });
 
     final JButton magnifyModel = new JButton("Magnified Layout");
-    magnifyModel.addActionListener(e -> magnifyLayoutSupport.activate());
+    magnifyModel.addActionListener(e -> {
+      magnifyViewSupport.deactivate();
+      magnifyLayoutSupport.activate();
+    });
 
     JMenuBar menubar = new JMenuBar();
     JMenu modeMenu = graphMouse.getModeMenu();
     menubar.add(modeMenu);
 
-    JPanel lensPanel = new JPanel(new GridLayout(2, 0));
+    JPanel lensPanel = new JPanel(new FlowLayout());
     lensPanel.setBorder(BorderFactory.createTitledBorder("Lens"));
     lensPanel.add(none);
     lensPanel.add(magnifyView);

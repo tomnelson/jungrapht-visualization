@@ -1,5 +1,8 @@
 package org.jungrapht.visualization.renderers;
 
+import static org.jungrapht.visualization.renderers.BiModalRenderer.HEAVYWEIGHT;
+import static org.jungrapht.visualization.renderers.BiModalRenderer.LIGHTWEIGHT;
+
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.HashMap;
@@ -16,6 +19,7 @@ import org.jungrapht.visualization.transform.Lens;
 import org.jungrapht.visualization.transform.MagnifyTransformer;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.transform.shape.MagnifyIconGraphics;
+
 // unused
 public class BiModalRendererDelegate<V, E> implements Renderer<V, E> {
 
@@ -28,8 +32,8 @@ public class BiModalRendererDelegate<V, E> implements Renderer<V, E> {
       Renderer<V, E> lightweightRenderer) {
     this.delegate = delegate;
     this.rendererMap = new HashMap<>();
-    rendererMap.put(BiModalRenderer.Mode.HEAVYWEIGHT, heavyweightRenderer);
-    rendererMap.put(BiModalRenderer.Mode.LIGHTWEIGHT, lightweightRenderer);
+    rendererMap.put(HEAVYWEIGHT, heavyweightRenderer);
+    rendererMap.put(LIGHTWEIGHT, lightweightRenderer);
   }
 
   public Supplier<Double> getScaleSupplier() {

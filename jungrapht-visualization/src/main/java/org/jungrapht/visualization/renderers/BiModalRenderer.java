@@ -48,9 +48,10 @@ import org.slf4j.LoggerFactory;
  * @param <V> the vertex type
  * @param <E> the edge type
  */
-public class BiModalRenderer<V, E>
-    implements ModalRenderer<V, E, BiModalRenderer.Mode>, ChangeListener {
+public class BiModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeListener {
 
+  public static final Mode LIGHTWEIGHT = new Mode();
+  public static final Mode HEAVYWEIGHT = new Mode();
   /**
    * Builder to create a configured instance of a BiModalRenderer
    *
@@ -86,7 +87,7 @@ public class BiModalRenderer<V, E>
      * @return this Builder
      */
     public B lightweightRenderer(Renderer<V, E> lightweightRenderer) {
-      rendererMap.put(Mode.LIGHTWEIGHT, lightweightRenderer);
+      rendererMap.put(LIGHTWEIGHT, lightweightRenderer);
       return self();
     }
 
@@ -95,7 +96,7 @@ public class BiModalRenderer<V, E>
      * @return
      */
     public B heavyweightRenderer(Renderer<V, E> heavyweightRenderer) {
-      rendererMap.put(Mode.HEAVYWEIGHT, heavyweightRenderer);
+      rendererMap.put(HEAVYWEIGHT, heavyweightRenderer);
       return self();
     }
 
@@ -112,12 +113,6 @@ public class BiModalRenderer<V, E>
    */
   public static <V, E> Builder<V, E, ?, ?> builder() {
     return new Builder();
-  }
-
-  /** the Modes for rendering */
-  public enum Mode {
-    HEAVYWEIGHT,
-    LIGHTWEIGHT
   }
 
   private static final Logger log = LoggerFactory.getLogger(BiModalRenderer.class);
@@ -160,11 +155,11 @@ public class BiModalRenderer<V, E>
   protected BiModalRenderer(JComponent component, Map<Mode, Renderer<V, E>> rendererMap) {
     this.component = component;
     this.rendererMap = rendererMap;
-    if (rendererMap.get(Mode.LIGHTWEIGHT) == null) {
-      rendererMap.put(Mode.LIGHTWEIGHT, new LightweightRenderer<>());
+    if (rendererMap.get(LIGHTWEIGHT) == null) {
+      rendererMap.put(LIGHTWEIGHT, new LightweightRenderer<>());
     }
-    if (rendererMap.get(Mode.HEAVYWEIGHT) == null) {
-      rendererMap.put(Mode.HEAVYWEIGHT, new HeavyweightRenderer<>());
+    if (rendererMap.get(HEAVYWEIGHT) == null) {
+      rendererMap.put(HEAVYWEIGHT, new HeavyweightRenderer<>());
     }
   }
 
@@ -193,7 +188,7 @@ public class BiModalRenderer<V, E>
 
   public Mode getMode() {
     if (mode == null) {
-      return Mode.HEAVYWEIGHT;
+      return HEAVYWEIGHT;
     }
     return mode;
   }
@@ -207,14 +202,14 @@ public class BiModalRenderer<V, E>
     log.trace("initialMode...");
     if (!this.countPredicate.test(countSupplier)) {
       // small graph, initial state is Heavyweight
-      return rendererMap.get(Mode.HEAVYWEIGHT);
+      return rendererMap.get(HEAVYWEIGHT);
     } else if (this.scalePredicate.test(scaleSupplier)) {
       // bigger graph, test the scale
       // not a small graph and the scale is small. use lightweight
-      return rendererMap.get(Mode.LIGHTWEIGHT);
+      return rendererMap.get(LIGHTWEIGHT);
     } else {
       // bigger graph, but the scale is big, use Heavyweight
-      return rendererMap.get(Mode.HEAVYWEIGHT);
+      return rendererMap.get(HEAVYWEIGHT);
     }
   }
 
@@ -226,7 +221,7 @@ public class BiModalRenderer<V, E>
       Spatial<E> edgeSpatial) {
 
     if (mode == null) {
-      setAntialias(renderContext, Mode.HEAVYWEIGHT);
+      setAntialias(renderContext, HEAVYWEIGHT);
       getInitialRenderer().render(renderContext, visualizationModel, vertexSpatial, edgeSpatial);
     } else {
       setAntialias(renderContext, mode);
@@ -235,7 +230,7 @@ public class BiModalRenderer<V, E>
   }
 
   private void setAntialias(RenderContext<V, E> renderContext, Mode mode) {
-    if (mode == Mode.HEAVYWEIGHT) {
+    if (mode == HEAVYWEIGHT) {
       renderContext
           .getGraphicsContext()
           .getRenderingHints()
@@ -476,21 +471,21 @@ public class BiModalRenderer<V, E>
   protected Mode getModeFor(Supplier<Double> scaleSupplier) {
     if (!this.countPredicate.test(this.countSupplier)) {
       // its a small graph, always use default renderer
-      return Mode.HEAVYWEIGHT;
+      return HEAVYWEIGHT;
     }
     // its a big graph, check the scale
     double scale = scaleSupplier.get();
     if (this.scalePredicate.test(scaleSupplier)) {
-      return Mode.LIGHTWEIGHT;
+      return LIGHTWEIGHT;
     } else {
-      return Mode.HEAVYWEIGHT;
+      return HEAVYWEIGHT;
     }
   }
 
   protected void manageMode() {
     if (!this.countPredicate.test(this.countSupplier)) {
       // its a small graph, always use default renderer
-      setMode(Mode.HEAVYWEIGHT);
+      setMode(HEAVYWEIGHT);
       component.repaint();
       return;
     }
@@ -498,7 +493,7 @@ public class BiModalRenderer<V, E>
     // its a big graph, check the scale
     if (this.scalePredicate.test(this.scaleSupplier)) {
       // the scale is small, use lightweight
-      setMode(Mode.LIGHTWEIGHT);
+      setMode(LIGHTWEIGHT);
       component.repaint();
       return;
     }
@@ -527,7 +522,7 @@ public class BiModalRenderer<V, E>
 
     Timer() {
       log.trace("timer start mode");
-      setMode(Mode.LIGHTWEIGHT);
+      setMode(LIGHTWEIGHT);
       component.repaint();
     }
 
@@ -550,9 +545,9 @@ public class BiModalRenderer<V, E>
 
       if (scalePredicate.test(scaleSupplier)) {
         // the scale is small, use lightweight
-        setMode(Mode.LIGHTWEIGHT);
+        setMode(LIGHTWEIGHT);
       } else {
-        setMode(Mode.HEAVYWEIGHT);
+        setMode(HEAVYWEIGHT);
       }
       done = true;
       component.repaint();

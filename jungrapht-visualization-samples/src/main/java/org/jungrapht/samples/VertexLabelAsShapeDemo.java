@@ -8,6 +8,8 @@
  */
 package org.jungrapht.samples;
 
+import static org.jungrapht.visualization.renderers.BiModalRenderer.HEAVYWEIGHT;
+
 import java.awt.*;
 import java.util.function.Function;
 import javax.swing.*;
@@ -23,7 +25,6 @@ import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.renderers.GradientVertexRenderer;
-import org.jungrapht.visualization.renderers.JLabelVertexLabelRenderer;
 import org.jungrapht.visualization.renderers.VertexLabelAsShapeRenderer;
 
 /**
@@ -70,13 +71,15 @@ public class VertexLabelAsShapeDemo extends JPanel {
             ((Function<String, String>) Object::toString)
                 .andThen(input -> "<html><center>Node<p>" + input));
     vv.getRenderContext().setVertexShapeFunction(vlasr);
-    vv.getRenderContext().setVertexLabelRenderer(new JLabelVertexLabelRenderer(Color.red));
+    //    vv.getRenderContext().setVertexLabelRenderer(new JLabelVertexLabelRenderer(Color.red));
     vv.getRenderContext().setEdgeDrawPaintFunction(e -> Color.yellow);
     vv.getRenderContext().setEdgeStrokeFunction(e -> new BasicStroke(2.5f));
 
     // customize the renderer
-    vv.getRenderer().setVertexRenderer(new GradientVertexRenderer<>(Color.gray, Color.white, true));
-    vv.getRenderer().setVertexLabelRenderer(vlasr);
+    vv.getRenderer()
+        .setVertexRenderer(
+            HEAVYWEIGHT, new GradientVertexRenderer<>(Color.gray, Color.white, true));
+    vv.getRenderer().setVertexLabelRenderer(HEAVYWEIGHT, vlasr);
 
     vv.setBackground(Color.black);
 

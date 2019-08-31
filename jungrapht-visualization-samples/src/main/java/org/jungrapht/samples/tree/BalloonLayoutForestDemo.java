@@ -127,10 +127,17 @@ public class BalloonLayoutForestDemo extends JPanel {
 
     JButton minus = new JButton("-");
     minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
-    final JRadioButton hyperView = new JRadioButton("Hyperbolic View");
-    hyperView.addActionListener(e -> hyperbolicViewSupport.activate());
+    final JButton hyperView = new JButton("Hyperbolic View");
+    hyperView.addActionListener(e -> {
+      hyperbolicSupport.deactivate();
+      hyperbolicViewSupport.activate();
+    });
     final JButton hyperLayout = new JButton("Hyperbolic Layout");
-    hyperLayout.addActionListener(e -> hyperbolicSupport.activate());
+    hyperLayout.addActionListener(e -> {
+      hyperbolicViewSupport.deactivate();
+      hyperbolicSupport.activate();
+
+    });
     final JButton noLens = new JButton("No Lens");
     noLens.addActionListener(
         e -> {

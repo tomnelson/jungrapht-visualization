@@ -8,7 +8,7 @@
  */
 package org.jungrapht.samples;
 
-import static org.jungrapht.visualization.renderers.BiModalRenderer.Mode.LIGHTWEIGHT;
+import static org.jungrapht.visualization.renderers.BiModalRenderer.LIGHTWEIGHT;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -190,11 +190,11 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
     magnifyModel.addActionListener(
         e -> SwingUtilities.invokeLater(() -> magnifyLayoutSupport.activate()));
 
-    JPanel lensPanel = new JPanel(new GridLayout(2, 0));
+    Box lensPanel = Box.createHorizontalBox();
     lensPanel.setBorder(BorderFactory.createTitledBorder("Lens"));
-    lensPanel.add(none);
     lensPanel.add(magnifyView);
     lensPanel.add(magnifyModel);
+    lensPanel.add(none);
     controls.add(lensPanel);
   }
 

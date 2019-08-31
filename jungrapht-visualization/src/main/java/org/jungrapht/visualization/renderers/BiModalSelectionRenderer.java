@@ -97,7 +97,7 @@ public class BiModalSelectionRenderer<V, E> extends BiModalRenderer<V, E> {
           double magnification = magnifyTransformer.getLens().getMagnification();
           double product = magnification * magnifyTransformer.getScale();
           // override for the magnifier scale. This may set the mode to Heavyweight inside the lens
-          BiModalRenderer.Mode mode = other.getModeFor(() -> product);
+          Mode mode = other.getModeFor(() -> product);
           rendererMap.get(mode).renderVertex(renderContext, visualizationModel, v);
         } else {
           rendererMap.get(other.getMode()).renderVertex(renderContext, visualizationModel, v);

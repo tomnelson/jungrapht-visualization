@@ -40,7 +40,7 @@ import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.util.Caching;
 import org.jungrapht.visualization.renderers.DefaultModalRenderer;
-import org.jungrapht.visualization.renderers.Renderer;
+import org.jungrapht.visualization.renderers.ModalRenderer;
 import org.jungrapht.visualization.selection.MultiMutableSelectedState;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 import org.jungrapht.visualization.selection.ShapePickSupport;
@@ -406,7 +406,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
   }
 
   @Override
-  public Renderer<V, E> getRenderer() {
+  public ModalRenderer<V, E> getRenderer() {
     return renderer;
   }
 

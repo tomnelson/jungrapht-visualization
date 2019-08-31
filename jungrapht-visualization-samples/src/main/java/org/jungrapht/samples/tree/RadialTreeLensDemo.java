@@ -107,10 +107,20 @@ public class RadialTreeLensDemo extends JPanel {
             new ModalLensGraphMouse());
 
     final JButton hyperView = new JButton("Hyperbolic View");
-    hyperView.addActionListener(e -> hyperbolicViewSupport.activate(true));
+    hyperView.addActionListener(e -> {
+      hyperbolicLayoutSupport.deactivate();
+      hyperbolicViewSupport.activate(true);
+    });
     final JButton hyperLayout = new JButton("Hyperbolic Layout");
-    hyperLayout.addActionListener(e -> hyperbolicLayoutSupport.activate(true));
-    final JRadioButton noLens = new JRadioButton("No Lens");
+    hyperLayout.addActionListener(e -> {
+      hyperbolicViewSupport.deactivate();
+      hyperbolicLayoutSupport.activate(true);
+    });
+    final JButton noLens = new JButton("No Lens");
+    noLens.addActionListener(e -> {
+      hyperbolicLayoutSupport.deactivate();
+      hyperbolicViewSupport.deactivate();
+    });
     noLens.setSelected(true);
 
     ButtonGroup radio = new ButtonGroup();
@@ -125,15 +135,15 @@ public class RadialTreeLensDemo extends JPanel {
     menubar.add(graphMouse.getModeMenu());
     visualizationScrollPane.setCorner(menubar);
 
-    JPanel controls = new JPanel(new GridLayout(1, 0));
-    JPanel hyperControls = new JPanel(new GridLayout(3, 2));
+    Box controls = Box.createHorizontalBox();
+    Box hyperControls = Box.createVerticalBox();
     hyperControls.setBorder(BorderFactory.createTitledBorder("Examiner Lens"));
     JPanel modeControls = new JPanel();
     modeControls.setBorder(BorderFactory.createTitledBorder("Mouse Mode"));
     modeControls.add(graphMouse.getModeComboBox());
     hyperControls.add(hyperView);
     hyperControls.add(hyperLayout);
-    //    hyperControls.add(noLens);
+    hyperControls.add(noLens);
 
     controls.add(ControlHelpers.getZoomControls(vv, "Zoom"));
     controls.add(hyperControls);

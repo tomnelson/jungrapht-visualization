@@ -12,6 +12,8 @@ import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -181,6 +183,7 @@ public class LensDemo extends JPanel {
         .getLens()
         .setLensShape(magnifyViewSupport.getLensTransformer().getLens().getLensShape());
 
+    List<LensSupport> lenses = List.of(hyperbolicLayoutSupport,hyperbolicViewSupport,magnifyViewSupport,magnifyLayoutSupport);
     final ScalingControl scaler = new CrossoverScalingControl();
 
     JButton plus = new JButton("+");
@@ -191,32 +194,31 @@ public class LensDemo extends JPanel {
 
     JButton normal = new JButton("None");
     normal.addActionListener(
-        e -> {
-          if (hyperbolicViewSupport != null) {
-            hyperbolicViewSupport.deactivate();
-          }
-          if (hyperbolicLayoutSupport != null) {
-            hyperbolicLayoutSupport.deactivate();
-          }
-          if (magnifyViewSupport != null) {
-            magnifyViewSupport.deactivate();
-          }
-          if (magnifyLayoutSupport != null) {
-            magnifyLayoutSupport.deactivate();
-          }
-        });
+            e -> lenses.stream().forEach(LensSupport::deactivate));
 
     final JButton hyperView = new JButton("Hyperbolic View");
-    hyperView.addActionListener(e -> hyperbolicViewSupport.activate());
+    hyperView.addActionListener(e -> {
+      lenses.stream().forEach(LensSupport::deactivate);
+      hyperbolicViewSupport.activate();
+    });
 
     final JButton hyperModel = new JButton("Hyperbolic Layout");
-    hyperModel.addActionListener(e -> hyperbolicLayoutSupport.activate());
+    hyperModel.addActionListener(e -> {
+      lenses.stream().forEach(LensSupport::deactivate);
+      hyperbolicLayoutSupport.activate();
+    });
 
     final JButton magnifyView = new JButton("Magnified View");
-    magnifyView.addActionListener(e -> magnifyViewSupport.activate());
+    magnifyView.addActionListener(e -> {
+      lenses.stream().forEach(LensSupport::deactivate);
+      magnifyViewSupport.activate();
+    });
 
     final JButton magnifyModel = new JButton("Magnified Layout");
-    magnifyModel.addActionListener(e -> magnifyLayoutSupport.activate());
+    magnifyModel.addActionListener(e -> {
+      lenses.stream().forEach(LensSupport::deactivate);
+      magnifyLayoutSupport.activate();
+    });
 
     JLabel modeLabel = new JLabel("     Mode Menu >>");
     modeLabel.setUI(new VerticalLabelUI(false));
@@ -269,21 +271,23 @@ public class LensDemo extends JPanel {
     visualizationScrollPane.setCorner(menubar);
 
     Box controls = Box.createHorizontalBox();
-    JPanel zoomControls = new JPanel(new GridLayout(2, 1));
+    JPanel zoomControls = new JPanel(new FlowLayout());
     zoomControls.setBorder(BorderFactory.createTitledBorder("Zoom"));
-    JPanel hyperControls = new JPanel(new GridLayout(3, 2));
+    JPanel hyperControls = new JPanel(new GridLayout(2, 0));
+    JPanel topSubPanel = new JPanel();
+    JPanel bottomSubPanel = new JPanel();
     hyperControls.setBorder(BorderFactory.createTitledBorder("Examiner Lens"));
     zoomControls.add(plus);
     zoomControls.add(minus);
+    hyperControls.add(topSubPanel);
+    hyperControls.add(bottomSubPanel);
+    topSubPanel.add(normal);
 
-    hyperControls.add(normal);
-    hyperControls.add(new JLabel());
+    topSubPanel.add(hyperModel);
+    bottomSubPanel.add(magnifyModel);
 
-    hyperControls.add(hyperModel);
-    hyperControls.add(magnifyModel);
-
-    hyperControls.add(hyperView);
-    hyperControls.add(magnifyView);
+    topSubPanel.add(hyperView);
+    bottomSubPanel.add(magnifyView);
 
     controls.add(zoomControls);
     controls.add(hyperControls);
