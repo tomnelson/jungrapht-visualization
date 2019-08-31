@@ -100,11 +100,6 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
     final ScalingControl scaler = new CrossoverScalingControl();
     vv.scaleToLayout(scaler);
 
-    JButton plus = new JButton("+");
-    plus.addActionListener(e -> scaler.scale(vv, 1.1f, vv.getCenter()));
-    JButton minus = new JButton("-");
-    minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
-
     JComboBox modeBox = graphMouse.getModeComboBox();
     modeBox.addItemListener(
         ((DefaultModalGraphMouse<Integer, DefaultEdge>) vv.getGraphMouse()).getModeListener());

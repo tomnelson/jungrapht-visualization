@@ -34,6 +34,7 @@ import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.renderers.GradientVertexRenderer;
 import org.jungrapht.visualization.renderers.HeavyweightVertexLabelRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
+import org.jungrapht.visualization.util.helpers.ControlHelpers;
 
 /**
  * Shows a graph overlaid on a world map image. Scaling of the graph also scales the image
@@ -152,12 +153,6 @@ public class WorldMapGraphDemo extends JPanel {
 
     final ScalingControl scaler = new CrossoverScalingControl();
 
-    JButton plus = new JButton("+");
-    plus.addActionListener(e -> scaler.scale(vv, 1.1f, vv.getCenter()));
-
-    JButton minus = new JButton("-");
-    minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
-
     JButton reset = new JButton("reset");
     reset.addActionListener(
         e -> {
@@ -172,8 +167,7 @@ public class WorldMapGraphDemo extends JPanel {
         });
 
     JPanel controls = new JPanel();
-    controls.add(plus);
-    controls.add(minus);
+    controls.add(ControlHelpers.getZoomControls("Zoom", vv));
     controls.add(reset);
     add(controls, BorderLayout.SOUTH);
   }

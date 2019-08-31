@@ -94,12 +94,6 @@ public class EdgeLabelDemo extends JPanel {
     final DefaultModalGraphMouse<Integer, Number> graphMouse = new DefaultModalGraphMouse<>();
     vv.setGraphMouse(graphMouse);
 
-    JButton plus = new JButton("+");
-    plus.addActionListener(e -> scaler.scale(vv, 1.1f, vv.getCenter()));
-
-    JButton minus = new JButton("-");
-    minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
-
     ButtonGroup radio = new ButtonGroup();
     JRadioButton lineButton = new JRadioButton("Line");
     lineButton.addItemListener(

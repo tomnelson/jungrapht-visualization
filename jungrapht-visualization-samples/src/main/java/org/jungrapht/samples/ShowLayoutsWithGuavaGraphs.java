@@ -23,9 +23,7 @@ import org.jgrapht.graph.guava.MutableGraphAdapter;
 import org.jungrapht.samples.spatial.RTreeVisualization;
 import org.jungrapht.samples.util.TestGuavaGraphs;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
-import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
@@ -35,6 +33,7 @@ import org.jungrapht.visualization.layout.algorithms.TreeLayout;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.LoadingCacheLayoutModel;
+import org.jungrapht.visualization.util.helpers.ControlHelpers;
 import org.jungrapht.visualization.util.helpers.LayoutHelper;
 import org.jungrapht.visualization.util.helpers.SpanningTreeAdapter;
 
@@ -94,13 +93,6 @@ public class ShowLayoutsWithGuavaGraphs extends JPanel {
             vertex
                 + ". with neighbors:"
                 + Graphs.neighborListOf(vv.getVisualizationModel().getGraph(), vertex));
-
-    final ScalingControl scaler = new CrossoverScalingControl();
-
-    JButton plus = new JButton("+");
-    plus.addActionListener(e -> scaler.scale(vv, 1.1f, vv.getCenter()));
-    JButton minus = new JButton("-");
-    minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
 
     JComboBox modeBox = graphMouse.getModeComboBox();
     modeBox.addItemListener(
@@ -178,8 +170,7 @@ public class ShowLayoutsWithGuavaGraphs extends JPanel {
     topControls.add(jcb);
     topControls.add(graph_chooser);
     bottomControls.add(animateLayoutTransition);
-    bottomControls.add(plus);
-    bottomControls.add(minus);
+    bottomControls.add(ControlHelpers.getZoomControls("Zoom", vv));
     bottomControls.add(modeBox);
     bottomControls.add(showRTree);
   }

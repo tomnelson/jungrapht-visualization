@@ -90,12 +90,6 @@ public class VertexLabelPositionDemo extends JPanel {
 
     final ScalingControl scaler = new CrossoverScalingControl();
 
-    JButton plus = new JButton("+");
-    plus.addActionListener(e -> scaler.scale(vv, 1.1f, vv.getCenter()));
-
-    JButton minus = new JButton("-");
-    minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
-
     JPanel positionPanel = new JPanel();
     JMenuBar menubar = new JMenuBar();
     menubar.add(graphMouse.getModeMenu());

@@ -8,12 +8,12 @@
  */
 package org.jungrapht.samples;
 
+import com.google.common.collect.ImmutableSortedMap;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import javax.swing.*;
@@ -26,7 +26,6 @@ import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.LensMagnificationGraphMousePlugin;
 import org.jungrapht.visualization.control.ModalLensGraphMouse;
@@ -48,6 +47,8 @@ import org.jungrapht.visualization.transform.MagnifyTransformer;
 import org.jungrapht.visualization.transform.shape.HyperbolicShapeTransformer;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
 import org.jungrapht.visualization.transform.shape.ViewLensSupport;
+import org.jungrapht.visualization.util.helpers.ControlHelpers;
+import org.jungrapht.visualization.util.helpers.LensControlHelper;
 
 /**
  * Demonstrates the use of <code>HyperbolicTransform</code> and <code>MagnifyTransform</code>
@@ -182,51 +183,6 @@ public class LensDemo extends JPanel {
         .getLens()
         .setLensShape(magnifyViewSupport.getLensTransformer().getLens().getLensShape());
 
-    List<LensSupport> lenses =
-        List.of(
-            hyperbolicLayoutSupport,
-            hyperbolicViewSupport,
-            magnifyViewSupport,
-            magnifyLayoutSupport);
-    final ScalingControl scaler = new CrossoverScalingControl();
-
-    JButton plus = new JButton("+");
-    plus.addActionListener(e -> scaler.scale(vv, 1.1f, vv.getCenter()));
-
-    JButton minus = new JButton("-");
-    minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
-
-    JButton normal = new JButton("None");
-    normal.addActionListener(e -> lenses.stream().forEach(LensSupport::deactivate));
-
-    final JButton hyperView = new JButton("Hyperbolic View");
-    hyperView.addActionListener(
-        e -> {
-          lenses.stream().forEach(LensSupport::deactivate);
-          hyperbolicViewSupport.activate();
-        });
-
-    final JButton hyperModel = new JButton("Hyperbolic Layout");
-    hyperModel.addActionListener(
-        e -> {
-          lenses.stream().forEach(LensSupport::deactivate);
-          hyperbolicLayoutSupport.activate();
-        });
-
-    final JButton magnifyView = new JButton("Magnified View");
-    magnifyView.addActionListener(
-        e -> {
-          lenses.stream().forEach(LensSupport::deactivate);
-          magnifyViewSupport.activate();
-        });
-
-    final JButton magnifyModel = new JButton("Magnified Layout");
-    magnifyModel.addActionListener(
-        e -> {
-          lenses.stream().forEach(LensSupport::deactivate);
-          magnifyLayoutSupport.activate();
-        });
-
     JLabel modeLabel = new JLabel("     Mode Menu >>");
     modeLabel.setUI(new VerticalLabelUI(false));
 
@@ -278,26 +234,20 @@ public class LensDemo extends JPanel {
     visualizationScrollPane.setCorner(menubar);
 
     Box controls = Box.createHorizontalBox();
-    JPanel zoomControls = new JPanel(new FlowLayout());
-    zoomControls.setBorder(BorderFactory.createTitledBorder("Zoom"));
-    JPanel hyperControls = new JPanel(new GridLayout(2, 0));
-    JPanel topSubPanel = new JPanel();
-    JPanel bottomSubPanel = new JPanel();
-    hyperControls.setBorder(BorderFactory.createTitledBorder("Examiner Lens"));
-    zoomControls.add(plus);
-    zoomControls.add(minus);
-    hyperControls.add(topSubPanel);
-    hyperControls.add(bottomSubPanel);
-    topSubPanel.add(normal);
-
-    topSubPanel.add(hyperModel);
-    bottomSubPanel.add(magnifyModel);
-
-    topSubPanel.add(hyperView);
-    bottomSubPanel.add(magnifyView);
-
-    controls.add(zoomControls);
-    controls.add(hyperControls);
+    controls.add(ControlHelpers.getZoomControls("Zoom", vv));
+    controls.add(
+        LensControlHelper.with(
+                Box.createVerticalBox(),
+                ImmutableSortedMap.of(
+                    "Hyperbolic View",
+                    hyperbolicViewSupport,
+                    "Hyperbolic Layout",
+                    hyperbolicLayoutSupport,
+                    "Magnified View",
+                    magnifyViewSupport,
+                    "Magnified Layout",
+                    magnifyLayoutSupport))
+            .container("Lens Controls"));
     controls.add(modePanel);
     controls.add(modeLabel);
     add(controls, BorderLayout.SOUTH);

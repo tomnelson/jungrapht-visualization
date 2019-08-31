@@ -125,12 +125,6 @@ public class BalloonLayoutForestDemo extends JPanel {
     final ScalingControl scaler = new CrossoverScalingControl();
     vv.scaleToLayout(new CrossoverScalingControl());
 
-    JButton plus = new JButton("+");
-    plus.addActionListener(e -> scaler.scale(vv, 1.1f, vv.getCenter()));
-
-    JButton minus = new JButton("-");
-    minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
-
     JComponent lensBox =
         LensControlHelper.with(
                 Box.createVerticalBox(),
