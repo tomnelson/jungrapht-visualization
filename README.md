@@ -8,6 +8,13 @@
 
 JUNGRAPHT-VISUALIZATION includes new performance enhancements for visualization of large networks, including R*Tree for visualization, Barnes-Hut Quad Tree for force-directed layouts, and a lightweight rendering layer that can swap in while graphs are being animated or when they are zoomed out to a point where details are very small.
 
+### Latest Release
+
+The most recent version of JUNGRAPHT-VISUALIZATION is [version 1.0-RC1](https://github.com/tomnelson/jungrapht-visualization/releases/tag/jungrapht-visualization-1.0-RC1), released 1 September 2019.
+*   [Javadoc](http://tomnelson.github.io/jungrapht-visualization/javadoc/index.html)
+*   [Maven Search Repository](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.tomnelson.jungrapht-visualization%22%20AND%20v%3A%222.1.1%22%20AND%20(a%3A%22jungrapht-visualization%22%20OR%20a%3A%22jungrapht-visualization-samples%22))
+    *   `jungrapht-visualization`: [jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization/jungrapht-visualization/1.0-RC1/jungrapht-visualization-1.0-RC1.jar), [source jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization/jungrapht-visualization/1.0-RC1/jungrapht-visualization-1.0-RC1-sources.jar), [documentation jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization/jungrapht-visualization/1.0-RC1/jungrapht-visualization-1.0-RC1-javadoc.jar)
+    *   `jungrapht-visualization-samples`: [jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization/jungrapht-visualization-samples/1.0-RC1/jungrapht-visualization-samples-1.0-RC1.jar), [source jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization/jungrapht-visualization-samples/1.0-RC1/jungrapht-visualization-samples-1.0-RC1-sources.jar), [documentation jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization/jungrapht-visualization-samples/1.0-RC1/jungrapht-visualization-samples-1.0-RC1-javadoc.jar)
 
 To add a dependency on this release of JUNGRAPHT-VISUALIZATION using Maven, use the following:
 
@@ -15,7 +22,7 @@ To add a dependency on this release of JUNGRAPHT-VISUALIZATION using Maven, use 
 <dependency>
   <groupId>com.github.tomnelson</groupId>
   <artifactId>jungrapht-visualization</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0-RC1</version>
 </dependency>
 ```
 
