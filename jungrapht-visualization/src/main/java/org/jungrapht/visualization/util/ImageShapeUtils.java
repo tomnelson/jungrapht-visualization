@@ -93,9 +93,8 @@ public class ImageShapeUtils {
       Graphics2D g = smaller.createGraphics();
       AffineTransform at = AffineTransform.getScaleInstance(max / width, max / height);
       AffineTransform back = AffineTransform.getScaleInstance(width / max, height / max);
-      Graphics2D g2 = g;
-      g2.drawImage(image, at, null);
-      g2.dispose();
+      g.drawImage(image, at, null);
+      g.dispose();
       return back.createTransformedShape(getShape(smaller));
     } else {
       return FourPassImageShaper.getShape(image);

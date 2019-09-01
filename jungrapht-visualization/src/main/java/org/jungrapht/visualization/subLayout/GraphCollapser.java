@@ -74,7 +74,7 @@ public class GraphCollapser<E> {
         graph.addEdge(u, v, e);
       }
     }
-    log.trace("collapsed graph is {}" + graph);
+    log.trace("collapsed graph is {}", graph);
     return graph;
   }
 

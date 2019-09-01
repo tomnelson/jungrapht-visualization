@@ -1,6 +1,7 @@
 package org.jungrapht.samples.large;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSortedMap;
 import com.google.common.collect.Sets;
 import java.awt.*;
 import java.io.InputStream;
@@ -20,9 +21,12 @@ import org.jgrapht.io.EdgeProvider;
 import org.jgrapht.io.GmlImporter;
 import org.jgrapht.io.VertexProvider;
 import org.jungrapht.samples.spatial.RTreeVisualization;
+import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
+import org.jungrapht.visualization.control.LensMagnificationGraphMousePlugin;
+import org.jungrapht.visualization.control.ModalLensGraphMouse;
 import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -33,8 +37,17 @@ import org.jungrapht.visualization.layout.algorithms.TreeLayout;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.LoadingCacheLayoutModel;
+import org.jungrapht.visualization.transform.HyperbolicTransformer;
+import org.jungrapht.visualization.transform.LayoutLensSupport;
+import org.jungrapht.visualization.transform.Lens;
+import org.jungrapht.visualization.transform.LensSupport;
+import org.jungrapht.visualization.transform.MagnifyTransformer;
+import org.jungrapht.visualization.transform.shape.HyperbolicShapeTransformer;
+import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
+import org.jungrapht.visualization.transform.shape.ViewLensSupport;
 import org.jungrapht.visualization.util.helpers.ControlHelpers;
 import org.jungrapht.visualization.util.helpers.LayoutHelper;
+import org.jungrapht.visualization.util.helpers.LensControlHelper;
 import org.jungrapht.visualization.util.helpers.SpanningTreeAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,7 +84,7 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
   LayoutPaintable.BalloonRings balloonLayoutRings;
   LayoutPaintable.RadialRings radialLayoutRings;
 
-  public ShowLayoutsWithJGraphtIO() throws Exception {
+  public ShowLayoutsWithJGraphtIO() {
 
     Graph<String, DefaultEdge> graph = new SimpleGraph<>(DefaultEdge.class);
     JPanel container = new JPanel(new BorderLayout());
@@ -192,13 +205,86 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
 
     layoutComboBox.setSelectedItem(LayoutHelper.Layouts.FR_BH_VISITOR);
 
-    JPanel control_panel = new JPanel(new GridLayout(2, 1));
+    // create a lens to share between the two hyperbolic transformers
+    LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
+    Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
+    Lens lens = new Lens(d); /* provides a Hyperbolic lens for the view */
+    LensSupport<ModalLensGraphMouse> hyperbolicViewSupport =
+        new ViewLensSupport<>(
+            vv,
+            new HyperbolicShapeTransformer(
+                lens,
+                vv.getRenderContext()
+                    .getMultiLayerTransformer()
+                    .getTransformer(MultiLayerTransformer.Layer.VIEW)),
+            new ModalLensGraphMouse());
+    LensSupport<ModalLensGraphMouse> hyperbolicLayoutSupport =
+        new LayoutLensSupport<>(
+            vv,
+            new HyperbolicTransformer(
+                lens,
+                vv.getRenderContext()
+                    .getMultiLayerTransformer()
+                    .getTransformer(MultiLayerTransformer.Layer.LAYOUT)),
+            new ModalLensGraphMouse());
+
+    // the magnification lens uses a different magnification than the hyperbolic lens
+    // create a new one to share between the two magnigy transformers
+    lens = new Lens(d);
+    lens.setMagnification(3.f);
+    LensSupport<ModalLensGraphMouse> magnifyViewSupport =
+        new ViewLensSupport<>(
+            vv,
+            new MagnifyShapeTransformer(
+                lens,
+                vv.getRenderContext()
+                    .getMultiLayerTransformer()
+                    .getTransformer(MultiLayerTransformer.Layer.VIEW)),
+            new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)));
+    LensSupport<ModalLensGraphMouse> magnifyLayoutSupport =
+        new LayoutLensSupport<>(
+            vv,
+            new MagnifyTransformer(
+                lens,
+                vv.getRenderContext()
+                    .getMultiLayerTransformer()
+                    .getTransformer(MultiLayerTransformer.Layer.LAYOUT)),
+            new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)));
+    hyperbolicLayoutSupport
+        .getLensTransformer()
+        .getLens()
+        .setLensShape(hyperbolicViewSupport.getLensTransformer().getLens().getLensShape());
+    magnifyViewSupport
+        .getLensTransformer()
+        .getLens()
+        .setLensShape(hyperbolicLayoutSupport.getLensTransformer().getLens().getLensShape());
+    magnifyLayoutSupport
+        .getLensTransformer()
+        .getLens()
+        .setLensShape(magnifyViewSupport.getLensTransformer().getLens().getLensShape());
+
+    graphMouse.addItemListener(hyperbolicLayoutSupport.getGraphMouse().getModeListener());
+    graphMouse.addItemListener(hyperbolicViewSupport.getGraphMouse().getModeListener());
+    graphMouse.addItemListener(magnifyLayoutSupport.getGraphMouse().getModeListener());
+    graphMouse.addItemListener(magnifyViewSupport.getGraphMouse().getModeListener());
+
+    JComponent lensBox =
+        LensControlHelper.with(
+                Box.createVerticalBox(),
+                ImmutableSortedMap.of(
+                    "Hyperbolic View", hyperbolicViewSupport,
+                    "Hyperbolic Layout", hyperbolicLayoutSupport,
+                    "Magnified View", magnifyViewSupport,
+                    "Magnified Layout", magnifyLayoutSupport))
+            .container("Lens Controls");
+
+    JPanel controlPanel = new JPanel(new GridLayout(2, 1));
     JComponent top =
         ControlHelpers.getContainer(
             Box.createHorizontalBox(),
             ControlHelpers.getCenteredContainer("Layouts", layoutComboBox),
             ControlHelpers.getCenteredContainer("Graphs", graphComboBox));
-    control_panel.add(top);
+    controlPanel.add(top);
 
     JButton showRTree = new JButton("Show RTree");
     showRTree.addActionListener(e -> RTreeVisualization.showRTree(vv));
@@ -208,10 +294,11 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
             Box.createHorizontalBox(),
             ControlHelpers.getZoomControls("Scale", vv),
             ControlHelpers.getCenteredContainer("Mouse Mode", modeBox),
+            lensBox,
             ControlHelpers.getCenteredContainer(
                 "Effects", Box.createVerticalBox(), showRTree, animateLayoutTransition));
-    control_panel.add(bottom);
-    container.add(control_panel, BorderLayout.NORTH);
+    controlPanel.add(bottom);
+    container.add(controlPanel, BorderLayout.NORTH);
 
     setTitle(
         "Graph With "
@@ -228,8 +315,8 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
   void clear(Graph graph) {
     Set edges = Sets.newHashSet(graph.edgeSet());
     Set vertices = Sets.newHashSet(graph.vertexSet());
-    edges.stream().forEach(graph::removeEdge);
-    vertices.stream().forEach(graph::removeVertex);
+    edges.forEach(graph::removeEdge);
+    vertices.forEach(graph::removeVertex);
   }
 
   LayoutModel getTreeLayoutPositions(

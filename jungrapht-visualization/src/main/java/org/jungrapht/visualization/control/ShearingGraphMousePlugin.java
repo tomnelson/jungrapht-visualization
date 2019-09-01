@@ -43,7 +43,7 @@ public class ShearingGraphMousePlugin extends AbstractGraphMousePlugin
 
   static {
     if (System.getProperty("os.name").startsWith("Mac")) {
-      mask = MouseEvent.META_MASK;
+      mask = MouseEvent.META_DOWN_MASK;
     }
   }
   /** create an instance with default modifier values */
@@ -61,8 +61,7 @@ public class ShearingGraphMousePlugin extends AbstractGraphMousePlugin
     Dimension cd = Toolkit.getDefaultToolkit().getBestCursorSize(16, 16);
     BufferedImage cursorImage = new BufferedImage(cd.width, cd.height, BufferedImage.TYPE_INT_ARGB);
     Graphics2D g = cursorImage.createGraphics();
-    Graphics2D g2 = g;
-    g2.addRenderingHints(
+    g.addRenderingHints(
         Collections.singletonMap(
             RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON));
     g.setColor(new Color(0, 0, 0, 0));
@@ -74,7 +73,7 @@ public class ShearingGraphMousePlugin extends AbstractGraphMousePlugin
     int bottom = 15;
 
     g.setColor(Color.white);
-    g2.setStroke(new BasicStroke(3));
+    g.setStroke(new BasicStroke(3));
     g.drawLine(left + 2, top + 5, right - 2, top + 5);
     g.drawLine(left + 2, bottom - 5, right - 2, bottom - 5);
     g.drawLine(left + 2, top + 5, left + 4, top + 3);
@@ -83,7 +82,7 @@ public class ShearingGraphMousePlugin extends AbstractGraphMousePlugin
     g.drawLine(right - 2, bottom - 5, right - 4, bottom - 7);
 
     g.setColor(Color.black);
-    g2.setStroke(new BasicStroke(1));
+    g.setStroke(new BasicStroke(1));
     g.drawLine(left + 2, top + 5, right - 2, top + 5);
     g.drawLine(left + 2, bottom - 5, right - 2, bottom - 5);
     g.drawLine(left + 2, top + 5, left + 4, top + 3);

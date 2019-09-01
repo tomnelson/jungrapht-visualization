@@ -164,11 +164,9 @@ public class MagnifyShapeTransformer extends MagnifyTransformer
     Point2D viewCenter = lens.getCenter();
     double viewRadius = lens.getRadius();
     double ratio = lens.getRatio();
-    // transform the point from the graph to the view
-    Point2D viewPoint = graphPoint;
     // calculate point from center
-    double dx = viewPoint.getX() - viewCenter.getX();
-    double dy = viewPoint.getY() - viewCenter.getY();
+    double dx = graphPoint.getX() - viewCenter.getX();
+    double dy = graphPoint.getY() - viewCenter.getY();
     // factor out ellipse
     dx *= ratio;
     org.jungrapht.visualization.layout.model.Point pointFromCenter =
@@ -178,7 +176,7 @@ public class MagnifyShapeTransformer extends MagnifyTransformer
     double theta = polar.theta;
     double radius = polar.radius;
     if (radius > viewRadius) {
-      return viewPoint;
+      return graphPoint;
     }
 
     double mag = lens.getMagnification();

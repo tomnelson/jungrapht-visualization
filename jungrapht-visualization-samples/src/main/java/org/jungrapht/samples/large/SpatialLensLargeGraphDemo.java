@@ -27,11 +27,9 @@ import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.LensMagnificationGraphMousePlugin;
 import org.jungrapht.visualization.control.ModalLensGraphMouse;
-import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFRRepulsion;
@@ -77,8 +75,6 @@ public class SpatialLensLargeGraphDemo extends JPanel {
   LensSupport<ModalLensGraphMouse> hyperbolicLayoutSupport;
   /** provides a magnification lens for the model */
   LensSupport<ModalLensGraphMouse> magnifyLayoutSupport;
-
-  ScalingControl scaler;
 
   public SpatialLensLargeGraphDemo() {
     setLayout(new BorderLayout());
@@ -161,8 +157,6 @@ public class SpatialLensLargeGraphDemo extends JPanel {
         .getLens()
         .setLensShape(magnifyViewSupport.getLensTransformer().getLens().getLensShape());
 
-    final ScalingControl scaler = new CrossoverScalingControl();
-
     JComponent lensBox =
         LensControlHelper.with(
                 Box.createVerticalBox(),
@@ -173,13 +167,13 @@ public class SpatialLensLargeGraphDemo extends JPanel {
                     "Magnified Layout", magnifyLayoutSupport))
             .container("Lens Controls");
 
-    JLabel modeLabel = new JLabel("     Mode Menu >>");
-    modeLabel.setUI(new VerticalLabelUI(false));
-
     graphMouse.addItemListener(hyperbolicLayoutSupport.getGraphMouse().getModeListener());
     graphMouse.addItemListener(hyperbolicViewSupport.getGraphMouse().getModeListener());
     graphMouse.addItemListener(magnifyLayoutSupport.getGraphMouse().getModeListener());
     graphMouse.addItemListener(magnifyViewSupport.getGraphMouse().getModeListener());
+
+    JLabel modeLabel = new JLabel("     Mode Menu >>");
+    modeLabel.setUI(new VerticalLabelUI(false));
 
     JMenuBar menubar = new JMenuBar();
     menubar.add(graphMouse.getModeMenu());

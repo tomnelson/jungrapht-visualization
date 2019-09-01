@@ -97,13 +97,11 @@ public class Dijkstra<V> {
     Queue<V> queue = new LinkedList<>();
     Map<V, Integer> distances = Maps.newHashMap();
     Map<V, V> previous = Maps.newLinkedHashMap();
-    //    Map<V, Boolean> visitedMap = Maps.newHashMap();
 
     for (V vertex : graph.vertexSet()) {
       distances.put(vertex, Integer.MAX_VALUE);
       previous.put(vertex, null);
       queue.add(vertex);
-      //        visitedMap.put(vertex, false);
     }
 
     distances.put(source, 0);

@@ -16,9 +16,7 @@ import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.AbstractModalGraphMouse;
-import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
-import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.Renderer;
@@ -42,8 +40,6 @@ public class VertexLabelPositionDemo extends JPanel {
 
   /** the visual component and renderer for the graph */
   VisualizationViewer<String, Number> vv;
-
-  ScalingControl scaler;
 
   /** create an instance of a simple graph with controls to demo the zoomand hyperbolic features. */
   public VertexLabelPositionDemo() {
@@ -87,8 +83,6 @@ public class VertexLabelPositionDemo extends JPanel {
 
     vv.setGraphMouse(graphMouse);
     vv.addKeyListener(graphMouse.getModeKeyListener());
-
-    final ScalingControl scaler = new CrossoverScalingControl();
 
     JPanel positionPanel = new JPanel();
     JMenuBar menubar = new JMenuBar();

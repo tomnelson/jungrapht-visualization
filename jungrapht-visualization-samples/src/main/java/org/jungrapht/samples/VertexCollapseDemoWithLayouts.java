@@ -325,7 +325,7 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
    * sides corresponds to the number of vertices that were collapsed into the vertex represented by
    * this shape.
    */
-  class ClusterShapeFunction extends EllipseShapeFunction<Collapsable<?>> {
+  static class ClusterShapeFunction extends EllipseShapeFunction<Collapsable<?>> {
 
     ClusterShapeFunction() {
       setSizeFunction(new ClusterSizeFunction(20));

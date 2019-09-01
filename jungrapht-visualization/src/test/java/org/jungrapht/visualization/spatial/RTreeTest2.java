@@ -5,6 +5,7 @@ import static com.google.common.truth.Truth.assertThat;
 import com.google.common.collect.Maps;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -90,7 +91,6 @@ public class RTreeTest2 {
       rTree = RTree.add(rTree, splitterContext, "N" + i, r);
       log.trace("tree:" + rTree);
     }
-    log.trace("root:{}");
     testAreas(rTree);
 
     log.info("after adding 100 'N' nodes, tree size is {}", rTree.count());
@@ -256,10 +256,10 @@ public class RTreeTest2 {
   private void stuff() {
     Collection<String> strings = new HashSet<>();
     strings.add("1");
-    List<String> list = strings.stream().collect(Collectors.toList());
+    List<String> list = new ArrayList<>(strings);
 
     List<Map.Entry<String, String>> entryList =
-        new HashMap<String, String>().entrySet().stream().collect(Collectors.toList());
+        new ArrayList<>(new HashMap<String, String>().entrySet());
 
     List<String> valueList =
         new HashMap<String, String>()

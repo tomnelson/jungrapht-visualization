@@ -20,15 +20,11 @@ import org.jungrapht.visualization.layout.quadtree.Node;
 class ForceObjectIterator<T> implements Iterator<ForceObject<T>> {
 
   private BarnesHutQuadTree<T> tree;
-  private ForceObject<T> target;
-  private ForceObject<T> next;
-  private Set<ForceObject<T>> forceObjects;
   private Iterator<ForceObject<T>> iterator;
 
   public ForceObjectIterator(BarnesHutQuadTree<T> tree, ForceObject<T> target) {
     this.tree = tree;
-    this.target = target;
-    this.forceObjects = getForceObjectsFor(Sets.newLinkedHashSet(), target);
+    Set<ForceObject<T>> forceObjects = getForceObjectsFor(Sets.newLinkedHashSet(), target);
     this.iterator = forceObjects.iterator();
   }
 

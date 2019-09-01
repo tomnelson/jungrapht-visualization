@@ -93,7 +93,7 @@ public class BiModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeListene
 
     /**
      * @param heavyweightRenderer the value for the HEAVYWEIGHT key
-     * @return
+     * @return this Builder
      */
     public B heavyweightRenderer(Renderer<V, E> heavyweightRenderer) {
       rendererMap.put(HEAVYWEIGHT, heavyweightRenderer);

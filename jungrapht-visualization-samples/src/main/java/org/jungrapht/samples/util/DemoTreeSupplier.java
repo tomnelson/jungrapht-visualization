@@ -373,10 +373,9 @@ public class DemoTreeSupplier {
     Graph<String, Integer> directedGraph =
         GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.directedSimple())
             .buildGraph();
-    graph.vertexSet().stream().forEach(directedGraph::addVertex);
+    graph.vertexSet().forEach(directedGraph::addVertex);
     graph
         .edgeSet()
-        .stream()
         .forEach(e -> directedGraph.addEdge(graph.getEdgeTarget(e), graph.getEdgeSource(e), e));
     log.trace("graph is {}, directedGraph is {}", graph, directedGraph);
     return directedGraph;

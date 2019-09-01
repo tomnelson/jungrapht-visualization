@@ -29,7 +29,6 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.LensMagnificationGraphMousePlugin;
 import org.jungrapht.visualization.control.ModalLensGraphMouse;
-import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -82,8 +81,6 @@ public class LensDemo extends JPanel {
   LensSupport<ModalLensGraphMouse> hyperbolicLayoutSupport;
   /** provides a magnification lens for the model */
   LensSupport<ModalLensGraphMouse> magnifyLayoutSupport;
-
-  ScalingControl scaler;
 
   /** create an instance of a simple graph with controls to demo the zoomand hyperbolic features. */
   public LensDemo() {

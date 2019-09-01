@@ -172,8 +172,6 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
             .container("Lens Controls"));
   }
 
-  Integer n = 0;
-
   public static void main(String[] args) {
     JFrame frame = new JFrame();
     Container content = frame.getContentPane();

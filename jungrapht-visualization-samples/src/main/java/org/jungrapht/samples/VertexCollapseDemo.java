@@ -280,7 +280,7 @@ public class VertexCollapseDemo extends JPanel {
    *
    * @author Tom Nelson
    */
-  class ClusterShapeFunction extends EllipseShapeFunction<Collapsable<?>> {
+  static class ClusterShapeFunction extends EllipseShapeFunction<Collapsable<?>> {
 
     ClusterShapeFunction() {
       setSizeFunction(new ClusterSizeFunction(20));

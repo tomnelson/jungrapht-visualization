@@ -15,13 +15,11 @@ import org.jgrapht.Graph;
 import org.jungrapht.samples.util.DemoTreeSupplier;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationScrollPane;
-import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.control.ModalLensGraphMouse;
-import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
@@ -51,9 +49,6 @@ public class BalloonLayoutForestDemo extends JPanel {
   private static final Logger log = LoggerFactory.getLogger(BalloonLayoutForestDemo.class);
 
   Graph<String, Integer> graph;
-
-  VisualizationServer.Paintable balloonPaintable;
-  VisualizationServer.Paintable radialPaintable;
 
   /** the visual component and renderer for the graph */
   VisualizationViewer<String, Integer> vv;
@@ -122,7 +117,6 @@ public class BalloonLayoutForestDemo extends JPanel {
     modeBox.addItemListener(graphMouse.getModeListener());
     graphMouse.setMode(ModalGraphMouse.Mode.TRANSFORMING);
 
-    final ScalingControl scaler = new CrossoverScalingControl();
     vv.scaleToLayout(new CrossoverScalingControl());
 
     JComponent lensBox =

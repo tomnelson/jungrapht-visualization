@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -185,8 +184,6 @@ public class RTree<T> {
 
     // find all nodes that have leaf children
     List<LeafNode> leafVertices = rtree.collectLeafVertices(root, new ArrayList<>());
-    // are there dupes?
-    Set<LeafNode> leafVertexSet = new HashSet<>(leafVertices);
     // for each leaf node, sort the children max to min, according to how far they are from the center
     List<Map.Entry<T, Rectangle2D>> goners = new ArrayList<>();
     int averageSize = (int) rtree.averageLeafCount(root, new double[] {0}, new int[] {0});
@@ -367,9 +364,8 @@ public class RTree<T> {
 
   private double averageLeafCount(TreeNode parent, double[] average, int[] leafCount) {
 
-    TreeNode start = parent;
-    if (start instanceof LeafNode) {
-      int childSum = ((LeafNode) start).map.size();
+    if (parent instanceof LeafNode) {
+      int childSum = ((LeafNode) parent).map.size();
       average[0] = (average[0] * leafCount[0] + childSum) / (leafCount[0] + 1);
       leafCount[0]++;
     } else {

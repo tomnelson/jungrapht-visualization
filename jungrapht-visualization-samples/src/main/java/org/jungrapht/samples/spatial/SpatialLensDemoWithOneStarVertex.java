@@ -14,9 +14,6 @@ import com.google.common.collect.ImmutableSortedMap;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Function;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicLabelUI;
@@ -31,7 +28,6 @@ import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.LensMagnificationGraphMousePlugin;
 import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.control.ModalLensGraphMouse;
-import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -80,8 +76,6 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
   /** provides a magnification lens for the model */
   LensSupport<ModalLensGraphMouse> magnifyLayoutSupport;
 
-  ScalingControl scaler;
-
   /** create an instance of a simple graph with controls to demo the zoomand hyperbolic features. */
   public SpatialLensDemoWithOneStarVertex() {
     setLayout(new BorderLayout());
@@ -91,7 +85,6 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
     graphLayoutAlgorithm = FRLayoutAlgorithm.<String>builder().build();
 
     Dimension preferredSize = new Dimension(600, 600);
-    Map<String, Point2D> map = new HashMap<>();
 
     final VisualizationModel<String, Number> visualizationModel =
         VisualizationModel.builder(graph)

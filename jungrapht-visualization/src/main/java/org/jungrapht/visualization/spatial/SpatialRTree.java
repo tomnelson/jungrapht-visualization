@@ -190,10 +190,10 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
         log.trace("added {} got {} nodes in {}", element, rtree.count(), rtree);
       }
       if (reinsert) {
-        log.trace("before reinsert node count: {}, tree: {}", rtree.count()); //, rtree);
+        log.trace("before reinsert node count: {}", rtree.count());
 
         rtree = RTree.reinsert(rtree, splitterContext);
-        log.trace("after reinsert node count: {}, tree: {}", rtree.count()); //, rtree);
+        log.trace("after reinsert node count: {}", rtree.count());
       }
     } else {
       log.trace("got no rectangles");

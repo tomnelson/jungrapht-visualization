@@ -14,7 +14,6 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.visualization.VisualizationScrollPane;
-import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.ModalGraphMouse.Mode;
@@ -39,10 +38,6 @@ public class TreeDAGLayoutDemo extends JPanel {
 
   /** the visual component and renderer for the graph */
   VisualizationViewer<String, Integer> vv;
-
-  VisualizationServer.Paintable rings;
-
-  String root;
 
   public TreeDAGLayoutDemo() {
 

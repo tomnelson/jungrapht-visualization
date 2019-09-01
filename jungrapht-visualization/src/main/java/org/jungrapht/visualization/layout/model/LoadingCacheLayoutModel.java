@@ -19,9 +19,7 @@ public class LoadingCacheLayoutModel<V> extends AbstractLayoutModel<V>
 
   private static final Logger log = LoggerFactory.getLogger(LoadingCacheLayoutModel.class);
 
-  protected LoadingCache<V, Point> locations =
-      CacheBuilder.newBuilder().build(CacheLoader.from(() -> Point.ORIGIN));
-
+  protected LoadingCache<V, Point> locations;
   /**
    * a builder for LoadingCache instances
    *
