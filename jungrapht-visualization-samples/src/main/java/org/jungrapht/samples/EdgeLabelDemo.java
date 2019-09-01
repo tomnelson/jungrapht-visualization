@@ -32,7 +32,7 @@ import org.jungrapht.visualization.util.Context;
 import org.jungrapht.visualization.util.helpers.ControlHelpers;
 
 /**
- * Demonstrates jung support for drawing edge labels that can be positioned at any point along the
+ * Demonstrates jungrapht support for drawing edge labels that can be positioned at any point along the
  * edge, and can be rotated to be parallel with the edge.
  *
  * @author Tom Nelson

@@ -20,7 +20,7 @@ import org.jungrapht.visualization.control.LensGraphMouse;
 import org.jungrapht.visualization.control.LensTransformSupport;
 
 /**
- * A class to make it easy to add an examining lens to a jung graph application. See
+ * A class to make it easy to add an examining lens to a jungrapht graph application. See
  * HyperbolicTransformerDemo, ViewLensSupport and LayoutLensSupport for examples of how to use it.
  *
  * @author Tom Nelson

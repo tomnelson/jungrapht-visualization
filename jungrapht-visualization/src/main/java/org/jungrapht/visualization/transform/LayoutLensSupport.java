@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A class to make it easy to add an examining lens to a jung graph application. See
+ * A class to make it easy to add an examining lens to a jungrapht graph application. See
  * HyperbolicTransformerDemo for an example of how to use it.
  *
  * @author Tom Nelson

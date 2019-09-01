@@ -21,8 +21,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//import org.jungrapht.visualization.layout.algorithms.SpringBHVisitorLayoutAlgorithm;
-
 /**
  * This test makes a very small graph, sets initial locations for each vertex, and each time, it
  * runs a version of FRLayout.

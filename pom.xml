@@ -5,7 +5,7 @@
     <artifactId>jungrapht-visualization-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>JGrapht Visualization</name>
+    <name>JunGrapht Visualization</name>
     <description>Jungrapht-visualization is a port of the Java Universal Network Graph (JUNG)
     visualization and sample code that uses JGrapht graph models and algorithms.</description>
     <url>http://tomnelson.github.io/jungraphtvisualization/</url>
