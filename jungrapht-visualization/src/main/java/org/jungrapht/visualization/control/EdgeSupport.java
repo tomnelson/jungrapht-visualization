@@ -9,7 +9,7 @@ import org.jungrapht.visualization.VisualizationServer;
  *
  * @author Tom Nelson
  * @param <V> the vertex type
- * @param <V> the edge type
+ * @param <E> the edge type
  */
 public interface EdgeSupport<V, E> {
 

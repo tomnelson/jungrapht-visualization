@@ -66,21 +66,26 @@ public class HyperbolicTransformer extends LensTransformer implements MutableTra
     if (graphPoint == null) {
       return null;
     }
-    Ellipse2D lensEllipse = (Ellipse2D) lens.getLensShape();
-    if (lensEllipse.contains(graphPoint)) {
-      log.trace("lens {} contains graphPoint{}", lensEllipse, graphPoint);
-    } else {
-      log.trace("lens {} does not contain graphPoint {}", lensEllipse, graphPoint);
+    if (log.isTraceEnabled()) {
+      Ellipse2D lensEllipse = (Ellipse2D) lens.getLensShape();
+      if (lensEllipse.contains(graphPoint)) {
+        log.trace("lens {} contains graphPoint{}", lensEllipse, graphPoint);
+      } else {
+        log.trace("lens {} does not contain graphPoint {}", lensEllipse, graphPoint);
+      }
     }
     Point2D viewCenter = lens.getCenter();
     double viewRadius = lens.getRadius();
     double ratio = lens.getRatio();
     // transform the point from the graph to the view
     Point2D viewPoint = delegate.transform(graphPoint);
-    if (lensEllipse.contains(viewPoint)) {
-      log.trace("lens {} contains viewPoint {}", lensEllipse, viewPoint);
-    } else {
-      log.trace("lens {} does not contain viewPoint {}", lensEllipse, viewPoint);
+    if (log.isTraceEnabled()) {
+      Ellipse2D lensEllipse = (Ellipse2D) lens.getLensShape();
+      if (lensEllipse.contains(viewPoint)) {
+        log.trace("lens {} contains viewPoint {}", lensEllipse, viewPoint);
+      } else {
+        log.trace("lens {} does not contain viewPoint {}", lensEllipse, viewPoint);
+      }
     }
 
     // calculate point from center
@@ -109,6 +114,8 @@ public class HyperbolicTransformer extends LensTransformer implements MutableTra
     radius *= Math.PI / 2;
     radius = Math.abs(Math.atan(radius));
     radius *= viewRadius;
+    radius = Math.min(radius, viewRadius);
+
     org.jungrapht.visualization.layout.model.Point projectedPoint =
         PolarPoint.polarToCartesian(theta, radius);
     projectedPoint =

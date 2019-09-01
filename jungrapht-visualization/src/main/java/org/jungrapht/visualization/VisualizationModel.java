@@ -25,15 +25,10 @@ import org.jungrapht.visualization.layout.model.Point;
  * @param <E> the edge type
  */
 public interface VisualizationModel<V, E>
-    extends ViewChange.Listener,
-        ViewChange.Producer,
-        //        LayoutVertexPositionChange.Listener,
-        //        LayoutVertexPositionChange.Producer,// can tell the view to repaint
-        ModelChange.Listener, //
-        ModelChange.Producer {
+    extends ViewChange.Listener, ViewChange.Producer, ModelChange.Listener, ModelChange.Producer {
 
   /**
-   * A builder for creating instances of a {@link }VisualizationModel} with user defined properties
+   * A builder for creating instances of a {@code }VisualizationModel} with user defined properties
    *
    * @param <V> the vertex type
    * @param <E> the edge type
@@ -41,15 +36,15 @@ public interface VisualizationModel<V, E>
    * @param <B> the builder type
    */
   class Builder<V, E, T extends VisualizationModel, B extends Builder<V, E, T, B>> {
-    /** a {@link Graph} to visualize */
+    /** a {@code Graph} to visualize */
     protected Graph<V, E> graph;
-    /** a {@link LayoutAlgorithm} to position the graph vertices */
+    /** a {@code LayoutAlgorithm} to position the graph vertices */
     protected LayoutAlgorithm<V> layoutAlgorithm;
-    /** a {@link LayoutModel} to hold the positions of the vertices */
+    /** a {@code LayoutModel} to hold the positions of the vertices */
     protected LayoutModel<V> layoutModel;
     /** the bounds of the layout area */
     protected Dimension layoutSize;
-    /** a {@link Function} to set initial vertex locations */
+    /** a {@code Function} to set initial vertex locations */
     protected Function<V, Point> initializer;
 
     /** @return this builder cast to type B */

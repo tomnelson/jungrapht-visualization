@@ -29,7 +29,6 @@ public class Point {
   /**
    * @param x coordinate
    * @param y coordinate
-   * @return a new Point with the passed coordinates
    */
   protected Point(double x, double y) {
     this.x = x;

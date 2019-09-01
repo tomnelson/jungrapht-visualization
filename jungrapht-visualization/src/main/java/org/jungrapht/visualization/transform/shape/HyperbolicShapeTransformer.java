@@ -191,6 +191,8 @@ public class HyperbolicShapeTransformer extends HyperbolicTransformer
     radius *= Math.PI / 2;
     radius = Math.abs(Math.atan(radius));
     radius *= viewRadius;
+    radius = Math.min(radius, viewRadius);
+
     org.jungrapht.visualization.layout.model.Point projectedPoint =
         PolarPoint.polarToCartesian(theta, radius);
     projectedPoint =
