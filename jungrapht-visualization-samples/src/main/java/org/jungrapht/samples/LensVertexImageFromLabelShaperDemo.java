@@ -8,8 +8,9 @@
  */
 package org.jungrapht.samples;
 
-import static org.jungrapht.visualization.renderers.BiModalRenderer.Mode.LIGHTWEIGHT;
+import static org.jungrapht.visualization.renderers.BiModalRenderer.LIGHTWEIGHT;
 
+import com.google.common.collect.ImmutableSortedMap;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.util.function.Function;
@@ -44,6 +45,8 @@ import org.jungrapht.visualization.transform.MagnifyTransformer;
 import org.jungrapht.visualization.transform.shape.MagnifyImageLensSupport;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
 import org.jungrapht.visualization.util.IconCache;
+import org.jungrapht.visualization.util.helpers.ControlHelpers;
+import org.jungrapht.visualization.util.helpers.LensControlHelper;
 
 /** @author Tom Nelson */
 public class LensVertexImageFromLabelShaperDemo extends JPanel {
@@ -135,19 +138,9 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
 
     final ScalingControl scaler = new CrossoverScalingControl();
     vv.scaleToLayout(scaler);
-    JButton plus = new JButton("+");
-    plus.addActionListener(e -> scaler.scale(vv, 1.1f, vv.getCenter()));
 
-    JButton minus = new JButton("-");
-    minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
-
-    JPanel scaleGrid = new JPanel(new GridLayout(1, 0));
-    scaleGrid.setBorder(BorderFactory.createTitledBorder("Zoom"));
-    JPanel controls = new JPanel();
-    scaleGrid.add(plus);
-    scaleGrid.add(minus);
-    controls.add(scaleGrid);
-
+    Box controls = Box.createHorizontalBox();
+    controls.add(ControlHelpers.getZoomControls("Zoom", vv));
     add(controls, BorderLayout.SOUTH);
 
     LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
@@ -170,32 +163,13 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
                 lens,
                 vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT)),
             new DefaultLensGraphMouse<>(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)));
-
-    JButton none = new JButton("None");
-    none.addActionListener(
-        e -> {
-          if (magnifyViewSupport != null) {
-            magnifyViewSupport.deactivate();
-          }
-          if (magnifyLayoutSupport != null) {
-            magnifyLayoutSupport.deactivate();
-          }
-        });
-
-    final JButton magnifyView = new JButton("Magnified View");
-    magnifyView.addActionListener(
-        e -> SwingUtilities.invokeLater(() -> magnifyViewSupport.activate()));
-
-    final JButton magnifyModel = new JButton("Magnified Layout");
-    magnifyModel.addActionListener(
-        e -> SwingUtilities.invokeLater(() -> magnifyLayoutSupport.activate()));
-
-    JPanel lensPanel = new JPanel(new GridLayout(2, 0));
-    lensPanel.setBorder(BorderFactory.createTitledBorder("Lens"));
-    lensPanel.add(none);
-    lensPanel.add(magnifyView);
-    lensPanel.add(magnifyModel);
-    controls.add(lensPanel);
+    controls.add(
+        LensControlHelper.with(
+                Box.createVerticalBox(),
+                ImmutableSortedMap.of(
+                    "Magnified View", magnifyViewSupport,
+                    "Magnified Layout", magnifyLayoutSupport))
+            .container("Lens Controls"));
   }
 
   Integer n = 0;

@@ -8,6 +8,8 @@
  */
 package org.jungrapht.samples;
 
+import static org.jungrapht.visualization.renderers.BiModalRenderer.HEAVYWEIGHT;
+
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
@@ -32,6 +34,7 @@ import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.renderers.GradientVertexRenderer;
 import org.jungrapht.visualization.renderers.HeavyweightVertexLabelRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
+import org.jungrapht.visualization.util.helpers.ControlHelpers;
 
 /**
  * Shows a graph overlaid on a world map image. Scaling of the graph also scales the image
@@ -137,7 +140,7 @@ public class WorldMapGraphDemo extends JPanel {
 
     vv.getRenderContext().setVertexLabelFunction(n -> n);
     vv.getRenderer()
-        .getVertexLabelRenderer()
+        .getVertexLabelRenderer(HEAVYWEIGHT)
         .setPositioner(new HeavyweightVertexLabelRenderer.InsidePositioner());
     vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.AUTO);
 
@@ -149,12 +152,6 @@ public class WorldMapGraphDemo extends JPanel {
     vv.setToolTipText("<html><center>Type 'p' for Pick mode<p>Type 't' for Transform mode");
 
     final ScalingControl scaler = new CrossoverScalingControl();
-
-    JButton plus = new JButton("+");
-    plus.addActionListener(e -> scaler.scale(vv, 1.1f, vv.getCenter()));
-
-    JButton minus = new JButton("-");
-    minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
 
     JButton reset = new JButton("reset");
     reset.addActionListener(
@@ -170,8 +167,7 @@ public class WorldMapGraphDemo extends JPanel {
         });
 
     JPanel controls = new JPanel();
-    controls.add(plus);
-    controls.add(minus);
+    controls.add(ControlHelpers.getZoomControls("Zoom", vv));
     controls.add(reset);
     add(controls, BorderLayout.SOUTH);
   }

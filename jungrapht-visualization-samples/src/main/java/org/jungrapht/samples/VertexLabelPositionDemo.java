@@ -24,6 +24,7 @@ import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.renderers.Renderer.VertexLabel.Position;
 import org.jungrapht.visualization.selection.MutableSelectedState;
+import org.jungrapht.visualization.util.helpers.ControlHelpers;
 
 /**
  * Demonstrates vertex label positioning controlled by the user. In the AUTO setting, labels are
@@ -89,14 +90,7 @@ public class VertexLabelPositionDemo extends JPanel {
 
     final ScalingControl scaler = new CrossoverScalingControl();
 
-    JButton plus = new JButton("+");
-    plus.addActionListener(e -> scaler.scale(vv, 1.1f, vv.getCenter()));
-
-    JButton minus = new JButton("-");
-    minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
-
     JPanel positionPanel = new JPanel();
-    positionPanel.setBorder(BorderFactory.createTitledBorder("Label Position"));
     JMenuBar menubar = new JMenuBar();
     menubar.add(graphMouse.getModeMenu());
     visualizationScrollPane.setCorner(menubar);
@@ -122,13 +116,9 @@ public class VertexLabelPositionDemo extends JPanel {
     cb.setSelectedItem(Renderer.VertexLabel.Position.SE);
     positionPanel.add(cb);
     JPanel controls = new JPanel();
-    JPanel zoomControls = new JPanel(new GridLayout(2, 1));
-    zoomControls.setBorder(BorderFactory.createTitledBorder("Zoom"));
-    zoomControls.add(plus);
-    zoomControls.add(minus);
 
-    controls.add(zoomControls);
-    controls.add(positionPanel);
+    controls.add(ControlHelpers.getZoomControls("Zoom", vv));
+    controls.add(ControlHelpers.getCenteredContainer("Label", positionPanel));
     add(controls, BorderLayout.SOUTH);
   }
 

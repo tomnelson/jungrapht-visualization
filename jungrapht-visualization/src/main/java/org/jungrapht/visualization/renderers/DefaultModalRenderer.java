@@ -1,6 +1,5 @@
 package org.jungrapht.visualization.renderers;
 
-import javax.swing.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,23 +22,28 @@ import org.slf4j.LoggerFactory;
  * @param <V> the vertex type
  * @param <E> the edge type
  */
-public class DefaultModalRenderer<V, E> extends BiModalRenderer<V, E> {
+public class DefaultModalRenderer<V, E> extends BiModalRenderer<V, E>
+    implements ModalRenderer<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(DefaultModalRenderer.class);
 
   public static class Builder<
-          V, E, T extends DefaultModalRenderer<V, E>, B extends Builder<V, E, T, B>>
+          V,
+          E,
+          M extends Enum<M>,
+          T extends DefaultModalRenderer<V, E>,
+          B extends Builder<V, E, M, T, B>>
       extends BiModalRenderer.Builder<V, E, T, B> {
     public T build() {
       return (T) new DefaultModalRenderer<>(this);
     }
   }
 
-  public static <V, E> Builder<V, E, ?, ?> builder() {
+  public static <V, E> Builder<V, E, ?, ?, ?> builder() {
     return new Builder();
   }
 
-  public DefaultModalRenderer(Builder<V, E, ?, ?> builder) {
+  public DefaultModalRenderer(Builder<V, E, ?, ?, ?> builder) {
     super(builder);
   }
 }

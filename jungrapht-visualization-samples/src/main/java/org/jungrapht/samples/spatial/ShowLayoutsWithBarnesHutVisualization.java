@@ -23,8 +23,6 @@ import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
-import org.jungrapht.samples.util.LayoutHelper;
-import org.jungrapht.samples.util.SpanningTreeAdapter;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.AbstractVisualizationViewer;
 import org.jungrapht.visualization.VisualizationComponent;
@@ -44,6 +42,9 @@ import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.quadtree.BarnesHutQuadTree;
 import org.jungrapht.visualization.layout.quadtree.ForceObject;
 import org.jungrapht.visualization.layout.quadtree.Node;
+import org.jungrapht.visualization.util.helpers.ControlHelpers;
+import org.jungrapht.visualization.util.helpers.LayoutHelper;
+import org.jungrapht.visualization.util.helpers.SpanningTreeAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -111,11 +112,6 @@ public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
 
     final ScalingControl scaler = new CrossoverScalingControl();
 
-    JButton plus = new JButton("+");
-    plus.addActionListener(e -> scaler.scale(vv, 1.1f, vv.getCenter()));
-    JButton minus = new JButton("-");
-    minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
-
     JComboBox modeBox = graphMouse.getModeComboBox();
     modeBox.addItemListener(
         ((DefaultModalGraphMouse<Integer, Number>) vv.getGraphMouse()).getModeListener());
@@ -177,8 +173,7 @@ public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
     topControls.add(jcb);
     topControls.add(graph_chooser);
     bottomControls.add(animateLayoutTransition);
-    bottomControls.add(plus);
-    bottomControls.add(minus);
+    bottomControls.add(ControlHelpers.getZoomControls("Zoom", vv));
     bottomControls.add(modeBox);
   }
 

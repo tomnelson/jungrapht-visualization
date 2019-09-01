@@ -8,6 +8,7 @@
  */
 package org.jungrapht.samples;
 
+import com.google.common.collect.ImmutableSortedMap;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -24,12 +25,10 @@ import org.jungrapht.visualization.LayeredIcon;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.LensMagnificationGraphMousePlugin;
 import org.jungrapht.visualization.control.ModalGraphMouse.Mode;
 import org.jungrapht.visualization.control.ModalLensGraphMouse;
-import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.decorators.IconShapeFunction;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
@@ -45,6 +44,8 @@ import org.jungrapht.visualization.transform.LensSupport;
 import org.jungrapht.visualization.transform.MagnifyTransformer;
 import org.jungrapht.visualization.transform.shape.MagnifyImageLensSupport;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
+import org.jungrapht.visualization.util.helpers.ControlHelpers;
+import org.jungrapht.visualization.util.helpers.LensControlHelper;
 
 /**
  * Demonstrates the use of images to represent graph vertices. The images are added to the
@@ -191,25 +192,13 @@ public class LensVertexImageShaperDemo extends JPanel {
     final DefaultModalGraphMouse<Number, Number> graphMouse = new DefaultModalGraphMouse<>();
     vv.setGraphMouse(graphMouse);
 
-    final ScalingControl scaler = new CrossoverScalingControl();
-
-    JButton plus = new JButton("+");
-    plus.addActionListener(e -> scaler.scale(vv, 1.1f, vv.getCenter()));
-
-    JButton minus = new JButton("-");
-    minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
-
     JComboBox<Mode> modeBox = graphMouse.getModeComboBox();
     JPanel modePanel = new JPanel();
     modePanel.setBorder(BorderFactory.createTitledBorder("Mouse Mode"));
     modePanel.add(modeBox);
 
-    JPanel scaleGrid = new JPanel(new GridLayout(1, 0));
-    scaleGrid.setBorder(BorderFactory.createTitledBorder("Zoom"));
-    JPanel controls = new JPanel();
-    scaleGrid.add(plus);
-    scaleGrid.add(minus);
-    controls.add(scaleGrid);
+    Box controls = Box.createHorizontalBox();
+    controls.add(ControlHelpers.getZoomControls("Scale", vv));
 
     controls.add(modePanel);
     add(controls, BorderLayout.SOUTH);
@@ -236,33 +225,16 @@ public class LensVertexImageShaperDemo extends JPanel {
     graphMouse.addItemListener(magnifyLayoutSupport.getGraphMouse().getModeListener());
     graphMouse.addItemListener(magnifyViewSupport.getGraphMouse().getModeListener());
 
-    JButton none = new JButton("None");
-    none.addActionListener(
-        e -> {
-          if (magnifyViewSupport != null) {
-            magnifyViewSupport.deactivate();
-          }
-          if (magnifyLayoutSupport != null) {
-            magnifyLayoutSupport.deactivate();
-          }
-        });
-
-    final JButton magnifyView = new JButton("Magnified View");
-    magnifyView.addActionListener(e -> magnifyViewSupport.activate());
-
-    final JButton magnifyModel = new JButton("Magnified Layout");
-    magnifyModel.addActionListener(e -> magnifyLayoutSupport.activate());
-
     JMenuBar menubar = new JMenuBar();
     JMenu modeMenu = graphMouse.getModeMenu();
     menubar.add(modeMenu);
-
-    JPanel lensPanel = new JPanel(new GridLayout(2, 0));
-    lensPanel.setBorder(BorderFactory.createTitledBorder("Lens"));
-    lensPanel.add(none);
-    lensPanel.add(magnifyView);
-    lensPanel.add(magnifyModel);
-    controls.add(lensPanel);
+    controls.add(
+        LensControlHelper.with(
+                Box.createVerticalBox(),
+                ImmutableSortedMap.of(
+                    "Magnified Vies", magnifyViewSupport,
+                    "Magnified Layout", magnifyLayoutSupport))
+            .container("Lens Controls"));
   }
 
   Graph<Number, Number> createGraph() {

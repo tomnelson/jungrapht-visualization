@@ -24,7 +24,7 @@ import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
 import org.jungrapht.visualization.layout.event.ModelChange;
 import org.jungrapht.visualization.layout.event.ViewChange;
-import org.jungrapht.visualization.renderers.Renderer;
+import org.jungrapht.visualization.renderers.ModalRenderer;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 import org.jungrapht.visualization.spatial.Spatial;
 
@@ -185,7 +185,7 @@ public interface VisualizationServer<V, E>
   void stateChanged(ChangeEvent e);
 
   /** @return the renderer used by this instance. */
-  Renderer<V, E> getRenderer();
+  ModalRenderer<V, E> getRenderer();
 
   /**
    * Makes the component visible if {@code aFlag} is true, or invisible if false.

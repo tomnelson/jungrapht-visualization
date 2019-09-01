@@ -1,4 +1,4 @@
-package org.jungrapht.samples.util;
+package org.jungrapht.visualization.util.helpers;
 
 import java.util.HashMap;
 import java.util.Map;

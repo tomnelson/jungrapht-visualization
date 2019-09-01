@@ -1,4 +1,4 @@
-package org.jungrapht.samples.util;
+package org.jungrapht.visualization.util.helpers;
 
 import com.google.common.base.Preconditions;
 import java.awt.*;
@@ -140,7 +140,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
         RadialTreeLayoutAlgorithm.<V>builder()
             .horizontalVertexSpacing(100)
             .verticalVertexSpacing(100)
-            .expandLayout(true)
+            .expandLayout(false)
             .build();
 
     RadialEdgeAwareTreeLayoutAlgorithm<V, E> radialEdgeAwareTreeLayoutAlgorithm =
@@ -149,7 +149,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
             .verticalVertexSpacing(100)
             .edgePredicate(edgePredicate)
             .vertexPredicate(vertexPredicate)
-            .expandLayout(true)
+            .expandLayout(false)
             .build();
 
     EdgeAwareTreeLayoutAlgorithm<V, E> edgeAwareTreeLayoutAlgorithm =

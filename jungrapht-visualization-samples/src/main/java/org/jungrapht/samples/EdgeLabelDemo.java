@@ -29,6 +29,7 @@ import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.renderers.EdgeLabelRenderer;
 import org.jungrapht.visualization.renderers.VertexLabelRenderer;
 import org.jungrapht.visualization.util.Context;
+import org.jungrapht.visualization.util.helpers.ControlHelpers;
 
 /**
  * Demonstrates jung support for drawing edge labels that can be positioned at any point along the
@@ -92,12 +93,6 @@ public class EdgeLabelDemo extends JPanel {
 
     final DefaultModalGraphMouse<Integer, Number> graphMouse = new DefaultModalGraphMouse<>();
     vv.setGraphMouse(graphMouse);
-
-    JButton plus = new JButton("+");
-    plus.addActionListener(e -> scaler.scale(vv, 1.1f, vv.getCenter()));
-
-    JButton minus = new JButton("-");
-    minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
 
     ButtonGroup radio = new ButtonGroup();
     JRadioButton lineButton = new JRadioButton("Line");
@@ -173,11 +168,6 @@ public class EdgeLabelDemo extends JPanel {
 
     Box controls = Box.createHorizontalBox();
 
-    JPanel zoomPanel = new JPanel(new GridLayout(0, 1));
-    zoomPanel.setBorder(BorderFactory.createTitledBorder("Scale"));
-    zoomPanel.add(plus);
-    zoomPanel.add(minus);
-
     JPanel edgePanel = new JPanel(new GridLayout(0, 1));
     edgePanel.setBorder(BorderFactory.createTitledBorder("Edge Shape"));
     edgePanel.add(lineButton);
@@ -206,7 +196,7 @@ public class EdgeLabelDemo extends JPanel {
     modePanel.setBorder(BorderFactory.createTitledBorder("Mouse Mode"));
     modePanel.add(graphMouse.getModeComboBox());
 
-    controls.add(zoomPanel);
+    controls.add(ControlHelpers.getZoomControls("Zoom", vv));
     controls.add(edgePanel);
     controls.add(labelPanel);
     controls.add(modePanel);

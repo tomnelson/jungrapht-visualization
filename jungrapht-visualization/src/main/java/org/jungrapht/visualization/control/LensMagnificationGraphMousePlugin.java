@@ -59,7 +59,7 @@ public class LensMagnificationGraphMousePlugin extends AbstractGraphMousePlugin
    * @param modifiers the mouse event modifiers to specify
    */
   public LensMagnificationGraphMousePlugin(int modifiers) {
-    this(modifiers, 0.5f, 50.0f, .2f);
+    this(modifiers, 0.5f, 4.0f, .2f);
   }
 
   /**

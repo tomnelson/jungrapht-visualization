@@ -14,10 +14,10 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
-import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
+import org.jungrapht.visualization.util.helpers.ControlHelpers;
 
 /**
  * A demo that shows a minimal visualization
@@ -52,9 +52,10 @@ public class MinimalVisualization {
     final DefaultModalGraphMouse<Integer, Number> gm = new DefaultModalGraphMouse<>();
     vv.setGraphMouse(gm);
 
-    JPanel controls = new JPanel();
-    controls.add(ControlHelpers.getZoomControls(vv, ""));
-    controls.add(gm.getModeComboBox());
+    Box controls = Box.createHorizontalBox();
+    controls.add(ControlHelpers.getZoomControls("Zoom", vv));
+    controls.add(Box.createGlue());
+    controls.add(ControlHelpers.getCenteredContainer("Mouse Mode", gm.getModeComboBox()));
     content.add(controls, BorderLayout.SOUTH);
 
     frame.pack();

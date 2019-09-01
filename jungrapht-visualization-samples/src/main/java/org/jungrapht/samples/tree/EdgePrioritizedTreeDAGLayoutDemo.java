@@ -8,19 +8,18 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
-import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.DemoTreeSupplier;
-import org.jungrapht.samples.util.TreeLayoutSelector;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.Renderer;
+import org.jungrapht.visualization.util.helpers.ControlHelpers;
+import org.jungrapht.visualization.util.helpers.TreeLayoutSelector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,31 +88,21 @@ public class EdgePrioritizedTreeDAGLayoutDemo extends JFrame {
                         .map(e -> graph.getEdgeSource(e)))
                 .collect(Collectors.toList()));
 
-    JPanel layoutPanel = new JPanel(new GridLayout(2, 1));
-    JPanel controls = new JPanel();
-    controls.add(layoutPanel);
-    controls.add(ControlHelpers.getZoomControls(vv, "Zoom"));
-
-    // layout controls
-    JPanel layoutControls = new JPanel(new GridLayout(0, 1));
-    layoutControls.setBorder(new TitledBorder("Layout Selections"));
-
     TreeLayoutSelector<String, Integer> treeLayoutSelector =
         TreeLayoutSelector.<String, Integer>builder(vv)
             .edgePredicate(edgePredicate)
             .after(vv::scaleToLayout)
             .build();
 
-    layoutControls.add(treeLayoutSelector);
-    controls.add(layoutControls);
-
-    container.add(controls, BorderLayout.SOUTH);
-
-    getContentPane();
     setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
     setTitle("Prioritized Edges are " + prioritySet);
     add(container);
+
+    Box controls = Box.createHorizontalBox();
+    controls.add(ControlHelpers.getCenteredContainer("Layout Controls", treeLayoutSelector));
+    controls.add(ControlHelpers.getZoomControls(vv));
+    add(controls, BorderLayout.SOUTH);
     pack();
     setVisible(true);
   }

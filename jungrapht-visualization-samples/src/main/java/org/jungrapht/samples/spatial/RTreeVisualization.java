@@ -25,7 +25,6 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
-import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationServer;
@@ -46,6 +45,7 @@ import org.jungrapht.visualization.spatial.rtree.InnerNode;
 import org.jungrapht.visualization.spatial.rtree.LeafNode;
 import org.jungrapht.visualization.spatial.rtree.Node;
 import org.jungrapht.visualization.spatial.rtree.RTree;
+import org.jungrapht.visualization.util.helpers.ControlHelpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -228,7 +228,7 @@ public class RTreeVisualization<V> extends JPanel {
     layoutPanel.add(animate);
     JPanel controls = new JPanel();
     controls.add(layoutPanel);
-    controls.add(ControlHelpers.getZoomControls(vv, "Zoom"));
+    controls.add(ControlHelpers.getCenteredContainer("Zoom", ControlHelpers.getZoomControls(vv)));
 
     add(controls, BorderLayout.SOUTH);
   }

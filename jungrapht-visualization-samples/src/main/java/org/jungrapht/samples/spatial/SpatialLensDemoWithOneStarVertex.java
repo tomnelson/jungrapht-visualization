@@ -10,6 +10,7 @@ package org.jungrapht.samples.spatial;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
+import com.google.common.collect.ImmutableSortedMap;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.geom.AffineTransform;
@@ -26,7 +27,6 @@ import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.LensMagnificationGraphMousePlugin;
 import org.jungrapht.visualization.control.ModalGraphMouse;
@@ -44,6 +44,8 @@ import org.jungrapht.visualization.transform.shape.HyperbolicShapeTransformer;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
 import org.jungrapht.visualization.transform.shape.ViewLensSupport;
 import org.jungrapht.visualization.util.ShapeFactory;
+import org.jungrapht.visualization.util.helpers.ControlHelpers;
+import org.jungrapht.visualization.util.helpers.LensControlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -171,43 +173,6 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
         .getLens()
         .setLensShape(magnifyViewSupport.getLensTransformer().getLens().getLensShape());
 
-    final ScalingControl scaler = new CrossoverScalingControl();
-
-    JButton plus = new JButton("+");
-    plus.addActionListener(e -> scaler.scale(vv, 1.1f, vv.getCenter()));
-
-    JButton minus = new JButton("-");
-    minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
-
-    JButton normal = new JButton("None");
-    normal.addActionListener(
-        e -> {
-          if (hyperbolicViewSupport != null) {
-            hyperbolicViewSupport.deactivate();
-          }
-          if (hyperbolicLayoutSupport != null) {
-            hyperbolicLayoutSupport.deactivate();
-          }
-          if (magnifyViewSupport != null) {
-            magnifyViewSupport.deactivate();
-          }
-          if (magnifyLayoutSupport != null) {
-            magnifyLayoutSupport.deactivate();
-          }
-        });
-
-    final JButton hyperView = new JButton("Hyperbolic View");
-    hyperView.addActionListener(e -> hyperbolicViewSupport.activate());
-
-    final JButton hyperModel = new JButton("Hyperbolic Layout");
-    hyperModel.addActionListener(e -> hyperbolicLayoutSupport.activate());
-
-    final JButton magnifyView = new JButton("Magnified View");
-    magnifyView.addActionListener(e -> magnifyViewSupport.activate());
-
-    final JButton magnifyModel = new JButton("Magnified Layout");
-    magnifyModel.addActionListener(e -> magnifyLayoutSupport.activate());
-
     JLabel modeLabel = new JLabel("     Mode Menu >>");
     modeLabel.setUI(new VerticalLabelUI(false));
 
@@ -255,29 +220,21 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
         });
 
     Box controls = Box.createHorizontalBox();
-    JPanel zoomControls = new JPanel(new GridLayout(2, 1));
-    JPanel modeControls = new JPanel(new GridLayout(2, 1));
     JPanel leftControls = new JPanel();
-    JPanel hyperControls = new JPanel(new GridLayout(3, 2));
-    hyperControls.setBorder(BorderFactory.createTitledBorder("Examiner Lens"));
-    zoomControls.add(plus);
-    zoomControls.add(minus);
-    modeControls.add(showSpatialEffects);
-    modeControls.add(modeBox);
-    leftControls.add(zoomControls);
-    leftControls.add(modeControls);
-
-    hyperControls.add(normal);
-    hyperControls.add(new JLabel());
-
-    hyperControls.add(hyperModel);
-    hyperControls.add(magnifyModel);
-
-    hyperControls.add(hyperView);
-    hyperControls.add(magnifyView);
-
+    controls.add(ControlHelpers.getZoomControls("Scale", vv));
+    controls.add(
+        ControlHelpers.getCenteredContainer(
+            "Spatial Effects", Box.createVerticalBox(), showSpatialEffects));
     controls.add(leftControls);
-    controls.add(hyperControls);
+    controls.add(
+        LensControlHelper.with(
+                Box.createVerticalBox(),
+                ImmutableSortedMap.of(
+                    "Hyperbolic Layout", hyperbolicLayoutSupport,
+                    "Hyperbolic View", hyperbolicViewSupport,
+                    "Magnify Layout", magnifyLayoutSupport,
+                    "Magnify View", magnifyViewSupport))
+            .container("Lens Controls"));
     controls.add(modeLabel);
     add(controls, BorderLayout.SOUTH);
   }

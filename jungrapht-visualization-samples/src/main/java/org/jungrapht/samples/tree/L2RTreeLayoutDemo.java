@@ -35,6 +35,7 @@ import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.PolarPoint;
+import org.jungrapht.visualization.util.helpers.ControlHelpers;
 
 /**
  * A variant of TreeLayoutDemo that rotates the view by 90 degrees from the default orientation.
@@ -92,12 +93,6 @@ public class L2RTreeLayoutDemo extends JPanel {
 
     final ScalingControl scaler = new CrossoverScalingControl();
 
-    JButton plus = new JButton("+");
-    plus.addActionListener(e -> scaler.scale(vv, 1.1f, vv.getCenter()));
-
-    JButton minus = new JButton("-");
-    minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
-
     JToggleButton radial = new JToggleButton("Radial");
     radial.addItemListener(
         e -> {
@@ -121,13 +116,11 @@ public class L2RTreeLayoutDemo extends JPanel {
     JPanel scaleGrid = new JPanel(new GridLayout(1, 0));
     scaleGrid.setBorder(BorderFactory.createTitledBorder("Zoom"));
 
-    JPanel controls = new JPanel();
-    scaleGrid.add(plus);
-    scaleGrid.add(minus);
-    controls.add(radial);
-    controls.add(scaleGrid);
-    controls.add(modeBox);
-
+    Box controls = Box.createHorizontalBox();
+    controls.add(ControlHelpers.getCenteredContainer("Layout Control", radial));
+    controls.add(ControlHelpers.getCenteredContainer("Scale", ControlHelpers.getZoomControls(vv)));
+    controls.add(
+        ControlHelpers.getCenteredContainer("Mouse Mode", ControlHelpers.getModeRadio(graphMouse)));
     add(controls, BorderLayout.SOUTH);
   }
 

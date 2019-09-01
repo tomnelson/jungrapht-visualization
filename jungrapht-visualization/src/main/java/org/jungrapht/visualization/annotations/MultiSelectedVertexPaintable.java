@@ -1,5 +1,7 @@
 package org.jungrapht.visualization.annotations;
 
+import static org.jungrapht.visualization.renderers.BiModalRenderer.LIGHTWEIGHT;
+
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
@@ -175,11 +177,9 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
             visualizationServer.getRenderContext().getVertexShapeFunction();
         visualizationServer.getRenderContext().setVertexShapeFunction(v -> selectionShape);
         Function<V, Shape> oldLightweightShapeFunction =
-            ((LightweightVertexSelectionRenderer)
-                    biModalRenderer.getVertexRenderer(BiModalRenderer.Mode.LIGHTWEIGHT))
+            ((LightweightVertexSelectionRenderer) biModalRenderer.getVertexRenderer(LIGHTWEIGHT))
                 .getVertexShapeFunction();
-        ((LightweightVertexSelectionRenderer)
-                biModalRenderer.getVertexRenderer(BiModalRenderer.Mode.LIGHTWEIGHT))
+        ((LightweightVertexSelectionRenderer) biModalRenderer.getVertexRenderer(LIGHTWEIGHT))
             .setVertexShapeFunction(v -> selectionShape);
 
         biModalRenderer.renderVertex(
@@ -187,8 +187,7 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
             visualizationServer.getVisualizationModel(),
             vertex);
         visualizationServer.getRenderContext().setVertexShapeFunction(oldShapeFunction);
-        ((LightweightVertexSelectionRenderer)
-                biModalRenderer.getVertexRenderer(BiModalRenderer.Mode.LIGHTWEIGHT))
+        ((LightweightVertexSelectionRenderer) biModalRenderer.getVertexRenderer(LIGHTWEIGHT))
             .setVertexShapeFunction(oldLightweightShapeFunction);
       } else {
         AffineTransform graphicsTransform = g2d.getTransform();

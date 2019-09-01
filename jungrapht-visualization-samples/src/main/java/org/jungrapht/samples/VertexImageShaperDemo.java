@@ -45,6 +45,7 @@ import org.jungrapht.visualization.renderers.JLabelVertexLabelRenderer;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.util.ImageShapeUtils;
+import org.jungrapht.visualization.util.helpers.ControlHelpers;
 
 /**
  * Demonstrates the use of images to represent graph vertices. The images are supplied via the
@@ -200,12 +201,6 @@ public class VertexImageShaperDemo extends JPanel {
     vv.addKeyListener(graphMouse.getModeKeyListener());
     final ScalingControl scaler = new CrossoverScalingControl();
 
-    JButton plus = new JButton("+");
-    plus.addActionListener(e -> scaler.scale(vv, 1.1f, vv.getCenter()));
-
-    JButton minus = new JButton("-");
-    minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
-
     JCheckBox shape = new JCheckBox("Shape");
     shape.addItemListener(
         e -> {
@@ -236,14 +231,10 @@ public class VertexImageShaperDemo extends JPanel {
     modePanel.setBorder(BorderFactory.createTitledBorder("Mouse Mode"));
     modePanel.add(modeBox);
 
-    JPanel scaleGrid = new JPanel(new GridLayout(1, 0));
-    scaleGrid.setBorder(BorderFactory.createTitledBorder("Zoom"));
     JPanel labelFeatures = new JPanel(new GridLayout(1, 0));
     labelFeatures.setBorder(BorderFactory.createTitledBorder("Image Effects"));
     JPanel controls = new JPanel();
-    scaleGrid.add(plus);
-    scaleGrid.add(minus);
-    controls.add(scaleGrid);
+    controls.add(ControlHelpers.getZoomControls("Zoom", vv));
     labelFeatures.add(shape);
     labelFeatures.add(fill);
     labelFeatures.add(drawOutlines);

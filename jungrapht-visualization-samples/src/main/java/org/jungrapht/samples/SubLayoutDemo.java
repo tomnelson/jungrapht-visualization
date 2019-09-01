@@ -8,8 +8,8 @@
  */
 package org.jungrapht.samples;
 
-import static org.jungrapht.samples.util.SubLayoutHelper.Layouts;
-import static org.jungrapht.samples.util.SubLayoutHelper.getCombos;
+import static org.jungrapht.visualization.util.helpers.SubLayoutHelper.Layouts;
+import static org.jungrapht.visualization.util.helpers.SubLayoutHelper.getCombos;
 
 import java.awt.*;
 import java.awt.event.ItemEvent;
@@ -18,8 +18,6 @@ import java.util.Collection;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
-import org.jungrapht.samples.util.ControlHelpers;
-import org.jungrapht.samples.util.SpanningTreeAdapter;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -38,6 +36,8 @@ import org.jungrapht.visualization.layout.model.LoadingCacheLayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.util.RandomLocationTransformer;
 import org.jungrapht.visualization.selection.MutableSelectedState;
+import org.jungrapht.visualization.util.helpers.ControlHelpers;
+import org.jungrapht.visualization.util.helpers.SpanningTreeAdapter;
 
 /**
  * Demonstrates the AggregateLayout class. In this demo, vertices are visually clustered as they are
@@ -225,7 +225,8 @@ public class SubLayoutDemo extends JPanel {
     Box controls = Box.createHorizontalBox();
     controls.add(Box.createRigidArea(space));
 
-    JComponent zoomControls = ControlHelpers.getZoomControls(vv, "Zoom", new GridLayout(0, 1));
+    JComponent zoomControls =
+        ControlHelpers.getZoomControls("Scale", vv); //, new GridLayout(0, 1));
     heightConstrain(zoomControls);
     controls.add(zoomControls);
     controls.add(Box.createRigidArea(space));

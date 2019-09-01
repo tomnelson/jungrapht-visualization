@@ -20,8 +20,6 @@ import org.jgrapht.io.EdgeProvider;
 import org.jgrapht.io.GmlImporter;
 import org.jgrapht.io.VertexProvider;
 import org.jungrapht.samples.spatial.RTreeVisualization;
-import org.jungrapht.samples.util.LayoutHelper;
-import org.jungrapht.samples.util.SpanningTreeAdapter;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
@@ -35,6 +33,9 @@ import org.jungrapht.visualization.layout.algorithms.TreeLayout;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.LoadingCacheLayoutModel;
+import org.jungrapht.visualization.util.helpers.ControlHelpers;
+import org.jungrapht.visualization.util.helpers.LayoutHelper;
+import org.jungrapht.visualization.util.helpers.SpanningTreeAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,11 +100,6 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
     final ScalingControl scaler = new CrossoverScalingControl();
     vv.scaleToLayout(scaler);
 
-    JButton plus = new JButton("+");
-    plus.addActionListener(e -> scaler.scale(vv, 1.1f, vv.getCenter()));
-    JButton minus = new JButton("-");
-    minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
-
     JComboBox modeBox = graphMouse.getModeComboBox();
     modeBox.addItemListener(
         ((DefaultModalGraphMouse<Integer, DefaultEdge>) vv.getGraphMouse()).getModeListener());
@@ -136,14 +132,15 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
 
     container.add(vv.getComponent(), BorderLayout.CENTER);
     LayoutHelper.Layouts[] combos = LayoutHelper.getCombos();
-    final JRadioButton animateLayoutTransition = new JRadioButton("Animate Layout Transition");
+    final JToggleButton animateLayoutTransition = new JToggleButton("Animate Layout Transition");
 
-    final JComboBox jcb = new JComboBox(combos);
-    jcb.addActionListener(
+    final JComboBox layoutComboBox = new JComboBox(combos);
+    layoutComboBox.addActionListener(
         e ->
             SwingUtilities.invokeLater(
                 () -> {
-                  LayoutHelper.Layouts layoutType = (LayoutHelper.Layouts) jcb.getSelectedItem();
+                  LayoutHelper.Layouts layoutType =
+                      (LayoutHelper.Layouts) layoutComboBox.getSelectedItem();
                   LayoutAlgorithm layoutAlgorithm = layoutType.getLayoutAlgorithm();
                   vv.removePreRenderPaintable(balloonLayoutRings);
                   vv.removePreRenderPaintable(radialLayoutRings);
@@ -193,25 +190,28 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
                           .contains(vv.getVisualizationModel()));
                 }));
 
-    jcb.setSelectedItem(LayoutHelper.Layouts.FR_BH_VISITOR);
+    layoutComboBox.setSelectedItem(LayoutHelper.Layouts.FR_BH_VISITOR);
 
     JPanel control_panel = new JPanel(new GridLayout(2, 1));
-    JPanel topControls = new JPanel();
-    JPanel bottomControls = new JPanel();
-    control_panel.add(topControls);
-    control_panel.add(bottomControls);
-    container.add(control_panel, BorderLayout.NORTH);
+    JComponent top =
+        ControlHelpers.getContainer(
+            Box.createHorizontalBox(),
+            ControlHelpers.getCenteredContainer("Layouts", layoutComboBox),
+            ControlHelpers.getCenteredContainer("Graphs", graphComboBox));
+    control_panel.add(top);
 
     JButton showRTree = new JButton("Show RTree");
     showRTree.addActionListener(e -> RTreeVisualization.showRTree(vv));
 
-    topControls.add(jcb);
-    topControls.add(graphComboBox);
-    bottomControls.add(animateLayoutTransition);
-    bottomControls.add(plus);
-    bottomControls.add(minus);
-    bottomControls.add(modeBox);
-    bottomControls.add(showRTree);
+    JComponent bottom =
+        ControlHelpers.getContainer(
+            Box.createHorizontalBox(),
+            ControlHelpers.getZoomControls("Scale", vv),
+            ControlHelpers.getCenteredContainer("Mouse Mode", modeBox),
+            ControlHelpers.getCenteredContainer(
+                "Effects", Box.createVerticalBox(), showRTree, animateLayoutTransition));
+    control_panel.add(bottom);
+    container.add(control_panel, BorderLayout.NORTH);
 
     setTitle(
         "Graph With "

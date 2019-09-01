@@ -25,15 +25,14 @@ import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.annotations.AnnotationControls;
-import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.EditingModalGraphMouse;
 import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.control.ModalGraphMouse.Mode;
-import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.spatial.Spatial;
 import org.jungrapht.visualization.util.ParallelEdgeIndexFunction;
+import org.jungrapht.visualization.util.helpers.ControlHelpers;
 
 /**
  * Shows how to create a graph editor with JUNG. Mouse modes and actions are explained in the help
@@ -157,23 +156,15 @@ public class GraphEditorDemo extends JPanel implements Printable {
 
     graphMouse.setMode(ModalGraphMouse.Mode.EDITING);
 
-    final ScalingControl scaler = new CrossoverScalingControl();
-    JButton plus = new JButton("+");
-    plus.addActionListener(e -> scaler.scale(vv, 1.1f, vv.getCenter()));
-
-    JButton minus = new JButton("-");
-    minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
-
     JButton help = new JButton("Help");
     help.addActionListener(e -> JOptionPane.showMessageDialog(vv.getComponent(), instructions));
 
     AnnotationControls<Number, Number> annotationControls =
         new AnnotationControls<>(graphMouse.getAnnotatingPlugin());
     JPanel controls = new JPanel();
-    controls.add(plus);
-    controls.add(minus);
+    controls.add(ControlHelpers.getZoomControls("Zoom", vv));
     JComboBox<Mode> modeBox = graphMouse.getModeComboBox();
-    controls.add(modeBox);
+    controls.add(ControlHelpers.getCenteredContainer("Mouse Mode", modeBox));
     controls.add(annotationControls.getAnnotationsToolBar());
     controls.add(help);
     add(controls, BorderLayout.SOUTH);

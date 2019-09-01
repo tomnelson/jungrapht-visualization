@@ -1,22 +1,25 @@
 package org.jungrapht.visualization.renderers;
 
-public interface ModalRenderer<V, E, M extends Enum<M>> extends Renderer<V, E> {
+public interface ModalRenderer<V, E> extends Renderer<V, E> {
 
-  void setMode(M mode);
+  /** the Modes for rendering */
+  class Mode {}
 
-  void setVertexRenderer(M mode, Vertex<V, E> r);
+  void setMode(Mode mode);
 
-  void setEdgeRenderer(M mode, Edge<V, E> r);
+  void setVertexRenderer(Mode mode, Vertex<V, E> r);
 
-  void setVertexLabelRenderer(M mode, VertexLabel<V, E> r);
+  void setEdgeRenderer(Mode mode, Edge<V, E> r);
 
-  void setEdgeLabelRenderer(M mode, EdgeLabel<V, E> r);
+  void setVertexLabelRenderer(Mode mode, VertexLabel<V, E> r);
 
-  VertexLabel<V, E> getVertexLabelRenderer(M mode);
+  void setEdgeLabelRenderer(Mode mode, EdgeLabel<V, E> r);
 
-  Vertex<V, E> getVertexRenderer(M mode);
+  VertexLabel<V, E> getVertexLabelRenderer(Mode mode);
 
-  Edge<V, E> getEdgeRenderer(M mode);
+  Vertex<V, E> getVertexRenderer(Mode mode);
 
-  EdgeLabel<V, E> getEdgeLabelRenderer(M mode);
+  Edge<V, E> getEdgeRenderer(Mode mode);
+
+  EdgeLabel<V, E> getEdgeLabelRenderer(Mode mode);
 }

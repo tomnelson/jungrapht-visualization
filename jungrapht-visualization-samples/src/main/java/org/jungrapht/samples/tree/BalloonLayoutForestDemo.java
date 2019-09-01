@@ -8,11 +8,11 @@
  */
 package org.jungrapht.samples.tree;
 
+import com.google.common.collect.ImmutableSortedMap;
 import java.awt.*;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.DemoTreeSupplier;
-import org.jungrapht.samples.util.TreeLayoutSelector;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationServer;
@@ -33,6 +33,9 @@ import org.jungrapht.visualization.transform.Lens;
 import org.jungrapht.visualization.transform.LensSupport;
 import org.jungrapht.visualization.transform.shape.HyperbolicShapeTransformer;
 import org.jungrapht.visualization.transform.shape.ViewLensSupport;
+import org.jungrapht.visualization.util.helpers.ControlHelpers;
+import org.jungrapht.visualization.util.helpers.LensControlHelper;
+import org.jungrapht.visualization.util.helpers.TreeLayoutSelector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,45 +125,22 @@ public class BalloonLayoutForestDemo extends JPanel {
     final ScalingControl scaler = new CrossoverScalingControl();
     vv.scaleToLayout(new CrossoverScalingControl());
 
-    JButton plus = new JButton("+");
-    plus.addActionListener(e -> scaler.scale(vv, 1.1f, vv.getCenter()));
+    JComponent lensBox =
+        LensControlHelper.with(
+                Box.createVerticalBox(),
+                ImmutableSortedMap.of(
+                    "Hyperbolic View", hyperbolicViewSupport,
+                    "Hyperbolic Layout", hyperbolicSupport))
+            .container();
 
-    JButton minus = new JButton("-");
-    minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
-    final JRadioButton hyperView = new JRadioButton("Hyperbolic View");
-    hyperView.addActionListener(e -> hyperbolicViewSupport.activate());
-    final JButton hyperLayout = new JButton("Hyperbolic Layout");
-    hyperLayout.addActionListener(e -> hyperbolicSupport.activate());
-    final JButton noLens = new JButton("No Lens");
-    noLens.addActionListener(
-        e -> {
-          hyperbolicSupport.deactivate();
-          hyperbolicViewSupport.deactivate();
-        });
-    noLens.setSelected(true);
-
-    ButtonGroup radio = new ButtonGroup();
-    radio.add(hyperView);
-    radio.add(hyperLayout);
-    radio.add(noLens);
-
-    JPanel scaleGrid = new JPanel(new GridLayout(1, 0));
-    scaleGrid.setBorder(BorderFactory.createTitledBorder("Zoom"));
-    JPanel viewControls = new JPanel();
-    viewControls.setLayout(new GridLayout(0, 1));
-
-    JPanel controls = new JPanel();
-    scaleGrid.add(plus);
-    scaleGrid.add(minus);
-    JPanel layoutControls = new JPanel();
-    layoutControls.add(TreeLayoutSelector.builder(vv).after(vv::scaleToLayout).build());
-    controls.add(layoutControls);
-    controls.add(scaleGrid);
-    controls.add(modeBox);
-    viewControls.add(hyperView);
-    viewControls.add(hyperLayout);
-    viewControls.add(noLens);
-    controls.add(viewControls);
+    Box controls = Box.createHorizontalBox();
+    controls.add(
+        ControlHelpers.getCenteredContainer(
+            "Layout Controls", TreeLayoutSelector.builder(vv).after(vv::scaleToLayout).build()));
+    controls.add(ControlHelpers.getCenteredContainer("Scale", ControlHelpers.getZoomControls(vv)));
+    controls.add(
+        ControlHelpers.getCenteredContainer("Mouse Mode", ControlHelpers.getModeRadio(graphMouse)));
+    controls.add(ControlHelpers.getCenteredContainer("Lens Controls", lensBox));
     add(controls, BorderLayout.SOUTH);
   }
 

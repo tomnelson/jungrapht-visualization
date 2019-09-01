@@ -9,6 +9,7 @@
 package org.jungrapht.visualization.transform;
 
 import java.awt.*;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.PolarPoint;
@@ -62,11 +63,28 @@ public class MagnifyTransformer extends LensTransformer implements MutableTransf
     if (graphPoint == null) {
       return null;
     }
+    if (log.isTraceEnabled()) {
+      Ellipse2D lensEllipse = (Ellipse2D) lens.getLensShape();
+      if (lensEllipse.contains(graphPoint)) {
+        log.trace("lens {} contains graphPoint{}", lensEllipse, graphPoint);
+      } else {
+        log.trace("lens {} does not contain graphPoint {}", lensEllipse, graphPoint);
+      }
+    }
     Point2D viewCenter = lens.getCenter();
     double viewRadius = lens.getRadius();
     double ratio = lens.getRatio();
     // transform the point from the graph to the view
     Point2D viewPoint = delegate.transform(graphPoint);
+    if (log.isTraceEnabled()) {
+      Ellipse2D lensEllipse = (Ellipse2D) lens.getLensShape();
+      if (lensEllipse.contains(viewPoint)) {
+        log.trace("lens {} contains viewPoint {}", lensEllipse, viewPoint);
+      } else {
+        log.trace("lens {} does not contain viewPoint {}", lensEllipse, viewPoint);
+      }
+    }
+
     // calculate point from center
     double dx = viewPoint.getX() - viewCenter.getX();
     double dy = viewPoint.getY() - viewCenter.getY();

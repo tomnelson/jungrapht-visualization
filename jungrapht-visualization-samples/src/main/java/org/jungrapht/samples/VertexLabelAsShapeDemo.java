@@ -8,6 +8,8 @@
  */
 package org.jungrapht.samples;
 
+import static org.jungrapht.visualization.renderers.BiModalRenderer.HEAVYWEIGHT;
+
 import java.awt.*;
 import java.util.function.Function;
 import javax.swing.*;
@@ -16,15 +18,12 @@ import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
-import org.jungrapht.visualization.control.ModalGraphMouse;
-import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.renderers.GradientVertexRenderer;
-import org.jungrapht.visualization.renderers.JLabelVertexLabelRenderer;
 import org.jungrapht.visualization.renderers.VertexLabelAsShapeRenderer;
+import org.jungrapht.visualization.util.helpers.ControlHelpers;
 
 /**
  * This demo shows how to use the vertex labels themselves as the vertex shapes. Additionally, it
@@ -70,13 +69,14 @@ public class VertexLabelAsShapeDemo extends JPanel {
             ((Function<String, String>) Object::toString)
                 .andThen(input -> "<html><center>Node<p>" + input));
     vv.getRenderContext().setVertexShapeFunction(vlasr);
-    vv.getRenderContext().setVertexLabelRenderer(new JLabelVertexLabelRenderer(Color.red));
     vv.getRenderContext().setEdgeDrawPaintFunction(e -> Color.yellow);
     vv.getRenderContext().setEdgeStrokeFunction(e -> new BasicStroke(2.5f));
 
     // customize the renderer
-    vv.getRenderer().setVertexRenderer(new GradientVertexRenderer<>(Color.gray, Color.white, true));
-    vv.getRenderer().setVertexLabelRenderer(vlasr);
+    vv.getRenderer()
+        .setVertexRenderer(
+            HEAVYWEIGHT, new GradientVertexRenderer<>(Color.gray, Color.white, true));
+    vv.getRenderer().setVertexLabelRenderer(HEAVYWEIGHT, vlasr);
 
     vv.setBackground(Color.black);
 
@@ -91,25 +91,9 @@ public class VertexLabelAsShapeDemo extends JPanel {
     VisualizationScrollPane visualizationScrollPane = new VisualizationScrollPane(vv);
     add(visualizationScrollPane);
 
-    JComboBox<?> modeBox = graphMouse.getModeComboBox();
-    modeBox.addItemListener(graphMouse.getModeListener());
-    graphMouse.setMode(ModalGraphMouse.Mode.TRANSFORMING);
-
-    final ScalingControl scaler = new CrossoverScalingControl();
-
-    JButton plus = new JButton("+");
-    plus.addActionListener(e -> scaler.scale(vv, 1.1f, vv.getCenter()));
-
-    JButton minus = new JButton("-");
-    minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
-
     JPanel controls = new JPanel();
-    JPanel zoomControls = new JPanel(new GridLayout(2, 1));
-    zoomControls.setBorder(BorderFactory.createTitledBorder("Zoom"));
-    zoomControls.add(plus);
-    zoomControls.add(minus);
-    controls.add(zoomControls);
-    controls.add(modeBox);
+    controls.add(ControlHelpers.getZoomControls("Zoom", vv));
+    controls.add(ControlHelpers.getModeControls("Mouse Mode", vv));
     add(controls, BorderLayout.SOUTH);
   }
 

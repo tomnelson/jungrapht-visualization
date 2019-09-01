@@ -11,7 +11,6 @@ package org.jungrapht.samples.tree;
 import java.awt.*;
 import javax.swing.*;
 import org.jgrapht.Graph;
-import org.jungrapht.samples.util.SpanningTreeAdapter;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -28,6 +27,8 @@ import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.selection.MultiMutableSelectedState;
 import org.jungrapht.visualization.selection.MutableSelectedState;
+import org.jungrapht.visualization.util.helpers.ControlHelpers;
+import org.jungrapht.visualization.util.helpers.SpanningTreeAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -203,15 +204,6 @@ public class MinimumSpanningTreeDemo extends JPanel {
     final ScalingControl scaler = new CrossoverScalingControl();
     vv0.scaleToLayout(scaler);
 
-    JButton plus = new JButton("+");
-    plus.addActionListener(e -> scaler.scale(vv1, 1.1f, vv1.getCenter()));
-
-    JButton minus = new JButton("-");
-    minus.addActionListener(e -> scaler.scale(vv1, 1 / 1.1f, vv1.getCenter()));
-
-    JPanel zoomPanel = new JPanel(new GridLayout(1, 2));
-    zoomPanel.setBorder(BorderFactory.createTitledBorder("Zoom"));
-
     JPanel modePanel = new JPanel();
     modePanel.setBorder(BorderFactory.createTitledBorder("Mouse Mode"));
     gm1.getModeComboBox().addItemListener(gm2.getModeListener());
@@ -219,9 +211,7 @@ public class MinimumSpanningTreeDemo extends JPanel {
     modePanel.add(gm1.getModeComboBox());
 
     JPanel controls = new JPanel();
-    zoomPanel.add(plus);
-    zoomPanel.add(minus);
-    controls.add(zoomPanel);
+    controls.add(ControlHelpers.getZoomControls("Zoom", vv1));
     controls.add(modePanel);
     add(controls, BorderLayout.SOUTH);
   }

@@ -22,6 +22,7 @@ import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.ISOMLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
+import org.jungrapht.visualization.util.helpers.ControlHelpers;
 
 /**
  * Similar to the SatelliteViewDemo, but using JInternalFrame.
@@ -132,11 +133,6 @@ public class InternalFrameSatelliteViewDemo {
 
     final ScalingControl scaler = new CrossoverScalingControl();
 
-    JButton plus = new JButton("+");
-    plus.addActionListener(e -> scaler.scale(vv, 1.1f, vv.getCenter()));
-    JButton minus = new JButton("-");
-    minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
-
     JButton dismiss = new JButton("Dismiss");
     dismiss.addActionListener(e -> dialog.setVisible(false));
 
@@ -145,9 +141,8 @@ public class InternalFrameSatelliteViewDemo {
         e ->
             JOptionPane.showInternalMessageDialog(
                 dialog, instructions, "Instructions", JOptionPane.PLAIN_MESSAGE));
-    JPanel controls = new JPanel(new GridLayout(2, 2));
-    controls.add(plus);
-    controls.add(minus);
+    Box controls = Box.createHorizontalBox();
+    controls.add(ControlHelpers.getZoomControls("Zoom", vv));
     controls.add(dismiss);
     controls.add(help);
     content.add(satellite.getComponent());
