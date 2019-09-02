@@ -53,8 +53,8 @@ public class Circle {
    * Compute the squared distance (avoid sqrt operation) between the passed Point and Rectangle
    *
    * @param p a Point to test
-   * @param r
-   * @return
+   * @param r rectangle to test
+   * @return the distance squared
    */
   private static double squaredDistance(Point p, Rectangle r) {
     double distSq = 0;

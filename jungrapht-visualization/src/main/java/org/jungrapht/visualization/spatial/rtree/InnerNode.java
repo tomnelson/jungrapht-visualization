@@ -95,7 +95,7 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
   /**
    * true if the children are LeafVertices
    *
-   * @return
+   * @return whether this node's children are {@link LeafNode}s
    */
   @Override
   public boolean isLeafChildren() {
@@ -142,7 +142,7 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
    * recompute the bounding box for this InnerVertex, then the recompute for parent node Climbs the
    * tree to the root as it recalcultes. This i required when a leaf node is removed.
    *
-   * @return
+   * @return the Node with new bounds
    */
   @Override
   public Node<T> recalculateBounds() {

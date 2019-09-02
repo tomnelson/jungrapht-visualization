@@ -20,7 +20,7 @@ import org.jungrapht.visualization.layout.model.Point;
 public interface VertexAccessor<V> {
 
   /**
-   * @param layoutModel
+   * @param layoutModel the source of graph element locations
    * @param p the pick point
    * @return the vertex associated with the pick point
    */

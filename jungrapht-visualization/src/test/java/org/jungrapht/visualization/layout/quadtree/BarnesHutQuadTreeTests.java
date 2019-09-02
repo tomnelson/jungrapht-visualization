@@ -37,7 +37,7 @@ public class BarnesHutQuadTreeTests {
 
     log.info("tree: {}", tree);
     ForceObject<String> expectedForceObject = new ForceObject("force", 10, 10, 3);
-    Assert.assertTrue(tree.getRoot().getForceObject().equals(expectedForceObject));
+    Assert.assertEquals(tree.getRoot().getForceObject(), expectedForceObject);
   }
 
   /** test a simple construction */
@@ -53,16 +53,16 @@ public class BarnesHutQuadTreeTests {
     tree.insert(forceObjectD);
 
     log.info("tree: {}", tree);
-    Assert.assertTrue(tree.getRoot() != null);
+    Assert.assertNotNull(tree.getRoot());
     Node<String> root = tree.getRoot();
-    Assert.assertTrue(!root.isLeaf());
+    Assert.assertFalse(root.isLeaf());
     Node<String> NW = root.NW;
-    Assert.assertTrue(NW.forceObject.equals(forceObjectA.add(forceObjectB).add(forceObjectC)));
-    Assert.assertTrue(!NW.isLeaf());
-    Assert.assertTrue(NW.NW.forceObject.equals(forceObjectC));
-    Assert.assertTrue(NW.NE.forceObject.equals(forceObjectA));
-    Assert.assertTrue(NW.SW.forceObject.equals(forceObjectB));
-    Assert.assertTrue(NW.SE.forceObject == null);
-    Assert.assertTrue(root.NE.forceObject.equals(forceObjectD));
+    Assert.assertEquals(NW.forceObject, forceObjectA.add(forceObjectB).add(forceObjectC));
+    Assert.assertFalse(NW.isLeaf());
+    Assert.assertEquals(NW.NW.forceObject, forceObjectC);
+    Assert.assertEquals(NW.NE.forceObject, forceObjectA);
+    Assert.assertEquals(NW.SW.forceObject, forceObjectB);
+    Assert.assertNull(NW.SE.forceObject);
+    Assert.assertEquals(root.NE.forceObject, forceObjectD);
   }
 }

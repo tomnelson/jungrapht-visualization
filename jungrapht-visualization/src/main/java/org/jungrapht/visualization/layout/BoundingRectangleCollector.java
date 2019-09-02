@@ -47,10 +47,10 @@ public abstract class BoundingRectangleCollector<T> {
     }
 
     /**
-     * @param vertex
-     * @param p1
+     * @param vertex the vertex to get bounds for
+     * @param p1 the location of the vertex
      * @param p2 ignored for Vertices
-     * @return
+     * @return bounds for the vertex shape
      */
     public Rectangle2D getForElement(V vertex, Point p1, Point p2) {
       return getForElement(vertex, p1);
@@ -117,10 +117,10 @@ public abstract class BoundingRectangleCollector<T> {
     }
 
     /**
-     * @param vertex
-     * @param p1
+     * @param vertex the vertex to get bounds for
+     * @param p1 the location of vertex
      * @param p2 ignored for Vertices
-     * @return
+     * @return the bounds
      */
     public Rectangle2D getForElement(V vertex, Point p1, Point p2) {
       return getForElement(vertex, p1);
@@ -293,9 +293,9 @@ public abstract class BoundingRectangleCollector<T> {
      * Line edge will have a bounding rectangle of zero width or height. Give any such bounding
      * rectangles a non-zero volume so that contained edges are not lost
      *
-     * @param r
-     * @param delta
-     * @return
+     * @param r Rectangle to check for empty size
+     * @param delta how much to increase siz by
+     * @return a non-empty Rectangle
      */
     private Rectangle2D nonEmpty(Rectangle2D r, double delta) {
       if (r.getHeight() == 0) {

@@ -113,7 +113,7 @@ public class RTreeTest2 {
     Assert.assertTrue(rTree.getRoot().isPresent());
     Node<String> root = rTree.getRoot().get();
     Assert.assertTrue(root instanceof LeafNode);
-    Assert.assertTrue(root.size() == 1);
+    Assert.assertEquals(1, root.size());
 
     testAreas(rTree);
   }

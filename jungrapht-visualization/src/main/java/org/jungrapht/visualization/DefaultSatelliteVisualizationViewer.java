@@ -76,7 +76,7 @@ public class DefaultSatelliteVisualizationViewer<V, E> extends DefaultVisualizat
   /**
    * override to not use the spatial data structure, as this view will always show the entire graph
    *
-   * @param g2d
+   * @param g2d graphics context
    */
   @Override
   protected void renderGraph(Graphics2D g2d) {

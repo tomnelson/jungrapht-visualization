@@ -524,8 +524,8 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
   /**
    * parse out the vertex label position
    *
-   * @param position
-   * @return
+   * @param position position as a String
+   * @return the {@link Renderer.VertexLabel.Position}
    */
   private Renderer.VertexLabel.Position getPosition(String position) {
     try {
@@ -538,7 +538,7 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
   /**
    * parse out the edge shape
    *
-   * @param edgeShape
+   * @param edgeShape edge shape as a String
    */
   private void setEdgeShape(String edgeShape) {
     switch (edgeShape) {

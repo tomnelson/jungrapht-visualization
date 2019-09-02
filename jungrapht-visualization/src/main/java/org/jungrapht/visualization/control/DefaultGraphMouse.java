@@ -2,7 +2,19 @@ package org.jungrapht.visualization.control;
 
 import java.awt.event.InputEvent;
 
-/** @author Tom Nelson */
+/**
+ * The DefaultGraphMouse does not have 'transforming/selecting' modes. It has 3 plugins that are
+ * always active:
+ *
+ * <ul>
+ *   <li>{@link ScalingGraphMousePlugin} operates via mouse wheel
+ *   <li>{@link TranslatingGraphMousePlugin} operated via mouse-drag
+ *   <li>{@link SelectingGraphMousePlugin} operates via CTRL+mouse gestures
+ * </ul>
+ *
+ * @param <V>
+ * @param <E>
+ */
 public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
 
   /** create an instance with default values */

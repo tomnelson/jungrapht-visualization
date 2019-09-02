@@ -86,7 +86,7 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
     /**
      * @param expandLayout if {@code true} expand the layout width and height to accomodate the
      *     entire tree
-     * @return
+     * @return the Builder
      */
     public B expandLayout(boolean expandLayout) {
       this.expandLayout = expandLayout;

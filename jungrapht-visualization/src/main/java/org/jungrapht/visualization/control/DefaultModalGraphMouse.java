@@ -19,11 +19,11 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 /**
- * DefaultModalGraphMouse is a PluggableGraphMouse class that pre-installs a large collection of
- * plugins for picking and transforming the graph. Additionally, it carries the notion of a Mode:
- * Picking or Translating. Switching between modes allows for a more natural choice of mouse
- * modifiers to be used for the various plugins. The default modifiers are intended to mimick those
- * of mainstream software applications in order to be intuitive to users.
+ * DefaultModalGraphMouse is a GraphMouse class that pre-installs a large collection of plugins for
+ * picking and transforming the graph. Additionally, it carries the notion of a Mode: Picking or
+ * Translating. Switching between modes allows for a more natural choice of mouse modifiers to be
+ * used for the various plugins. The default modifiers are intended to mimick those of mainstream
+ * software applications in order to be intuitive to users.
  *
  * <p>To change between modes, two different controls are offered, a combo box and a menu system.
  * These controls are lazily created in their respective 'getter' methods so they don't impact code

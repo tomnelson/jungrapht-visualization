@@ -29,6 +29,7 @@ public class LensManager<T extends LensSupport> {
       lensSet.stream().filter(l -> !activeOne.equals(l)).forEach(LensSupport::deactivate);
     }
     log.info(
-        "active Lens: {}", lensSet.stream().filter(l -> l.isActive()).collect(Collectors.toSet()));
+        "active Lens: {}",
+        lensSet.stream().filter(LensSupport::isActive).collect(Collectors.toSet()));
   }
 }

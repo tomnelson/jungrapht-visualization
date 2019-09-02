@@ -271,7 +271,7 @@ public class RTreeVisualizer extends JPanel {
           new Thread(
               () -> {
                 while (running) {
-                  SwingUtilities.invokeLater(() -> addRandomShape());
+                  SwingUtilities.invokeLater(this::addRandomShape);
                   try {
                     Thread.sleep(100);
                   } catch (InterruptedException ex) {

@@ -20,7 +20,7 @@ import org.jungrapht.visualization.layout.model.Point;
 public interface EdgeAccessor<V, E> {
 
   /**
-   * @param layoutModel
+   * @param layoutModel the source of Edge positions
    * @param p the pick point
    * @return the vertex associated with the pick point
    */

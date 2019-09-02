@@ -41,12 +41,12 @@ public class FourPassImageShaper {
    * the line, update my shape with a line extending to the old p2 location, make the old p2 the new
    * p1, and make p2 the old p
    *
-   * @param p1
-   * @param p2
-   * @param p
-   * @param line
-   * @param path
-   * @return
+   * @param p1 first end point
+   * @param p2 last end point
+   * @param p point on the line
+   * @param line line so far
+   * @param path path to search for the point p
+   * @return the last point
    */
   private static Point2D detectLine(
       Point2D p1, Point2D p2, Point2D p, Line2D line, GeneralPath path) {
@@ -69,8 +69,8 @@ public class FourPassImageShaper {
   /**
    * trace the left side of the image
    *
-   * @param image
-   * @return
+   * @param image image to find boundary of
+   * @return the Shape of the left edge of the image
    */
   private static Shape leftEdge(BufferedImage image) {
     GeneralPath path = new GeneralPath();
@@ -112,8 +112,8 @@ public class FourPassImageShaper {
   /**
    * trace the bottom of the image
    *
-   * @param image
-   * @return
+   * @param image image to fimd the boundary of
+   * @return the Shape of the bottom edge of the image
    */
   private static Shape bottomEdge(BufferedImage image) {
     GeneralPath path = new GeneralPath();
@@ -155,8 +155,8 @@ public class FourPassImageShaper {
   /**
    * trace the right side of the image
    *
-   * @param image
-   * @return
+   * @param image the input image
+   * @return the Shape of the right edge
    */
   private static Shape rightEdge(BufferedImage image) {
     GeneralPath path = new GeneralPath();
@@ -199,8 +199,8 @@ public class FourPassImageShaper {
   /**
    * trace the top of the image
    *
-   * @param image
-   * @return
+   * @param image image to find the boundary of
+   * @return the Shape of the top boundary
    */
   private static Shape topEdge(BufferedImage image) {
     GeneralPath path = new GeneralPath();

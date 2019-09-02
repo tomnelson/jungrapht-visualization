@@ -99,7 +99,7 @@ public interface VisualizationModel<V, E>
 
     /**
      * @param initializer a {@code Function} to set initial vertex locations
-     * @return
+     * @return the Builder
      */
     public B initializer(Function<V, Point> initializer) {
       this.initializer = initializer;

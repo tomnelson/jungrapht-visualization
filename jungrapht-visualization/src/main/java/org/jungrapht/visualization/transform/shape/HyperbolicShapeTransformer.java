@@ -35,8 +35,8 @@ public class HyperbolicShapeTransformer extends HyperbolicTransformer
    * Create an instance, setting values from the passed component and registering to listen for
    * layoutSize changes on the component.
    *
-   * @param lens
-   * @param delegate
+   * @param lens the {@link Lens} to consider for transform
+   * @param delegate transformer to use
    */
   public HyperbolicShapeTransformer(Lens lens, MutableTransformer delegate) {
     super(lens, delegate);
