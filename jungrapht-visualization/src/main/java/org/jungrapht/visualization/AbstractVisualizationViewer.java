@@ -1,7 +1,7 @@
 package org.jungrapht.visualization;
 
 /**
- * Provided as a base for extending the DefaultVisualizationViewer
+ * Provided as a public base class for extending the DefaultVisualizationViewer
  *
  * @param <V> vertex type
  * @param <E> edge type
