@@ -75,7 +75,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
   private static final String VERTEX_SPATIAL_SUPPORT = PREFIX + "vertexSpatialSupport";
   private static final String EDGE_SPATIAL_SUPPORT = PREFIX + "edgeSpatialSupport";
   private static final String PROPERTIES_FILE_NAME =
-      System.getProperty("graph.visualization.properties.file.name", PREFIX + "properties");
+      System.getProperty("jungrapht.properties.file.name", PREFIX + "properties");
   private static final String LIGHTWEIGHT_VERTEX_COUNT_THRESHOLD =
       PREFIX + "lightweightVertexCountThreshold";
   private static final String LIGHTWEIGHT_SCALE_THRESHOLD = PREFIX + "lightweightScaleThreshold";

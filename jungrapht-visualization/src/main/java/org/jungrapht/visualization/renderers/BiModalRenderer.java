@@ -31,19 +31,31 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A {@link Renderer} that delegates to either a {@link HeavyweightRenderer} or a {@link
- * LightweightRenderer} depending on the results of a count predicate and a scale predicate
+ * LightweightRenderer} depending on the results of a count Predicate and a scale Predicate
  *
  * <p>The count predicate defaults to a comparison of the vertex count with the
- * lightweightCountThreshold
+ * lightweightCountThreshold.
  *
- * <p>The scale predicate defauls to a comparison of the VIEW transform scale with the
- * lightweightScaleThreshold
+ * <p>The scale predicate defaults to a comparison of the VIEW transform scale with the
+ * lightweightScaleThreshold. Note that the VIEW transform scale range is <b>0 &lt; VIEW transform
+ * scale &lt;= 1.0</b>
  *
- * <p>if the scale threshold is less than 0.5, then the graph is always drawn with the lightweight
- * renderer
+ * <p>The following conditions apply:
  *
- * <p>if the vertex count is less than (for example) 20 the the graph is always drawn with the
- * default renderer
+ * <ol>
+ *   <li><b>vertex count &lt; {@code lightweightCountThreshold}:</b> Always draw with {@link
+ *       HeavyweightRenderer}
+ *   <li><b>{@code lightweightScaleThreshold} &gt; 1.0:</b> Always draw with {@link
+ *       LightweightRenderer} (unless 1 is true)
+ *   <li>If neither 1 nor 2 are true:
+ *       <ul>
+ *         <li>the static graph will be rendered with the {@link HeavyweightRenderer} when <b>VIEW
+ *             transform scale &gt; {@code lightweightScaleThreshold}</b>. Otherwise, the static
+ *             graph will be rendered with the {@link LightweightRenderer}
+ *         <li>While the graph is being manipulated with mouse gestures (zoom/pan, etc) the graph
+ *             will be rendered with the {@link LightweightRenderer}
+ *       </ul>
+ * </ol>
  *
  * @param <V> the vertex type
  * @param <E> the edge type

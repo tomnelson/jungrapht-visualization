@@ -1,5 +1,12 @@
 package org.jungrapht.visualization.renderers;
 
+/**
+ * Interface for Modality in Renderers. Properties may be set and fetched based on a {#code Mode}
+ * parameter
+ *
+ * @param <V> vertex type
+ * @param <E> edge type
+ */
 public interface ModalRenderer<V, E> extends Renderer<V, E> {
 
   /** the Modes for rendering */
