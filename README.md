@@ -7,7 +7,7 @@
 [**JUNGRAPHT-VISUALIZATION Website**](http://tomnelson.github.io/jungrapht-visualization/)
 
 JUNGRAPHT-VISUALIZATION includes performance enhancements for visualization of large networks, including R*Tree for visualization, Barnes-Hut Quad Tree for force-directed layouts, and a lightweight rendering layer that can swap in while graphs are being animated or when they are zoomed out to a point where details are very small.
-Many values may be set via java properties (see sample.jungrapht.properties for keys and default values).
+Many values may be set via java properties (see [sample.jungrapht.properties](https://github.com/tomnelson/jungrapht-visualization/blob/master/jungrapht-visualization/src/main/resources/sample.jungrapht.properties) for keys and default values).
 
 ### Latest Release
 
@@ -36,6 +36,4 @@ Snapshots of JUNGRAPHT-VISUALIZATION built from the `master` branch are availabl
 * [GitHub project](https://github.com/tomnelson/jungrapht-visualization)
 * [Issue tracker: report a defect or make a feature request](https://github.com/tomnelson/jungrapht-visualization/issues/new)
 * [StackOverflow: Ask questions](https://stackoverflow.com/questions/ask?tags=jungrapht+java)
-
-### Contributions
 
