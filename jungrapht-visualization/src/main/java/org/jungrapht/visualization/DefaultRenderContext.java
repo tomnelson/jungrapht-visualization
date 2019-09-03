@@ -56,7 +56,8 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
   private static final String EDGE_SHAPE = PREFIX + "edgeShape";
   private static final String EDGE_COLOR = PREFIX + "edgeColor";
   private static final String PICKED_EDGE_COLOR = PREFIX + "pickedEdgeColor";
-  private static final String EDGE_STROKE = PREFIX + "edgeStroke";
+  private static final String EDGE_WIDTH = PREFIX + "edgeWidth";
+  private static final String EDGE_STROKE_FUNCTION = PREFIX + "edgeStrokeFunction";
 
   // edge label visual property symbols
   private static final String EDGE_LABEL_FONT = PREFIX + "edgeLabelFont";
@@ -106,13 +107,12 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
   protected Function<V, Paint> vertexLabelDrawPaintFunction = n -> vertexLabelDrawPaint;
 
   // edge properties
-  private Stroke edgeStroke =
-      new BasicStroke(Float.parseFloat(System.getProperty(EDGE_STROKE, "1.0")));
+  private float edgeWidth = Float.parseFloat(System.getProperty(EDGE_WIDTH, "1.0f"));
   private Color pickedEdgePaint = Color.getColor(PICKED_EDGE_COLOR, Color.CYAN);
   private Color edgePaint = Color.getColor(EDGE_COLOR, Color.BLACK);
 
   // edge functions
-  protected Function<E, Stroke> edgeStrokeFunction = e -> edgeStroke;
+  protected Function<E, Stroke> edgeStrokeFunction;
   protected Function<E, Paint> edgeFillPaintFunction = n -> null;
   protected Function<E, Paint> edgeDrawPaintFunction =
       e -> pickedEdgeState != null && pickedEdgeState.isSelected(e) ? pickedEdgePaint : edgePaint;
@@ -183,8 +183,6 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
 
   protected GraphicsDecorator graphicsContext;
 
-  //  private EdgeShape edgeShape;
-
   DefaultRenderContext(Builder<V, E, ?, ?> builder) {
     this(builder.graph);
   }
@@ -192,6 +190,8 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
   private DefaultRenderContext(Graph<V, E> graph) {
     this.parallelEdgeIndexFunction = new ParallelEdgeIndexFunction<>();
     setEdgeShape(System.getProperty(EDGE_SHAPE, "QUAD_CURVE"));
+    float edgeWidth = Float.parseFloat(System.getProperty(EDGE_WIDTH, "1.0f"));
+    setEdgeStrokeFunction(System.getProperty(EDGE_STROKE_FUNCTION, "LINE"), edgeWidth);
     setupArrows(graph.getType().isDirected());
   }
 
@@ -555,6 +555,36 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
       default:
         setEdgeShapeFunction(EdgeShape.quadCurve());
         break;
+    }
+  }
+
+  /**
+   * parse out the edge stroke (LINE, DASHED, DOTTED
+   *
+   * @param edgeStroke
+   */
+  private void setEdgeStrokeFunction(String edgeStroke, float width) {
+    switch (edgeStroke) {
+      case "DOTTED":
+        setEdgeStrokeFunction(
+            width == 1.0f
+                ? e -> RenderContext.DOTTED
+                : e ->
+                    new BasicStroke(
+                        width, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, dotting, 0f));
+        break;
+      case "DASHED":
+        setEdgeStrokeFunction(
+            width == 1.0f
+                ? e -> RenderContext.DASHED
+                : e ->
+                    new BasicStroke(
+                        width, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL, 1.0f, dashing, 0f));
+        break;
+      case "LINE":
+      default:
+        setEdgeStrokeFunction(
+            width == 1.0f ? e -> RenderContext.LINE : e -> new BasicStroke(width));
     }
   }
 }

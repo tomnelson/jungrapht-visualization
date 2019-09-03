@@ -1,10 +1,6 @@
 package org.jungrapht.visualization;
 
-import java.awt.BasicStroke;
-import java.awt.Font;
-import java.awt.Paint;
-import java.awt.Shape;
-import java.awt.Stroke;
+import java.awt.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import javax.swing.CellRendererPane;
@@ -59,6 +55,8 @@ public interface RenderContext<V, E> {
    */
   Stroke DASHED =
       new BasicStroke(1.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL, 1.0f, dashing, 0f);
+
+  Stroke LINE = new BasicStroke(1.0f);
 
   /** Specifies the offset for the edge labels. */
   int LABEL_OFFSET = 10;
