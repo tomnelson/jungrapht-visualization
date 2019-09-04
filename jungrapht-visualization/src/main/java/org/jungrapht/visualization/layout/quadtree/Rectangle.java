@@ -45,8 +45,8 @@ public class Rectangle {
   /**
    * fail-fast implementation to reduce computation
    *
-   * @param other
-   * @return
+   * @param other to compare for intersection
+   * @return true if they intersect
    */
   public boolean intersects(Rectangle other) {
     return maxX >= other.x && other.maxX >= x && maxY >= other.y && other.maxY >= y;

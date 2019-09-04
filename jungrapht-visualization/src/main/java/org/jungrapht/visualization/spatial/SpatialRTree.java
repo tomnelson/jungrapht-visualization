@@ -157,7 +157,7 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
    */
   @Override
   public Set<LeafNode<T>> getContainingLeafs(double x, double y) {
-    if (!isActive() || !rtree.getRoot().isPresent()) {
+    if (!isActive() || rtree.getRoot().isEmpty()) {
       return Collections.emptySet();
     }
 
@@ -172,7 +172,7 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
 
   @Override
   public LeafNode<T> getContainingLeaf(Object element) {
-    if (!rtree.getRoot().isPresent()) {
+    if (rtree.getRoot().isEmpty()) {
       return null; // nothing in this tree
     }
     Node<T> theRoot = rtree.getRoot().get();
@@ -260,7 +260,7 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
      */
     @Override
     public Set<V> getVisibleElements(Shape shape) {
-      if (!isActive() || !rtree.getRoot().isPresent()) {
+      if (!isActive() || rtree.getRoot().isEmpty()) {
         return layoutModel.getGraph().vertexSet();
       }
       pickShapes.add(shape);
@@ -325,7 +325,7 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
      */
     @Override
     public V getClosestElement(double x, double y) {
-      if (!isActive() || !rtree.getRoot().isPresent()) {
+      if (!isActive() || rtree.getRoot().isEmpty()) {
         // use the fallback VertexAccessor
         return fallback.getVertex(layoutModel, x, y);
       }
@@ -447,7 +447,7 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
      */
     @Override
     public Set<E> getVisibleElements(Shape shape) {
-      if (!isActive() || !rtree.getRoot().isPresent()) {
+      if (!isActive() || rtree.getRoot().isEmpty()) {
         log.trace("not relaxing so getting from the graph");
         return visualizationModel.getGraph().edgeSet();
       }
@@ -548,7 +548,7 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
     @Override
     public E getClosestElement(double x, double y) {
 
-      if (!isActive() || !rtree.getRoot().isPresent()) {
+      if (!isActive() || rtree.getRoot().isEmpty()) {
         // not active or empty
         // use the fallback VertexAccessor
         return graphElementAccessor.getEdge(layoutModel, x, y);

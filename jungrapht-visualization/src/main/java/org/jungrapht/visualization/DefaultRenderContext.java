@@ -563,7 +563,7 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
   /**
    * parse out the edge stroke (LINE, DASHED, DOTTED
    *
-   * @param edgeStroke
+   * @param edgeStroke Stroke to set
    */
   private void setEdgeStroke(String edgeStroke, float width) {
     switch (edgeStroke) {

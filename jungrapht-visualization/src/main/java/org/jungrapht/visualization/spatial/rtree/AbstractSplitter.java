@@ -39,7 +39,7 @@ public abstract class AbstractSplitter<T> {
       double unionArea = area(union);
       // this should be difference between the new union with incoming and the original kid area
       double enlargement = unionArea - kidArea;
-      if (!winner.isPresent()) {
+      if (winner.isEmpty()) {
         // first one is the winner
         winner = Optional.of(kid);
         winningUnion = Optional.of(kidRectangle);
@@ -98,7 +98,7 @@ public abstract class AbstractSplitter<T> {
       Rectangle2D kidRectangle = kid.getBounds();
 
       double overlap = overlap(kid.getBounds(), bounds);
-      if (!winner.isPresent()) {
+      if (winner.isEmpty()) {
         winner = Optional.of(kid);
         leastOverlap = overlap;
         winningUnion = Optional.of(kid.getBounds().createUnion(bounds));
@@ -184,7 +184,7 @@ public abstract class AbstractSplitter<T> {
         winner = Optional.of(kid);
       }
     }
-    if (!winner.isPresent()) {
+    if (winner.isEmpty()) {
       log.error("no winner");
       if (log.isTraceEnabled()) {
         whatKind = "no winner";

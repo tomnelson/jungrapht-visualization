@@ -96,7 +96,7 @@ public class QuadraticSplitter<T> extends AbstractSplitter<T> implements Splitte
         Rectangle2D union = entryPair.left.getBounds().createUnion(entryPair.right.getBounds());
         double area =
             area(union) - area(entryPair.left.getBounds()) - area(entryPair.right.getBounds());
-        if (!winningPair.isPresent()) {
+        if (winningPair.isEmpty()) {
           winningPair = Optional.of(entryPair);
           largestArea = area;
         } else if (area > largestArea) {
@@ -136,7 +136,7 @@ public class QuadraticSplitter<T> extends AbstractSplitter<T> implements Splitte
         double difference = leftAreaIncrease - rightAreaIncrease;
         // make sure it is positive
         difference = difference < 0 ? -difference : difference;
-        if (!winner.isPresent()) {
+        if (winner.isEmpty()) {
           winner = Optional.of(entry);
           maxDifference = difference;
         } else if (difference > maxDifference) {

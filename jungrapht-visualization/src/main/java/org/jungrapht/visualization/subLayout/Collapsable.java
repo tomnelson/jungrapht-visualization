@@ -2,6 +2,11 @@ package org.jungrapht.visualization.subLayout;
 
 import java.util.Objects;
 
+/**
+ * container for a type that cam be made Collapsable. Used for vertex collapse to make a
+ * @code {Graph<Collapsable<V>, E>} instead of a {@code Graph<V,E>}
+ * @param <T> the type that may be collapsed
+ */
 public class Collapsable<T> {
 
   private T item;

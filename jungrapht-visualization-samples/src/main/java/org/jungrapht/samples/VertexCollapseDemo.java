@@ -204,7 +204,6 @@ public class VertexCollapseDemo extends JPanel {
                       vv.getVisualizationModel().setGraph(g);
 
                       vv.getRenderContext().getParallelEdgeIndexFunction().reset();
-                      //                vv.getModel().setLayout(layout);
                     }
                     vv.getSelectedVertexState().clear();
                     vv.repaint();

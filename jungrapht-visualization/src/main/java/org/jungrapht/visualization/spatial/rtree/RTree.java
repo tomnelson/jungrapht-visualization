@@ -51,7 +51,7 @@ public class RTree<T> {
    */
   private RTree(Node<T> node) {
     Preconditions.checkArgument(
-        !node.getParent().isPresent(), "Error creating R-Tree with root that has parent");
+            node.getParent().isEmpty(), "Error creating R-Tree with root that has parent");
     root = Optional.of(node);
   }
 
@@ -91,7 +91,7 @@ public class RTree<T> {
   public static <T> RTree<T> add(
       RTree<T> rtree, SplitterContext<T> splitterContext, T element, Rectangle2D bounds) {
     // see if the root is not present (i.e. the RTree is empty
-    if (!rtree.root.isPresent()) {
+    if (rtree.root.isEmpty()) {
       // The first element addded to an empty RTree
       // Return a new RTree with the new LeafVertex as its root
       return new RTree(LeafNode.create(element, bounds));
@@ -104,7 +104,7 @@ public class RTree<T> {
 
       Node<T> got = leafVertex.add(splitterContext, element, bounds);
       Preconditions.checkArgument(
-          !got.getParent().isPresent(), "return from LeafVertex add has a parent");
+              got.getParent().isEmpty(), "return from LeafVertex add has a parent");
       return new RTree(got);
 
     } else {
@@ -115,7 +115,7 @@ public class RTree<T> {
         log.error("add did not work");
       }
       Preconditions.checkArgument(
-          !got.getParent().isPresent(), "return from InnerVertex add has a parent");
+              got.getParent().isEmpty(), "return from InnerVertex add has a parent");
       return new RTree(got);
     }
   }
@@ -135,7 +135,7 @@ public class RTree<T> {
 
   public static <T> RTree removeForReinsert(
       RTree<T> rtree, Collection<Map.Entry<T, Rectangle2D>> removed) {
-    if (!rtree.root.isPresent()) return rtree;
+    if (rtree.root.isEmpty()) return rtree;
     Node<T> root = rtree.root.get();
     log.trace(
         "average leaf count {}", rtree.averageLeafCount(root, new double[] {0}, new int[] {0}));
@@ -177,7 +177,7 @@ public class RTree<T> {
 
   public static <T> RTree reinsert(RTree<T> rtree, SplitterContext<T> splitterContext) {
 
-    if (!rtree.root.isPresent()) return rtree;
+    if (rtree.root.isEmpty()) return rtree;
     Node<T> root = rtree.root.get();
     log.trace(
         "average leaf count {}", rtree.averageLeafCount(root, new double[] {0}, new int[] {0}));
@@ -263,7 +263,7 @@ public class RTree<T> {
    */
   public static <T> RTree<T> remove(RTree<T> rtree, T element) {
     log.trace("want to remove {} from tree size {}", element, rtree.count());
-    if (!rtree.root.isPresent()) {
+    if (rtree.root.isEmpty()) {
       // this tree is empty
       return new RTree();
     }

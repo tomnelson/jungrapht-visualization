@@ -355,7 +355,7 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
     return new InputStreamReader(inputStream);
   }
 
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] args) {
     new ShowLayoutsWithJGraphtIO();
   }
 }

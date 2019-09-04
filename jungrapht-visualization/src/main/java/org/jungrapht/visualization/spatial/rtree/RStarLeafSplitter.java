@@ -116,7 +116,7 @@ public class RStarLeafSplitter<T> implements LeafSplitter<T> {
       double nodeOverlap = Node.entryOverlap(pair.left, pair.right);
       double nodeArea = Node.entryArea(pair.left, pair.right);
       // no winner yet. first node wins by default
-      if (!winner.isPresent()) {
+      if (winner.isEmpty()) {
         minOverlap = nodeOverlap;
         minArea = nodeArea;
         winner = Optional.of(pair);

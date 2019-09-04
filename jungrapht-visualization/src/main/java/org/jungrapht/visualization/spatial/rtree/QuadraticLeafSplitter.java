@@ -49,7 +49,7 @@ public class QuadraticLeafSplitter<T> implements LeafSplitter<T> {
         double difference = leftAreaIncrease - rightAreaIncrease;
         // make sure it is positive
         difference = difference < 0 ? -difference : difference;
-        if (!winner.isPresent()) {
+        if (winner.isEmpty()) {
           winner = Optional.of(entry);
           maxDifference = difference;
         } else if (difference > maxDifference) {
@@ -80,7 +80,7 @@ public class QuadraticLeafSplitter<T> implements LeafSplitter<T> {
             Node.area(union)
                 - Node.area(entryPair.left.getValue())
                 - Node.area(entryPair.right.getValue());
-        if (!winningPair.isPresent()) {
+        if (winningPair.isEmpty()) {
           winningPair = Optional.of(entryPair);
           largestArea = area;
         } else if (area > largestArea) {

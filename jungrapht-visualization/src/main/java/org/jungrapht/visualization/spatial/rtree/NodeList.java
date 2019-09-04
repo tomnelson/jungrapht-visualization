@@ -36,7 +36,7 @@ public class NodeList<B extends Bounded> extends ArrayList<B> implements Bounded
   public boolean add(B n) {
     if (n instanceof Node) {
       Node node = (Node) n;
-      if (node.getParent() == null || !node.getParent().isPresent()) {
+      if (node.getParent() == null || node.getParent().isEmpty()) {
         log.error("adding a node {} with unset parent {}", node, node.getParent());
       }
     } else {

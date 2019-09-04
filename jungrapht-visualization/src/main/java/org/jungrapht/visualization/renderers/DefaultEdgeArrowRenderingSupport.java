@@ -88,7 +88,7 @@ public class DefaultEdgeArrowRenderingSupport<V, E> implements EdgeArrowRenderin
       try {
         edgeShape = getLastOutsideSegment(edgeShape, vertexShape);
       } catch (IllegalArgumentException e) {
-        log.error("got {}", e);
+        log.error("got", e);
         return null;
       }
       dx = (float) (edgeShape.getX1() - edgeShape.getX2());
@@ -110,7 +110,7 @@ public class DefaultEdgeArrowRenderingSupport<V, E> implements EdgeArrowRenderin
       try {
         edgeShape = getFirstOutsideSegment(edgeShape, vertexShape);
       } catch (IllegalArgumentException e) {
-        log.error("got {}", e);
+        log.error("got", e);
         return null;
       }
       dx = (float) (edgeShape.getX1() - edgeShape.getX2());

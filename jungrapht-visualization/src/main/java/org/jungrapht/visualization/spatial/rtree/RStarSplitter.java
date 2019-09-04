@@ -82,7 +82,7 @@ public class RStarSplitter<T> extends AbstractSplitter<T> implements Splitter<T>
     for (Pair<List<Node<T>>> pair : group) {
       double nodeOverlap = nodeOverlap(pair.left, pair.right);
       double nodeArea = nodeArea(pair.left, pair.right);
-      if (!winner.isPresent()) {
+      if (winner.isEmpty()) {
         minOverlap = nodeOverlap;
         minArea = nodeArea;
         winner = Optional.of(pair);

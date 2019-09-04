@@ -73,7 +73,7 @@ public interface LayoutModel<V>
   /**
    * indicates that there is a relaxer thread operating on this LayoutModel
    *
-   * @param relaxing
+   * @param relaxing whether there is a relaxer thread
    */
   void setRelaxing(boolean relaxing);
 
