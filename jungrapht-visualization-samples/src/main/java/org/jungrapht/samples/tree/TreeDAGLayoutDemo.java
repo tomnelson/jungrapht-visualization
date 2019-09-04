@@ -71,13 +71,12 @@ public class TreeDAGLayoutDemo extends JPanel {
     modeBox.addItemListener(graphMouse.getModeListener());
     graphMouse.setMode(Mode.TRANSFORMING);
 
-    JPanel layoutPanel = new JPanel(new GridLayout(2, 1));
-    layoutPanel.add(TreeLayoutSelector.builder(vv).build());
-    JPanel controls = new JPanel();
+    JPanel layoutPanel = new JPanel(new GridLayout(0, 1));
+    layoutPanel.add(ControlHelpers.getCenteredContainer("Layouts", TreeLayoutSelector.builder(vv).build()));
+    Box controls = Box.createHorizontalBox();
     controls.add(layoutPanel);
     controls.add(ControlHelpers.getCenteredContainer("Zoom", ControlHelpers.getZoomControls(vv)));
-    controls.add(modeBox);
-
+    controls.add(ControlHelpers.getCenteredContainer("Mouse Mode", modeBox));
     add(controls, BorderLayout.SOUTH);
   }
 

@@ -66,7 +66,11 @@ public class LensControlHelper {
   private Supplier<AbstractButton> buttonSupplier;
   private String title;
 
-  /** @return the original container, which has been populated with activation buttons */
+  /**
+   *
+   * @param <T> the container type
+   * @return the original container, possible with a title
+   */
   public <T extends JComponent> T container() {
     if (title != null) {
       if (container instanceof AbstractButton) { // true if the container is a JMenu
