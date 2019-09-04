@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.function.Supplier;
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import org.jungrapht.visualization.transform.LensSupport;
 
 public class LensControlHelper {
@@ -65,19 +66,14 @@ public class LensControlHelper {
   private Supplier<AbstractButton> buttonSupplier;
   private String title;
 
-  //  /**
-  //   *
-  //   * @param title the title to use in a {@code JLabel} to title the group of activation buttons
-  //   * @return the original container
-  //   */
-  //  public <T extends JComponent> T  container(String title) {
-  //    return (T)ControlHelpers.getCenteredContainer(title, container);
-  //  }
-
   /** @return the original container, which has been populated with activation buttons */
   public <T extends JComponent> T container() {
     if (title != null) {
-      return (T) ControlHelpers.getCenteredContainer(title, container);
+      if (container instanceof AbstractButton) { // true if the container is a JMenu
+        ((AbstractButton) container).setText(title);
+      } else {
+        container.setBorder(new TitledBorder(title));
+      }
     }
     return (T) container;
   }
