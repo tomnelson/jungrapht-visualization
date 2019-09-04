@@ -23,12 +23,12 @@ import org.jungrapht.visualization.util.EdgeIndexFunction;
 public abstract class ParallelEdgeShapeFunction<V, E>
     implements Function<Context<Graph<V, E>, E>, Shape> {
   /** Specifies the distance between control points for edges being drawn in parallel. */
-  protected float control_offset_increment = 20.f;
+  protected float controlOffsetIncrement = 20.f;
 
   protected EdgeIndexFunction<V, E> edgeIndexFunction;
 
   public void setControlOffsetIncrement(float y) {
-    control_offset_increment = y;
+    controlOffsetIncrement = y;
   }
 
   public void setEdgeIndexFunction(EdgeIndexFunction<V, E> edgeIndexFunction) {

@@ -20,9 +20,8 @@ import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.util.RadiusVertexAccessor;
 
 /**
- * Simple implementation of PickSupport that returns the vertex or edge that is closest to the
- * specified location. This implementation provides the same picking options that were available in
- * previous versions of
+ * Simple implementation of GraphElementAccessor that returns the vertex or edge that is closest to
+ * the specified location.
  *
  * <p>No element will be returned that is farther away than the specified maximum distance.
  *

@@ -27,10 +27,22 @@ import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * convenience tool to configure and supply {@link TreeLayout} instances
+ *
+ * @param <V> vertex type
+ * @param <E> edge type
+ */
 public class TreeLayoutSelector<V, E> extends JPanel {
 
   private static final Logger log = LoggerFactory.getLogger(TreeLayoutSelector.class);
 
+  /**
+   * Builder for {@code TreeLayoutSelector}
+   *
+   * @param <V> vertexx type
+   * @param <E> edge type
+   */
   public static class Builder<V, E> {
     VisualizationServer<V, E> visualizationServer;
     int intialialSelection;
@@ -40,49 +52,86 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     Predicate<V> vertexPredicate = e -> false;
     Comparator<V> vertexComparator = (e1, e2) -> 0;
 
+    /** @param visualizationServer required {@link VisualizationServer} */
     Builder(VisualizationServer<V, E> visualizationServer) {
       this.visualizationServer = visualizationServer;
     }
 
+    /**
+     * @param intialialSelection initial selection for {@code TreeLayoutSelector}
+     * @return this Builder
+     */
     public Builder initialSelection(int intialialSelection) {
       this.intialialSelection = intialialSelection;
       return this;
     }
 
+    /**
+     * @param edgeComparator {@link Comparator} to sort edges
+     * @return this Builder
+     */
     public Builder edgeComparator(Comparator<E> edgeComparator) {
       this.edgeComparator = edgeComparator;
       return this;
     }
 
+    /**
+     * @param vertexComparator {@link Comparator} to sort vertices
+     * @return this Builder
+     */
     public Builder vertexComparator(Comparator<V> vertexComparator) {
       this.vertexComparator = vertexComparator;
       return this;
     }
 
+    /**
+     * @param edgePredicate {@link Predicate} to identify preferred edges
+     * @return this Builder
+     */
     public Builder edgePredicate(Predicate<E> edgePredicate) {
       this.edgePredicate = edgePredicate;
       return this;
     }
 
+    /**
+     * @param vertexPredicate {@link Predicate} to identify preferred vertices
+     * @return this Builder
+     */
     public Builder vertexPredicate(Predicate<V> vertexPredicate) {
       this.vertexPredicate = vertexPredicate;
       return this;
     }
 
+    /**
+     * @param after {@link Runnable} to execute after layout change
+     * @return this Builder
+     */
     public Builder after(Runnable after) {
       this.after = after;
       return this;
     }
 
+    /** @return a configured {@link TreeLayoutSelector} */
     public TreeLayoutSelector<V, E> build() {
       return new TreeLayoutSelector<>(this);
     }
   }
 
+  /**
+   * @param visualizationServer required {@link VisualizationServer}
+   * @param <V> vertex type
+   * @param <E> edge type
+   * @return a Builder to configure
+   */
   public static <V, E> Builder<V, E> builder(VisualizationServer visualizationServer) {
     return new Builder<>(visualizationServer);
   }
 
+  /**
+   * create an instance with a {@code Builder}
+   *
+   * @param builder {@code Builder} with configurations
+   */
   private TreeLayoutSelector(Builder<V, E> builder) {
     this(
         builder.visualizationServer,
@@ -213,6 +262,10 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     this.add(animateTransition);
   }
 
+  /**
+   * manages the transition between {@link LayoutAlgorithm}s and the {@code Paintable} decorations
+   * for {@link RadialTreeLayout} and {@link BalloonLayoutAlgorithm}
+   */
   class LayoutItemListener implements ItemListener {
 
     LayoutAlgorithm layoutAlgorithm;

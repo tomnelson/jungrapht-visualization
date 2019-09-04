@@ -8,54 +8,85 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import org.jungrapht.visualization.transform.LensSupport;
 
+/** Helper class to manage buttons to activate Lens controls */
 public class LensControlHelper {
 
+  /** Builder for {@code LensControlHelper} */
   public static class Builder {
-    private Map<String, LensSupport> map;
+
+    /** {@code Map} of String button names to {@code LensSupport} instances */
+    private final Map<String, LensSupport> map;
+
+    /** optional title for the group of buttons (or for JMenu) */
     String title;
-    private Supplier<JComponent> containerSupplier = Box::createHorizontalBox;
-    private JComponent container = containerSupplier.get();
+
+    /** a {@code JComponent} container for the group of activation buttons */
+    private JComponent container = Box.createHorizontalBox();
+
+    /** supplier for activation control buttons (typically {@link JButton} or {@link JMenuItem}) */
     private Supplier<AbstractButton> buttonSupplier = JButton::new;
 
+    /**
+     * create a Builder with required {@code Map} of String button names to {@code LensSupport}
+     * instances
+     *
+     * @param map
+     */
     private Builder(Map<String, LensSupport> map) {
       this.map = map;
     }
 
+    /**
+     * @param containerSupplier a {@link Supplier} for the desired container type
+     * @return this Builder
+     */
     public Builder containerSupplier(Supplier<JComponent> containerSupplier) {
-      this.containerSupplier = containerSupplier;
       this.container = containerSupplier.get();
       return this;
     }
 
+    /**
+     * @param containerLayoutManager a {@link LayoutManager} for the container
+     * @return this Builder
+     */
     public Builder containerLayoutManager(LayoutManager containerLayoutManager) {
       this.container.setLayout(containerLayoutManager);
       return this;
     }
 
+    /**
+     * @param buttonSupplier a {@link Supplier} for the activation control buttons
+     * @return
+     */
     public Builder buttonSupplier(Supplier<AbstractButton> buttonSupplier) {
       this.buttonSupplier = buttonSupplier;
       return this;
     }
 
+    /**
+     * @param title optional title for the Container
+     * @return this Builder
+     */
     public Builder title(String title) {
       this.title = title;
       return this;
     }
 
-    Builder builder(Map<String, LensSupport> map) {
-      this.map = map;
-      return this;
-    }
-
+    /** @return a configured instance of the Builder */
     public LensControlHelper build() {
       return new LensControlHelper(this);
     }
   }
 
+  /**
+   * @param map required {@code Map} of String button names to {@code LensSupport} instances
+   * @return a new Builder
+   */
   public static Builder builder(Map<String, LensSupport> map) {
     return new Builder(map);
   }
 
+  /** @param builder {@code Builder} with configurations for {@code LensControlHelper} */
   private LensControlHelper(Builder builder) {
     this(builder.container, builder.map, builder.title, builder.buttonSupplier);
   }
@@ -63,11 +94,13 @@ public class LensControlHelper {
   /** the container to hold the lens activation buttons */
   private JComponent container;
 
+  /** {@link Supplier} for activation control buttons */
   private Supplier<AbstractButton> buttonSupplier;
+
+  /** optional title for the button group container */
   private String title;
 
   /**
-   *
    * @param <T> the container type
    * @return the original container, possible with a title
    */

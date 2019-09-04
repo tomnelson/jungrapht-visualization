@@ -14,6 +14,11 @@ import org.jungrapht.visualization.util.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * collects the {@link Rectangle2D}s that bound all of the elements of a {@code Graph}
+ *
+ * @param <T> the type to collect bounds for, either vertices or edges (see subclasses)
+ */
 public abstract class BoundingRectangleCollector<T> {
 
   protected RenderContext rc;
@@ -97,6 +102,11 @@ public abstract class BoundingRectangleCollector<T> {
     }
   }
 
+  /**
+   * collects the {@link Rectangle2D}s that bound all of the vertices of a {@code Graph}
+   *
+   * @param <V> the vertex type
+   */
   public static class Vertices<V> extends BoundingRectangleCollector<V> {
     private static final Logger log = LoggerFactory.getLogger(Vertices.class);
 
@@ -168,6 +178,11 @@ public abstract class BoundingRectangleCollector<T> {
     }
   }
 
+  /**
+   * collects the {@link Rectangle2D}s that bound all of the edges of a {@code Graph}
+   *
+   * @param <E> the edge type
+   */
   public static class Edges<E> extends BoundingRectangleCollector<E> {
 
     private static final double NON_EMPTY_DELTA = 0.001;
@@ -289,9 +304,9 @@ public abstract class BoundingRectangleCollector<T> {
     }
 
     /**
-     * a zero width or height Rectangle2D will never intersect anything. A vertical or horizontal
-     * Line edge will have a bounding rectangle of zero width or height. Give any such bounding
-     * rectangles a non-zero volume so that contained edges are not lost
+     * a zero width or height Rectangle2D will never contain/intersect anything. A vertical or
+     * horizontal Line edge will have a bounding rectangle of zero width or height. Give any such
+     * bounding rectangles a non-zero volume so that contained edges are not lost
      *
      * @param r Rectangle to check for empty size
      * @param delta how much to increase siz by

@@ -101,7 +101,7 @@ public interface EdgeShape {
 
       int index = getIndex(context, edgeIndexFunction);
 
-      float controlY = control_offset_increment + control_offset_increment * index;
+      float controlY = controlOffsetIncrement + controlOffsetIncrement * index;
       QUAD_CURVE.setCurve(0.0f, 0.0f, 0.5f, controlY, 1.0f, 0.0f);
       return QUAD_CURVE;
     }
@@ -130,7 +130,7 @@ public interface EdgeShape {
 
       int index = getIndex(context, edgeIndexFunction);
 
-      float controlY = control_offset_increment + control_offset_increment * index;
+      float controlY = controlOffsetIncrement + controlOffsetIncrement * index;
       CUBIC_CURVE.setCurve(0.0f, 0.0f, 0.33f, 2 * controlY, .66f, -controlY, 1.0f, 0.0f);
       return CUBIC_CURVE;
     }

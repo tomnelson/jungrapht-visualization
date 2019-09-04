@@ -15,7 +15,7 @@ import java.awt.event.ItemListener;
 import javax.swing.event.EventListenerList;
 
 /**
- * An abstract class to support ItemEvents for MutableSelectedState
+ * An abstract class to support ItemEvents for {@link MutableSelectedState}
  *
  * @author Tom Nelson
  */
