@@ -1,61 +1,130 @@
 package org.jungrapht.visualization.util.helpers;
 
+import java.awt.*;
 import java.util.Collection;
 import java.util.Map;
+import java.util.function.Supplier;
 import javax.swing.*;
 import org.jungrapht.visualization.transform.LensSupport;
 
 public class LensControlHelper {
 
-  public static LensControlHelper with(JComponent container, Map<String, LensSupport> map) {
-    return new LensControlHelper(container, map);
-  }
+  public static class Builder {
+    private Map<String, LensSupport> map;
+    String title;
+    private Supplier<JComponent> containerSupplier = Box::createHorizontalBox;
+    private JComponent container = containerSupplier.get();
+    private Supplier<AbstractButton> buttonSupplier = JButton::new;
 
-  private JComponent container;
+    private Builder(Map<String, LensSupport> map) {
+      this.map = map;
+    }
 
-  public JComponent container(String title) {
-    return ControlHelpers.getCenteredContainer(title, container);
-  }
+    public Builder containerSupplier(Supplier<JComponent> containerSupplier) {
+      this.containerSupplier = containerSupplier;
+      this.container = containerSupplier.get();
+      return this;
+    }
 
-  public JComponent container() {
-    return container;
-  }
+    public Builder containerLayoutManager(LayoutManager containerLayoutManager) {
+      this.container.setLayout(containerLayoutManager);
+      return this;
+    }
 
-  private LensControlHelper(JComponent container, Map<String, LensSupport> map) {
-    this.container = container;
-    JButton none = new JButton("None");
-    none.addActionListener(e -> map.values().forEach(LensSupport::deactivate));
+    public Builder buttonSupplier(Supplier<AbstractButton> buttonSupplier) {
+      this.buttonSupplier = buttonSupplier;
+      return this;
+    }
 
-    int count = map.size();
-    if (count < 4) {
-      map.entrySet().forEach(entry -> addControls(entry, map.values(), this.container));
-      container.add(none);
-    } else {
-      int i = 0;
-      Box box = Box.createHorizontalBox();
-      for (Map.Entry<String, LensSupport> entry : map.entrySet()) {
-        if (i++ % 2 == 0) {
-          box = Box.createHorizontalBox();
-          container.add(box);
-        }
-        addControls(entry, map.values(), box);
-      }
-      box = Box.createHorizontalBox();
-      container.add(box);
-      box.add(none);
+    public Builder title(String title) {
+      this.title = title;
+      return this;
+    }
+
+    Builder builder(Map<String, LensSupport> map) {
+      this.map = map;
+      return this;
+    }
+
+    public LensControlHelper build() {
+      return new LensControlHelper(this);
     }
   }
 
+  public static Builder builder(Map<String, LensSupport> map) {
+    return new Builder(map);
+  }
+
+  private LensControlHelper(Builder builder) {
+    this(builder.container, builder.map, builder.title, builder.buttonSupplier);
+  }
+
+  /** the container to hold the lens activation buttons */
+  private JComponent container;
+
+  private Supplier<AbstractButton> buttonSupplier;
+  private String title;
+
+  //  /**
+  //   *
+  //   * @param title the title to use in a {@code JLabel} to title the group of activation buttons
+  //   * @return the original container
+  //   */
+  //  public <T extends JComponent> T  container(String title) {
+  //    return (T)ControlHelpers.getCenteredContainer(title, container);
+  //  }
+
+  /** @return the original container, which has been populated with activation buttons */
+  public <T extends JComponent> T container() {
+    if (title != null) {
+      return (T) ControlHelpers.getCenteredContainer(title, container);
+    }
+    return (T) container;
+  }
+
+  /**
+   * Populate the supplied container with lens activation buttons. If there are more than 3 entries
+   * in the map, create a horizontal row for every 2 buttons. Create and add a 'None' (turn off
+   * lenses) button as the last item.
+   *
+   * @param container a Container to hold the collection of lens activation buttons
+   * @param map of button title to {@link LensSupport} implementation
+   * @param buttonSupplier a supplier for buttons (e.g. JButton or JMenuButton)
+   */
+  private LensControlHelper(
+      JComponent container,
+      Map<String, LensSupport> map,
+      String title,
+      Supplier<AbstractButton> buttonSupplier) {
+    this.container = container;
+    this.title = title;
+    this.buttonSupplier = buttonSupplier;
+    AbstractButton none = buttonSupplier.get();
+    none.setText("None");
+    none.addActionListener(e -> map.values().forEach(LensSupport::deactivate));
+    map.entrySet().forEach(entry -> addControls(entry, map.values(), this.container));
+    container.add(none);
+  }
+
+  /**
+   * Add an activation {@link JButton} for a {@link LensSupport} implementation. Add an {@code
+   * actionListener} to activate the {@code LensSupport} after deactivating all {@code LensSupport}
+   * instance in the {@code lenses Collection} add a {@code JButton} activation control for the
+   * provided {@code Map.Entry}
+   *
+   * @param entry a String mapped to a {@link LensSupport} implementation
+   * @param lenses a {@code Collection} of all of the {@link LensSupport} instances
+   * @param container to hold the activation button
+   */
   private void addControls(
       Map.Entry<String, LensSupport> entry, Collection<LensSupport> lenses, JComponent container) {
-    JButton button = new JButton(entry.getKey());
+    AbstractButton button = buttonSupplier.get();
+    button.setText(entry.getKey());
     button.addActionListener(
         e -> {
           lenses.forEach(LensSupport::deactivate);
           entry.getValue().activate();
         });
-    container.add(Box.createGlue());
     container.add(button);
-    container.add(Box.createGlue());
   }
 }

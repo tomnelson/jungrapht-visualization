@@ -164,12 +164,13 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
                 vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT)),
             new DefaultLensGraphMouse<>(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)));
     controls.add(
-        LensControlHelper.with(
-                Box.createVerticalBox(),
+        LensControlHelper.builder(
                 ImmutableSortedMap.of(
                     "Magnified View", magnifyViewSupport,
                     "Magnified Layout", magnifyLayoutSupport))
-            .container("Lens Controls"));
+            .title("Lens Controls")
+            .build()
+            .container());
   }
 
   public static void main(String[] args) {

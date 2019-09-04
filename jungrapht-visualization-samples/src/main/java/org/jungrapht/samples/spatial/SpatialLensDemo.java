@@ -206,14 +206,17 @@ public class SpatialLensDemo extends JPanel {
             "Spatial Effects", Box.createVerticalBox(), showSpatialEffects, showRTree));
     controls.add(leftControls);
     controls.add(
-        LensControlHelper.with(
-                Box.createVerticalBox(),
+        LensControlHelper.builder(
                 ImmutableSortedMap.of(
                     "Hyperbolic Layout", hyperbolicLayoutSupport,
                     "Hyperbolic View", hyperbolicViewSupport,
                     "Magnify Layout", magnifyLayoutSupport,
                     "Magnify View", magnifyViewSupport))
-            .container("Lens Controls"));
+            .containerSupplier(JPanel::new)
+            .containerLayoutManager(new GridLayout(0, 2))
+            .title("Lens Controls")
+            .build()
+            .container());
     controls.add(modeLabel);
     add(controls, BorderLayout.SOUTH);
   }

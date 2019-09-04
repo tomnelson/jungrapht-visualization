@@ -229,12 +229,13 @@ public class LensVertexImageShaperDemo extends JPanel {
     JMenu modeMenu = graphMouse.getModeMenu();
     menubar.add(modeMenu);
     controls.add(
-        LensControlHelper.with(
-                Box.createVerticalBox(),
+        LensControlHelper.builder(
                 ImmutableSortedMap.of(
-                    "Magnified Vies", magnifyViewSupport,
+                    "Magnified View", magnifyViewSupport,
                     "Magnified Layout", magnifyLayoutSupport))
-            .container("Lens Controls"));
+            .title("Lens Controls")
+            .build()
+            .container());
   }
 
   Graph<Number, Number> createGraph() {

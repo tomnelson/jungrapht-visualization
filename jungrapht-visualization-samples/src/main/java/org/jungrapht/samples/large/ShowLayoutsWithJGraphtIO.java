@@ -269,14 +269,17 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
     graphMouse.addItemListener(magnifyViewSupport.getGraphMouse().getModeListener());
 
     JComponent lensBox =
-        LensControlHelper.with(
-                Box.createVerticalBox(),
+        LensControlHelper.builder(
                 ImmutableSortedMap.of(
                     "Hyperbolic View", hyperbolicViewSupport,
                     "Hyperbolic Layout", hyperbolicLayoutSupport,
                     "Magnified View", magnifyViewSupport,
                     "Magnified Layout", magnifyLayoutSupport))
-            .container("Lens Controls");
+            .containerSupplier(JPanel::new)
+            .containerLayoutManager(new GridLayout(0, 2))
+            .title("Lens Controls")
+            .build()
+            .container();
 
     JPanel controlPanel = new JPanel(new GridLayout(2, 1));
     JComponent top =

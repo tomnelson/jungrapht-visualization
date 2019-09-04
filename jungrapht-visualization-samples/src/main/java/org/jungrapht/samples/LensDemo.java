@@ -233,8 +233,7 @@ public class LensDemo extends JPanel {
     Box controls = Box.createHorizontalBox();
     controls.add(ControlHelpers.getZoomControls("Zoom", vv));
     controls.add(
-        LensControlHelper.with(
-                Box.createVerticalBox(),
+        LensControlHelper.builder(
                 ImmutableSortedMap.of(
                     "Hyperbolic View",
                     hyperbolicViewSupport,
@@ -244,7 +243,12 @@ public class LensDemo extends JPanel {
                     magnifyViewSupport,
                     "Magnified Layout",
                     magnifyLayoutSupport))
-            .container("Lens Controls"));
+            .containerSupplier(JPanel::new)
+            .containerLayoutManager(new GridLayout(0, 2))
+            .title("Lens Controls")
+            .build()
+            .container());
+
     controls.add(modePanel);
     controls.add(modeLabel);
     add(controls, BorderLayout.SOUTH);

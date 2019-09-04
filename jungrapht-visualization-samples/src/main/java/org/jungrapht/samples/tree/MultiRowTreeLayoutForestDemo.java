@@ -143,12 +143,14 @@ public class MultiRowTreeLayoutForestDemo extends JPanel {
     controls.add(
         ControlHelpers.getCenteredContainer("Mouse Mode", ControlHelpers.getModeRadio(graphMouse)));
     controls.add(
-        LensControlHelper.with(
-                Box.createVerticalBox(),
+        LensControlHelper.builder(
                 ImmutableSortedMap.of(
                     "Hyperbolic View", hyperbolicViewSupport,
                     "Hyperbolic Layout", hyperbolicSupport))
-            .container("Lens Controls"));
+            .containerSupplier(Box::createVerticalBox)
+            .title("Lens Controls")
+            .build()
+            .container());
 
     add(controls, BorderLayout.SOUTH);
   }

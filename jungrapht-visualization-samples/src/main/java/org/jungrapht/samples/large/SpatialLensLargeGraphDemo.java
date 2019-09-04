@@ -158,14 +158,16 @@ public class SpatialLensLargeGraphDemo extends JPanel {
         .setLensShape(magnifyViewSupport.getLensTransformer().getLens().getLensShape());
 
     JComponent lensBox =
-        LensControlHelper.with(
-                Box.createVerticalBox(),
+        LensControlHelper.builder(
                 ImmutableSortedMap.of(
                     "Hyperbolic View", hyperbolicViewSupport,
                     "Hyperbolic Layout", hyperbolicLayoutSupport,
                     "Magnified View", magnifyViewSupport,
                     "Magnified Layout", magnifyLayoutSupport))
-            .container("Lens Controls");
+            .containerSupplier(Box::createVerticalBox)
+            .title("Lens Controls")
+            .build()
+            .container();
 
     graphMouse.addItemListener(hyperbolicLayoutSupport.getGraphMouse().getModeListener());
     graphMouse.addItemListener(hyperbolicViewSupport.getGraphMouse().getModeListener());

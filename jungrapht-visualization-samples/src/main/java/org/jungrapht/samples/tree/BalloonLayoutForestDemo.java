@@ -120,11 +120,12 @@ public class BalloonLayoutForestDemo extends JPanel {
     vv.scaleToLayout(new CrossoverScalingControl());
 
     JComponent lensBox =
-        LensControlHelper.with(
-                Box.createVerticalBox(),
+        LensControlHelper.builder(
                 ImmutableSortedMap.of(
                     "Hyperbolic View", hyperbolicViewSupport,
                     "Hyperbolic Layout", hyperbolicSupport))
+            .containerSupplier(Box::createVerticalBox)
+            .build()
             .container();
 
     Box controls = Box.createHorizontalBox();
