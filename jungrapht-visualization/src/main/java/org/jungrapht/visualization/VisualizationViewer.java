@@ -36,6 +36,9 @@ public interface VisualizationViewer<V, E> extends VisualizationServer<V, E> {
   class Builder<V, E, T extends DefaultVisualizationViewer<V, E>, B extends Builder<V, E, T, B>>
       extends DefaultVisualizationServer.Builder<V, E, T, B> {
 
+    /** create an instance with no initial args */
+    protected Builder() {}
+
     /** @param graph the graph to be visualized */
     protected Builder(Graph<V, E> graph) {
       super(graph);
@@ -51,6 +54,14 @@ public interface VisualizationViewer<V, E> extends VisualizationServer<V, E> {
     }
   }
 
+  /**
+   * @param <V> vertex type
+   * @param <E> edge type
+   * @return the builder
+   */
+  static <V, E> Builder<V, E, ?, ?> builder() {
+    return new Builder();
+  }
   /**
    * @param graph the graph to be visualized
    * @param <V> the vertex type

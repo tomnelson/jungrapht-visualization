@@ -51,7 +51,7 @@ public class RTree<T> {
    */
   private RTree(Node<T> node) {
     Preconditions.checkArgument(
-            node.getParent().isEmpty(), "Error creating R-Tree with root that has parent");
+        node.getParent().isEmpty(), "Error creating R-Tree with root that has parent");
     root = Optional.of(node);
   }
 
@@ -104,7 +104,7 @@ public class RTree<T> {
 
       Node<T> got = leafVertex.add(splitterContext, element, bounds);
       Preconditions.checkArgument(
-              got.getParent().isEmpty(), "return from LeafVertex add has a parent");
+          got.getParent().isEmpty(), "return from LeafVertex add has a parent");
       return new RTree(got);
 
     } else {
@@ -115,7 +115,7 @@ public class RTree<T> {
         log.error("add did not work");
       }
       Preconditions.checkArgument(
-              got.getParent().isEmpty(), "return from InnerVertex add has a parent");
+          got.getParent().isEmpty(), "return from InnerVertex add has a parent");
       return new RTree(got);
     }
   }

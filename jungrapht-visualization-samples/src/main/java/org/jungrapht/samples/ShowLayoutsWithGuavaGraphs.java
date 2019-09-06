@@ -11,7 +11,6 @@ import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.Collection;
 import java.util.HashSet;
@@ -81,7 +80,7 @@ public class ShowLayoutsWithGuavaGraphs extends JPanel {
     Graph<String, Number> g = g_array[2]; // initial graph
 
     final VisualizationViewer<String, Number> vv =
-        VisualizationViewer.builder(g).viewSize(new Dimension(600, 600)).build();
+        VisualizationViewer.<String, Number>builder().build();
 
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
 

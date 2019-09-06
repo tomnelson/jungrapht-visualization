@@ -12,6 +12,7 @@ package org.jungrapht.visualization;
 import java.awt.*;
 import java.util.function.Function;
 import org.jgrapht.Graph;
+import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.event.ModelChange;
 import org.jungrapht.visualization.layout.event.ViewChange;
@@ -37,13 +38,13 @@ public interface VisualizationModel<V, E>
    */
   class Builder<V, E, T extends VisualizationModel, B extends Builder<V, E, T, B>> {
     /** a {@code Graph} to visualize */
-    protected Graph<V, E> graph;
+    protected Graph<V, E> graph = GraphTypeBuilder.<V, E>directed().buildGraph();
     /** a {@code LayoutAlgorithm} to position the graph vertices */
     protected LayoutAlgorithm<V> layoutAlgorithm;
     /** a {@code LayoutModel} to hold the positions of the vertices */
     protected LayoutModel<V> layoutModel;
     /** the bounds of the layout area */
-    protected Dimension layoutSize;
+    protected Dimension layoutSize = new Dimension(600, 600);
     /** a {@code Function} to set initial vertex locations */
     protected Function<V, Point> initializer;
 
@@ -52,6 +53,8 @@ public interface VisualizationModel<V, E>
       return (B) this;
     }
 
+    /** create a builder with no arguments */
+    protected Builder() {}
     /**
      * create a builder with the passed graph
      *
@@ -112,6 +115,14 @@ public interface VisualizationModel<V, E>
     }
   }
 
+  /**
+   * @param <V> vertex type
+   * @param <E> edge type
+   * @return a Builder to create a VisualizationModel instance
+   */
+  static <V, E> Builder<V, E, ?, ?> builder() {
+    return new Builder();
+  }
   /**
    * @param graph the graph to visualize
    * @param <V> the vertex type

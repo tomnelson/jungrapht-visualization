@@ -17,6 +17,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 import org.jgrapht.Graph;
+import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.control.TransformSupport;
 import org.jungrapht.visualization.layout.GraphElementAccessor;
@@ -54,19 +55,20 @@ public interface VisualizationServer<V, E>
    */
   class Builder<V, E, T extends DefaultVisualizationServer<V, E>, B extends Builder<V, E, T, B>> {
     /** the {@link Graph} to be visualized */
-    protected Graph<V, E> graph;
+    protected Graph<V, E> graph = GraphTypeBuilder.<V, E>directed().buildGraph();
     /** the bounds of the graph layout area */
-    protected Dimension layoutSize;
+    protected Dimension layoutSize = new Dimension(600, 600);
     /** the size of the viewer window */
-    protected Dimension viewSize;
+    protected Dimension viewSize = new Dimension(600, 600);
     /** the algorithm to apply to position the vertices */
     protected LayoutAlgorithm<V> layoutAlgorithm;
     /** the model to hold state for the visualization */
     protected VisualizationModel<V, E> visualizationModel;
 
+    /** create an instance with no args */
+    protected Builder() {}
     /**
-     * create an instance of the builder the graph may be null if the visualizationModel is non-null
-     * (and contains a reference to the graph)
+     * create an instance of the builder with the passed {@link Graph}
      *
      * @param graph the graph to visualize
      */
@@ -120,6 +122,15 @@ public interface VisualizationServer<V, E>
     public T build() {
       return (T) new DefaultVisualizationServer(this);
     }
+  }
+
+  /**
+   * @param <V> vertex type
+   * @param <E> edge type
+   * @return a Builder to create a VisualizationServer instance
+   */
+  static <V, E> Builder<V, E, ?, ?> builder() {
+    return new Builder();
   }
 
   /**
