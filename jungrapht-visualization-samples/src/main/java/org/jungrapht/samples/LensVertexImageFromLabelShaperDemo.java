@@ -15,6 +15,8 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.util.function.Function;
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
@@ -89,15 +91,27 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
             new PickableElementPaintFunction<>(vv.getSelectedEdgeState(), Color.black, Color.cyan));
 
     vv.setBackground(Color.white);
+
     IconCache<String> iconCache =
-        new IconCache(
-            n -> "<html>This<br>is a<br>multiline<br>label " + n,
-            (Function<String, Paint>)
+        IconCache.<String>builder(n -> "<html>This<br>is a<br>multiline<br>label " + n + "</html>")
+            .colorFunction(
                 n -> {
-                  if (graph.incomingEdgesOf(n).isEmpty()) return Color.red;
-                  if (graph.outgoingEdgesOf(n).isEmpty()) return Color.green;
+                  if (graph.degreeOf(n) > 9) return Color.red;
+                  if (graph.degreeOf(n) < 7) return Color.green;
                   return Color.black;
-                });
+                })
+            .stylist(
+                (label, vertex, colorFunction) -> {
+                  label.setFont(new Font("Serif", Font.BOLD, 20));
+                  label.setForeground((Color) colorFunction.apply(vertex));
+                  label.setBackground(Color.white);
+                  label.setOpaque(true);
+                  Border lineBorder =
+                      BorderFactory.createEtchedBorder(); //Border(BevelBorder.RAISED);
+                  Border marginBorder = BorderFactory.createEmptyBorder(4, 4, 4, 4);
+                  label.setBorder(new CompoundBorder(lineBorder, marginBorder));
+                })
+            .build();
 
     vv.getRenderContext().setVertexLabelRenderer(new JLabelVertexLabelRenderer(Color.cyan));
     vv.getRenderContext().setEdgeLabelRenderer(new JLabelEdgeLabelRenderer(Color.cyan));
