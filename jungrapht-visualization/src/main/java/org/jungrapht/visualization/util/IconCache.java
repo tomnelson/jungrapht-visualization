@@ -1,6 +1,7 @@
 package org.jungrapht.visualization.util;
 
 import java.awt.*;
+import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,6 +24,7 @@ public class IconCache<V> extends HashMap<V, Icon> implements Function<V, Icon> 
    */
   public static class Builder<V> {
     private Function<V, String> vertexLabelFunction;
+    private Function<V, Shape> vertexShapeFunction = v -> new Ellipse2D.Double(-5, -5, 10, 10);
     private Function<V, Paint> paintFunction = v -> Color.black;
     private JLabel label = new JLabel();
     /** default simple renderer for vertex labels. */
@@ -38,8 +40,16 @@ public class IconCache<V> extends HashMap<V, Icon> implements Function<V, Icon> 
           label.setBorder(new CompoundBorder(lineBorder, marginBorder));
         };
 
+    private Decorator<V> decorator =
+        (graphics, vertex, bounds, vertexShapeFunction, colorFunction) -> {};
+
     public Builder(Function<V, String> vertexLabelFunction) {
       this.vertexLabelFunction = vertexLabelFunction;
+    }
+
+    public Builder<V> vertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
+      this.vertexShapeFunction = vertexShapeFunction;
+      return this;
     }
 
     public Builder<V> label(JLabel label) {
@@ -54,6 +64,11 @@ public class IconCache<V> extends HashMap<V, Icon> implements Function<V, Icon> 
 
     public Builder<V> stylist(Stylist<V> stylist) {
       this.stylist = stylist;
+      return this;
+    }
+
+    public Builder<V> decorator(Decorator<V> decorator) {
+      this.decorator = decorator;
       return this;
     }
 
@@ -72,24 +87,40 @@ public class IconCache<V> extends HashMap<V, Icon> implements Function<V, Icon> 
   }
 
   protected Function<V, String> vertexLabelFunction;
+  protected Function<V, Shape> vertexShapeFunction;
   protected JLabel label;
   protected Map<RenderingHints.Key, Object> renderingHints = new HashMap<>();
   protected Function<V, Paint> colorFunction;
   protected Stylist<V> stylist;
+  protected Decorator<V> decorator;
 
-  private IconCache(Builder<V> builder) {
-    this(builder.label, builder.vertexLabelFunction, builder.paintFunction, builder.stylist);
+  /**
+   * 
+   * @param builder
+   */
+  protected IconCache(Builder<V> builder) {
+    this(
+        builder.label,
+        builder.vertexLabelFunction,
+        builder.vertexShapeFunction,
+        builder.paintFunction,
+        builder.stylist,
+        builder.decorator);
   }
 
   private IconCache(
       JLabel label,
       Function<V, String> vertexLabelFunction,
+      Function<V, Shape> vertexShapeFunction,
       Function<V, Paint> colorFunction,
-      Stylist<V> stylist) {
+      Stylist<V> stylist,
+      Decorator<V> decorator) {
     this.label = label;
     this.vertexLabelFunction = vertexLabelFunction;
+    this.vertexShapeFunction = vertexShapeFunction;
     this.colorFunction = colorFunction;
     this.stylist = stylist;
+    this.decorator = decorator;
     renderingHints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
   }
 
@@ -109,10 +140,19 @@ public class IconCache<V> extends HashMap<V, Icon> implements Function<V, Icon> 
   /**
    * allows for functional interface method
    *
-   * @param <V>
+   * @param <V> vertex type
    */
   public interface Stylist<V> {
     void style(JLabel label, V vertex, Function<V, Paint> colorFunction);
+  }
+
+  public interface Decorator<V> {
+    void decorate(
+        Graphics2D graphics,
+        V vertex,
+        Dimension labelBounds,
+        Function<V, Shape> vertexShapeFunction,
+        Function<V, Paint> colorFunction);
   }
 
   protected void cacheIconFor(
@@ -133,6 +173,7 @@ public class IconCache<V> extends HashMap<V, Icon> implements Function<V, Icon> 
     graphics.setRenderingHints(renderingHints);
     label.paint(graphics);
 
+    decorator.decorate(graphics, vertex, label.getSize(), vertexShapeFunction, colorFunction);
     // clean up and return the Icon
     graphics.dispose();
     super.put(vertex, new ImageIcon(bufferedImage));

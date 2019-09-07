@@ -12,6 +12,7 @@ import static org.jungrapht.visualization.renderers.BiModalRenderer.LIGHTWEIGHT;
 
 import com.google.common.collect.ImmutableSortedMap;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.function.Function;
 import javax.swing.*;
@@ -94,6 +95,7 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
 
     IconCache<String> iconCache =
         IconCache.<String>builder(n -> "<html>This<br>is a<br>multiline<br>label " + n + "</html>")
+            .vertexShapeFunction(vv.getRenderContext().getVertexShapeFunction())
             .colorFunction(
                 n -> {
                   if (graph.degreeOf(n) > 9) return Color.red;
@@ -110,6 +112,26 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
                       BorderFactory.createEtchedBorder(); //Border(BevelBorder.RAISED);
                   Border marginBorder = BorderFactory.createEmptyBorder(4, 4, 4, 4);
                   label.setBorder(new CompoundBorder(lineBorder, marginBorder));
+                })
+            .decorator(
+                (graphics, vertex, labelBounds, vertexShapeFunction, colorFunction) -> {
+                  Color color = (Color) colorFunction.apply(vertex);
+                  color =
+                      new Color(
+                          color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha() / 4);
+                  graphics.setPaint(color);
+                  Shape shape = vertexShapeFunction.apply(vertex);
+                  Rectangle2D bounds = shape.getBounds2D();
+                  AffineTransform scale =
+                      AffineTransform.getScaleInstance(
+                          labelBounds.width / bounds.getWidth(),
+                          labelBounds.height / bounds.getHeight());
+                  AffineTransform translate =
+                      AffineTransform.getTranslateInstance(
+                          labelBounds.width / 2, labelBounds.height / 2);
+                  translate.concatenate(scale);
+                  shape = translate.createTransformedShape(shape);
+                  graphics.fill(shape);
                 })
             .build();
 
@@ -140,14 +162,10 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
     Renderer<String, Number> renderer = vv.getRenderer();
     if (renderer instanceof ModalRenderer) {
       ModalRenderer modalRenderer = (ModalRenderer) renderer;
-      Renderer.Vertex<Number, Number> vertexRenderer = modalRenderer.getVertexRenderer(LIGHTWEIGHT);
-      // TODO: refactor interfaces
-      if (vertexRenderer instanceof LightweightVertexRenderer) {
-        LightweightVertexRenderer lightweightVertexRenderer =
-            (LightweightVertexRenderer) vertexRenderer;
-        lightweightVertexRenderer.setVertexShapeFunction(
-            n -> new Rectangle2D.Double(-10, -10, 20, 20));
-      }
+      LightweightVertexRenderer lightweightVertexRenderer =
+          (LightweightVertexRenderer) modalRenderer.getVertexRenderer(LIGHTWEIGHT);
+      lightweightVertexRenderer.setVertexShapeFunction(
+          n -> new Rectangle2D.Double(-10, -10, 20, 20));
     }
 
     final ScalingControl scaler = new CrossoverScalingControl();
