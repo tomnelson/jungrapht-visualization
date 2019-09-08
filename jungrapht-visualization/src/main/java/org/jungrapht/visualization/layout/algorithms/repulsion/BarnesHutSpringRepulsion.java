@@ -2,9 +2,7 @@ package org.jungrapht.visualization.layout.algorithms.repulsion;
 
 import com.google.common.cache.LoadingCache;
 import java.util.ConcurrentModificationException;
-import java.util.Map;
 import java.util.Random;
-import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.SpringLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -81,17 +79,7 @@ public class BarnesHutSpringRepulsion<V>
   }
 
   public void step() {
-    tree.rebuild(
-        layoutModel
-            .getLocations()
-            .entrySet()
-            .stream()
-            .collect(
-                Collectors.toMap(
-                    Map.Entry::getKey,
-                    entry ->
-                        org.jungrapht.visualization.layout.quadtree.Point.of(
-                            entry.getValue().x, entry.getValue().y))));
+    tree.rebuild(layoutModel.getLocations());
   }
 
   public void calculateRepulsion() {
@@ -117,8 +105,8 @@ public class BarnesHutSpringRepulsion<V>
                 if (other == null || vertex == other.getElement()) {
                   return;
                 }
-                org.jungrapht.visualization.layout.quadtree.Point p = this.p;
-                org.jungrapht.visualization.layout.quadtree.Point p2 = other.p;
+                Point p = this.p;
+                Point p2 = other.p;
                 if (p == null || p2 == null) {
                   return;
                 }

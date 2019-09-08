@@ -43,15 +43,9 @@ public class KKLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
   public static class Builder<V, T extends KKLayoutAlgorithm<V>, B extends Builder<V, T, B>>
       extends AbstractIterativeLayoutAlgorithm.Builder<V, T, B>
       implements LayoutAlgorithm.Builder<V, T, B> {
-    protected Map<Pair<V>, Integer> distance;
     protected int maxIterations = 2000;
     protected boolean adjustForGravity = true;
     protected boolean exchangeVertices = true;
-
-    public B distance(Map<Pair<V>, Integer> distance) {
-      this.distance = distance;
-      return self();
-    }
 
     public B maxIterations(int maxIterations) {
       this.maxIterations = maxIterations;
@@ -257,18 +251,7 @@ public class KKLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
   public void step() {
     Graph<V, ?> graph = layoutModel.getGraph();
     currentIteration++;
-    double energy; // = calcEnergy();
-    //    status =
-    //        "Kamada-Kawai N="
-    //            + graph.vertexSet().size()
-    //            + "("
-    //            + graph.vertexSet().size()
-    //            + ")"
-    //            + " IT: "
-    //            + currentIteration
-    //            + " E="
-    //            + energy;
-
+    double energy;
     int n = graph.vertexSet().size();
     if (n == 0) {
       return;
@@ -497,7 +480,7 @@ public class KKLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
     return diameter;
   }
 
-  private static class Pair<V> {
+  public static class Pair<V> {
     final V first;
     final V second;
 

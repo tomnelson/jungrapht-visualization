@@ -1,5 +1,6 @@
 package org.jungrapht.visualization.layout.quadtree;
 
+import org.jungrapht.visualization.layout.model.Point;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

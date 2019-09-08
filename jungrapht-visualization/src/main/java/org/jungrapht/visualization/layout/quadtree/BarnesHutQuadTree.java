@@ -2,6 +2,8 @@ package org.jungrapht.visualization.layout.quadtree;
 
 import com.google.common.base.Preconditions;
 import java.util.Map;
+import org.jungrapht.visualization.layout.model.Point;
+import org.jungrapht.visualization.layout.model.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

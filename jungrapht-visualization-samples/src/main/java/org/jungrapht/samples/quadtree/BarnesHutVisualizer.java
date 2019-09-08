@@ -12,11 +12,11 @@ import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import java.util.Map;
 import javax.swing.*;
+import org.jungrapht.visualization.layout.model.Point;
+import org.jungrapht.visualization.layout.model.Rectangle;
 import org.jungrapht.visualization.layout.quadtree.BarnesHutQuadTree;
 import org.jungrapht.visualization.layout.quadtree.ForceObject;
 import org.jungrapht.visualization.layout.quadtree.Node;
-import org.jungrapht.visualization.layout.quadtree.Point;
-import org.jungrapht.visualization.layout.quadtree.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,9 +75,9 @@ public class BarnesHutVisualizer extends JPanel {
             String got = getVertexAt(p);
             if (got != null) {
               ForceObject<String> nodeForceObject =
-                  new ForceObject(got, elements.get(got)) {
+                  new ForceObject<String>(got, elements.get(got)) {
                     @Override
-                    protected void addForceFrom(ForceObject other) {
+                    protected void addForceFrom(ForceObject<String> other) {
                       log.info("adding force from {}", other);
                       Ellipse2D ellipse =
                           new Ellipse2D.Double(other.p.x - 15, other.p.y - 15, 30, 30);

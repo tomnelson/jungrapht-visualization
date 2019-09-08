@@ -93,19 +93,18 @@ public class StandardFRRepulsion<
             if (p1 == null || p2 == null) {
               continue;
             }
-            double xDelta = p1.x - p2.x;
-            double yDelta = p1.y - p2.y;
+            double dx = p1.x - p2.x;
+            double dy = p1.y - p2.y;
 
-            double deltaLength =
-                Math.max(EPSILON, Math.sqrt((xDelta * xDelta) + (yDelta * yDelta)));
+            double dist = Math.max(EPSILON, Math.sqrt((dx * dx) + (dy * dy)));
 
-            double force = (repulsionConstant * repulsionConstant) / deltaLength;
+            double force = (repulsionConstant * repulsionConstant) / dist;
 
             if (Double.isNaN(force)) {
               throw new RuntimeException(
                   "Unexpected mathematical result in FRLayout:calcPositions [repulsion]");
             }
-            fvd1 = fvd1.add((xDelta / deltaLength) * force, (yDelta / deltaLength) * force);
+            fvd1 = fvd1.add((dx / dist) * force, (dy / dist) * force);
             frVertexData.put(vertex1, fvd1);
           }
         }

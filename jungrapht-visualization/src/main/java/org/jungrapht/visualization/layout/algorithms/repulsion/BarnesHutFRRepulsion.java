@@ -1,9 +1,7 @@
 package org.jungrapht.visualization.layout.algorithms.repulsion;
 
 import com.google.common.cache.LoadingCache;
-import java.util.Map;
 import java.util.Random;
-import java.util.stream.Collectors;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.quadtree.BarnesHutQuadTree;
@@ -77,17 +75,7 @@ public class BarnesHutFRRepulsion<V>
 
   public void step() {
 
-    tree.rebuild(
-        layoutModel
-            .getLocations()
-            .entrySet()
-            .stream()
-            .collect(
-                Collectors.toMap(
-                    Map.Entry::getKey,
-                    entry ->
-                        org.jungrapht.visualization.layout.quadtree.Point.of(
-                            entry.getValue().x, entry.getValue().y))));
+    tree.rebuild(layoutModel.getLocations());
   }
 
   @Override

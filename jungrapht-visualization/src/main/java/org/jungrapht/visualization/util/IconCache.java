@@ -26,7 +26,6 @@ public class IconCache<V> extends HashMap<V, Icon> implements Function<V, Icon> 
     private Function<V, String> vertexLabelFunction;
     private Function<V, Shape> vertexShapeFunction = v -> new Ellipse2D.Double(-5, -5, 10, 10);
     private Function<V, Paint> paintFunction = v -> Color.black;
-    private JLabel label = new JLabel();
     /** default simple renderer for vertex labels. */
     private Stylist<V> stylist =
         (label, vertex, colorFunction) -> {
@@ -49,11 +48,6 @@ public class IconCache<V> extends HashMap<V, Icon> implements Function<V, Icon> 
 
     public Builder<V> vertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
       this.vertexShapeFunction = vertexShapeFunction;
-      return this;
-    }
-
-    public Builder<V> label(JLabel label) {
-      this.label = label;
       return this;
     }
 
@@ -88,19 +82,15 @@ public class IconCache<V> extends HashMap<V, Icon> implements Function<V, Icon> 
 
   protected Function<V, String> vertexLabelFunction;
   protected Function<V, Shape> vertexShapeFunction;
-  protected JLabel label;
+  protected JLabel label = new JLabel();
   protected Map<RenderingHints.Key, Object> renderingHints = new HashMap<>();
   protected Function<V, Paint> colorFunction;
   protected Stylist<V> stylist;
   protected Decorator<V> decorator;
 
-  /**
-   * 
-   * @param builder
-   */
+  /** @param builder */
   protected IconCache(Builder<V> builder) {
     this(
-        builder.label,
         builder.vertexLabelFunction,
         builder.vertexShapeFunction,
         builder.paintFunction,
@@ -109,7 +99,6 @@ public class IconCache<V> extends HashMap<V, Icon> implements Function<V, Icon> 
   }
 
   private IconCache(
-      JLabel label,
       Function<V, String> vertexLabelFunction,
       Function<V, Shape> vertexShapeFunction,
       Function<V, Paint> colorFunction,
@@ -138,7 +127,7 @@ public class IconCache<V> extends HashMap<V, Icon> implements Function<V, Icon> 
   }
 
   /**
-   * allows for functional interface method
+   * allows for functional interface method to set the font, colors, etc for the vertex JLabel.
    *
    * @param <V> vertex type
    */
@@ -146,6 +135,11 @@ public class IconCache<V> extends HashMap<V, Icon> implements Function<V, Icon> 
     void style(JLabel label, V vertex, Function<V, Paint> colorFunction);
   }
 
+  /**
+   * extend this interface to apply 'decorations' to the vertex labels after they are drawn.
+   *
+   * @param <V>
+   */
   public interface Decorator<V> {
     void decorate(
         Graphics2D graphics,

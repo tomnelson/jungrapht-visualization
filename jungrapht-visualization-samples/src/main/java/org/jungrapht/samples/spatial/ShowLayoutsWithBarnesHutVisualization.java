@@ -39,6 +39,7 @@ import org.jungrapht.visualization.layout.algorithms.repulsion.StandardRepulsion
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.LoadingCacheLayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
+import org.jungrapht.visualization.layout.model.Rectangle;
 import org.jungrapht.visualization.layout.quadtree.BarnesHutQuadTree;
 import org.jungrapht.visualization.layout.quadtree.ForceObject;
 import org.jungrapht.visualization.layout.quadtree.Node;
@@ -223,7 +224,7 @@ public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
     }
 
     private void getShapes(Collection<Shape> shapes, Node node) {
-      org.jungrapht.visualization.layout.quadtree.Rectangle bounds = node.getBounds();
+      Rectangle bounds = node.getBounds();
       Rectangle2D r = new Rectangle2D.Double(bounds.x, bounds.y, bounds.width, bounds.height);
       shapes.add(r);
       ForceObject forceObject = node.getForceObject();
@@ -277,7 +278,7 @@ public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
   }
 
   private void getShapes(Collection<Shape> shapes, Node node) {
-    org.jungrapht.visualization.layout.quadtree.Rectangle bounds = node.getBounds();
+    Rectangle bounds = node.getBounds();
     Rectangle2D r = new Rectangle2D.Double(bounds.x, bounds.y, bounds.width, bounds.height);
     shapes.add(r);
     ForceObject forceObject = node.getForceObject();

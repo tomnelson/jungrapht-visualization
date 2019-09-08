@@ -1,6 +1,7 @@
 package org.jungrapht.visualization.layout.quadtree;
 
 import java.util.Objects;
+import org.jungrapht.visualization.layout.model.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +52,7 @@ public class ForceObject<T> {
    *
    * @param other the ForceObject (a node or a force vector) to apply force from
    */
-  protected <S> void addForceFrom(ForceObject<T> other) {
+  protected void addForceFrom(ForceObject<T> other) {
     // no op
   }
 
