@@ -15,7 +15,6 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.control.ModalSatelliteGraphMouse;
-import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.spatial.Spatial;
 import org.jungrapht.visualization.transform.MutableAffineTransformer;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
@@ -65,6 +64,10 @@ public class DefaultSatelliteVisualizationViewer<V, E> extends DefaultVisualizat
 
     // make sure the satellite listens for changes in the master
     master.addChangeListener(this);
+    master
+        .getVisualizationModel()
+        .getModelChangeSupport()
+        .addModelChangeListener(() -> scaleToLayout());
 
     // share the selected state of the master
     setSelectedVertexState(master.getSelectedVertexState());
@@ -86,7 +89,6 @@ public class DefaultSatelliteVisualizationViewer<V, E> extends DefaultVisualizat
       renderContext.getGraphicsContext().setDelegate(g2d);
     }
     renderContext.setScreenDevice(this);
-    LayoutModel<V> layoutModel = getVisualizationModel().getLayoutModel();
 
     g2d.setRenderingHints(renderingHints);
 

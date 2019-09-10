@@ -100,28 +100,35 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
                 n -> {
                   if (graph.degreeOf(n) > 9) return Color.red;
                   if (graph.degreeOf(n) < 7) return Color.green;
-                  return Color.black;
+                  return Color.lightGray;
                 })
             .stylist(
                 (label, vertex, colorFunction) -> {
                   label.setFont(new Font("Serif", Font.BOLD, 20));
-                  label.setForeground((Color) colorFunction.apply(vertex));
+                  label.setForeground(Color.black);
                   label.setBackground(Color.white);
-                  label.setOpaque(true);
+                  //                  label.setOpaque(true);
                   Border lineBorder =
                       BorderFactory.createEtchedBorder(); //Border(BevelBorder.RAISED);
                   Border marginBorder = BorderFactory.createEmptyBorder(4, 4, 4, 4);
                   label.setBorder(new CompoundBorder(lineBorder, marginBorder));
                 })
-            .decorator(
+            .preDecorator(
                 (graphics, vertex, labelBounds, vertexShapeFunction, colorFunction) -> {
                   Color color = (Color) colorFunction.apply(vertex);
-                  color =
-                      new Color(
-                          color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha() / 4);
-                  graphics.setPaint(color);
+                                            color =
+                                                    new Color(
+
+                                                            color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha() / 4);
+                  // save off the old color
+                  Color oldColor = graphics.getColor();
+                  // fill the image background with white
+                  graphics.setPaint(Color.white);
+                  graphics.fill(labelBounds);
+
                   Shape shape = vertexShapeFunction.apply(vertex);
                   Rectangle2D bounds = shape.getBounds2D();
+
                   AffineTransform scale =
                       AffineTransform.getScaleInstance(
                           labelBounds.width / bounds.getWidth(),
@@ -131,7 +138,9 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
                           labelBounds.width / 2, labelBounds.height / 2);
                   translate.concatenate(scale);
                   shape = translate.createTransformedShape(shape);
+                  graphics.setColor(color);
                   graphics.fill(shape);
+                  graphics.setColor(oldColor);
                 })
             .build();
 

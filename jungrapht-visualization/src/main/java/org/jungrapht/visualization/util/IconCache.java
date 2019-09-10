@@ -32,14 +32,21 @@ public class IconCache<V> extends HashMap<V, Icon> implements Function<V, Icon> 
           label.setFont(new Font("Serif", Font.BOLD, 20));
           label.setForeground(Color.black);
           label.setBackground(Color.white);
-          label.setOpaque(true);
+          label.setOpaque(false); // so the preDecorator drawing will show up
           Border lineBorder =
               BorderFactory.createLineBorder((Color) colorFunction.apply(vertex), 3);
           Border marginBorder = BorderFactory.createEmptyBorder(4, 4, 4, 4);
           label.setBorder(new CompoundBorder(lineBorder, marginBorder));
         };
 
-    private Decorator<V> decorator =
+    // default is to fill the image rectangle with white
+    private Decorator<V> preDecorator =
+        (graphics, vertex, bounds, vertexShapeFunction, colorFunction) -> {
+          graphics.setColor(Color.white);
+          graphics.fill(bounds);
+        };
+    // default is no-op
+    private Decorator<V> postDecorator =
         (graphics, vertex, bounds, vertexShapeFunction, colorFunction) -> {};
 
     public Builder(Function<V, String> vertexLabelFunction) {
@@ -61,8 +68,13 @@ public class IconCache<V> extends HashMap<V, Icon> implements Function<V, Icon> 
       return this;
     }
 
-    public Builder<V> decorator(Decorator<V> decorator) {
-      this.decorator = decorator;
+    public Builder<V> preDecorator(Decorator<V> preDecorator) {
+      this.preDecorator = preDecorator;
+      return this;
+    }
+
+    public Builder<V> postDecorator(Decorator<V> postDecorator) {
+      this.postDecorator = postDecorator;
       return this;
     }
 
@@ -86,7 +98,8 @@ public class IconCache<V> extends HashMap<V, Icon> implements Function<V, Icon> 
   protected Map<RenderingHints.Key, Object> renderingHints = new HashMap<>();
   protected Function<V, Paint> colorFunction;
   protected Stylist<V> stylist;
-  protected Decorator<V> decorator;
+  protected Decorator<V> preDecorator;
+  protected Decorator<V> postDecorator;
 
   /** @param builder */
   protected IconCache(Builder<V> builder) {
@@ -95,7 +108,8 @@ public class IconCache<V> extends HashMap<V, Icon> implements Function<V, Icon> 
         builder.vertexShapeFunction,
         builder.paintFunction,
         builder.stylist,
-        builder.decorator);
+        builder.preDecorator,
+        builder.postDecorator);
   }
 
   private IconCache(
@@ -103,13 +117,15 @@ public class IconCache<V> extends HashMap<V, Icon> implements Function<V, Icon> 
       Function<V, Shape> vertexShapeFunction,
       Function<V, Paint> colorFunction,
       Stylist<V> stylist,
-      Decorator<V> decorator) {
+      Decorator<V> preDecorator,
+      Decorator<V> postDecorator) {
     this.label = label;
     this.vertexLabelFunction = vertexLabelFunction;
     this.vertexShapeFunction = vertexShapeFunction;
     this.colorFunction = colorFunction;
     this.stylist = stylist;
-    this.decorator = decorator;
+    this.preDecorator = preDecorator;
+    this.postDecorator = postDecorator;
     renderingHints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
   }
 
@@ -144,7 +160,7 @@ public class IconCache<V> extends HashMap<V, Icon> implements Function<V, Icon> 
     void decorate(
         Graphics2D graphics,
         V vertex,
-        Dimension labelBounds,
+        Rectangle labelBounds,
         Function<V, Shape> vertexShapeFunction,
         Function<V, Paint> colorFunction);
   }
@@ -165,9 +181,12 @@ public class IconCache<V> extends HashMap<V, Icon> implements Function<V, Icon> 
     // draw the JLabel onto the Image
     Graphics2D graphics = bufferedImage.createGraphics();
     graphics.setRenderingHints(renderingHints);
+
+    preDecorator.decorate(graphics, vertex, label.getBounds(), vertexShapeFunction, colorFunction);
+    graphics.setColor(Color.black);
     label.paint(graphics);
 
-    decorator.decorate(graphics, vertex, label.getSize(), vertexShapeFunction, colorFunction);
+    postDecorator.decorate(graphics, vertex, label.getBounds(), vertexShapeFunction, colorFunction);
     // clean up and return the Icon
     graphics.dispose();
     super.put(vertex, new ImageIcon(bufferedImage));
