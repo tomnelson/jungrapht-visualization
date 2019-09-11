@@ -1,7 +1,6 @@
 package org.jungrapht.visualization.util.helpers;
 
-import java.util.Arrays;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.jungrapht.visualization.layout.algorithms.*;
@@ -22,8 +21,12 @@ public class LayoutFunction<V, E> implements Function<String, LayoutAlgorithm.Bu
     }
   }
 
+  public Collection<String> getNames() {
+    return map.keySet();
+  }
+
   public LayoutFunction(Layout<V>... layouts) {
-    this.map = Arrays.stream(layouts).collect(Collectors.toMap(e -> e.name, e -> e.builder));
+    this.map = Arrays.stream(layouts).collect(Collectors.toMap(e -> e.name, e -> e.builder, (v1,v2) ->{ throw new RuntimeException(String.format("Duplicate key for values %s and %s", v1, v2));}, LinkedHashMap::new));
   }
 
   @Override

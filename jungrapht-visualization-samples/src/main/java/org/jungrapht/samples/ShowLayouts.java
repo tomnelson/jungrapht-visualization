@@ -22,16 +22,12 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.control.ScalingControl;
-import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
-import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.TreeLayout;
+import org.jungrapht.visualization.layout.algorithms.*;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.LoadingCacheLayoutModel;
 import org.jungrapht.visualization.util.helpers.ControlHelpers;
+import org.jungrapht.visualization.util.helpers.LayoutFunction;
 import org.jungrapht.visualization.util.helpers.LayoutHelper;
 import org.jungrapht.visualization.util.helpers.SpanningTreeAdapter;
 
@@ -110,13 +106,17 @@ public class ShowLayouts extends JPanel {
     LayoutHelper.Layouts[] combos = LayoutHelper.getCombos();
     final JRadioButton animateLayoutTransition = new JRadioButton("Animate Layout Transition");
 
-    final JComboBox jcb = new JComboBox(combos);
+    LayoutFunction<String,Number> layoutFunction = new LayoutFunction.FullLayoutFunction<>();
+
+    final JComboBox jcb = new JComboBox(layoutFunction.getNames().toArray());
     jcb.addActionListener(
         e ->
             SwingUtilities.invokeLater(
                 () -> {
-                  LayoutHelper.Layouts layoutType = (LayoutHelper.Layouts) jcb.getSelectedItem();
-                  LayoutAlgorithm layoutAlgorithm = layoutType.getLayoutAlgorithm();
+                  LayoutAlgorithm.Builder<String,?,?> builder = layoutFunction.apply((String)jcb.getSelectedItem());
+//                  LayoutHelper.Layouts layoutType = (LayoutHelper.Layouts) jcb.getSelectedItem();
+                  LayoutAlgorithm layoutAlgorithm = builder.build();
+//                          layoutType.getLayoutAlgorithm();
                   vv.removePreRenderPaintable(balloonLayoutRings);
                   vv.removePreRenderPaintable(radialLayoutRings);
                   if ((layoutAlgorithm instanceof TreeLayout)
@@ -132,16 +132,16 @@ public class ShowLayouts extends JPanel {
                   } else {
                     LayoutAlgorithmTransition.apply(vv, layoutAlgorithm);
                   }
-                  if (layoutAlgorithm instanceof BalloonLayoutAlgorithm) {
+                  if (layoutAlgorithm instanceof Balloon) {
                     balloonLayoutRings =
                         new LayoutPaintable.BalloonRings(
                             vv, (BalloonLayoutAlgorithm) layoutAlgorithm);
                     vv.addPreRenderPaintable(balloonLayoutRings);
                   }
-                  if (layoutAlgorithm instanceof RadialTreeLayoutAlgorithm) {
+                  if (layoutAlgorithm instanceof Radial) {
                     radialLayoutRings =
                         new LayoutPaintable.RadialRings(
-                            vv, (RadialTreeLayoutAlgorithm) layoutAlgorithm);
+                            vv, (RadialTreeLayout) layoutAlgorithm);
                     vv.addPreRenderPaintable(radialLayoutRings);
                   }
                 }));

@@ -11,7 +11,7 @@ import org.jungrapht.visualization.layout.model.Rectangle;
  *
  * @param <V>
  */
-public interface RadialTreeLayout<V> {
+public interface RadialTreeLayout<V> extends TreeLayout<V>, Radial {
 
   Map<V, Rectangle> getBaseBounds();
 

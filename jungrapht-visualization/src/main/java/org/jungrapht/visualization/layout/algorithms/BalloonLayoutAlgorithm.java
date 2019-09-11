@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-public class BalloonLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V> implements TreeLayout<V> {
+public class BalloonLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V> implements TreeLayout<V>, Balloon {
 
   private static final Logger log = LoggerFactory.getLogger(BalloonLayoutAlgorithm.class);
 
