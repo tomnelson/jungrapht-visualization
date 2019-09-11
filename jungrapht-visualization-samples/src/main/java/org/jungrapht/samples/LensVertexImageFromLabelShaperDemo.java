@@ -116,10 +116,9 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
             .preDecorator(
                 (graphics, vertex, labelBounds, vertexShapeFunction, colorFunction) -> {
                   Color color = (Color) colorFunction.apply(vertex);
-                                            color =
-                                                    new Color(
-
-                                                            color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha() / 4);
+                  color =
+                      new Color(
+                          color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha() / 4);
                   // save off the old color
                   Color oldColor = graphics.getColor();
                   // fill the image background with white

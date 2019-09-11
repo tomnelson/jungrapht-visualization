@@ -40,7 +40,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
   /**
    * Builder for {@code TreeLayoutSelector}
    *
-   * @param <V> vertexx type
+   * @param <V> vertex type
    * @param <E> edge type
    */
   public static class Builder<V, E> {
