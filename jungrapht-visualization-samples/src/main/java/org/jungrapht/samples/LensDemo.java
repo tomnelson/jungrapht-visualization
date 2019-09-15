@@ -139,7 +139,6 @@ public class LensDemo extends JPanel {
 
     hyperbolicViewSupport =
         ViewLensSupport.<String, Number, ModalLensGraphMouse>builder(vv)
-            //            .visualizationViewer(vv)
             .lensTransformer(
                 HyperbolicShapeTransformer.builder(lens)
                     .delegate(
@@ -150,7 +149,6 @@ public class LensDemo extends JPanel {
 
     hyperbolicLayoutSupport =
         LayoutLensSupport.<String, Number, ModalLensGraphMouse>builder(vv)
-            //            .visualizationViewer(vv)
             .lensTransformer(
                 HyperbolicTransformer.builder(lens)
                     .delegate(
@@ -167,7 +165,6 @@ public class LensDemo extends JPanel {
     lens.setMagnification(3.f);
     magnifyViewSupport =
         ViewLensSupport.<String, Number, ModalLensGraphMouse>builder(vv)
-            //            .visualizationViewer(vv)
             .lensTransformer(
                 MagnifyShapeTransformer.builder(lens)
                     .delegate(
@@ -179,7 +176,6 @@ public class LensDemo extends JPanel {
 
     magnifyLayoutSupport =
         LayoutLensSupport.<String, Number, ModalLensGraphMouse>builder(vv)
-            //            .visualizationViewer(vv)
             .lensTransformer(
                 MagnifyTransformer.builder(lens)
                     .delegate(

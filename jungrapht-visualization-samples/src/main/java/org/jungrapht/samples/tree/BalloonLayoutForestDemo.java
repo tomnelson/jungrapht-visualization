@@ -105,11 +105,7 @@ public class BalloonLayoutForestDemo extends JPanel {
                     .build())
             .lensGraphMouse(new ModalLensGraphMouse())
             .build();
-    //        new ViewLensSupport<>(
-    //            vv,
-    //            new HyperbolicShapeTransformer(
-    //                lens, vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW)),
-    //            new ModalLensGraphMouse());
+
     hyperbolicSupport =
         LayoutLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
             .lensTransformer(
@@ -121,12 +117,6 @@ public class BalloonLayoutForestDemo extends JPanel {
                     .build())
             .lensGraphMouse(new ModalLensGraphMouse())
             .build();
-    //        new LayoutLensSupport<>(
-    //            vv,
-    //            new HyperbolicTransformer(
-    //                lens,
-    //                vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT)),
-    //            new ModalLensGraphMouse());
 
     graphMouse.addItemListener(hyperbolicViewSupport.getGraphMouse().getModeListener());
     graphMouse.addItemListener(hyperbolicSupport.getGraphMouse().getModeListener());

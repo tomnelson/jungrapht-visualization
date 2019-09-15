@@ -33,10 +33,6 @@ public abstract class MutableTransformerDecorator implements MutableTransformer 
       return self();
     }
 
-    protected Builder() {
-      //      this.delegate = delegate;
-    }
-
     protected abstract T build();
   }
 

@@ -54,11 +54,6 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse>
       this.vv = vv;
     }
 
-    //    public B visualizationViewer(VisualizationViewer<V, E> visualizationViewer) {
-    //      this.vv = visualizationViewer;
-    //      return self();
-    //    }
-
     public B graphMouse(VisualizationViewer.GraphMouse graphMouse) {
       this.graphMouse = graphMouse;
       return self();

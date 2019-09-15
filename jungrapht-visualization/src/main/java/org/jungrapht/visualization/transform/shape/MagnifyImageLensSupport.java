@@ -63,7 +63,6 @@ public class MagnifyImageLensSupport<V, E, M extends LensGraphMouse>
     this.renderer = vv.getRenderer();
     this.transformingRenderer = Renderer.<V, E>builder().build();
     this.savedGraphicsDecorator = renderContext.getGraphicsContext();
-    //    this.lensTransformer = lensTransformer;
     this.lensGraphicsDecorator = new MagnifyIconGraphics(lensTransformer);
   }
 

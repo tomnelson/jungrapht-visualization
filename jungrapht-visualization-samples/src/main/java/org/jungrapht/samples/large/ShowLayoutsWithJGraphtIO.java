@@ -220,14 +220,7 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
                     .build())
             .lensGraphMouse(new ModalLensGraphMouse())
             .build();
-    //        new ViewLensSupport<>(
-    //            vv,
-    //            new HyperbolicShapeTransformer(
-    //                lens,
-    //                vv.getRenderContext()
-    //                    .getMultiLayerTransformer()
-    //                    .getTransformer(MultiLayerTransformer.Layer.VIEW)),
-    //            new ModalLensGraphMouse());
+
     LensSupport<ModalLensGraphMouse> hyperbolicLayoutSupport =
         LayoutLensSupport.<String, DefaultEdge, ModalLensGraphMouse>builder(vv)
             .lensTransformer(
@@ -239,14 +232,6 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
                     .build())
             .lensGraphMouse(new ModalLensGraphMouse())
             .build();
-    //        new LayoutLensSupport<>(
-    //            vv,
-    //            new HyperbolicTransformer(
-    //                lens,
-    //                vv.getRenderContext()
-    //                    .getMultiLayerTransformer()
-    //                    .getTransformer(MultiLayerTransformer.Layer.LAYOUT)),
-    //            new ModalLensGraphMouse());
 
     // the magnification lens uses a different magnification than the hyperbolic lens
     // create a new one to share between the two magnigy transformers

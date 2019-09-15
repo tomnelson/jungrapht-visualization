@@ -78,7 +78,6 @@ public class LensTransformSupport<V, E> extends TransformSupport<V, E> {
       Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
       HyperbolicShapeTransformer shapeChanger =
           HyperbolicShapeTransformer.builder(d).delegate(viewTransformer).build();
-      //              new HyperbolicShapeTransformer(d, viewTransformer);
       LensTransformer lensTransformer = (LensTransformer) layoutTransformer;
       shapeChanger.getLens().setLensShape(lensTransformer.getLens().getLensShape());
       MutableTransformer layoutDelegate =
