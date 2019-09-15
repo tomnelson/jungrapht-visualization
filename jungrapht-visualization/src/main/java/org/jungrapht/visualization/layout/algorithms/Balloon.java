@@ -1,4 +1,3 @@
 package org.jungrapht.visualization.layout.algorithms;
 
-public interface Balloon {
-}
+public interface Balloon {}

@@ -29,6 +29,37 @@ import org.slf4j.LoggerFactory;
  */
 public class HyperbolicShapeTransformer extends HyperbolicTransformer
     implements ShapeFlatnessTransformer {
+
+  public static class Builder<T extends HyperbolicShapeTransformer, B extends Builder<T, B>>
+      extends HyperbolicTransformer.Builder<T, B> {
+    public Builder(Lens lens) {
+      super(lens);
+    }
+
+    public Builder(Dimension dimension) {
+      super(dimension);
+    }
+
+    public T build() {
+      if (lens == null && dimension != null) {
+        lens = new Lens(dimension);
+      }
+      return (T) new HyperbolicShapeTransformer(this);
+    }
+  }
+
+  public static Builder<?, ?> builder(Lens lens) {
+    return new Builder<>(lens);
+  }
+
+  public static Builder<?, ?> builder(Dimension dimension) {
+    return new Builder<>(dimension);
+  }
+
+  protected HyperbolicShapeTransformer(Builder builder) {
+    super(builder);
+  }
+
   private static final Logger log = LoggerFactory.getLogger(HyperbolicShapeTransformer.class);
 
   /**
@@ -38,7 +69,7 @@ public class HyperbolicShapeTransformer extends HyperbolicTransformer
    * @param lens the {@link Lens} to consider for transform
    * @param delegate transformer to use
    */
-  public HyperbolicShapeTransformer(Lens lens, MutableTransformer delegate) {
+  protected HyperbolicShapeTransformer(Lens lens, MutableTransformer delegate) {
     super(lens, delegate);
   }
 
@@ -49,7 +80,7 @@ public class HyperbolicShapeTransformer extends HyperbolicTransformer
    * @param d the size for the lens
    * @param delegate the layoutTransformer to use
    */
-  public HyperbolicShapeTransformer(Dimension d, MutableTransformer delegate) {
+  protected HyperbolicShapeTransformer(Dimension d, MutableTransformer delegate) {
     super(d, delegate);
   }
 

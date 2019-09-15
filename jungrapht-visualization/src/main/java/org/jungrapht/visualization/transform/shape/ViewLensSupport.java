@@ -30,8 +30,44 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-public class ViewLensSupport<V, E, T extends LensGraphMouse> extends AbstractLensSupport<V, E, T>
-    implements LensSupport<T> {
+public class ViewLensSupport<V, E, M extends LensGraphMouse> extends AbstractLensSupport<V, E, M>
+    implements LensSupport<M> {
+
+  public static class Builder<
+          V,
+          E,
+          M extends LensGraphMouse,
+          T extends ViewLensSupport<V, E, M>,
+          B extends Builder<V, E, M, T, B>>
+      extends AbstractLensSupport.Builder<V, E, M, T, B> {
+
+    protected Builder(VisualizationViewer<V, E> vv) {
+      super(vv);
+    }
+
+    public T build() {
+      return (T) new ViewLensSupport(this);
+    }
+  }
+
+  public static <V, E, M extends LensGraphMouse> Builder<V, E, M, ?, ?> builder(
+      VisualizationViewer<V, E> vv) {
+    return new Builder<>(vv);
+  }
+
+  protected ViewLensSupport(Builder<V, E, M, ?, ?> builder) {
+    super(builder);
+    this.renderContext = vv.getRenderContext();
+    this.pickSupport = renderContext.getPickSupport();
+    this.savedGraphicsDecorator = renderContext.getGraphicsContext();
+    //    this.lensTransformer = lensTransformer;
+    LayoutModel layoutModel = vv.getVisualizationModel().getLayoutModel();
+    Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
+    lensTransformer.getLens().setSize(d);
+
+    this.lensGraphicsDecorator = new TransformingFlatnessGraphics(lensTransformer);
+    this.savedEdgeRenderer = vv.getRenderer().getEdgeRenderer();
+  }
 
   private static final Logger log = LoggerFactory.getLogger(ViewLensSupport.class);
 
@@ -42,8 +78,8 @@ public class ViewLensSupport<V, E, T extends LensGraphMouse> extends AbstractLen
   protected Renderer.Edge<V, E> savedEdgeRenderer;
   protected Renderer.Edge<V, E> reshapingEdgeRenderer;
 
-  public ViewLensSupport(
-      VisualizationViewer<V, E> vv, LensTransformer lensTransformer, T lensGraphMouse) {
+  protected ViewLensSupport(
+      VisualizationViewer<V, E> vv, LensTransformer lensTransformer, M lensGraphMouse) {
     super(vv, lensGraphMouse);
     this.renderContext = vv.getRenderContext();
     this.pickSupport = renderContext.getPickSupport();

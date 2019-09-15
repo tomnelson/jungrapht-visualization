@@ -28,6 +28,36 @@ import org.slf4j.LoggerFactory;
  */
 public class MagnifyTransformer extends LensTransformer implements MutableTransformer {
 
+  public static class Builder<T extends MagnifyTransformer, B extends Builder<T, B>>
+      extends LensTransformer.Builder<T, B> {
+    public Builder(Lens lens) {
+      super(lens);
+    }
+
+    public Builder(Dimension dimension) {
+      super(dimension);
+    }
+
+    public T build() {
+      if (lens == null && dimension != null) {
+        lens = new Lens(dimension);
+      }
+      return (T) new MagnifyTransformer(this);
+    }
+  }
+
+  public static Builder<?, ?> builder(Lens lens) {
+    return new Builder<>(lens);
+  }
+
+  public static Builder<?, ?> builder(Dimension dimension) {
+    return new Builder<>(dimension);
+  }
+
+  protected MagnifyTransformer(Builder builder) {
+    this(builder.lens, builder.delegate);
+  }
+
   private static final Logger log = LoggerFactory.getLogger(MagnifyTransformer.class);
 
   /**
@@ -36,11 +66,11 @@ public class MagnifyTransformer extends LensTransformer implements MutableTransf
    *
    * @param d the size used for the lens
    */
-  public MagnifyTransformer(Dimension d) {
+  protected MagnifyTransformer(Dimension d) {
     this(d, new MutableAffineTransformer());
   }
 
-  public MagnifyTransformer(Lens lens) {
+  protected MagnifyTransformer(Lens lens) {
     this(lens, new MutableAffineTransformer());
   }
 

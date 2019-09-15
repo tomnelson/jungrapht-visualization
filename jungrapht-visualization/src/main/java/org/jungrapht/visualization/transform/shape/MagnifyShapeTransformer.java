@@ -30,9 +30,39 @@ import org.slf4j.LoggerFactory;
 public class MagnifyShapeTransformer extends MagnifyTransformer
     implements ShapeFlatnessTransformer {
 
+  public static class Builder<T extends MagnifyShapeTransformer, B extends Builder<T, B>>
+      extends MagnifyTransformer.Builder<T, B> {
+    public Builder(Lens lens) {
+      super(lens);
+    }
+
+    public Builder(Dimension dimension) {
+      super(dimension);
+    }
+
+    public T build() {
+      if (lens == null && dimension != null) {
+        lens = new Lens(dimension);
+      }
+      return (T) new MagnifyShapeTransformer(this);
+    }
+  }
+
+  public static Builder<?, ?> builder(Lens lens) {
+    return new Builder<>(lens);
+  }
+
+  public static Builder<?, ?> builder(Dimension dimension) {
+    return new Builder<>(dimension);
+  }
+
+  protected MagnifyShapeTransformer(Builder builder) {
+    super(builder);
+  }
+
   private static final Logger log = LoggerFactory.getLogger(MagnifyShapeTransformer.class);
   /** @param d the size used for the lens */
-  public MagnifyShapeTransformer(Dimension d) {
+  protected MagnifyShapeTransformer(Dimension d) {
     super(d);
   }
 
@@ -40,11 +70,11 @@ public class MagnifyShapeTransformer extends MagnifyTransformer
    * @param d the size used for the lens
    * @param delegate the layoutTransformer to use
    */
-  public MagnifyShapeTransformer(Dimension d, MutableTransformer delegate) {
+  protected MagnifyShapeTransformer(Dimension d, MutableTransformer delegate) {
     super(d, delegate);
   }
 
-  public MagnifyShapeTransformer(Lens lens, MutableTransformer delegate) {
+  protected MagnifyShapeTransformer(Lens lens, MutableTransformer delegate) {
     super(lens, delegate);
   }
 

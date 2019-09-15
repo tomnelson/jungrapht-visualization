@@ -30,8 +30,42 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-public class MagnifyImageLensSupport<V, E, T extends LensGraphMouse>
-    extends AbstractLensSupport<V, E, T> {
+public class MagnifyImageLensSupport<V, E, M extends LensGraphMouse>
+    extends AbstractLensSupport<V, E, M> {
+
+  public static class Builder<
+          V,
+          E,
+          M extends LensGraphMouse,
+          T extends MagnifyImageLensSupport<V, E, M>,
+          B extends Builder<V, E, M, T, B>>
+      extends AbstractLensSupport.Builder<V, E, M, T, B> {
+
+    protected Builder(VisualizationViewer<V, E> vv) {
+      super(vv);
+    }
+
+    public T build() {
+      return (T) new MagnifyImageLensSupport(this);
+    }
+  }
+
+  public static <V, E, M extends LensGraphMouse> Builder<V, E, M, ?, ?> builder(
+      VisualizationViewer<V, E> vv) {
+    return new Builder<>(vv);
+  }
+
+  protected MagnifyImageLensSupport(Builder<V, E, M, ?, ?> builder) {
+
+    super(builder);
+    this.renderContext = vv.getRenderContext();
+    this.pickSupport = renderContext.getPickSupport();
+    this.renderer = vv.getRenderer();
+    this.transformingRenderer = Renderer.<V, E>builder().build();
+    this.savedGraphicsDecorator = renderContext.getGraphicsContext();
+    //    this.lensTransformer = lensTransformer;
+    this.lensGraphicsDecorator = new MagnifyIconGraphics(lensTransformer);
+  }
 
   private static final Logger log = LoggerFactory.getLogger(MagnifyImageLensSupport.class);
 
@@ -47,8 +81,8 @@ public class MagnifyImageLensSupport<V, E, T extends LensGraphMouse>
           + "Mouse-Drag the Lens edge to resize it<p>"
           + "Ctrl+MouseWheel to change magnification</center></html>";
 
-  public MagnifyImageLensSupport(
-      VisualizationViewer<V, E> vv, LensTransformer lensTransformer, T lensGraphMouse) {
+  protected MagnifyImageLensSupport(
+      VisualizationViewer<V, E> vv, LensTransformer lensTransformer, M lensGraphMouse) {
     super(vv, lensGraphMouse);
     this.renderContext = vv.getRenderContext();
     this.pickSupport = renderContext.getPickSupport();

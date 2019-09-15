@@ -209,18 +209,41 @@ public class LensVertexImageShaperDemo extends JPanel {
     Lens lens = new Lens(d);
     lens.setMagnification(2.f);
     magnifyViewSupport =
-        new MagnifyImageLensSupport<>(
-            vv,
-            new MagnifyShapeTransformer(
-                lens, vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW)),
-            new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)));
+        MagnifyImageLensSupport.<Number, Number, ModalLensGraphMouse>builder(vv)
+            .lensTransformer(
+                MagnifyShapeTransformer.builder(lens)
+                    .delegate(
+                        vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
+                    .build())
+            .lensGraphMouse(
+                new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
+            .build();
+
     magnifyLayoutSupport =
-        new LayoutLensSupport<>(
-            vv,
-            new MagnifyTransformer(
-                lens,
-                vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT)),
-            new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)));
+        LayoutLensSupport.<Number, Number, ModalLensGraphMouse>builder(vv)
+            .lensTransformer(
+                MagnifyTransformer.builder(lens)
+                    .delegate(
+                        vv.getRenderContext()
+                            .getMultiLayerTransformer()
+                            .getTransformer(Layer.LAYOUT))
+                    .build())
+            .lensGraphMouse(
+                new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
+            .build();
+    //    magnifyViewSupport =
+    //        new MagnifyImageLensSupport<>(
+    //            vv,
+    //            new MagnifyShapeTransformer(
+    //                lens, vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW)),
+    //            new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)));
+    //    magnifyLayoutSupport =
+    //        new LayoutLensSupport<>(
+    //            vv,
+    //            new MagnifyTransformer(
+    //                lens,
+    //                vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT)),
+    //            new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)));
 
     graphMouse.addItemListener(magnifyLayoutSupport.getGraphMouse().getModeListener());
     graphMouse.addItemListener(magnifyViewSupport.getGraphMouse().getModeListener());

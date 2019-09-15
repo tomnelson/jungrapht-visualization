@@ -189,20 +189,31 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
     Lens lens = new Lens(d);
     lens.setMagnification(2.f);
     magnifyViewSupport =
-        new MagnifyImageLensSupport<>(
-            vv,
-            new MagnifyShapeTransformer(
-                lens, vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW)),
-            new DefaultLensGraphMouse<>(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)));
+        MagnifyImageLensSupport.builder(vv)
+            .lensTransformer(
+                MagnifyShapeTransformer.builder(lens)
+                    .delegate(
+                        vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
+                    .build())
+            .lensGraphMouse(
+                new DefaultLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
+            .build();
+
     lens = new Lens(d);
     lens.setMagnification(2.f);
     magnifyLayoutSupport =
-        new LayoutLensSupport<>(
-            vv,
-            new MagnifyTransformer(
-                lens,
-                vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT)),
-            new DefaultLensGraphMouse<>(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)));
+        LayoutLensSupport.builder(vv)
+            .lensTransformer(
+                MagnifyTransformer.builder(lens)
+                    .delegate(
+                        vv.getRenderContext()
+                            .getMultiLayerTransformer()
+                            .getTransformer(Layer.LAYOUT))
+                    .build())
+            .lensGraphMouse(
+                new DefaultLensGraphMouse<>(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
+            .build();
+
     controls.add(
         LensControlHelper.builder(
                 ImmutableSortedMap.of(

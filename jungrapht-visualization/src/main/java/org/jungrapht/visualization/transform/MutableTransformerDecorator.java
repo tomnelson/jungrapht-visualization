@@ -21,6 +21,25 @@ import javax.swing.event.ChangeListener;
  */
 public abstract class MutableTransformerDecorator implements MutableTransformer {
 
+  public abstract static class Builder<T extends LensTransformer, B extends Builder<T, B>> {
+    protected MutableTransformer delegate = new MutableAffineTransformer();
+
+    protected B self() {
+      return (B) this;
+    }
+
+    public B delegate(MutableTransformer delegate) {
+      this.delegate = delegate;
+      return self();
+    }
+
+    protected Builder() {
+      //      this.delegate = delegate;
+    }
+
+    protected abstract T build();
+  }
+
   protected MutableTransformer delegate;
 
   public MutableTransformerDecorator(MutableTransformer delegate) {

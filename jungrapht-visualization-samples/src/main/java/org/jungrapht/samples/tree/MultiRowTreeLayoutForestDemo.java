@@ -104,18 +104,25 @@ public class MultiRowTreeLayoutForestDemo extends JPanel {
     Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
     Lens lens = new Lens(d);
     hyperbolicViewSupport =
-        new ViewLensSupport<>(
-            vv,
-            new HyperbolicShapeTransformer(
-                lens, vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW)),
-            new ModalLensGraphMouse());
+        ViewLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
+            .lensTransformer(
+                HyperbolicShapeTransformer.builder(lens)
+                    .delegate(
+                        vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
+                    .build())
+            .lensGraphMouse(new ModalLensGraphMouse())
+            .build();
     hyperbolicSupport =
-        new LayoutLensSupport<>(
-            vv,
-            new HyperbolicTransformer(
-                lens,
-                vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT)),
-            new ModalLensGraphMouse());
+        LayoutLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
+            .lensTransformer(
+                HyperbolicTransformer.builder(lens)
+                    .delegate(
+                        vv.getRenderContext()
+                            .getMultiLayerTransformer()
+                            .getTransformer(Layer.LAYOUT))
+                    .build())
+            .lensGraphMouse(new ModalLensGraphMouse())
+            .build();
 
     graphMouse.addItemListener(hyperbolicViewSupport.getGraphMouse().getModeListener());
     graphMouse.addItemListener(hyperbolicSupport.getGraphMouse().getModeListener());

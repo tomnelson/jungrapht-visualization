@@ -106,17 +106,16 @@ public class ShowLayouts extends JPanel {
     LayoutHelper.Layouts[] combos = LayoutHelper.getCombos();
     final JRadioButton animateLayoutTransition = new JRadioButton("Animate Layout Transition");
 
-    LayoutFunction<String,Number> layoutFunction = new LayoutFunction.FullLayoutFunction<>();
+    LayoutFunction<String, Number> layoutFunction = new LayoutFunction.FullLayoutFunction<>();
 
     final JComboBox jcb = new JComboBox(layoutFunction.getNames().toArray());
     jcb.addActionListener(
         e ->
             SwingUtilities.invokeLater(
                 () -> {
-                  LayoutAlgorithm.Builder<String,?,?> builder = layoutFunction.apply((String)jcb.getSelectedItem());
-//                  LayoutHelper.Layouts layoutType = (LayoutHelper.Layouts) jcb.getSelectedItem();
+                  LayoutAlgorithm.Builder<String, ?, ?> builder =
+                      layoutFunction.apply((String) jcb.getSelectedItem());
                   LayoutAlgorithm layoutAlgorithm = builder.build();
-//                          layoutType.getLayoutAlgorithm();
                   vv.removePreRenderPaintable(balloonLayoutRings);
                   vv.removePreRenderPaintable(radialLayoutRings);
                   if ((layoutAlgorithm instanceof TreeLayout)
@@ -132,16 +131,15 @@ public class ShowLayouts extends JPanel {
                   } else {
                     LayoutAlgorithmTransition.apply(vv, layoutAlgorithm);
                   }
-                  if (layoutAlgorithm instanceof Balloon) {
+                  if (layoutAlgorithm instanceof BalloonLayoutAlgorithm) {
                     balloonLayoutRings =
                         new LayoutPaintable.BalloonRings(
                             vv, (BalloonLayoutAlgorithm) layoutAlgorithm);
                     vv.addPreRenderPaintable(balloonLayoutRings);
                   }
-                  if (layoutAlgorithm instanceof Radial) {
+                  if (layoutAlgorithm instanceof RadialTreeLayout) {
                     radialLayoutRings =
-                        new LayoutPaintable.RadialRings(
-                            vv, (RadialTreeLayout) layoutAlgorithm);
+                        new LayoutPaintable.RadialRings(vv, (RadialTreeLayout) layoutAlgorithm);
                     vv.addPreRenderPaintable(radialLayoutRings);
                   }
                 }));

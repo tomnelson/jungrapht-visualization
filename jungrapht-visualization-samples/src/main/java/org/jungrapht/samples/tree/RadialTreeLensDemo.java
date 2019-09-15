@@ -94,19 +94,37 @@ public class RadialTreeLensDemo extends JPanel {
 
     //    Lens lens = new Lens(d);
     hyperbolicViewSupport =
-        new ViewLensSupport<>(
-            vv,
-            new HyperbolicShapeTransformer(
-                new Lens(d),
-                vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW)),
-            new ModalLensGraphMouse());
+        ViewLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
+            .lensTransformer(
+                HyperbolicShapeTransformer.builder(d)
+                    .delegate(
+                        vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
+                    .build())
+            .lensGraphMouse(new ModalLensGraphMouse())
+            .build();
+    //        new ViewLensSupport<>(
+    //            vv,
+    //            new HyperbolicShapeTransformer(
+    //                new Lens(d),
+    //                vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW)),
+    //            new ModalLensGraphMouse());
     hyperbolicLayoutSupport =
-        new LayoutLensSupport<>(
-            vv,
-            new HyperbolicTransformer(
-                new Lens(d),
-                vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT)),
-            new ModalLensGraphMouse());
+        LayoutLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
+            .lensTransformer(
+                HyperbolicTransformer.builder(d)
+                    .delegate(
+                        vv.getRenderContext()
+                            .getMultiLayerTransformer()
+                            .getTransformer(Layer.LAYOUT))
+                    .build())
+            .lensGraphMouse(new ModalLensGraphMouse())
+            .build();
+    //        new LayoutLensSupport<>(
+    //            vv,
+    //            new HyperbolicTransformer(
+    //                new Lens(d),
+    //                vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT)),
+    //            new ModalLensGraphMouse());
 
     final JButton hyperView = new JButton("Hyperbolic View");
     hyperView.addActionListener(

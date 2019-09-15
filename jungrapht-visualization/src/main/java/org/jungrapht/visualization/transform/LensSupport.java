@@ -17,7 +17,9 @@ import org.jungrapht.visualization.control.LensGraphMouse;
  *
  * @author Tom Nelson
  */
-public interface LensSupport<T extends LensGraphMouse> {
+public interface LensSupport<M extends LensGraphMouse> {
+
+  interface Builder<M extends LensGraphMouse, B extends Builder<M, B>> {}
 
   void activate();
 
@@ -31,5 +33,5 @@ public interface LensSupport<T extends LensGraphMouse> {
 
   LensTransformer getLensTransformer();
 
-  T getGraphMouse();
+  M getGraphMouse();
 }

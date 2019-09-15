@@ -26,8 +26,37 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-public class LayoutLensSupport<V, E, T extends LensGraphMouse> extends AbstractLensSupport<V, E, T>
-    implements LensSupport<T> {
+public class LayoutLensSupport<V, E, M extends LensGraphMouse> extends AbstractLensSupport<V, E, M>
+    implements LensSupport<M> {
+
+  public static class Builder<
+          V,
+          E,
+          M extends LensGraphMouse,
+          T extends LayoutLensSupport<V, E, M>,
+          B extends Builder<V, E, M, T, B>>
+      extends AbstractLensSupport.Builder<V, E, M, T, B> {
+    protected Builder(VisualizationViewer<V, E> vv) {
+      super(vv);
+    }
+
+    protected GraphElementAccessor<V, E> pickSupport;
+
+    public T build() {
+      return (T) new LayoutLensSupport(this);
+    }
+  }
+
+  public static <V, E, M extends LensGraphMouse> Builder<V, E, M, ?, ?> builder(
+      VisualizationViewer<V, E> vv) {
+    return new Builder(vv);
+  }
+
+  protected LayoutLensSupport(Builder<V, E, M, ?, ?> builder) {
+    super(builder);
+    this.lensTransformer = builder.lensTransformer;
+    this.pickSupport = vv.getPickSupport();
+  }
 
   private static final Logger log = LoggerFactory.getLogger(LayoutLensSupport.class);
   protected GraphElementAccessor<V, E> pickSupport;
@@ -39,8 +68,8 @@ public class LayoutLensSupport<V, E, T extends LensGraphMouse> extends AbstractL
    * @param lensTransformer the lens layoutTransformer to use
    * @param lensGraphMouse the lens input handler
    */
-  public LayoutLensSupport(
-      VisualizationViewer<V, E> vv, LensTransformer lensTransformer, T lensGraphMouse) {
+  protected LayoutLensSupport(
+      VisualizationViewer<V, E> vv, LensTransformer lensTransformer, M lensGraphMouse) {
     super(vv, lensGraphMouse);
     this.lensTransformer = lensTransformer;
     this.pickSupport = vv.getPickSupport();

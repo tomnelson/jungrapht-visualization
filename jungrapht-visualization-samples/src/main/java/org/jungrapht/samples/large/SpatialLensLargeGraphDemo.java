@@ -114,36 +114,53 @@ public class SpatialLensLargeGraphDemo extends JPanel {
     Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
     Lens lens = new Lens(d);
     hyperbolicViewSupport =
-        new ViewLensSupport<>(
-            vv,
-            new HyperbolicShapeTransformer(
-                lens, vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW)),
-            new ModalLensGraphMouse());
+        ViewLensSupport.<String, Number, ModalLensGraphMouse>builder(vv)
+            .lensTransformer(
+                HyperbolicShapeTransformer.builder(lens)
+                    .delegate(
+                        vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
+                    .build())
+            .lensGraphMouse(new ModalLensGraphMouse())
+            .build();
     hyperbolicLayoutSupport =
-        new LayoutLensSupport<>(
-            vv,
-            new HyperbolicTransformer(
-                lens,
-                vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT)),
-            new ModalLensGraphMouse());
+        LayoutLensSupport.<String, Number, ModalLensGraphMouse>builder(vv)
+            .lensTransformer(
+                HyperbolicTransformer.builder(lens)
+                    .delegate(
+                        vv.getRenderContext()
+                            .getMultiLayerTransformer()
+                            .getTransformer(Layer.LAYOUT))
+                    .build())
+            .lensGraphMouse(new ModalLensGraphMouse())
+            .build();
 
     // the magnification lens uses a different magnification than the hyperbolic lens
     // create a new one to share between the two magnigy transformers
     lens = new Lens(d);
     lens.setMagnification(3.f);
     magnifyViewSupport =
-        new ViewLensSupport<>(
-            vv,
-            new MagnifyShapeTransformer(
-                lens, vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW)),
-            new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)));
+        ViewLensSupport.<String, Number, ModalLensGraphMouse>builder(vv)
+            .lensTransformer(
+                MagnifyShapeTransformer.builder(lens)
+                    .delegate(
+                        vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
+                    .build())
+            .lensGraphMouse(
+                new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
+            .build();
+
     magnifyLayoutSupport =
-        new LayoutLensSupport<>(
-            vv,
-            new MagnifyTransformer(
-                lens,
-                vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT)),
-            new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)));
+        LayoutLensSupport.<String, Number, ModalLensGraphMouse>builder(vv)
+            .lensTransformer(
+                MagnifyTransformer.builder(lens)
+                    .delegate(
+                        vv.getRenderContext()
+                            .getMultiLayerTransformer()
+                            .getTransformer(Layer.LAYOUT))
+                    .build())
+            .lensGraphMouse(
+                new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
+            .build();
     hyperbolicLayoutSupport
         .getLensTransformer()
         .getLens()

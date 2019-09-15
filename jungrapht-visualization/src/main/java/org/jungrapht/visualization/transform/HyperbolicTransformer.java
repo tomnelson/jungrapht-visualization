@@ -30,6 +30,36 @@ import org.slf4j.LoggerFactory;
  */
 public class HyperbolicTransformer extends LensTransformer implements MutableTransformer {
 
+  public static class Builder<T extends HyperbolicTransformer, B extends Builder<T, B>>
+      extends LensTransformer.Builder<T, B> {
+    public Builder(Lens lens) {
+      super(lens);
+    }
+
+    public Builder(Dimension dimension) {
+      super(dimension);
+    }
+
+    public T build() {
+      if (lens == null && dimension != null) {
+        lens = new Lens(dimension);
+      }
+      return (T) new HyperbolicTransformer(this);
+    }
+  }
+
+  public static <T extends HyperbolicTransformer> Builder<T, ?> builder(Lens lens) {
+    return new Builder<>(lens);
+  }
+
+  public static <T extends HyperbolicTransformer> Builder<T, ?> builder(Dimension dimension) {
+    return new Builder<>(dimension);
+  }
+
+  protected HyperbolicTransformer(Builder builder) {
+    this(builder.lens, builder.delegate);
+  }
+
   private static final Logger log = LoggerFactory.getLogger(HyperbolicTransformer.class);
 
   /**
@@ -38,7 +68,7 @@ public class HyperbolicTransformer extends LensTransformer implements MutableTra
    *
    * @param d the size used for the lens
    */
-  public HyperbolicTransformer(Dimension d) {
+  protected HyperbolicTransformer(Dimension d) {
     this(d, new MutableAffineTransformer());
   }
 
@@ -48,7 +78,7 @@ public class HyperbolicTransformer extends LensTransformer implements MutableTra
    *
    * @param d the size used for the lens
    */
-  public HyperbolicTransformer(Dimension d, MutableTransformer delegate) {
+  protected HyperbolicTransformer(Dimension d, MutableTransformer delegate) {
     super(d, delegate);
   }
 
@@ -57,7 +87,7 @@ public class HyperbolicTransformer extends LensTransformer implements MutableTra
    *
    * @param lens a lens created elsewhere, but on the same component
    */
-  public HyperbolicTransformer(Lens lens, MutableTransformer delegate) {
+  protected HyperbolicTransformer(Lens lens, MutableTransformer delegate) {
     super(lens, delegate);
   }
 

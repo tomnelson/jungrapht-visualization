@@ -18,6 +18,8 @@ import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.LensGraphMouse;
 import org.jungrapht.visualization.control.LensTransformSupport;
+import org.jungrapht.visualization.control.ModalLensGraphMouse;
+import org.jungrapht.visualization.layout.GraphElementAccessor;
 
 /**
  * A class to make it easy to add an examining lens to a jungrapht graph application. See
@@ -25,31 +27,106 @@ import org.jungrapht.visualization.control.LensTransformSupport;
  *
  * @author Tom Nelson
  */
-public abstract class AbstractLensSupport<V, E, T extends LensGraphMouse>
-    implements LensSupport<T> {
+public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse>
+    implements LensSupport<M> {
+
+  public abstract static class Builder<
+          V,
+          E,
+          M extends LensGraphMouse,
+          T extends AbstractLensSupport<V, E, M>,
+          B extends Builder<V, E, M, T, B>>
+      implements LensSupport.Builder<M, B> {
+
+    protected VisualizationViewer<V, E> vv;
+    protected VisualizationViewer.GraphMouse graphMouse;
+    protected M lensGraphMouse = (M) new ModalLensGraphMouse();
+    protected String defaultToolTipText;
+    protected Runnable killSwitch;
+    protected LensTransformer lensTransformer;
+    protected GraphElementAccessor<V, E> pickSupport;
+
+    public B self() {
+      return (B) this;
+    }
+
+    protected Builder(VisualizationViewer<V, E> vv) {
+      this.vv = vv;
+    }
+
+    //    public B visualizationViewer(VisualizationViewer<V, E> visualizationViewer) {
+    //      this.vv = visualizationViewer;
+    //      return self();
+    //    }
+
+    public B graphMouse(VisualizationViewer.GraphMouse graphMouse) {
+      this.graphMouse = graphMouse;
+      return self();
+    }
+
+    public B lensGraphMouse(M lensGraphMouse) {
+      this.lensGraphMouse = lensGraphMouse;
+      return self();
+    }
+
+    public B defaultToolTipText(String defaultToolTipText) {
+      this.defaultToolTipText = defaultToolTipText;
+      return self();
+    }
+
+    public B killSwitch(Runnable killSwitch) {
+      this.killSwitch = killSwitch;
+      return self();
+    }
+
+    public B lensTransformer(LensTransformer lensTransformer) {
+      this.lensTransformer = lensTransformer;
+      return self();
+    }
+
+    public B pickSupport(GraphElementAccessor<V, E> pickSupport) {
+      this.pickSupport = pickSupport;
+      return self();
+    }
+
+    public abstract T build();
+  }
 
   protected VisualizationViewer<V, E> vv;
   protected VisualizationViewer.GraphMouse graphMouse;
   protected LensTransformer lensTransformer;
-  protected T lensGraphMouse;
+  protected M lensGraphMouse;
   protected LensPaintable lensPaintable;
   protected LensControls lensControls;
   protected String defaultToolTipText;
   boolean active;
   Runnable manager;
+  protected GraphElementAccessor<V, E> pickSupport;
 
   protected static final String instructions =
       "<html><center>Mouse-Drag the Lens center to move it<p>"
           + "Mouse-Drag the Lens edge to resize it<p>"
           + "Ctrl+MouseWheel to change magnification</center></html>";
 
+  protected AbstractLensSupport(Builder<V, E, M, ?, ?> builder) {
+    this.vv = builder.vv;
+    this.lensGraphMouse = builder.lensGraphMouse;
+    this.defaultToolTipText =
+        builder.defaultToolTipText != null ? builder.defaultToolTipText : vv.getToolTipText();
+    this.graphMouse = builder.graphMouse != null ? builder.graphMouse : vv.getGraphMouse();
+    this.lensGraphMouse = builder.lensGraphMouse;
+    this.lensGraphMouse.setKillSwitch(
+        builder.killSwitch != null ? builder.killSwitch : this::deactivate);
+    this.lensTransformer = builder.lensTransformer;
+    this.pickSupport = builder.pickSupport != null ? builder.pickSupport : vv.getPickSupport();
+  }
   /**
    * create the base class, setting common members and creating a custom GraphMouse
    *
    * @param vv the VisualizationViewer to work on
    * @param lensGraphMouse the GraphMouse instance to use for the lens
    */
-  public AbstractLensSupport(VisualizationViewer<V, E> vv, T lensGraphMouse) {
+  public AbstractLensSupport(VisualizationViewer<V, E> vv, M lensGraphMouse) {
     this.vv = vv;
     this.graphMouse = vv.getGraphMouse();
     this.defaultToolTipText = vv.getToolTipText();
@@ -84,7 +161,7 @@ public abstract class AbstractLensSupport<V, E, T extends LensGraphMouse>
   }
 
   /** @return the hyperbolicGraphMouse. */
-  public T getGraphMouse() {
+  public M getGraphMouse() {
     return lensGraphMouse;
   }
 

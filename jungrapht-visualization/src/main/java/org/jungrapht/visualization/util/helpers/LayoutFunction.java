@@ -2,14 +2,13 @@ package org.jungrapht.visualization.util.helpers;
 
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import org.jungrapht.visualization.layout.algorithms.*;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFRRepulsion;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutSpringRepulsion;
 
 public class LayoutFunction<V, E> implements Function<String, LayoutAlgorithm.Builder<V, ?, ?>> {
 
-  Map<String, LayoutAlgorithm.Builder<V, ?, ?>> map;
+  Map<String, LayoutAlgorithm.Builder<V, ?, ?>> map = new LinkedHashMap<>();
 
   public static class Layout<V> {
     public final String name;
@@ -26,7 +25,7 @@ public class LayoutFunction<V, E> implements Function<String, LayoutAlgorithm.Bu
   }
 
   public LayoutFunction(Layout<V>... layouts) {
-    this.map = Arrays.stream(layouts).collect(Collectors.toMap(e -> e.name, e -> e.builder, (v1,v2) ->{ throw new RuntimeException(String.format("Duplicate key for values %s and %s", v1, v2));}, LinkedHashMap::new));
+    Arrays.stream(layouts).forEach(e -> map.put(e.name, e.builder));
   }
 
   @Override

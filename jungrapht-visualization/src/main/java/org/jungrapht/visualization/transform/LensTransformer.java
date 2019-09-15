@@ -25,12 +25,42 @@ import org.slf4j.LoggerFactory;
 public abstract class LensTransformer extends MutableTransformerDecorator
     implements MutableTransformer {
 
+  public abstract static class Builder<T extends LensTransformer, B extends Builder<T, B>>
+      extends MutableTransformerDecorator.Builder<T, B> {
+    protected Lens lens;
+    protected Dimension dimension = new Dimension(600, 600);
+
+    protected Builder(Lens lens) {
+      this.lens = lens;
+    }
+
+    protected Builder(Dimension dimension) {
+      this.dimension = dimension;
+    }
+
+    protected B self() {
+      return (B) this;
+    }
+
+    public B lens(Lens lens) {
+      this.lens = lens;
+      return self();
+    }
+
+    public B dimension(Dimension dimension) {
+      this.dimension = dimension;
+      return self();
+    }
+
+    protected abstract T build();
+  }
+
   private static final Logger log = LoggerFactory.getLogger(LensTransformer.class);
 
   protected Lens lens;
 
   /** @param d the size used for the lens */
-  public LensTransformer(Dimension d) {
+  protected LensTransformer(Dimension d) {
     this(new Lens(d));
   }
 
@@ -39,7 +69,7 @@ public abstract class LensTransformer extends MutableTransformerDecorator
    *
    * @param lens
    */
-  public LensTransformer(Lens lens) {
+  protected LensTransformer(Lens lens) {
     super(new MutableAffineTransformer());
     this.lens = lens;
   }
@@ -48,7 +78,7 @@ public abstract class LensTransformer extends MutableTransformerDecorator
    * @param d the size used for the lens
    * @param delegate the layoutTransformer to use
    */
-  public LensTransformer(Dimension d, MutableTransformer delegate) {
+  protected LensTransformer(Dimension d, MutableTransformer delegate) {
     this(new Lens(d), delegate);
   }
 
@@ -56,7 +86,7 @@ public abstract class LensTransformer extends MutableTransformerDecorator
    * @param lens
    * @param delegate the layoutTransformer to use
    */
-  public LensTransformer(Lens lens, MutableTransformer delegate) {
+  protected LensTransformer(Lens lens, MutableTransformer delegate) {
     super(delegate);
     this.lens = lens;
   }

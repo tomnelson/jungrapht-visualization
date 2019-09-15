@@ -47,7 +47,10 @@ public class LensTransformSupport<V, E> extends TransformSupport<V, E> {
         p = ht.inverseTransform(p);
       } else if (viewTransformer instanceof HyperbolicShapeTransformer) {
         HyperbolicTransformer ht =
-            new HyperbolicTransformer(lensTransformer.getLens(), layoutTransformer);
+            HyperbolicTransformer.builder(lensTransformer.getLens())
+                .delegate(layoutTransformer)
+                .build();
+        //            new HyperbolicTransformer(lensTransformer.getLens(), layoutTransformer);
         p = delegateTransformer.inverseTransform(p);
         p = ht.inverseTransform(p);
       }
@@ -73,7 +76,9 @@ public class LensTransformSupport<V, E> extends TransformSupport<V, E> {
     } else if (layoutTransformer instanceof LensTransformer) {
       LayoutModel<V> layoutModel = model.getLayoutModel();
       Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
-      HyperbolicShapeTransformer shapeChanger = new HyperbolicShapeTransformer(d, viewTransformer);
+      HyperbolicShapeTransformer shapeChanger =
+          HyperbolicShapeTransformer.builder(d).delegate(viewTransformer).build();
+      //              new HyperbolicShapeTransformer(d, viewTransformer);
       LensTransformer lensTransformer = (LensTransformer) layoutTransformer;
       shapeChanger.getLens().setLensShape(lensTransformer.getLens().getLensShape());
       MutableTransformer layoutDelegate =
@@ -100,7 +105,9 @@ public class LensTransformSupport<V, E> extends TransformSupport<V, E> {
     } else if (layoutTransformer instanceof LensTransformer) {
       LayoutModel<V> layoutModel = model.getLayoutModel();
       Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
-      HyperbolicShapeTransformer shapeChanger = new HyperbolicShapeTransformer(d, viewTransformer);
+      HyperbolicShapeTransformer shapeChanger =
+          HyperbolicShapeTransformer.builder(d).delegate(viewTransformer).build();
+      //              new HyperbolicShapeTransformer(d, viewTransformer);
       LensTransformer lensTransformer = (LensTransformer) layoutTransformer;
       shapeChanger.getLens().setLensShape(lensTransformer.getLens().getLensShape());
       MutableTransformer layoutDelegate =
@@ -128,7 +135,8 @@ public class LensTransformSupport<V, E> extends TransformSupport<V, E> {
       // apply the shape changer
       LayoutModel<V> layoutModel = model.getLayoutModel();
       Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
-      HyperbolicShapeTransformer shapeChanger = new HyperbolicShapeTransformer(d, viewTransformer);
+      HyperbolicShapeTransformer shapeChanger =
+          HyperbolicShapeTransformer.builder(d).delegate(viewTransformer).build();
       LensTransformer lensTransformer = (LensTransformer) layoutTransformer;
       shapeChanger.getLens().setLensShape(lensTransformer.getLens().getLensShape());
       MutableTransformer layoutDelegate =
@@ -158,7 +166,8 @@ public class LensTransformSupport<V, E> extends TransformSupport<V, E> {
       // apply the shape changer
       LayoutModel<V> layoutModel = model.getLayoutModel();
       Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
-      HyperbolicShapeTransformer shapeChanger = new HyperbolicShapeTransformer(d, viewTransformer);
+      HyperbolicShapeTransformer shapeChanger =
+          HyperbolicShapeTransformer.builder(d).delegate(viewTransformer).build();
       LensTransformer lensTransformer = (LensTransformer) layoutTransformer;
       shapeChanger.getLens().setLensShape(lensTransformer.getLens().getLensShape());
       MutableTransformer layoutDelegate =
@@ -190,7 +199,8 @@ public class LensTransformSupport<V, E> extends TransformSupport<V, E> {
       // apply the shape changer
       LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
       Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
-      HyperbolicShapeTransformer shapeChanger = new HyperbolicShapeTransformer(d, viewTransformer);
+      HyperbolicShapeTransformer shapeChanger =
+          HyperbolicShapeTransformer.builder(d).delegate(viewTransformer).build();
       LensTransformer lensTransformer = (LensTransformer) layoutTransformer;
       shapeChanger.getLens().setLensShape(lensTransformer.getLens().getLensShape());
       MutableTransformer layoutDelegate =
