@@ -14,6 +14,8 @@ import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.RectangularShape;
+import java.util.Optional;
+
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.LensGraphMouse;
@@ -106,14 +108,12 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse>
   protected AbstractLensSupport(Builder<V, E, M, ?, ?> builder) {
     this.vv = builder.vv;
     this.lensGraphMouse = builder.lensGraphMouse;
-    this.defaultToolTipText =
-        builder.defaultToolTipText != null ? builder.defaultToolTipText : vv.getToolTipText();
-    this.graphMouse = builder.graphMouse != null ? builder.graphMouse : vv.getGraphMouse();
+    this.defaultToolTipText = Optional.ofNullable(builder.defaultToolTipText).orElse(vv.getToolTipText());
+    this.graphMouse = Optional.ofNullable(builder.graphMouse).orElse(vv.getGraphMouse());
     this.lensGraphMouse = builder.lensGraphMouse;
-    this.lensGraphMouse.setKillSwitch(
-        builder.killSwitch != null ? builder.killSwitch : this::deactivate);
+    this.lensGraphMouse.setKillSwitch(Optional.ofNullable(builder.killSwitch).orElse(this::deactivate));
     this.lensTransformer = builder.lensTransformer;
-    this.pickSupport = builder.pickSupport != null ? builder.pickSupport : vv.getPickSupport();
+    this.pickSupport = Optional.ofNullable(builder.pickSupport).orElse(vv.getPickSupport());
   }
   /**
    * create the base class, setting common members and creating a custom GraphMouse

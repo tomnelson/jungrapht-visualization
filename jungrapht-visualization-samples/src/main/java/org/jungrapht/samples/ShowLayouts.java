@@ -97,13 +97,11 @@ public class ShowLayouts extends JPanel {
                 + ". with neighbors:"
                 + Graphs.neighborListOf(vv.getVisualizationModel().getGraph(), vertex));
 
-    final ScalingControl scaler = new CrossoverScalingControl();
-
     vv.setBackground(Color.WHITE);
 
     setLayout(new BorderLayout());
     add(vv.getComponent(), BorderLayout.CENTER);
-    LayoutHelper.Layouts[] combos = LayoutHelper.getCombos();
+//    LayoutHelper.Layouts[] combos = LayoutHelper.getCombos();
     final JRadioButton animateLayoutTransition = new JRadioButton("Animate Layout Transition");
 
     LayoutFunction<String, Number> layoutFunction = new LayoutFunction.FullLayoutFunction<>();
@@ -145,6 +143,7 @@ public class ShowLayouts extends JPanel {
                 }));
 
     jcb.setSelectedItem(LayoutHelper.Layouts.FR);
+
 
     JPanel control_panel = new JPanel(new GridLayout(2, 1));
     JPanel topControls = new JPanel();

@@ -9,6 +9,8 @@
 package org.jungrapht.samples;
 
 import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -146,18 +148,18 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
     final JRadioButton animateLayoutTransition = new JRadioButton("Animate Layout Transition");
 
     final JComboBox jcb = new JComboBox(combos);
-    jcb.addActionListener(
-        e ->
-            SwingUtilities.invokeLater(
+    jcb.addItemListener(e -> {
+      if (e.getStateChange() == ItemEvent.SELECTED) {
+        SwingUtilities.invokeLater(
                 () -> {
                   LayoutHelper.Layouts layoutType = (LayoutHelper.Layouts) jcb.getSelectedItem();
                   LayoutAlgorithm layoutAlgorithm = layoutType.getLayoutAlgorithm();
                   log.trace("got a {}", layoutAlgorithm);
                   if ((layoutAlgorithm instanceof TreeLayout)
-                      && vv.getVisualizationModel().getGraph().getType().isUndirected()) {
+                          && vv.getVisualizationModel().getGraph().getType().isUndirected()) {
                     Graph tree =
-                        SpanningTreeAdapter.getSpanningTree(vv.getVisualizationModel().getGraph());
-                    LayoutModel positionModel = this.getTreeLayoutPositions(tree, layoutAlgorithm);
+                            SpanningTreeAdapter.getSpanningTree(vv.getVisualizationModel().getGraph());
+                    LayoutModel positionModel = getTreeLayoutPositions(tree, layoutAlgorithm);
                     vv.getVisualizationModel().getLayoutModel().setInitializer(positionModel);
                     layoutAlgorithm = new StaticLayoutAlgorithm();
                   }
@@ -166,7 +168,9 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
                   } else {
                     LayoutAlgorithmTransition.apply(vv, layoutAlgorithm);
                   }
-                }));
+                });
+      }
+    });
 
     jcb.setSelectedItem(LayoutHelper.Layouts.FR);
 
