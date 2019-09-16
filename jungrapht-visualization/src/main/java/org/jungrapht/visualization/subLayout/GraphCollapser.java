@@ -172,7 +172,7 @@ public class GraphCollapser<E> {
       log.trace(
           "vertex.get() {} instanceof Graph is {}", vertex.get(), vertex.get() instanceof Graph);
       contained |=
-          (vertex.get() instanceof Graph)
+          (vertex.get() instanceof Collapsable)
               && contains((Collapsable<Graph<Collapsable<?>, E>>) vertex, inVertex);
     }
     return contained;
