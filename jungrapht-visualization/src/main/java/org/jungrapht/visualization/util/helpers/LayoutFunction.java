@@ -6,13 +6,17 @@ import org.jungrapht.visualization.layout.algorithms.*;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFRRepulsion;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutSpringRepulsion;
 
-public class LayoutFunction<V, E> implements Function<String, LayoutAlgorithm.Builder<V, ?, ?>> {
+public class LayoutFunction<V> implements Function<String, LayoutAlgorithm.Builder<V, ?, ?>> {
 
   Map<String, LayoutAlgorithm.Builder<V, ?, ?>> map = new LinkedHashMap<>();
 
   public static class Layout<V> {
     public final String name;
     public final LayoutAlgorithm.Builder<V, ?, ?> builder;
+
+    public static <V> Layout of(String name, LayoutAlgorithm.Builder<V, ?, ?> builder) {
+      return new Layout(name, builder);
+    }
 
     public Layout(String name, LayoutAlgorithm.Builder<V, ?, ?> builder) {
       this.name = name;
@@ -33,7 +37,7 @@ public class LayoutFunction<V, E> implements Function<String, LayoutAlgorithm.Bu
     return map.get(s);
   }
 
-  public static class FullLayoutFunction<V, E> extends LayoutFunction<V, E> {
+  public static class FullLayoutFunction<V, E> extends LayoutFunction<V> {
     public FullLayoutFunction() {
       super(
           new Layout("Kamada Kawai", KKLayoutAlgorithm.<V>builder()),

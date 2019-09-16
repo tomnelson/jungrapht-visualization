@@ -102,7 +102,7 @@ public class ShowLayouts extends JPanel {
 
     final JRadioButton animateLayoutTransition = new JRadioButton("Animate Layout Transition");
 
-    LayoutFunction<String, Number> layoutFunction = new LayoutFunction.FullLayoutFunction<>();
+    LayoutFunction<String> layoutFunction = new LayoutFunction.FullLayoutFunction<>();
 
     final JComboBox jcb = new JComboBox(layoutFunction.getNames().toArray());
     jcb.addActionListener(
