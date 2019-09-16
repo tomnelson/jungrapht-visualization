@@ -528,8 +528,12 @@ public class BiModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeListene
     manageMode();
   }
 
+  static final int TIMER_MAX = Integer.getInteger(PREFIX + "modalRendererTimerMax", 10);
+  static final int TIMER_INCREMENT = Integer.getInteger(PREFIX + "modalRendererTimerIncrement", 10);
+  static final int TIMER_SLEEP = Integer.getInteger(PREFIX + "modalRendererTimerSleep", 30);
+
   class Timer extends Thread {
-    long value = 10;
+    long value = TIMER_MAX;
     boolean done;
 
     Timer() {
@@ -539,7 +543,7 @@ public class BiModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeListene
     }
 
     void incrementValue() {
-      value = 10;
+      value = TIMER_INCREMENT;
     }
 
     @Override
@@ -548,7 +552,7 @@ public class BiModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeListene
       while (value > 0) {
         value--;
         try {
-          Thread.sleep(10);
+          Thread.sleep(TIMER_SLEEP);
         } catch (InterruptedException ex) {
           // ignore
         }

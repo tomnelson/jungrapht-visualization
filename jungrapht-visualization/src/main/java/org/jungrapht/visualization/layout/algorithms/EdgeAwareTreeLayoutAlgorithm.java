@@ -42,8 +42,8 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
       extends TreeLayoutAlgorithm.Builder<V, T, B>
       implements EdgeAwareLayoutAlgorithm.Builder<V, E, T, B> {
     protected Predicate<V> rootPredicate;
-    protected int horizontalVertexSpacing = DEFAULT_HORIZONTAL_VERTEX_SPACING;
-    protected int verticalVertexSpacing = DEFAULT_VERTICAL_VERTEX_SPACING;
+    protected int horizontalVertexSpacing = TREE_LAYOUT_HORIZONTAL_SPACING;
+    protected int verticalVertexSpacing = TREE_LAYOUT_VERTICAL_SPACING;
     protected Predicate<V> vertexPredicate = v -> false;
     protected Predicate<E> edgePredicate = e -> false;
     protected Comparator<V> vertexComparator = (v1, v2) -> 0;

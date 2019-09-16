@@ -42,8 +42,8 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
   public static class Builder<V, T extends TreeLayoutAlgorithm<V>, B extends Builder<V, T, B>>
       implements LayoutAlgorithm.Builder<V, T, B> {
     protected Predicate<V> rootPredicate;
-    protected int horizontalVertexSpacing = DEFAULT_HORIZONTAL_VERTEX_SPACING;
-    protected int verticalVertexSpacing = DEFAULT_VERTICAL_VERTEX_SPACING;
+    protected int horizontalVertexSpacing = TREE_LAYOUT_HORIZONTAL_SPACING;
+    protected int verticalVertexSpacing = TREE_LAYOUT_VERTICAL_SPACING;
     protected boolean expandLayout = true;
 
     /** @return this builder cast to type B */
@@ -151,12 +151,6 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
    * children
    */
   protected Map<V, Rectangle> baseBounds = new HashMap<>();
-
-  /** The default horizontal vertex spacing. Initialized to 50. */
-  protected static final int DEFAULT_HORIZONTAL_VERTEX_SPACING = 50;
-
-  /** The default vertical vertex spacing. Initialized to 50. */
-  protected static final int DEFAULT_VERTICAL_VERTEX_SPACING = 50;
 
   /** The horizontal vertex spacing. Defaults to {@code DEFAULT_HORIZONTAL_VERTEX_SPACING}. */
   protected int horizontalVertexSpacing;
