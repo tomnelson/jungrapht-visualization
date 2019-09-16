@@ -10,7 +10,6 @@ package org.jungrapht.samples;
 
 import java.awt.*;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -148,17 +147,18 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
     final JRadioButton animateLayoutTransition = new JRadioButton("Animate Layout Transition");
 
     final JComboBox jcb = new JComboBox(combos);
-    jcb.addItemListener(e -> {
-      if (e.getStateChange() == ItemEvent.SELECTED) {
-        SwingUtilities.invokeLater(
+    jcb.addItemListener(
+        e -> {
+          if (e.getStateChange() == ItemEvent.SELECTED) {
+            SwingUtilities.invokeLater(
                 () -> {
                   LayoutHelper.Layouts layoutType = (LayoutHelper.Layouts) jcb.getSelectedItem();
                   LayoutAlgorithm layoutAlgorithm = layoutType.getLayoutAlgorithm();
                   log.trace("got a {}", layoutAlgorithm);
                   if ((layoutAlgorithm instanceof TreeLayout)
-                          && vv.getVisualizationModel().getGraph().getType().isUndirected()) {
+                      && vv.getVisualizationModel().getGraph().getType().isUndirected()) {
                     Graph tree =
-                            SpanningTreeAdapter.getSpanningTree(vv.getVisualizationModel().getGraph());
+                        SpanningTreeAdapter.getSpanningTree(vv.getVisualizationModel().getGraph());
                     LayoutModel positionModel = getTreeLayoutPositions(tree, layoutAlgorithm);
                     vv.getVisualizationModel().getLayoutModel().setInitializer(positionModel);
                     layoutAlgorithm = new StaticLayoutAlgorithm();
@@ -169,8 +169,8 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
                     LayoutAlgorithmTransition.apply(vv, layoutAlgorithm);
                   }
                 });
-      }
-    });
+          }
+        });
 
     jcb.setSelectedItem(LayoutHelper.Layouts.FR);
 
@@ -208,9 +208,7 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
                     layoutModel.set(Collapsable.of(clusterGraph), cp);
                     log.trace("put the cluster at " + cp);
                     layoutModel.lock(Collapsable.of(clusterGraph), true);
-                    layoutModel.lock(true);
                     vv.getVisualizationModel().setGraph(g);
-
                     vv.getRenderContext().getParallelEdgeIndexFunction().reset();
                     layoutModel.accept(vv.getVisualizationModel().getLayoutAlgorithm());
                     vv.getSelectedVertexState().clear();

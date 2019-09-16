@@ -173,9 +173,7 @@ public class VertexCollapseDemo extends JPanel {
                     layoutModel.set(Collapsable.of(clusterGraph), cp);
                     log.trace("put the cluster at " + cp);
                     layoutModel.lock(Collapsable.of(clusterGraph), true);
-                    layoutModel.lock(true);
                     vv.getVisualizationModel().setGraph(g);
-
                     vv.getRenderContext().getParallelEdgeIndexFunction().reset();
                     layoutModel.accept(vv.getVisualizationModel().getLayoutAlgorithm());
                     vv.getSelectedVertexState().clear();

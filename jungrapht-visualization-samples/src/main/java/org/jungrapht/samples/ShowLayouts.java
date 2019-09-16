@@ -19,9 +19,7 @@ import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.samples.spatial.RTreeVisualization;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultGraphMouse;
-import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.layout.algorithms.*;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -101,7 +99,7 @@ public class ShowLayouts extends JPanel {
 
     setLayout(new BorderLayout());
     add(vv.getComponent(), BorderLayout.CENTER);
-//    LayoutHelper.Layouts[] combos = LayoutHelper.getCombos();
+
     final JRadioButton animateLayoutTransition = new JRadioButton("Animate Layout Transition");
 
     LayoutFunction<String, Number> layoutFunction = new LayoutFunction.FullLayoutFunction<>();
@@ -143,7 +141,6 @@ public class ShowLayouts extends JPanel {
                 }));
 
     jcb.setSelectedItem(LayoutHelper.Layouts.FR);
-
 
     JPanel control_panel = new JPanel(new GridLayout(2, 1));
     JPanel topControls = new JPanel();
