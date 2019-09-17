@@ -54,7 +54,7 @@ public class AttributeFilters<K, V, T extends Attributed<K, V>, B extends Abstra
     this(builder.losers, builder.elements, builder.buttonSupplier, builder.paintFunction);
   }
 
-  List<B> radioButtons = new ArrayList<>();
+  List<B> buttons = new ArrayList<>();
   Multiset<V> multiset = HashMultiset.create();
 
   Set<String> selectedTexts = new HashSet<>();
@@ -80,7 +80,7 @@ public class AttributeFilters<K, V, T extends Attributed<K, V>, B extends Abstra
     // accept the values with cardinality above the max of 2 and 5% of the number elements.
     multiset.removeIf(s -> multiset.count(s) < Math.max(2, elements.size() * .05));
 
-    // create a radio button for every element that was retained
+    // create a button for every element that was retained
     multiset.elementSet();
     for (V key : multiset.elementSet()) {
       B button = buttonSupplier.get();
@@ -104,12 +104,12 @@ public class AttributeFilters<K, V, T extends Attributed<K, V>, B extends Abstra
                       ItemEvent.DESELECTED));
             }
           });
-      radioButtons.add(button);
+      buttons.add(button);
     }
   }
 
-  public List<B> getRadioButtons() {
-    return radioButtons;
+  public List<B> getButtons() {
+    return buttons;
   }
 
   // event support:

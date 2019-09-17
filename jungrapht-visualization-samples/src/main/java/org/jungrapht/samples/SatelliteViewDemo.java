@@ -88,8 +88,7 @@ public class SatelliteViewDemo extends JPanel {
 
     // create one layout for the graph
     FRLayoutAlgorithm<String> layoutAlgorithm = FRLayoutAlgorithm.<String>builder().build();
-    // not used, for testing only
-    //    CircleLayoutAlgorithm<String, Point2D> clayout = new CircleLayoutAlgorithm<>();
+
     layoutAlgorithm.setMaxIterations(500);
 
     // create one model that both views will share
@@ -105,6 +104,7 @@ public class SatelliteViewDemo extends JPanel {
     final SatelliteVisualizationViewer<String, Number> satelliteVisualizationViewer =
         SatelliteVisualizationViewer.builder(mainVisualizationViewer)
             .viewSize(preferredSize2)
+            .transparent(true)
             .build();
     mainVisualizationViewer.setBackground(Color.white);
     mainVisualizationViewer
@@ -152,14 +152,10 @@ public class SatelliteViewDemo extends JPanel {
     ToolTipManager.sharedInstance().setDismissDelay(10000);
 
     Container panel = new JPanel(new BorderLayout());
-    //    Container rightPanel = new JPanel(new BorderLayout());
 
     VisualizationScrollPane visualizationScrollPane =
         new VisualizationScrollPane(mainVisualizationViewer);
     panel.add(visualizationScrollPane);
-    //    rightPanel.add(new JPanel());
-    //    rightPanel.add(satelliteVisualizationViewer.getComponent(), BorderLayout.SOUTH);
-    //    panel.add(rightPanel, BorderLayout.EAST);
 
     mainVisualizationViewer.getComponent().setLayout(null);
     mainVisualizationViewer.add(satelliteVisualizationViewer.getComponent());

@@ -13,6 +13,7 @@ package org.jungrapht.visualization;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import javax.swing.*;
 import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.control.ModalSatelliteGraphMouse;
 import org.jungrapht.visualization.spatial.Spatial;
@@ -41,6 +42,8 @@ public class DefaultSatelliteVisualizationViewer<V, E> extends DefaultVisualizat
     super(builder);
     this.master = builder.master;
     this.transparent = builder.transparent;
+    setOpaque(!transparent);
+    setBorder(BorderFactory.createEtchedBorder());
 
     // create a graph mouse with custom plugins to affect the master view
     ModalGraphMouse gm = new ModalSatelliteGraphMouse();
