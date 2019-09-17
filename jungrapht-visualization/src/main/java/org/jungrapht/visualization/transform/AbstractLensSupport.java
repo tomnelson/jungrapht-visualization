@@ -220,8 +220,11 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse>
     }
 
     public void paint(Graphics g) {
-
       Graphics2D g2d = (Graphics2D) g;
+      RenderingHints savedRenderingHints = g2d.getRenderingHints();
+      RenderingHints renderingHints = (RenderingHints) savedRenderingHints.clone();
+      renderingHints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+      g2d.setRenderingHints(renderingHints);
       g2d.setPaint(paint);
       g2d.draw(lensShape);
       int centerX = (int) Math.round(lensShape.getCenterX());
@@ -256,6 +259,7 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse>
       double ymax = killShape.getCenterY() + radius * Math.sin(Math.PI / 4);
       g2d.draw(new Line2D.Double(xmin, ymin, xmax, ymax));
       g2d.draw(new Line2D.Double(xmin, ymax, xmax, ymin));
+      g2d.setRenderingHints(savedRenderingHints);
     }
 
     public boolean useTransform() {

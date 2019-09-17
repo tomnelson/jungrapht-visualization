@@ -35,9 +35,13 @@ public class DefaultSatelliteVisualizationViewer<V, E> extends DefaultVisualizat
   /** the master VisualizationViewer that this is a satellite view for */
   VisualizationViewer<V, E> master;
 
+  boolean transparent;
+
   DefaultSatelliteVisualizationViewer(SatelliteVisualizationViewer.Builder<V, E, ?, ?> builder) {
     super(builder);
     this.master = builder.master;
+    this.transparent = builder.transparent;
+
     // create a graph mouse with custom plugins to affect the master view
     ModalGraphMouse gm = new ModalSatelliteGraphMouse();
     setGraphMouse(gm);
@@ -95,9 +99,11 @@ public class DefaultSatelliteVisualizationViewer<V, E> extends DefaultVisualizat
     // the layoutSize of the VisualizationViewer
     Dimension d = getSize();
 
-    // clear the offscreen image
-    g2d.setColor(getBackground());
-    g2d.fillRect(0, 0, d.width, d.height);
+    if (!transparent) {
+      // clear the offscreen image
+      g2d.setColor(getBackground());
+      g2d.fillRect(0, 0, d.width, d.height);
+    }
 
     AffineTransform oldXform = g2d.getTransform();
     AffineTransform newXform = new AffineTransform(oldXform);

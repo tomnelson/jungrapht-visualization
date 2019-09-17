@@ -160,6 +160,9 @@ public interface VisualizationServer<V, E>
    */
   void setDoubleBuffered(boolean doubleBuffered);
 
+  /** resets all transforms in the visualization */
+  void reset();
+
   /**
    * Returns whether this class uses double buffering. The superclass will be the opposite state.
    *

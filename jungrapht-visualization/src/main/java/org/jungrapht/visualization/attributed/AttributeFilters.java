@@ -7,6 +7,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.*;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import javax.swing.*;
 import javax.swing.event.EventListenerList;
@@ -18,6 +19,7 @@ public class AttributeFilters<K, V, T extends Attributed<K, V>, B extends Abstra
     private Collection<K> losers = Collections.emptyList();
     private Set<T> elements;
     private Supplier<B> buttonSupplier = () -> (B) new JRadioButton();
+    private Function<T, Paint> paintFunction = v -> Color.black;
 
     public Builder losers(Collection<K> losers) {
       this.losers = losers;
@@ -34,13 +36,22 @@ public class AttributeFilters<K, V, T extends Attributed<K, V>, B extends Abstra
       return this;
     }
 
+    public Builder paintFunction(Function<T, Paint> paintFunction) {
+      this.paintFunction = paintFunction;
+      return this;
+    }
+
     public AttributeFilters<K, V, T, B> build() {
       return new AttributeFilters<>(this);
     }
   }
 
+  public static Builder builder() {
+    return new Builder();
+  }
+
   private AttributeFilters(Builder builder) {
-    this(builder.losers, builder.elements, builder.buttonSupplier);
+    this(builder.losers, builder.elements, builder.buttonSupplier, builder.paintFunction);
   }
 
   List<B> radioButtons = new ArrayList<>();
@@ -50,7 +61,11 @@ public class AttributeFilters<K, V, T extends Attributed<K, V>, B extends Abstra
 
   protected EventListenerList listenerList = new EventListenerList();
 
-  private AttributeFilters(Collection<String> losers, Set<T> elements, Supplier<B> buttonSupplier) {
+  private AttributeFilters(
+      Collection<String> losers,
+      Set<T> elements,
+      Supplier<B> buttonSupplier,
+      Function<V, Paint> paintFunction) {
 
     // count up the unique attribute values (skipping the 'losers' we know we don't want)
     elements.forEach(
@@ -69,6 +84,7 @@ public class AttributeFilters<K, V, T extends Attributed<K, V>, B extends Abstra
     multiset.elementSet();
     for (V key : multiset.elementSet()) {
       B button = buttonSupplier.get();
+      button.setForeground((Color) paintFunction.apply(key));
       button.setText(key.toString());
       button.addItemListener(
           item -> {

@@ -9,6 +9,8 @@
 package org.jungrapht.samples;
 
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.ItemEvent;
 import java.awt.geom.GeneralPath;
 import javax.swing.*;
@@ -150,15 +152,34 @@ public class SatelliteViewDemo extends JPanel {
     ToolTipManager.sharedInstance().setDismissDelay(10000);
 
     Container panel = new JPanel(new BorderLayout());
-    Container rightPanel = new JPanel(new BorderLayout());
+    //    Container rightPanel = new JPanel(new BorderLayout());
 
     VisualizationScrollPane visualizationScrollPane =
         new VisualizationScrollPane(mainVisualizationViewer);
     panel.add(visualizationScrollPane);
-    rightPanel.add(new JPanel());
-    rightPanel.add(satelliteVisualizationViewer.getComponent(), BorderLayout.SOUTH);
-    panel.add(rightPanel, BorderLayout.EAST);
+    //    rightPanel.add(new JPanel());
+    //    rightPanel.add(satelliteVisualizationViewer.getComponent(), BorderLayout.SOUTH);
+    //    panel.add(rightPanel, BorderLayout.EAST);
 
+    mainVisualizationViewer.getComponent().setLayout(null);
+    mainVisualizationViewer.add(satelliteVisualizationViewer.getComponent());
+    Dimension sd = satelliteVisualizationViewer.getSize();
+
+    mainVisualizationViewer
+        .getComponent()
+        .addComponentListener(
+            new ComponentAdapter() {
+              @Override
+              public void componentResized(ComponentEvent e) {
+                super.componentResized(e);
+                Component vv = e.getComponent();
+                Dimension vvd = vv.getSize();
+                Point p = new Point(vvd.width - sd.width, vvd.height - sd.height);
+                satelliteVisualizationViewer
+                    .getComponent()
+                    .setBounds(p.x, p.y, sd.width, sd.height);
+              }
+            });
     helpDialog = new JDialog();
     helpDialog.getContentPane().add(new JLabel(instructions));
 

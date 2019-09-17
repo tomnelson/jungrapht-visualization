@@ -34,6 +34,13 @@ public interface SatelliteVisualizationViewer<V, E> extends VisualizationViewer<
 
     protected VisualizationViewer<V, E> master;
 
+    protected boolean transparent;
+
+    public B transparent(boolean transparent) {
+      this.transparent = transparent;
+      return self();
+    }
+
     protected Builder(VisualizationViewer<V, E> master) {
       super(master.getVisualizationModel());
       this.master = master;

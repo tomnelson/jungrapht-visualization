@@ -235,6 +235,11 @@ class DefaultVisualizationServer<V, E> extends JPanel
   }
 
   @Override
+  public void reset() {
+    getRenderContext().getMultiLayerTransformer().setToIdentity();
+  }
+
+  @Override
   public JComponent getComponent() {
     return this;
   }
