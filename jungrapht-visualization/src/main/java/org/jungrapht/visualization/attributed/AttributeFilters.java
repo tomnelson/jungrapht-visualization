@@ -11,15 +11,15 @@ import java.util.function.Supplier;
 import javax.swing.*;
 import javax.swing.event.EventListenerList;
 
-public class SmartGraphFilters<T extends Attributed<String, String>, B extends AbstractButton>
+public class AttributeFilters<K, V, T extends Attributed<K, V>, B extends AbstractButton>
     implements ItemSelectable {
 
-  public static class Builder<T extends Attributed<String, String>, B extends AbstractButton> {
-    private Collection<String> losers = Collections.emptyList();
+  public static class Builder<K, V, T extends Attributed<K, V>, B extends AbstractButton> {
+    private Collection<K> losers = Collections.emptyList();
     private Set<T> elements;
     private Supplier<B> buttonSupplier = () -> (B) new JRadioButton();
 
-    public Builder losers(Collection<String> losers) {
+    public Builder losers(Collection<K> losers) {
       this.losers = losers;
       return this;
     }
@@ -34,30 +34,29 @@ public class SmartGraphFilters<T extends Attributed<String, String>, B extends A
       return this;
     }
 
-    public SmartGraphFilters<T, B> build() {
-      return new SmartGraphFilters<>(this);
+    public AttributeFilters<K, V, T, B> build() {
+      return new AttributeFilters<>(this);
     }
   }
 
-  private SmartGraphFilters(Builder builder) {
+  private AttributeFilters(Builder builder) {
     this(builder.losers, builder.elements, builder.buttonSupplier);
   }
 
   List<B> radioButtons = new ArrayList<>();
-  Multiset<String> multiset = HashMultiset.create();
+  Multiset<V> multiset = HashMultiset.create();
 
   Set<String> selectedTexts = new HashSet<>();
 
   protected EventListenerList listenerList = new EventListenerList();
 
-  private SmartGraphFilters(
-      Collection<String> losers, Set<T> elements, Supplier<B> buttonSupplier) {
+  private AttributeFilters(Collection<String> losers, Set<T> elements, Supplier<B> buttonSupplier) {
 
     // count up the unique attribute values (skipping the 'losers' we know we don't want)
     elements.forEach(
         element -> {
-          Map<String, String> attributeMap = new HashMap<>(element.getAttributeMap());
-          for (Map.Entry<String, String> entry : attributeMap.entrySet()) {
+          Map<K, V> attributeMap = new HashMap<>(element.getAttributeMap());
+          for (Map.Entry<K, V> entry : attributeMap.entrySet()) {
             if (!losers.contains(entry.getKey())) {
               multiset.add(entry.getValue());
             }
@@ -68,9 +67,9 @@ public class SmartGraphFilters<T extends Attributed<String, String>, B extends A
 
     // create a radio button for every element that was retained
     multiset.elementSet();
-    for (String key : multiset.elementSet()) {
+    for (V key : multiset.elementSet()) {
       B button = buttonSupplier.get();
-      button.setText(key);
+      button.setText(key.toString());
       button.addItemListener(
           item -> {
             if (item.getStateChange() == ItemEvent.SELECTED) {
