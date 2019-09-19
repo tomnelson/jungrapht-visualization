@@ -25,7 +25,7 @@ import java.util.Set;
  * @author Tom Nelson
  */
 public class MultiMutableSelectedState<T> extends AbstractMutableSelectedState<T>
-    implements MutableSelectedState<T> {
+    implements MutableSelectedStateSink<T> {
   /** the 'selected' items */
   protected Set<T> selected = new LinkedHashSet<>();
 
@@ -37,10 +37,16 @@ public class MultiMutableSelectedState<T> extends AbstractMutableSelectedState<T
    */
   @Override
   public boolean select(T element) {
+    return select(element, true);
+  }
 
+  @Override
+  public boolean select(T element, boolean fireEvents) {
     if (selected.add(element)) {
-      fireItemStateChanged(
-          new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, element, ItemEvent.SELECTED));
+      if (fireEvents) {
+        fireItemStateChanged(
+            new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, element, ItemEvent.SELECTED));
+      }
       return true;
     }
     return false;
@@ -53,42 +59,68 @@ public class MultiMutableSelectedState<T> extends AbstractMutableSelectedState<T
    * @return
    */
   @Override
-  public boolean deselect(T t) {
+  public boolean deselect(T t, boolean fireEvents) {
     if (this.selected.remove(t)) {
-      fireItemStateChanged(
-          new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, t, ItemEvent.DESELECTED));
+      if (fireEvents) {
+        fireItemStateChanged(
+            new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, t, ItemEvent.DESELECTED));
+      }
       return true; // mutated the collection
     }
     return false;
   }
 
   @Override
-  public boolean select(Collection<T> elements) {
+  public boolean deselect(T element) {
+    return deselect(element, true);
+  }
+
+  @Override
+  public boolean select(Collection<T> elements, boolean fireEvents) {
 
     if (selected.addAll(elements)) {
       // added and mutated the set.
-      fireItemStateChanged(
-          new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, elements, ItemEvent.SELECTED));
+      if (fireEvents) {
+        fireItemStateChanged(
+            new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, elements, ItemEvent.SELECTED));
+      }
       return true; // mutated the collection and fired an event
     }
     return false;
   }
 
   @Override
-  public boolean deselect(Collection<T> elements) {
+  public boolean select(Collection<T> elements) {
+    return select(elements, true);
+  }
+
+  @Override
+  public boolean deselect(Collection<T> elements, boolean fireEvents) {
     if (this.selected.removeAll(elements)) {
-      fireItemStateChanged(
-          new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, elements, ItemEvent.DESELECTED));
+      if (fireEvents) {
+        fireItemStateChanged(
+            new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, elements, ItemEvent.DESELECTED));
+      }
       return true; // mutated the collection
     }
     return false;
   }
 
   @Override
-  public void clear() {
+  public boolean deselect(Collection<T> elements) {
+    return deselect(elements, true);
+  }
+
+  @Override
+  public void clear(boolean fireEvents) {
     Collection<T> unpicks = new ArrayList<>(selected);
-    deselect(unpicks);
+    deselect(unpicks, fireEvents);
     selected.clear();
+  }
+
+  @Override
+  public void clear() {
+    clear(true);
   }
 
   @Override
