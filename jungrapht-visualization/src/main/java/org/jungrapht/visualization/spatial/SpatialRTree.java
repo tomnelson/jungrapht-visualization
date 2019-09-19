@@ -436,7 +436,7 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
       super(visualizationModel.getLayoutModel(), splitterContext, reinsert);
       this.visualizationModel = visualizationModel;
       this.boundingRectangleCollector = boundingRectangleCollector;
-      graphElementAccessor = new RadiusGraphElementAccessor(visualizationModel.getGraph());
+      graphElementAccessor = new RadiusGraphElementAccessor();
       rtree = RTree.create();
       recalculate();
     }

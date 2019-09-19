@@ -30,11 +30,10 @@ import org.jungrapht.visualization.layout.util.RadiusVertexAccessor;
  */
 public class RadiusGraphElementAccessor<V, E> extends RadiusVertexAccessor<V>
     implements GraphElementAccessor<V, E> {
-  private final Graph<V, E> graph;
 
   /** Creates an instance with an effectively infinite default maximum distance. */
-  public RadiusGraphElementAccessor(Graph<V, E> graph) {
-    this(graph, Math.sqrt(Double.MAX_VALUE - 1000));
+  public RadiusGraphElementAccessor() {
+    this(Math.sqrt(Double.MAX_VALUE - 1000));
   }
 
   /**
@@ -43,9 +42,8 @@ public class RadiusGraphElementAccessor<V, E> extends RadiusVertexAccessor<V>
    * @param maxDistance the maximum distance at which any element can be from a specified location
    *     and still be returned
    */
-  public RadiusGraphElementAccessor(Graph<V, E> graph, double maxDistance) {
+  public RadiusGraphElementAccessor(double maxDistance) {
     super(maxDistance);
-    this.graph = graph;
   }
 
   /**
@@ -76,6 +74,7 @@ public class RadiusGraphElementAccessor<V, E> extends RadiusVertexAccessor<V>
    */
   @Override
   public E getEdge(LayoutModel<V> layoutModel, double x, double y) {
+    Graph<V, E> graph = layoutModel.getGraph();
     double minDistance = maxDistance * maxDistance;
     E closest = null;
     while (true) {

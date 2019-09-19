@@ -279,7 +279,7 @@ public interface Spatial<T> extends LayoutStateChange.Listener {
       public Edge(VisualizationModel<V, E> visualizationModel) {
         super(visualizationModel.getLayoutModel());
         this.visualizationModel = visualizationModel;
-        this.accessor = new RadiusGraphElementAccessor<>(visualizationModel.getGraph());
+        this.accessor = new RadiusGraphElementAccessor<>();
       }
 
       @Override
