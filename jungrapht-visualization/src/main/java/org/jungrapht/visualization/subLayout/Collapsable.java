@@ -25,7 +25,7 @@ public class Collapsable<T> {
   }
 
   public String toString() {
-    return Objects.toString(this.item, "null");
+    return "collapsable{" + Objects.toString(this.item, "null") + "}";
   }
 
   @Override
