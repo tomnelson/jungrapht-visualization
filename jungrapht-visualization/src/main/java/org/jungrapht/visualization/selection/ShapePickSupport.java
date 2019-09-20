@@ -11,6 +11,8 @@
  */
 package org.jungrapht.visualization.selection;
 
+import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+
 import com.google.common.collect.Sets;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -27,7 +29,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.VisualizationServer;
-import org.jungrapht.visualization.control.TransformSupport;
 import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
@@ -46,6 +47,8 @@ import org.slf4j.LoggerFactory;
  * @author Tom Nelson
  */
 public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
+
+  private static final String PICK_AREA_SIZE = PREFIX + "pickAreaSize";
 
   private static final Logger log = LoggerFactory.getLogger(ShapePickSupport.class);
   /**
@@ -68,7 +71,7 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
     HIGHEST
   }
 
-  protected float pickSize;
+  protected int pickSize = Integer.getInteger(PICK_AREA_SIZE, 4);
 
   /**
    * The <code>VisualizationServer</code> in which the this instance is being used for picking. Used
@@ -89,8 +92,8 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
    * @param vv source of the current <code>Layout</code>.
    * @param pickSize the layoutSize of the pick footprint for line edges
    */
-  public ShapePickSupport(VisualizationServer<V, E> vv, float pickSize) {
-    this.vv = vv;
+  public ShapePickSupport(VisualizationServer<V, E> vv, int pickSize) {
+    this(vv);
     this.pickSize = pickSize;
   }
 
@@ -102,7 +105,6 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
    */
   public ShapePickSupport(VisualizationServer<V, E> vv) {
     this.vv = vv;
-    this.pickSize = 2;
   }
 
   /**
@@ -163,7 +165,8 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
    */
   @Override
   public V getVertex(LayoutModel<V> layoutModel, double x, double y) {
-    log.trace("look for vertex at (layout coords) {},{}", x, y);
+
+    log.trace("look for vertex in (layout coords) {},{}", x, y);
     V closest = null;
     double minDistance = Double.MAX_VALUE;
     // x,y is in layout coordinate system.
@@ -175,6 +178,9 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
     }
 
     // fall back on checking every vertex
+    Rectangle2D pickArea =
+        new Rectangle2D.Float(
+            (float) x - pickSize / 2, (float) y - pickSize / 2, pickSize, pickSize);
     while (true) {
       try {
         for (V v : getFilteredVertices()) {
@@ -190,7 +196,7 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
           AffineTransform xform = AffineTransform.getTranslateInstance(p.x, p.y);
           shape = xform.createTransformedShape(shape);
 
-          if (shape.contains(pickPoint.getX(), pickPoint.getY())) {
+          if (shape.intersects(pickArea)) {
 
             if (style == Style.LOWEST) {
               // return the first match
@@ -231,7 +237,10 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
    */
   protected V getVertex(Spatial<V> spatial, LayoutModel<V> layoutModel, double x, double y) {
 
-    TransformSupport<V, E> transformSupport = vv.getTransformSupport();
+    //    TransformSupport<V, E> transformSupport = vv.getTransformSupport();
+    Rectangle2D pickArea =
+        new Rectangle2D.Float(
+            (float) x - pickSize / 2, (float) y - pickSize / 2, pickSize, pickSize);
 
     // find the leaf vertex that would contain a point at x,y
     Collection<? extends TreeNode> containingLeafs =
@@ -285,7 +294,7 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
       AffineTransform xform = AffineTransform.getTranslateInstance(p.x, p.y);
       shape = xform.createTransformedShape(shape);
 
-      if (shape.contains(x, y)) {
+      if (shape.intersects(pickArea)) {
         if (style == Style.LOWEST) {
           // return the first match
           return vertex;
@@ -721,7 +730,7 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
    *
    * @param pickSize the length of one side of the (square) picking area, in view coordinates
    */
-  public void setPickSize(float pickSize) {
+  public void setPickSize(int pickSize) {
     this.pickSize = pickSize;
   }
 }
