@@ -148,7 +148,7 @@ public class WorldMapGraphDemo extends JPanel {
     vv.setGraphMouse(graphMouse);
 
     vv.setToolTipText("<html><center>Type 'p' for Pick mode<p>Type 't' for Transform mode");
-
+    vv.scaleToLayout();
     JButton reset = new JButton("reset");
     reset.addActionListener(
         e -> {

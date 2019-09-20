@@ -258,7 +258,7 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
   /**
    * gather the RTree Node rectangles into a Collection
    *
-   * @param list
+   * @param list an ordered collection of shapes
    * @return
    */
   public Collection<Shape> collectGrids(Collection<Shape> list) {

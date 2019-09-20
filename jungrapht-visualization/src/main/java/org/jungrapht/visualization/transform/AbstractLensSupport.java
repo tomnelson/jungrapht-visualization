@@ -10,6 +10,8 @@
 
 package org.jungrapht.visualization.transform;
 
+import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
@@ -30,6 +32,8 @@ import org.jungrapht.visualization.layout.GraphElementAccessor;
  */
 public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse>
     implements LensSupport<M> {
+
+  private static final String LENS_STROKE_WIDTH = PREFIX + "lensStrokeWidth";
 
   public abstract static class Builder<
           V,
@@ -204,6 +208,8 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse>
   public static class LensControls implements VisualizationServer.Paintable {
     RectangularShape lensShape;
     Paint paint = Color.getColor("jungrapht.lensControlsColor", Color.gray);
+    Stroke lensStroke =
+        new BasicStroke(Float.parseFloat(System.getProperty(LENS_STROKE_WIDTH, "2.0f")));
 
     public LensControls(LensTransformer lensTransformer) {
       this.lensShape = lensTransformer.getLens().getLensShape();
@@ -226,6 +232,8 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse>
       renderingHints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
       g2d.setRenderingHints(renderingHints);
       g2d.setPaint(paint);
+      Stroke savedStroke = g2d.getStroke();
+      g2d.setStroke(lensStroke);
       g2d.draw(lensShape);
       int centerX = (int) Math.round(lensShape.getCenterX());
       int centerY = (int) Math.round(lensShape.getCenterY());
@@ -250,15 +258,18 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse>
               lensShape.getWidth() / 20,
               lensShape.getHeight() / 20);
 
-      g2d.draw(killShape);
+      g2d.setColor(Color.lightGray);
+      g2d.fill(killShape);
       // kill button 'X'
       double radius = killShape.getWidth() / 2;
       double xmin = killShape.getCenterX() - radius * Math.cos(Math.PI / 4);
       double ymin = killShape.getCenterY() - radius * Math.sin(Math.PI / 4);
       double xmax = killShape.getCenterX() + radius * Math.cos(Math.PI / 4);
       double ymax = killShape.getCenterY() + radius * Math.sin(Math.PI / 4);
+      g2d.setColor(Color.white);
       g2d.draw(new Line2D.Double(xmin, ymin, xmax, ymax));
       g2d.draw(new Line2D.Double(xmin, ymax, xmax, ymin));
+      g2d.setStroke(savedStroke);
       g2d.setRenderingHints(savedRenderingHints);
     }
 

@@ -84,7 +84,7 @@ public class IconCache<V> extends HashMap<V, Icon> implements Function<V, Icon> 
   }
 
   /**
-   * @param vertexLabelFunction
+   * @param vertexLabelFunction function to return String labels for vertices
    * @param <V> vertex type
    * @return the Builder
    */
@@ -101,7 +101,7 @@ public class IconCache<V> extends HashMap<V, Icon> implements Function<V, Icon> 
   protected Decorator<V> preDecorator;
   protected Decorator<V> postDecorator;
 
-  /** @param builder */
+  /** @param builder the configured Builder */
   protected IconCache(Builder<V> builder) {
     this(
         builder.vertexLabelFunction,
