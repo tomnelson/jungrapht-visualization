@@ -42,11 +42,7 @@ public class GraphCollapser<E> {
 
     // add all vertices in the delegate, unless the vertex is in the
     // cluster.
-    for (Collapsable<?> v : inGraph.vertexSet()) {
-      if (!cluster.contains(v)) {
-        graph.addVertex(v);
-      }
-    }
+    inGraph.vertexSet().stream().filter(v -> !cluster.contains(v)).forEach(graph::addVertex);
     // add the clusterGraph as a vertex
     graph.addVertex(Collapsable.of(clusterGraph));
 
@@ -101,11 +97,7 @@ public class GraphCollapser<E> {
     for (E edge : originalGraph.edgeSet()) {
       // if this edge already exists in the depths of newGraph, then it must be wholly contained
       // inside a collapsed graph vertex. Do not add it to newGraph
-      E found = findEdge(newGraph, edge);
-      if (found != null) {
-        Collapsable<?> foundContainer = findContainerOf(newGraph, found);
-        log.trace("found {} in {}", found, foundContainer);
-        // this edge is in a collapsed graph and I will leave it out
+      if (null != findEdge(newGraph, edge)) {
         continue;
       }
       // get the original graph endpoints for edge
@@ -117,7 +109,7 @@ public class GraphCollapser<E> {
         continue;
       }
       // either the originalSource or the originalTarget is inside a collapsed graph vertex in newGraph.
-      // Find them and add this edge with one or both enpoints as collapsed graph vertices in newGraph
+      // Find them and add this edge with one or both endpoints as collapsed graph vertices in newGraph
       Collapsable<?> foundSource = findContainerOf(newGraph, originalSource);
       Collapsable<?> foundTarget = findContainerOf(newGraph, originalTarget);
       newGraph.addEdge(foundSource, foundTarget, edge);
@@ -140,23 +132,6 @@ public class GraphCollapser<E> {
     return null;
   }
 
-  private Collapsable<?> findContainerOf(Graph<Collapsable<?>, E> graph, E edge) {
-    if (graph.edgeSet().contains(edge)) {
-      return Collapsable.of(graph);
-    }
-    for (Collapsable<?> v : graph.vertexSet()) {
-      // if v is a collapsed graph, go into it
-      if (v.get() instanceof Graph) {
-        Graph<Collapsable<?>, E> collapsedGraph = (Graph<Collapsable<?>, E>) v.get();
-        Collapsable<?> found = findContainerOf(collapsedGraph, edge);
-        if (found != null) {
-          return found;
-        }
-      }
-    }
-    throw new RuntimeException(edge + " was not found");
-  }
-
   /**
    * Look in the vertexSet of the passed graph. Find either the passed vertex, or if any vertices
    * are {@code Collapsable<Graph>} instances, look inside to see if it includes the passed vertex.
@@ -171,6 +146,7 @@ public class GraphCollapser<E> {
     if (graph.vertexSet().contains(vertex)) {
       return vertex;
     }
+    log.trace("look in {} for {}", graph.vertexSet(), vertex);
     for (Collapsable<?> v : graph.vertexSet()) {
       if (v.get() instanceof Graph) {
         Collapsable<Graph<Collapsable<?>, E>> collapsedGraph =
@@ -181,7 +157,7 @@ public class GraphCollapser<E> {
         }
       }
     }
-    throw new RuntimeException(vertex + " was not found");
+    return null;
   }
 
   public Graph<Collapsable<?>, E> getClusterGraph(
