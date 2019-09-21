@@ -207,9 +207,9 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse>
    */
   public static class LensControls implements VisualizationServer.Paintable {
     RectangularShape lensShape;
-    Paint paint = Color.getColor("jungrapht.lensControlsColor", Color.gray);
-    Stroke lensStroke =
-        new BasicStroke(Float.parseFloat(System.getProperty(LENS_STROKE_WIDTH, "2.0f")));
+    Paint lensControlsDrawColor = Color.getColor("jungrapht.lensControlsColor", Color.gray);
+    Paint lensControlsFillColor = Color.getColor("jungrapht.lensColor", Color.decode("0xFAFAFA"));
+    float lensStrokeWidth = Float.parseFloat(System.getProperty(LENS_STROKE_WIDTH, "2.0f"));
 
     public LensControls(LensTransformer lensTransformer) {
       this.lensShape = lensTransformer.getLens().getLensShape();
@@ -217,12 +217,12 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse>
 
     /** @return the paint */
     public Paint getPaint() {
-      return paint;
+      return lensControlsDrawColor;
     }
 
     /** @param paint the paint to set */
     public void setPaint(Paint paint) {
-      this.paint = paint;
+      this.lensControlsDrawColor = paint;
     }
 
     public void paint(Graphics g) {
@@ -231,9 +231,11 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse>
       RenderingHints renderingHints = (RenderingHints) savedRenderingHints.clone();
       renderingHints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
       g2d.setRenderingHints(renderingHints);
-      g2d.setPaint(paint);
+      g2d.setPaint(lensControlsDrawColor);
       Stroke savedStroke = g2d.getStroke();
-      g2d.setStroke(lensStroke);
+      // if the transform scale is small, make the stroke wider so it is still visible
+      g2d.setStroke(
+          new BasicStroke(Math.max(lensStrokeWidth, (int) (1.0 / g2d.getTransform().getScaleX()))));
       g2d.draw(lensShape);
       int centerX = (int) Math.round(lensShape.getCenterX());
       int centerY = (int) Math.round(lensShape.getCenterY());
@@ -258,7 +260,7 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse>
               lensShape.getWidth() / 20,
               lensShape.getHeight() / 20);
 
-      g2d.setColor(Color.lightGray);
+      g2d.setPaint(lensControlsFillColor);
       g2d.fill(killShape);
       // kill button 'X'
       double radius = killShape.getWidth() / 2;
@@ -266,7 +268,7 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse>
       double ymin = killShape.getCenterY() - radius * Math.sin(Math.PI / 4);
       double xmax = killShape.getCenterX() + radius * Math.cos(Math.PI / 4);
       double ymax = killShape.getCenterY() + radius * Math.sin(Math.PI / 4);
-      g2d.setColor(Color.white);
+      g2d.setPaint(lensControlsDrawColor);
       g2d.draw(new Line2D.Double(xmin, ymin, xmax, ymax));
       g2d.draw(new Line2D.Double(xmin, ymax, xmax, ymin));
       g2d.setStroke(savedStroke);
