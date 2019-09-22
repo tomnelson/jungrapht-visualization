@@ -18,7 +18,7 @@ public class LayoutFunction<V> implements Function<String, LayoutAlgorithm.Build
       return new Layout(name, builder);
     }
 
-    public Layout(String name, LayoutAlgorithm.Builder<V, ?, ?> builder) {
+    private Layout(String name, LayoutAlgorithm.Builder<V, ?, ?> builder) {
       this.name = name;
       this.builder = builder;
     }
@@ -40,28 +40,28 @@ public class LayoutFunction<V> implements Function<String, LayoutAlgorithm.Build
   public static class FullLayoutFunction<V, E> extends LayoutFunction<V> {
     public FullLayoutFunction() {
       super(
-          new Layout("Kamada Kawai", KKLayoutAlgorithm.<V>builder()),
-          new Layout("Circle", CircleLayoutAlgorithm.<V>builder()),
-          new Layout("Self Organizing Map", ISOMLayoutAlgorithm.<V>builder()),
-          new Layout("Fruchterman Reingold", FRLayoutAlgorithm.<V>builder()),
-          new Layout(
+          Layout.of("Kamada Kawai", KKLayoutAlgorithm.<V>builder()),
+          Layout.of("Circle", CircleLayoutAlgorithm.<V>builder()),
+          Layout.of("Self Organizing Map", ISOMLayoutAlgorithm.<V>builder()),
+          Layout.of("Fruchterman Reingold", FRLayoutAlgorithm.<V>builder()),
+          Layout.of(
               "Fruchterman Reingold (BH Optimized)",
               FRLayoutAlgorithm.builder()
                   .repulsionContractBuilder(BarnesHutFRRepulsion.barnesHutBuilder())),
-          new Layout("Spring", SpringLayoutAlgorithm.<V>builder()),
-          new Layout(
+          Layout.of("Spring", SpringLayoutAlgorithm.<V>builder()),
+          Layout.of(
               "Spring (BH Optimized)",
               SpringLayoutAlgorithm.<V>builder()
                   .repulsionContractBuilder(BarnesHutSpringRepulsion.barnesHutBuilder())),
-          new Layout("Tree", TreeLayoutAlgorithm.<V>builder()),
-          new Layout("EdgeAwareTree", EdgeAwareTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()),
-          new Layout("Multirow Tree", MultiRowTreeLayoutAlgorithm.<V>builder()),
-          new Layout(
+          Layout.of("Tree", TreeLayoutAlgorithm.<V>builder()),
+          Layout.of("EdgeAwareTree", EdgeAwareTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()),
+          Layout.of("Multirow Tree", MultiRowTreeLayoutAlgorithm.<V>builder()),
+          Layout.of(
               "EdgeAwareMultirow Tree",
               MultiRowEdgeAwareTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()),
-          new Layout("Balloon", BalloonLayoutAlgorithm.<V>builder()),
-          new Layout("Radial", RadialTreeLayoutAlgorithm.<V>builder()),
-          new Layout(
+          Layout.of("Balloon", BalloonLayoutAlgorithm.<V>builder()),
+          Layout.of("Radial", RadialTreeLayoutAlgorithm.<V>builder()),
+          Layout.of(
               "EdgeAwareRadial", RadialEdgeAwareTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()));
     }
   }

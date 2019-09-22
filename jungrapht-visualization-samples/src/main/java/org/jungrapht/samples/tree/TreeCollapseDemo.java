@@ -91,9 +91,8 @@ public class TreeCollapseDemo extends JPanel {
           if (picked.size() == 1) {
             Collapsable<?> root = picked.iterator().next();
             Graph<Collapsable<?>, Integer> subTree = TreeCollapser.collapse(graph, root);
-            LayoutModel<Collapsable<?>> objectLayoutModel =
-                vv.getVisualizationModel().getLayoutModel();
-            objectLayoutModel.set(Collapsable.of(subTree), objectLayoutModel.apply(root));
+            LayoutModel<Collapsable<?>> layoutModel = vv.getVisualizationModel().getLayoutModel();
+            layoutModel.set(Collapsable.of(subTree), layoutModel.apply(root));
             vv.getVisualizationModel().setGraph(graph, true);
             vv.getSelectedVertexState().clear();
             vv.repaint();
@@ -106,9 +105,8 @@ public class TreeCollapseDemo extends JPanel {
           for (Collapsable<?> v : vv.getSelectedVertexState().getSelected()) {
             if (v.get() instanceof Graph) {
               graph = TreeCollapser.expand(graph, (Collapsable<Graph>) v);
-              LayoutModel<Collapsable<?>> objectLayoutModel =
-                  vv.getVisualizationModel().getLayoutModel();
-              objectLayoutModel.set(Collapsable.of(graph), objectLayoutModel.apply(v));
+              LayoutModel<Collapsable<?>> layoutModel = vv.getVisualizationModel().getLayoutModel();
+              layoutModel.set(Collapsable.of(graph), layoutModel.apply(v));
               vv.getVisualizationModel().setGraph(graph, true);
             }
             vv.getSelectedVertexState().clear();
