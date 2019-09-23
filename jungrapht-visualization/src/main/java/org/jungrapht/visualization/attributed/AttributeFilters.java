@@ -11,13 +11,18 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import javax.swing.*;
 import javax.swing.event.EventListenerList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AttributeFilters<K, V, T extends Attributed<K, V>, B extends AbstractButton>
     implements ItemSelectable {
 
+  private Logger log = LoggerFactory.getLogger(AttributeFilters.class);
+
   public static class Builder<K, V, T extends Attributed<K, V>, B extends AbstractButton> {
     private Collection<K> losers = Collections.emptyList();
     private Set<T> elements;
+    private int min;
     private Supplier<B> buttonSupplier = () -> (B) new JRadioButton();
     private Function<T, Paint> paintFunction = v -> Color.black;
 
@@ -28,6 +33,11 @@ public class AttributeFilters<K, V, T extends Attributed<K, V>, B extends Abstra
 
     public Builder elements(Set<T> elements) {
       this.elements = elements;
+      return this;
+    }
+
+    public Builder elements(int min) {
+      this.min = min;
       return this;
     }
 
@@ -51,7 +61,12 @@ public class AttributeFilters<K, V, T extends Attributed<K, V>, B extends Abstra
   }
 
   private AttributeFilters(Builder builder) {
-    this(builder.losers, builder.elements, builder.buttonSupplier, builder.paintFunction);
+    this(
+        builder.losers,
+        builder.elements,
+        builder.min,
+        builder.buttonSupplier,
+        builder.paintFunction);
   }
 
   List<B> buttons = new ArrayList<>();
@@ -64,6 +79,7 @@ public class AttributeFilters<K, V, T extends Attributed<K, V>, B extends Abstra
   private AttributeFilters(
       Collection<String> losers,
       Set<T> elements,
+      int min,
       Supplier<B> buttonSupplier,
       Function<V, Paint> paintFunction) {
 
@@ -77,9 +93,12 @@ public class AttributeFilters<K, V, T extends Attributed<K, V>, B extends Abstra
             }
           }
         });
-    // accept the values with cardinality above the max of 2 and 5% of the number elements.
-    multiset.removeIf(s -> multiset.count(s) < Math.max(2, elements.size() * .05));
-
+    if (min == 0) {
+      min = (int) (elements.size() * .01);
+    }
+    int lowThreshold = Math.max(2, min);
+    // accept the values with cardinality above the max of 2 and 50% of the number elements.
+    multiset.removeIf(s -> multiset.count(s) < lowThreshold);
     // create a button for every element that was retained
     multiset.elementSet();
     for (V key : multiset.elementSet()) {
