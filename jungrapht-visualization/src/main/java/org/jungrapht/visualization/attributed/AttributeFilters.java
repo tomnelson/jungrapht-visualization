@@ -36,7 +36,7 @@ public class AttributeFilters<K, V, T extends Attributed<K, V>, B extends Abstra
       return this;
     }
 
-    public Builder elements(int min) {
+    public Builder min(int min) {
       this.min = min;
       return this;
     }
