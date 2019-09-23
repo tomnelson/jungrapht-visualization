@@ -20,7 +20,6 @@ import org.jungrapht.visualization.util.helpers.LayoutFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * Adds vertices one at a time, adds edges to connect them, then removes vertices one a a time.
  * Repeats.
