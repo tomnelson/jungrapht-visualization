@@ -8,7 +8,15 @@
  */
 package org.jungrapht.samples.tree;
 
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.event.ItemEvent;
 import java.awt.geom.GeneralPath;
 import javax.swing.*;
@@ -21,6 +29,7 @@ import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.annotations.MultiSelectedVertexPaintable;
+import org.jungrapht.visualization.annotations.SingleSelectedVertexPaintable;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.control.DefaultSatelliteGraphMouse;
@@ -104,8 +113,29 @@ public class SatelliteViewTreeDemo extends JPanel {
         SatelliteVisualizationViewer.builder(mainVisualizationViewer)
             .viewSize(preferredSize2)
             .build();
-    mainVisualizationViewer.addPostRenderPaintable(
-        MultiSelectedVertexPaintable.builder(mainVisualizationViewer).build());
+
+    MultiSelectedVertexPaintable<String, Integer> multiSelectedVertexPaintable =
+        MultiSelectedVertexPaintable.builder(mainVisualizationViewer).build();
+    mainVisualizationViewer.addPostRenderPaintable(multiSelectedVertexPaintable);
+    //    multiSelectedVertexPaintable.setSelectedVertices(mainVisualizationViewer.getRenderContext().getSelectedVertexState().getSelected());
+
+    SingleSelectedVertexPaintable<String, Integer> singleSelectedVertexPaintable =
+        SingleSelectedVertexPaintable.builder(mainVisualizationViewer).build();
+    mainVisualizationViewer.addPostRenderPaintable(singleSelectedVertexPaintable);
+
+    mainVisualizationViewer
+        .getRenderContext()
+        .getSelectedVertexState()
+        .addItemListener(
+            item -> {
+              if (item.getStateChange() == ItemEvent.SELECTED) {
+                if (item.getItem() instanceof String) {
+                  singleSelectedVertexPaintable.setSelectedVertex((String) item.getItem());
+                }
+              } else if (item.getStateChange() == ItemEvent.DESELECTED) {
+                singleSelectedVertexPaintable.setSelectedVertex(null);
+              }
+            });
 
     mainVisualizationViewer.setBackground(Color.white);
     mainVisualizationViewer

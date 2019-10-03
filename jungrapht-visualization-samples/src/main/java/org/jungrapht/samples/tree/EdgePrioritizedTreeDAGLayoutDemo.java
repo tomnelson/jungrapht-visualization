@@ -91,6 +91,8 @@ public class EdgePrioritizedTreeDAGLayoutDemo extends JFrame {
     TreeLayoutSelector<String, Integer> treeLayoutSelector =
         TreeLayoutSelector.<String, Integer>builder(vv)
             .edgePredicate(edgePredicate)
+            .vertexShapeFunction(vv.getRenderContext().getVertexShapeFunction())
+            .alignFavoredEdges(false)
             .after(vv::scaleToLayout)
             .build();
 

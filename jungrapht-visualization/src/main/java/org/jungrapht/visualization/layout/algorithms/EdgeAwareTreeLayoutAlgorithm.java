@@ -1,9 +1,11 @@
 package org.jungrapht.visualization.layout.algorithms;
 
 import com.google.common.base.Preconditions;
+import java.awt.Shape;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
@@ -49,6 +51,7 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
     protected Comparator<V> vertexComparator = (v1, v2) -> 0;
     protected Comparator<E> edgeComparator = (e1, e2) -> 0;
     protected boolean expandLayout = true;
+    protected boolean alignFavoredEdges = true;
 
     /** {@inheritDoc} */
     protected B self() {
@@ -119,6 +122,11 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
       return self();
     }
 
+    public B alignFavoredEdges(boolean alignFavoredEdges) {
+      this.alignFavoredEdges = alignFavoredEdges;
+      return self();
+    }
+
     /** {@inheritDoc} */
     public T build() {
       return (T) new EdgeAwareTreeLayoutAlgorithm<>(this);
@@ -144,11 +152,13 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
         builder.rootPredicate,
         builder.horizontalVertexSpacing,
         builder.verticalVertexSpacing,
+        builder.vertexShapeFunction,
         builder.vertexPredicate,
         builder.edgePredicate,
         builder.vertexComparator,
         builder.edgeComparator,
-        builder.expandLayout);
+        builder.expandLayout,
+        builder.alignFavoredEdges);
   }
 
   /**
@@ -167,16 +177,24 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
       Predicate<V> rootPredicate,
       int horizontalVertexSpacing,
       int verticalVertexSpacing,
+      Function<V, Shape> vertexShapeFunction,
       Predicate<V> vertexPredicate,
       Predicate<E> edgePredicate,
       Comparator<V> vertexComparator,
       Comparator<E> edgeComparator,
-      boolean expandLayout) {
-    super(rootPredicate, horizontalVertexSpacing, verticalVertexSpacing, expandLayout);
+      boolean expandLayout,
+      boolean alignFavoredEdges) {
+    super(
+        rootPredicate,
+        horizontalVertexSpacing,
+        verticalVertexSpacing,
+        vertexShapeFunction,
+        expandLayout);
     this.vertexPredicate = vertexPredicate;
     this.edgePredicate = edgePredicate;
     this.vertexComparator = vertexComparator;
     this.edgeComparator = edgeComparator;
+    this.alignFavoredEdges = alignFavoredEdges;
   }
 
   /** a {@link Predicate} to filter vertices */
@@ -190,6 +208,8 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
 
   /** a {@link Comparator} to sort edges */
   protected Comparator<E> edgeComparator;
+
+  protected boolean alignFavoredEdges;
 
   @Override
   public void visit(LayoutModel<V> layoutModel) {
@@ -226,7 +246,9 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
    */
   protected Set<V> buildTree(LayoutModel<V> layoutModel) {
     Set<V> roots = super.buildTree(layoutModel);
-    roots.addAll(afterBuildTree(layoutModel));
+    if (alignFavoredEdges) {
+      roots.addAll(afterBuildTree(layoutModel));
+    }
     return roots;
   }
 
@@ -259,6 +281,7 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
               .stream()
               .sorted(edgeComparator)
               .collect(Collectors.toCollection(LinkedHashSet::new))) {
+        //     log.info("consider edge {}", edge);
         if (edgePredicate.test(edge)
             || graph.incomingEdgesOf(graph.getEdgeTarget(edge)).stream().noneMatch(edgePredicate)) {
           V v = graph.getEdgeTarget(edge);

@@ -1,8 +1,10 @@
 package org.jungrapht.visualization.layout.algorithms;
 
+import java.awt.Shape;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
@@ -45,6 +47,7 @@ public class MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> extends MultiRowTreeLayo
     protected Predicate<E> edgePredicate = e -> false;
     protected Comparator<V> vertexComparator = (v1, v2) -> 0;
     protected Comparator<E> edgeComparator = (e1, e2) -> 0;
+    protected boolean alignFavoredEdges = true;
 
     /**
      * @param vertexPredicate a {@link Predicate} to filter vertices
@@ -82,6 +85,11 @@ public class MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> extends MultiRowTreeLayo
       return self();
     }
 
+    public B alignFavoredEdges(boolean alignFavoredEdges) {
+      this.alignFavoredEdges = alignFavoredEdges;
+      return self();
+    }
+
     /**
      * Build a configured instance
      *
@@ -111,11 +119,13 @@ public class MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> extends MultiRowTreeLayo
         builder.rootPredicate,
         builder.horizontalVertexSpacing,
         builder.verticalVertexSpacing,
+        builder.vertexShapeFunction,
         builder.vertexPredicate,
         builder.edgePredicate,
         builder.vertexComparator,
         builder.edgeComparator,
-        builder.expandLayout);
+        builder.expandLayout,
+        builder.alignFavoredEdges);
   }
 
   /**
@@ -133,16 +143,24 @@ public class MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> extends MultiRowTreeLayo
       Predicate<V> rootPredicate,
       int horizontalVertexSpacing,
       int verticalVertexSpacing,
+      Function<V, Shape> vertexShapeFunction,
       Predicate<V> vertexPredicate,
       Predicate<E> edgePredicate,
       Comparator<V> vertexComparator,
       Comparator<E> edgeComparator,
-      boolean expandLayout) {
-    super(rootPredicate, horizontalVertexSpacing, verticalVertexSpacing, expandLayout);
+      boolean expandLayout,
+      boolean alignFavoredEdges) {
+    super(
+        rootPredicate,
+        horizontalVertexSpacing,
+        verticalVertexSpacing,
+        vertexShapeFunction,
+        expandLayout);
     this.vertexPredicate = vertexPredicate;
     this.edgePredicate = edgePredicate;
     this.vertexComparator = vertexComparator;
     this.edgeComparator = edgeComparator;
+    this.alignFavoredEdges = alignFavoredEdges;
   }
 
   /** a {@link Predicate} to filter vertices */
@@ -156,6 +174,8 @@ public class MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> extends MultiRowTreeLayo
 
   /** a {@link Comparator} to sort edges */
   protected Comparator<E> edgeComparator;
+
+  protected boolean alignFavoredEdges;
 
   /** @param vertexPredicate property to set */
   @Override
@@ -321,7 +341,9 @@ public class MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> extends MultiRowTreeLayo
   @Override
   protected Set<V> buildTree(LayoutModel<V> layoutModel) {
     Set<V> roots = super.buildTree(layoutModel);
-    roots.addAll(afterBuildTree(layoutModel));
+    if (alignFavoredEdges) {
+      roots.addAll(afterBuildTree(layoutModel));
+    }
     return roots;
   }
 

@@ -2,7 +2,9 @@ package org.jungrapht.visualization.layout.algorithms;
 
 import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 
+import java.awt.Shape;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import org.jungrapht.visualization.layout.model.Rectangle;
 
@@ -20,4 +22,6 @@ public interface TreeLayout<V> extends LayoutAlgorithm<V> {
   Map<V, Rectangle> getBaseBounds();
 
   void setRootPredicate(Predicate<V> rootPredicate);
+
+  void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction);
 }

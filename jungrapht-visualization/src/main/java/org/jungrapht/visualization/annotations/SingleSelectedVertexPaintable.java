@@ -3,11 +3,15 @@ package org.jungrapht.visualization.annotations;
 import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 import static org.jungrapht.visualization.renderers.BiModalRenderer.LIGHTWEIGHT;
 
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Paint;
+import java.awt.Shape;
+import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.function.Function;
 import javax.swing.*;
 import org.jungrapht.visualization.MultiLayerTransformer;
@@ -16,8 +20,13 @@ import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
-import org.jungrapht.visualization.renderers.*;
+import org.jungrapht.visualization.renderers.BiModalRenderer;
+import org.jungrapht.visualization.renderers.BiModalSelectionRenderer;
+import org.jungrapht.visualization.renderers.HeavyweightVertexSelectionRenderer;
+import org.jungrapht.visualization.renderers.LightweightVertexRenderer;
+import org.jungrapht.visualization.renderers.LightweightVertexSelectionRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
+import org.jungrapht.visualization.renderers.SelectionRenderer;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.transform.shape.TransformingGraphics;
 import org.jungrapht.visualization.util.ArrowFactory;
@@ -31,9 +40,9 @@ import org.slf4j.LoggerFactory;
  * @param <V> the vertex type
  * @author Tom Nelson
  */
-public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.Paintable {
+public class SingleSelectedVertexPaintable<V, E> implements VisualizationServer.Paintable {
 
-  private static final Logger log = LoggerFactory.getLogger(MultiSelectedVertexPaintable.class);
+  private static final Logger log = LoggerFactory.getLogger(SingleSelectedVertexPaintable.class);
 
   /**
    * builder for the {@code SelectedVertexPaintable}
@@ -46,8 +55,8 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
     private Shape selectionShape =
         AffineTransform.getRotateInstance(3 * Math.PI / 4)
             .createTransformedShape(ArrowFactory.getNotchedArrow(20, 24, 8));
-    private Icon selectionIcon;
     private Paint selectionPaint = Color.red;
+    private Icon selectionIcon;
     private float selectionStrokeMin =
         Float.parseFloat(System.getProperty(PREFIX + "selectionStrokeMin", "2.f"));
 
@@ -60,10 +69,6 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
       return this;
     }
 
-    public Builder selectionIcon(Icon selectionIcon) {
-      this.selectionIcon = selectionIcon;
-      return this;
-    }
     /**
      * @param selectionPaint the color to draw the selected vertex indicator
      * @return this builder
@@ -73,14 +78,19 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
       return this;
     }
 
+    public Builder selectionIcon(Icon selectionIcon) {
+      this.selectionIcon = selectionIcon;
+      return this;
+    }
+
     public Builder selectionStrokeMin(float selectionStrokeMin) {
       this.selectionStrokeMin = selectionStrokeMin;
       return this;
     }
 
     /** @return a new instance of a {@code SelectedVertexPaintable} */
-    public MultiSelectedVertexPaintable<V, E> build() {
-      return new MultiSelectedVertexPaintable<>(this);
+    public SingleSelectedVertexPaintable<V, E> build() {
+      return new SingleSelectedVertexPaintable<>(this);
     }
 
     /** @param visualizationServer the (required) {@code VisualizationServer} parameter */
@@ -111,14 +121,14 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
 
   private BiModalSelectionRenderer<V, E> biModalRenderer;
 
-  private Collection<V> selectedVertices = new ArrayList<>();
+  private V selectedVertex;
 
   /**
    * Create an instance of a {@code SelectedVertexPaintable}
    *
    * @param builder the {@code Builder} to provide parameters to the {@code SelectedVertexPaintable}
    */
-  private MultiSelectedVertexPaintable(Builder<V, E> builder) {
+  private SingleSelectedVertexPaintable(Builder<V, E> builder) {
     this(
         builder.visualizationServer,
         builder.selectionShape,
@@ -135,15 +145,13 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
    * @param selectionPaint the {@code Paint} to use to draw the selected vertex indicating {@code
    *     Shape}
    */
-  private MultiSelectedVertexPaintable(
+  private SingleSelectedVertexPaintable(
       VisualizationServer<V, E> visualizationServer,
       Shape shape,
       Paint selectionPaint,
       Icon selectionIcon,
       float selectionStrokeMin) {
     this.visualizationServer = visualizationServer;
-    this.selectedVertices =
-        visualizationServer.getRenderContext().getSelectedVertexState().getSelected();
     this.selectionShape = shape;
     this.selectionPaint = selectionPaint;
     this.selectionIcon = selectionIcon;
@@ -160,8 +168,8 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
             .build();
   }
 
-  public void setSelectedVertices(Collection<V> selectedVertices) {
-    this.selectedVertices = selectedVertices;
+  public void setSelectedVertex(V selectedVertex) {
+    this.selectedVertex = selectedVertex;
   }
 
   /**
@@ -197,21 +205,32 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
       // don't mutate the viewTransform!
       graphicsTransformCopy.concatenate(viewTransform);
       g2d.setTransform(graphicsTransformCopy);
-      Stroke savedStroke = g2d.getStroke();
-      float strokeWidth =
-          Math.max(selectionStrokeMin, (int) (selectionStrokeMin / g2d.getTransform().getScaleX()));
-      g2d.setStroke(new BasicStroke(strokeWidth));
-      for (V vertex : selectedVertices) {
-        paintTransformed(vertex);
+      if (selectedVertex != null) {
+        paintSingleTransformed(selectedVertex);
+        //      } else {
+        //        Stroke savedStroke = g2d.getStroke();
+        //        float strokeWidth =
+        //            Math.max(
+        //                selectionStrokeMin, (int) (selectionStrokeMin / g2d.getTransform().getScaleX()));
+        //        g2d.setStroke(new BasicStroke(strokeWidth));
+        //        for (V vertex : selectedVertices) {
+        //          paintTransformed(vertex);
+        //        }
+        //        g2d.setStroke(savedStroke);
       }
-      g2d.setStroke(savedStroke);
 
     } else {
-      for (V vertex : selectedVertices) {
-        paintIconForVertex(
-            visualizationServer.getRenderContext(),
-            visualizationServer.getVisualizationModel(),
-            vertex);
+      if (selectedVertex != null) {
+        ((JComponent) visualizationServer).revalidate();
+        paintSingleNormal(g2d, selectedVertex);
+        //      } else {
+        //        for (V vertex : selectedVertices) {
+        //     //      good
+        //          paintIconForVertex(
+        //              visualizationServer.getRenderContext(),
+        //              visualizationServer.getVisualizationModel(),
+        //              vertex);
+        //        }
       }
     }
     // put back the old values

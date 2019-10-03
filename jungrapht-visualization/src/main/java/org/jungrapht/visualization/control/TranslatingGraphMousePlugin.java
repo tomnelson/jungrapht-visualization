@@ -82,6 +82,9 @@ public class TranslatingGraphMousePlugin extends AbstractGraphMousePlugin
    * @param e the event
    */
   public void mouseDragged(MouseEvent e) {
+    if (down == null) {
+      return;
+    }
     VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
     boolean accepted = checkModifiers(e);
     if (accepted) {

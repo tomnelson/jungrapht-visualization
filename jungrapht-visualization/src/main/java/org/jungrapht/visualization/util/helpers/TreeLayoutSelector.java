@@ -9,20 +9,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import javax.swing.*;
 import org.jungrapht.visualization.VisualizationServer;
-import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.EdgeAwareTreeLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
-import org.jungrapht.visualization.layout.algorithms.MultiRowEdgeAwareTreeLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.MultiRowTreeLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.RadialEdgeAwareTreeLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.RadialTreeLayout;
-import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.TreeLayout;
-import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.*;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,17 +37,23 @@ public class TreeLayoutSelector<V, E> extends JPanel {
   public static class Builder<V, E> {
     VisualizationServer<V, E> visualizationServer;
     int intialialSelection;
+    Function<V, Shape> vertexShapeFunction;
     Runnable after = () -> {};
     Predicate<E> edgePredicate = e -> false;
     Comparator<E> edgeComparator = (e1, e2) -> 0;
     Predicate<V> vertexPredicate = e -> false;
     Comparator<V> vertexComparator = (e1, e2) -> 0;
+    boolean alignFavoredEdges = true;
 
     /** @param visualizationServer required {@link VisualizationServer} */
     Builder(VisualizationServer<V, E> visualizationServer) {
       this.visualizationServer = visualizationServer;
     }
 
+    public Builder vertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
+      this.vertexShapeFunction = vertexShapeFunction;
+      return this;
+    }
     /**
      * @param intialialSelection initial selection for {@code TreeLayoutSelector}
      * @return this Builder
@@ -111,6 +108,11 @@ public class TreeLayoutSelector<V, E> extends JPanel {
       return this;
     }
 
+    public Builder alignFavoredEdges(boolean alignFavoredEdges) {
+      this.alignFavoredEdges = alignFavoredEdges;
+      return this;
+    }
+
     /** @return a configured {@link TreeLayoutSelector} */
     public TreeLayoutSelector<V, E> build() {
       return new TreeLayoutSelector<>(this);
@@ -135,11 +137,13 @@ public class TreeLayoutSelector<V, E> extends JPanel {
   private TreeLayoutSelector(Builder<V, E> builder) {
     this(
         builder.visualizationServer,
+        builder.vertexShapeFunction,
         builder.intialialSelection,
         builder.vertexPredicate,
         builder.edgePredicate,
         builder.vertexComparator,
         builder.edgeComparator,
+        builder.alignFavoredEdges,
         builder.after);
   }
 
@@ -153,6 +157,10 @@ public class TreeLayoutSelector<V, E> extends JPanel {
 
   Comparator<E> edgeComparator;
 
+  Function<V, Shape> vertexShapeFunction;
+
+  boolean alignFavoredEdgess;
+
   Runnable after;
 
   Set<VisualizationServer.Paintable> paintables = new HashSet<>();
@@ -161,25 +169,39 @@ public class TreeLayoutSelector<V, E> extends JPanel {
 
   private TreeLayoutSelector(
       VisualizationServer<V, E> vv,
+      Function<V, Shape> vertexShapeFunction,
       int initialSelection,
       Predicate<V> vertexPredicate,
       Predicate<E> edgePredicate,
       Comparator<V> vertexComparator,
       Comparator<E> edgeComparator,
+      boolean alignFavoredEdges,
       Runnable after) {
     super(new GridLayout(0, 2));
     this.vv = vv;
+    this.vertexShapeFunction = vertexShapeFunction;
     this.vertexPredicate = vertexPredicate;
     this.edgePredicate = edgePredicate;
     this.vertexComparator = vertexComparator;
     this.edgeComparator = edgeComparator;
+    this.alignFavoredEdgess = alignFavoredEdges;
     Preconditions.checkNotNull(after);
     this.after = after;
 
-    TreeLayoutAlgorithm<V> treeLayoutAlgorithm = TreeLayoutAlgorithm.<V>builder().build();
+    TreeLayoutAlgorithm<V> treeLayoutAlgorithm =
+        TreeLayoutAlgorithm.<V>builder().vertexShapeFunction(vertexShapeFunction).build();
+
+    CompactTreeLayoutAlgorithm<V, E> compactTreeLayoutAlgorithm =
+        CompactTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()
+            .edgeComparator(edgeComparator)
+            .edgePredicate(edgePredicate)
+            .vertexComparator(vertexComparator)
+            .vertexPredicate(vertexPredicate)
+            .vertexShapeFunction(vertexShapeFunction)
+            .build();
 
     MultiRowTreeLayoutAlgorithm<V> multiRowTreeLayoutAlgorithm =
-        MultiRowTreeLayoutAlgorithm.<V>builder().build();
+        MultiRowTreeLayoutAlgorithm.<V>builder().vertexShapeFunction(vertexShapeFunction).build();
 
     int layoutNumber = 0;
 
@@ -189,6 +211,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
         RadialTreeLayoutAlgorithm.<V>builder()
             .horizontalVertexSpacing(100)
             .verticalVertexSpacing(100)
+            .vertexShapeFunction(vertexShapeFunction)
             .expandLayout(false)
             .build();
 
@@ -196,6 +219,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
         RadialEdgeAwareTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()
             .horizontalVertexSpacing(100)
             .verticalVertexSpacing(100)
+            .vertexShapeFunction(vertexShapeFunction)
             .edgePredicate(edgePredicate)
             .vertexPredicate(vertexPredicate)
             .expandLayout(false)
@@ -203,19 +227,27 @@ public class TreeLayoutSelector<V, E> extends JPanel {
 
     EdgeAwareTreeLayoutAlgorithm<V, E> edgeAwareTreeLayoutAlgorithm =
         EdgeAwareTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()
+            .vertexShapeFunction(vertexShapeFunction)
             .edgePredicate(edgePredicate)
             .vertexPredicate(vertexPredicate)
+            .alignFavoredEdges(alignFavoredEdges)
             .build();
 
     MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> multiRowEdgeAwareTreeLayoutAlgorithm =
         MultiRowEdgeAwareTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()
+            .vertexShapeFunction(vertexShapeFunction)
             .edgePredicate(edgePredicate)
             .vertexPredicate(vertexPredicate)
+            .alignFavoredEdges(alignFavoredEdges)
             .build();
 
     JRadioButton treeButton = new JRadioButton("Tree");
     treeButton.addItemListener(new LayoutItemListener(treeLayoutAlgorithm, vv));
     treeButton.setSelected(initialSelection == layoutNumber++);
+
+    JRadioButton anotherTreeButton = new JRadioButton("Compact Tree");
+    anotherTreeButton.addItemListener(new LayoutItemListener(compactTreeLayoutAlgorithm, vv));
+    anotherTreeButton.setSelected(initialSelection == layoutNumber++);
 
     JRadioButton multiRowTreeButton = new JRadioButton("MultiRowTree");
     multiRowTreeButton.addItemListener(new LayoutItemListener(multiRowTreeLayoutAlgorithm, vv));
@@ -245,6 +277,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
 
     ButtonGroup layoutRadio = new ButtonGroup();
     layoutRadio.add(treeButton);
+    layoutRadio.add(anotherTreeButton);
     layoutRadio.add(multiRowTreeButton);
     layoutRadio.add(balloonButton);
     layoutRadio.add(radialButton);
@@ -259,6 +292,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     this.add(radialButton);
     this.add(radialEdgeAwareButton);
     this.add(balloonButton);
+    this.add(anotherTreeButton);
     this.add(animateTransition);
   }
 

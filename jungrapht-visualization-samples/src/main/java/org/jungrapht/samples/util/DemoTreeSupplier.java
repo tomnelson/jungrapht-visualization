@@ -9,6 +9,7 @@ import org.jgrapht.generate.BarabasiAlbertForestGenerator;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphBuilder;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.util.helpers.SpanningTreeAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,57 +22,58 @@ public class DemoTreeSupplier {
   public static Graph<String, Integer> createSmallTree() {
     GraphBuilder<String, Integer, ?> treeBuilder =
         GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.directedSimple())
+            .edgeSupplier(SupplierUtil.createIntegerSupplier())
             .buildGraphBuilder();
 
     treeBuilder.addVertex("root");
 
     Integer edgeId = 0;
     // root gets 3 children
-    treeBuilder.addEdge("root", "V0", edgeId++);
-    treeBuilder.addEdge("root", "V1", edgeId++);
-    treeBuilder.addEdge("root", "V2", edgeId++);
+    treeBuilder.addEdge("root", "V0");
+    treeBuilder.addEdge("root", "V1");
+    treeBuilder.addEdge("root", "V2");
 
     // V2 gets 2 children
-    treeBuilder.addEdge("V2", "C0", edgeId++);
-    treeBuilder.addEdge("V2", "C1", edgeId++);
+    treeBuilder.addEdge("V2", "C0");
+    treeBuilder.addEdge("V2", "C1");
     return treeBuilder.build();
   }
 
-  public static Graph<String, Number> createGenericTreeOne() {
-    GraphBuilder<String, Number, ?> tree =
-        GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.directedMultigraph())
+  public static Graph<String, Integer> createGenericTreeOne() {
+    GraphBuilder<String, Integer, ?> tree =
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.directedMultigraph())
+            .edgeSupplier(SupplierUtil.createIntegerSupplier())
             .buildGraphBuilder();
 
     tree.addVertex("root");
 
-    Integer edgeId = 0;
-    tree.addEdge("root", "V0", edgeId++);
-    tree.addEdge("V0", "V1", edgeId++);
-    tree.addEdge("V0", "V2", edgeId++);
-    tree.addEdge("V1", "V4", edgeId++);
-    tree.addEdge("V2", "V3", edgeId++);
-    tree.addEdge("V2", "V5", edgeId++);
-    tree.addEdge("V4", "V6", edgeId++);
-    tree.addEdge("V4", "V7", edgeId++);
-    tree.addEdge("V3", "V8", edgeId++);
-    tree.addEdge("V6", "V9", edgeId++);
-    tree.addEdge("V4", "V10", edgeId++);
+    tree.addEdge("root", "V0");
+    tree.addEdge("V0", "V1");
+    tree.addEdge("V0", "V2");
+    tree.addEdge("V1", "V4");
+    tree.addEdge("V2", "V3");
+    tree.addEdge("V2", "V5");
+    tree.addEdge("V4", "V6");
+    tree.addEdge("V4", "V7");
+    tree.addEdge("V3", "V8");
+    tree.addEdge("V6", "V9");
+    tree.addEdge("V4", "V10");
 
-    tree.addEdge("root", "A0", edgeId++);
-    tree.addEdge("A0", "A1", edgeId++);
-    tree.addEdge("A0", "A2", edgeId++);
-    tree.addEdge("A0", "A3", edgeId++);
+    tree.addEdge("root", "A0");
+    tree.addEdge("A0", "A1");
+    tree.addEdge("A0", "A2");
+    tree.addEdge("A0", "A3");
 
-    tree.addEdge("root", "B0", edgeId++);
-    tree.addEdge("B0", "B1", edgeId++);
-    tree.addEdge("B0", "B2", edgeId++);
-    tree.addEdge("B1", "B4", edgeId++);
-    tree.addEdge("B2", "B3", edgeId++);
-    tree.addEdge("B2", "B5", edgeId++);
-    tree.addEdge("B4", "B6", edgeId++);
-    tree.addEdge("B4", "B7", edgeId++);
-    tree.addEdge("B3", "B8", edgeId++);
-    tree.addEdge("B6", "B9", edgeId++);
+    tree.addEdge("root", "B0");
+    tree.addEdge("B0", "B1");
+    tree.addEdge("B0", "B2");
+    tree.addEdge("B1", "B4");
+    tree.addEdge("B2", "B3");
+    tree.addEdge("B2", "B5");
+    tree.addEdge("B4", "B6");
+    tree.addEdge("B4", "B7");
+    tree.addEdge("B3", "B8");
+    tree.addEdge("B6", "B9");
 
     return tree.build();
   }
@@ -79,113 +81,157 @@ public class DemoTreeSupplier {
   /** */
   public static Graph<String, Integer> createTreeTwo() {
     GraphBuilder<String, Integer, Graph<String, Integer>> builder =
-        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.dag()).buildGraphBuilder();
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.dag())
+            .edgeSupplier(SupplierUtil.createIntegerSupplier())
+            .buildGraphBuilder();
 
-    Integer edgeId = 0;
     builder.addVertex("A0");
-    builder.addEdge("A0", "B0", edgeId++);
-    builder.addEdge("A0", "B1", edgeId++);
-    builder.addEdge("A0", "B2", edgeId++);
+    builder.addEdge("A0", "B0");
+    builder.addEdge("A0", "B1");
+    builder.addEdge("A0", "B2");
 
-    builder.addEdge("B0", "C0", edgeId++);
-    builder.addEdge("B0", "C1", edgeId++);
-    builder.addEdge("B0", "C2", edgeId++);
-    builder.addEdge("B0", "C3", edgeId++);
+    builder.addEdge("B0", "C0");
+    builder.addEdge("B0", "C1");
+    builder.addEdge("B0", "C2");
+    builder.addEdge("B0", "C3");
 
-    builder.addEdge("C2", "H0", edgeId++);
-    builder.addEdge("C2", "H1", edgeId++);
+    builder.addEdge("C2", "H0");
+    builder.addEdge("C2", "H1");
 
-    builder.addEdge("B1", "D0", edgeId++);
-    builder.addEdge("B1", "D1", edgeId++);
-    builder.addEdge("B1", "D2", edgeId++);
+    builder.addEdge("H1", "H2");
+    builder.addEdge("H1", "H3");
 
-    builder.addEdge("B2", "E0", edgeId++);
-    builder.addEdge("B2", "E1", edgeId++);
-    builder.addEdge("B2", "E2", edgeId++);
+    builder.addEdge("H3", "H4");
+    builder.addEdge("H3", "H5");
+    builder.addEdge("H5", "H6");
+    builder.addEdge("H5", "H7");
 
-    builder.addEdge("D0", "F0", edgeId++);
-    builder.addEdge("D0", "F1", edgeId++);
-    builder.addEdge("D0", "F2", edgeId++);
+    builder.addEdge("B1", "D0");
+    builder.addEdge("B1", "D1");
+    builder.addEdge("B1", "D2");
 
-    builder.addEdge("D1", "G0", edgeId++);
-    builder.addEdge("D1", "G1", edgeId++);
-    builder.addEdge("D1", "G2", edgeId++);
-    builder.addEdge("D1", "G3", edgeId++);
-    builder.addEdge("D1", "G4", edgeId++);
-    builder.addEdge("D1", "G5", edgeId++);
-    builder.addEdge("D1", "G6", edgeId++);
-    builder.addEdge("D1", "G7", edgeId++);
+    builder.addEdge("B2", "E0");
+    builder.addEdge("B2", "E1");
+    builder.addEdge("B2", "E2");
+
+    builder.addEdge("D0", "F0");
+    builder.addEdge("D0", "F1");
+    builder.addEdge("D0", "F2");
+
+    builder.addEdge("D1", "G0");
+    builder.addEdge("D1", "G1");
+    builder.addEdge("D1", "G2");
+    builder.addEdge("D1", "G3");
+    builder.addEdge("D1", "G4");
+    builder.addEdge("D1", "G5");
+    builder.addEdge("D1", "G6");
+    builder.addEdge("D1", "G7");
 
     return builder.build();
   }
 
   public static Graph<String, Integer> createTreeOne() {
     GraphBuilder<String, Integer, ?> tree =
-        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.dag()).buildGraphBuilder();
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.dag())
+            .edgeSupplier(SupplierUtil.createIntegerSupplier())
+            .buildGraphBuilder();
 
     tree.addVertex("root");
 
-    Integer edgeId = 0;
-    tree.addEdge("root", "V0", edgeId++);
-    tree.addEdge("V0", "V1", edgeId++);
-    tree.addEdge("V0", "V2", edgeId++);
-    tree.addEdge("V1", "V4", edgeId++);
-    tree.addEdge("V2", "V3", edgeId++);
-    tree.addEdge("V2", "V5", edgeId++);
-    tree.addEdge("V4", "V6", edgeId++);
-    tree.addEdge("V4", "V7", edgeId++);
-    tree.addEdge("V3", "V8", edgeId++);
-    tree.addEdge("V6", "V9", edgeId++);
-    tree.addEdge("V4", "V10", edgeId++);
+    tree.addEdge("root", "V0");
+    tree.addEdge("V0", "V1");
+    tree.addEdge("V0", "V2");
+    tree.addEdge("V1", "V4");
+    tree.addEdge("V2", "V3");
+    tree.addEdge("V2", "V5");
+    tree.addEdge("V4", "V6");
+    tree.addEdge("V4", "V7");
+    tree.addEdge("V3", "V8");
+    tree.addEdge("V6", "V9");
+    tree.addEdge("V4", "V10");
 
-    tree.addEdge("root", "A0", edgeId++);
-    tree.addEdge("A0", "A1", edgeId++);
-    tree.addEdge("A0", "A2", edgeId++);
-    tree.addEdge("A0", "A3", edgeId++);
+    tree.addEdge("root", "A0");
+    tree.addEdge("A0", "A1");
+    tree.addEdge("A0", "A2");
+    tree.addEdge("A0", "A3");
 
-    tree.addEdge("root", "B0", edgeId++);
-    tree.addEdge("B0", "B1", edgeId++);
-    tree.addEdge("B0", "B2", edgeId++);
-    tree.addEdge("B1", "B4", edgeId++);
-    tree.addEdge("B2", "B3", edgeId++);
-    tree.addEdge("B2", "B5", edgeId++);
-    tree.addEdge("B4", "B6", edgeId++);
-    tree.addEdge("B4", "B7", edgeId++);
-    tree.addEdge("B3", "B8", edgeId++);
-    tree.addEdge("B6", "B9", edgeId++);
+    tree.addEdge("root", "B0");
+    tree.addEdge("B0", "B1");
+    tree.addEdge("B0", "B2");
+    tree.addEdge("B1", "B4");
+    tree.addEdge("B2", "B3");
+    tree.addEdge("B2", "B5");
+    tree.addEdge("B4", "B6");
+    tree.addEdge("B4", "B7");
+    tree.addEdge("B3", "B8");
+    tree.addEdge("B6", "B9");
+
+    return tree.build();
+  }
+
+  public static Graph<String, Integer> createForestForCompactTreeLayout() {
+    GraphBuilder<String, Integer, Graph<String, Integer>> tree =
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.dag())
+            .edgeSupplier(SupplierUtil.createIntegerSupplier())
+            .buildGraphBuilder();
+
+    tree.addEdge("R1", "A1");
+    tree.addEdge("R1", "A2");
+    tree.addEdge("A2", "A3");
+    tree.addEdge("A2", "A4");
+    tree.addEdge("A4", "A5");
+    tree.addEdge("A4", "A6");
+
+    tree.addEdge("R2", "B1");
+    tree.addEdge("R2", "B2");
+
+    tree.addEdge("R3", "C1");
+    tree.addEdge("C1", "C2");
+    tree.addEdge("C1", "C3");
+    tree.addEdge("R3", "C4");
 
     return tree.build();
   }
 
   public static Graph<String, Integer> createForest() {
     GraphBuilder<String, Integer, Graph<String, Integer>> tree =
-        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.dag()).buildGraphBuilder();
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.dag())
+            .edgeSupplier(SupplierUtil.createIntegerSupplier())
+            .buildGraphBuilder();
 
-    Integer edgeId = 0;
-    tree.addEdge("V0", "V1", edgeId++);
-    tree.addEdge("V0", "V2", edgeId++);
-    tree.addEdge("V1", "V4", edgeId++);
-    tree.addEdge("V2", "V3", edgeId++);
-    tree.addEdge("V2", "V5", edgeId++);
-    tree.addEdge("V4", "V6", edgeId++);
-    tree.addEdge("V4", "V7", edgeId++);
-    tree.addEdge("V3", "V8", edgeId++);
-    tree.addEdge("V6", "V9", edgeId++);
-    tree.addEdge("V4", "V10", edgeId++);
+    //    tree.addEdge("R", "V0");
+    //    tree.addEdge("R", "A0");
+    //    tree.addEdge("R", "B0");
+    tree.addEdge("V0", "V1");
+    tree.addEdge("V0", "V2");
+    tree.addEdge("V1", "V4");
+    tree.addEdge("V2", "V3");
+    tree.addEdge("V2", "V5");
+    tree.addEdge("V4", "V6");
+    tree.addEdge("V4", "V7");
+    tree.addEdge("V3", "V8");
+    tree.addEdge("V6", "V9");
+    tree.addEdge("V4", "V10");
 
-    tree.addEdge("A0", "A1", edgeId++);
-    tree.addEdge("A0", "A2", edgeId++);
-    tree.addEdge("A0", "A3", edgeId++);
+    tree.addEdge("V5", "V11");
+    tree.addEdge("V5", "V12");
 
-    tree.addEdge("B0", "B1", edgeId++);
-    tree.addEdge("B0", "B2", edgeId++);
-    tree.addEdge("B1", "B4", edgeId++);
-    tree.addEdge("B2", "B3", edgeId++);
-    tree.addEdge("B2", "B5", edgeId++);
-    tree.addEdge("B4", "B6", edgeId++);
-    tree.addEdge("B4", "B7", edgeId++);
-    tree.addEdge("B3", "B8", edgeId++);
-    tree.addEdge("B6", "B9", edgeId++);
+    tree.addEdge("A0", "A1");
+    tree.addEdge("A0", "A2");
+    tree.addEdge("A0", "A3");
+
+    tree.addEdge("B0", "B1");
+    tree.addEdge("B0", "B2");
+    tree.addEdge("B1", "B4");
+    tree.addEdge("B2", "B3");
+    tree.addEdge("B2", "B5");
+    tree.addEdge("B4", "B6");
+    tree.addEdge("B4", "B7");
+    tree.addEdge("B4", "B8");
+    tree.addEdge("B3", "B9");
+    tree.addEdge("B6", "B10");
+
+    tree.addEdge("B6", "B11");
 
     return tree.build();
   }
@@ -193,74 +239,75 @@ public class DemoTreeSupplier {
   public static Graph<String, Integer> createForest2() {
     GraphBuilder<String, Integer, Graph<String, Integer>> builder =
         GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.simple())
+            .edgeSupplier(SupplierUtil.createIntegerSupplier())
             .buildGraphBuilder();
 
     Integer edgeId = 0;
-    builder.addEdge("A0", "A1", edgeId++);
-    builder.addEdge("A0", "A2", edgeId++);
-    //    builder.addEdge("A1", "A4", edgeId++);
-    //    builder.addEdge("A2", "A3", edgeId++);
-    //    builder.addEdge("A2", "A5", edgeId++);
-    //    builder.addEdge("A4", "A6", edgeId++);
-    //    builder.addEdge("A4", "A7", edgeId++);
-    //    builder.addEdge("A3", "A8", edgeId++);
-    //    builder.addEdge("A6", "A9", edgeId++);
-    //    builder.addEdge("A4", "A10", edgeId++);
+    builder.addEdge("A0", "A1");
+    builder.addEdge("A0", "A2");
+    //    builder.addEdge("A1", "A4");
+    //    builder.addEdge("A2", "A3");
+    //    builder.addEdge("A2", "A5");
+    //    builder.addEdge("A4", "A6");
+    //    builder.addEdge("A4", "A7");
+    //    builder.addEdge("A3", "A8");
+    //    builder.addEdge("A6", "A9");
+    //    builder.addEdge("A4", "A10");
 
-    builder.addEdge("G0", "G1", edgeId++);
-    builder.addEdge("G0", "G2", edgeId++);
-    //    builder.addEdge("G1", "G4", edgeId++);
-    //    builder.addEdge("G2", "G3", edgeId++);
-    //    builder.addEdge("G2", "G5", edgeId++);
-    //    builder.addEdge("G4", "G6", edgeId++);
-    //    builder.addEdge("G4", "G7", edgeId++);
-    //    builder.addEdge("G3", "G8", edgeId++);
-    //    builder.addEdge("G6", "G9", edgeId++);
+    builder.addEdge("G0", "G1");
+    builder.addEdge("G0", "G2");
+    //    builder.addEdge("G1", "G4");
+    //    builder.addEdge("G2", "G3");
+    //    builder.addEdge("G2", "G5");
+    //    builder.addEdge("G4", "G6");
+    //    builder.addEdge("G4", "G7");
+    //    builder.addEdge("G3", "G8");
+    //    builder.addEdge("G6", "G9");
 
-    builder.addEdge("B0", "B1", edgeId++);
-    builder.addEdge("B0", "B2", edgeId++);
-    builder.addEdge("B0", "B3", edgeId++);
+    builder.addEdge("B0", "B1");
+    builder.addEdge("B0", "B2");
+    builder.addEdge("B0", "B3");
 
-    builder.addEdge("C0", "C1", edgeId++);
-    builder.addEdge("C0", "C2", edgeId++);
-    builder.addEdge("C0", "C3", edgeId++);
+    builder.addEdge("C0", "C1");
+    builder.addEdge("C0", "C2");
+    builder.addEdge("C0", "C3");
 
-    builder.addEdge("D0", "D1", edgeId++);
-    builder.addEdge("D0", "D2", edgeId++);
+    builder.addEdge("D0", "D1");
+    builder.addEdge("D0", "D2");
 
-    builder.addEdge("E0", "E1", edgeId++);
+    builder.addEdge("E0", "E1");
 
-    builder.addEdge("F0", "F1", edgeId++);
+    builder.addEdge("F0", "F1");
 
-    builder.addEdge("E10", "E11", edgeId++);
+    builder.addEdge("E10", "E11");
 
-    builder.addEdge("F10", "F11", edgeId++);
+    builder.addEdge("F10", "F11");
 
-    builder.addEdge("E20", "E21", edgeId++);
+    builder.addEdge("E20", "E21");
 
-    builder.addEdge("F20", "F21", edgeId++);
+    builder.addEdge("F20", "F21");
     int i = 0;
     char c = (char) ('H' + i);
     for (; i < 8; i++) {
-      builder.addEdge(c + "0", c + "1", edgeId++);
-      builder.addEdge(c + "0", c + "2", edgeId++);
-      builder.addEdge(c + "1", c + "4", edgeId++);
-      builder.addEdge(c + "2", c + "3", edgeId++);
-      builder.addEdge(c + "2", c + "5", edgeId++);
-      builder.addEdge(c + "4", c + "6", edgeId++);
-      builder.addEdge(c + "4", c + "7", edgeId++);
-      builder.addEdge(c + "3", c + "8", edgeId++);
-      builder.addEdge(c + "6", c + "9", edgeId++);
-      builder.addEdge(c + "6", c + "10", edgeId++);
-      builder.addEdge(c + "9", c + "11", edgeId++);
-      builder.addEdge(c + "9", c + "12", edgeId++);
+      builder.addEdge(c + "0", c + "1");
+      builder.addEdge(c + "0", c + "2");
+      builder.addEdge(c + "1", c + "4");
+      builder.addEdge(c + "2", c + "3");
+      builder.addEdge(c + "2", c + "5");
+      builder.addEdge(c + "4", c + "6");
+      builder.addEdge(c + "4", c + "7");
+      builder.addEdge(c + "3", c + "8");
+      builder.addEdge(c + "6", c + "9");
+      builder.addEdge(c + "6", c + "10");
+      builder.addEdge(c + "9", c + "11");
+      builder.addEdge(c + "9", c + "12");
       c++;
     }
 
     for (; i < 14; i++) {
-      builder.addEdge(c + "0", c + "1", edgeId++);
-      builder.addEdge(c + "0", c + "2", edgeId++);
-      builder.addEdge(c + "0", c + "3", edgeId++);
+      builder.addEdge(c + "0", c + "1");
+      builder.addEdge(c + "0", c + "2");
+      builder.addEdge(c + "0", c + "3");
       c++;
     }
 
@@ -270,7 +317,9 @@ public class DemoTreeSupplier {
   public static Graph<String, Integer> generateProgramGraph() {
     Integer edgeCounter = 100;
     GraphBuilder<String, Integer, Graph<String, Integer>> builder =
-        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.dag()).buildGraphBuilder();
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.dag())
+            .edgeSupplier(SupplierUtil.createIntegerSupplier())
+            .buildGraphBuilder();
     builder.addEdge("A0", "A1", (Integer) 0);
     builder.addEdge("A1", "A2", (Integer) 1);
     builder.addEdge("A2", "A3", (Integer) 3);

@@ -9,7 +9,6 @@
 package org.jungrapht.samples.tree;
 
 import java.awt.*;
-import java.awt.geom.Ellipse2D;
 import java.util.function.Function;
 import javax.swing.*;
 import org.jgrapht.Graph;
@@ -17,14 +16,12 @@ import org.jungrapht.samples.util.DemoTreeSupplier;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
-import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.control.ModalGraphMouse.Mode;
 import org.jungrapht.visualization.decorators.EdgeShape;
-import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.AnotherForestLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.util.helpers.ControlHelpers;
-import org.jungrapht.visualization.util.helpers.TreeLayoutSelector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,38 +31,31 @@ import org.slf4j.LoggerFactory;
  * @author Tom Nelson
  */
 @SuppressWarnings("serial")
-public class TreeLayoutDemo extends JPanel {
+public class AnotherForestLayoutDemo extends JPanel {
 
-  private static final Logger log = LoggerFactory.getLogger(TreeLayoutDemo.class);
+  private static final Logger log = LoggerFactory.getLogger(AnotherForestLayoutDemo.class);
   Graph<String, Integer> graph;
 
-  /** the visual component and renderer for the graph */
   VisualizationViewer<String, Integer> vv;
 
-  public TreeLayoutDemo() {
+  public AnotherForestLayoutDemo() {
 
     setLayout(new BorderLayout());
     // create a simple graph for the demo
-    graph = DemoTreeSupplier.createTreeTwo();
-    int width = 20;
-    int height = 100;
-    Function<String, Shape> vertexShapeFunction =
-        v -> new Ellipse2D.Float(-width / 2.f, -height / 2.f, width, height);
-    vv =
-        VisualizationViewer.builder(graph)
-            .layoutAlgorithm(
-                TreeLayoutAlgorithm.<String>builder()
-                    .vertexShapeFunction(vertexShapeFunction)
-                    .build())
-            .viewSize(new Dimension(600, 600))
-            .build();
+    graph = DemoTreeSupplier.createForest();
+    //            DemoTreeSupplier.createTreeTwo();
+    vv = VisualizationViewer.builder(graph).viewSize(new Dimension(600, 600)).build();
+    Function<String, Shape> vertexShapeFunction = vv.getRenderContext().getVertexShapeFunction();
+    AnotherForestLayoutAlgorithm<String> layoutAlgorithm = new AnotherForestLayoutAlgorithm<>();
+    layoutAlgorithm.setVertexShapeFunction(vertexShapeFunction);
+    //    layoutAlgorithm.setRootSupplier(() -> "SyntheticRoot");
+    //    layoutAlgorithm.setEdgeSupplier(() -> IntStream.range(100, 200));
     vv.setBackground(Color.white);
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
     vv.getRenderContext().setVertexLabelDrawPaintFunction(n -> Color.white);
     vv.getRenderContext().setVertexShapeFunction(vertexShapeFunction);
-    // add a listener for ToolTips
     vv.setVertexToolTipFunction(Object::toString);
     vv.getRenderContext().setArrowFillPaintFunction(n -> Color.lightGray);
     if (log.isTraceEnabled()) {
@@ -73,7 +63,8 @@ public class TreeLayoutDemo extends JPanel {
           new LayoutPaintable.LayoutBounds(
               vv.getVisualizationModel(), vv.getRenderContext().getMultiLayerTransformer()));
     }
-
+    vv.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm);
+    vv.scaleToLayout();
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
 
@@ -86,16 +77,16 @@ public class TreeLayoutDemo extends JPanel {
 
     JComboBox<Mode> modeBox = graphMouse.getModeComboBox();
     modeBox.addItemListener(graphMouse.getModeListener());
-    graphMouse.setMode(ModalGraphMouse.Mode.TRANSFORMING);
+    graphMouse.setMode(Mode.TRANSFORMING);
 
-    JPanel layoutPanel = new JPanel(new GridLayout(0, 1));
-    layoutPanel.add(
-        TreeLayoutSelector.<String, Integer>builder(vv)
-            .vertexShapeFunction(vertexShapeFunction)
-            .after(vv::scaleToLayout)
-            .build());
+    //    JPanel layoutPanel = new JPanel(new GridLayout(0, 1));
+    //    layoutPanel.add(
+    //        TreeLayoutSelector.<String, Integer>builder(vv)
+    //            .vertexShapeFunction(vertexShapeFunction)
+    //            .after(vv::scaleToLayout)
+    //            .build());
     JPanel controls = new JPanel();
-    controls.add(layoutPanel);
+    //    controls.add(layoutPanel);
     controls.add(ControlHelpers.getZoomControls(vv));
     controls.add(modeBox);
 
@@ -106,7 +97,7 @@ public class TreeLayoutDemo extends JPanel {
     JFrame frame = new JFrame();
     Container content = frame.getContentPane();
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-    JPanel demo = new TreeLayoutDemo();
+    JPanel demo = new AnotherForestLayoutDemo();
     content.add(demo);
     frame.pack();
     frame.setVisible(true);

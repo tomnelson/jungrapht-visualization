@@ -22,7 +22,7 @@ public class AttributeFilters<K, V, T extends Attributed<K, V>, B extends Abstra
   public static class Builder<K, V, T extends Attributed<K, V>, B extends AbstractButton> {
     private Collection<K> losers = Collections.emptyList();
     private Set<T> elements;
-    private int min;
+    private double maxFactor;
     private Supplier<B> buttonSupplier = () -> (B) new JRadioButton();
     private Function<T, Paint> paintFunction = v -> Color.black;
 
@@ -36,8 +36,8 @@ public class AttributeFilters<K, V, T extends Attributed<K, V>, B extends Abstra
       return this;
     }
 
-    public Builder min(int min) {
-      this.min = min;
+    public Builder maxFactor(double maxFactor) {
+      this.maxFactor = maxFactor;
       return this;
     }
 
@@ -64,7 +64,7 @@ public class AttributeFilters<K, V, T extends Attributed<K, V>, B extends Abstra
     this(
         builder.losers,
         builder.elements,
-        builder.min,
+        builder.maxFactor,
         builder.buttonSupplier,
         builder.paintFunction);
   }
@@ -79,7 +79,7 @@ public class AttributeFilters<K, V, T extends Attributed<K, V>, B extends Abstra
   private AttributeFilters(
       Collection<String> losers,
       Set<T> elements,
-      int min,
+      double maxFactor,
       Supplier<B> buttonSupplier,
       Function<V, Paint> paintFunction) {
 
@@ -93,12 +93,12 @@ public class AttributeFilters<K, V, T extends Attributed<K, V>, B extends Abstra
             }
           }
         });
-    if (min == 0) {
-      min = (int) (elements.size() * .01);
+    if (maxFactor == 0) {
+      maxFactor = .01;
     }
-    int lowThreshold = Math.max(2, min);
-    // accept the values with cardinality above the max of 2 and 50% of the number elements.
-    multiset.removeIf(s -> multiset.count(s) < lowThreshold);
+    double threshold = Math.max(2, elements.size() * maxFactor);
+    // accept the values with cardinality above the max of 2 and maxFactor times the of the number elements.
+    multiset.removeIf(s -> multiset.count(s) < threshold);
     // create a button for every element that was retained
     multiset.elementSet();
     for (V key : multiset.elementSet()) {
