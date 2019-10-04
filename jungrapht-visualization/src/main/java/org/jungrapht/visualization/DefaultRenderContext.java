@@ -15,6 +15,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.decorators.EdgeShape;
@@ -39,6 +40,15 @@ import org.jungrapht.visualization.util.ParallelEdgeIndexFunction;
  */
 public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
 
+  public static class ShapeFunctionSupplier<V> implements Supplier<Function<V, Shape>> {
+    @Override
+    public Function<V, Shape> get() {
+      int vertexSize = Integer.getInteger(VERTEX_SIZE, 20);
+      String vertexShapeString = System.getProperty(VERTEX_SHAPE, "CIRCLE");
+      Shape vertexShape = getVertexShape(vertexShapeString, vertexSize);
+      return v -> vertexShape;
+    }
+  }
   // vertex visual property symbols
   private static final String VERTEX_SHAPE = PREFIX + "vertexShape";
   private static final String VERTEX_SIZE = PREFIX + "vertexSize";
@@ -513,7 +523,7 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
     this.arrowFillPaintFunction = arrowFillPaintFunction;
   }
 
-  private Shape getVertexShape(String shape, int size) {
+  private static Shape getVertexShape(String shape, int size) {
     switch (shape) {
       case "SQUARE":
         return new Rectangle2D.Float(-size / 2.f, -size / 2.f, size, size);

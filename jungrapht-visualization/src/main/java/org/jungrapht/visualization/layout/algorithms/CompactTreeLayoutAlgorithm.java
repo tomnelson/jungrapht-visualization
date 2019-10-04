@@ -9,6 +9,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
+import org.jungrapht.visualization.DefaultRenderContext;
 import org.jungrapht.visualization.layout.algorithms.util.TreeView;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
@@ -41,7 +42,8 @@ public class CompactTreeLayoutAlgorithm<V, E>
           V, E, T extends CompactTreeLayoutAlgorithm<V, E>, B extends Builder<V, E, T, B>>
       implements LayoutAlgorithm.Builder<V, T, B>, EdgeAwareLayoutAlgorithm.Builder<V, E, T, B> {
     protected Predicate<V> rootPredicate;
-    protected Function<V, Shape> vertexShapeFunction = v -> IDENTITY_SHAPE;
+    protected Function<V, Shape> vertexShapeFunction =
+        new DefaultRenderContext.ShapeFunctionSupplier().get();
     protected int horizontalVertexSpacing = TREE_LAYOUT_HORIZONTAL_SPACING;
     protected int verticalVertexSpacing = TREE_LAYOUT_VERTICAL_SPACING;
     protected Predicate<V> vertexPredicate = v -> false;

@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.geom.Ellipse2D;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -13,6 +12,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import javax.swing.*;
+import org.jungrapht.visualization.DefaultRenderContext;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.layout.algorithms.*;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
@@ -38,7 +38,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
   public static class Builder<V, E> {
     VisualizationServer<V, E> visualizationServer;
     int intialialSelection;
-    Function<V, Shape> vertexShapeFunction;
+    Function<V, Shape> vertexShapeFunction = new DefaultRenderContext.ShapeFunctionSupplier().get();
     Runnable after = () -> {};
     Predicate<E> edgePredicate = e -> false;
     Comparator<E> edgeComparator = (e1, e2) -> 0;
@@ -180,9 +180,6 @@ public class TreeLayoutSelector<V, E> extends JPanel {
       Runnable after) {
     super(new GridLayout(0, 2));
     this.vv = vv;
-    if (vertexShapeFunction == null) {
-      vertexShapeFunction = vv.getRenderContext().getVertexShapeFunction();
-    }
     this.vertexShapeFunction = vertexShapeFunction;
     this.vertexPredicate = vertexPredicate;
     this.edgePredicate = edgePredicate;

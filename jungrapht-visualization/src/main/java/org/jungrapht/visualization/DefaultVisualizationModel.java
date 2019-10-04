@@ -114,7 +114,7 @@ class DefaultVisualizationModel<V, E> implements VisualizationModel<V, E> {
   @Override
   public void setLayoutAlgorithm(LayoutAlgorithm<V> layoutAlgorithm) {
     this.layoutAlgorithm = layoutAlgorithm;
-    log.info("setLayoutAlgorithm to " + layoutAlgorithm);
+    log.trace("setLayoutAlgorithm to " + layoutAlgorithm);
     layoutModel.accept(layoutAlgorithm);
   }
 
