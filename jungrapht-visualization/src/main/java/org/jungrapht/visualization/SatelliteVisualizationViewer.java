@@ -36,8 +36,16 @@ public interface SatelliteVisualizationViewer<V, E> extends VisualizationViewer<
 
     protected boolean transparent;
 
+    protected Color lensColor =
+        Color.getColor(PREFIX + "satelliteLensColor", Color.decode("0xFFFAE0"));
+
     public B transparent(boolean transparent) {
       this.transparent = transparent;
+      return self();
+    }
+
+    public B lensColor(Color color) {
+      this.lensColor = lensColor;
       return self();
     }
 
@@ -62,6 +70,8 @@ public interface SatelliteVisualizationViewer<V, E> extends VisualizationViewer<
   /** @return Returns the master. */
   VisualizationViewer<V, E> getMaster();
 
+  Color getLensColor();
+
   /**
    * A four-sided shape that represents the visible part of the master view and is drawn in the
    * satellite view
@@ -71,9 +81,9 @@ public interface SatelliteVisualizationViewer<V, E> extends VisualizationViewer<
   class ViewLens<V, E> implements Paintable {
 
     VisualizationViewer<V, E> master;
-    VisualizationViewer<V, E> vv;
+    SatelliteVisualizationViewer<V, E> vv;
 
-    public ViewLens(VisualizationViewer<V, E> vv, VisualizationViewer<V, E> master) {
+    public ViewLens(SatelliteVisualizationViewer<V, E> vv, VisualizationViewer<V, E> master) {
       this.vv = vv;
       this.master = master;
     }
@@ -100,7 +110,7 @@ public interface SatelliteVisualizationViewer<V, E> extends VisualizationViewer<
       lens = vvLayoutTransformer.transform(lens);
       Graphics2D g2d = (Graphics2D) g;
       Color old = g.getColor();
-      Color lensColor = master.getBackground();
+      Color lensColor = vv.getLensColor();
       Color darker =
           new Color(
               Math.max((int) (lensColor.getRed() * .95), 0),
@@ -110,7 +120,7 @@ public interface SatelliteVisualizationViewer<V, E> extends VisualizationViewer<
       vv.setBackground(darker);
       g.setColor(lensColor);
       g2d.fill(lens);
-      g.setColor(Color.gray);
+      g.setColor(Color.black);
       g2d.draw(lens);
       g.setColor(old);
     }

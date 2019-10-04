@@ -1,10 +1,13 @@
 package org.jungrapht.visualization.layout.algorithms;
 
 import com.google.common.base.Preconditions;
+import java.awt.Dimension;
+import java.awt.Shape;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
@@ -53,8 +56,14 @@ public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
       Predicate<V> rootPredicate,
       int horizontalVertexSpacing,
       int verticalVertexSpacing,
+      Function<V, Shape> vertexShapeFunction,
       boolean expandLayout) {
-    super(rootPredicate, horizontalVertexSpacing, verticalVertexSpacing, expandLayout);
+    super(
+        rootPredicate,
+        horizontalVertexSpacing,
+        verticalVertexSpacing,
+        vertexShapeFunction,
+        expandLayout);
   }
 
   /** keeps track of how many rows have been created */
@@ -71,6 +80,11 @@ public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
   protected Set<V> buildTree(LayoutModel<V> layoutModel) {
     rowCount = 1;
     Graph<V, ?> graph = layoutModel.getGraph();
+    if (vertexShapeFunction != null) {
+      Dimension averageVertexSize = computeAverageVertexDimension(graph, vertexShapeFunction);
+      this.horizontalVertexSpacing = averageVertexSize.width * 2;
+      this.verticalVertexSpacing = averageVertexSize.height * 2;
+    }
     if (this.rootPredicate == null) {
       this.rootPredicate = v -> graph.incomingEdgesOf(v).isEmpty();
     }

@@ -11,16 +11,15 @@
 package org.jungrapht.visualization.layout.algorithms;
 
 import com.google.common.base.Preconditions;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.awt.Dimension;
+import java.awt.Shape;
+import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
+import org.jungrapht.visualization.layout.algorithms.util.DimensionSummaryStatistics;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
@@ -45,6 +44,7 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
     protected int horizontalVertexSpacing = TREE_LAYOUT_HORIZONTAL_SPACING;
     protected int verticalVertexSpacing = TREE_LAYOUT_VERTICAL_SPACING;
     protected boolean expandLayout = true;
+    protected Function<V, Shape> vertexShapeFunction;
 
     /** @return this builder cast to type B */
     protected B self() {
@@ -84,6 +84,18 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
     }
 
     /**
+     * if provided, the horizontal and vertical spacings will be replaced by the average width and
+     * height of the vertex {@code Shape}s returned by this {@link Function}
+     *
+     * @param vertexShapeFunction source of vertex shapes
+     * @return this builder
+     */
+    public B vertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
+      this.vertexShapeFunction = vertexShapeFunction;
+      return self();
+    }
+
+    /**
      * @param expandLayout if {@code true} expand the layout width and height to accomodate the
      *     entire tree
      * @return the Builder
@@ -117,6 +129,7 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
         builder.rootPredicate,
         builder.horizontalVertexSpacing,
         builder.verticalVertexSpacing,
+        builder.vertexShapeFunction,
         builder.expandLayout);
   }
 
@@ -132,10 +145,12 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
       Predicate<V> rootPredicate,
       int horizontalVertexSpacing,
       int verticalVertexSpacing,
+      Function<V, Shape> vertexShapeFunction,
       boolean expandLayout) {
     this.rootPredicate = rootPredicate;
     this.horizontalVertexSpacing = horizontalVertexSpacing;
     this.verticalVertexSpacing = verticalVertexSpacing;
+    this.vertexShapeFunction = vertexShapeFunction;
     this.expandLayout = expandLayout;
   }
 
@@ -144,6 +159,11 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
 
   public void setRootPredicate(Predicate<V> rootPredicate) {
     this.rootPredicate = rootPredicate;
+  }
+
+  @Override
+  public void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
+    this.vertexShapeFunction = vertexShapeFunction;
   }
 
   /**
@@ -157,6 +177,12 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
 
   /** The vertical vertex spacing. Defaults to {@code DEFAULT_VERTICAL_VERTEX_SPACING}. */
   protected int verticalVertexSpacing;
+
+  /**
+   * if provided (non-null) then the horizontalVertexSpacing and verticalVertexSpacing values will
+   * be replaced by 2 times the average width and height of all vertex shapes
+   */
+  protected Function<V, Shape> vertexShapeFunction;
 
   /** if {@code true} then expand the layout size to accomodate the entire tree. */
   protected boolean expandLayout;
@@ -181,12 +207,30 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
     return baseBounds;
   }
 
+  protected <V, E> Dimension computeAverageVertexDimension(
+      Graph<V, E> graph, Function<V, Shape> shapeFunction) {
+    DimensionSummaryStatistics dss = new DimensionSummaryStatistics();
+    graph
+        .vertexSet()
+        .stream()
+        .map(vertex -> shapeFunction.apply(vertex).getBounds())
+        .forEach(dss::accept);
+    return dss.getAverage();
+  }
+
   /**
    * @param layoutModel the model to hold vertex positions
    * @return the roots vertices of the tree
    */
   protected Set<V> buildTree(LayoutModel<V> layoutModel) {
     Graph<V, ?> graph = layoutModel.getGraph();
+    // when provided, replace the horizontal and vertical spacing with twice the average
+    // width and height of the Shapes returned by the function
+    if (vertexShapeFunction != null) {
+      Dimension averageVertexSize = computeAverageVertexDimension(graph, vertexShapeFunction);
+      this.horizontalVertexSpacing = averageVertexSize.width * 2;
+      this.verticalVertexSpacing = averageVertexSize.height * 2;
+    }
     if (this.rootPredicate == null) {
       rootPredicate = v -> graph.incomingEdgesOf(v).isEmpty();
     }

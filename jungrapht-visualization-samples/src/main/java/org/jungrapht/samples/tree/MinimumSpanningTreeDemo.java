@@ -74,7 +74,7 @@ public class MinimumSpanningTreeDemo extends JPanel {
     LayoutAlgorithm<String> treeLayoutAlgorithm = TreeLayoutAlgorithm.<String>builder().build();
     LayoutAlgorithm<String> staticLayoutAlgorithm = new StaticLayoutAlgorithm<>();
 
-    // create the two models, each with a different layout
+    // create the models, each with a different layout
     VisualizationModel<String, Number> vm0 =
         VisualizationModel.builder(graph)
             .layoutAlgorithm(kkLayoutAlgorithm)
@@ -90,7 +90,7 @@ public class MinimumSpanningTreeDemo extends JPanel {
     VisualizationModel<String, Number> vm2 =
         VisualizationModel.builder(graph)
             .layoutAlgorithm(staticLayoutAlgorithm)
-            .layoutModel(vm1.getLayoutModel())
+            .initializer(vm1.getLayoutModel())
             .layoutSize(vm1.getLayoutSize())
             .build();
 

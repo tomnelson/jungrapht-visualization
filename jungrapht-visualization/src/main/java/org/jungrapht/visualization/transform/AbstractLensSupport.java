@@ -246,12 +246,6 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse>
               lensShape.getWidth() / 20,
               lensShape.getHeight() / 20));
 
-      g2d.draw(
-          new Ellipse2D.Double(
-              lensShape.getMinX() + lensShape.getWidth() / 40,
-              lensShape.getMinY() + lensShape.getHeight() / 40,
-              lensShape.getWidth() - lensShape.getWidth() / 20,
-              lensShape.getHeight() - lensShape.getHeight() / 20));
       // kill 'button' shape
       Ellipse2D killShape =
           new Ellipse2D.Double(

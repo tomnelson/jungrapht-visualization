@@ -123,6 +123,20 @@ public class Rectangle {
   }
 
   /**
+   * return a union of this rectangle and the other rectangle
+   *
+   * @param other
+   * @return
+   */
+  public Rectangle add(Rectangle other) {
+    double minX = Math.min(this.x, other.x);
+    double minY = Math.min(this.y, other.y);
+    double maxX = Math.max(this.maxX, other.maxX);
+    double maxY = Math.max(this.maxY, other.maxY);
+    return Rectangle.of(minX, minY, maxX - minX, maxY - minY);
+  }
+
+  /**
    * Compare for equality
    *
    * @param o the object to compare

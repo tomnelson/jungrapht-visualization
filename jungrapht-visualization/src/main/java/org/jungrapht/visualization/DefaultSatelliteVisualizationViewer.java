@@ -10,8 +10,7 @@
 
 package org.jungrapht.visualization;
 
-import java.awt.Dimension;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import javax.swing.*;
 import org.jungrapht.visualization.control.ModalGraphMouse;
@@ -38,10 +37,14 @@ public class DefaultSatelliteVisualizationViewer<V, E> extends DefaultVisualizat
 
   boolean transparent;
 
+  Color lensColor;
+
   DefaultSatelliteVisualizationViewer(SatelliteVisualizationViewer.Builder<V, E, ?, ?> builder) {
     super(builder);
     this.master = builder.master;
     this.transparent = builder.transparent;
+    this.lensColor = builder.lensColor;
+
     setOpaque(!transparent);
     setBorder(BorderFactory.createEtchedBorder());
 
@@ -149,5 +152,9 @@ public class DefaultSatelliteVisualizationViewer<V, E> extends DefaultVisualizat
   /** @return Returns the master. */
   public VisualizationViewer<V, E> getMaster() {
     return master;
+  }
+
+  public Color getLensColor() {
+    return lensColor;
   }
 }
