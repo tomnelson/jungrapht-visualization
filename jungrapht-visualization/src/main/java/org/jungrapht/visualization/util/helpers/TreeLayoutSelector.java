@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.geom.Ellipse2D;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -179,6 +180,9 @@ public class TreeLayoutSelector<V, E> extends JPanel {
       Runnable after) {
     super(new GridLayout(0, 2));
     this.vv = vv;
+    if (vertexShapeFunction == null) {
+      vertexShapeFunction = vv.getRenderContext().getVertexShapeFunction();
+    }
     this.vertexShapeFunction = vertexShapeFunction;
     this.vertexPredicate = vertexPredicate;
     this.edgePredicate = edgePredicate;
