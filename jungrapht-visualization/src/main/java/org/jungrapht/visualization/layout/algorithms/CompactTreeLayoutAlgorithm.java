@@ -189,6 +189,7 @@ public class CompactTreeLayoutAlgorithm<V, E>
       int horizontalVertexSpacing,
       int verticalVertexSpacing,
       boolean expandLayout) {
+    Preconditions.checkNotNull(vertexShapeFunction);
     this.rootPredicate = rootPredicate;
     this.vertexShapeFunction = vertexShapeFunction;
     this.vertexPredicate = vertexPredicate;
@@ -261,6 +262,7 @@ public class CompactTreeLayoutAlgorithm<V, E>
   }
 
   public void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
+    Preconditions.checkNotNull(vertexShapeFunction);
     this.vertexShapeFunction = vertexShapeFunction;
   }
 

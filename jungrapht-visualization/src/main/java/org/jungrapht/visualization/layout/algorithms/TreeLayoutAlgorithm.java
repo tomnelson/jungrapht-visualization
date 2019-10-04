@@ -149,6 +149,7 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
       int verticalVertexSpacing,
       Function<V, Shape> vertexShapeFunction,
       boolean expandLayout) {
+    Preconditions.checkNotNull(vertexShapeFunction);
     this.rootPredicate = rootPredicate;
     this.horizontalVertexSpacing = horizontalVertexSpacing;
     this.verticalVertexSpacing = verticalVertexSpacing;
@@ -165,6 +166,7 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
 
   @Override
   public void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
+    Preconditions.checkNotNull(vertexShapeFunction);
     this.vertexShapeFunction = vertexShapeFunction;
   }
 
