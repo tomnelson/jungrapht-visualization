@@ -108,11 +108,11 @@ public class Rectangle {
   }
 
   /**
-   * move the rectangle to be centered at the passed coordinates
+   * offset the rectangle's location by the passed coordinates
    *
-   * @param x
-   * @param y
-   * @return
+   * @param x horizontal offset
+   * @param y vertical offset
+   * @return a new Rectangle offset by the passed coordinates
    */
   public Rectangle offset(double x, double y) {
     return new Rectangle(this.x + x, this.y + y, this.width, this.height);

@@ -166,7 +166,7 @@ public class CompactTreeLayoutAlgorithm<V, E>
     private int childCount;
   }
 
-  private CompactTreeLayoutAlgorithm(Builder builder) {
+  private CompactTreeLayoutAlgorithm(Builder<V, E, ?, ?> builder) {
     this(
         builder.rootPredicate,
         builder.vertexShapeFunction,
@@ -250,18 +250,6 @@ public class CompactTreeLayoutAlgorithm<V, E>
     return r;
   }
 
-  private Rectangle union(Rectangle r, Collection<V> in) {
-    for (V v : in) {
-      Point p = layoutModel.apply(v);
-      Rectangle vr = from(vertexShapeFunction.apply(v).getBounds());
-      vr = vr.offset(p.x, p.y);
-      r = r.union(vr);
-      union(r, successors(v));
-      baseBounds.put(v, union(r, Graphs.successorListOf(tree, v)));
-    }
-    return r;
-  }
-
   private Rectangle from(java.awt.Rectangle in) {
     return Rectangle.of(in.x, in.y, in.width, in.height);
   }
@@ -326,12 +314,15 @@ public class CompactTreeLayoutAlgorithm<V, E>
 
     if (v != null) {
       layoutModel.set(v, Point.of(x, y));
+      updateBounds(v, x, y);
+      // if tree is a forest, and v is null, then v's successors
+      // are the roots of the forest. Don't add a verticalSpacing for the
+      // first rank of root vertices
+      yOffset += verticalSpacing;
     }
 
-    updateBounds(v, x, y);
-
     if (!successors(v).isEmpty()) {
-      yOffset += levelHeight + verticalSpacing;
+      yOffset += levelHeight;
       for (V w : successors(v)) {
         secondWalk(w, m + vertexData(v).mod, depth + 1, yOffset);
       }
@@ -406,18 +397,16 @@ public class CompactTreeLayoutAlgorithm<V, E>
   private int childPosition(V vertex, V parentNode) {
     if (parentNode == null) {
       // if the parentNode is null, then the vertex is one of the 'roots'
-      log.trace("childPosition({}, {}) = {}", vertex, parentNode, roots.indexOf(vertex) + 1);
+      // positions are '1' based, not '0' based
       return roots.indexOf(vertex) + 1;
     }
     if (vertexData(vertex).childCount != 0) {
-      log.trace("childPosition({}, {}) = {}", vertex, parentNode, vertexData(vertex).childCount);
       return vertexData(vertex).childCount;
     }
     int i = 1;
     for (V v : successors(parentNode)) {
       vertexData(v).childCount = i++;
     }
-    log.trace("childPosition({}, {}) = {}", vertex, parentNode, vertexData(vertex).childCount);
     return vertexData(vertex).childCount;
   }
 
@@ -427,11 +416,9 @@ public class CompactTreeLayoutAlgorithm<V, E>
 
     for (V vp : predecessors(ancestor)) {
       if (vp == parentOfV) {
-        log.trace("ancestor({}, {}, {}) = {}", vil, parentOfV, ancestor, ancestor);
         return ancestor;
       }
     }
-    log.trace("ancestor({}, {}, {}) = {}", vil, parentOfV, defaultAncestor, defaultAncestor);
     return defaultAncestor;
   }
 
@@ -513,49 +500,38 @@ public class CompactTreeLayoutAlgorithm<V, E>
   private List<V> successors(V v) {
     if (v == null) {
       // if v is null, then its successors are the forest roots
-      log.trace("successors({}) = {}", v, roots);
       return roots;
     }
-    log.trace("successors({}) = {}", v, Graphs.successorListOf(tree, v));
     return Graphs.successorListOf(tree, v);
   }
 
   private List<V> predecessors(V v) {
     if (roots.contains(v)) {
       // if v is one of the roots, then its predecessor is null (not empty collection)
-      log.trace("predecessors({}) = {}", v, Collections.singletonList(null));
       return ((List<V>) Collections.singletonList(null));
     }
-    log.trace("predecessors({}) = {}", v, Graphs.predecessorListOf(tree, v));
     return Graphs.predecessorListOf(tree, v);
   }
 
   private V leftChild(V v) {
-    log.trace("leftChild({}) = {}", v, firstChild(v).orElse(vertexData(v).thread));
     return firstChild(v).orElse(vertexData(v).thread);
   }
 
   private V rightChild(V v) {
-    log.trace("rightChild({}) = {}", v, lastChild(v).orElse(vertexData(v).thread));
     return lastChild(v).orElse(vertexData(v).thread);
   }
 
   private Optional<V> firstChild(V v) {
-    log.trace("firstChild({}) = {}", v, successors(v).stream().findFirst());
     return successors(v).stream().findFirst();
   }
 
   private Optional<V> lastChild(V v) {
-    log.trace("lastChild({}) = {}", v, successors(v).stream().reduce((first, second) -> second));
     return successors(v).stream().reduce((first, second) -> second);
   }
 
   private int getDistance(V v, V w) {
-    log.trace("getDistance({}, {}) = {}", v, w);
     int sizeOfNodes = shape(v).getBounds().width + shape(w).getBounds().width;
-
     int distance = sizeOfNodes / 2 + horizontalSpacing;
-    log.trace("getDistance({}, {}) = {}", v, w, distance);
     return distance;
   }
 
