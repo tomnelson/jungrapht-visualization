@@ -343,7 +343,9 @@ public class TreeLayoutSelector<V, E> extends JPanel {
         }
         paintables.add(
             new LayoutPaintable.LayoutBounds(
-                vv.getVisualizationModel(), vv.getRenderContext().getMultiLayerTransformer()));
+                vv.getVisualizationModel(),
+                vv.getRenderContext().getMultiLayerTransformer(),
+                Color.pink));
         paintables.forEach(p -> vv.addPreRenderPaintable(p));
       }
       vv.repaint();

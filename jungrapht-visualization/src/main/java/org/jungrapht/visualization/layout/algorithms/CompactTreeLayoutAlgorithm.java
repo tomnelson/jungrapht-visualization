@@ -230,23 +230,33 @@ public class CompactTreeLayoutAlgorithm<V, E>
   public Map<V, Rectangle> getBaseBounds() {
     if (this.baseBounds.isEmpty()) {
       for (V root : roots) {
-        Point p = layoutModel.apply(root);
-        // get the union of all kids
-        Rectangle r = from(vertexShapeFunction.apply(root).getBounds());
-        r = Rectangle.of(r.x - r.width / 2 + p.x, r.y - r.height / 2 + p.y, r.width, r.height);
-        baseBounds.put(root, union(r, Graphs.successorListOf(tree, root)));
+        gatherBounds(root);
       }
     }
+    if (log.isTraceEnabled()) {
+      baseBounds.forEach((k, v) -> log.trace("baseBounds: {}-{}", k, v));
+    }
     return baseBounds;
+  }
+
+  private Rectangle gatherBounds(V parent) {
+    Rectangle r = from(vertexShapeFunction.apply(parent).getBounds());
+    Point p = layoutModel.apply(parent);
+    r = r.offset(p.x, p.y);
+    for (V kid : Graphs.successorListOf(tree, parent)) {
+      r = r.union(gatherBounds(kid));
+    }
+    baseBounds.put(parent, r);
+    return r;
   }
 
   private Rectangle union(Rectangle r, Collection<V> in) {
     for (V v : in) {
       Point p = layoutModel.apply(v);
       Rectangle vr = from(vertexShapeFunction.apply(v).getBounds());
-      r = Rectangle.of(vr.x - vr.width / 2 + p.x, vr.y - vr.height / 2 + p.y, vr.width, vr.height);
-      r = r.add(vr);
-      r = union(r, successors(v));
+      vr = vr.offset(p.x, p.y);
+      r = r.union(vr);
+      union(r, successors(v));
       baseBounds.put(v, union(r, Graphs.successorListOf(tree, v)));
     }
     return r;
@@ -347,7 +357,7 @@ public class CompactTreeLayoutAlgorithm<V, E>
     int bottom = centerY + height / 2;
 
     Rectangle bounds = Rectangle.of(left, top, right - left, bottom - top);
-    this.bounds = this.bounds.add(bounds);
+    this.bounds = this.bounds.union(bounds);
     log.trace(
         "updated bounds to {} ({}, {}, {}, {})",
         bounds,

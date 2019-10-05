@@ -129,7 +129,7 @@ public class Node<T> {
     }
     if (!this.getBounds().contains(element.p.x, element.p.y)) {
       log.trace("{} outside of spatial bounds {}", element.p, this.getBounds());
-      this.area = area.add(element.p.x, element.p.y);
+      this.area = area.union(element.p.x, element.p.y);
     }
 
     if (forceObject == null) {

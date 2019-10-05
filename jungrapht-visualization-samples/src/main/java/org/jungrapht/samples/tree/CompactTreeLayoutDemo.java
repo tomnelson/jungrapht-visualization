@@ -51,7 +51,6 @@ public class CompactTreeLayoutDemo extends JPanel {
             .vertexShapeFunction(vertexShapeFunction)
             .build();
 
-    //    layoutAlgorithm.setVertexShapeFunction(vertexShapeFunction);
     vv.setBackground(Color.white);
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
@@ -63,7 +62,9 @@ public class CompactTreeLayoutDemo extends JPanel {
     if (log.isTraceEnabled()) {
       vv.addPreRenderPaintable(
           new LayoutPaintable.LayoutBounds(
-              vv.getVisualizationModel(), vv.getRenderContext().getMultiLayerTransformer()));
+              vv.getVisualizationModel(),
+              vv.getRenderContext().getMultiLayerTransformer(),
+              Color.pink));
     }
     vv.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm);
     vv.scaleToLayout();
@@ -72,10 +73,6 @@ public class CompactTreeLayoutDemo extends JPanel {
 
     final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
     vv.setGraphMouse(graphMouse);
-    // temporary feature to draw the layout bounds in the viewer
-    vv.addPreRenderPaintable(
-        new LayoutPaintable.LayoutBounds(
-            vv.getVisualizationModel(), vv.getRenderContext().getMultiLayerTransformer()));
 
     JComboBox<Mode> modeBox = graphMouse.getModeComboBox();
     modeBox.addItemListener(graphMouse.getModeListener());

@@ -108,13 +108,24 @@ public class Rectangle {
   }
 
   /**
+   * move the rectangle to be centered at the passed coordinates
+   *
+   * @param x
+   * @param y
+   * @return
+   */
+  public Rectangle offset(double x, double y) {
+    return new Rectangle(this.x + x, this.y + y, this.width, this.height);
+  }
+
+  /**
    * return a new Rectangle that is is the expansion of this Rectangle to contain the passed Point
    *
    * @param newX x coordinate of expansion point
    * @param newY y coordinate of expansion point
    * @return a new Rectangle that was expanded to include the passed coordinates
    */
-  public Rectangle add(double newX, double newY) {
+  public Rectangle union(double newX, double newY) {
     double x1 = Math.min(x, newX);
     double x2 = Math.max(maxX, newX);
     double y1 = Math.min(y, newY);
@@ -128,7 +139,7 @@ public class Rectangle {
    * @param other
    * @return
    */
-  public Rectangle add(Rectangle other) {
+  public Rectangle union(Rectangle other) {
     double minX = Math.min(this.x, other.x);
     double minY = Math.min(this.y, other.y);
     double maxX = Math.max(this.maxX, other.maxX);

@@ -114,7 +114,7 @@ public class AnotherForestLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
       int bottom = centerY + height / 2;
 
       Rectangle bounds = Rectangle.of(left, top, right - left, bottom - top);
-      this.bounds = this.bounds.add(bounds);
+      this.bounds = this.bounds.union(bounds);
       log.trace(
           "updated bounds to {} ({}, {}, {}, {})",
           bounds,

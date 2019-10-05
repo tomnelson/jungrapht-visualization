@@ -48,7 +48,7 @@ public class TreeLayoutDemo extends JPanel {
     // create a simple graph for the demo
     graph = DemoTreeSupplier.createTreeTwo();
     int width = 20;
-    int height = 100;
+    int height = 20;
     Function<String, Shape> vertexShapeFunction =
         v -> new Ellipse2D.Float(-width / 2.f, -height / 2.f, width, height);
     vv =
