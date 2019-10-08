@@ -17,6 +17,20 @@ import org.jungrapht.visualization.layout.model.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A more compact tree layout algorithm, inspired by:
+ * <ol>
+ * <li> C. Buchheim, M. J¨unger, and S. Leipert. Improving Walker’s algorithm to run inlinear time. Technical Report zaik2002-431, ZAIK, Universit¨at zu K¨oln, 2002.
+ * <li> E. Reingold and J. Tilford. Tidier drawings of trees. IEEE Transactions on SoftwareEngineering, 7(2):223–228, 1981.
+ * <li> B. Schieber and U. Vishkin. On ﬁnding lowest common ancestors: Simpliﬁcationand parallelization. In Proceedings of the Third Aegean Workshop on Computing,volume 319 of Lecture Notes in Computer Science, pages 111–123, 1988.
+ * <li> K. Supowit and E. Reingold. The complexity of drawing trees nicely. Acta Infor-matica, 18(4):377–392, 1983.
+ * <li> J. Walker II. A node-positioning algorithm for general trees. Software – Practiceand Experience, 20(7):685–705, 1990.
+ * <li> C. Wetherell and A. Shannon. Tidy drawings of trees. IEEE Transactions onSoftware Engineering, 5(5):514–520, 1979
+ * </ol>
+ * Supports drawing of trees and forests. Should work with any Directed Graph that can supply root vertices.
+ * @param <V> vertex type
+ * @param <E> edge type
+ */
 public class CompactTreeLayoutAlgorithm<V, E>
     implements LayoutAlgorithm<V>,
         TreeLayout<V>,
@@ -156,6 +170,10 @@ public class CompactTreeLayoutAlgorithm<V, E>
 
   Map<V, Rectangle> baseBounds = new HashMap<>();
 
+  /**
+   * data associated with graph vertices during layout
+   * @param <V> vertex type
+   */
   private static class VertexData<V> {
     private int mod;
     private V thread;
