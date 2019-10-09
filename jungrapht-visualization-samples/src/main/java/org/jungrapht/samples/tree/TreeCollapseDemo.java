@@ -25,6 +25,8 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.decorators.EllipseShapeFunction;
+import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.TreeLayout;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.subLayout.Collapsable;
 import org.jungrapht.visualization.subLayout.TreeCollapser;
@@ -93,6 +95,12 @@ public class TreeCollapseDemo extends JPanel {
             Graph<Collapsable<?>, Integer> subTree = TreeCollapser.collapse(graph, root);
             LayoutModel<Collapsable<?>> layoutModel = vv.getVisualizationModel().getLayoutModel();
             layoutModel.set(Collapsable.of(subTree), layoutModel.apply(root));
+            // the rootPredicate uses the graph which we have changed.
+            // let the layoutAlgorithm create a rootPredicate based on the changed graph
+            LayoutAlgorithm layoutAlgorithm = vv.getVisualizationModel().getLayoutAlgorithm();
+            if (layoutAlgorithm instanceof TreeLayout) {
+              ((TreeLayout) layoutAlgorithm).setRootPredicate(null);
+            }
             vv.getVisualizationModel().setGraph(graph, true);
             vv.getSelectedVertexState().clear();
             vv.repaint();
@@ -107,6 +115,12 @@ public class TreeCollapseDemo extends JPanel {
               graph = TreeCollapser.expand(graph, (Collapsable<Graph>) v);
               LayoutModel<Collapsable<?>> layoutModel = vv.getVisualizationModel().getLayoutModel();
               layoutModel.set(Collapsable.of(graph), layoutModel.apply(v));
+              // the rootPredicate uses the graph which we have changed.
+              // let the layoutAlgorithm create a rootPredicate based on the changed graph
+              LayoutAlgorithm layoutAlgorithm = vv.getVisualizationModel().getLayoutAlgorithm();
+              if (layoutAlgorithm instanceof TreeLayout) {
+                ((TreeLayout) layoutAlgorithm).setRootPredicate(null);
+              }
               vv.getVisualizationModel().setGraph(graph, true);
             }
             vv.getSelectedVertexState().clear();

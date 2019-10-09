@@ -25,8 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Paints a shape at the location of all selected vertices. The shape does not change size as the
- * view is scaled (zoomed in or out)
+ * Paints a highlight at the location of all selected vertices.
  *
  * @param <V> the vertex type
  * @author Tom Nelson

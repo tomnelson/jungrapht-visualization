@@ -207,30 +207,12 @@ public class SingleSelectedVertexPaintable<V, E> implements VisualizationServer.
       g2d.setTransform(graphicsTransformCopy);
       if (selectedVertex != null) {
         paintSingleTransformed(selectedVertex);
-        //      } else {
-        //        Stroke savedStroke = g2d.getStroke();
-        //        float strokeWidth =
-        //            Math.max(
-        //                selectionStrokeMin, (int) (selectionStrokeMin / g2d.getTransform().getScaleX()));
-        //        g2d.setStroke(new BasicStroke(strokeWidth));
-        //        for (V vertex : selectedVertices) {
-        //          paintTransformed(vertex);
-        //        }
-        //        g2d.setStroke(savedStroke);
       }
 
     } else {
       if (selectedVertex != null) {
         ((JComponent) visualizationServer).revalidate();
         paintSingleNormal(g2d, selectedVertex);
-        //      } else {
-        //        for (V vertex : selectedVertices) {
-        //     //      good
-        //          paintIconForVertex(
-        //              visualizationServer.getRenderContext(),
-        //              visualizationServer.getVisualizationModel(),
-        //              vertex);
-        //        }
       }
     }
     // put back the old values
