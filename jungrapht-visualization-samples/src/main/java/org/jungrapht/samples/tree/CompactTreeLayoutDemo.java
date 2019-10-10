@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Demonsrates TreeLayout and RadialTreeLayout.
+ * Demonstrates several tree layout algorithms
  *
  * @author Tom Nelson
  */

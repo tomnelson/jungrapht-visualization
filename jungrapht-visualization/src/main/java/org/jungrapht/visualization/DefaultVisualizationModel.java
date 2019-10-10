@@ -136,7 +136,7 @@ class DefaultVisualizationModel<V, E> implements VisualizationModel<V, E> {
 
   @Override
   public void setGraph(Graph<V, E> graph, boolean forceUpdate) {
-    log.trace("setGraph to n:{} e:{}", graph.vertexSet(), graph.edgeSet());
+    log.info("setGraph to n:{} e:{}", graph.vertexSet(), graph.edgeSet());
     this.layoutModel.setGraph(graph);
     if (forceUpdate && this.layoutAlgorithm != null) {
       log.trace("will accept {}", layoutAlgorithm);

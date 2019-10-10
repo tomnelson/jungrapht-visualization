@@ -141,7 +141,7 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
    * @param rootPredicate the {@link Predicate} function to determine root vertices
    * @param horizontalVertexSpacing the horizontal spacing between adjacent siblings
    * @param verticalVertexSpacing the vertical spacing between adjacent siblings
-   * @param expandLayout whether to expand the layout size to accomodate the entire tree
+   * @param expandLayout whether to expand the layout size to accommodate the entire tree
    */
   protected TreeLayoutAlgorithm(
       Predicate<V> rootPredicate,
@@ -236,13 +236,13 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
       this.verticalVertexSpacing = averageVertexSize.height * 2;
     }
     if (this.rootPredicate == null) {
-      rootPredicate = v -> graph.incomingEdgesOf(v).isEmpty();
+      this.rootPredicate = v -> graph.incomingEdgesOf(v).isEmpty();
     }
     Set<V> roots =
         graph
             .vertexSet()
             .stream()
-            .filter(rootPredicate)
+            .filter(this.rootPredicate)
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
     Preconditions.checkArgument(roots.size() > 0);
@@ -276,6 +276,7 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
       merge(layoutModel, vertex);
       x += w / 2 + horizontalVertexSpacing;
     }
+    this.rootPredicate = null;
     return roots;
   }
 

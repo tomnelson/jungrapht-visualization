@@ -36,7 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Demonstrates the visualization of a Tree using TreeLayout and BalloonLayout. An examiner lens
+ * Demonstrates the visualization of a Tree using several layout algorithms. An examiner lens
  * performing a hyperbolic transformation of the view is also included.
  *
  * @author Tom Nelson
