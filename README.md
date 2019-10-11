@@ -6,6 +6,11 @@
 
 [**JUNGRAPHT-VISUALIZATION Website**](http://tomnelson.github.io/jungrapht-visualization/)
 
+JUNGRAPHT-VISUALIZATION can be used to render any of the following:
+* org.jgrapht.Graph
+* com.google.common.graph.Network
+* com.google.common.graph.Graph
+
 JUNGRAPHT-VISUALIZATION includes performance enhancements for visualization of large networks, including R*Tree for visualization, Barnes-Hut Quad Tree for force-directed layouts, and a lightweight rendering layer that can swap in while graphs are being animated or when they are zoomed out to a point where details are very small.
 Many values may be set via java properties (see [sample.jungrapht.properties](https://github.com/tomnelson/jungrapht-visualization/blob/master/jungrapht-visualization/src/main/resources/sample.jungrapht.properties) for keys and default values).
 
