@@ -204,15 +204,6 @@ public class TreeLayoutSelector<V, E> extends JPanel {
             .vertexShapeFunction(vertexShapeFunction)
             .build();
 
-    RunnableCompactTreeLayoutAlgorithm<V, E> runnableCompactTreeLayoutAlgorithm =
-        RunnableCompactTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()
-            .edgeComparator(edgeComparator)
-            .edgePredicate(edgePredicate)
-            .vertexComparator(vertexComparator)
-            .vertexPredicate(vertexPredicate)
-            .vertexShapeFunction(vertexShapeFunction)
-            .build();
-
     SugiyamaLayoutAlgorithm<V, E> sugiyamaLayoutAlgorithm =
         SugiyamaLayoutAlgorithm.<V, E>edgeAwareBuilder().build();
 
@@ -265,11 +256,6 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     compactTreeButton.addItemListener(new LayoutItemListener(compactTreeLayoutAlgorithm, vv));
     compactTreeButton.setSelected(initialSelection == layoutNumber++);
 
-    JRadioButton runnableCompactTreeButton = new JRadioButton("Threaded Compact Tree");
-    runnableCompactTreeButton.addItemListener(
-        new LayoutItemListener(runnableCompactTreeLayoutAlgorithm, vv));
-    runnableCompactTreeButton.setSelected(initialSelection == layoutNumber++);
-
     JRadioButton mySugiyamaButton = new JRadioButton("Sugiyama");
     mySugiyamaButton.addItemListener(new LayoutItemListener(sugiyamaLayoutAlgorithm, vv));
     mySugiyamaButton.setSelected(initialSelection == layoutNumber++);
@@ -303,7 +289,6 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     ButtonGroup layoutRadio = new ButtonGroup();
     layoutRadio.add(treeButton);
     layoutRadio.add(compactTreeButton);
-    layoutRadio.add(runnableCompactTreeButton);
     layoutRadio.add(mySugiyamaButton);
     layoutRadio.add(multiRowTreeButton);
     layoutRadio.add(balloonButton);
@@ -320,7 +305,6 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     this.add(radialEdgeAwareButton);
     this.add(balloonButton);
     this.add(compactTreeButton);
-    this.add(runnableCompactTreeButton);
     this.add(mySugiyamaButton);
     this.add(animateTransition);
   }
