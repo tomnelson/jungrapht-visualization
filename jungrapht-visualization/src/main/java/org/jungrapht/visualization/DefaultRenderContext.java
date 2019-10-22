@@ -66,7 +66,7 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
   private static final String EDGE_SHAPE = PREFIX + "edgeShape";
   private static final String EDGE_COLOR = PREFIX + "edgeColor";
   private static final String PICKED_EDGE_COLOR = PREFIX + "pickedEdgeColor";
-  private static final String EDGE_WIDTH = PREFIX + "edgeWidth";
+  public static final String EDGE_WIDTH = PREFIX + "edgeWidth";
   private static final String EDGE_STROKE = PREFIX + "edgeStroke";
 
   // edge label visual property symbols

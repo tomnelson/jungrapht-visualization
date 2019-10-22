@@ -9,6 +9,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
+import org.jungrapht.visualization.DefaultRenderContext;
 import org.jungrapht.visualization.layout.algorithms.util.TreeView;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
@@ -16,6 +17,31 @@ import org.jungrapht.visualization.layout.model.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A more compact tree layout algorithm, inspired by:
+ *
+ * <ol>
+ *   <li>C. Buchheim, M. J¨unger, and S. Leipert. Improving Walker’s algorithm to run inlinear time.
+ *       Technical Report zaik2002-431, ZAIK, Universit¨at zu K¨oln, 2002.
+ *   <li>E. Reingold and J. Tilford. Tidier drawings of trees. IEEE Transactions on
+ *       SoftwareEngineering, 7(2):223–228, 1981.
+ *   <li>B. Schieber and U. Vishkin. On ﬁnding lowest common ancestors: Simpliﬁcationand
+ *       parallelization. In Proceedings of the Third Aegean Workshop on Computing,volume 319 of
+ *       Lecture Notes in Computer Science, pages 111–123, 1988.
+ *   <li>K. Supowit and E. Reingold. The complexity of drawing trees nicely. Acta Infor-matica,
+ *       18(4):377–392, 1983.
+ *   <li>J. Walker II. A node-positioning algorithm for general trees. Software – Practiceand
+ *       Experience, 20(7):685–705, 1990.
+ *   <li>C. Wetherell and A. Shannon. Tidy drawings of trees. IEEE Transactions onSoftware
+ *       Engineering, 5(5):514–520, 1979
+ * </ol>
+ *
+ * Supports drawing of trees and forests. Should work with any Directed Graph that can supply root
+ * vertices.
+ *
+ * @param <V> vertex type
+ * @param <E> edge type
+ */
 public class CompactTreeLayoutAlgorithm<V, E>
     implements LayoutAlgorithm<V>,
         TreeLayout<V>,
@@ -41,7 +67,8 @@ public class CompactTreeLayoutAlgorithm<V, E>
           V, E, T extends CompactTreeLayoutAlgorithm<V, E>, B extends Builder<V, E, T, B>>
       implements LayoutAlgorithm.Builder<V, T, B>, EdgeAwareLayoutAlgorithm.Builder<V, E, T, B> {
     protected Predicate<V> rootPredicate;
-    protected Function<V, Shape> vertexShapeFunction = v -> IDENTITY_SHAPE;
+    protected Function<V, Shape> vertexShapeFunction =
+        new DefaultRenderContext.ShapeFunctionSupplier().get();
     protected int horizontalVertexSpacing = TREE_LAYOUT_HORIZONTAL_SPACING;
     protected int verticalVertexSpacing = TREE_LAYOUT_VERTICAL_SPACING;
     protected Predicate<V> vertexPredicate = v -> false;
@@ -154,6 +181,11 @@ public class CompactTreeLayoutAlgorithm<V, E>
 
   Map<V, Rectangle> baseBounds = new HashMap<>();
 
+  /**
+   * data associated with graph vertices during layout
+   *
+   * @param <V> vertex type
+   */
   private static class VertexData<V> {
     private int mod;
     private V thread;
@@ -164,7 +196,7 @@ public class CompactTreeLayoutAlgorithm<V, E>
     private int childCount;
   }
 
-  private CompactTreeLayoutAlgorithm(Builder builder) {
+  private CompactTreeLayoutAlgorithm(Builder<V, E, ?, ?> builder) {
     this(
         builder.rootPredicate,
         builder.vertexShapeFunction,
@@ -187,6 +219,7 @@ public class CompactTreeLayoutAlgorithm<V, E>
       int horizontalVertexSpacing,
       int verticalVertexSpacing,
       boolean expandLayout) {
+    Preconditions.checkNotNull(vertexShapeFunction);
     this.rootPredicate = rootPredicate;
     this.vertexShapeFunction = vertexShapeFunction;
     this.vertexPredicate = vertexPredicate;
@@ -227,25 +260,23 @@ public class CompactTreeLayoutAlgorithm<V, E>
   public Map<V, Rectangle> getBaseBounds() {
     if (this.baseBounds.isEmpty()) {
       for (V root : roots) {
-        Point p = layoutModel.apply(root);
-        // get the union of all kids
-        Rectangle r = from(vertexShapeFunction.apply(root).getBounds());
-        r = Rectangle.of(r.x - r.width / 2 + p.x, r.y - r.height / 2 + p.y, r.width, r.height);
-        baseBounds.put(root, union(r, Graphs.successorListOf(tree, root)));
+        gatherBounds(root);
       }
+    }
+    if (log.isTraceEnabled()) {
+      baseBounds.forEach((k, v) -> log.trace("baseBounds: {}-{}", k, v));
     }
     return baseBounds;
   }
 
-  private Rectangle union(Rectangle r, Collection<V> in) {
-    for (V v : in) {
-      Point p = layoutModel.apply(v);
-      Rectangle vr = from(vertexShapeFunction.apply(v).getBounds());
-      r = Rectangle.of(vr.x - vr.width / 2 + p.x, vr.y - vr.height / 2 + p.y, vr.width, vr.height);
-      r = r.union(vr);
-      r = union(r, successors(v));
-      baseBounds.put(v, union(r, Graphs.successorListOf(tree, v)));
+  private Rectangle gatherBounds(V parent) {
+    Rectangle r = from(vertexShapeFunction.apply(parent).getBounds());
+    Point p = layoutModel.apply(parent);
+    r = r.offset(p.x, p.y);
+    for (V kid : Graphs.successorListOf(tree, parent)) {
+      r = r.union(gatherBounds(kid));
     }
+    baseBounds.put(parent, r);
     return r;
   }
 
@@ -259,6 +290,7 @@ public class CompactTreeLayoutAlgorithm<V, E>
   }
 
   public void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
+    Preconditions.checkNotNull(vertexShapeFunction);
     this.vertexShapeFunction = vertexShapeFunction;
   }
 
@@ -312,12 +344,15 @@ public class CompactTreeLayoutAlgorithm<V, E>
 
     if (v != null) {
       layoutModel.set(v, Point.of(x, y));
+      updateBounds(v, x, y);
+      // if tree is a forest, and v is null, then v's successors
+      // are the roots of the forest. Don't add a verticalSpacing for the
+      // first rank of root vertices
+      yOffset += verticalSpacing;
     }
 
-    updateBounds(v, x, y);
-
     if (!successors(v).isEmpty()) {
-      yOffset += levelHeight + verticalSpacing;
+      yOffset += levelHeight;
       for (V w : successors(v)) {
         secondWalk(w, m + vertexData(v).mod, depth + 1, yOffset);
       }
@@ -392,18 +427,16 @@ public class CompactTreeLayoutAlgorithm<V, E>
   private int childPosition(V vertex, V parentNode) {
     if (parentNode == null) {
       // if the parentNode is null, then the vertex is one of the 'roots'
-      log.trace("childPosition({}, {}) = {}", vertex, parentNode, roots.indexOf(vertex) + 1);
+      // positions are '1' based, not '0' based
       return roots.indexOf(vertex) + 1;
     }
     if (vertexData(vertex).childCount != 0) {
-      log.trace("childPosition({}, {}) = {}", vertex, parentNode, vertexData(vertex).childCount);
       return vertexData(vertex).childCount;
     }
     int i = 1;
     for (V v : successors(parentNode)) {
       vertexData(v).childCount = i++;
     }
-    log.trace("childPosition({}, {}) = {}", vertex, parentNode, vertexData(vertex).childCount);
     return vertexData(vertex).childCount;
   }
 
@@ -413,11 +446,9 @@ public class CompactTreeLayoutAlgorithm<V, E>
 
     for (V vp : predecessors(ancestor)) {
       if (vp == parentOfV) {
-        log.trace("ancestor({}, {}, {}) = {}", vil, parentOfV, ancestor, ancestor);
         return ancestor;
       }
     }
-    log.trace("ancestor({}, {}, {}) = {}", vil, parentOfV, defaultAncestor, defaultAncestor);
     return defaultAncestor;
   }
 
@@ -499,49 +530,38 @@ public class CompactTreeLayoutAlgorithm<V, E>
   private List<V> successors(V v) {
     if (v == null) {
       // if v is null, then its successors are the forest roots
-      log.trace("successors({}) = {}", v, roots);
       return roots;
     }
-    log.trace("successors({}) = {}", v, Graphs.successorListOf(tree, v));
     return Graphs.successorListOf(tree, v);
   }
 
   private List<V> predecessors(V v) {
     if (roots.contains(v)) {
       // if v is one of the roots, then its predecessor is null (not empty collection)
-      log.trace("predecessors({}) = {}", v, Collections.singletonList(null));
       return ((List<V>) Collections.singletonList(null));
     }
-    log.trace("predecessors({}) = {}", v, Graphs.predecessorListOf(tree, v));
     return Graphs.predecessorListOf(tree, v);
   }
 
   private V leftChild(V v) {
-    log.trace("leftChild({}) = {}", v, firstChild(v).orElse(vertexData(v).thread));
     return firstChild(v).orElse(vertexData(v).thread);
   }
 
   private V rightChild(V v) {
-    log.trace("rightChild({}) = {}", v, lastChild(v).orElse(vertexData(v).thread));
     return lastChild(v).orElse(vertexData(v).thread);
   }
 
   private Optional<V> firstChild(V v) {
-    log.trace("firstChild({}) = {}", v, successors(v).stream().findFirst());
     return successors(v).stream().findFirst();
   }
 
   private Optional<V> lastChild(V v) {
-    log.trace("lastChild({}) = {}", v, successors(v).stream().reduce((first, second) -> second));
     return successors(v).stream().reduce((first, second) -> second);
   }
 
   private int getDistance(V v, V w) {
-    log.trace("getDistance({}, {}) = {}", v, w);
     int sizeOfNodes = shape(v).getBounds().width + shape(w).getBounds().width;
-
     int distance = sizeOfNodes / 2 + horizontalSpacing;
-    log.trace("getDistance({}, {}) = {}", v, w, distance);
     return distance;
   }
 

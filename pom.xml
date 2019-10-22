@@ -55,6 +55,7 @@
         </snapshotRepository>
     </distributionManagement>
     <properties>
+        <cloning.version>1.10.0</cloning.version>
         <cobertura.plugin.version>2.7</cobertura.plugin.version>
         <compiler.plugin.version>3.8.0</compiler.plugin.version>
         <doclint>none</doclint>
@@ -97,6 +98,11 @@
                 <groupId>com.google.truth.extensions</groupId>
                 <artifactId>truth-java8-extension</artifactId>
                 <version>${truth.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.kostaskougios</groupId>
+                <artifactId>cloning</artifactId>
+                <version>${cloning.version}</version>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>

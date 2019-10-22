@@ -89,6 +89,12 @@ public class LoadingCacheLayoutModel<V> extends AbstractLayoutModel<V>
 
   @Override
   public void set(V vertex, Point location) {
+    if (location == null) {
+      log.error("whoa");
+    }
+    if (vertex == null) {
+      log.error("whoa");
+    }
     if (!locked) {
       this.locations.put(vertex, location);
       super.set(vertex, location); // will fire events

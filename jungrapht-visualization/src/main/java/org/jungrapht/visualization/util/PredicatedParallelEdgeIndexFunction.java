@@ -33,8 +33,8 @@ public class PredicatedParallelEdgeIndexFunction<V, E> extends ParallelEdgeIndex
    * @param context the graph and the edge whose index is to be calculated
    */
   @Override
-  public int getIndex(Context<Graph<V, E>, E> context) {
-    return predicate.test(context.element) ? 0 : super.getIndex(context);
+  public Integer apply(Context<Graph<V, E>, E> context) {
+    return predicate.test(context.element) ? 0 : super.apply(context);
   }
 
   public Predicate<E> getPredicate() {

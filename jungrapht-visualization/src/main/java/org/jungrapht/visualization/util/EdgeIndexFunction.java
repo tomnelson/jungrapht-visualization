@@ -11,6 +11,7 @@
  */
 package org.jungrapht.visualization.util;
 
+import java.util.function.Function;
 import org.jgrapht.Graph;
 
 /**
@@ -22,7 +23,7 @@ import org.jgrapht.Graph;
  *
  * @author Tom Nelson
  */
-public interface EdgeIndexFunction<V, E> {
+public interface EdgeIndexFunction<V, E> extends Function<Context<Graph<V, E>, E>, Integer> {
 
   /**
    * The index of <code>e</code> is defined as its position in some consistent ordering of <code>e
@@ -31,7 +32,9 @@ public interface EdgeIndexFunction<V, E> {
    * @param context the graph and the edge whose index is to be queried
    * @return {@code edge}'s index in this instance's <code>Graph</code>.
    */
-  int getIndex(Context<Graph<V, E>, E> context);
+  default Integer apply(Context<Graph<V, E>, E> context) {
+    return 1;
+  }
 
   /**
    * Resets the indices for <code>edge</code> and its parallel edges. Should be invoked when an edge
@@ -39,8 +42,8 @@ public interface EdgeIndexFunction<V, E> {
    *
    * @param context the graph and the edge whose index is to be reset
    */
-  void reset(Context<Graph<V, E>, E> context);
+  default void reset(Context<Graph<V, E>, E> context) {}
 
   /** Clears all edge indices for all edges. Does not recalculate the indices. */
-  void reset();
+  default void reset() {}
 }

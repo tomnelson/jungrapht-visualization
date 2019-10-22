@@ -3,7 +3,15 @@ package org.jungrapht.visualization.layout.algorithms;
 import com.google.common.base.Preconditions;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -16,8 +24,9 @@ import org.jungrapht.visualization.layout.model.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CompactTreeLayoutAlgorithm<V, E>
-    implements LayoutAlgorithm<V>,
+public class RunnableCompactTreeLayoutAlgorithm<V, E>
+    implements Runnable,
+        LayoutAlgorithm<V>,
         TreeLayout<V>,
         EdgeAwareLayoutAlgorithm<V, E>,
         EdgeSorting<E>,
@@ -25,7 +34,8 @@ public class CompactTreeLayoutAlgorithm<V, E>
         VertexSorting<V>,
         VertexPredicated<V> {
 
-  private static final Logger log = LoggerFactory.getLogger(CompactTreeLayoutAlgorithm.class);
+  private static final Logger log =
+      LoggerFactory.getLogger(RunnableCompactTreeLayoutAlgorithm.class);
 
   private static final Shape IDENTITY_SHAPE = new Ellipse2D.Double();
 
@@ -38,7 +48,7 @@ public class CompactTreeLayoutAlgorithm<V, E>
    * @param <B> the builder type
    */
   public static class Builder<
-          V, E, T extends CompactTreeLayoutAlgorithm<V, E>, B extends Builder<V, E, T, B>>
+          V, E, T extends RunnableCompactTreeLayoutAlgorithm<V, E>, B extends Builder<V, E, T, B>>
       implements LayoutAlgorithm.Builder<V, T, B>, EdgeAwareLayoutAlgorithm.Builder<V, E, T, B> {
     protected Predicate<V> rootPredicate;
     protected Function<V, Shape> vertexShapeFunction = v -> IDENTITY_SHAPE;
@@ -125,7 +135,7 @@ public class CompactTreeLayoutAlgorithm<V, E>
 
     /** {@inheritDoc} */
     public T build() {
-      return (T) new CompactTreeLayoutAlgorithm<>(this);
+      return (T) new RunnableCompactTreeLayoutAlgorithm<>(this);
     }
   }
 
@@ -164,7 +174,7 @@ public class CompactTreeLayoutAlgorithm<V, E>
     private int childCount;
   }
 
-  private CompactTreeLayoutAlgorithm(Builder builder) {
+  private RunnableCompactTreeLayoutAlgorithm(Builder builder) {
     this(
         builder.rootPredicate,
         builder.vertexShapeFunction,
@@ -177,7 +187,7 @@ public class CompactTreeLayoutAlgorithm<V, E>
         builder.expandLayout);
   }
 
-  private CompactTreeLayoutAlgorithm(
+  private RunnableCompactTreeLayoutAlgorithm(
       Predicate<V> rootPredicate,
       Function<V, Shape> vertexShapeFunction,
       Predicate<V> vertexPredicate,
@@ -202,6 +212,7 @@ public class CompactTreeLayoutAlgorithm<V, E>
 
   int horizontalSpacing = 20;
   int verticalSpacing = 20;
+  Graph<V, E> graph;
 
   @Override
   public void setEdgePredicate(Predicate<E> edgePredicate) {
@@ -545,16 +556,7 @@ public class CompactTreeLayoutAlgorithm<V, E>
     return distance;
   }
 
-  @Override
-  public void visit(LayoutModel<V> layoutModel) {
-    this.layoutModel = layoutModel;
-    Graph<V, E> graph = layoutModel.getGraph();
-    this.vertexData.clear();
-    this.heights.clear();
-    if (this.rootPredicate == null) {
-      this.rootPredicate = v -> graph.incomingEdgesOf(v).isEmpty();
-    }
-
+  public void run() {
     TreeView.Builder<V, E, ?, ?> builder =
         TreeView.<V, E>builder()
             .rootPredicate(rootPredicate)
@@ -594,5 +596,31 @@ public class CompactTreeLayoutAlgorithm<V, E>
       np = np.add(xoffset, yoffset);
       layoutModel.set(entry.getKey(), np);
     }
+  }
+
+  @Override
+  public void visit(LayoutModel<V> layoutModel) {
+    this.layoutModel = layoutModel;
+    this.graph = layoutModel.getGraph();
+    this.vertexData.clear();
+    this.heights.clear();
+    if (this.rootPredicate == null) {
+      this.rootPredicate = v -> graph.incomingEdgesOf(v).isEmpty();
+    }
+
+    CompletableFuture theFuture =
+        CompletableFuture.runAsync(this)
+            .thenRun(
+                () -> {
+                  log.trace("We're done");
+                  //                              setRelaxing(false);
+                  layoutModel.getViewChangeSupport().fireViewChanged();
+                  //                              this.viewChangeSupport.fireViewChanged();
+                  // fire an event to say that the layout relax is done
+                  layoutModel
+                      .getLayoutStateChangeSupport()
+                      .fireLayoutStateChanged(layoutModel, false);
+                  //                              this.layoutStateChangeSupport.fireLayoutStateChanged(this, false);
+                });
   }
 }

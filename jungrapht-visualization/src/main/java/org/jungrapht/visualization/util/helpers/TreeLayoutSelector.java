@@ -12,10 +12,13 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import javax.swing.*;
+import org.jgrapht.Graph;
 import org.jungrapht.visualization.DefaultRenderContext;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.layout.algorithms.*;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.RenderContextAware;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
+import org.jungrapht.visualization.util.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -201,6 +204,18 @@ public class TreeLayoutSelector<V, E> extends JPanel {
             .vertexShapeFunction(vertexShapeFunction)
             .build();
 
+    RunnableCompactTreeLayoutAlgorithm<V, E> runnableCompactTreeLayoutAlgorithm =
+        RunnableCompactTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()
+            .edgeComparator(edgeComparator)
+            .edgePredicate(edgePredicate)
+            .vertexComparator(vertexComparator)
+            .vertexPredicate(vertexPredicate)
+            .vertexShapeFunction(vertexShapeFunction)
+            .build();
+
+    SugiyamaLayoutAlgorithm<V, E> sugiyamaLayoutAlgorithm =
+        SugiyamaLayoutAlgorithm.<V, E>edgeAwareBuilder().build();
+
     MultiRowTreeLayoutAlgorithm<V> multiRowTreeLayoutAlgorithm =
         MultiRowTreeLayoutAlgorithm.<V>builder().vertexShapeFunction(vertexShapeFunction).build();
 
@@ -246,9 +261,18 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     treeButton.addItemListener(new LayoutItemListener(treeLayoutAlgorithm, vv));
     treeButton.setSelected(initialSelection == layoutNumber++);
 
-    JRadioButton anotherTreeButton = new JRadioButton("Compact Tree");
-    anotherTreeButton.addItemListener(new LayoutItemListener(compactTreeLayoutAlgorithm, vv));
-    anotherTreeButton.setSelected(initialSelection == layoutNumber++);
+    JRadioButton compactTreeButton = new JRadioButton("Compact Tree");
+    compactTreeButton.addItemListener(new LayoutItemListener(compactTreeLayoutAlgorithm, vv));
+    compactTreeButton.setSelected(initialSelection == layoutNumber++);
+
+    JRadioButton runnableCompactTreeButton = new JRadioButton("Threaded Compact Tree");
+    runnableCompactTreeButton.addItemListener(
+        new LayoutItemListener(runnableCompactTreeLayoutAlgorithm, vv));
+    runnableCompactTreeButton.setSelected(initialSelection == layoutNumber++);
+
+    JRadioButton mySugiyamaButton = new JRadioButton("Sugiyama");
+    mySugiyamaButton.addItemListener(new LayoutItemListener(sugiyamaLayoutAlgorithm, vv));
+    mySugiyamaButton.setSelected(initialSelection == layoutNumber++);
 
     JRadioButton multiRowTreeButton = new JRadioButton("MultiRowTree");
     multiRowTreeButton.addItemListener(new LayoutItemListener(multiRowTreeLayoutAlgorithm, vv));
@@ -278,7 +302,9 @@ public class TreeLayoutSelector<V, E> extends JPanel {
 
     ButtonGroup layoutRadio = new ButtonGroup();
     layoutRadio.add(treeButton);
-    layoutRadio.add(anotherTreeButton);
+    layoutRadio.add(compactTreeButton);
+    layoutRadio.add(runnableCompactTreeButton);
+    layoutRadio.add(mySugiyamaButton);
     layoutRadio.add(multiRowTreeButton);
     layoutRadio.add(balloonButton);
     layoutRadio.add(radialButton);
@@ -293,7 +319,9 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     this.add(radialButton);
     this.add(radialEdgeAwareButton);
     this.add(balloonButton);
-    this.add(anotherTreeButton);
+    this.add(compactTreeButton);
+    this.add(runnableCompactTreeButton);
+    this.add(mySugiyamaButton);
     this.add(animateTransition);
   }
 
@@ -305,15 +333,22 @@ public class TreeLayoutSelector<V, E> extends JPanel {
 
     LayoutAlgorithm layoutAlgorithm;
     VisualizationServer vv;
+    Function<Context<Graph<V, E>, E>, Shape> originalEdgeShapeFunction;
 
     LayoutItemListener(LayoutAlgorithm layoutAlgorithm, VisualizationServer vv) {
       this.layoutAlgorithm = layoutAlgorithm;
       this.vv = vv;
+      this.originalEdgeShapeFunction = vv.getRenderContext().getEdgeShapeFunction();
     }
 
     @Override
     public void itemStateChanged(ItemEvent e) {
       if (e.getStateChange() == ItemEvent.SELECTED) {
+        if (layoutAlgorithm instanceof RenderContextAware) {
+          ((RenderContextAware) layoutAlgorithm).setRenderContext(vv.getRenderContext());
+        } else {
+          vv.getRenderContext().setEdgeShapeFunction(originalEdgeShapeFunction);
+        }
         if (animateTransition.isSelected()) {
           LayoutAlgorithmTransition.animate(vv, layoutAlgorithm, after);
         } else {

@@ -10,17 +10,16 @@
  */
 package org.jungrapht.visualization.decorators;
 
-import java.awt.*;
-import java.awt.geom.CubicCurve2D;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Line2D;
-import java.awt.geom.QuadCurve2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.RectangularShape;
+import java.awt.Shape;
+import java.awt.geom.*;
+import java.util.List;
 import java.util.function.Function;
 import org.jgrapht.Graph;
+import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.util.Context;
 import org.jungrapht.visualization.util.EdgeIndexFunction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An interface for decorators that return a <code>Shape</code> for a specified edge.
@@ -66,7 +65,6 @@ public interface EdgeShape {
 
   /** An edge shape that renders as a straight line between the vertex endpoints. */
   class Line<V, E> implements Function<Context<Graph<V, E>, E>, Shape> {
-    public Line() {}
 
     public Shape apply(Context<Graph<V, E>, E> context) {
       Graph graph = context.graph;
@@ -75,16 +73,26 @@ public interface EdgeShape {
     }
   }
 
-  static <V, E> int getIndex(
-      Context<Graph<V, E>, E> context, EdgeIndexFunction<V, E> edgeIndexFunction) {
-    return edgeIndexFunction == null ? 1 : edgeIndexFunction.getIndex(context);
+  class ArticulatedLine<V, E> extends ArticulatedEdgeShapeFunction<V, E>
+      implements Function<Context<Graph<V, E>, E>, Shape> {
+    private static Logger log = LoggerFactory.getLogger(ArticulatedLine.class);
+
+    public Shape apply(Context<Graph<V, E>, E> context) {
+      E e = context.element;
+      List<Point> points = edgeArticulationFunction.apply(e);
+      if (points.isEmpty()) {
+        return LINE;
+      } else {
+        return ShapeFunctions.makeShape(points);
+      }
+    }
   }
 
   /** An edge shape that renders as a QuadCurve between vertex endpoints. */
   class QuadCurve<V, E> extends ParallelEdgeShapeFunction<V, E> {
     @Override
     public void setEdgeIndexFunction(EdgeIndexFunction<V, E> parallelEdgeIndexFunction) {
-      this.edgeIndexFunction = parallelEdgeIndexFunction;
+      super.setEdgeIndexFunction(parallelEdgeIndexFunction);
       loop.setEdgeIndexFunction(parallelEdgeIndexFunction);
     }
 
@@ -99,7 +107,7 @@ public interface EdgeShape {
         return loop.apply(context);
       }
 
-      int index = getIndex(context, edgeIndexFunction);
+      int index = edgeIndexFunction.apply(context);
 
       float controlY = controlOffsetIncrement + controlOffsetIncrement * index;
       QUAD_CURVE.setCurve(0.0f, 0.0f, 0.5f, controlY, 1.0f, 0.0f);
@@ -113,7 +121,7 @@ public interface EdgeShape {
    */
   class CubicCurve<V, E> extends ParallelEdgeShapeFunction<V, E> {
     public void setEdgeIndexFunction(EdgeIndexFunction<V, E> edgeIndexFunction) {
-      this.edgeIndexFunction = edgeIndexFunction;
+      super.setEdgeIndexFunction(edgeIndexFunction);
       loop.setEdgeIndexFunction(edgeIndexFunction);
     }
 
@@ -128,7 +136,7 @@ public interface EdgeShape {
         return loop.apply(context);
       }
 
-      int index = getIndex(context, edgeIndexFunction);
+      int index = edgeIndexFunction.apply(context);
 
       float controlY = controlOffsetIncrement + controlOffsetIncrement * index;
       CUBIC_CURVE.setCurve(0.0f, 0.0f, 0.33f, 2 * controlY, .66f, -controlY, 1.0f, 0.0f);
@@ -169,7 +177,7 @@ public interface EdgeShape {
     public Shape apply(Context<Graph<V, E>, E> context) {
       Graph graph = context.graph;
       E e = context.element;
-      return buildFrame(ELLIPSE, getIndex(context, edgeIndexFunction));
+      return buildFrame(ELLIPSE, edgeIndexFunction.apply(context));
     }
   }
 
@@ -181,7 +189,7 @@ public interface EdgeShape {
     public Shape apply(Context<Graph<V, E>, E> context) {
       Graph graph = context.graph;
       E e = context.element;
-      return buildFrame(BOX, getIndex(context, edgeIndexFunction));
+      return buildFrame(BOX, edgeIndexFunction.apply(context));
     }
   }
 

@@ -9,10 +9,15 @@
  */
 package org.jungrapht.visualization.renderers;
 
+import static org.jungrapht.visualization.DefaultRenderContext.EDGE_WIDTH;
+
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.function.Function;
+import org.jgrapht.Graph;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationModel;
@@ -55,8 +60,18 @@ public class LightweightEdgeRenderer<V, E> extends AbstractEdgeRenderer<V, E>
 
     boolean isLoop = loop[0] = v1.equals(v2);
     Shape s2 = renderContext.getVertexShapeFunction().apply(v2);
-    // always use LINE shape for lightweight edges
-    Shape edgeShape = EdgeShape.line().apply(Context.getInstance(visualizationModel.getGraph(), e));
+    // use LINE or ArticulatedLine for lightweight edges
+    Shape edgeShape;
+    Function<Context<Graph<V, E>, E>, Shape> edgeShapeFunction =
+        renderContext.getEdgeShapeFunction();
+    if (edgeShapeFunction instanceof EdgeShape.ArticulatedLine) {
+      edgeShape =
+          renderContext
+              .getEdgeShapeFunction()
+              .apply(Context.getInstance(visualizationModel.getGraph(), e));
+    } else {
+      edgeShape = EdgeShape.line().apply(Context.getInstance(visualizationModel.getGraph(), e));
+    }
 
     AffineTransform xform = AffineTransform.getTranslateInstance(x1, y1);
 
@@ -77,7 +92,11 @@ public class LightweightEdgeRenderer<V, E> extends AbstractEdgeRenderer<V, E>
       float thetaRadians = (float) Math.atan2(dy, dx);
       xform.rotate(thetaRadians);
       float dist = (float) Math.sqrt(dx * dx + dy * dy);
-      xform.scale(dist, 1.0);
+      if (edgeShape instanceof Path2D) {
+        xform.scale(dist, dist);
+      } else {
+        xform.scale(dist, 1.0);
+      }
     }
     edgeShape = xform.createTransformedShape(edgeShape);
 
@@ -94,6 +113,12 @@ public class LightweightEdgeRenderer<V, E> extends AbstractEdgeRenderer<V, E>
    */
   protected void drawSimpleEdge(
       RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e) {
+    Graphics2D g2d = renderContext.getGraphicsContext().getDelegate();
+    Stroke savedStroke = g2d.getStroke();
+    float minStrokeWidth = Float.parseFloat(System.getProperty(EDGE_WIDTH, "1.0f"));
+    // if the transform scale is small, make the stroke wider so it is still visible
+    g2d.setStroke(
+        new BasicStroke(Math.max(minStrokeWidth, (int) (1.0 / g2d.getTransform().getScaleX()))));
 
     int[] coords = new int[4];
     boolean[] loop = new boolean[1];
@@ -113,10 +138,12 @@ public class LightweightEdgeRenderer<V, E> extends AbstractEdgeRenderer<V, E>
     Paint draw_paint = renderContext.getEdgeDrawPaintFunction().apply(e);
     if (draw_paint != null) {
       g.setPaint(draw_paint);
+      // set the stroke to something proportional to the scale
       g.draw(edgeShape);
     }
     // restore old paint
     g.setPaint(oldPaint);
+    g2d.setStroke(savedStroke);
   }
 
   public EdgeArrowRenderingSupport<V, E> getEdgeArrowRenderingSupport() {

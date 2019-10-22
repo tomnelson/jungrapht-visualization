@@ -99,7 +99,7 @@ public class HeayweightEdgeLabelRenderer<V, E> implements Renderer.EdgeLabel<V, 
     parallelOffset +=
         renderContext
             .getParallelEdgeIndexFunction()
-            .getIndex(Context.getInstance(visualizationModel.getGraph(), e));
+            .apply(Context.getInstance(visualizationModel.getGraph(), e));
 
     parallelOffset *= d.height;
     if (edgeShape instanceof Ellipse2D) {

@@ -27,29 +27,31 @@ import org.jgrapht.Graph;
  * @author Tom Nelson
  */
 public class ParallelEdgeIndexFunction<V, E> implements EdgeIndexFunction<V, E> {
-  protected Map<E, Integer> edge_index = new HashMap<>();
 
-  public int getIndex(Context<Graph<V, E>, E> context) {
+  protected Map<E, Integer> edgeIndex = new HashMap<>();
+
+  @Override
+  public Integer apply(Context<Graph<V, E>, E> context) {
     Graph<V, E> graph = context.graph;
     E edge = context.element;
-    Integer index = edge_index.get(edge);
+    Integer index = edgeIndex.get(edge);
     if (index == null) {
       V u = graph.getEdgeSource(edge);
       V v = graph.getEdgeTarget(edge);
       int count = 0;
       for (E connectingEdge : graph.getAllEdges(u, v)) {
-        edge_index.put(connectingEdge, count++);
+        edgeIndex.put(connectingEdge, count++);
       }
-      return edge_index.get(edge);
+      return edgeIndex.get(edge);
     }
     return index;
   }
 
   public void reset(Context<Graph<V, E>, E> context) {
-    edge_index.remove(context.element);
+    edgeIndex.remove(context.element);
   }
 
   public void reset() {
-    edge_index.clear();
+    edgeIndex.clear();
   }
 }

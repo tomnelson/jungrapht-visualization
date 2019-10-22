@@ -79,11 +79,11 @@ public class TreeView<V, E> {
   }
 
   private static final Logger log = LoggerFactory.getLogger(TreeView.class);
-  private Predicate<V> rootPredicate;
-  private Predicate<V> vertexPredicate;
-  private Predicate<E> edgePredicate;
-  private Comparator<V> vertexComparator;
-  private Comparator<E> edgeComparator;
+  protected Predicate<V> rootPredicate;
+  protected Predicate<V> vertexPredicate;
+  protected Predicate<E> edgePredicate;
+  protected Comparator<V> vertexComparator;
+  protected Comparator<E> edgeComparator;
 
   TreeView(Builder<V, E, ?, ?> builder) {
     this(

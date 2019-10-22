@@ -9,11 +9,10 @@
  */
 package org.jungrapht.visualization.renderers;
 
+import static org.jungrapht.visualization.DefaultRenderContext.EDGE_WIDTH;
+
 import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
+import java.awt.geom.*;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
@@ -37,60 +36,63 @@ public class HeavyweightEdgeRenderer<V, E> extends AbstractEdgeRenderer<V, E>
       E e,
       int[] coords,
       boolean[] loop) {
-    V v1 = visualizationModel.getGraph().getEdgeSource(e);
-    V v2 = visualizationModel.getGraph().getEdgeTarget(e);
+    V source = visualizationModel.getGraph().getEdgeSource(e);
+    V target = visualizationModel.getGraph().getEdgeTarget(e);
 
-    org.jungrapht.visualization.layout.model.Point p1 =
-        visualizationModel.getLayoutModel().apply(v1);
-    Point p2 = visualizationModel.getLayoutModel().apply(v2);
-    Point2D p2d1 =
+    Point sourcePoint = visualizationModel.getLayoutModel().apply(source);
+    Point targetPoint = visualizationModel.getLayoutModel().apply(target);
+    Point2D sourcePoint2D =
         renderContext
             .getMultiLayerTransformer()
-            .transform(MultiLayerTransformer.Layer.LAYOUT, new Point2D.Double(p1.x, p1.y));
-    Point2D p2d2 =
+            .transform(
+                MultiLayerTransformer.Layer.LAYOUT,
+                new Point2D.Double(sourcePoint.x, sourcePoint.y));
+    Point2D targetPoint2D =
         renderContext
             .getMultiLayerTransformer()
-            .transform(MultiLayerTransformer.Layer.LAYOUT, new Point2D.Double(p2.x, p2.y));
-    float x1 = (float) p2d1.getX();
-    float y1 = (float) p2d1.getY();
-    float x2 = (float) p2d2.getX();
-    float y2 = (float) p2d2.getY();
-    coords[0] = (int) x1;
-    coords[1] = (int) y1;
-    coords[2] = (int) x2;
-    coords[3] = (int) y2;
+            .transform(
+                MultiLayerTransformer.Layer.LAYOUT,
+                new Point2D.Double(targetPoint.x, targetPoint.y));
+    float sourcePoint2DX = (float) sourcePoint2D.getX();
+    float sourcePoint2DY = (float) sourcePoint2D.getY();
+    float targetPoint2DX = (float) targetPoint2D.getX();
+    float targetPoint2DY = (float) targetPoint2D.getY();
+    coords[0] = (int) sourcePoint2DX;
+    coords[1] = (int) sourcePoint2DY;
+    coords[2] = (int) targetPoint2DX;
+    coords[3] = (int) targetPoint2DY;
 
-    boolean isLoop = loop[0] = v1.equals(v2);
-    Shape s2 = renderContext.getVertexShapeFunction().apply(v2);
+    boolean isLoop = loop[0] = source.equals(target);
+    Shape targetShape = renderContext.getVertexShapeFunction().apply(target);
     Shape edgeShape =
         renderContext
             .getEdgeShapeFunction()
             .apply(Context.getInstance(visualizationModel.getGraph(), e));
 
-    AffineTransform xform = AffineTransform.getTranslateInstance(x1, y1);
+    AffineTransform xform = AffineTransform.getTranslateInstance(sourcePoint2DX, sourcePoint2DY);
 
     if (isLoop) {
       // this is a self-loop. scale it is larger than the vertex
       // it decorates and translate it so that its nadir is
       // at the center of the vertex.
-      Rectangle2D s2Bounds = s2.getBounds2D();
-      xform.scale(s2Bounds.getWidth(), s2Bounds.getHeight());
+      Rectangle2D targetShapeBounds2D = targetShape.getBounds2D();
+      xform.scale(targetShapeBounds2D.getWidth(), targetShapeBounds2D.getHeight());
       xform.translate(0, -edgeShape.getBounds2D().getWidth() / 2);
     } else if (renderContext.getEdgeShapeFunction() instanceof EdgeShape.Orthogonal) {
-      float dx = x2 - x1;
-      float dy = y2 - y1;
+      float dx = targetPoint2DX - sourcePoint2DX;
+      float dy = targetPoint2DY - sourcePoint2DY;
       int index = 0;
       if (renderContext.getEdgeShapeFunction() instanceof ParallelEdgeShapeFunction) {
         EdgeIndexFunction<V, E> peif =
             ((ParallelEdgeShapeFunction<V, E>) renderContext.getEdgeShapeFunction())
                 .getEdgeIndexFunction();
-        index = peif.getIndex(Context.getInstance(visualizationModel.getGraph(), e));
+        index = peif.apply(Context.getInstance(visualizationModel.getGraph(), e));
         index *= 20;
       }
       GeneralPath gp = new GeneralPath();
       gp.moveTo(0, 0); // the xform will do the translation to x1,y1
-      if (x1 > x2) {
-        if (y1 > y2) {
+      if (sourcePoint2DX > targetPoint2DX) {
+        if (sourcePoint2DY > targetPoint2DY) {
           gp.lineTo(0, index);
           gp.lineTo(dx - index, index);
           gp.lineTo(dx - index, dy);
@@ -103,7 +105,7 @@ public class HeavyweightEdgeRenderer<V, E> extends AbstractEdgeRenderer<V, E>
         }
 
       } else {
-        if (y1 > y2) {
+        if (sourcePoint2DY > targetPoint2DY) {
           gp.lineTo(0, index);
           gp.lineTo(dx + index, index);
           gp.lineTo(dx + index, dy);
@@ -123,12 +125,16 @@ public class HeavyweightEdgeRenderer<V, E> extends AbstractEdgeRenderer<V, E>
       // this is a normal edge. Rotate it to the angle between
       // vertex endpoints, then scale it to the distance between
       // the vertices
-      float dx = x2 - x1;
-      float dy = y2 - y1;
+      float dx = targetPoint2DX - sourcePoint2DX;
+      float dy = targetPoint2DY - sourcePoint2DY;
       float thetaRadians = (float) Math.atan2(dy, dx);
       xform.rotate(thetaRadians);
-      float dist = (float) Math.sqrt(dx * dx + dy * dy);
-      xform.scale(dist, 1.0);
+      double dist = Math.sqrt(dx * dx + dy * dy);
+      if (edgeShape instanceof Path2D) {
+        xform.scale(dist, dist);
+      } else {
+        xform.scale(dist, 1.0);
+      }
     }
     edgeShape = xform.createTransformedShape(edgeShape);
 
@@ -145,6 +151,13 @@ public class HeavyweightEdgeRenderer<V, E> extends AbstractEdgeRenderer<V, E>
    */
   protected void drawSimpleEdge(
       RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e) {
+
+    Graphics2D g2d = renderContext.getGraphicsContext().getDelegate();
+    Stroke savedStroke = g2d.getStroke();
+    float minStrokeWidth = Float.parseFloat(System.getProperty(EDGE_WIDTH, "1.0f"));
+    // if the transform scale is small, make the stroke wider so it is still visible
+    g2d.setStroke(
+        new BasicStroke(Math.max(minStrokeWidth, (int) (1.0 / g2d.getTransform().getScaleX()))));
 
     int[] coords = new int[4];
     boolean[] loop = new boolean[1];
@@ -231,6 +244,7 @@ public class HeavyweightEdgeRenderer<V, E> extends AbstractEdgeRenderer<V, E>
 
     // restore old paint
     g.setPaint(oldPaint);
+    g2d.setStroke(savedStroke);
   }
 
   public EdgeArrowRenderingSupport<V, E> getEdgeArrowRenderingSupport() {
