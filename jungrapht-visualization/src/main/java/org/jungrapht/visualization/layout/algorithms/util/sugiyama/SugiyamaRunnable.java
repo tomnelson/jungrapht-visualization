@@ -171,6 +171,11 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       // offset against widest row
       x += (widestRowWidth - rowWidthMap.get(layerIndex)) / 2;
 
+      y += rowMaxHeightMap.get(layerIndex) / 2;
+      if (layerIndex > 0) {
+        y += rowMaxHeightMap.get(layerIndex - 1) / 2;
+      }
+
       for (SV<V> sv : layer) {
         int vertexWidth = 0;
         if (!(sv instanceof SyntheticVertex)) {
@@ -188,9 +193,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       }
       x = horizontalOffset;
       y += verticalOffset;
-      y += rowMaxHeightMap.get(layerIndex) / 2;
       layerIndex++;
-      y += rowMaxHeightMap.get(layerIndex - 1) / 2;
     }
 
     long pointsSetTime = System.currentTimeMillis();
