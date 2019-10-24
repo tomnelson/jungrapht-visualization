@@ -65,7 +65,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
         new SVTransformedGraphSupplier<>(graph);
     this.svGraph = transformedGraphSupplier.get();
     long transformTime = System.currentTimeMillis();
-    System.err.println("transform Graph took " + (transformTime - startTime));
+    log.info("transform Graph took {}", (transformTime - startTime));
 
     if (checkStopped()) {
       return;
@@ -73,13 +73,13 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     RemoveCycles<SV<V>, SE<V, E>> removeCycles = new RemoveCycles<>(svGraph);
     svGraph = removeCycles.removeCycles();
     long cycles = System.currentTimeMillis();
-    System.err.println("remove cycles took " + (cycles - transformTime));
+    log.info("remove cycles took {}", (cycles - transformTime));
 
     AssignLayers<V, E> assignLayers = new AssignLayers<>(svGraph);
 
     List<List<SV<V>>> layers = assignLayers.assignLayers();
     long assignLayersTime = System.currentTimeMillis();
-    System.err.println("assign layers took " + (assignLayersTime - cycles));
+    log.info("assign layers took {} ", (assignLayersTime - cycles));
     if (log.isTraceEnabled()) {
       AssignLayers.checkLayers(layers);
     }
@@ -88,15 +88,8 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       return;
     }
 
-    //    log.info("assign layers:");
-    //    for (List<SV<V>> layer : layers) {
-    //      log.info("Layer: {}", layer);
-    //    }
-    //    log.info("virtual vertices and edges:");
     Synthetics<V, E> synthetics = new Synthetics<>(svGraph);
     List<SE<V, E>> edges = new ArrayList<>(svGraph.edgeSet());
-    //    log.info("there are {} edges ", edges.size());
-    //    log.info("edges: {}", edges);
     layers = synthetics.createVirtualVerticesAndEdges(edges, layers);
 
     if (checkStopped()) {
@@ -104,7 +97,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     }
 
     long syntheticsTime = System.currentTimeMillis();
-    System.err.println("synthetics took " + (syntheticsTime - assignLayersTime));
+    log.info("synthetics took {}", (syntheticsTime - assignLayersTime));
 
     List<List<SV<V>>> best = null;
     int lowestCrossCount = Integer.MAX_VALUE;
@@ -130,7 +123,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     }
 
     long crossCountTests = System.currentTimeMillis();
-    System.err.println("cross counts took " + (crossCountTests - syntheticsTime));
+    log.info("cross counts took {}", (crossCountTests - syntheticsTime));
 
     Map<SV<V>, SV<V>> vertexMap = new HashMap<>();
     for (List<SV<V>> layer : best) {
@@ -145,6 +138,8 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     Map<Integer, Integer> rowMaxHeightMap = new HashMap<>();
     int layerIndex = 0;
     Function<V, Shape> vertexShapeFunction = renderContext.getVertexShapeFunction();
+    int totalHeight = 0;
+    int totalWidth = 0;
     for (List<SV<V>> layer : best) {
       int width = horizontalOffset;
       int maxHeight = 0;
@@ -162,7 +157,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       layerIndex++;
     }
     int widestRowWidth = rowWidthMap.values().stream().mapToInt(v -> v).max().getAsInt();
-    int x = horizontalOffset;
+    int x = 0; //horizontalOffset;
     int y = verticalOffset;
     layerIndex = 0;
     log.info("layerMaxHeights {}", rowMaxHeightMap);
@@ -176,13 +171,16 @@ public class SugiyamaRunnable<V, E> implements Runnable {
         y += rowMaxHeightMap.get(layerIndex - 1) / 2;
       }
 
+      int rowWidth = 0;
       for (SV<V> sv : layer) {
         int vertexWidth = 0;
         if (!(sv instanceof SyntheticVertex)) {
           vertexWidth = vertexShapeFunction.apply(sv.vertex).getBounds().width;
         }
+
         x += previousVertexWidth / 2 + vertexWidth / 2 + horizontalOffset;
 
+        rowWidth = x + vertexWidth / 2;
         log.info("layerIndex {} y is {}", layerIndex, y);
         sv.setPoint(Point.of(x, y));
 
@@ -191,13 +189,16 @@ public class SugiyamaRunnable<V, E> implements Runnable {
         }
         previousVertexWidth = vertexWidth;
       }
+      totalWidth = Math.max(totalWidth, rowWidth);
       x = horizontalOffset;
       y += verticalOffset;
+      totalHeight = y + rowMaxHeightMap.get(layerIndex) / 2;
       layerIndex++;
     }
 
+    layoutModel.setSize(totalWidth + horizontalOffset, totalHeight);
     long pointsSetTime = System.currentTimeMillis();
-    System.err.println("setting points took " + (pointsSetTime - crossCountTests));
+    log.info("setting points took {}", (pointsSetTime - crossCountTests));
 
     // now all the vertices in layers (best) have points associated with them
     // every vertex in vertexMap has a point value
@@ -237,7 +238,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     renderContext.setEdgeShapeFunction(edgeShape);
 
     long articulatedEdgeTime = System.currentTimeMillis();
-    System.err.println("articulated edges took " + (articulatedEdgeTime - pointsSetTime));
+    log.info("articulated edges took {}", (articulatedEdgeTime - pointsSetTime));
 
     //    svGraph.vertexSet().forEach(v -> layoutModel.set(v.vertex, v.getPoint()));
 
@@ -359,24 +360,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
 
     return this.insertionSortCounter(targetIndices);
   }
-  /*
-    private void transpose(rank)
-  2. improved = True;
-  3. while improved do
-            4. improved = False;
-  5. for r = 0 to Max_rank do
-            6. for i = 0 to  rank[r] -2 do
-            7. v = rank[r][i];
-  8. w = rank[r][i+1];
-  9. if crossing(v,w) > crossing(w,v) then
-  10. improved = True;
-  11. exchange(rank[r][i],rank[r][i+1]);
-  12. endif
-  13. end
-  14. end
-  15. end
-  16. end
-  */
+
   //http://www.graphviz.org/Documentation/TSE93.pdf p 15
   void median(List<List<SV<V>>> layers, int i, Graph<SV<V>, SE<V, E>> svGraph) {
     if (i % 2 == 0) {

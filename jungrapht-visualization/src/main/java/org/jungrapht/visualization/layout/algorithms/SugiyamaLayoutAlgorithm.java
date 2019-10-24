@@ -258,9 +258,6 @@ public class SugiyamaLayoutAlgorithm<V, E>
 
   private static final Shape IDENTITY_SHAPE = new Ellipse2D.Double();
 
-  //  private Graph<V, E> graph;
-  //  private Graph<SV<V>, SE<V, E>> svGraph;
-
   @Override
   public void setRenderContext(RenderContext<V, E> renderContext) {
     this.renderContext = renderContext;
@@ -279,12 +276,14 @@ public class SugiyamaLayoutAlgorithm<V, E>
         CompletableFuture.runAsync(runnable)
             .thenRun(
                 () -> {
-                  log.trace("We're done");
+                  log.info("We're done");
+
                   layoutModel.getViewChangeSupport().fireViewChanged();
                   // fire an event to say that the layout relax is done
                   layoutModel
                       .getLayoutStateChangeSupport()
                       .fireLayoutStateChanged(layoutModel, false);
+                  log.info("Layout size: {},{}", layoutModel.getWidth(), layoutModel.getHeight());
                 });
   }
 
