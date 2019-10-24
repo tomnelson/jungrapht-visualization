@@ -69,19 +69,12 @@ public class LabelEditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    */
   @SuppressWarnings("unchecked")
   public void mouseClicked(MouseEvent e) {
-    //    System.err.println(
-    //        "e.getModifiersEx() = " + e.getModifiersEx() + " and e.getClickCount() = " + e.getClickCount());
     if (e.getModifiersEx() == modifiers && e.getClickCount() == 2) {
       VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
       LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
       GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
       if (pickSupport != null) {
         Function<V, String> vs = vv.getRenderContext().getVertexLabelFunction();
-        //        System.err.println("vs is a " + vs);
-        //        if (vs instanceof MapSettableTransformer) {
-        //          MapSettableTransformer<V, String> mst =
-        //              (MapSettableTransformer<V, String>) vs;
-        //    				Layout<V, Point2D> layout = vv.getGraphLayout();
         // p is the screen point for the mouse event
         Point2D p = e.getPoint();
 
@@ -97,10 +90,6 @@ public class LabelEditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
         }
         //        }
         Function<E, String> es = vv.getRenderContext().getEdgeLabelFunction();
-        //        if (es instanceof MapSettableTransformer) {
-        //          MapSettableTransformer<E, String> mst =
-        //              (MapSettableTransformer<E, String>) es;
-        //    				Layout<V> layout = vv.getGraphLayout();
         // p is the screen point for the mouse event
         p = e.getPoint();
         // take away the view transform
@@ -118,7 +107,6 @@ public class LabelEditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
           return;
         }
       }
-      //      }
       e.consume();
     }
   }

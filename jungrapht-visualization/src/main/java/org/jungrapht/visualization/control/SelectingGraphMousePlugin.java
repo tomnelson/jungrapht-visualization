@@ -177,7 +177,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
       if (edge != null) {
 
         log.trace("mousePressed set the edge to {}", edge);
-        if (!selectedEdgeState.select(edge)) {
+        if (!selectedEdgeState.isSelected(edge)) {
           selectedEdgeState.clear();
           selectedEdgeState.select(edge);
         }

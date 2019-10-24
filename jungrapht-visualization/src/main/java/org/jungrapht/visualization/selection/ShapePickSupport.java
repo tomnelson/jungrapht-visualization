@@ -15,12 +15,7 @@ import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 
 import com.google.common.collect.Sets;
 import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.PathIterator;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
+import java.awt.geom.*;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.HashSet;
@@ -552,9 +547,8 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
     Rectangle2D pickArea =
         new Rectangle2D.Float(
             (float) x - pickSize / 2, (float) y - pickSize / 2, pickSize, pickSize);
-    //    Point2D pickPoint = new Point2D.Double(x, y);
 
-    // Check the (smaller) set of eligible vertices
+    // Check the (smaller) set of eligible edges
     // to return the one that contains the (x,y)
     for (E edge : edges) {
 
@@ -562,32 +556,9 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
       if (edgeShape == null) {
         continue;
       }
-
-      // because of the transform, the edgeShape is now a GeneralPath
-      // see if this edge is the closest of any that intersect
-      if (edgeShape.intersects(pickArea)) {
-        float cx = 0;
-        float cy = 0;
-        float[] f = new float[6];
-        PathIterator pi = new GeneralPath(edgeShape).getPathIterator(null);
-        if (!pi.isDone()) {
-          pi.next();
-          pi.currentSegment(f);
-          cx = f[0];
-          cy = f[1];
-          if (!pi.isDone()) {
-            pi.currentSegment(f);
-            cx = f[0];
-            cy = f[1];
-          }
-        }
-        float dx = (float) (cx - x);
-        float dy = (float) (cy - y);
-        float dist = dx * dx + dy * dy;
-        if (dist < minDistance) {
-          minDistance = dist;
-          closest = edge;
-        }
+      if (!edgeShape.contains(pickArea) && edgeShape.intersects(pickArea)) {
+        closest = edge;
+        break;
       }
     }
     return closest;
@@ -637,7 +608,11 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
       xform.rotate(theta);
       // stretch the edge to span the distance between the vertices
       float dist = (float) Math.sqrt(dx * dx + dy * dy);
-      xform.scale(dist, 1.0f);
+      if (edgeShape instanceof Path2D) {
+        xform.scale(dist, dist);
+      } else {
+        xform.scale(dist, 1.0);
+      }
     }
 
     // transform the edge to its location and dimensions

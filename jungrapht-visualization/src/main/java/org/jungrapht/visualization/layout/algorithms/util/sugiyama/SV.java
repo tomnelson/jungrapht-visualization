@@ -81,12 +81,6 @@ public class SV<V> {
     if (o instanceof SyntheticVertex) {
       return false;
     }
-    if (vertex == null) {
-      System.err.println("huh");
-    }
-    if (o == null) {
-      System.err.println("hm");
-    }
     return vertex.equals(sv.vertex);
   }
 

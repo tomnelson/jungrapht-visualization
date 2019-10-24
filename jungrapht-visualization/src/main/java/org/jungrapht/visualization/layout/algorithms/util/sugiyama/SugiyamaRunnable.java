@@ -160,7 +160,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     int x = 0; //horizontalOffset;
     int y = verticalOffset;
     layerIndex = 0;
-    log.info("layerMaxHeights {}", rowMaxHeightMap);
+    log.trace("layerMaxHeights {}", rowMaxHeightMap);
     for (List<SV<V>> layer : best) {
       int previousVertexWidth = 0;
       // offset against widest row
@@ -181,7 +181,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
         x += previousVertexWidth / 2 + vertexWidth / 2 + horizontalOffset;
 
         rowWidth = x + vertexWidth / 2;
-        log.info("layerIndex {} y is {}", layerIndex, y);
+        log.trace("layerIndex {} y is {}", layerIndex, y);
         sv.setPoint(Point.of(x, y));
 
         if (vertexMap.containsKey(sv)) {

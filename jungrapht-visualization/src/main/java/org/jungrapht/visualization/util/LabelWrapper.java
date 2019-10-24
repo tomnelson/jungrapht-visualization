@@ -66,16 +66,4 @@ public class LabelWrapper implements Function<String, String> {
     buf.insert(0, "<html>");
     return buf.toString();
   }
-
-  public static void main(String[] args) {
-    String[] lines = {
-      "This is a line with many short words that I will break into shorter lines.",
-      "thisisalinewithnobreakssowhoknowswhereitwillwrap",
-      "short line"
-    };
-    LabelWrapper w = new LabelWrapper(10);
-    for (String line : lines) {
-      System.err.println("from " + line + " to " + w.wrap(line));
-    }
-  }
 }

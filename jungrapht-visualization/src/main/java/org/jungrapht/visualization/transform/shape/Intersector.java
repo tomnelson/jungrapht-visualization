@@ -105,13 +105,4 @@ public class Intersector {
   public String toString() {
     return "Rectangle: " + rectangle + ", points:" + points;
   }
-
-  public static void main(String[] args) {
-    Rectangle rectangle = new Rectangle(0, 0, 10, 10);
-    Line2D line = new Line2D.Float(4, 4, 5, 5);
-    System.err.println("" + new Intersector(rectangle, line));
-    System.err.println("" + new Intersector(rectangle, new Line2D.Float(9, 11, 11, 9)));
-    System.err.println("" + new Intersector(rectangle, new Line2D.Float(1, 1, 3, 2)));
-    System.err.println("" + new Intersector(rectangle, new Line2D.Float(4, 6, 6, 4)));
-  }
 }

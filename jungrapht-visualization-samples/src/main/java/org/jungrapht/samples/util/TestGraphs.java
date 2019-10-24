@@ -20,6 +20,7 @@ import org.jgrapht.generate.BarabasiAlbertGraphGenerator;
 import org.jgrapht.generate.CompleteBipartiteGraphGenerator;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jgrapht.util.SupplierUtil;
 
 /** Provides generators for several different test graphs. */
 public class TestGraphs {
@@ -104,11 +105,12 @@ public class TestGraphs {
    *     <i>k</i> to a vertex in layer <i>k+1</i>
    * @return the created graph
    */
-  public static Graph<String, Number> createDirectedAcyclicGraph(
+  public static Graph<String, Integer> createDirectedAcyclicGraph(
       int layers, int maxVerticesPerLayer, double linkprob) {
 
-    Graph<String, Number> graph =
-        GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.directedMultigraph())
+    Graph<String, Integer> graph =
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.directedMultigraph())
+            .edgeSupplier(SupplierUtil.createIntegerSupplier())
             .buildGraph();
 
     Set<String> previousLayers = new HashSet<>();
@@ -123,8 +125,7 @@ public class TestGraphs {
         // for each previous vertex...
         for (String v2 : previousLayers) {
           if (Math.random() < linkprob) {
-            Double de = Math.random();
-            graph.addEdge(v, v2, de);
+            graph.addEdge(v, v2);
           }
         }
       }

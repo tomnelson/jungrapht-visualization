@@ -4,7 +4,6 @@ import com.google.common.collect.Sets;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -13,7 +12,7 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import org.jgrapht.Graph;
-import org.jungrapht.samples.util.DemoTreeSupplier;
+import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultGraphMouse;
@@ -30,28 +29,24 @@ import org.slf4j.LoggerFactory;
 
 /** @author Tom Nelson */
 @SuppressWarnings("serial")
-public class EdgePrioritizedTreeDAGLayoutDemo extends JFrame {
+public class SugiyamaLayoutExample extends JFrame {
 
-  private static final Logger log = LoggerFactory.getLogger(EdgePrioritizedTreeDAGLayoutDemo.class);
+  private static final Logger log = LoggerFactory.getLogger(SugiyamaLayoutExample.class);
 
   static Set<Integer> prioritySet = Sets.newHashSet(0, 2, 6, 8);
 
-  static Predicate<Integer> edgePredicate =
-      //          e -> false;
-      e -> e < 100;
+  static Predicate<Integer> edgePredicate = e -> false;
 
   Graph<String, Integer> graph;
 
   /** the visual component and renderer for the graph */
   VisualizationViewer<String, Integer> vv;
 
-  public EdgePrioritizedTreeDAGLayoutDemo() {
+  public SugiyamaLayoutExample() {
 
     JPanel container = new JPanel(new BorderLayout());
     // create a simple graph for the demo
-    graph = DemoTreeSupplier.generatePicture();
-    //            .generateDag();
-    //            .generateProgramGraph2();
+    graph = TestGraphs.createDirectedAcyclicGraph(5, 6, .4);
 
     vv =
         VisualizationViewer.builder(graph)
@@ -61,14 +56,12 @@ public class EdgePrioritizedTreeDAGLayoutDemo extends JFrame {
 
     vv.setBackground(Color.white);
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
-    //    vv.getRenderContext().setVertexLabelFunction(Object::toString);
     // add a listener for ToolTips
     vv.setVertexToolTipFunction(Object::toString);
     vv.getRenderContext().setArrowFillPaintFunction(n -> Color.lightGray);
 
     vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
     vv.getRenderContext().setVertexLabelDrawPaintFunction(c -> Color.white);
-    vv.getRenderContext().setEdgeLabelFunction(Objects::toString);
 
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     container.add(panel);
@@ -91,9 +84,7 @@ public class EdgePrioritizedTreeDAGLayoutDemo extends JFrame {
                   label.setFont(new Font("Serif", Font.BOLD, 20));
                   label.setForeground(Color.black);
                   label.setBackground(Color.white);
-                  //                                                label.setOpaque(true);
-                  Border lineBorder =
-                      BorderFactory.createEtchedBorder(); //Border(BevelBorder.RAISED);
+                  Border lineBorder = BorderFactory.createEtchedBorder();
                   Border marginBorder = BorderFactory.createEmptyBorder(4, 4, 4, 4);
                   label.setBorder(new CompoundBorder(lineBorder, marginBorder));
                 })
@@ -155,6 +146,7 @@ public class EdgePrioritizedTreeDAGLayoutDemo extends JFrame {
     TreeLayoutSelector<String, Integer> treeLayoutSelector =
         TreeLayoutSelector.<String, Integer>builder(vv)
             .edgePredicate(edgePredicate)
+            .initialSelection(2)
             .vertexShapeFunction(vv.getRenderContext().getVertexShapeFunction())
             .alignFavoredEdges(false)
             .after(vv::scaleToLayout)
@@ -174,6 +166,6 @@ public class EdgePrioritizedTreeDAGLayoutDemo extends JFrame {
   }
 
   public static void main(String[] args) {
-    new EdgePrioritizedTreeDAGLayoutDemo();
+    new SugiyamaLayoutExample();
   }
 }
