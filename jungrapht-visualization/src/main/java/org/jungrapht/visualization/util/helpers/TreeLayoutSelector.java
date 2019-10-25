@@ -205,7 +205,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
             .build();
 
     SugiyamaLayoutAlgorithm<V, E> sugiyamaLayoutAlgorithm =
-        SugiyamaLayoutAlgorithm.<V, E>edgeAwareBuilder().build();
+        SugiyamaLayoutAlgorithm.<V, E>edgeAwareBuilder().after(after).build();
 
     MultiRowTreeLayoutAlgorithm<V> multiRowTreeLayoutAlgorithm =
         MultiRowTreeLayoutAlgorithm.<V>builder().vertexShapeFunction(vertexShapeFunction).build();

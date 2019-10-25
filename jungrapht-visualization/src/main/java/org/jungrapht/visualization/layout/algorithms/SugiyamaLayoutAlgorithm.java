@@ -139,6 +139,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
     protected Comparator<V> vertexComparator = (v1, v2) -> 0;
     protected Comparator<E> edgeComparator = (e1, e2) -> 0;
     protected boolean expandLayout = true;
+    protected Runnable after = () -> {};
 
     /** {@inheritDoc} */
     protected B self() {
@@ -197,6 +198,11 @@ public class SugiyamaLayoutAlgorithm<V, E>
       return self();
     }
 
+    public B after(Runnable after) {
+      this.after = after;
+      return self();
+    }
+
     /** {@inheritDoc} */
     public T build() {
       return (T) new SugiyamaLayoutAlgorithm<>(this);
@@ -225,6 +231,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
   protected boolean expandLayout;
   protected RenderContext<V, E> renderContext;
   CompletableFuture theFuture;
+  Runnable after;
 
   private SugiyamaLayoutAlgorithm(Builder builder) {
     this(
@@ -234,7 +241,8 @@ public class SugiyamaLayoutAlgorithm<V, E>
         builder.vertexComparator,
         builder.edgePredicate,
         builder.edgeComparator,
-        builder.expandLayout);
+        builder.expandLayout,
+        builder.after);
   }
 
   private SugiyamaLayoutAlgorithm(
@@ -244,7 +252,8 @@ public class SugiyamaLayoutAlgorithm<V, E>
       Comparator<V> vertexComparator,
       Predicate<E> edgePredicate,
       Comparator<E> edgeComparator,
-      boolean expandLayout) {
+      boolean expandLayout,
+      Runnable after) {
     this.rootPredicate = rootPredicate;
     this.vertexShapeFunction = vertexShapeFunction;
     this.vertexPredicate = vertexPredicate;
@@ -252,6 +261,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
     this.edgePredicate = edgePredicate;
     this.edgeComparator = edgeComparator;
     this.expandLayout = expandLayout;
+    this.after = after;
   }
 
   private static final Logger log = LoggerFactory.getLogger(SugiyamaLayoutAlgorithm.class);
@@ -277,7 +287,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
             .thenRun(
                 () -> {
                   log.info("We're done");
-
+                  after.run();
                   layoutModel.getViewChangeSupport().fireViewChanged();
                   // fire an event to say that the layout relax is done
                   layoutModel

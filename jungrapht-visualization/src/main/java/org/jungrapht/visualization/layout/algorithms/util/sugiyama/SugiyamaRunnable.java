@@ -46,16 +46,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     }
     return false;
   }
-  /**
-   * When an object implementing interface <code>Runnable</code> is used to create a thread,
-   * starting the thread causes the object's <code>run</code> method to be called in that separately
-   * executing thread.
-   *
-   * <p>The general contract of the method <code>run</code> is that it may take any action
-   * whatsoever.
-   *
-   * @see Thread#run()
-   */
+
   @Override
   public void run() {
     this.graph = layoutModel.getGraph();
@@ -217,7 +208,6 @@ public class SugiyamaRunnable<V, E> implements Runnable {
 
     for (ArticulatedEdge<V, E> ae : articulatedEdges) {
       for (SV<V> sv : ae.getIntermediateVertices()) {
-
         sv.setPoint(vertexMap.get(sv).getPoint());
       }
     }
@@ -230,7 +220,6 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       points.add(ae.target.getPoint());
       edgePointMap.put(ae.edge, points);
     }
-    //    articulatedEdges.forEach(ae -> edgePointMap.put(ae.edge, ae.getIntermediatePoints()));
     EdgeShape.ArticulatedLine<V, E> edgeShape = new EdgeShape.ArticulatedLine<>();
     edgeShape.setEdgeArticulationFunction(
         e -> edgePointMap.getOrDefault(e, Collections.emptyList()));
@@ -240,20 +229,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     long articulatedEdgeTime = System.currentTimeMillis();
     log.info("articulated edges took {}", (articulatedEdgeTime - pointsSetTime));
 
-    //    svGraph.vertexSet().forEach(v -> layoutModel.set(v.vertex, v.getPoint()));
-
-    for (SV<V> v : svGraph.vertexSet()) {
-      if (v == null) {
-        log.error("whoa");
-      }
-      if (v.vertex == null) {
-        log.error("whoa");
-      }
-      if (v.getPoint() == null) {
-        log.error("whoa");
-      }
-      layoutModel.set(v.vertex, v.getPoint());
-    }
+    svGraph.vertexSet().forEach(v -> layoutModel.set(v.vertex, v.getPoint()));
   }
 
   private void transpose(List<List<SV<V>>> ranks, List<SE<V, E>> edges) {
@@ -278,13 +254,13 @@ public class SugiyamaRunnable<V, E> implements Runnable {
           int vw = crossing(v, w, edges);
           int wv = crossing(w, v, edges);
           if (vw > wv) {
-            // are the indices good going in?
-            if (v.getIndex() != rank.indexOf(v)) {
-              log.error("wrong index already");
-            }
-            if (w.getIndex() != rank.indexOf(w)) {
-              log.error("wrong index already");
-            }
+            //            // are the indices good going in?
+            //            if (v.getIndex() != rank.indexOf(v)) {
+            //              log.error("wrong index already");
+            //            }
+            //            if (w.getIndex() != rank.indexOf(w)) {
+            //              log.error("wrong index already");
+            //            }
             improved = true;
             improvements++;
             Collections.swap(rank, j, j + 1);
