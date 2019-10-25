@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import java.util.ConcurrentModificationException;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.IterativeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -68,7 +69,7 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
   /** @value relaxing true is this layout model is being accessed by a running relaxer */
   protected boolean relaxing;
 
-  protected CompletableFuture theFuture;
+  protected Future theFuture;
   protected LayoutVertexPositionChange.Support layoutVertexPositionSupport =
       LayoutVertexPositionChange.Support.create();
   protected LayoutStateChange.Support layoutStateChangeSupport = LayoutStateChange.Support.create();
@@ -97,7 +98,8 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
     setRelaxing(false);
   }
 
-  public CompletableFuture getTheFuture() {
+  @Override
+  public Future getTheFuture() {
     return theFuture;
   }
 
@@ -129,6 +131,10 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
     if (layoutAlgorithm != null) {
       layoutAlgorithm.visit(this);
 
+      // e.g. the SugiyamaLayoutAlgorithm
+      if (layoutAlgorithm instanceof Future) {
+        this.theFuture = (Future) layoutAlgorithm;
+      }
       if (layoutAlgorithm instanceof IterativeLayoutAlgorithm) {
         setRelaxing(true);
         setupVisRunner((IterativeLayoutAlgorithm) layoutAlgorithm);

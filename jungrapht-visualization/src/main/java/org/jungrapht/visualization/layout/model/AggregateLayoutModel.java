@@ -13,7 +13,7 @@ package org.jungrapht.visualization.layout.model;
 import com.google.common.collect.Maps;
 import java.awt.geom.AffineTransform;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -123,7 +123,7 @@ public class AggregateLayoutModel<V> implements LayoutModel<V> {
   }
 
   @Override
-  public CompletableFuture getTheFuture() {
+  public Future getTheFuture() {
     return delegate.getTheFuture();
   }
 

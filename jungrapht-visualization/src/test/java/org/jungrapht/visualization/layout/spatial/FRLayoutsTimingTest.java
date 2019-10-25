@@ -1,5 +1,6 @@
 package org.jungrapht.visualization.layout.spatial;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.IntStream;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
@@ -74,14 +75,15 @@ public class FRLayoutsTimingTest {
   private void doTest(FRLayoutAlgorithm<String> layoutAlgorithm) {
     long startTime = System.currentTimeMillis();
     layoutModel.accept(layoutAlgorithm);
-    layoutModel
-        .getTheFuture()
-        .thenRun(
-            () ->
-                log.info(
-                    "elapsed time for {} was {}",
-                    layoutAlgorithm,
-                    System.currentTimeMillis() - startTime))
-        .join();
+    if (layoutModel.getTheFuture() instanceof CompletableFuture) {
+      ((CompletableFuture) layoutModel.getTheFuture())
+          .thenRun(
+              () ->
+                  log.info(
+                      "elapsed time for {} was {}",
+                      layoutAlgorithm,
+                      System.currentTimeMillis() - startTime))
+          .join();
+    }
   }
 }

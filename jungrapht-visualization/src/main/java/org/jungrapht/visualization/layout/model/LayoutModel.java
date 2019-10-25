@@ -12,7 +12,7 @@ package org.jungrapht.visualization.layout.model;
 import com.google.common.collect.Maps;
 import java.util.Collections;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -87,9 +87,9 @@ public interface LayoutModel<V>
   /**
    * a handle to the relaxer thread; may be used to attach a process to run after relax is complete
    *
-   * @return the CompletableFuture
+   * @return the Future
    */
-  CompletableFuture getTheFuture();
+  Future getTheFuture();
 
   /**
    * @param vertex the vertex whose locked state is being queried
