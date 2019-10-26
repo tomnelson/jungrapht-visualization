@@ -20,6 +20,25 @@ import org.jungrapht.visualization.layout.model.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The Sugiyama Hierarchical Minimum cross layout algorithm from:
+ * <code>
+ *     Methods for Visual Understanding Hierarchical System Structures
+ *     KOZO SUGIYAMA, MEMBER, IEEE, SHOJIRO TAGAWA, AND MITSUHIKO TODA, MEMBER, IEEE
+ * </code>
+ *
+ * Using level crossing algorithm from:
+ * <code>
+ * An E log E Line Crossing Algorithm for Levelled Graphs
+ * Vance Waddle and Ashok Malhotra IBM Thomas J. Watson Research Center,
+ * P.O.Box 704
+ * Yorktown Heights, NY 10598
+ * {waddle,petsa}@us.ibm.com
+ * <code></code>
+ *
+ * @param <V>
+ * @param <E>
+ */
 public class SugiyamaLayoutAlgorithm<V, E>
     implements LayoutAlgorithm<V>,
         EdgeAwareLayoutAlgorithm<V, E>,
@@ -196,14 +215,13 @@ public class SugiyamaLayoutAlgorithm<V, E>
         CompletableFuture.runAsync(runnable)
             .thenRun(
                 () -> {
-                  log.info("We're done");
+                  log.trace("Sugiyama layout done");
                   this.run(); // run the after function
                   layoutModel.getViewChangeSupport().fireViewChanged();
-                  // fire an event to say that the layout relax is done
+                  // fire an event to say that the layout is done
                   layoutModel
                       .getLayoutStateChangeSupport()
                       .fireLayoutStateChanged(layoutModel, false);
-                  log.info("Layout size: {},{}", layoutModel.getWidth(), layoutModel.getHeight());
                 });
   }
 

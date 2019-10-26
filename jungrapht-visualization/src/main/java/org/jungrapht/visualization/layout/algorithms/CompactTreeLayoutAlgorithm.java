@@ -16,6 +16,15 @@ import org.jungrapht.visualization.layout.model.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * from <code>
+ *     Tidier Drawings of Trees
+ * EDWARD M. REINGOLD AND JOHN S. TILFORD
+ * </code>
+ *
+ * @param <V> vertex type
+ * @param <E> edge type
+ */
 public class CompactTreeLayoutAlgorithm<V, E>
     implements LayoutAlgorithm<V>,
         TreeLayout<V>,

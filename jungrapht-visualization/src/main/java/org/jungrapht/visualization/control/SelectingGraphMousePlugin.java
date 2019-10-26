@@ -11,6 +11,8 @@
  */
 package org.jungrapht.visualization.control;
 
+import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+
 import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
@@ -43,6 +45,11 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     implements MouseListener, MouseMotionListener {
 
   private static final Logger log = LoggerFactory.getLogger(SelectingGraphMousePlugin.class);
+
+  private static final String PICK_AREA_SIZE = PREFIX + "pickAreaSize";
+
+  protected int pickSize = Integer.getInteger(PICK_AREA_SIZE, 4);
+
   /** the selected Vertex, if any */
   protected V vertex;
 
@@ -62,6 +69,9 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
 
   /** the Paintable for the lens picking rectangle */
   protected VisualizationServer.Paintable lensPaintable;
+
+  protected Rectangle2D footprintRectangle = new Rectangle2D.Float();
+  protected VisualizationViewer.Paintable pickFootprintPaintable;
 
   /** color for the picking rectangle */
   protected Color lensColor = Color.cyan;
@@ -91,6 +101,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     super(selectionModifiers);
     this.addToSelectionModifiers = addToSelectionModifiers;
     this.lensPaintable = new LensPaintable();
+    this.pickFootprintPaintable = new FootprintPaintable();
     this.cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
   }
 
@@ -115,6 +126,20 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
       Color oldColor = g.getColor();
       g.setColor(lensColor);
       ((Graphics2D) g).draw(viewRectangle);
+      g.setColor(oldColor);
+    }
+
+    public boolean useTransform() {
+      return false;
+    }
+  }
+
+  class FootprintPaintable implements VisualizationServer.Paintable {
+
+    public void paint(Graphics g) {
+      Color oldColor = g.getColor();
+      g.setColor(lensColor);
+      ((Graphics2D) g).draw(footprintRectangle);
       g.setColor(oldColor);
     }
 
@@ -150,6 +175,15 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
 
     MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
 
+    this.footprintRectangle =
+        new Rectangle2D.Float(
+            (float) e.getPoint().x - pickSize / 2,
+            (float) e.getPoint().y - pickSize / 2,
+            pickSize,
+            pickSize);
+
+    vv.addPostRenderPaintable(pickFootprintPaintable);
+    vv.repaint();
     // subclass can override to account for view distortion effects
     updatePickingTargets(vv, multiLayerTransformer, down, down);
 
@@ -288,6 +322,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     viewRectangle.setFrame(0, 0, 0, 0);
     layoutTargetShape = multiLayerTransformer.inverseTransform(viewRectangle);
     vv.removePostRenderPaintable(lensPaintable);
+    vv.removePostRenderPaintable(pickFootprintPaintable);
     vv.repaint();
   }
 

@@ -16,11 +16,18 @@ import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.decorators.EdgeShape;
+import org.jungrapht.visualization.layout.algorithms.SugiyamaLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Runnable portion of {@link SugiyamaLayoutAlgorithm}
+ *
+ * @param <V> vertex type
+ * @param <E> edge type
+ */
 public class SugiyamaRunnable<V, E> implements Runnable {
 
   private static final Logger log = LoggerFactory.getLogger(SugiyamaRunnable.class);
