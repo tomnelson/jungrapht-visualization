@@ -21,23 +21,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The Sugiyama Hierarchical Minimum cross layout algorithm from:
- * <code>
- *     Methods for Visual Understanding Hierarchical System Structures
- *     KOZO SUGIYAMA, MEMBER, IEEE, SHOJIRO TAGAWA, AND MITSUHIKO TODA, MEMBER, IEEE
- * </code>
+ * The Sugiyama Hierarchical Minimum-Cross layout algorithm
  *
- * Using level crossing algorithm from:
- * <code>
- * An E log E Line Crossing Algorithm for Levelled Graphs
- * Vance Waddle and Ashok Malhotra IBM Thomas J. Watson Research Center,
- * P.O.Box 704
- * Yorktown Heights, NY 10598
- * {waddle,petsa}@us.ibm.com
- * <code></code>
+ * <p>Using level crossing algorithm from Waddle and Malhotra
  *
- * @param <V>
- * @param <E>
+ * @see "Methods for Visual Understanding Hierarchical System Structures. KOZO SUGIYAMA, MEMBER,
+ *     IEEE, SHOJIRO TAGAWA, AND MITSUHIKO TODA, MEMBER, IEEE"
+ * @see "An E log E Line Crossing Algorithm for Levelled Graphs. Vance Waddle and Ashok Malhotra IBM
+ *     Thomas J. Watson Research Center"
+ * @param <V> vertex type
+ * @param <E> edge type
  */
 public class SugiyamaLayoutAlgorithm<V, E>
     implements LayoutAlgorithm<V>,

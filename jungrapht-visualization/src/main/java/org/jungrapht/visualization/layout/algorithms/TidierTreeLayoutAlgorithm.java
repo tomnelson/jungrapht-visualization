@@ -17,11 +17,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * from <code>
- *     Tidier Drawings of Trees
- * EDWARD M. REINGOLD AND JOHN S. TILFORD
- * </code>
+ * A more compact tree layout algorithm. This implementation has been extended to allow multiple
+ * roots and to allow drawing of any directed graph for which a root or roots can be discerned.
  *
+ * @see "Tidier Drawings of Trees, EDWARD M. REINGOLD AND JOHN S. TILFORD"
  * @param <V> vertex type
  * @param <E> edge type
  */

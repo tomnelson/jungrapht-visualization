@@ -27,7 +27,12 @@ import org.jungrapht.visualization.layout.model.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** @author Tom Nelson */
+/**
+ * A simple tree layout algorithm that will allow multiple roots. Will also layouy any directed
+ * graph for which a root or roots can be discerned.
+ *
+ * @param <V> vertex type
+ */
 public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V> {
 
   private static final Logger log = LoggerFactory.getLogger(TreeLayoutAlgorithm.class);

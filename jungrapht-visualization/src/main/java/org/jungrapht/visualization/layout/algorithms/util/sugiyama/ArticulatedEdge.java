@@ -19,9 +19,9 @@ public class ArticulatedEdge<V, E> extends SE<V, E> {
   }
 
   /**
-   * two synthetic edges are created by splitting an existing SE<V,E> edge. This is a reference to
-   * that edge The edge what was split will gain an intermediate vertex between the source and
-   * target vertices each time it or one of its split-off edges is further split
+   * two synthetic edges are created by splitting an existing SE&lt;V,E&gt; edge. This is a
+   * reference to that edge The edge what was split will gain an intermediate vertex between the
+   * source and target vertices each time it or one of its split-off edges is further split
    */
   protected SE<V, E> se;
 

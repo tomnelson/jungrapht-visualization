@@ -19,6 +19,10 @@ import org.slf4j.LoggerFactory;
  * A {@link TreeLayoutAlgorithm} that can evaluate {@code Comparator} and {@link Predicate} for both
  * edges and vertices.
  *
+ * <p>During graph traversal (for tree layout) the Comparators may be spcified to help order the
+ * traversal to favor certain edges or vertices. Similarly, the Predicates may be used to help
+ * follow a desired path to a vertex when multiple alternatives appear in the graph.
+ *
  * @author Tom Nelson
  */
 public class EdgeAwareTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
