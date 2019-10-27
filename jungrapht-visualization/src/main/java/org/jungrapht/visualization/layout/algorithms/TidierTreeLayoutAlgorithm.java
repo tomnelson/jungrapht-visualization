@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  * @param <V> vertex type
  * @param <E> edge type
  */
-public class CompactTreeLayoutAlgorithm<V, E>
+public class TidierTreeLayoutAlgorithm<V, E>
     implements LayoutAlgorithm<V>,
         TreeLayout<V>,
         EdgeAwareLayoutAlgorithm<V, E>,
@@ -34,7 +34,7 @@ public class CompactTreeLayoutAlgorithm<V, E>
         VertexSorting<V>,
         VertexPredicated<V> {
 
-  private static final Logger log = LoggerFactory.getLogger(CompactTreeLayoutAlgorithm.class);
+  private static final Logger log = LoggerFactory.getLogger(TidierTreeLayoutAlgorithm.class);
 
   private static final Shape IDENTITY_SHAPE = new Ellipse2D.Double();
 
@@ -47,7 +47,7 @@ public class CompactTreeLayoutAlgorithm<V, E>
    * @param <B> the builder type
    */
   public static class Builder<
-          V, E, T extends CompactTreeLayoutAlgorithm<V, E>, B extends Builder<V, E, T, B>>
+          V, E, T extends TidierTreeLayoutAlgorithm<V, E>, B extends Builder<V, E, T, B>>
       implements LayoutAlgorithm.Builder<V, T, B>, EdgeAwareLayoutAlgorithm.Builder<V, E, T, B> {
     protected Predicate<V> rootPredicate;
     protected Function<V, Shape> vertexShapeFunction = v -> IDENTITY_SHAPE;
@@ -134,7 +134,7 @@ public class CompactTreeLayoutAlgorithm<V, E>
 
     /** {@inheritDoc} */
     public T build() {
-      return (T) new CompactTreeLayoutAlgorithm<>(this);
+      return (T) new TidierTreeLayoutAlgorithm<>(this);
     }
   }
 
@@ -173,7 +173,7 @@ public class CompactTreeLayoutAlgorithm<V, E>
     private int childCount;
   }
 
-  private CompactTreeLayoutAlgorithm(Builder builder) {
+  private TidierTreeLayoutAlgorithm(Builder builder) {
     this(
         builder.rootPredicate,
         builder.vertexShapeFunction,
@@ -186,7 +186,7 @@ public class CompactTreeLayoutAlgorithm<V, E>
         builder.expandLayout);
   }
 
-  private CompactTreeLayoutAlgorithm(
+  private TidierTreeLayoutAlgorithm(
       Predicate<V> rootPredicate,
       Function<V, Shape> vertexShapeFunction,
       Predicate<V> vertexPredicate,

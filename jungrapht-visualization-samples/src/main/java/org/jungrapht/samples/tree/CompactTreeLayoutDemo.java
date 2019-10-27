@@ -18,7 +18,7 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.ModalGraphMouse.Mode;
 import org.jungrapht.visualization.decorators.EdgeShape;
-import org.jungrapht.visualization.layout.algorithms.CompactTreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.TidierTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.util.helpers.ControlHelpers;
@@ -49,8 +49,8 @@ public class CompactTreeLayoutDemo extends JPanel {
     //                DemoTreeSupplier.createTreeTwo();
     vv = VisualizationViewer.builder(graph).viewSize(new Dimension(600, 600)).build();
     Function<String, Shape> vertexShapeFunction = vv.getRenderContext().getVertexShapeFunction();
-    CompactTreeLayoutAlgorithm<String, Integer> layoutAlgorithm =
-        CompactTreeLayoutAlgorithm.<String, Integer>edgeAwareBuilder()
+    TidierTreeLayoutAlgorithm<String, Integer> layoutAlgorithm =
+        TidierTreeLayoutAlgorithm.<String, Integer>edgeAwareBuilder()
             .vertexShapeFunction(vertexShapeFunction)
             .build();
 

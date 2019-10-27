@@ -195,8 +195,8 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     TreeLayoutAlgorithm<V> treeLayoutAlgorithm =
         TreeLayoutAlgorithm.<V>builder().vertexShapeFunction(vertexShapeFunction).build();
 
-    CompactTreeLayoutAlgorithm<V, E> compactTreeLayoutAlgorithm =
-        CompactTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()
+    TidierTreeLayoutAlgorithm<V, E> tidierTreeLayoutAlgorithm =
+        TidierTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()
             .edgeComparator(edgeComparator)
             .edgePredicate(edgePredicate)
             .vertexComparator(vertexComparator)
@@ -253,7 +253,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     treeButton.setSelected(initialSelection == layoutNumber++);
 
     JRadioButton compactTreeButton = new JRadioButton("Compact Tree");
-    compactTreeButton.addItemListener(new LayoutItemListener(compactTreeLayoutAlgorithm, vv));
+    compactTreeButton.addItemListener(new LayoutItemListener(tidierTreeLayoutAlgorithm, vv));
     compactTreeButton.setSelected(initialSelection == layoutNumber++);
 
     JRadioButton mySugiyamaButton = new JRadioButton("Sugiyama");

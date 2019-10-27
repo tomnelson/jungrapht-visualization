@@ -416,31 +416,31 @@ public class DemoTreeSupplier {
         GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.dag())
             .edgeSupplier(SupplierUtil.createIntegerSupplier())
             .buildGraphBuilder();
-    builder.addEdge("SimpleDigraphAdapter<V>", "SimpleDigraph<V>");
-    builder.addEdge("SimpleDigraphAdapter<V>", "Digraph<V,E>");
-    builder.addEdge("SimpleDigraphAdapter<V>", "WeightedDigraph<V>");
-    builder.addEdge("SimpleDigraphAdapter<V>", "WeightedDigraphAdapter<V>");
-    builder.addEdge("WeightedDigraphAdapter<V>", "WeightedDigraph<V>");
-    builder.addEdge("WeightedDigraphAdapter<V>", "Digraph<V,E>");
-    builder.addEdge("WeightedDigraphAdapter<V>", "DigraphAdapter<V,E>");
-    builder.addEdge("WeightedDigraphAdapter<V>", "Digraphs");
-    builder.addEdge("WeightedDigraphAdapter<V>", "MapDigraph<V,E>");
-    builder.addEdge("SimpleDigraphAdapter<V>", "Digraphs");
-    builder.addEdge("SimpleDigraphAdapter<V>", "DigraphAdapter<V,E>");
-    builder.addEdge("SimpleDigraphAdapter<V>", "MapDigraph<V,E>");
-    builder.addEdge("DoubledDigraphAdapter<V,E>", "MapDigraph<V,E>");
-    builder.addEdge("DoubledDigraphAdapter<V,E>", "DigraphAdapter<V,E>");
-    builder.addEdge("DoubledDigraphAdapter<V,E>", "DoubledDigraph<V,E>");
-    builder.addEdge("DoubledDigraphAdapter<V,E>", "Digraph<V,E>");
-    builder.addEdge("MapDigraph<V,E>", "Digraphs");
-    builder.addEdge("MapDigraph<V,E>", "Digraph<V,E>");
-    builder.addEdge("Digraphs", "Digraph<V,E>");
-    builder.addEdge("Digraphs", "DigraphAdapter<V,E>");
-    builder.addEdge("Digraphs", "DoubledDigraph<V,E>");
-    builder.addEdge("DigraphAdapter<V,E>", "Digraph<V,E>");
-    builder.addEdge("DoubledDigraph<V,E>", "Digraph<V,E>");
-    builder.addEdge("WeightedDigraph<V>", "Digraph<V,E>");
-    builder.addEdge("SimpleDigraph<V>", "Digraph<V,E>");
+    builder.addEdge("SimpleGraphAdapter<V>", "SimpleGraph<V>");
+    builder.addEdge("SimpleGraphAdapter<V>", "Graph<V,E>");
+    builder.addEdge("SimpleGraphAdapter<V>", "WeightedGraph<V>");
+    builder.addEdge("SimpleGraphAdapter<V>", "WeightedGraphAdapter<V>");
+    builder.addEdge("WeightedGraphAdapter<V>", "WeightedGraph<V>");
+    builder.addEdge("WeightedGraphAdapter<V>", "Graph<V,E>");
+    builder.addEdge("WeightedGraphAdapter<V>", "GraphAdapter<V,E>");
+    builder.addEdge("WeightedGraphAdapter<V>", "Graphs");
+    builder.addEdge("WeightedGraphAdapter<V>", "MappedGraph<V,E>");
+    builder.addEdge("SimpleGraphAdapter<V>", "Graphs");
+    builder.addEdge("SimpleGraphAdapter<V>", "GraphAdapter<V,E>");
+    builder.addEdge("SimpleGraphAdapter<V>", "MappedGraph<V,E>");
+    builder.addEdge("DoubleGraphAdapter<V,E>", "MappedGraph<V,E>");
+    builder.addEdge("DoubleGraphAdapter<V,E>", "GraphAdapter<V,E>");
+    builder.addEdge("DoubleGraphAdapter<V,E>", "DoubleGraph<V,E>");
+    builder.addEdge("DoubleGraphAdapter<V,E>", "Graph<V,E>");
+    builder.addEdge("MappedGraph<V,E>", "Graphs");
+    builder.addEdge("MappedGraph<V,E>", "Graph<V,E>");
+    builder.addEdge("Graphs", "Graph<V,E>");
+    builder.addEdge("Graphs", "GraphAdapter<V,E>");
+    builder.addEdge("Graphs", "DoubleGraph<V,E>");
+    builder.addEdge("GraphAdapter<V,E>", "Graph<V,E>");
+    builder.addEdge("DoubleGraph<V,E>", "Graph<V,E>");
+    builder.addEdge("WeightedGraph<V>", "Graph<V,E>");
+    builder.addEdge("SimpleGraph<V>", "Graph<V,E>");
 
     return builder.build();
   }
