@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.github.tomnelson</groupId>
         <artifactId>jungrapht-visualization-parent</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0-RC4</version>
     </parent>
     <artifactId>jungrapht-visualization-samples</artifactId>
     <name>Graph Visualization - Samples</name>
