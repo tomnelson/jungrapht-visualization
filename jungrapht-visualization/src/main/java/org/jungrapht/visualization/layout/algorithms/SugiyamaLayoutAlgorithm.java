@@ -61,8 +61,8 @@ public class SugiyamaLayoutAlgorithm<V, E>
       implements LayoutAlgorithm.Builder<V, T, B>, EdgeAwareLayoutAlgorithm.Builder<V, E, T, B> {
     protected Predicate<V> rootPredicate;
     protected Function<V, Shape> vertexShapeFunction = v -> IDENTITY_SHAPE;
-    protected Predicate<V> vertexPredicate = v -> false;
-    protected Predicate<E> edgePredicate = e -> false;
+    protected Predicate<V> vertexPredicate = v -> true;
+    protected Predicate<E> edgePredicate = e -> true;
     protected Comparator<V> vertexComparator = (v1, v2) -> 0;
     protected Comparator<E> edgeComparator = (e1, e2) -> 0;
     protected boolean expandLayout = true;
@@ -203,7 +203,15 @@ public class SugiyamaLayoutAlgorithm<V, E>
   @Override
   public void visit(LayoutModel<V> layoutModel) {
 
-    Runnable runnable = new SugiyamaRunnable(layoutModel, renderContext);
+    Runnable runnable =
+        SugiyamaRunnable.<V, E>builder()
+            .layoutModel(layoutModel)
+            .renderContext(renderContext)
+            .edgeComparator(edgeComparator)
+            .edgePredicate(edgePredicate)
+            .vertexComparator(vertexComparator)
+            .vertexPredicate(vertexPredicate)
+            .build();
     theFuture =
         CompletableFuture.runAsync(runnable)
             .thenRun(

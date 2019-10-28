@@ -45,7 +45,7 @@ public class TestSugiyamaFunctions {
   public void testTransformedGraph() {
 
     SVTransformedGraphSupplier<String, Integer> svTransformedGraphSupplier =
-        new SVTransformedGraphSupplier<>(graph);
+        SVTransformedGraphSupplier.<String, Integer>builder().graph(graph).build();
     Graph<SV<String>, SE<String, Integer>> sgraph = svTransformedGraphSupplier.get();
 
     Assert.assertEquals(graph.vertexSet().size(), sgraph.vertexSet().size());
@@ -75,7 +75,7 @@ public class TestSugiyamaFunctions {
   public void testAssignLayers() {
 
     SVTransformedGraphSupplier<String, Integer> svTransformedGraphSupplier =
-        new SVTransformedGraphSupplier<>(graph);
+        SVTransformedGraphSupplier.<String, Integer>builder().graph(graph).build();
     Graph<SV<String>, SE<String, Integer>> sgraph = svTransformedGraphSupplier.get();
 
     AssignLayers<String, Integer> assignLayers = new AssignLayers<>(sgraph);
@@ -109,7 +109,7 @@ public class TestSugiyamaFunctions {
     graph.addEdge("00", "30"); // connect from rank 0 to rank 3. should add 3, subtract 1
 
     SVTransformedGraphSupplier<String, Integer> svTransformedGraphSupplier =
-        new SVTransformedGraphSupplier<>(graph);
+        SVTransformedGraphSupplier.<String, Integer>builder().graph(graph).build();
     Graph<SV<String>, SE<String, Integer>> sgraph = svTransformedGraphSupplier.get();
 
     log.info("incoming dag: {}", sgraph);

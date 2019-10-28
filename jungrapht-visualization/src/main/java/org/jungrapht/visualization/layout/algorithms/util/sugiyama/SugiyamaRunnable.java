@@ -4,14 +4,9 @@ import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 
 import java.awt.Rectangle;
 import java.awt.Shape;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jungrapht.visualization.RenderContext;
@@ -32,15 +27,122 @@ public class SugiyamaRunnable<V, E> implements Runnable {
 
   private static final Logger log = LoggerFactory.getLogger(SugiyamaRunnable.class);
 
+  /**
+   * a Builder to create a configured instance
+   *
+   * @param <V> the vertex type
+   * @param <E> the edge type
+   * @param <T> the type that is built
+   * @param <B> the builder type
+   */
+  public static class Builder<
+      V, E, T extends SugiyamaRunnable<V, E>, B extends Builder<V, E, T, B>> {
+    protected LayoutModel<V> layoutModel;
+    protected RenderContext<V, E> renderContext;
+    protected Predicate<V> vertexPredicate = v -> true;
+    protected Predicate<E> edgePredicate = e -> true;
+    protected Comparator<V> vertexComparator = (v1, v2) -> 0;
+    protected Comparator<E> edgeComparator = (e1, e2) -> 0;
+
+    /** {@inheritDoc} */
+    protected B self() {
+      return (B) this;
+    }
+
+    /**
+     * @param vertexPredicate {@link Predicate} to apply to vertices
+     * @return this Builder
+     */
+    public B vertexPredicate(Predicate<V> vertexPredicate) {
+      this.vertexPredicate = vertexPredicate;
+      return self();
+    }
+
+    /**
+     * @param edgePredicate {@link Predicate} to apply to edges
+     * @return this Builder
+     */
+    public B edgePredicate(Predicate<E> edgePredicate) {
+      this.edgePredicate = edgePredicate;
+      return self();
+    }
+
+    /**
+     * @param vertexComparator {@link Comparator} to sort vertices
+     * @return this Builder
+     */
+    public B vertexComparator(Comparator<V> vertexComparator) {
+      this.vertexComparator = vertexComparator;
+      return self();
+    }
+
+    /**
+     * @param edgeComparator {@link Comparator} to sort edges
+     * @return this Builder
+     */
+    public B edgeComparator(Comparator<E> edgeComparator) {
+      this.edgeComparator = edgeComparator;
+      return self();
+    }
+
+    public B layoutModel(LayoutModel<V> layoutModel) {
+      this.layoutModel = layoutModel;
+      return self();
+    }
+
+    public B renderContext(RenderContext<V, E> renderContext) {
+      this.renderContext = renderContext;
+      return self();
+    }
+
+    /** {@inheritDoc} */
+    public T build() {
+      return (T) new SugiyamaRunnable<>(this);
+    }
+  }
+
+  /**
+   * @param <V> vertex type
+   * @param <E> edge type
+   * @return a Builder ready to configure
+   */
+  public static <V, E> Builder<V, E, ?, ?> builder() {
+    return new Builder<>();
+  }
+
   final LayoutModel<V> layoutModel;
   final RenderContext<V, E> renderContext;
   Graph<V, E> graph;
   Graph<SV<V>, SE<V, E>> svGraph;
   boolean stopit = false;
+  protected Predicate<V> vertexPredicate;
+  protected Predicate<E> edgePredicate;
+  protected Comparator<V> vertexComparator;
+  protected Comparator<E> edgeComparator;
 
-  public SugiyamaRunnable(LayoutModel<V> layoutModel, RenderContext<V, E> renderContext) {
+  private SugiyamaRunnable(Builder<V, E, ?, ?> builder) {
+    this(
+        builder.layoutModel,
+        builder.renderContext,
+        builder.vertexPredicate,
+        builder.edgePredicate,
+        builder.vertexComparator,
+        builder.edgeComparator);
+  }
+
+  private SugiyamaRunnable(
+      LayoutModel<V> layoutModel,
+      RenderContext<V, E> renderContext,
+      Predicate<V> vertexPredicate,
+      Predicate<E> edgePredicate,
+      Comparator<V> vertexComparator,
+      Comparator<E> edgeComparator) {
     this.layoutModel = layoutModel;
     this.renderContext = renderContext;
+    this.vertexComparator = vertexComparator;
+    this.vertexPredicate = vertexPredicate;
+    this.edgeComparator = edgeComparator;
+    this.edgePredicate = edgePredicate;
   }
 
   private boolean checkStopped() {
@@ -60,7 +162,13 @@ public class SugiyamaRunnable<V, E> implements Runnable {
 
     long startTime = System.currentTimeMillis();
     SVTransformedGraphSupplier<V, E> transformedGraphSupplier =
-        new SVTransformedGraphSupplier<>(graph);
+        SVTransformedGraphSupplier.<V, E>builder()
+            .graph(graph)
+            .edgeComparator(edgeComparator)
+            .edgePredicate(edgePredicate)
+            .vertexComparator(vertexComparator)
+            .vertexPredicate(vertexPredicate)
+            .build();
     this.svGraph = transformedGraphSupplier.get();
     long transformTime = System.currentTimeMillis();
     log.info("transform Graph took {}", (transformTime - startTime));
