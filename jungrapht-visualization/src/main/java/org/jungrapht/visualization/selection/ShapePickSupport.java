@@ -556,12 +556,65 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
       if (edgeShape == null) {
         continue;
       }
-      if (!edgeShape.contains(pickArea) && edgeShape.intersects(pickArea)) {
+      Line2D endToEnd = getLineFromShape(edgeShape);
+      log.info("endToEnd from {} to {}", endToEnd.getP1(), endToEnd.getP2());
+      if (!edgeShape.contains(pickArea)
+          && edgeShape.intersects(pickArea)
+          && !endToEnd.intersects(pickArea)) {
         closest = edge;
         break;
       }
     }
     return closest;
+  }
+
+  /**
+   * for articulated edges, I want the line from
+   *
+   * @param shape
+   * @return
+   */
+  private Line2D getLineFromShape(Shape shape) {
+    float[] coords = new float[6];
+    float startx = 0;
+    float starty = 0;
+    float endx = 0;
+    float endy = 0;
+    int segmentCount = 0;
+    PathIterator pathIterator = shape.getPathIterator(new AffineTransform());
+    while (!pathIterator.isDone()) {
+      switch (pathIterator.currentSegment(coords)) {
+        case PathIterator.SEG_MOVETO:
+          startx = coords[0];
+          starty = coords[1];
+          break;
+        case PathIterator.SEG_LINETO:
+          segmentCount++;
+          endx = coords[0];
+          endy = coords[1];
+          break;
+        case PathIterator.SEG_QUADTO:
+          segmentCount += 2;
+          endx = coords[2];
+          endy = coords[3];
+          break;
+        case PathIterator.SEG_CUBICTO:
+          segmentCount += 2;
+          endx = coords[4];
+          endy = coords[5];
+          break;
+        case PathIterator.SEG_CLOSE:
+          break;
+      }
+      pathIterator.next();
+    }
+    log.info(
+        "segmentCount: {}, line {}", segmentCount, new Line2D.Float(startx, starty, endx, endy));
+    if (segmentCount > 1) {
+      return new Line2D.Float(startx, starty, endx, endy);
+    } else {
+      return new Line2D.Float();
+    }
   }
 
   /**

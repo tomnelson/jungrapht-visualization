@@ -8,6 +8,7 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.GraphElementAccessor;
+import org.jungrapht.visualization.layout.event.RenderContextStateChange;
 import org.jungrapht.visualization.renderers.EdgeLabelRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.renderers.VertexLabelRenderer;
@@ -21,7 +22,7 @@ import org.jungrapht.visualization.util.EdgeIndexFunction;
  * @param <E>
  * @author Tom Nelson
  */
-public interface RenderContext<V, E> {
+public interface RenderContext<V, E> extends RenderContextStateChange.Producer {
 
   class Builder<V, E, T extends RenderContext<V, E>, B extends Builder<V, E, T, B>> {
 

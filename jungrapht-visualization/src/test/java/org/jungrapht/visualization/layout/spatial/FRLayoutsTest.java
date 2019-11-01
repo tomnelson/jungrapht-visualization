@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
 public class FRLayoutsTest {
 
   private static final Logger log = LoggerFactory.getLogger(FRLayoutsTest.class);
-  Graph<String, Number> graph;
+  Graph<String, Integer> graph;
   LayoutModel<String> layoutModel;
   static Map<String, Point> mapOne = Maps.newHashMap();
   static Map<String, Point> mapThree = Maps.newHashMap();
@@ -61,7 +61,7 @@ public class FRLayoutsTest {
   public void setup() {
     int i = 0;
     graph =
-        GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.directedMultigraph())
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.directedMultigraph())
             .buildGraph();
 
     graph.addVertex("A");

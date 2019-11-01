@@ -63,7 +63,7 @@ public class AnnotationsDemo extends JPanel {
 
     setLayout(new BorderLayout());
     // create a simple graph for the demo
-    Graph<String, Number> graph = TestGraphs.getOneComponentGraph();
+    Graph<String, Integer> graph = TestGraphs.getOneComponentGraph();
 
     // the preferred sizes for the two views
     Dimension preferredSize1 = new Dimension(600, 600);
@@ -72,13 +72,13 @@ public class AnnotationsDemo extends JPanel {
     FRLayoutAlgorithm<String> layoutAlgorithm = FRLayoutAlgorithm.<String>builder().build();
     layoutAlgorithm.setMaxIterations(500);
 
-    VisualizationModel<String, Number> vm =
+    VisualizationModel<String, Integer> vm =
         VisualizationModel.builder(graph)
             .layoutAlgorithm(layoutAlgorithm)
             .layoutSize(preferredSize1)
             .build();
 
-    final VisualizationViewer<String, Number> vv =
+    final VisualizationViewer<String, Integer> vv =
         VisualizationViewer.builder(vm).viewSize(preferredSize1).build();
 
     vv.setBackground(Color.white);
@@ -96,11 +96,11 @@ public class AnnotationsDemo extends JPanel {
     helpDialog = new JDialog();
     helpDialog.getContentPane().add(new JLabel(instructions));
 
-    RenderContext<String, Number> rc = vv.getRenderContext();
-    AnnotatingGraphMousePlugin<String, Number> annotatingPlugin =
+    RenderContext<String, Integer> rc = vv.getRenderContext();
+    AnnotatingGraphMousePlugin<String, Integer> annotatingPlugin =
         new AnnotatingGraphMousePlugin<>(rc);
 
-    final AnnotatingModalGraphMouse<String, Number> graphMouse =
+    final AnnotatingModalGraphMouse<String, Integer> graphMouse =
         new AnnotatingModalGraphMouse<>(rc, annotatingPlugin);
     vv.setGraphMouse(graphMouse);
     vv.addKeyListener(graphMouse.getModeKeyListener());
@@ -126,7 +126,7 @@ public class AnnotationsDemo extends JPanel {
     JPanel annotationControlPanel = new JPanel();
     annotationControlPanel.setBorder(BorderFactory.createTitledBorder("Annotation Controls"));
 
-    AnnotationControls<String, Number> annotationControls =
+    AnnotationControls<String, Integer> annotationControls =
         new AnnotationControls<>(annotatingPlugin);
 
     annotationControlPanel.add(annotationControls.getAnnotationsToolBar());

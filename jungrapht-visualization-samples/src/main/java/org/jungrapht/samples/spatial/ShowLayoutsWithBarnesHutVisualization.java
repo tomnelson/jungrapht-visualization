@@ -62,7 +62,7 @@ public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
 
   private static final Logger log =
       LoggerFactory.getLogger(ShowLayoutsWithBarnesHutVisualization.class);
-  protected static Graph<String, Number>[] g_array;
+  protected static Graph<String, Integer>[] g_array;
   protected static int graph_index;
   protected static String[] graph_names = {
     "Two component graph",
@@ -83,8 +83,8 @@ public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
     g_array[2] = TestGraphs.getOneComponentGraph();
     g_array[3] = TestGraphs.createChainPlusIsolates(18, 5);
     g_array[4] = TestGraphs.createChainPlusIsolates(0, 20);
-    Graph<String, Number> graph =
-        GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.directedMultigraph())
+    Graph<String, Integer> graph =
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.directedMultigraph())
             .buildGraph();
     Stream.of("A", "B", "C").forEach(graph::addVertex);
     graph.addEdge("A", "B", 1);
@@ -92,9 +92,9 @@ public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
 
     g_array[5] = graph;
 
-    Graph<String, Number> g = g_array[2]; // initial graph
+    Graph<String, Integer> g = g_array[2]; // initial graph
 
-    final VisualizationViewer<String, Number> vv =
+    final VisualizationViewer<String, Integer> vv =
         new DecoratedVisualizationViewer<>(
             VisualizationViewer.builder(g).viewSize(new Dimension(600, 600)));
 

@@ -88,7 +88,6 @@ public class KKLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
   private Point[] xydata;
 
   /** Retrieves graph distances between vertices of the visible graph */
-  //  protected BiFunction<V, V, Number> distance;
   protected Map<Pair<V>, Integer> distance;
 
   /**

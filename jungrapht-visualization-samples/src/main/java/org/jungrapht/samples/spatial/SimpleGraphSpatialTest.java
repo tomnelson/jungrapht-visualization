@@ -42,20 +42,20 @@ public class SimpleGraphSpatialTest extends JPanel {
   public SimpleGraphSpatialTest() {
     setLayout(new BorderLayout());
 
-    Graph<String, Number> g = TestGraphs.getOneComponentGraph();
+    Graph<String, Integer> g = TestGraphs.getOneComponentGraph();
 
     Dimension viewPreferredSize = new Dimension(600, 600);
     Dimension layoutPreferredSize = new Dimension(600, 600);
     LayoutAlgorithm layoutAlgorithm = FRLayoutAlgorithm.builder().build();
 
     ScalingControl scaler = new CrossoverScalingControl();
-    VisualizationModel<String, Number> model =
+    VisualizationModel<String, Integer> model =
         VisualizationModel.builder(g)
             .layoutAlgorithm(layoutAlgorithm)
             .initializer(new RandomLocationTransformer(600, 600, System.currentTimeMillis()))
             .layoutSize(layoutPreferredSize)
             .build();
-    VisualizationViewer<String, Number> vv =
+    VisualizationViewer<String, Integer> vv =
         VisualizationViewer.builder(model).viewSize(viewPreferredSize).build();
     final DefaultModalGraphMouse graphMouse = new DefaultModalGraphMouse();
     vv.setGraphMouse(graphMouse);

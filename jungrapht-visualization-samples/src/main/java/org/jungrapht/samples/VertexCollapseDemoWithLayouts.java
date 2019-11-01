@@ -19,6 +19,7 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -26,11 +27,7 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.decorators.EllipseShapeFunction;
-import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
-import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.TreeLayout;
+import org.jungrapht.visualization.layout.algorithms.*;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.LoadingCacheLayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
@@ -49,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * vertex objects.
  *
  * <p>Note that the collection types don't use generics in this demo, because the vertices are of
- * two types: String for plain vertices, and {@code Graph<String, Number>} for the collapsed
+ * two types: String for plain vertices, and {@code Graph<String, Integer>} for the collapsed
  * vertices.
  *
  * @author Tom Nelson
@@ -78,10 +75,10 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
           + "<p>Use the 'Picking'/'Transforming' combo-box to switch"
           + "<p>between picking and transforming mode.</html>";
   /** the graph */
-  Graph<Collapsable<?>, Number> graph;
+  Graph<Collapsable<?>, Integer> graph;
 
   /** the visual component and renderer for the graph */
-  VisualizationViewer<Collapsable<?>, Number> vv;
+  VisualizationViewer<Collapsable<?>, Integer> vv;
 
   LayoutAlgorithm<Collapsable<?>> layoutAlgorithm;
 
@@ -91,14 +88,15 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
   public VertexCollapseDemoWithLayouts() {
     setLayout(new BorderLayout());
     // create a simple graph for the demo
-    Graph<String, Number> generatedGraph = TestGraphs.getOneComponentGraph();
+    Graph<String, Integer> generatedGraph = TestGraphs.getOneComponentGraph();
 
     // make a graph of the same type but with Collapsable vertex types
     this.graph =
-        GraphTypeBuilder.<Collapsable<?>, Number>forGraphType(generatedGraph.getType())
+        GraphTypeBuilder.<Collapsable<?>, Integer>forGraphType(generatedGraph.getType())
+            .edgeSupplier(SupplierUtil.createIntegerSupplier())
             .buildGraph();
 
-    for (Number edge : generatedGraph.edgeSet()) {
+    for (Integer edge : generatedGraph.edgeSet()) {
       Collapsable<?> source = Collapsable.of(generatedGraph.getEdgeSource(edge));
       Collapsable<?> target = Collapsable.of(generatedGraph.getEdgeTarget(edge));
       this.graph.addVertex(source);
@@ -112,7 +110,7 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
 
     Dimension preferredSize = new Dimension(400, 400);
 
-    final VisualizationModel<Collapsable<?>, Number> visualizationModel =
+    final VisualizationModel<Collapsable<?>, Integer> visualizationModel =
         VisualizationModel.builder(graph)
             .layoutAlgorithm(layoutAlgorithm)
             .layoutSize(preferredSize)
@@ -184,13 +182,13 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
                   Collection<Collapsable<?>> picked =
                       new HashSet(vv.getSelectedVertexState().getSelected());
                   if (picked.size() > 1) {
-                    Graph<Collapsable<?>, Number> inGraph = vv.getVisualizationModel().getGraph();
+                    Graph<Collapsable<?>, Integer> inGraph = vv.getVisualizationModel().getGraph();
                     LayoutModel<Collapsable<?>> layoutModel =
                         vv.getVisualizationModel().getLayoutModel();
                     Graph<Collapsable<?>, Number> clusterGraph =
                         collapser.getClusterGraph(inGraph, picked);
                     log.trace("clusterGraph:" + clusterGraph);
-                    Graph<Collapsable<?>, Number> g = collapser.collapse(inGraph, clusterGraph);
+                    Graph<Collapsable<?>, Integer> g = collapser.collapse(inGraph, clusterGraph);
                     log.trace("g:" + g);
 
                     double sumx = 0;
@@ -226,10 +224,11 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
                       new HashSet(vv.getSelectedVertexState().getSelected());
                   for (Collapsable<?> v : picked) {
                     if (v.get() instanceof Graph) {
-                      Graph<Collapsable<?>, Number> inGraph = vv.getVisualizationModel().getGraph();
+                      Graph<Collapsable<?>, Integer> inGraph =
+                          vv.getVisualizationModel().getGraph();
                       LayoutModel<Collapsable<?>> layoutModel =
                           vv.getVisualizationModel().getLayoutModel();
-                      Graph<Collapsable<?>, Number> g = collapser.expand(graph, inGraph, v);
+                      Graph<Collapsable<?>, Integer> g = collapser.expand(graph, inGraph, v);
 
                       layoutModel.lock(false);
                       vv.getVisualizationModel().setGraph(g);

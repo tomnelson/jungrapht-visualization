@@ -22,6 +22,7 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphBuilder;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.samples.spatial.RTreeVisualization;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationModel;
@@ -59,12 +60,12 @@ public class SpatialLensLargeGraphDemo extends JPanel {
 
   private static final Logger log = LoggerFactory.getLogger(SpatialLensLargeGraphDemo.class);
   /** the graph */
-  Graph<String, Number> graph;
+  Graph<String, Integer> graph;
 
   LayoutAlgorithm<String> graphLayoutAlgorithm;
 
   /** the visual component and renderer for the graph */
-  VisualizationViewer<String, Number> vv;
+  VisualizationViewer<String, Integer> vv;
 
   /** provides a Hyperbolic lens for the view */
   LensSupport<ModalLensGraphMouse> hyperbolicViewSupport;
@@ -88,7 +89,7 @@ public class SpatialLensLargeGraphDemo extends JPanel {
     Dimension preferredSize = new Dimension(800, 800);
     Dimension viewPreferredSize = new Dimension(800, 800);
 
-    final VisualizationModel<String, Number> visualizationModel =
+    final VisualizationModel<String, Integer> visualizationModel =
         VisualizationModel.builder(graph)
             .layoutAlgorithm(graphLayoutAlgorithm)
             .layoutSize(preferredSize)
@@ -104,7 +105,7 @@ public class SpatialLensLargeGraphDemo extends JPanel {
     add(visualizationScrollPane);
 
     // the regular graph mouse for the normal view
-    final DefaultModalGraphMouse<String, Number> graphMouse = new DefaultModalGraphMouse<>();
+    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
 
     vv.setGraphMouse(graphMouse);
     vv.addKeyListener(graphMouse.getModeKeyListener());
@@ -114,7 +115,7 @@ public class SpatialLensLargeGraphDemo extends JPanel {
     Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
     Lens lens = new Lens(d);
     hyperbolicViewSupport =
-        ViewLensSupport.<String, Number, ModalLensGraphMouse>builder(vv)
+        ViewLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
             .lensTransformer(
                 HyperbolicShapeTransformer.builder(lens)
                     .delegate(
@@ -123,7 +124,7 @@ public class SpatialLensLargeGraphDemo extends JPanel {
             .lensGraphMouse(new ModalLensGraphMouse())
             .build();
     hyperbolicLayoutSupport =
-        LayoutLensSupport.<String, Number, ModalLensGraphMouse>builder(vv)
+        LayoutLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
             .lensTransformer(
                 HyperbolicTransformer.builder(lens)
                     .delegate(
@@ -139,7 +140,7 @@ public class SpatialLensLargeGraphDemo extends JPanel {
     lens = new Lens(d);
     lens.setMagnification(3.f);
     magnifyViewSupport =
-        ViewLensSupport.<String, Number, ModalLensGraphMouse>builder(vv)
+        ViewLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
             .lensTransformer(
                 MagnifyShapeTransformer.builder(lens)
                     .delegate(
@@ -150,7 +151,7 @@ public class SpatialLensLargeGraphDemo extends JPanel {
             .build();
 
     magnifyLayoutSupport =
-        LayoutLensSupport.<String, Number, ModalLensGraphMouse>builder(vv)
+        LayoutLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
             .lensTransformer(
                 MagnifyTransformer.builder(lens)
                     .delegate(
@@ -324,9 +325,9 @@ public class SpatialLensLargeGraphDemo extends JPanel {
     }
   }
 
-  Graph<String, Number> buildOneVertex() {
-    Graph<String, Number> graph =
-        GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.directedMultigraph())
+  Graph<String, Integer> buildOneVertex() {
+    Graph<String, Integer> graph =
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.directedMultigraph())
             .buildGraph();
 
     graph.addVertex("A");
@@ -334,8 +335,8 @@ public class SpatialLensLargeGraphDemo extends JPanel {
   }
 
   private static void createEdge(
-      GraphBuilder<String, Number, ?> g, String v1Label, String v2Label, int weight) {
-    g.addEdge(v1Label, v2Label, (Number) Math.random());
+      GraphBuilder<String, Integer, ?> g, String v1Label, String v2Label) {
+    g.addEdge(v1Label, v2Label);
   }
 
   public static String[][] pairs = {
@@ -350,20 +351,20 @@ public class SpatialLensLargeGraphDemo extends JPanel {
     {"h", "g", "2"}
   };
 
-  public static Graph<String, Number> getGraph() {
-    GraphBuilder<String, Number, ?> g =
-        GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.multigraph())
+  public static Graph<String, Integer> getGraph() {
+    GraphBuilder<String, Integer, ?> g =
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.multigraph())
+            .edgeSupplier(SupplierUtil.createIntegerSupplier())
             .buildGraphBuilder();
 
     for (String[] pair : pairs) {
-      createEdge(g, pair[0], pair[1], Integer.parseInt(pair[2]));
+      createEdge(g, pair[0], pair[1]);
     }
-    Integer edge = 10;
     for (int i = 1; i <= 10; i++) {
       for (int j = i + 1; j <= 10; j++) {
         String i1 = "c" + i;
         String i2 = "c" + j;
-        g.addEdge(i1, i2, edge++);
+        g.addEdge(i1, i2);
       }
     }
 
@@ -371,7 +372,7 @@ public class SpatialLensLargeGraphDemo extends JPanel {
       for (int j = i + 1; j <= 10; j++) {
         String i1 = "d" + i;
         String i2 = "d" + j;
-        g.addEdge(i1, i2, edge++);
+        g.addEdge(i1, i2);
       }
     }
 
@@ -383,7 +384,7 @@ public class SpatialLensLargeGraphDemo extends JPanel {
         }
         String i1 = "q" + i;
         String i2 = "q" + j;
-        g.addEdge(i1, i2, edge++);
+        g.addEdge(i1, i2);
       }
     }
 
@@ -395,14 +396,14 @@ public class SpatialLensLargeGraphDemo extends JPanel {
         }
         String i1 = "p" + i;
         String i2 = "p" + j;
-        g.addEdge(i1, i2, edge++);
+        g.addEdge(i1, i2);
       }
     }
     Iterator<String> vertexIt = g.build().vertexSet().iterator();
     String current = vertexIt.next();
     while (vertexIt.hasNext()) {
       String next = vertexIt.next();
-      g.addEdge(current, next, edge++);
+      g.addEdge(current, next);
     }
     return g.build();
   }

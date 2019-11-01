@@ -21,6 +21,7 @@ import org.jgrapht.Graph;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.decorators.ParallelEdgeShapeFunction;
 import org.jungrapht.visualization.layout.GraphElementAccessor;
+import org.jungrapht.visualization.layout.event.RenderContextStateChange;
 import org.jungrapht.visualization.renderers.EdgeLabelRenderer;
 import org.jungrapht.visualization.renderers.JLabelEdgeLabelRenderer;
 import org.jungrapht.visualization.renderers.JLabelVertexLabelRenderer;
@@ -39,6 +40,14 @@ import org.jungrapht.visualization.util.ParallelEdgeIndexFunction;
  * @param <E> edge type
  */
 public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
+
+  private RenderContextStateChange.Support<V, E> renderContextStateChangeSupport =
+      RenderContextStateChange.Support.create();
+
+  @Override
+  public RenderContextStateChange.Support getRenderContextStateChangeSupport() {
+    return renderContextStateChangeSupport;
+  }
 
   public static class ShapeFunctionSupplier<V> implements Supplier<Function<V, Shape>> {
     @Override
@@ -229,6 +238,7 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
   @Override
   public void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
     this.vertexShapeFunction = vertexShapeFunction;
+    this.renderContextStateChangeSupport.fireRenderContextStateChanged(this, true);
   }
 
   /** @return the vertexStrokeFunction */
@@ -332,6 +342,7 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
           (ParallelEdgeShapeFunction<V, E>) edgeShapeFunction;
       function.setEdgeIndexFunction(this.parallelEdgeIndexFunction);
     }
+    this.renderContextStateChangeSupport.fireRenderContextStateChanged(this, true);
   }
 
   public Renderer.VertexLabel.Position getVertexLabelPosition() {

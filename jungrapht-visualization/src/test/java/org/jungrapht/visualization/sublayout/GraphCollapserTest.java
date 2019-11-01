@@ -22,13 +22,13 @@ public class GraphCollapserTest {
   @Test
   public void testCollapser() {
 
-    Graph<String, Number> generatedGraph = getDemoGraph();
+    Graph<String, Integer> generatedGraph = getDemoGraph();
     // make a graph of the same type but with Collapsable vertex types
-    Graph<Collapsable<?>, Number> graph =
-        GraphTypeBuilder.<Collapsable<?>, Number>forGraphType(generatedGraph.getType())
+    Graph<Collapsable<?>, Integer> graph =
+        GraphTypeBuilder.<Collapsable<?>, Integer>forGraphType(generatedGraph.getType())
             .buildGraph();
 
-    for (Number edge : generatedGraph.edgeSet()) {
+    for (Integer edge : generatedGraph.edgeSet()) {
       Collapsable<?> source = Collapsable.of(generatedGraph.getEdgeSource(edge));
       Collapsable<?> target = Collapsable.of(generatedGraph.getEdgeTarget(edge));
       graph.addVertex(source);
@@ -46,14 +46,14 @@ public class GraphCollapserTest {
     Assert.assertEquals(
         Sets.newHashSet(Collapsable.of("B"), Collapsable.of("C")), endpoints(graph, 2));
 
-    GraphCollapser<Number> collapser = new GraphCollapser(graph);
+    GraphCollapser<Integer> collapser = new GraphCollapser(graph);
     MultiMutableSelectedState picker = new MultiMutableSelectedState();
     picker.select(Collapsable.of("B"));
     picker.select(Collapsable.of("C"));
 
-    Graph<Collapsable<?>, Number> clusterGraph =
+    Graph<Collapsable<?>, Integer> clusterGraph =
         collapser.getClusterGraph(graph, picker.getSelected());
-    Graph<Collapsable<?>, Number> collapsed = collapser.collapse(graph, clusterGraph);
+    Graph<Collapsable<?>, Integer> collapsed = collapser.collapse(graph, clusterGraph);
     for (Collapsable<?> vertex : collapsed.vertexSet()) {
       if (vertex.get() instanceof Graph) {
         Assert.assertEquals(((Graph) vertex.get()).edgeSet(), Sets.newHashSet(2));
@@ -63,7 +63,7 @@ public class GraphCollapserTest {
     }
 
     Assert.assertEquals(collapsed.edgeSet(), Sets.newHashSet(0, 1));
-    for (Number edge : collapsed.edgeSet()) {
+    for (Integer edge : collapsed.edgeSet()) {
       Assert.assertEquals(Collapsable.of("A"), collapsed.getEdgeSource(edge));
       Assert.assertTrue(collapsed.getEdgeTarget(edge).get() instanceof Graph);
     }
@@ -75,7 +75,7 @@ public class GraphCollapserTest {
         picker.select(vertex);
       }
     }
-    Graph<Collapsable<?>, Number> expanded =
+    Graph<Collapsable<?>, Integer> expanded =
         collapser.expand(graph, collapsed, Collapsable.of(clusterGraph));
     Assert.assertEquals(
         Sets.newHashSet(Collapsable.of("A"), Collapsable.of("B"), Collapsable.of("C")),
@@ -90,13 +90,13 @@ public class GraphCollapserTest {
 
   @Test
   public void testTwoConnectedClustersExpandOneThenTheOther() {
-    Graph<String, Number> generatedGraph = getDemoGraph2();
+    Graph<String, Integer> generatedGraph = getDemoGraph2();
     // make a graph of the same type but with Collapsable vertex types
     Graph<Collapsable<?>, Number> originalGraph =
         GraphTypeBuilder.<Collapsable<?>, Number>forGraphType(generatedGraph.getType())
             .buildGraph();
 
-    for (Number edge : generatedGraph.edgeSet()) {
+    for (Integer edge : generatedGraph.edgeSet()) {
       Collapsable<?> source = Collapsable.of(generatedGraph.getEdgeSource(edge));
       Collapsable<?> target = Collapsable.of(generatedGraph.getEdgeTarget(edge));
       originalGraph.addVertex(source);
@@ -145,16 +145,16 @@ public class GraphCollapserTest {
   }
 
   private static void createEdge(
-      Graph<String, Number> g, String v1Label, String v2Label, int weight) {
+      Graph<String, Integer> g, String v1Label, String v2Label, int weight) {
     g.addVertex(v1Label);
     g.addVertex(v2Label);
     g.addEdge(v1Label, v2Label, weight);
   }
 
-  public static Graph<String, Number> getDemoGraph() {
+  public static Graph<String, Integer> getDemoGraph() {
 
-    Graph<String, Number> g =
-        GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.multigraph()).buildGraph();
+    Graph<String, Integer> g =
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.multigraph()).buildGraph();
     createEdge(g, "A", "B", 0);
     createEdge(g, "A", "C", 1);
     createEdge(g, "B", "C", 2);
@@ -162,9 +162,9 @@ public class GraphCollapserTest {
     return g;
   }
 
-  public static Graph<String, Number> getDemoGraph2() {
-    Graph<String, Number> g =
-        GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.multigraph()).buildGraph();
+  public static Graph<String, Integer> getDemoGraph2() {
+    Graph<String, Integer> g =
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.multigraph()).buildGraph();
 
     createEdge(g, "A", "B", 0);
     createEdge(g, "A", "C", 1);

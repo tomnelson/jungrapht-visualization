@@ -67,10 +67,10 @@ public class SubLayoutDemo extends JPanel {
           + "<p>Use the 'Picking'/'Transforming' combo-box to switch"
           + "<p>between picking and transforming mode.</html>";
   /** the graph */
-  Graph<String, Number> graph;
+  Graph<String, Integer> graph;
 
   /** the visual component and renderer for the graph */
-  VisualizationViewer<String, Number> vv;
+  VisualizationViewer<String, Integer> vv;
 
   AggregateLayoutModel<String> clusteringLayoutModel;
 
@@ -101,7 +101,7 @@ public class SubLayoutDemo extends JPanel {
 
     clusteringLayoutModel.accept(layoutAlgorithm);
 
-    final VisualizationModel<String, Number> visualizationModel =
+    final VisualizationModel<String, Integer> visualizationModel =
         VisualizationModel.builder(graph)
             .layoutModel(clusteringLayoutModel)
             .layoutAlgorithm(layoutAlgorithm)
@@ -296,12 +296,12 @@ public class SubLayoutDemo extends JPanel {
         y /= picked.size();
         center.setLocation(x, y);
 
-        Graph<String, Number> subGraph;
+        Graph<String, Integer> subGraph;
         try {
           subGraph = GraphTypeBuilder.forGraph(graph).buildGraph();
           for (String vertex : picked) {
             subGraph.addVertex(vertex);
-            for (Number edge : graph.edgesOf(vertex)) {
+            for (Integer edge : graph.edgesOf(vertex)) {
               String vertexU = graph.getEdgeSource(edge);
               String vertexV = graph.getEdgeTarget(edge);
               if (picked.contains(vertexU) && picked.contains(vertexV)) {

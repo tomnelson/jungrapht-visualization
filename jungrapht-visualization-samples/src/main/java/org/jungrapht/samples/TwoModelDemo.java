@@ -34,12 +34,12 @@ import org.jungrapht.visualization.util.helpers.ControlHelpers;
 public class TwoModelDemo extends JPanel {
 
   /** the graph */
-  Graph<String, Number> graph;
+  Graph<String, Integer> graph;
 
   /** the visual components and renderers for the graph */
-  VisualizationViewer<String, Number> vv1;
+  VisualizationViewer<String, Integer> vv1;
 
-  VisualizationViewer<String, Number> vv2;
+  VisualizationViewer<String, Integer> vv2;
 
   Dimension preferredSize = new Dimension(300, 300);
 
@@ -56,12 +56,12 @@ public class TwoModelDemo extends JPanel {
     LayoutAlgorithm<String> layoutAlgorithm2 = ISOMLayoutAlgorithm.<String>builder().build();
 
     // create the two models, each with a different layout
-    VisualizationModel<String, Number> vm1 =
+    VisualizationModel<String, Integer> vm1 =
         VisualizationModel.builder(graph)
             .layoutAlgorithm(layoutAlgorithm1)
             .layoutSize(preferredSize)
             .build();
-    VisualizationModel<String, Number> vm2 =
+    VisualizationModel<String, Integer> vm2 =
         VisualizationModel.builder(graph)
             .layoutAlgorithm(layoutAlgorithm2)
             .layoutSize(preferredSize)
@@ -91,7 +91,7 @@ public class TwoModelDemo extends JPanel {
     MutableSelectedState<String> ps = new MultiMutableSelectedState<>();
     vv1.setSelectedVertexState(ps);
     vv2.setSelectedVertexState(ps);
-    MutableSelectedState<Number> pes = new MultiMutableSelectedState<>();
+    MutableSelectedState<Integer> pes = new MultiMutableSelectedState<>();
     vv1.setSelectedEdgeState(pes);
     vv2.setSelectedEdgeState(pes);
 
@@ -114,9 +114,9 @@ public class TwoModelDemo extends JPanel {
     add(panel);
 
     // create a GraphMouse for each view
-    final DefaultModalGraphMouse<String, Number> gm1 = new DefaultModalGraphMouse<>();
+    final DefaultModalGraphMouse<String, Integer> gm1 = new DefaultModalGraphMouse<>();
 
-    DefaultModalGraphMouse<String, Number> gm2 = new DefaultModalGraphMouse<>();
+    DefaultModalGraphMouse<String, Integer> gm2 = new DefaultModalGraphMouse<>();
 
     vv1.setGraphMouse(gm1);
     vv2.setGraphMouse(gm2);

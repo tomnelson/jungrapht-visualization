@@ -59,19 +59,19 @@ public class SimpleGraphSpatialSearchTest extends JPanel {
   public SimpleGraphSpatialSearchTest() {
     setLayout(new BorderLayout());
 
-    Graph<String, Number> g = TestGraphs.createChainPlusIsolates(0, 20);
+    Graph<String, Integer> g = TestGraphs.createChainPlusIsolates(0, 20);
     Dimension viewPreferredSize = new Dimension(600, 600);
     Dimension layoutPreferredSize = new Dimension(600, 600);
     LayoutAlgorithm layoutAlgorithm = new StaticLayoutAlgorithm();
 
     ScalingControl scaler = new CrossoverScalingControl();
-    VisualizationModel<String, Number> model =
+    VisualizationModel<String, Integer> model =
         VisualizationModel.builder(g)
             .layoutAlgorithm(layoutAlgorithm)
             .initializer(new RandomLocationTransformer(600, 600, System.currentTimeMillis()))
             .layoutSize(layoutPreferredSize)
             .build();
-    VisualizationViewer<String, Number> vv =
+    VisualizationViewer<String, Integer> vv =
         VisualizationViewer.builder(model).viewSize(viewPreferredSize).build();
 
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
@@ -135,8 +135,8 @@ public class SimpleGraphSpatialSearchTest extends JPanel {
   }
 
   public void testClosestVertices(
-      VisualizationViewer<String, Number> vv,
-      Graph<String, Number> graph,
+      VisualizationViewer<String, Integer> vv,
+      Graph<String, Integer> graph,
       LayoutModel<String> layoutModel,
       Spatial<String> tree) {
     vv.getSelectedVertexState().clear();

@@ -60,17 +60,17 @@ import org.jungrapht.visualization.util.helpers.LensControlHelper;
 public class LensDemo extends JPanel {
 
   /** the graph */
-  Graph<String, Number> graph;
+  Graph<String, Integer> graph;
 
   FRLayoutAlgorithm<String> graphLayoutAlgorithm;
 
   /** a grid shaped graph */
-  Graph<String, Number> grid;
+  Graph<String, Integer> grid;
 
   LayoutAlgorithm<String> gridLayoutAlgorithm;
 
   /** the visual component and renderer for the graph */
-  VisualizationViewer<String, Number> vv;
+  VisualizationViewer<String, Integer> vv;
 
   /** provides a Hyperbolic lens for the view */
   LensSupport<ModalLensGraphMouse> hyperbolicViewSupport;
@@ -98,7 +98,7 @@ public class LensDemo extends JPanel {
     grid = this.generateVertexGrid(map, preferredSize, 25);
     gridLayoutAlgorithm = new StaticLayoutAlgorithm<>();
 
-    final VisualizationModel<String, Number> visualizationModel =
+    final VisualizationModel<String, Integer> visualizationModel =
         VisualizationModel.builder(graph)
             .layoutAlgorithm(graphLayoutAlgorithm)
             .layoutSize(preferredSize)
@@ -106,7 +106,7 @@ public class LensDemo extends JPanel {
     vv = VisualizationViewer.builder(visualizationModel).viewSize(preferredSize).build();
 
     MutableSelectedState<String> ps = vv.getSelectedVertexState();
-    MutableSelectedState<Number> pes = vv.getSelectedEdgeState();
+    MutableSelectedState<Integer> pes = vv.getSelectedEdgeState();
     vv.getRenderContext()
         .setVertexFillPaintFunction(
             new PickableElementPaintFunction<>(ps, Color.red, Color.yellow));
@@ -126,7 +126,7 @@ public class LensDemo extends JPanel {
     add(visualizationScrollPane);
 
     // the regular graph mouse for the normal view
-    final DefaultModalGraphMouse<String, Number> graphMouse = new DefaultModalGraphMouse<>();
+    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
 
     vv.setGraphMouse(graphMouse);
     vv.addKeyListener(graphMouse.getModeKeyListener());
@@ -138,7 +138,7 @@ public class LensDemo extends JPanel {
     Lens lens = new Lens(d);
 
     hyperbolicViewSupport =
-        ViewLensSupport.<String, Number, ModalLensGraphMouse>builder(vv)
+        ViewLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
             .lensTransformer(
                 HyperbolicShapeTransformer.builder(lens)
                     .delegate(
@@ -148,7 +148,7 @@ public class LensDemo extends JPanel {
             .build();
 
     hyperbolicLayoutSupport =
-        LayoutLensSupport.<String, Number, ModalLensGraphMouse>builder(vv)
+        LayoutLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
             .lensTransformer(
                 HyperbolicTransformer.builder(lens)
                     .delegate(
@@ -164,7 +164,7 @@ public class LensDemo extends JPanel {
     lens = new Lens(d);
     lens.setMagnification(3.f);
     magnifyViewSupport =
-        ViewLensSupport.<String, Number, ModalLensGraphMouse>builder(vv)
+        ViewLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
             .lensTransformer(
                 MagnifyShapeTransformer.builder(lens)
                     .delegate(
@@ -175,7 +175,7 @@ public class LensDemo extends JPanel {
             .build();
 
     magnifyLayoutSupport =
-        LayoutLensSupport.<String, Number, ModalLensGraphMouse>builder(vv)
+        LayoutLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
             .lensTransformer(
                 MagnifyTransformer.builder(lens)
                     .delegate(
@@ -274,11 +274,11 @@ public class LensDemo extends JPanel {
     add(controls, BorderLayout.SOUTH);
   }
 
-  private Graph<String, Number> generateVertexGrid(
+  private Graph<String, Integer> generateVertexGrid(
       Map<String, Point> vlf, Dimension d, int interval) {
     int count = d.width / interval * d.height / interval;
-    Graph<String, Number> graph =
-        GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.directedMultigraph())
+    Graph<String, Integer> graph =
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.directedMultigraph())
             .buildGraph();
     for (int i = 0; i < count; i++) {
       int x = interval * i;

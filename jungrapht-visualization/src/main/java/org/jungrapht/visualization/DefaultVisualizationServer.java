@@ -37,6 +37,7 @@ import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
 import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
+import org.jungrapht.visualization.layout.event.RenderContextStateChange;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.util.Caching;
 import org.jungrapht.visualization.renderers.DefaultModalRenderer;
@@ -201,6 +202,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
     }
     setVisualizationModel(visualizationModel);
     renderContext = RenderContext.builder(this.visualizationModel.getGraph()).build();
+    renderContext.getRenderContextStateChangeSupport().addRenderContextStateChangeListener(this);
     renderContext.setScreenDevice(this);
     renderer = DefaultModalRenderer.<V, E>builder().component(this).build();
     renderer.setCountSupplier(getVisualizationModel().getGraph().vertexSet()::size);
@@ -243,6 +245,18 @@ class DefaultVisualizationServer<V, E> extends JPanel
   public JComponent getComponent() {
     return this;
   }
+
+  //  @Override
+  //  public void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
+  //    this.renderContext.setVertexShapeFunction(vertexShapeFunction);
+  //    createSpatialStuctures(this.visualizationModel, this.renderContext);
+  //  }
+  //
+  //  @Override
+  //  public void setEdgeShapeFunction(Function<Context<Graph<V, E>, E>, Shape> edgeShapeFunction) {
+  //    this.renderContext.setEdgeShapeFunction(edgeShapeFunction);
+  //    createSpatialStuctures(this.visualizationModel, this.renderContext);
+  //  }
 
   private void createSpatialStuctures(VisualizationModel model, RenderContext renderContext) {
     setVertexSpatial(
@@ -578,6 +592,11 @@ class DefaultVisualizationServer<V, E> extends JPanel
   public void layoutStateChanged(LayoutStateChange.Event evt) {
     //    repaint();
     //    no op
+  }
+
+  @Override
+  public void renderContextStateChanged(RenderContextStateChange.Event evt) {
+    this.createSpatialStuctures(this.visualizationModel, evt.renderContext);
   }
 
   /**

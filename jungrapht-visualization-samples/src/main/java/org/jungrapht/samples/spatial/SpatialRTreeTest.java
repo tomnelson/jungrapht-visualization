@@ -22,6 +22,7 @@ import javax.swing.WindowConstants;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
@@ -60,29 +61,29 @@ public class SpatialRTreeTest extends JPanel {
 
   public SpatialRTreeTest() {
     setLayout(new BorderLayout());
-    Graph<String, Number> g =
-        GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.directedMultigraph())
+    Graph<String, Integer> g =
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.directedMultigraph())
             .buildGraph();
     Dimension viewPreferredSize = new Dimension(600, 600);
     Dimension layoutPreferredSize = new Dimension(600, 600);
     LayoutAlgorithm layoutAlgorithm = new StaticLayoutAlgorithm();
 
     ScalingControl scaler = new CrossoverScalingControl();
-    VisualizationModel<String, Number> model =
+    VisualizationModel<String, Integer> model =
         VisualizationModel.builder(g)
             .layoutAlgorithm(layoutAlgorithm)
             .layoutSize(layoutPreferredSize)
             .build();
-    VisualizationViewer<String, Number> vv =
+    VisualizationViewer<String, Integer> vv =
         VisualizationViewer.builder(model).viewSize(viewPreferredSize).build();
 
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
 
     Supplier<String> vertexFactory = new VertexFactory();
-    Supplier<Number> edgeFactory = new EdgeFactory();
+    Supplier<Integer> edgeFactory = SupplierUtil.createIntegerSupplier();
 
-    final EditingModalGraphMouse<String, Number> graphMouse =
+    final EditingModalGraphMouse<String, Integer> graphMouse =
         new EditingModalGraphMouse<>(vv.getRenderContext(), vertexFactory, edgeFactory);
 
     // the EditingGraphMouse will pass mouse event coordinates to the
@@ -154,8 +155,8 @@ public class SpatialRTreeTest extends JPanel {
   }
 
   public void testClosestVertices(
-      VisualizationViewer<String, Number> vv,
-      Graph<String, Number> graph,
+      VisualizationViewer<String, Integer> vv,
+      Graph<String, Integer> graph,
       LayoutModel<String> layoutModel,
       SpatialQuadTree<String> tree) {
     vv.getSelectedVertexState().clear();
@@ -212,8 +213,8 @@ public class SpatialRTreeTest extends JPanel {
   }
 
   public void testClosestVertices(
-      VisualizationViewer<String, Number> vv,
-      Graph<String, Number> graph,
+      VisualizationViewer<String, Integer> vv,
+      Graph<String, Integer> graph,
       LayoutModel<String> layoutModel,
       SpatialRTree.Vertices<String> tree) {
     vv.getSelectedVertexState().clear();
@@ -265,15 +266,6 @@ public class SpatialRTreeTest extends JPanel {
 
     public String get() {
       return "N" + i++;
-    }
-  }
-
-  static class EdgeFactory implements Supplier<Number> {
-
-    int i = 0;
-
-    public Number get() {
-      return i++;
     }
   }
 

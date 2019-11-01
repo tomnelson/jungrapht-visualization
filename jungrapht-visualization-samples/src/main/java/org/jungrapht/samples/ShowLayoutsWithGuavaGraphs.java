@@ -45,7 +45,7 @@ import org.jungrapht.visualization.util.helpers.SpanningTreeAdapter;
 @SuppressWarnings("serial")
 public class ShowLayoutsWithGuavaGraphs extends JPanel {
 
-  protected static Graph<String, Number>[] g_array;
+  protected static Graph<String, Integer>[] g_array;
   protected static int graph_index;
   protected static String[] graph_names = {
     "Two component graph",
@@ -77,10 +77,10 @@ public class ShowLayoutsWithGuavaGraphs extends JPanel {
     g_array[5] = new MutableGraphAdapter(graph);
     g_array[6] = new MutableGraphAdapter(TestGuavaGraphs.getGeneratedGraph());
 
-    Graph<String, Number> g = g_array[2]; // initial graph
+    Graph<String, Integer> g = g_array[2]; // initial graph
 
-    final VisualizationViewer<String, Number> vv =
-        VisualizationViewer.<String, Number>builder().build();
+    final VisualizationViewer<String, Integer> vv =
+        VisualizationViewer.<String, Integer>builder().build();
 
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
 

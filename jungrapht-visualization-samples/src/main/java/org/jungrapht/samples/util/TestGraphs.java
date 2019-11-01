@@ -48,15 +48,17 @@ public class TestGraphs {
    * @param directed true iff the graph created is to have directed edges
    * @return a graph consisting of eight edges and ten vertices.
    */
-  public static Graph<String, Number> createTestGraph(boolean directed) {
-    Graph<String, Number> graph;
+  public static Graph<String, Integer> createTestGraph(boolean directed) {
+    Graph<String, Integer> graph;
     if (directed) {
       graph =
-          GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.directedMultigraph())
+          GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.directedMultigraph())
+              .edgeSupplier(SupplierUtil.createIntegerSupplier())
               .buildGraph();
     } else {
       graph =
-          GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.multigraph()).buildGraph();
+          GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.multigraph())
+              .buildGraph();
     }
 
     for (String[] pair : pairs) {
@@ -73,9 +75,12 @@ public class TestGraphs {
    * @return a graph consisting of a chain of {@code chain_length} vertices and {@code
    *     isolate_count} isolated vertices.
    */
-  public static Graph<String, Number> createChainPlusIsolates(int chain_length, int isolate_count) {
-    Graph<String, Number> graph =
-        GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.multigraph()).buildGraph();
+  public static Graph<String, Integer> createChainPlusIsolates(
+      int chain_length, int isolate_count) {
+    Graph<String, Integer> graph =
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.multigraph())
+            .edgeSupplier(SupplierUtil.createIntegerSupplier())
+            .buildGraph();
 
     if (chain_length > 0) {
       String[] v = new String[chain_length];
@@ -84,7 +89,7 @@ public class TestGraphs {
       for (int i = 1; i < chain_length; i++) {
         v[i] = "v" + i;
         graph.addVertex(v[i]);
-        graph.addEdge(v[i], v[i - 1], Math.random());
+        graph.addEdge(v[i], v[i - 1]);
       }
     }
     for (int i = 0; i < isolate_count; i++) {
@@ -143,12 +148,11 @@ public class TestGraphs {
    *
    * @return the testgraph
    */
-  public static Graph<String, Number> getOneComponentGraph() {
+  public static Graph<String, Integer> getOneComponentGraph() {
 
-    Integer n = 0;
-    Graph<String, Number> graph =
-        GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.simple())
-            .edgeSupplier(new EdgeSupplier())
+    Graph<String, Integer> graph =
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.simple())
+            .edgeSupplier(SupplierUtil.createIntegerSupplier())
             .buildGraph();
 
     // let's throw in a clique, too
@@ -158,7 +162,7 @@ public class TestGraphs {
         String i2 = "" + j;
         graph.addVertex(i1);
         graph.addVertex(i2);
-        graph.addEdge(i1, i2, n++);
+        graph.addEdge(i1, i2);
       }
     }
 
@@ -172,7 +176,7 @@ public class TestGraphs {
         String i2 = "" + j;
         graph.addVertex(i1);
         graph.addVertex(i2);
-        graph.addEdge(i1, i2, n++);
+        graph.addEdge(i1, i2);
       }
     }
     Iterator<String> vertexIt = graph.vertexSet().iterator();
@@ -181,7 +185,7 @@ public class TestGraphs {
       String next = vertexIt.next();
       graph.addVertex(current);
       graph.addVertex(next);
-      graph.addEdge(current, next, n++);
+      graph.addEdge(current, next);
     }
 
     return graph;
@@ -192,15 +196,16 @@ public class TestGraphs {
    *
    * @return a demonstration graph of type <tt>UndirectedSparseMultiGraph</tt> with 28 vertices.
    */
-  public static Graph<String, Number> getDemoGraph() {
-    Graph<String, Number> graph =
-        GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.multigraph()).buildGraph();
+  public static Graph<String, Integer> getDemoGraph() {
+    Graph<String, Integer> graph =
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.multigraph())
+            .edgeSupplier(SupplierUtil.createIntegerSupplier())
+            .buildGraph();
 
     for (String[] pair : pairs) {
       graph.addVertex(pair[0]);
       graph.addVertex(pair[1]);
-      graph.addEdge(pair[0], pair[1], Integer.parseInt(pair[2]));
-      //      createEdge(builder, pair[0], pair[1], Integer.parseInt(pair[2]));
+      graph.addEdge(pair[0], pair[1]);
     }
 
     // let's throw in a clique, too
@@ -210,7 +215,7 @@ public class TestGraphs {
         String i2 = "c" + j;
         graph.addVertex(i1);
         graph.addVertex(i2);
-        graph.addEdge(i1, i2, Math.pow(i + 2, j));
+        graph.addEdge(i1, i2);
       }
     }
 
@@ -224,21 +229,23 @@ public class TestGraphs {
         String i2 = "p" + j;
         graph.addVertex(i1);
         graph.addVertex(i2);
-        graph.addEdge(i1, i2, Math.pow(i + 2, j));
+        graph.addEdge(i1, i2);
       }
     }
     return graph;
   }
 
-  public static Graph<String, Number> createSmallGraph(boolean directed) {
-    Graph<String, Number> graph;
+  public static Graph<String, Integer> createSmallGraph(boolean directed) {
+    Graph<String, Integer> graph;
     if (directed) {
       graph =
-          GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.directedMultigraph())
+          GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.directedMultigraph())
+              .edgeSupplier(SupplierUtil.createIntegerSupplier())
               .buildGraph();
     } else {
       graph =
-          GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.multigraph()).buildGraph();
+          GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.multigraph())
+              .buildGraph();
     }
 
     graph.addVertex("A");
@@ -252,39 +259,41 @@ public class TestGraphs {
   }
 
   /** @return the graph for this demo */
-  public static Graph<String, Number> getGeneratedGraph() {
+  public static Graph<String, Integer> getGeneratedGraph() {
 
-    Graph<String, Number> graph =
-        GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.directedPseudograph())
+    Graph<String, Integer> graph =
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.directedPseudograph())
             .vertexSupplier(new VertexSupplier())
-            .edgeSupplier(new EdgeSupplier())
+            .edgeSupplier(SupplierUtil.createIntegerSupplier())
             .buildGraph();
-    BarabasiAlbertGraphGenerator<String, Number> gen = new BarabasiAlbertGraphGenerator<>(4, 3, 20);
+    BarabasiAlbertGraphGenerator<String, Integer> gen =
+        new BarabasiAlbertGraphGenerator<>(4, 3, 20);
     gen.generateGraph(graph, null);
     return graph;
   }
 
-  public static Graph<String, Number> getGeneratedGraph2() {
+  public static Graph<String, Integer> getGeneratedGraph2() {
 
-    Graph<String, Number> graph =
-        GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.multigraph())
+    Graph<String, Integer> graph =
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.multigraph())
             .vertexSupplier(new VertexSupplier())
-            .edgeSupplier(new EdgeSupplier())
+            .edgeSupplier(SupplierUtil.createIntegerSupplier())
             .buildGraph();
-    BarabasiAlbertGraphGenerator<String, Number> gen =
+    BarabasiAlbertGraphGenerator<String, Integer> gen =
         new BarabasiAlbertGraphGenerator<>(2, 2, 1000);
     gen.generateGraph(graph, null);
     return graph;
   }
 
-  public static Graph<String, Number> getGeneratedBipartiteGraph() {
+  public static Graph<String, Integer> getGeneratedBipartiteGraph() {
 
-    Graph<String, Number> graph =
-        GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.multigraph())
-            .vertexSupplier(new VertexSupplier())
-            .edgeSupplier(new EdgeSupplier())
+    Graph<String, Integer> graph =
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.multigraph())
+            .vertexSupplier(SupplierUtil.createStringSupplier())
+            //            .vertexSupplier(new VertexSupplier())
+            .edgeSupplier(SupplierUtil.createIntegerSupplier())
             .buildGraph();
-    CompleteBipartiteGraphGenerator<String, Number> gen =
+    CompleteBipartiteGraphGenerator<String, Integer> gen =
         new CompleteBipartiteGraphGenerator<>(5, 10);
     gen.generateGraph(graph, null);
     return graph;
@@ -295,14 +304,6 @@ public class TestGraphs {
 
     public String get() {
       return Character.toString(a++);
-    }
-  }
-
-  static class EdgeSupplier implements Supplier<Number> {
-    int count;
-
-    public Number get() {
-      return count++;
     }
   }
 }

@@ -1,12 +1,10 @@
 package org.jungrapht.samples.tree;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.LoggerContext;
 import com.google.common.collect.Sets;
 import java.awt.*;
-import java.awt.event.ItemEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -15,13 +13,14 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import org.jgrapht.Graph;
-import org.jungrapht.samples.util.TestGraphs;
+import org.jungrapht.samples.util.DemoTreeSupplier;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.decorators.IconShapeFunction;
+import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.util.IconCache;
 import org.jungrapht.visualization.util.helpers.ControlHelpers;
@@ -31,40 +30,45 @@ import org.slf4j.LoggerFactory;
 
 /** @author Tom Nelson */
 @SuppressWarnings("serial")
-public class SugiyamaLayoutExample extends JFrame {
+public class VertexSizeAwareTreeDAGLayoutDemo extends JFrame {
 
-  private static final Logger log = LoggerFactory.getLogger(SugiyamaLayoutExample.class);
+  private static final Logger log = LoggerFactory.getLogger(VertexSizeAwareTreeDAGLayoutDemo.class);
 
   static Set<Integer> prioritySet = Sets.newHashSet(0, 2, 6, 8);
 
-  static Predicate<Integer> edgePredicate = e -> false;
+  static Predicate<Integer> edgePredicate =
+      //          e -> false;
+      e -> e < 100;
 
   Graph<String, Integer> graph;
 
   /** the visual component and renderer for the graph */
   VisualizationViewer<String, Integer> vv;
 
-  public SugiyamaLayoutExample() {
+  public VertexSizeAwareTreeDAGLayoutDemo() {
 
     JPanel container = new JPanel(new BorderLayout());
     // create a simple graph for the demo
-    graph = TestGraphs.createDirectedAcyclicGraph(5, 6, .4);
+    graph = DemoTreeSupplier.generatePicture();
+    //            .generateDag();
+    //            .generateProgramGraph2();
 
     vv =
         VisualizationViewer.builder(graph)
-            //            .layoutAlgorithm(TreeLayoutAlgorithm.<String>builder().build())
+            .layoutAlgorithm(TreeLayoutAlgorithm.<String>builder().build())
             .viewSize(new Dimension(600, 600))
             .build();
 
     vv.setBackground(Color.white);
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
-    // need to update the edge spatial structure
+    //    vv.getRenderContext().setVertexLabelFunction(Object::toString);
     // add a listener for ToolTips
     vv.setVertexToolTipFunction(Object::toString);
     vv.getRenderContext().setArrowFillPaintFunction(n -> Color.lightGray);
 
     vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
     vv.getRenderContext().setVertexLabelDrawPaintFunction(c -> Color.white);
+    vv.getRenderContext().setEdgeLabelFunction(Objects::toString);
 
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     container.add(panel);
@@ -87,7 +91,9 @@ public class SugiyamaLayoutExample extends JFrame {
                   label.setFont(new Font("Serif", Font.BOLD, 20));
                   label.setForeground(Color.black);
                   label.setBackground(Color.white);
-                  Border lineBorder = BorderFactory.createEtchedBorder();
+                  //                                                label.setOpaque(true);
+                  Border lineBorder =
+                      BorderFactory.createEtchedBorder(); //Border(BevelBorder.RAISED);
                   Border marginBorder = BorderFactory.createEmptyBorder(4, 4, 4, 4);
                   label.setBorder(new CompoundBorder(lineBorder, marginBorder));
                 })
@@ -149,7 +155,6 @@ public class SugiyamaLayoutExample extends JFrame {
     TreeLayoutSelector<String, Integer> treeLayoutSelector =
         TreeLayoutSelector.<String, Integer>builder(vv)
             .edgePredicate(edgePredicate)
-            .initialSelection(2)
             .vertexShapeFunction(vv.getRenderContext().getVertexShapeFunction())
             .alignFavoredEdges(false)
             .after(vv::scaleToLayout)
@@ -160,45 +165,15 @@ public class SugiyamaLayoutExample extends JFrame {
     setTitle("Prioritized Edges are " + prioritySet);
     add(container);
 
-    JRadioButton showSpatialEffects = new JRadioButton("Spatial Structure");
-    showSpatialEffects.addItemListener(
-        e -> {
-          if (e.getStateChange() == ItemEvent.SELECTED) {
-            System.err.println("TURNED ON LOGGING");
-            // turn on the logging
-            // programmatically set the log level so that the spatial grid is drawn for this demo and the SpatialGrid logging is output
-            ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) log;
-            LoggerContext ctx = (LoggerContext) LoggerFactory.getILoggerFactory();
-            ctx.getLogger("org.jungrapht.visualization.layout.spatial").setLevel(Level.DEBUG);
-            ctx.getLogger("org.jungrapht.visualization.DefaultVisualizationServer")
-                .setLevel(Level.TRACE);
-            ctx.getLogger("org.jungrapht.visualization.picking").setLevel(Level.TRACE);
-            repaint();
-
-          } else if (e.getStateChange() == ItemEvent.DESELECTED) {
-            System.err.println("TURNED OFF LOGGING");
-            // turn off the logging
-            // programmatically set the log level so that the spatial grid is drawn for this demo and the SpatialGrid logging is output
-            ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) log;
-            LoggerContext ctx = (LoggerContext) LoggerFactory.getILoggerFactory();
-            ctx.getLogger("org.jungrapht.visualization.layout.spatial").setLevel(Level.INFO);
-            ctx.getLogger("org.jungrapht.visualization.DefaultVisualizationServer")
-                .setLevel(Level.INFO);
-            ctx.getLogger("org.jungrapht.visualization.picking").setLevel(Level.INFO);
-            repaint();
-          }
-        });
-
     Box controls = Box.createHorizontalBox();
     controls.add(ControlHelpers.getCenteredContainer("Layout Controls", treeLayoutSelector));
     controls.add(ControlHelpers.getZoomControls(vv));
-    controls.add(showSpatialEffects);
     add(controls, BorderLayout.SOUTH);
     pack();
     setVisible(true);
   }
 
   public static void main(String[] args) {
-    new SugiyamaLayoutExample();
+    new VertexSizeAwareTreeDAGLayoutDemo();
   }
 }

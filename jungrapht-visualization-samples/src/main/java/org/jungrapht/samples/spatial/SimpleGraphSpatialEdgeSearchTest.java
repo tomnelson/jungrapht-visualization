@@ -60,19 +60,19 @@ public class SimpleGraphSpatialEdgeSearchTest extends JPanel {
   public SimpleGraphSpatialEdgeSearchTest() {
     setLayout(new BorderLayout());
 
-    Graph<String, Number> g = TestGraphs.getOneComponentGraph();
+    Graph<String, Integer> g = TestGraphs.getOneComponentGraph();
     Dimension viewPreferredSize = new Dimension(600, 600);
     Dimension layoutPreferredSize = new Dimension(600, 600);
     LayoutAlgorithm layoutAlgorithm = new StaticLayoutAlgorithm();
 
     ScalingControl scaler = new CrossoverScalingControl();
-    VisualizationModel<String, Number> model =
+    VisualizationModel<String, Integer> model =
         VisualizationModel.builder(g)
             .layoutAlgorithm(layoutAlgorithm)
             .initializer(new RandomLocationTransformer(600, 600, System.currentTimeMillis()))
             .layoutSize(layoutPreferredSize)
             .build();
-    VisualizationViewer<String, Number> vv =
+    VisualizationViewer<String, Integer> vv =
         VisualizationViewer.builder(model).viewSize(viewPreferredSize).build();
 
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
@@ -90,7 +90,7 @@ public class SimpleGraphSpatialEdgeSearchTest extends JPanel {
                 MultiLayerTransformer multiLayerTransformer =
                     vv.getRenderContext().getMultiLayerTransformer();
                 Point2D layoutPoint = multiLayerTransformer.inverseTransform(e.getX(), e.getY());
-                Number edge = vv.getEdgeSpatial().getClosestElement(layoutPoint);
+                Integer edge = vv.getEdgeSpatial().getClosestElement(layoutPoint);
                 if (edge != null) {
                   vv.getSelectedEdgeState().clear();
                   vv.getSelectedEdgeState().select(edge);
@@ -141,8 +141,8 @@ public class SimpleGraphSpatialEdgeSearchTest extends JPanel {
   }
 
   public void testClosestVertices(
-      VisualizationViewer<String, Number> vv,
-      Graph<String, Number> graph,
+      VisualizationViewer<String, Integer> vv,
+      Graph<String, Integer> graph,
       LayoutModel<String> layoutModel,
       Spatial<String> tree) {
     vv.getSelectedVertexState().clear();

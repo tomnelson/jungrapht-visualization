@@ -46,15 +46,15 @@ public class MinimumSpanningTreeDemo extends JPanel {
   private static final Logger log = LoggerFactory.getLogger(MinimumSpanningTreeDemo.class);
 
   /** the graph */
-  Graph<String, Number> graph;
+  Graph<String, Integer> graph;
 
-  Graph<String, Number> tree;
+  Graph<String, Integer> tree;
 
   /** the visual components and renderers for the graph */
-  VisualizationViewer<String, Number> vv0;
+  VisualizationViewer<String, Integer> vv0;
 
-  VisualizationViewer<String, Number> vv1;
-  VisualizationViewer<String, Number> vv2;
+  VisualizationViewer<String, Integer> vv1;
+  VisualizationViewer<String, Integer> vv2;
 
   Dimension preferredSize = new Dimension(300, 300);
   Dimension preferredSizeRect = new Dimension(1100, 300);
@@ -75,19 +75,19 @@ public class MinimumSpanningTreeDemo extends JPanel {
     LayoutAlgorithm<String> staticLayoutAlgorithm = new StaticLayoutAlgorithm<>();
 
     // create the models, each with a different layout
-    VisualizationModel<String, Number> vm0 =
+    VisualizationModel<String, Integer> vm0 =
         VisualizationModel.builder(graph)
             .layoutAlgorithm(kkLayoutAlgorithm)
             .layoutSize(preferredSize)
             .build();
-    VisualizationModel<String, Number> vm1 =
+    VisualizationModel<String, Integer> vm1 =
         VisualizationModel.builder(tree)
             .layoutAlgorithm(treeLayoutAlgorithm)
             .layoutSize(preferredSizeRect)
             .build();
     // initializer is the layout model for vm1
     // and the size is also set to the same size required for the Tree in treeLayoutAlgorithm
-    VisualizationModel<String, Number> vm2 =
+    VisualizationModel<String, Integer> vm2 =
         VisualizationModel.builder(graph)
             .layoutAlgorithm(staticLayoutAlgorithm)
             .initializer(vm1.getLayoutModel())
@@ -131,7 +131,7 @@ public class MinimumSpanningTreeDemo extends JPanel {
     vv1.setSelectedVertexState(ps);
     vv2.setSelectedVertexState(ps);
 
-    MutableSelectedState<Number> pes = new MultiMutableSelectedState<>();
+    MutableSelectedState<Integer> pes = new MultiMutableSelectedState<>();
     vv0.setSelectedEdgeState(pes);
     vv1.setSelectedEdgeState(pes);
     vv2.setSelectedEdgeState(pes);
@@ -191,9 +191,9 @@ public class MinimumSpanningTreeDemo extends JPanel {
     add(panel);
 
     // create a GraphMouse for each view
-    DefaultModalGraphMouse<String, Number> gm0 = new DefaultModalGraphMouse<>();
-    DefaultModalGraphMouse<String, Number> gm1 = new DefaultModalGraphMouse<>();
-    DefaultModalGraphMouse<String, Number> gm2 = new DefaultModalGraphMouse<>();
+    DefaultModalGraphMouse<String, Integer> gm0 = new DefaultModalGraphMouse<>();
+    DefaultModalGraphMouse<String, Integer> gm1 = new DefaultModalGraphMouse<>();
+    DefaultModalGraphMouse<String, Integer> gm2 = new DefaultModalGraphMouse<>();
 
     vv0.setGraphMouse(gm0);
     vv1.setGraphMouse(gm1);

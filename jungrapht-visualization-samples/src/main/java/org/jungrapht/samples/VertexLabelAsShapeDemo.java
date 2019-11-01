@@ -36,9 +36,9 @@ public class VertexLabelAsShapeDemo extends JPanel {
   /** */
   private static final long serialVersionUID = 1017336668368978842L;
 
-  Graph<String, Number> graph;
+  Graph<String, Integer> graph;
 
-  VisualizationViewer<String, Number> vv;
+  VisualizationViewer<String, Integer> vv;
 
   LayoutAlgorithm<String> layoutAlgorithm;
 
@@ -52,7 +52,7 @@ public class VertexLabelAsShapeDemo extends JPanel {
     layoutAlgorithm = FRLayoutAlgorithm.<String>builder().build();
 
     Dimension preferredSize = new Dimension(400, 400);
-    final VisualizationModel<String, Number> visualizationModel =
+    final VisualizationModel<String, Integer> visualizationModel =
         VisualizationModel.builder(graph)
             .layoutAlgorithm(layoutAlgorithm)
             .layoutSize(preferredSize)
@@ -60,7 +60,7 @@ public class VertexLabelAsShapeDemo extends JPanel {
     vv = VisualizationViewer.builder(visualizationModel).viewSize(preferredSize).build();
 
     // this class will provide both label drawing and vertex shapes
-    VertexLabelAsShapeRenderer<String, Number> vlasr =
+    VertexLabelAsShapeRenderer<String, Integer> vlasr =
         new VertexLabelAsShapeRenderer<>(visualizationModel, vv.getRenderContext());
 
     // customize the render context
@@ -83,7 +83,7 @@ public class VertexLabelAsShapeDemo extends JPanel {
     // add a listener for ToolTips
     vv.setVertexToolTipFunction(n -> n);
 
-    final DefaultModalGraphMouse<String, Number> graphMouse = new DefaultModalGraphMouse<>();
+    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
 
     vv.setGraphMouse(graphMouse);
     vv.addKeyListener(graphMouse.getModeKeyListener());

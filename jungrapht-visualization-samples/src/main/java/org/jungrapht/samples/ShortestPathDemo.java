@@ -16,6 +16,7 @@ import org.jgrapht.alg.shortestpath.BFSShortestPath;
 import org.jgrapht.generate.BarabasiAlbertGraphGenerator;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.AbstractModalGraphMouse;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
@@ -36,7 +37,7 @@ public class ShortestPathDemo extends JPanel {
   /** Ending vertex */
   private String toVertex;
 
-  private Graph<String, Number> graph;
+  private Graph<String, Integer> graph;
   private Set<String> path = new HashSet<>();
 
   private final Stroke THIN = new BasicStroke(1);
@@ -48,7 +49,7 @@ public class ShortestPathDemo extends JPanel {
     setBackground(Color.WHITE);
 
     final LayoutAlgorithm<String> layoutAlgorithm = FRLayoutAlgorithm.<String>builder().build();
-    final VisualizationViewer<String, Number> vv =
+    final VisualizationViewer<String, Integer> vv =
         VisualizationViewer.builder(graph)
             .layoutAlgorithm(layoutAlgorithm)
             .viewSize(new Dimension(1000, 1000))
@@ -120,9 +121,9 @@ public class ShortestPathDemo extends JPanel {
             }
 
             // for all edges, paint edges that are in shortest path
-            for (Number e : graph.edgeSet()) {
+            for (Integer e : graph.edgeSet()) {
               if (onShortestPath(e)) {
-                Renderer<String, Number> renderer = vv.getRenderer();
+                Renderer<String, Integer> renderer = vv.getRenderer();
                 renderer.renderEdge(vv.getRenderContext(), vv.getVisualizationModel(), e);
               }
             }
@@ -183,7 +184,7 @@ public class ShortestPathDemo extends JPanel {
     }
   }
 
-  private boolean onShortestPath(Number e) {
+  private boolean onShortestPath(Integer e) {
     String v1 = graph.getEdgeSource(e);
     String v2 = graph.getEdgeTarget(e);
     return !v1.equals(v2) && path.contains(v1) && path.contains(v2);
@@ -197,8 +198,8 @@ public class ShortestPathDemo extends JPanel {
       return;
     }
     path.clear();
-    BFSShortestPath<String, Number> bfsShortestPath = new BFSShortestPath<>(this.graph);
-    GraphPath<String, Number> path = bfsShortestPath.getPath(fromVertex, toVertex);
+    BFSShortestPath<String, Integer> bfsShortestPath = new BFSShortestPath<>(this.graph);
+    GraphPath<String, Integer> path = bfsShortestPath.getPath(fromVertex, toVertex);
     this.path.addAll(path.getVertexList());
     repaint();
   }
@@ -212,14 +213,15 @@ public class ShortestPathDemo extends JPanel {
   }
 
   /** @return the graph for this demo */
-  private Graph<String, Number> getGraph() {
-    Graph<String, Number> graph =
-        GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.pseudograph())
+  private Graph<String, Integer> getGraph() {
+    Graph<String, Integer> graph =
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.pseudograph())
             .vertexSupplier(new VertexSupplier())
-            .edgeSupplier(new EdgeSupplier())
+            .edgeSupplier(SupplierUtil.createIntegerSupplier())
             .buildGraph();
 
-    BarabasiAlbertGraphGenerator<String, Number> gen = new BarabasiAlbertGraphGenerator<>(4, 3, 20);
+    BarabasiAlbertGraphGenerator<String, Integer> gen =
+        new BarabasiAlbertGraphGenerator<>(4, 3, 20);
     gen.generateGraph(graph, null);
     return graph;
   }
@@ -229,14 +231,6 @@ public class ShortestPathDemo extends JPanel {
 
     public String get() {
       return Character.toString(a++);
-    }
-  }
-
-  static class EdgeSupplier implements Supplier<Number> {
-    int count;
-
-    public Number get() {
-      return count++;
     }
   }
 }

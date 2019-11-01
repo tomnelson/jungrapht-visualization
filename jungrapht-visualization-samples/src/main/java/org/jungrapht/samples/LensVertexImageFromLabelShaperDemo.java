@@ -58,10 +58,10 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
   private static final long serialVersionUID = 5432239991020505763L;
 
   /** the graph */
-  Graph<String, Number> graph;
+  Graph<String, Integer> graph;
 
   /** the visual component and renderer for the graph */
-  VisualizationViewer<String, Number> vv;
+  VisualizationViewer<String, Integer> vv;
 
   LensSupport<LensGraphMouse> magnifyLayoutSupport;
   LensSupport<LensGraphMouse> magnifyViewSupport;
@@ -168,10 +168,10 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
 
-    final DefaultGraphMouse<String, Number> graphMouse = new DefaultGraphMouse<>();
+    final DefaultGraphMouse<String, Integer> graphMouse = new DefaultGraphMouse<>();
     vv.setGraphMouse(graphMouse);
 
-    Renderer<String, Number> renderer = vv.getRenderer();
+    Renderer<String, Integer> renderer = vv.getRenderer();
     if (renderer instanceof ModalRenderer) {
       ModalRenderer modalRenderer = (ModalRenderer) renderer;
       LightweightVertexRenderer lightweightVertexRenderer =

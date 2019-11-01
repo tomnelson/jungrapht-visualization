@@ -14,6 +14,7 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
@@ -26,9 +27,9 @@ import org.jungrapht.visualization.util.helpers.ControlHelpers;
  */
 public class MinimalVisualization {
 
-  Graph<Integer, Number> graph;
+  Graph<Integer, Integer> graph;
 
-  VisualizationViewer<Integer, Number> vv;
+  VisualizationViewer<Integer, Integer> vv;
 
   public MinimalVisualization() {
 
@@ -62,30 +63,32 @@ public class MinimalVisualization {
     frame.setVisible(true);
   }
 
-  Graph<Integer, Number> createGraph() {
-    Graph<Integer, Number> graph =
-        GraphTypeBuilder.<Integer, Number>forGraphType(DefaultGraphType.dag()).buildGraph();
+  Graph<Integer, Integer> createGraph() {
+    Graph<Integer, Integer> graph =
+        GraphTypeBuilder.<Integer, Integer>forGraphType(DefaultGraphType.dag())
+            .edgeSupplier(SupplierUtil.createIntegerSupplier())
+            .buildGraph();
 
     IntStream.rangeClosed(0, 10).forEach(graph::addVertex);
-    graph.addEdge(0, 1, Math.random());
-    graph.addEdge(3, 0, Math.random());
-    graph.addEdge(0, 4, Math.random());
-    graph.addEdge(4, 5, Math.random());
-    graph.addEdge(5, 3, Math.random());
-    graph.addEdge(2, 1, Math.random());
-    graph.addEdge(4, 1, Math.random());
-    graph.addEdge(8, 2, Math.random());
-    graph.addEdge(3, 8, Math.random());
-    graph.addEdge(6, 7, Math.random());
-    graph.addEdge(7, 5, Math.random());
-    graph.addEdge(0, 9, Math.random());
-    graph.addEdge(9, 8, Math.random());
-    graph.addEdge(7, 6, Math.random());
-    graph.addEdge(6, 5, Math.random());
-    graph.addEdge(4, 2, Math.random());
-    graph.addEdge(5, 4, Math.random());
-    graph.addEdge(4, 10, Math.random());
-    graph.addEdge(10, 4, Math.random());
+    graph.addEdge(0, 1);
+    graph.addEdge(3, 0);
+    graph.addEdge(0, 4);
+    graph.addEdge(4, 5);
+    graph.addEdge(5, 3);
+    graph.addEdge(2, 1);
+    graph.addEdge(4, 1);
+    graph.addEdge(8, 2);
+    graph.addEdge(3, 8);
+    graph.addEdge(6, 7);
+    graph.addEdge(7, 5);
+    graph.addEdge(0, 9);
+    graph.addEdge(9, 8);
+    graph.addEdge(7, 6);
+    graph.addEdge(6, 5);
+    graph.addEdge(4, 2);
+    graph.addEdge(5, 4);
+    graph.addEdge(4, 10);
+    graph.addEdge(10, 4);
 
     return graph;
   }

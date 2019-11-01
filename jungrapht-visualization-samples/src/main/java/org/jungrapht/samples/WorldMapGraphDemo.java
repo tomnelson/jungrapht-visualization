@@ -21,6 +21,7 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -44,10 +45,10 @@ import org.jungrapht.visualization.util.helpers.ControlHelpers;
 public class WorldMapGraphDemo extends JPanel {
 
   /** the graph */
-  Graph<String, Number> graph;
+  Graph<String, Integer> graph;
 
   /** the visual component and renderer for the graph */
-  VisualizationViewer<String, Number> vv;
+  VisualizationViewer<String, Integer> vv;
 
   List<String> cityList;
 
@@ -75,7 +76,7 @@ public class WorldMapGraphDemo extends JPanel {
 
     Function<String, Point> initializer =
         new CityTransformer(map).andThen(new LatLonPixelTransformer(new Dimension(2000, 1000)));
-    VisualizationModel<String, Number> model =
+    VisualizationModel<String, Integer> model =
         VisualizationModel.builder(graph)
             .layoutAlgorithm(layoutAlgorithm)
             .initializer(initializer)
@@ -144,7 +145,7 @@ public class WorldMapGraphDemo extends JPanel {
 
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
-    final VisualizationViewer.GraphMouse graphMouse = new DefaultGraphMouse<String, Number>();
+    final VisualizationViewer.GraphMouse graphMouse = new DefaultGraphMouse<String, Integer>();
     vv.setGraphMouse(graphMouse);
 
     vv.setToolTipText("<html><center>Type 'p' for Pick mode<p>Type 't' for Transform mode");
@@ -195,16 +196,17 @@ public class WorldMapGraphDemo extends JPanel {
     return map;
   }
 
-  private Graph<String, Number> buildGraph(Map<String, String[]> map) {
-    Graph<String, Number> graph =
-        GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.directedPseudograph())
+  private Graph<String, Integer> buildGraph(Map<String, String[]> map) {
+    Graph<String, Integer> graph =
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.directedPseudograph())
+            .edgeSupplier(SupplierUtil.createIntegerSupplier())
             .buildGraph();
 
     for (String city : map.keySet()) {
       graph.addVertex(city);
     }
     for (int i = 0; i < map.keySet().size() * 1.3; i++) {
-      graph.addEdge(randomCity(), randomCity(), Math.random());
+      graph.addEdge(randomCity(), randomCity());
     }
     return graph;
   }

@@ -13,8 +13,8 @@ public class LayoutAlgorithmTransitionTest {
 
   @Test
   public void testTransition() {
-    Graph<String, Number> graph =
-        GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.simple()).buildGraph();
+    Graph<String, Integer> graph =
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.simple()).buildGraph();
     graph.addVertex("A");
     LayoutModel<String> model =
         LoadingCacheLayoutModel.<String>builder().graph(graph).size(100, 100).build();

@@ -34,12 +34,12 @@ import org.jungrapht.visualization.util.helpers.ControlHelpers;
 public class VertexLabelPositionDemo extends JPanel {
 
   /** the graph */
-  Graph<String, Number> graph;
+  Graph<String, Integer> graph;
 
   FRLayoutAlgorithm<String> graphLayoutAlgorithm;
 
   /** the visual component and renderer for the graph */
-  VisualizationViewer<String, Number> vv;
+  VisualizationViewer<String, Integer> vv;
 
   /** create an instance of a simple graph with controls to demo the zoomand hyperbolic features. */
   public VertexLabelPositionDemo() {
@@ -53,7 +53,7 @@ public class VertexLabelPositionDemo extends JPanel {
 
     Dimension preferredSize = new Dimension(600, 600);
 
-    final VisualizationModel<String, Number> visualizationModel =
+    final VisualizationModel<String, Integer> visualizationModel =
         VisualizationModel.builder(graph)
             .layoutAlgorithm(graphLayoutAlgorithm)
             .layoutSize(preferredSize)
@@ -61,7 +61,7 @@ public class VertexLabelPositionDemo extends JPanel {
     vv = VisualizationViewer.builder(visualizationModel).viewSize(preferredSize).build();
 
     MutableSelectedState<String> ps = vv.getSelectedVertexState();
-    MutableSelectedState<Number> pes = vv.getSelectedEdgeState();
+    MutableSelectedState<Integer> pes = vv.getSelectedEdgeState();
     vv.getRenderContext()
         .setVertexFillPaintFunction(
             new PickableElementPaintFunction<>(ps, Color.red, Color.yellow));

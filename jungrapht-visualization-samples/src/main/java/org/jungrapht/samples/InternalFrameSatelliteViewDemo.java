@@ -57,12 +57,12 @@ public class InternalFrameSatelliteViewDemo {
           + "<li>Mousewheel scales the layout &gt; 1 and scales the view &lt; 1";
 
   /** the graph */
-  Graph<String, Number> graph;
+  Graph<String, Integer> graph;
 
   /** the visual component and renderer for the graph */
-  VisualizationViewer<String, Number> vv;
+  VisualizationViewer<String, Integer> vv;
 
-  VisualizationViewer<String, Number> satellite;
+  VisualizationViewer<String, Integer> satellite;
 
   JInternalFrame dialog;
 
@@ -91,7 +91,7 @@ public class InternalFrameSatelliteViewDemo {
 
     // add my listener for ToolTips
     vv.setVertexToolTipFunction(Object::toString);
-    final DefaultModalGraphMouse<String, Number> graphMouse = new DefaultModalGraphMouse<>();
+    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
     vv.setGraphMouse(graphMouse);
 
     satellite = SatelliteVisualizationViewer.builder(vv).viewSize(new Dimension(200, 200)).build();

@@ -40,7 +40,7 @@ import org.jungrapht.visualization.util.helpers.SpanningTreeAdapter;
 @SuppressWarnings("serial")
 public class ShowLayouts extends JPanel {
 
-  protected static Graph<String, Number>[] g_array;
+  protected static Graph<String, Integer>[] g_array;
   protected static int graph_index;
   protected static String[] graph_names = {
     "Two component graph",
@@ -66,8 +66,8 @@ public class ShowLayouts extends JPanel {
     g_array[3] = TestGraphs.getOneComponentGraph();
     g_array[4] = TestGraphs.createChainPlusIsolates(18, 5);
     g_array[5] = TestGraphs.createChainPlusIsolates(0, 20);
-    Graph<String, Number> graph =
-        GraphTypeBuilder.<String, Number>forGraphType(DefaultGraphType.directedMultigraph())
+    Graph<String, Integer> graph =
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.directedMultigraph())
             .buildGraph();
 
     graph.addVertex("A");
@@ -79,10 +79,10 @@ public class ShowLayouts extends JPanel {
     g_array[6] = graph;
     g_array[7] = TestGraphs.getGeneratedBipartiteGraph();
 
-    Graph<String, Number> g = g_array[3]; // initial graph
+    Graph<String, Integer> g = g_array[3]; // initial graph
 
-    final VisualizationViewer<String, Number> vv =
-        VisualizationViewer.<String, Number>builder().build();
+    final VisualizationViewer<String, Integer> vv =
+        VisualizationViewer.<String, Integer>builder().build();
 
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
 

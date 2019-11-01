@@ -7,6 +7,7 @@ import java.awt.Shape;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jungrapht.visualization.RenderContext;
@@ -39,8 +40,8 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       V, E, T extends SugiyamaRunnable<V, E>, B extends Builder<V, E, T, B>> {
     protected LayoutModel<V> layoutModel;
     protected RenderContext<V, E> renderContext;
-    protected Predicate<V> vertexPredicate = v -> true;
-    protected Predicate<E> edgePredicate = e -> true;
+    protected Predicate<V> vertexPredicate; // can be null
+    protected Predicate<E> edgePredicate; // can be null
     protected Comparator<V> vertexComparator = (v1, v2) -> 0;
     protected Comparator<E> edgeComparator = (e1, e2) -> 0;
 
@@ -358,7 +359,6 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     int sanityLimit = Integer.getInteger(PREFIX + "sugiyama.transpose.limit", 10);
     int sanityCheck = 0;
     while (improved) {
-      //      log.trace("{} improvements so far", improvements);
       improvements = 0;
       improved = false;
       for (int i = 0; i < ranks.size(); i++) {
@@ -431,24 +431,11 @@ public class SugiyamaRunnable<V, E> implements Runnable {
   int crossing(SV<V> v, SV<V> w, List<SE<V, E>> edges) {
 
     List<Integer> targetIndices = new LinkedList<>();
-    // get all edges that start with v
-    //    edges
-    //        .stream()
-    //        .filter(e -> e.source.equals(v))
-    //        .map(e -> e.target.getIndex())
-    //        .forEach(targetIndices::add);
     for (SE<V, E> edge : edges) {
       if (edge.source.equals(v) || edge.source.equals(w)) {
         targetIndices.add(edge.target.getIndex());
       }
     }
-
-    //    edges
-    //        .stream()
-    //        .filter(e -> e.source.equals(w))
-    //        .map(e -> e.target.getIndex())
-    //        .forEach(targetIndices::add);
-
     return this.insertionSortCounter(targetIndices);
   }
 
@@ -465,7 +452,17 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     }
   }
 
-  private void position(
+  /**
+   * for every vertex in a layer, place the vertex at the position of the median of the source
+   * vertices for its incoming edges. TODO: Override to instead place the vertex at the same
+   * position as the position of the source vertex of a 'favored' edge type or a 'favored' source
+   * vertex (vertex/edge predicate)
+   *
+   * @param layer
+   * @param previousLayer
+   * @param svGraph
+   */
+  protected void position(
       List<SV<V>> layer, List<SV<V>> previousLayer, Graph<SV<V>, SE<V, E>> svGraph) {
     Map<SV<V>, Integer> pos = new HashMap<>();
     for (SV<V> v : layer) {
@@ -502,19 +499,36 @@ public class SugiyamaRunnable<V, E> implements Runnable {
    * @return
    */
   int[] adjacentPositions(SV<V> v, List<SV<V>> previousLayer, Graph<SV<V>, SE<V, E>> svGraph) {
-    List<SV<V>> predecessors = Graphs.predecessorListOf(svGraph, v);
+    Predicate<SE<V, E>> sePredicate = null;
+    Predicate<SV<V>> vPredicate = null;
+    if (edgePredicate != null) {
+      sePredicate = se -> edgePredicate.test(se.edge);
+    }
+    if (vertexPredicate != null) {
+      vPredicate = sv -> vertexPredicate.test(sv.vertex);
+    }
+    List<SV<V>> predecessors;
+    if (sePredicate != null) {
+      predecessors =
+          svGraph
+              .incomingEdgesOf(v)
+              .stream()
+              .filter(sePredicate)
+              .map(e -> svGraph.getEdgeSource(e))
+              .collect(Collectors.toList());
+    } else {
+      predecessors = Graphs.predecessorListOf(svGraph, v);
+    }
+
+    if (vPredicate != null) {
+      predecessors = predecessors.stream().filter(vPredicate).collect(Collectors.toList());
+    }
+
     // sanity check:
     //    for (SV<V> p : predecessors) {
     //      assert previousLayer.indexOf(p) == p.getIndex();
     //    }
     // end sanity check
-    //    return predecessors
-    //        .stream()
-    //        .map(p -> p.getIndex())
-    //        //        .map(p -> previousLayer.indexOf(p))
-    //        .filter(idx -> idx != -1)
-    //        .mapToInt(i -> i)
-    //        .toArray();
     List<Integer> indexList = new ArrayList<>();
     for (SV<V> p : predecessors) {
       if (p.getIndex() != -1) {

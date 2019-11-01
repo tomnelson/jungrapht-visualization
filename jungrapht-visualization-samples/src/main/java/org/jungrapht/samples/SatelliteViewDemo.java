@@ -79,7 +79,7 @@ public class SatelliteViewDemo extends JPanel {
 
     setLayout(new BorderLayout());
     // create a simple graph for the demo
-    Graph<String, Number> graph = TestGraphs.getOneComponentGraph();
+    Graph<String, Integer> graph = TestGraphs.getOneComponentGraph();
 
     // the preferred sizes for the two views
     Dimension preferredSize1 = new Dimension(1000, 1000);
@@ -92,16 +92,16 @@ public class SatelliteViewDemo extends JPanel {
     layoutAlgorithm.setMaxIterations(500);
 
     // create one model that both views will share
-    VisualizationModel<String, Number> vm =
+    VisualizationModel<String, Integer> vm =
         VisualizationModel.builder(graph)
             .layoutAlgorithm(layoutAlgorithm)
             .layoutSize(layoutSize)
             .build();
 
     // create 2 views that share the same model
-    final VisualizationViewer<String, Number> mainVisualizationViewer =
+    final VisualizationViewer<String, Integer> mainVisualizationViewer =
         VisualizationViewer.builder(vm).viewSize(preferredSize1).build();
-    final SatelliteVisualizationViewer<String, Number> satelliteVisualizationViewer =
+    final SatelliteVisualizationViewer<String, Integer> satelliteVisualizationViewer =
         SatelliteVisualizationViewer.builder(mainVisualizationViewer)
             .viewSize(preferredSize2)
             .transparent(true)
@@ -180,7 +180,7 @@ public class SatelliteViewDemo extends JPanel {
     helpDialog.getContentPane().add(new JLabel(instructions));
 
     // create a GraphMouse for the main view
-    final DefaultModalGraphMouse<String, Number> graphMouse = new DefaultModalGraphMouse<>();
+    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
     mainVisualizationViewer.setGraphMouse(graphMouse);
 
     JComboBox<?> modeBox = graphMouse.getModeComboBox();

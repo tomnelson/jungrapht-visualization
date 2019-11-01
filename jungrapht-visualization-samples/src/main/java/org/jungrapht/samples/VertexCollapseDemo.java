@@ -48,7 +48,6 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-@SuppressWarnings({"serial", "rawtypes", "unchecked"})
 public class VertexCollapseDemo extends JPanel {
 
   private static final Logger log = LoggerFactory.getLogger(VertexCollapseDemo.class);
@@ -72,29 +71,29 @@ public class VertexCollapseDemo extends JPanel {
           + "<p>Use the 'Picking'/'Transforming' combo-box to switch"
           + "<p>between picking and transforming mode.</html>";
   /** the graph */
-  Graph<Collapsable<?>, Number> graph;
+  Graph<Collapsable<?>, Integer> graph;
 
   /** the visual component and renderer for the graph */
-  VisualizationViewer<Collapsable<?>, Number> vv;
+  VisualizationViewer<Collapsable<?>, Integer> vv;
 
   LayoutAlgorithm<Collapsable<?>> layoutAlgorithm;
 
-  GraphCollapser<Number> collapser;
+  GraphCollapser<Integer> collapser;
 
   public VertexCollapseDemo() {
 
     setLayout(new BorderLayout());
 
     // create a simple graph for the demo
-    Graph<String, Number> generatedGraph = TestGraphs.getOneComponentGraph();
+    Graph<String, Integer> generatedGraph = TestGraphs.getOneComponentGraph();
     // make a pseudograph with Collapsable vertex types
     // the graph has to allow self loops and parallel edges in order to
     // be collapsed and expanded without losing edges
     this.graph =
-        GraphTypeBuilder.<Collapsable<?>, Number>forGraphType(DefaultGraphType.pseudograph())
+        GraphTypeBuilder.<Collapsable<?>, Integer>forGraphType(DefaultGraphType.pseudograph())
             .buildGraph();
     // add vertices and edges to the new graph
-    for (Number edge : generatedGraph.edgeSet()) {
+    for (Integer edge : generatedGraph.edgeSet()) {
       Collapsable<?> source = Collapsable.of(generatedGraph.getEdgeSource(edge));
       Collapsable<?> target = Collapsable.of(generatedGraph.getEdgeTarget(edge));
       this.graph.addVertex(source);
@@ -108,7 +107,7 @@ public class VertexCollapseDemo extends JPanel {
 
     Dimension preferredSize = new Dimension(400, 400);
 
-    final VisualizationModel<Collapsable<?>, Number> visualizationModel =
+    final VisualizationModel<Collapsable<?>, Integer> visualizationModel =
         VisualizationModel.builder(graph)
             .layoutAlgorithm(layoutAlgorithm)
             .layoutSize(preferredSize)
@@ -149,13 +148,13 @@ public class VertexCollapseDemo extends JPanel {
                   Collection<Collapsable<?>> picked =
                       new HashSet(vv.getSelectedVertexState().getSelected());
                   if (picked.size() > 1) {
-                    Graph<Collapsable<?>, Number> inGraph = vv.getVisualizationModel().getGraph();
+                    Graph<Collapsable<?>, Integer> inGraph = vv.getVisualizationModel().getGraph();
                     LayoutModel<Collapsable<?>> layoutModel =
                         vv.getVisualizationModel().getLayoutModel();
-                    Graph<Collapsable<?>, Number> clusterGraph =
+                    Graph<Collapsable<?>, Integer> clusterGraph =
                         collapser.getClusterGraph(inGraph, picked);
                     log.trace("clusterGraph:" + clusterGraph);
-                    Graph<Collapsable<?>, Number> g = collapser.collapse(inGraph, clusterGraph);
+                    Graph<Collapsable<?>, Integer> g = collapser.collapse(inGraph, clusterGraph);
                     log.trace("g:" + g);
 
                     double sumx = 0;
@@ -191,12 +190,13 @@ public class VertexCollapseDemo extends JPanel {
                       new HashSet(vv.getSelectedVertexState().getSelected());
                   for (Collapsable<?> v : picked) {
                     if (v.get() instanceof Graph) {
-                      Graph<Collapsable<?>, Number> inGraph = vv.getVisualizationModel().getGraph();
+                      Graph<Collapsable<?>, Integer> inGraph =
+                          vv.getVisualizationModel().getGraph();
                       LayoutModel<Collapsable<?>> layoutModel =
                           vv.getVisualizationModel().getLayoutModel();
-                      Graph<Collapsable<?>, Number> g =
+                      Graph<Collapsable<?>, Integer> g =
                           collapser.expand(
-                              graph, inGraph, (Collapsable<Graph<Collapsable<?>, Number>>) v);
+                              graph, inGraph, (Collapsable<Graph<Collapsable<?>, Integer>>) v);
 
                       layoutModel.lock(false);
                       vv.getVisualizationModel().setGraph(g);

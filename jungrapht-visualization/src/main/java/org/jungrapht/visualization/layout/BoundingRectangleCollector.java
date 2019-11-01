@@ -2,6 +2,7 @@ package org.jungrapht.visualization.layout;
 
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -20,6 +21,8 @@ import org.slf4j.LoggerFactory;
  * @param <T> the type to collect bounds for, either vertices or edges (see subclasses)
  */
 public abstract class BoundingRectangleCollector<T> {
+
+  private static final Logger log = LoggerFactory.getLogger(BoundingRectangleCollector.class);
 
   protected RenderContext rc;
   protected VisualizationModel visualizationModel;
@@ -220,7 +223,11 @@ public abstract class BoundingRectangleCollector<T> {
         float theta = (float) Math.atan2(dy, dx);
         xform.rotate(theta);
         float dist = (float) p1.distance(p2);
-        xform.scale(dist, 1.0);
+        if (edgeShape instanceof Path2D) {
+          xform.scale(dist, dist);
+        } else {
+          xform.scale(dist, 1.0);
+        }
       }
       edgeShape = xform.createTransformedShape(edgeShape);
       return nonEmpty(edgeShape.getBounds2D(), NON_EMPTY_DELTA);
@@ -258,7 +265,11 @@ public abstract class BoundingRectangleCollector<T> {
         float theta = (float) Math.atan2(dy, dx);
         xform.rotate(theta);
         float dist = (float) p1.distance(p2);
-        xform.scale(dist, 1.0);
+        if (edgeShape instanceof Path2D) {
+          xform.scale(dist, dist);
+        } else {
+          xform.scale(dist, 1.0);
+        }
       }
       edgeShape = xform.createTransformedShape(edgeShape);
       return nonEmpty(edgeShape.getBounds2D(), NON_EMPTY_DELTA);
@@ -296,9 +307,14 @@ public abstract class BoundingRectangleCollector<T> {
           float theta = (float) Math.atan2(dy, dx);
           xform.rotate(theta);
           float dist = (float) p1.distance(p2);
-          xform.scale(dist, 1.0);
+          if (edgeShape instanceof Path2D) {
+            xform.scale(dist, dist);
+          } else {
+            xform.scale(dist, 1.0);
+          }
         }
         edgeShape = xform.createTransformedShape(edgeShape);
+        log.info("edge Shape: {} bounded by {}", edgeShape, edgeShape.getBounds2D());
         rectangles.add(nonEmpty(edgeShape.getBounds2D(), NON_EMPTY_DELTA));
       }
     }

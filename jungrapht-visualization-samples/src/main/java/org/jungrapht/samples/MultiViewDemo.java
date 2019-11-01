@@ -44,13 +44,13 @@ import org.jungrapht.visualization.selection.ShapePickSupport;
 public class MultiViewDemo extends JPanel {
 
   /** the graph */
-  Graph<String, Number> graph;
+  Graph<String, Integer> graph;
 
   /** the visual components and renderers for the graph */
-  VisualizationViewer<String, Number> vv1;
+  VisualizationViewer<String, Integer> vv1;
 
-  VisualizationViewer<String, Number> vv2;
-  VisualizationViewer<String, Number> vv3;
+  VisualizationViewer<String, Integer> vv2;
+  VisualizationViewer<String, Integer> vv3;
 
   Dimension preferredSize = new Dimension(300, 300);
 
@@ -86,7 +86,7 @@ public class MultiViewDemo extends JPanel {
     layoutAlgorithm.setMaxIterations(1000);
 
     // create one model that all 3 views will share
-    VisualizationModel<String, Number> visualizationModel =
+    VisualizationModel<String, Integer> visualizationModel =
         VisualizationModel.builder(graph)
             .layoutAlgorithm(layoutAlgorithm)
             .layoutSize(preferredSize)
@@ -118,13 +118,13 @@ public class MultiViewDemo extends JPanel {
     vv3.setBackground(Color.white);
 
     // create one pick support for all 3 views to share
-    GraphElementAccessor<String, Number> pickSupport = new ShapePickSupport<>(vv1);
+    GraphElementAccessor<String, Integer> pickSupport = new ShapePickSupport<>(vv1);
     vv1.setPickSupport(pickSupport);
     vv2.setPickSupport(pickSupport);
     vv3.setPickSupport(pickSupport);
 
     // create one selected state for all 3 views to share
-    MutableSelectedState<Number> pes = new MultiMutableSelectedState<>();
+    MutableSelectedState<Integer> pes = new MultiMutableSelectedState<>();
     MutableSelectedState<String> pvs = new MultiMutableSelectedState<>();
     vv1.setSelectedVertexState(pvs);
     vv2.setSelectedVertexState(pvs);
@@ -189,11 +189,11 @@ public class MultiViewDemo extends JPanel {
 
     // create a GraphMouse for each view
     // each one has a different scaling plugin
-    DefaultModalGraphMouse<String, Number> gm1 =
+    DefaultModalGraphMouse<String, Integer> gm1 =
         new DefaultModalGraphMouse<>() {
           protected void loadPlugins() {
-            pickingPlugin = new SelectingGraphMousePlugin<String, Number>();
-            animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<String, Number>();
+            pickingPlugin = new SelectingGraphMousePlugin<String, Integer>();
+            animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<String, Integer>();
             translatingPlugin = new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
             scalingPlugin = new ScalingGraphMousePlugin(new LayoutScalingControl(), 0);
             rotatingPlugin = new RotatingGraphMousePlugin();
@@ -204,11 +204,11 @@ public class MultiViewDemo extends JPanel {
           }
         };
 
-    DefaultModalGraphMouse<String, Number> gm2 =
+    DefaultModalGraphMouse<String, Integer> gm2 =
         new DefaultModalGraphMouse<>() {
           protected void loadPlugins() {
-            pickingPlugin = new SelectingGraphMousePlugin<String, Number>();
-            animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<String, Number>();
+            pickingPlugin = new SelectingGraphMousePlugin<String, Integer>();
+            animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<String, Integer>();
             translatingPlugin = new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
             scalingPlugin = new ScalingGraphMousePlugin(new ViewScalingControl(), 0);
             rotatingPlugin = new RotatingGraphMousePlugin();
@@ -219,7 +219,7 @@ public class MultiViewDemo extends JPanel {
           }
         };
 
-    DefaultModalGraphMouse<String, Number> gm3 = new DefaultModalGraphMouse<>() {};
+    DefaultModalGraphMouse<String, Integer> gm3 = new DefaultModalGraphMouse<>() {};
 
     vv1.setGraphMouse(gm1);
     vv2.setGraphMouse(gm2);
@@ -271,9 +271,9 @@ public class MultiViewDemo extends JPanel {
     int swidth;
     int sheight;
     String str;
-    VisualizationViewer<String, Number> vv;
+    VisualizationViewer<String, Integer> vv;
 
-    public BannerLabel(VisualizationViewer<String, Number> vv, String label) {
+    public BannerLabel(VisualizationViewer<String, Integer> vv, String label) {
       this.vv = vv;
       this.str = label;
     }

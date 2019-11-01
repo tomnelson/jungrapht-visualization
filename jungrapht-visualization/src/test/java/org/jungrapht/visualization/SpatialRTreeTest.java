@@ -28,17 +28,17 @@ public class SpatialRTreeTest {
 
   private static final Logger log = LoggerFactory.getLogger(SpatialRTreeTest.class);
 
-  Graph<String, Number> graph;
+  Graph<String, Integer> graph;
   LayoutModel<String> layoutModel;
   Spatial<String> tree;
 
   @Before
   public void setup() {
     // generate 100 random nodes in a graph at random locations in the layoutModel
-    this.graph = Pseudograph.<String, Number>createBuilder(Number.class).build();
+    this.graph = Pseudograph.<String, Integer>createBuilder(Integer.class).build();
     IntStream.range(0, 10).mapToObj(i -> "N" + i).forEach(graph::addVertex);
 
-    VisualizationServer<String, Number> vv =
+    VisualizationServer<String, Integer> vv =
         VisualizationServer.builder(graph)
             .layoutAlgorithm(new StaticLayoutAlgorithm())
             .viewSize(new Dimension(600, 600))
