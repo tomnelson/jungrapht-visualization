@@ -232,7 +232,6 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
    */
   protected V getVertex(Spatial<V> spatial, LayoutModel<V> layoutModel, double x, double y) {
 
-    //    TransformSupport<V, E> transformSupport = vv.getTransformSupport();
     Rectangle2D pickArea =
         new Rectangle2D.Float(
             (float) x - pickSize / 2, (float) y - pickSize / 2, pickSize, pickSize);
@@ -436,7 +435,7 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
         new Rectangle2D.Float(
             (float) x - pickSize / 2, (float) y - pickSize / 2, pickSize, pickSize);
     E closest = null;
-    double minDistance = Double.MAX_VALUE;
+
     Point2D pickPoint = new Point2D.Double(x, y);
 
     Spatial<E> edgeSpatial = vv.getEdgeSpatial();
@@ -447,38 +446,22 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
     while (true) {
       try {
         // this checks every edge.
-        for (E e : getFilteredEdges()) {
+        for (E edge : getFilteredEdges()) {
 
-          Shape edgeShape = getTransformedEdgeShape(e);
+          Shape edgeShape = getTransformedEdgeShape(edge);
           if (edgeShape == null) {
             continue;
           }
 
-          // because of the transform, the edgeShape is now a GeneralPath
-          // see if this edge is the closest of any that intersect
-          if (edgeShape.intersects(pickArea)) {
-            float cx = 0;
-            float cy = 0;
-            float[] f = new float[6];
-            PathIterator pi = new GeneralPath(edgeShape).getPathIterator(null);
-            if (!pi.isDone()) {
-              pi.next();
-              pi.currentSegment(f);
-              cx = f[0];
-              cy = f[1];
-              if (!pi.isDone()) {
-                pi.currentSegment(f);
-                cx = f[0];
-                cy = f[1];
-              }
-            }
-            float dx = (float) (cx - x);
-            float dy = (float) (cy - y);
-            float dist = dx * dx + dy * dy;
-            if (dist < minDistance) {
-              minDistance = dist;
-              closest = e;
-            }
+          Line2D endToEnd = getLineFromShape(edgeShape);
+          // for articulated edges, the edge 'shape' is an area bounded by the zig-zag edge and the
+          // (invisible) line from source to target vertex. The pick footprint is not inside the shape
+          // and is not intersecting the invisible line, but does intersect the zig zag line
+          if (!edgeShape.contains(pickArea)
+              && edgeShape.intersects(pickArea)
+              && !endToEnd.intersects(pickArea)) {
+            closest = edge;
+            break;
           }
         }
         break;
@@ -494,7 +477,7 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
   }
 
   /**
-   * uses the spatialRTree to find the closest vertex to the points
+   * uses the spatialRTree to find the closest edge to the point coords
    *
    * @param spatial
    * @param layoutModel
@@ -531,8 +514,6 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
       log.trace("target is {}", target);
     }
 
-    double minDistance = Double.MAX_VALUE;
-
     // will be the selected edge
     E closest = null;
 
@@ -557,7 +538,9 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
         continue;
       }
       Line2D endToEnd = getLineFromShape(edgeShape);
-      log.info("endToEnd from {} to {}", endToEnd.getP1(), endToEnd.getP2());
+      // for articulated edges, the edge 'shape' is an area bounded by the zig-zag edge and the
+      // (invisible) line from source to target vertex. The pick footprint is not inside the shape
+      // and is not intersecting the invisible line, but does intersect the zig zag line
       if (!edgeShape.contains(pickArea)
           && edgeShape.intersects(pickArea)
           && !endToEnd.intersects(pickArea)) {
@@ -569,7 +552,8 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
   }
 
   /**
-   * for articulated edges, I want the line from
+   * for articulated edges, I want the line from source to target vertex for any other shape, return
+   * a 0 length line
    *
    * @param shape
    * @return

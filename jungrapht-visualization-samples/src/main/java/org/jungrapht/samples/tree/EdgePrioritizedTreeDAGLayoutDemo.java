@@ -1,7 +1,9 @@
 package org.jungrapht.samples.tree;
 
 import com.google.common.collect.Sets;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -9,8 +11,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.swing.*;
 import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultGraphType;
-import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.samples.util.DemoTreeSupplier;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
@@ -23,17 +23,20 @@ import org.jungrapht.visualization.util.helpers.TreeLayoutSelector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** @author Tom Nelson */
-@SuppressWarnings("serial")
+/**
+ * This demo shows how the edgePredicate can be used to construct the desired tree shape. Note that
+ * in non-edge aware layouts, node B1 and its subtree are under node A14. The edge predicate will
+ * cause edge 12 (from A14 to B1 to be skipped in favor of edge 4 from B0 to B1.
+ *
+ * @author Tom Nelson
+ */
 public class EdgePrioritizedTreeDAGLayoutDemo extends JFrame {
 
   private static final Logger log = LoggerFactory.getLogger(EdgePrioritizedTreeDAGLayoutDemo.class);
 
   static Set<Integer> prioritySet = Sets.newHashSet(0, 2, 6, 8);
 
-  static Predicate<Integer> edgePredicate =
-      //          e -> false;
-      e -> e < 100;
+  static Predicate<Integer> edgePredicate = e -> e < 100;
 
   Graph<String, Integer> graph;
 
@@ -107,38 +110,6 @@ public class EdgePrioritizedTreeDAGLayoutDemo extends JFrame {
     add(controls, BorderLayout.SOUTH);
     pack();
     setVisible(true);
-  }
-
-  private Graph<String, Integer> createDAG() {
-    Graph<String, Integer> graph =
-        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.dag()).buildGraph();
-    int i = 0;
-    // roots
-    graph.addVertex("R1");
-    graph.addVertex("R2");
-    graph.addVertex("R3");
-    graph.addVertex("R4");
-
-    graph.addVertex("A1");
-    graph.addVertex("A2");
-    graph.addVertex("A3");
-    graph.addVertex("A4");
-    graph.addVertex("A5");
-    graph.addVertex("A6");
-
-    graph.addEdge("R1", "A1", i++);
-    graph.addEdge("R1", "A2", i++);
-    graph.addEdge("A1", "A3", i++);
-    graph.addEdge("A1", "A4", i++);
-
-    graph.addEdge("A4", "A3", i++);
-    graph.addEdge("A3", "A4", i++);
-
-    graph.addEdge("R2", "A5", i++);
-    graph.addEdge("R3", "A5", i++);
-    graph.addEdge("A5", "A6", i++);
-    //    graph.addEdge("R1","A1", i++);
-    return graph;
   }
 
   public static void main(String[] args) {
