@@ -43,7 +43,6 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-@SuppressWarnings("serial")
 public class BalloonLayoutForestDemo extends JPanel {
 
   private static final Logger log = LoggerFactory.getLogger(BalloonLayoutForestDemo.class);
@@ -139,7 +138,8 @@ public class BalloonLayoutForestDemo extends JPanel {
     Box controls = Box.createHorizontalBox();
     controls.add(
         ControlHelpers.getCenteredContainer(
-            "Layout Controls", TreeLayoutSelector.builder(vv).after(vv::scaleToLayout).build()));
+            "Layout Controls",
+            TreeLayoutSelector.builder(vv).initialSelection(4).after(vv::scaleToLayout).build()));
     controls.add(ControlHelpers.getCenteredContainer("Scale", ControlHelpers.getZoomControls(vv)));
     controls.add(
         ControlHelpers.getCenteredContainer("Mouse Mode", ControlHelpers.getModeRadio(graphMouse)));

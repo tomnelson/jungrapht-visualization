@@ -57,7 +57,6 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-@SuppressWarnings("serial")
 public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
 
   private static final Logger log =

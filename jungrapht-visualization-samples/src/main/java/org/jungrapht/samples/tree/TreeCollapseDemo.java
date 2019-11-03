@@ -38,7 +38,6 @@ import org.jungrapht.visualization.util.helpers.TreeLayoutSelector;
  *
  * @author Tom Nelson
  */
-@SuppressWarnings("serial")
 public class TreeCollapseDemo extends JPanel {
 
   /** the original graph */

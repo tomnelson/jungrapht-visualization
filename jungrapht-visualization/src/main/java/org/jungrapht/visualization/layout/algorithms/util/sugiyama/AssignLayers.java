@@ -15,20 +15,10 @@ public class AssignLayers<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(AssignLayers.class);
   protected Graph<SV<V>, SE<V, E>> dag;
-  //  Map<SV<V>, SVData> svData = new HashMap<>();
-  //  Map<SE<V,E>, SEData> seData = new HashMap<>();
 
   public AssignLayers(Graph<SV<V>, SE<V, E>> dag) {
     this.dag = dag;
   }
-
-  //  public Map<SV<V>, SVData> getSVData() {
-  //    return svData;
-  //  }
-  //
-  //  public Map<SE<V, E>, SEData> getSeData() {
-  //    return seData;
-  //  }
 
   public List<List<SV<V>>> assignLayers() {
     int rank = 0;
@@ -37,13 +27,12 @@ public class AssignLayers<V, E> {
     List<SV<V>> vertices =
         dag.vertexSet().stream().collect(Collectors.toCollection(LinkedList::new));
     List<SV<V>> start = getVerticesWithoutIncomingEdges(edges, vertices); // should be the roots
-    //    log.info("start is {}", start);
+
     while (start.size() > 0) {
       for (int i = 0; i < start.size(); i++) {
         SV<V> v = start.get(i);
         v.rank = rank;
         v.index = i;
-        //        svData.put(v, SVData.of(rank, i));
       }
       sorted.add(start); // add a row
       Set<SV<V>> fstart = new HashSet<>(start);
@@ -53,7 +42,6 @@ public class AssignLayers<V, E> {
       vertices.removeIf(v -> fstart.contains(v));
       start = getVerticesWithoutIncomingEdges(edges, vertices);
       rank++;
-      //      log.info("start is {}  rank:{}, ", start, rank);
     }
     return sorted;
   }
@@ -69,10 +57,8 @@ public class AssignLayers<V, E> {
   public static <V> void checkLayers(List<List<SV<V>>> layers) {
     for (int i = 0; i < layers.size(); i++) {
       List<SV<V>> layer = layers.get(i);
-      //      log.info("layer: {}", layer);
       for (int j = 0; j < layer.size(); j++) {
         SV<V> sv = layer.get(j);
-        //        log.info("sv {},{}: {}", i, j, sv);
         assert i == sv.getRank();
         assert j == sv.getIndex();
       }

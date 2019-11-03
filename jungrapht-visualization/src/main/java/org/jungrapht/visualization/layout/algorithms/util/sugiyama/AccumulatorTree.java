@@ -41,9 +41,8 @@ public class AccumulatorTree {
    */
   public int countEdges(int n, int last) {
     if (n > last) {
-      log.error("hold on there....");
+      log.error("position exceeds array size");
     }
-    //    log.info("countEdges from {} to {} in {}", n, last, toString());
     if (n == last) {
       return 0;
     }
@@ -55,30 +54,25 @@ public class AccumulatorTree {
       }
       pos = parentIndex(pos); // for 1-based array: pos/2. for 0-based: (pos+1)/2 - 1
     }
-    //    log.info("...gives count of {}", accumulatorTree[0] - sum);
     return accumulatorTree[0] - sum;
   }
 
   public void addEdge(int pos) {
     pos += base;
-    //    log.info("add at pos {} in {}", pos, this.toString());
     while (pos > 0) {
       accumulatorTree[pos]++;
       pos = parentIndex(pos);
     }
     accumulatorTree[0]++;
-    //    log.info("...yields {}", this.toString());
   }
 
   public void subtractEdge(int pos) {
     pos += base;
-    //    log.info("subtract at {} in {}", pos, this.toString());
     while (pos > 0) {
       accumulatorTree[pos]--;
       pos = parentIndex(pos);
     }
     accumulatorTree[0]--;
-    //    log.info("...yields {}", this.toString());
   }
 
   @Override

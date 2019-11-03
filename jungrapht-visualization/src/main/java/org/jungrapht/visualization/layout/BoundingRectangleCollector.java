@@ -22,8 +22,6 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class BoundingRectangleCollector<T> {
 
-  private static final Logger log = LoggerFactory.getLogger(BoundingRectangleCollector.class);
-
   protected RenderContext rc;
   protected VisualizationModel visualizationModel;
   protected List<Rectangle2D> rectangles = new ArrayList<>();
@@ -314,7 +312,6 @@ public abstract class BoundingRectangleCollector<T> {
           }
         }
         edgeShape = xform.createTransformedShape(edgeShape);
-        log.info("edge Shape: {} bounded by {}", edgeShape, edgeShape.getBounds2D());
         rectangles.add(nonEmpty(edgeShape.getBounds2D(), NON_EMPTY_DELTA));
       }
     }

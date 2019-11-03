@@ -22,16 +22,6 @@ public class GreedyCycleRemoval<V, E> {
     doit();
   }
 
-  //    class MyComparator implements Comparator<V> {
-  //        @Override
-  //        public int compare(V v, V w) {
-  //            int vDelta = graph.outDegreeOf(v) - graph.inDegreeOf(v);
-  //            int wDelta = graph.outDegreeOf(w) - graph.inDegreeOf(w);
-  //            log.info("compare {} and {} is {}", vDelta, wDelta, Integer.compare(vDelta, wDelta));
-  //            return Integer.compare(vDelta, wDelta);
-  //        }
-  //    }
-
   void doit() {
     for (V v : graph.vertexSet()) {
       if (graph.outDegreeOf(v) == 0) {

@@ -56,7 +56,6 @@ import org.jungrapht.visualization.util.helpers.LensControlHelper;
  *
  * @author Tom Nelson
  */
-@SuppressWarnings("serial")
 public class LensDemo extends JPanel {
 
   /** the graph */

@@ -50,7 +50,6 @@ import org.jungrapht.visualization.util.helpers.ControlHelpers;
  *
  * @author Tom Nelson
  */
-@SuppressWarnings("serial")
 public class SatelliteViewTreeDemo extends JPanel {
 
   static final String instructions =

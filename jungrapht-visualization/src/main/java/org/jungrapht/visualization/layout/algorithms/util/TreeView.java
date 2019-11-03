@@ -108,10 +108,8 @@ public class TreeView<V, E> {
   }
 
   public Graph<V, E> buildTree(Graph<V, E> graph) {
-    // the edgeSupplier is for synthetic edges created when adding a parent vertex
-    // over the roots of a forest
-    Graph<V, E> tree =
-        GraphTypeBuilder.<V, E>directed().edgeSupplier(() -> (E) new Object()).buildGraph();
+
+    Graph<V, E> tree = GraphTypeBuilder.<V, E>directed().buildGraph();
 
     Set<V> seen = new HashSet<>();
     List<V> roots = graph.vertexSet().stream().filter(rootPredicate).collect(Collectors.toList());

@@ -16,6 +16,7 @@ import org.jungrapht.visualization.layout.model.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  * A more compact tree layout algorithm. This implementation has been extended to allow multiple
  * roots and to allow drawing of any directed graph for which a root or roots can be discerned.
@@ -208,9 +209,6 @@ public class TidierTreeLayoutAlgorithm<V, E>
 
   private final Map<V, VertexData<V>> vertexData = new HashMap<>();
 
-  int horizontalSpacing = 20;
-  int verticalSpacing = 20;
-
   @Override
   public void setEdgePredicate(Predicate<E> edgePredicate) {
     this.edgePredicate = edgePredicate;
@@ -325,7 +323,7 @@ public class TidierTreeLayoutAlgorithm<V, E>
     updateBounds(v, x, y);
 
     if (!successors(v).isEmpty()) {
-      yOffset += levelHeight + verticalSpacing;
+      yOffset += levelHeight + verticalVertexSpacing;
       for (V w : successors(v)) {
         secondWalk(w, m + vertexData(v).mod, depth + 1, yOffset);
       }
@@ -548,7 +546,7 @@ public class TidierTreeLayoutAlgorithm<V, E>
     log.trace("getDistance({}, {}) = {}", v, w);
     int sizeOfNodes = shape(v).getBounds().width + shape(w).getBounds().width;
 
-    int distance = sizeOfNodes / 2 + horizontalSpacing;
+    int distance = sizeOfNodes / 2 + horizontalVertexSpacing;
     log.trace("getDistance({}, {}) = {}", v, w, distance);
     return distance;
   }

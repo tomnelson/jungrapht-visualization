@@ -50,7 +50,6 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-@SuppressWarnings("serial")
 public class SpatialLensDemo extends JPanel {
 
   private static final Logger log = LoggerFactory.getLogger(SpatialLensDemo.class);

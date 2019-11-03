@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-@SuppressWarnings("serial")
 public class CompactTreeLayoutDemo extends JPanel {
 
   private static final Logger log = LoggerFactory.getLogger(CompactTreeLayoutDemo.class);
@@ -43,10 +42,7 @@ public class CompactTreeLayoutDemo extends JPanel {
 
     setLayout(new BorderLayout());
     // create a simple graph for the demo
-    graph =
-        //            DemoTreeSupplier.createForestForCompactTreeLayout();
-        DemoTreeSupplier.createForest();
-    //                DemoTreeSupplier.createTreeTwo();
+    graph = DemoTreeSupplier.createForest();
     vv = VisualizationViewer.builder(graph).viewSize(new Dimension(600, 600)).build();
     Function<String, Shape> vertexShapeFunction = vv.getRenderContext().getVertexShapeFunction();
     TidierTreeLayoutAlgorithm<String, Integer> layoutAlgorithm =
@@ -54,7 +50,6 @@ public class CompactTreeLayoutDemo extends JPanel {
             .vertexShapeFunction(vertexShapeFunction)
             .build();
 
-    //    layoutAlgorithm.setVertexShapeFunction(vertexShapeFunction);
     vv.setBackground(Color.white);
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
@@ -88,6 +83,7 @@ public class CompactTreeLayoutDemo extends JPanel {
     layoutPanel.add(
         TreeLayoutSelector.<String, Integer>builder(vv)
             .vertexShapeFunction(vertexShapeFunction)
+            .initialSelection(1)
             .after(vv::scaleToLayout)
             .build());
     JPanel controls = new JPanel();

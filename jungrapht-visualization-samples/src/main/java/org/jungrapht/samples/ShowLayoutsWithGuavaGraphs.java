@@ -42,7 +42,6 @@ import org.jungrapht.visualization.util.helpers.SpanningTreeAdapter;
  *
  * @author Tom Nelson
  */
-@SuppressWarnings("serial")
 public class ShowLayoutsWithGuavaGraphs extends JPanel {
 
   protected static Graph<String, Integer>[] g_array;

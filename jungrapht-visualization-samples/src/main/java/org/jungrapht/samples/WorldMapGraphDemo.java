@@ -41,7 +41,6 @@ import org.jungrapht.visualization.util.helpers.ControlHelpers;
  *
  * @author Tom Nelson
  */
-@SuppressWarnings("serial")
 public class WorldMapGraphDemo extends JPanel {
 
   /** the graph */

@@ -8,7 +8,6 @@ public final class NLogNMedian {
 
   public static int median(int[] list) {
     int[] copy = list;
-    //                Arrays.copyOf(list, list.length);
     Arrays.sort(copy);
     return copy[copy.length / 2];
   }

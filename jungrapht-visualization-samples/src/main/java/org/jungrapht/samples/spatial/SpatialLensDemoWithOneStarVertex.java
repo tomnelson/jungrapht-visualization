@@ -54,7 +54,6 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-@SuppressWarnings("serial")
 public class SpatialLensDemoWithOneStarVertex extends JPanel {
 
   private static final Logger log = LoggerFactory.getLogger(SpatialLensDemoWithOneStarVertex.class);

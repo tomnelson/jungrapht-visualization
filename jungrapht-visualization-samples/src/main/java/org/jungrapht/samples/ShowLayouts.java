@@ -37,7 +37,6 @@ import org.jungrapht.visualization.util.helpers.SpanningTreeAdapter;
  * @author Joshua O'Madadhain
  * @author Tom Nelson - extensive modification
  */
-@SuppressWarnings("serial")
 public class ShowLayouts extends JPanel {
 
   protected static Graph<String, Integer>[] g_array;

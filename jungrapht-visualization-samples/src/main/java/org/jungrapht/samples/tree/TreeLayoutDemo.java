@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-@SuppressWarnings("serial")
 public class TreeLayoutDemo extends JPanel {
 
   private static final Logger log = LoggerFactory.getLogger(TreeLayoutDemo.class);

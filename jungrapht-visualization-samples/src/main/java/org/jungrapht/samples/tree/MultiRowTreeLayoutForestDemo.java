@@ -48,7 +48,6 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-@SuppressWarnings("serial")
 public class MultiRowTreeLayoutForestDemo extends JPanel {
 
   private static final Logger log = LoggerFactory.getLogger(MultiRowTreeLayoutForestDemo.class);

@@ -46,7 +46,6 @@ import org.jungrapht.visualization.util.helpers.SpanningTreeAdapter;
  *
  * @author Tom Nelson
  */
-@SuppressWarnings("serial")
 public class SubLayoutDemo extends JPanel {
 
   String instructions =

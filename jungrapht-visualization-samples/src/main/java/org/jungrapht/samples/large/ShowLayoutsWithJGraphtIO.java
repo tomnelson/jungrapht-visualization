@@ -58,7 +58,6 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-@SuppressWarnings("serial")
 public class ShowLayoutsWithJGraphtIO extends JFrame {
 
   private static final Logger log = LoggerFactory.getLogger(ShowLayoutsWithJGraphtIO.class);

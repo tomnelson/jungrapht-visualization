@@ -40,7 +40,6 @@ import org.jungrapht.visualization.util.helpers.ControlHelpers;
  *
  * @author Tom Nelson
  */
-@SuppressWarnings("serial")
 public class SatelliteViewDemo extends JPanel {
 
   static final String instructions =

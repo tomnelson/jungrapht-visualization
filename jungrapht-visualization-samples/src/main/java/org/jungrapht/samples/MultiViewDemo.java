@@ -40,7 +40,6 @@ import org.jungrapht.visualization.selection.ShapePickSupport;
  *
  * @author Tom Nelson
  */
-@SuppressWarnings("serial")
 public class MultiViewDemo extends JPanel {
 
   /** the graph */
