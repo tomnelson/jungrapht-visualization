@@ -16,7 +16,6 @@ import org.jungrapht.visualization.layout.model.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * A more compact tree layout algorithm. This implementation has been extended to allow multiple
  * roots and to allow drawing of any directed graph for which a root or roots can be discerned.

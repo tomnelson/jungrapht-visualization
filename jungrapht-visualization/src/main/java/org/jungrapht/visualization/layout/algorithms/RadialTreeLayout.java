@@ -9,7 +9,7 @@ import org.jungrapht.visualization.layout.model.Rectangle;
 /**
  * a marker interface for Tree layouts in a radial pattern
  *
- * @param <V>
+ * @param <V> vertex type
  */
 public interface RadialTreeLayout<V> extends TreeLayout<V>, Radial {
 
