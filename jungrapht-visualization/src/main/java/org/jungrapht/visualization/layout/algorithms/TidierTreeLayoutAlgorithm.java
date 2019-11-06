@@ -172,7 +172,7 @@ public class TidierTreeLayoutAlgorithm<V, E>
     private int childCount;
   }
 
-  private TidierTreeLayoutAlgorithm(Builder builder) {
+  protected TidierTreeLayoutAlgorithm(Builder builder) {
     this(
         builder.rootPredicate,
         builder.vertexShapeFunction,

@@ -232,6 +232,15 @@ public class TreeLayoutSelector<V, E> extends JPanel {
             .expandLayout(false)
             .build();
 
+    TidierRadialTreeLayoutAlgorithm<V, E> tidierRadialTreeLayoutAlgorithm =
+        TidierRadialTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()
+            .edgeComparator(edgeComparator)
+            .edgePredicate(edgePredicate)
+            .vertexComparator(vertexComparator)
+            .vertexPredicate(vertexPredicate)
+            .vertexShapeFunction(vertexShapeFunction)
+            .build();
+
     EdgeAwareTreeLayoutAlgorithm<V, E> edgeAwareTreeLayoutAlgorithm =
         EdgeAwareTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()
             .vertexShapeFunction(vertexShapeFunction)
@@ -277,6 +286,11 @@ public class TreeLayoutSelector<V, E> extends JPanel {
         new LayoutItemListener(radialEdgeAwareTreeLayoutAlgorithm, vv));
     radialEdgeAwareButton.setSelected(initialSelection == layoutNumber++);
 
+    JRadioButton tidierRadialEdgeAwareButton = new JRadioButton("Tidier Radial Edge aware");
+    tidierRadialEdgeAwareButton.addItemListener(
+        new LayoutItemListener(tidierRadialTreeLayoutAlgorithm, vv));
+    tidierRadialEdgeAwareButton.setSelected(initialSelection == layoutNumber++);
+
     JRadioButton edgeAwareTreeButton = new JRadioButton("Edge aware tree");
     edgeAwareTreeButton.addItemListener(new LayoutItemListener(edgeAwareTreeLayoutAlgorithm, vv));
     edgeAwareTreeButton.setSelected(initialSelection == layoutNumber++);
@@ -294,6 +308,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     layoutRadio.add(balloonButton);
     layoutRadio.add(radialButton);
     layoutRadio.add(radialEdgeAwareButton);
+    layoutRadio.add(tidierRadialEdgeAwareButton);
     layoutRadio.add(edgeAwareTreeButton);
     layoutRadio.add(multiRowEdgeAwareTreeButton);
 
@@ -306,6 +321,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     this.add(balloonButton);
     this.add(compactTreeButton);
     this.add(mySugiyamaButton);
+    this.add(tidierRadialEdgeAwareButton);
     this.add(animateTransition);
   }
 
