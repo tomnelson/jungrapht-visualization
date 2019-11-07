@@ -261,9 +261,9 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     treeButton.addItemListener(new LayoutItemListener(treeLayoutAlgorithm, vv));
     treeButton.setSelected(initialSelection == layoutNumber++);
 
-    JRadioButton compactTreeButton = new JRadioButton("Compact Tree");
-    compactTreeButton.addItemListener(new LayoutItemListener(tidierTreeLayoutAlgorithm, vv));
-    compactTreeButton.setSelected(initialSelection == layoutNumber++);
+    JRadioButton tidierTreeButton = new JRadioButton("Tidier Tree");
+    tidierTreeButton.addItemListener(new LayoutItemListener(tidierTreeLayoutAlgorithm, vv));
+    tidierTreeButton.setSelected(initialSelection == layoutNumber++);
 
     JRadioButton mySugiyamaButton = new JRadioButton("Sugiyama");
     mySugiyamaButton.addItemListener(new LayoutItemListener(sugiyamaLayoutAlgorithm, vv));
@@ -286,7 +286,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
         new LayoutItemListener(radialEdgeAwareTreeLayoutAlgorithm, vv));
     radialEdgeAwareButton.setSelected(initialSelection == layoutNumber++);
 
-    JRadioButton tidierRadialEdgeAwareButton = new JRadioButton("Tidier Radial Edge aware");
+    JRadioButton tidierRadialEdgeAwareButton = new JRadioButton("Tidier Radial Tree");
     tidierRadialEdgeAwareButton.addItemListener(
         new LayoutItemListener(tidierRadialTreeLayoutAlgorithm, vv));
     tidierRadialEdgeAwareButton.setSelected(initialSelection == layoutNumber++);
@@ -302,7 +302,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
 
     ButtonGroup layoutRadio = new ButtonGroup();
     layoutRadio.add(treeButton);
-    layoutRadio.add(compactTreeButton);
+    layoutRadio.add(tidierTreeButton);
     layoutRadio.add(mySugiyamaButton);
     layoutRadio.add(multiRowTreeButton);
     layoutRadio.add(balloonButton);
@@ -319,7 +319,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     this.add(radialButton);
     this.add(radialEdgeAwareButton);
     this.add(balloonButton);
-    this.add(compactTreeButton);
+    this.add(tidierTreeButton);
     this.add(mySugiyamaButton);
     this.add(tidierRadialEdgeAwareButton);
     this.add(animateTransition);

@@ -31,14 +31,14 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-public class CompactTreeLayoutDemo extends JPanel {
+public class TidierTreeLayoutDemo extends JPanel {
 
-  private static final Logger log = LoggerFactory.getLogger(CompactTreeLayoutDemo.class);
+  private static final Logger log = LoggerFactory.getLogger(TidierTreeLayoutDemo.class);
   Graph<String, Integer> graph;
 
   VisualizationViewer<String, Integer> vv;
 
-  public CompactTreeLayoutDemo() {
+  public TidierTreeLayoutDemo() {
 
     setLayout(new BorderLayout());
     // create a simple graph for the demo
@@ -98,7 +98,7 @@ public class CompactTreeLayoutDemo extends JPanel {
     JFrame frame = new JFrame();
     Container content = frame.getContentPane();
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-    JPanel demo = new CompactTreeLayoutDemo();
+    JPanel demo = new TidierTreeLayoutDemo();
     content.add(demo);
     frame.pack();
     frame.setVisible(true);
