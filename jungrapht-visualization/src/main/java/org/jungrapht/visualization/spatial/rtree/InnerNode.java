@@ -147,8 +147,8 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
   @Override
   public Node<T> recalculateBounds() {
     bounds = Optional.empty();
-    for (int i = 0; i < children.size(); i++) {
-      updateBounds(children.get(i).getBounds());
+    for (Node<T> child : children) {
+      updateBounds(child.getBounds());
     }
     if (parent.isPresent()) {
       return parent.get().recalculateBounds();
@@ -165,8 +165,8 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
     T picked = null;
     if (getBounds().contains(p)) {
       log.trace("{} does contain {}", this, p);
-      for (int i = 0; i < children.size(); i++) {
-        picked = children.get(i).getPickedObject(p);
+      for (Node<T> child : children) {
+        picked = child.getPickedObject(p);
         if (picked != null) {
           break;
         }
@@ -185,8 +185,7 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
 
   private Node<T> findElement(T o) {
     Node<T> found = null;
-    for (int i = 0; i < children.size(); i++) {
-      Node<T> kid = children.get(i);
+    for (Node<T> kid : children) {
       if (kid instanceof LeafNode) {
         return kid;
       } else {
@@ -203,8 +202,8 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
   @Override
   public LeafNode<T> getContainingLeaf(T element) {
     LeafNode<T> containingLeaf = null;
-    for (int i = 0; i < children.size(); i++) {
-      containingLeaf = children.get(i).getContainingLeaf(element);
+    for (Node<T> child : children) {
+      containingLeaf = child.getContainingLeaf(element);
       if (containingLeaf != null) {
         break;
       }
@@ -218,8 +217,7 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
    */
   LeafNode<T> getContainingLeaf(T element, Rectangle2D bounds) {
     LeafNode<T> containingLeaf = null;
-    for (int i = 0; i < children.size(); i++) {
-      Node<T> node = children.get(i);
+    for (Node<T> node : children) {
       if (node.getBounds().intersects(bounds)) {
         containingLeaf = node.getContainingLeaf(element);
         if (containingLeaf != null) {
@@ -247,8 +245,7 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
   @Override
   public Set<LeafNode<T>> getContainingLeafs(Set<LeafNode<T>> containingLeafs, double x, double y) {
     if (getBounds().contains(x, y)) {
-      for (int i = 0; i < children.size(); i++) {
-        Node<T> node = children.get(i);
+      for (Node<T> node : children) {
         node.getContainingLeafs(containingLeafs, x, y);
       }
     }
@@ -263,8 +260,8 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
    */
   public Collection<Shape> collectGrids(Collection<Shape> list) {
     list.add(getBounds());
-    for (int i = 0; i < children.size(); i++) {
-      children.get(i).collectGrids(list);
+    for (Node<T> child : children) {
+      child.collectGrids(list);
     }
     log.trace(
         "in nonleaf {}, added {} so list size now {}",
@@ -438,8 +435,8 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
   @Override
   public Set<T> getVisibleElements(Set<T> visibleElements, Shape shape) {
     if (shape.intersects(getBounds())) {
-      for (int i = 0; i < children.size(); i++) {
-        children.get(i).getVisibleElements(visibleElements, shape);
+      for (Node<T> child : children) {
+        child.getVisibleElements(visibleElements, shape);
       }
     }
     log.trace("visibleElements of InnerVertex inside {} are {}", shape, visibleElements);
@@ -453,8 +450,8 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
    */
   public int count() {
     int count = 0;
-    for (int i = 0; i < children.size(); i++) {
-      count += children.get(i).count();
+    for (Node<T> child : children) {
+      count += child.count();
     }
     return count;
   }

@@ -25,7 +25,7 @@ public abstract class ParallelEdgeShapeFunction<V, E>
   /** Specifies the distance between control points for edges being drawn in parallel. */
   protected float controlOffsetIncrement = 20.f;
 
-  protected EdgeIndexFunction<V, E> edgeIndexFunction = new EdgeIndexFunction<V, E>() {};
+  protected EdgeIndexFunction<V, E> edgeIndexFunction = new EdgeIndexFunction<>() {};
 
   public void setControlOffsetIncrement(float y) {
     controlOffsetIncrement = y;

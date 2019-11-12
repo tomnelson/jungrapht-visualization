@@ -152,7 +152,7 @@ public class Synthetics<V, E> {
         // target is not a SyntheticVertex
         // target is now a SV<V>
         ArticulatedEdge<V, E> articulatedEdge = ArticulatedEdge.of(edge, source, target);
-        syntheticVertices.forEach(v -> articulatedEdge.addIntermediateVertex(v));
+        syntheticVertices.forEach(articulatedEdge::addIntermediateVertex);
         syntheticVertices.forEach(v -> articulatedEdge.addIntermediatePoint(v.getPoint()));
         articulatedEdges.add(articulatedEdge);
       }

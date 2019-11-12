@@ -146,7 +146,7 @@ public class SVTransformedGraphSupplier<V, E> implements Supplier<Graph<SV<V>, S
 
   @Override
   public Graph<SV<V>, SE<V, E>> get() {
-    Function<V, SV<V>> vertexTransformFunction = s -> SV.of(s);
+    Function<V, SV<V>> vertexTransformFunction = SV::of;
     vertexTransformer = new SingletonTransformer<>(vertexTransformFunction);
 
     Function<E, SE<V, E>> edgeTransformFunction =

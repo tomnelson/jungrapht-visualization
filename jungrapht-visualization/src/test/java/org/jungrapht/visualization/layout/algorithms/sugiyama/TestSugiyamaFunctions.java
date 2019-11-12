@@ -165,7 +165,7 @@ public class TestSugiyamaFunctions {
     */
 
     // all edges for no skipped layers
-    sgraph.edgeSet().forEach(e -> testEdgeHasCorrectRanks(e));
+    sgraph.edgeSet().forEach(this::testEdgeHasCorrectRanks);
 
     // test that the graph has 3 virtualVertices
     List<SyntheticVertex<String>> virtualVertices =
@@ -196,11 +196,7 @@ public class TestSugiyamaFunctions {
     List<Integer> ranks = new ArrayList<>();
     ranks.add(bentEdge.source.getRank());
     ranks.addAll(
-        bentEdge
-            .getIntermediateVertices()
-            .stream()
-            .map(iv -> iv.getRank())
-            .collect(Collectors.toList()));
+        bentEdge.getIntermediateVertices().stream().map(SV::getRank).collect(Collectors.toList()));
     ranks.add(bentEdge.target.getRank());
     Assert.assertEquals(ranks, List.of(0, 1, 2, 3));
 
@@ -220,11 +216,7 @@ public class TestSugiyamaFunctions {
     ranks = new ArrayList<>();
     ranks.add(bentEdge.source.getRank());
     ranks.addAll(
-        bentEdge
-            .getIntermediateVertices()
-            .stream()
-            .map(iv -> iv.getRank())
-            .collect(Collectors.toList()));
+        bentEdge.getIntermediateVertices().stream().map(SV::getRank).collect(Collectors.toList()));
     ranks.add(bentEdge.target.getRank());
     Assert.assertEquals(ranks, List.of(0, 1, 2));
 
@@ -240,7 +232,7 @@ public class TestSugiyamaFunctions {
           ((ArticulatedEdge<String, Integer>) edge)
               .getIntermediateVertices()
               .stream()
-              .map(iv -> iv.getRank())
+              .map(SV::getRank)
               .collect(Collectors.toList()));
     }
     ranks.add(edge.target.getRank());

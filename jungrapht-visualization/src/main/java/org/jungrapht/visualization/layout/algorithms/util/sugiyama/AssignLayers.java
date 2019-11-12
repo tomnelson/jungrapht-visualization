@@ -39,7 +39,7 @@ public class AssignLayers<V, E> {
       // remove any edges that start in the new row
       edges.removeIf(e -> fstart.contains(dag.getEdgeSource(e)));
       // remove any vertices that have been added to the row
-      vertices.removeIf(v -> fstart.contains(v));
+      vertices.removeIf(fstart::contains);
       start = getVerticesWithoutIncomingEdges(edges, vertices);
       rank++;
     }

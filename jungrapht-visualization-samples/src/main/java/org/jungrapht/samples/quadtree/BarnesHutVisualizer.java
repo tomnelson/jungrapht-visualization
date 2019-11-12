@@ -75,7 +75,7 @@ public class BarnesHutVisualizer extends JPanel {
             String got = getVertexAt(p);
             if (got != null) {
               ForceObject<String> nodeForceObject =
-                  new ForceObject<String>(got, elements.get(got)) {
+                  new ForceObject<>(got, elements.get(got)) {
                     @Override
                     protected void addForceFrom(ForceObject<String> other) {
                       log.info("adding force from {}", other);

@@ -361,8 +361,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     while (improved) {
       improvements = 0;
       improved = false;
-      for (int i = 0; i < ranks.size(); i++) {
-        List<SV<V>> rank = ranks.get(i);
+      for (List<SV<V>> rank : ranks) {
         for (int j = 0; j < rank.size() - 1; j++) {
           SV<V> v = rank.get(j);
           SV<V> w = rank.get(j + 1);
@@ -514,7 +513,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
               .incomingEdgesOf(v)
               .stream()
               .filter(sePredicate)
-              .map(e -> svGraph.getEdgeSource(e))
+              .map(svGraph::getEdgeSource)
               .collect(Collectors.toList());
     } else {
       predecessors = Graphs.predecessorListOf(svGraph, v);

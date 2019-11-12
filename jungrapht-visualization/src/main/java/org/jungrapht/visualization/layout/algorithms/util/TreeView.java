@@ -114,7 +114,7 @@ public class TreeView<V, E> {
     Set<V> seen = new HashSet<>();
     List<V> roots = graph.vertexSet().stream().filter(rootPredicate).collect(Collectors.toList());
     // add all the graph roots to the tree. some my have no incident edges
-    roots.forEach(r -> tree.addVertex(r));
+    roots.forEach(tree::addVertex);
     for (V root : roots) {
       buildTree(graph, tree, seen, root);
     }

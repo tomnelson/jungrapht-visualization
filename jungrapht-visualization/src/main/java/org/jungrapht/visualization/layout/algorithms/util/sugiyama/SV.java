@@ -81,7 +81,7 @@ public class SV<V> {
     if (o instanceof SyntheticVertex) {
       return false;
     }
-    return vertex.equals(sv.vertex);
+    return Objects.equals(vertex, sv.vertex);
   }
 
   @Override

@@ -40,10 +40,7 @@ public class Point {
    * @return the centroid of the {@code Point} collection
    */
   public static Point centroidOf(Collection<Point> points) {
-    return points
-        .stream()
-        .reduce(Point.of(0, 0), (a, b) -> a.add(b))
-        .multiply((double) 1 / points.size());
+    return points.stream().reduce(Point.of(0, 0), Point::add).multiply((double) 1 / points.size());
   }
 
   /**
