@@ -9,7 +9,6 @@
 package org.jungrapht.visualization.transform;
 
 import java.awt.*;
-import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.PolarPoint;
@@ -97,11 +96,11 @@ public class HyperbolicTransformer extends LensTransformer implements MutableTra
       return null;
     }
     if (log.isTraceEnabled()) {
-      Ellipse2D lensEllipse = (Ellipse2D) lens.getLensShape();
-      if (lensEllipse.contains(graphPoint)) {
-        log.trace("lens {} contains graphPoint{}", lensEllipse, graphPoint);
+      Shape lensShape = lens.getLensShape();
+      if (lensShape.contains(graphPoint)) {
+        log.trace("lens {} contains graphPoint{}", lensShape, graphPoint);
       } else {
-        log.trace("lens {} does not contain graphPoint {}", lensEllipse, graphPoint);
+        log.trace("lens {} does not contain graphPoint {}", lensShape, graphPoint);
       }
     }
     Point2D viewCenter = lens.getCenter();
@@ -110,18 +109,18 @@ public class HyperbolicTransformer extends LensTransformer implements MutableTra
     // transform the point from the graph to the view
     Point2D viewPoint = delegate.transform(graphPoint);
     if (log.isTraceEnabled()) {
-      Ellipse2D lensEllipse = (Ellipse2D) lens.getLensShape();
-      if (lensEllipse.contains(viewPoint)) {
-        log.trace("lens {} contains viewPoint {}", lensEllipse, viewPoint);
+      Shape lensShape = lens.getLensShape();
+      if (lensShape.contains(viewPoint)) {
+        log.trace("lens {} contains viewPoint {}", lensShape, viewPoint);
       } else {
-        log.trace("lens {} does not contain viewPoint {}", lensEllipse, viewPoint);
+        log.trace("lens {} does not contain viewPoint {}", lensShape, viewPoint);
       }
     }
 
     // calculate point from center
     double dx = viewPoint.getX() - viewCenter.getX();
     double dy = viewPoint.getY() - viewCenter.getY();
-    // factor out ellipse
+    // factor out height/width ratio
     dx *= ratio;
     org.jungrapht.visualization.layout.model.Point pointFromCenter =
         org.jungrapht.visualization.layout.model.Point.of(dx, dy);
@@ -160,11 +159,11 @@ public class HyperbolicTransformer extends LensTransformer implements MutableTra
   /** override base class to un-project the fisheye effect */
   public Point2D inverseTransform(Point2D viewPoint) {
 
-    Ellipse2D lensEllipse = (Ellipse2D) lens.getLensShape();
-    if (lensEllipse.contains(viewPoint)) {
-      log.trace("lens {} contains viewPoint{}", lensEllipse, viewPoint);
+    Shape lensShape = lens.getLensShape();
+    if (lensShape.contains(viewPoint)) {
+      log.trace("lens {} contains viewPoint{}", lensShape, viewPoint);
     } else {
-      log.trace("lens {} does not contain viewPoint {}", lensEllipse, viewPoint);
+      log.trace("lens {} does not contain viewPoint {}", lensShape, viewPoint);
     }
 
     Point2D viewCenter = lens.getCenter();
@@ -172,7 +171,7 @@ public class HyperbolicTransformer extends LensTransformer implements MutableTra
     double ratio = lens.getRatio();
     double dx = viewPoint.getX() - viewCenter.getX();
     double dy = viewPoint.getY() - viewCenter.getY();
-    // factor out ellipse
+    // factor out height/width ratio
     dx *= ratio;
 
     org.jungrapht.visualization.layout.model.Point pointFromCenter =

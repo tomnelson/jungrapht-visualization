@@ -200,7 +200,7 @@ public class HyperbolicShapeTransformer extends HyperbolicTransformer
     // calculate point from center
     double dx = graphPoint.getX() - viewCenter.getX();
     double dy = graphPoint.getY() - viewCenter.getY();
-    // factor out ellipse
+    // factor out height/width
     dx *= ratio;
     org.jungrapht.visualization.layout.model.Point pointFromCenter =
         org.jungrapht.visualization.layout.model.Point.of(dx, dy);
@@ -242,7 +242,7 @@ public class HyperbolicShapeTransformer extends HyperbolicTransformer
     double ratio = lens.getRatio();
     double dx = viewPoint.getX() - viewCenter.getX();
     double dy = viewPoint.getY() - viewCenter.getY();
-    // factor out ellipse
+    // factor out height/width
     dx *= ratio;
 
     org.jungrapht.visualization.layout.model.Point pointFromCenter =
