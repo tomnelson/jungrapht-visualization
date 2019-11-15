@@ -17,13 +17,6 @@ public class SV<V> {
     return new SV(vertex, rank, index);
   }
 
-  //  public static <V> SV<V> copy(SV<V> sv) {
-  //    SV<V> copy = SV.of(sv.vertex);
-  //    copy.rank = sv.rank;
-  //    copy.index = sv.index;
-  //    copy.p = sv.p;
-  //    return copy;
-  //  }
   protected SV() {
     this.vertex = null;
   }

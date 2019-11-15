@@ -9,7 +9,12 @@
 package org.jungrapht.visualization.transform;
 
 import java.awt.*;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.util.Optional;
+import org.jungrapht.visualization.layout.model.Intersections;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.PolarPoint;
 import org.slf4j.Logger;
@@ -41,7 +46,7 @@ public class HyperbolicTransformer extends LensTransformer implements MutableTra
 
     public T build() {
       if (lens == null && dimension != null) {
-        lens = new Lens(dimension);
+        lens = Lens.builder().dimension(dimension).build();
       }
       return (T) new HyperbolicTransformer(this);
     }
@@ -95,83 +100,87 @@ public class HyperbolicTransformer extends LensTransformer implements MutableTra
     if (graphPoint == null) {
       return null;
     }
-    if (log.isTraceEnabled()) {
-      Shape lensShape = lens.getLensShape();
-      if (lensShape.contains(graphPoint)) {
-        log.trace("lens {} contains graphPoint{}", lensShape, graphPoint);
-      } else {
-        log.trace("lens {} does not contain graphPoint {}", lensShape, graphPoint);
-      }
-    }
-    Point2D viewCenter = lens.getCenter();
-    double viewRadius = lens.getRadius();
+    Point2D lensCenterInLayoutCoordinates = lens.getCenter();
+    Shape lensShape = lens.getLensShape();
+
+    double centerToCorner = lens.getCenterToCorner();
     double ratio = lens.getRatio();
     // transform the point from the graph to the view
     Point2D viewPoint = delegate.transform(graphPoint);
-    if (log.isTraceEnabled()) {
-      Shape lensShape = lens.getLensShape();
-      if (lensShape.contains(viewPoint)) {
-        log.trace("lens {} contains viewPoint {}", lensShape, viewPoint);
-      } else {
-        log.trace("lens {} does not contain viewPoint {}", lensShape, viewPoint);
-      }
-    }
 
     // calculate point from center
-    double dx = viewPoint.getX() - viewCenter.getX();
-    double dy = viewPoint.getY() - viewCenter.getY();
-    // factor out height/width ratio
+    double dx = viewPoint.getX() - lensCenterInLayoutCoordinates.getX();
+    double dy = viewPoint.getY() - lensCenterInLayoutCoordinates.getY();
+    // factor out ellipse
     dx *= ratio;
     org.jungrapht.visualization.layout.model.Point pointFromCenter =
         org.jungrapht.visualization.layout.model.Point.of(dx, dy);
 
     PolarPoint polar = PolarPoint.cartesianToPolar(pointFromCenter);
-    double theta = polar.theta;
-    double radius = polar.radius;
-    if (radius > viewRadius) {
-      log.trace("outside point radius {} > viewRadius {}", radius, viewRadius);
+    double polarPointAngle = polar.theta;
+    double polarPointRadius = polar.radius;
+    if (!lensShape.contains(viewPoint)) {
       return viewPoint;
-    } else {
-      log.trace("inside point radius {} >= viewRadius {}", radius, viewRadius);
     }
 
     double mag = Math.tan(Math.PI / 2 * lens.getMagnification());
-    radius *= mag;
+    polarPointRadius *= mag;
 
-    radius = Math.min(radius, viewRadius);
-    radius /= viewRadius;
-    radius *= Math.PI / 2;
-    radius = Math.abs(Math.atan(radius));
-    radius *= viewRadius;
-    radius = Math.min(radius, viewRadius);
+    polarPointRadius = Math.min(polarPointRadius, centerToCorner);
+    polarPointRadius /= centerToCorner;
+    polarPointRadius *= Math.PI / 2;
+    polarPointRadius = Math.abs(Math.atan(polarPointRadius));
+    polarPointRadius *= centerToCorner;
+    polarPointRadius = Math.min(polarPointRadius, centerToCorner);
+
+    if (lensShape instanceof Ellipse2D) {
+      double lensRadius = lens.getRadius();
+      polarPointRadius = Math.min(polarPointRadius, lensRadius);
+    } else if (lensShape instanceof Rectangle2D) {
+      // projected the point away from the center by a factor of the lens magnification
+      org.jungrapht.visualization.layout.model.Point projectedPoint =
+          PolarPoint.polarToCartesian(polarPointAngle, polarPointRadius);
+      // create a line from the lens center (layout coords) to the projected point (layout coords)
+      Line2D vector =
+          new Line2D.Double(
+              lensCenterInLayoutCoordinates.getX(),
+              lensCenterInLayoutCoordinates.getY(),
+              lensCenterInLayoutCoordinates.getX() + projectedPoint.x,
+              lensCenterInLayoutCoordinates.getY() + projectedPoint.y);
+
+      Rectangle2D lensRectangle = (Rectangle2D) lens.getLensShape();
+      // see if the vector intersects an edge of the lens
+      Optional<Point2D> intersectionPointOptional =
+          Intersections.getIntersectionPoint(vector, lensRectangle);
+      if (intersectionPointOptional.isPresent()) {
+        // this intersection point is in layout coords
+        Point2D intersectionPoint = intersectionPointOptional.get();
+        // radius is now the distance from center to the intersection point (shorten it)
+        polarPointRadius = lensCenterInLayoutCoordinates.distance(intersectionPoint);
+      }
+    }
 
     org.jungrapht.visualization.layout.model.Point projectedPoint =
-        PolarPoint.polarToCartesian(theta, radius);
+        PolarPoint.polarToCartesian(polarPointAngle, polarPointRadius);
     projectedPoint =
         org.jungrapht.visualization.layout.model.Point.of(
             projectedPoint.x / ratio, projectedPoint.y);
     Point2D translatedBack =
         new Point2D.Double(
-            projectedPoint.x + viewCenter.getX(), projectedPoint.y + viewCenter.getY());
+            projectedPoint.x + lensCenterInLayoutCoordinates.getX(),
+            projectedPoint.y + lensCenterInLayoutCoordinates.getY());
     return translatedBack;
   }
 
   /** override base class to un-project the fisheye effect */
   public Point2D inverseTransform(Point2D viewPoint) {
 
-    Shape lensShape = lens.getLensShape();
-    if (lensShape.contains(viewPoint)) {
-      log.trace("lens {} contains viewPoint{}", lensShape, viewPoint);
-    } else {
-      log.trace("lens {} does not contain viewPoint {}", lensShape, viewPoint);
-    }
-
-    Point2D viewCenter = lens.getCenter();
+    Point2D lensCenterInLayoutCoords = lens.getCenter();
     double viewRadius = lens.getRadius();
     double ratio = lens.getRatio();
-    double dx = viewPoint.getX() - viewCenter.getX();
-    double dy = viewPoint.getY() - viewCenter.getY();
-    // factor out height/width ratio
+    double dx = viewPoint.getX() - lensCenterInLayoutCoords.getX();
+    double dy = viewPoint.getY() - lensCenterInLayoutCoords.getY();
+    // factor out ellipse
     dx *= ratio;
 
     org.jungrapht.visualization.layout.model.Point pointFromCenter =
@@ -180,13 +189,9 @@ public class HyperbolicTransformer extends LensTransformer implements MutableTra
     PolarPoint polar = PolarPoint.cartesianToPolar(pointFromCenter);
 
     double radius = polar.radius;
-    if (radius > viewRadius) {
-      log.trace("outside point radius {} > viewRadius {}", radius, viewRadius);
-    } else {
-      log.trace("inside point radius {} <= viewRadius {}", radius, viewRadius);
-    }
+    Shape lensShape = lens.getLensShape();
 
-    if (radius > viewRadius) {
+    if (!lensShape.contains(viewPoint)) {
       return delegate.inverseTransform(viewPoint);
     }
 
@@ -202,7 +207,8 @@ public class HyperbolicTransformer extends LensTransformer implements MutableTra
     projectedPoint = Point.of(projectedPoint.x / ratio, projectedPoint.y);
     Point2D translatedBack =
         new Point2D.Double(
-            projectedPoint.x + viewCenter.getX(), projectedPoint.y + viewCenter.getY());
+            projectedPoint.x + lensCenterInLayoutCoords.getX(),
+            projectedPoint.y + lensCenterInLayoutCoords.getY());
     return delegate.inverseTransform(translatedBack);
   }
 }

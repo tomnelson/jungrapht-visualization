@@ -141,6 +141,15 @@ public class TestGraphs {
     return graph;
   }
 
+  public static Graph<String, Integer> getOneVertexGraph() {
+
+    Graph<String, Integer> graph =
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.simple())
+            .edgeSupplier(SupplierUtil.createIntegerSupplier())
+            .buildGraph();
+    graph.addVertex("A");
+    return graph;
+  }
   /**
    * Returns a bigger, undirected test graph with a just one component. This graph consists of a
    * clique of ten edges, a partial clique (randomly generated, with edges of 0.6 probability), and

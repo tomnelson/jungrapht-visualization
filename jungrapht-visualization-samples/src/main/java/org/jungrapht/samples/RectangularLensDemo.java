@@ -6,61 +6,63 @@
  * or https://github.com/tomnelson/jungrapht-visualization/blob/master/LICENSE for a description.
  *
  */
-package org.jungrapht.samples.spatial;
+package org.jungrapht.samples;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.LoggerContext;
 import com.google.common.collect.ImmutableSortedMap;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicLabelUI;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.LensMagnificationGraphMousePlugin;
-import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.control.ModalLensGraphMouse;
+import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
+import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.jungrapht.visualization.transform.HyperbolicTransformer;
-import org.jungrapht.visualization.transform.LayoutLensSupport;
-import org.jungrapht.visualization.transform.Lens;
-import org.jungrapht.visualization.transform.LensSupport;
-import org.jungrapht.visualization.transform.MagnifyTransformer;
+import org.jungrapht.visualization.layout.model.Point;
+import org.jungrapht.visualization.layout.util.RandomLocationTransformer;
+import org.jungrapht.visualization.selection.MutableSelectedState;
+import org.jungrapht.visualization.transform.*;
 import org.jungrapht.visualization.transform.shape.HyperbolicShapeTransformer;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
 import org.jungrapht.visualization.transform.shape.ViewLensSupport;
-import org.jungrapht.visualization.util.ShapeFactory;
 import org.jungrapht.visualization.util.helpers.ControlHelpers;
 import org.jungrapht.visualization.util.helpers.LensControlHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * The purpose of this demo is to test picking a single, irregularly shaped vertex in the presence
- * of Lens effects and spatial data structures. Correct operation is that the vertex should become
- * 'selected' when the mouse is clicked within the vertex star shape (i.e. not beyond its bounds and
- * not between the star points), or it should become 'selected' when a rectangular region is dragged
- * that contains the vertex's center.
+ * Demonstrates the use of <code>HyperbolicTransform</code> and <code>MagnifyTransform</code>
+ * applied to either the model (graph layout) or the view (VisualizationViewer) The hyperbolic
+ * transform is applied in an elliptical lens that affects that part of the visualization.
  *
  * @author Tom Nelson
  */
-public class SpatialLensDemoWithOneStarVertex extends JPanel {
+public class RectangularLensDemo extends JPanel {
 
-  private static final Logger log = LoggerFactory.getLogger(SpatialLensDemoWithOneStarVertex.class);
   /** the graph */
   Graph<String, Integer> graph;
 
-  LayoutAlgorithm<String> graphLayoutAlgorithm;
+  FRLayoutAlgorithm<String> graphLayoutAlgorithm;
+
+  /** a grid shaped graph */
+  Graph<String, Integer> grid;
+
+  LayoutAlgorithm<String> gridLayoutAlgorithm;
 
   /** the visual component and renderer for the graph */
   VisualizationViewer<String, Integer> vv;
@@ -76,14 +78,20 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
   LensSupport<ModalLensGraphMouse> magnifyLayoutSupport;
 
   /** create an instance of a simple graph with controls to demo the zoomand hyperbolic features. */
-  public SpatialLensDemoWithOneStarVertex() {
+  public RectangularLensDemo() {
+
     setLayout(new BorderLayout());
-    graph = buildOneVertex();
-    //        TestGraphs.getOneComponentGraph();
+    // create a simple graph for the demo
+    graph = TestGraphs.getOneComponentGraph();
 
     graphLayoutAlgorithm = FRLayoutAlgorithm.<String>builder().build();
+    graphLayoutAlgorithm.setMaxIterations(1000);
 
     Dimension preferredSize = new Dimension(600, 600);
+    Map<String, Point> map = new HashMap<>();
+    Function<String, Point> vlf = map::get;
+    grid = this.generateVertexGrid(map, preferredSize, 25);
+    gridLayoutAlgorithm = new StaticLayoutAlgorithm<>();
 
     final VisualizationModel<String, Integer> visualizationModel =
         VisualizationModel.builder(graph)
@@ -91,21 +99,23 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
             .layoutSize(preferredSize)
             .build();
     vv = VisualizationViewer.builder(visualizationModel).viewSize(preferredSize).build();
-    vv.getRenderContext().setVertexLabelFunction(Object::toString);
+
+    MutableSelectedState<String> ps = vv.getSelectedVertexState();
+    MutableSelectedState<Integer> pes = vv.getSelectedEdgeState();
+    vv.getRenderContext()
+        .setVertexFillPaintFunction(
+            new PickableElementPaintFunction<>(ps, Color.red, Color.yellow));
+    vv.getRenderContext()
+        .setEdgeDrawPaintFunction(new PickableElementPaintFunction<>(pes, Color.black, Color.cyan));
     vv.setBackground(Color.white);
 
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
 
-    vv.getRenderContext()
-        .setVertexShapeFunction(
-            new Function<>() {
-              ShapeFactory<String> shapeFactory = new ShapeFactory<>(n -> 30, n -> 1.0f);
+    final Function<String, Shape> ovals = vv.getRenderContext().getVertexShapeFunction();
+    final Function<String, Shape> squares = n -> new Rectangle2D.Float(-10, -10, 20, 20);
 
-              @Override
-              public Shape apply(String s) {
-                return shapeFactory.getRegularStar(s, 5);
-              }
-            });
+    // add a listener for ToolTips
+    vv.setVertexToolTipFunction(n -> n); //Object::toString);
 
     VisualizationScrollPane visualizationScrollPane = new VisualizationScrollPane(vv);
     add(visualizationScrollPane);
@@ -118,22 +128,32 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
 
     // create a lens to share between the two hyperbolic transformers
     LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
-    layoutModel.set("A", 300, 300);
     Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
-    Lens lens = Lens.builder().dimension(d).build();
+
     hyperbolicViewSupport =
         ViewLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
             .lensTransformer(
-                HyperbolicShapeTransformer.builder(lens)
+                HyperbolicShapeTransformer.builder(
+                        Lens.builder()
+                            .lensShape(Lens.Shape.RECTANGLE)
+                            .dimension(
+                                new Dimension(layoutModel.getWidth(), layoutModel.getHeight()))
+                            .build())
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
             .lensGraphMouse(new ModalLensGraphMouse())
             .build();
+
     hyperbolicLayoutSupport =
         LayoutLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
             .lensTransformer(
-                HyperbolicTransformer.builder(lens)
+                HyperbolicTransformer.builder(
+                        Lens.builder()
+                            .lensShape(Lens.Shape.RECTANGLE)
+                            .dimension(
+                                new Dimension(layoutModel.getWidth(), layoutModel.getHeight()))
+                            .build())
                     .delegate(
                         vv.getRenderContext()
                             .getMultiLayerTransformer()
@@ -143,14 +163,16 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
             .build();
 
     // the magnification lens uses a different magnification than the hyperbolic lens
-    // create a new one to share between the two magnigy transformers
-    lens = Lens.builder().dimension(d).build();
-    lens.setMagnification(3.f);
-
     magnifyViewSupport =
         ViewLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
             .lensTransformer(
-                MagnifyShapeTransformer.builder(lens)
+                MagnifyShapeTransformer.builder(
+                        Lens.builder()
+                            .lensShape(Lens.Shape.RECTANGLE)
+                            .dimension(
+                                new Dimension(layoutModel.getWidth(), layoutModel.getHeight()))
+                            .magnification(3.f)
+                            .build())
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
@@ -161,7 +183,13 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
     magnifyLayoutSupport =
         LayoutLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
             .lensTransformer(
-                MagnifyTransformer.builder(lens)
+                MagnifyTransformer.builder(
+                        Lens.builder()
+                            .lensShape(Lens.Shape.RECTANGLE)
+                            .dimension(
+                                new Dimension(layoutModel.getWidth(), layoutModel.getHeight()))
+                            .magnification(3.f)
+                            .build())
                     .delegate(
                         vv.getRenderContext()
                             .getMultiLayerTransformer()
@@ -171,85 +199,97 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
                 new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
             .build();
 
-    hyperbolicLayoutSupport
-        .getLensTransformer()
-        .getLens()
-        .setLensShape(hyperbolicViewSupport.getLensTransformer().getLens().getLensShape());
-    magnifyViewSupport
-        .getLensTransformer()
-        .getLens()
-        .setLensShape(hyperbolicLayoutSupport.getLensTransformer().getLens().getLensShape());
-    magnifyLayoutSupport
-        .getLensTransformer()
-        .getLens()
-        .setLensShape(magnifyViewSupport.getLensTransformer().getLens().getLensShape());
-
     JLabel modeLabel = new JLabel("     Mode Menu >>");
     modeLabel.setUI(new VerticalLabelUI(false));
 
-    graphMouse.addItemListener(
-        ((ModalGraphMouse) hyperbolicLayoutSupport.getGraphMouse()).getModeListener());
+    graphMouse.addItemListener(hyperbolicLayoutSupport.getGraphMouse().getModeListener());
     graphMouse.addItemListener(hyperbolicViewSupport.getGraphMouse().getModeListener());
     graphMouse.addItemListener(magnifyLayoutSupport.getGraphMouse().getModeListener());
     graphMouse.addItemListener(magnifyViewSupport.getGraphMouse().getModeListener());
+
+    ButtonGroup graphRadio = new ButtonGroup();
+    JRadioButton graphButton = new JRadioButton("Graph");
+    graphButton.setSelected(true);
+    graphButton.addItemListener(
+        e -> {
+          if (e.getStateChange() == ItemEvent.SELECTED) {
+            layoutModel.setInitializer(
+                new RandomLocationTransformer<>(layoutModel.getWidth(), layoutModel.getHeight()));
+            visualizationModel.setGraph(graph, false);
+            LayoutAlgorithmTransition.apply(vv, graphLayoutAlgorithm);
+            vv.getRenderContext().setVertexShapeFunction(ovals);
+            vv.getRenderContext().setVertexLabelFunction(Object::toString);
+            vv.repaint();
+          }
+        });
+
+    JRadioButton gridButton = new JRadioButton("Grid");
+    gridButton.addItemListener(
+        e -> {
+          if (e.getStateChange() == ItemEvent.SELECTED) {
+            layoutModel.setInitializer(vlf);
+            // so it won't start running the old layout algorithm on the new graph
+            visualizationModel.setGraph(grid, false);
+            LayoutAlgorithmTransition.apply(vv, gridLayoutAlgorithm);
+            vv.getRenderContext().setVertexShapeFunction(squares);
+            vv.getRenderContext().setVertexLabelFunction(n -> null);
+            vv.repaint();
+          }
+        });
+
+    graphRadio.add(graphButton);
+    graphRadio.add(gridButton);
+
+    JPanel modePanel = new JPanel(new GridLayout(3, 1));
+    modePanel.setBorder(BorderFactory.createTitledBorder("Display"));
+    modePanel.add(graphButton);
+    modePanel.add(gridButton);
 
     JMenuBar menubar = new JMenuBar();
     menubar.add(graphMouse.getModeMenu());
     visualizationScrollPane.setCorner(menubar);
 
-    JComboBox modeBox = graphMouse.getModeComboBox();
-    modeBox.addItemListener(
-        ((DefaultModalGraphMouse<Integer, Number>) vv.getGraphMouse()).getModeListener());
-
-    JRadioButton showSpatialEffects = new JRadioButton("Spatial Structure");
-    showSpatialEffects.addItemListener(
-        e -> {
-          if (e.getStateChange() == ItemEvent.SELECTED) {
-            System.err.println("TURNED ON LOGGING");
-            // turn on the logging
-            // programmatically set the log level so that the spatial grid is drawn for this demo and the SpatialGrid logging is output
-            ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) log;
-            LoggerContext ctx = (LoggerContext) LoggerFactory.getILoggerFactory();
-            ctx.getLogger("org.jungrapht.visualization.layout.spatial").setLevel(Level.DEBUG);
-            ctx.getLogger("org.jungrapht.visualization.DefaultVisualizationServer")
-                .setLevel(Level.TRACE);
-            ctx.getLogger("org.jungrapht.visualization.picking").setLevel(Level.TRACE);
-            repaint();
-
-          } else if (e.getStateChange() == ItemEvent.DESELECTED) {
-            System.err.println("TURNED OFF LOGGING");
-            // turn off the logging
-            // programmatically set the log level so that the spatial grid is drawn for this demo and the SpatialGrid logging is output
-            ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) log;
-            LoggerContext ctx = (LoggerContext) LoggerFactory.getILoggerFactory();
-            ctx.getLogger("org.jungrapht.visualization.layout.spatial").setLevel(Level.INFO);
-            ctx.getLogger("org.jungrapht.visualization.DefaultVisualizationServer")
-                .setLevel(Level.INFO);
-            ctx.getLogger("org.jungrapht.visualization.picking").setLevel(Level.INFO);
-            repaint();
-          }
-        });
-
     Box controls = Box.createHorizontalBox();
-    JPanel leftControls = new JPanel();
-    controls.add(ControlHelpers.getZoomControls("Scale", vv));
-    controls.add(
-        ControlHelpers.getCenteredContainer(
-            "Spatial Effects", Box.createVerticalBox(), showSpatialEffects));
-    controls.add(leftControls);
+    controls.add(ControlHelpers.getZoomControls("Zoom", vv));
     controls.add(
         LensControlHelper.builder(
                 ImmutableSortedMap.of(
-                    "Hyperbolic Layout", hyperbolicLayoutSupport,
-                    "Hyperbolic View", hyperbolicViewSupport,
-                    "Magnify Layout", magnifyLayoutSupport,
-                    "Magnify View", magnifyViewSupport))
+                    "Hyperbolic View",
+                    hyperbolicViewSupport,
+                    "Hyperbolic Layout",
+                    hyperbolicLayoutSupport,
+                    "Magnified View",
+                    magnifyViewSupport,
+                    "Magnified Layout",
+                    magnifyLayoutSupport))
+            .containerSupplier(JPanel::new)
             .containerLayoutManager(new GridLayout(0, 2))
             .title("Lens Controls")
             .build()
             .container());
+
+    controls.add(modePanel);
     controls.add(modeLabel);
     add(controls, BorderLayout.SOUTH);
+  }
+
+  private Graph<String, Integer> generateVertexGrid(
+      Map<String, Point> vlf, Dimension d, int interval) {
+    int count = d.width / interval * d.height / interval;
+    Graph<String, Integer> graph =
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.directedMultigraph())
+            .buildGraph();
+    for (int i = 0; i < count; i++) {
+      int x = interval * i;
+      int y = x / d.width * interval;
+      x %= d.width;
+
+      Point location = Point.of(x, y);
+      String vertex = "v" + i;
+      vlf.put(vertex, location);
+      graph.addVertex(vertex);
+    }
+    return graph;
   }
 
   static class VerticalLabelUI extends BasicLabelUI {
@@ -328,18 +368,10 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
     }
   }
 
-  Graph<String, Integer> buildOneVertex() {
-    Graph<String, Integer> graph =
-        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.directedMultigraph())
-            .buildGraph();
-    graph.addVertex("A");
-    return graph;
-  }
-
   public static void main(String[] args) {
     JFrame f = new JFrame();
     f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-    f.getContentPane().add(new SpatialLensDemoWithOneStarVertex());
+    f.getContentPane().add(new RectangularLensDemo());
     f.pack();
     f.setVisible(true);
   }

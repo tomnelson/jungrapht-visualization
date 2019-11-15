@@ -134,12 +134,15 @@ public class LensDemo extends JPanel {
     LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
     Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
 
-    Lens lens = new Lens(d);
-
     hyperbolicViewSupport =
         ViewLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
             .lensTransformer(
-                HyperbolicShapeTransformer.builder(lens)
+                HyperbolicShapeTransformer.builder(
+                        Lens.builder()
+                            .lensShape(Lens.Shape.ELLIPSE)
+                            .dimension(
+                                new Dimension(layoutModel.getWidth(), layoutModel.getHeight()))
+                            .build())
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
@@ -149,7 +152,12 @@ public class LensDemo extends JPanel {
     hyperbolicLayoutSupport =
         LayoutLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
             .lensTransformer(
-                HyperbolicTransformer.builder(lens)
+                HyperbolicTransformer.builder(
+                        Lens.builder()
+                            .lensShape(Lens.Shape.ELLIPSE)
+                            .dimension(
+                                new Dimension(layoutModel.getWidth(), layoutModel.getHeight()))
+                            .build())
                     .delegate(
                         vv.getRenderContext()
                             .getMultiLayerTransformer()
@@ -159,13 +167,16 @@ public class LensDemo extends JPanel {
             .build();
 
     // the magnification lens uses a different magnification than the hyperbolic lens
-    // create a new one to share between the two magnigy transformers
-    lens = new Lens(d);
-    lens.setMagnification(3.f);
     magnifyViewSupport =
         ViewLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
             .lensTransformer(
-                MagnifyShapeTransformer.builder(lens)
+                MagnifyShapeTransformer.builder(
+                        Lens.builder()
+                            .lensShape(Lens.Shape.ELLIPSE)
+                            .dimension(
+                                new Dimension(layoutModel.getWidth(), layoutModel.getHeight()))
+                            .magnification(3.f)
+                            .build())
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
@@ -176,7 +187,13 @@ public class LensDemo extends JPanel {
     magnifyLayoutSupport =
         LayoutLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
             .lensTransformer(
-                MagnifyTransformer.builder(lens)
+                MagnifyTransformer.builder(
+                        Lens.builder()
+                            .lensShape(Lens.Shape.ELLIPSE)
+                            .dimension(
+                                new Dimension(layoutModel.getWidth(), layoutModel.getHeight()))
+                            .magnification(3.f)
+                            .build())
                     .delegate(
                         vv.getRenderContext()
                             .getMultiLayerTransformer()
@@ -185,19 +202,6 @@ public class LensDemo extends JPanel {
             .lensGraphMouse(
                 new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
             .build();
-
-    hyperbolicLayoutSupport
-        .getLensTransformer()
-        .getLens()
-        .setLensShape(hyperbolicViewSupport.getLensTransformer().getLens().getLensShape());
-    magnifyViewSupport
-        .getLensTransformer()
-        .getLens()
-        .setLensShape(hyperbolicLayoutSupport.getLensTransformer().getLens().getLensShape());
-    magnifyLayoutSupport
-        .getLensTransformer()
-        .getLens()
-        .setLensShape(magnifyViewSupport.getLensTransformer().getLens().getLensShape());
 
     JLabel modeLabel = new JLabel("     Mode Menu >>");
     modeLabel.setUI(new VerticalLabelUI(false));

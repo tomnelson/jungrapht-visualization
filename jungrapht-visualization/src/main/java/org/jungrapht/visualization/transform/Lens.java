@@ -12,6 +12,7 @@ import com.google.common.base.Preconditions;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,16 +28,58 @@ import org.slf4j.LoggerFactory;
  */
 public class Lens {
 
-  private static final Logger log = LoggerFactory.getLogger(Lens.class);
-  /** the area affected by the transform */
-  protected RectangularShape lensShape = new Ellipse2D.Float();
-
-  protected float magnification = 0.7f;
-
-  /** @param d the size used for the lens */
-  public Lens(Dimension d) {
-    setSize(d);
+  public enum Shape {
+    ELLIPSE,
+    RECTANGLE
   }
+
+  private static final Logger log = LoggerFactory.getLogger(Lens.class);
+
+  public static class Builder {
+    private RectangularShape lensShape = new Ellipse2D.Double();;
+    private Dimension dimension = new Dimension(100, 100);
+    private float magnification = 0.7f;
+
+    public Builder lensShape(Lens.Shape shape) {
+      switch (shape) {
+        case RECTANGLE:
+          this.lensShape = new Rectangle2D.Double();
+          break;
+        case ELLIPSE:
+        default:
+          this.lensShape = new Ellipse2D.Double();
+      }
+      return this;
+    }
+
+    public Builder dimension(Dimension dimension) {
+      this.dimension = dimension;
+      return this;
+    }
+
+    public Builder magnification(float magnification) {
+      this.magnification = magnification;
+      return this;
+    }
+
+    public Lens build() {
+      return new Lens(this);
+    }
+  }
+
+  public static Builder builder() {
+    return new Builder();
+  }
+
+  private Lens(Builder builder) {
+    this.lensShape = builder.lensShape;
+    this.magnification = builder.magnification;
+    setSize(builder.dimension);
+  }
+  /** the area affected by the transform */
+  protected RectangularShape lensShape;
+
+  protected float magnification;
 
   /** @param d the size used for the lens */
   public void setSize(Dimension d) {
@@ -72,6 +115,13 @@ public class Lens {
 
   public double getRadius() {
     return lensShape.getHeight() / 2;
+  }
+
+  public double getCenterToCorner() {
+    double w = lensShape.getWidth();
+    double h = lensShape.getHeight();
+    double diag = Math.sqrt(w * w + h * h);
+    return diag / 2;
   }
 
   public void setRadius(double viewRadius) {

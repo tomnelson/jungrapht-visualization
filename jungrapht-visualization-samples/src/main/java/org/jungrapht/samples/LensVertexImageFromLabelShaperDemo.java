@@ -190,12 +190,18 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
     LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
     Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
 
-    Lens lens = new Lens(d);
+    Lens lens = Lens.builder().dimension(d).build();
     lens.setMagnification(2.f);
     magnifyViewSupport =
         MagnifyImageLensSupport.builder(vv)
             .lensTransformer(
-                MagnifyShapeTransformer.builder(lens)
+                MagnifyShapeTransformer.builder(
+                        Lens.builder()
+                            .lensShape(Lens.Shape.RECTANGLE)
+                            .dimension(
+                                new Dimension(layoutModel.getWidth(), layoutModel.getHeight()))
+                            .magnification(3.f)
+                            .build())
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
@@ -203,12 +209,18 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
                 new DefaultLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
             .build();
 
-    lens = new Lens(d);
+    lens = Lens.builder().dimension(d).build();
     lens.setMagnification(2.f);
     magnifyLayoutSupport =
         LayoutLensSupport.builder(vv)
             .lensTransformer(
-                MagnifyTransformer.builder(lens)
+                MagnifyTransformer.builder(
+                        Lens.builder()
+                            .lensShape(Lens.Shape.RECTANGLE)
+                            .dimension(
+                                new Dimension(layoutModel.getWidth(), layoutModel.getHeight()))
+                            .magnification(3.f)
+                            .build())
                     .delegate(
                         vv.getRenderContext()
                             .getMultiLayerTransformer()

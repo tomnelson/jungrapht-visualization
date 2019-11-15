@@ -206,7 +206,7 @@ public class LensVertexImageShaperDemo extends JPanel {
     LayoutModel<Number> layoutModel = vv.getVisualizationModel().getLayoutModel();
     Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
 
-    Lens lens = new Lens(d);
+    Lens lens = Lens.builder().lensShape(Lens.Shape.RECTANGLE).dimension(d).build();
     lens.setMagnification(2.f);
     magnifyViewSupport =
         MagnifyImageLensSupport.<Number, Number, ModalLensGraphMouse>builder(vv)
