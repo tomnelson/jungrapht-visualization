@@ -134,11 +134,7 @@ public class RectangularLensDemo extends JPanel {
         ViewLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
             .lensTransformer(
                 HyperbolicShapeTransformer.builder(
-                        Lens.builder()
-                            .lensShape(Lens.Shape.RECTANGLE)
-                            .dimension(
-                                new Dimension(layoutModel.getWidth(), layoutModel.getHeight()))
-                            .build())
+                        Lens.builder().lensShape(Lens.Shape.RECTANGLE).build())
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
@@ -149,11 +145,7 @@ public class RectangularLensDemo extends JPanel {
         LayoutLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
             .lensTransformer(
                 HyperbolicTransformer.builder(
-                        Lens.builder()
-                            .lensShape(Lens.Shape.RECTANGLE)
-                            .dimension(
-                                new Dimension(layoutModel.getWidth(), layoutModel.getHeight()))
-                            .build())
+                        Lens.builder().lensShape(Lens.Shape.RECTANGLE).build())
                     .delegate(
                         vv.getRenderContext()
                             .getMultiLayerTransformer()
@@ -167,12 +159,7 @@ public class RectangularLensDemo extends JPanel {
         ViewLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
             .lensTransformer(
                 MagnifyShapeTransformer.builder(
-                        Lens.builder()
-                            .lensShape(Lens.Shape.RECTANGLE)
-                            .dimension(
-                                new Dimension(layoutModel.getWidth(), layoutModel.getHeight()))
-                            .magnification(3.f)
-                            .build())
+                        Lens.builder().lensShape(Lens.Shape.RECTANGLE).magnification(3.f).build())
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
@@ -184,12 +171,7 @@ public class RectangularLensDemo extends JPanel {
         LayoutLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
             .lensTransformer(
                 MagnifyTransformer.builder(
-                        Lens.builder()
-                            .lensShape(Lens.Shape.RECTANGLE)
-                            .dimension(
-                                new Dimension(layoutModel.getWidth(), layoutModel.getHeight()))
-                            .magnification(3.f)
-                            .build())
+                        Lens.builder().lensShape(Lens.Shape.RECTANGLE).magnification(3.f).build())
                     .delegate(
                         vv.getRenderContext()
                             .getMultiLayerTransformer()

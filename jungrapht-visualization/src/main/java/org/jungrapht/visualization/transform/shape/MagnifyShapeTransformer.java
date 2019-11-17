@@ -43,7 +43,7 @@ public class MagnifyShapeTransformer extends MagnifyTransformer
 
     public T build() {
       if (lens == null && dimension != null) {
-        lens = Lens.builder().dimension(dimension).build();
+        lens = new Lens();
       }
       return (T) new MagnifyShapeTransformer(this);
     }

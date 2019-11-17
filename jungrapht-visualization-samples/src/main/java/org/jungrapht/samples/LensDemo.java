@@ -138,11 +138,7 @@ public class LensDemo extends JPanel {
         ViewLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
             .lensTransformer(
                 HyperbolicShapeTransformer.builder(
-                        Lens.builder()
-                            .lensShape(Lens.Shape.ELLIPSE)
-                            .dimension(
-                                new Dimension(layoutModel.getWidth(), layoutModel.getHeight()))
-                            .build())
+                        Lens.builder().lensShape(Lens.Shape.ELLIPSE).build())
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
@@ -152,12 +148,7 @@ public class LensDemo extends JPanel {
     hyperbolicLayoutSupport =
         LayoutLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
             .lensTransformer(
-                HyperbolicTransformer.builder(
-                        Lens.builder()
-                            .lensShape(Lens.Shape.ELLIPSE)
-                            .dimension(
-                                new Dimension(layoutModel.getWidth(), layoutModel.getHeight()))
-                            .build())
+                HyperbolicTransformer.builder(Lens.builder().lensShape(Lens.Shape.ELLIPSE).build())
                     .delegate(
                         vv.getRenderContext()
                             .getMultiLayerTransformer()
@@ -171,12 +162,7 @@ public class LensDemo extends JPanel {
         ViewLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
             .lensTransformer(
                 MagnifyShapeTransformer.builder(
-                        Lens.builder()
-                            .lensShape(Lens.Shape.ELLIPSE)
-                            .dimension(
-                                new Dimension(layoutModel.getWidth(), layoutModel.getHeight()))
-                            .magnification(3.f)
-                            .build())
+                        Lens.builder().lensShape(Lens.Shape.ELLIPSE).magnification(3.f).build())
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
@@ -188,12 +174,7 @@ public class LensDemo extends JPanel {
         LayoutLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
             .lensTransformer(
                 MagnifyTransformer.builder(
-                        Lens.builder()
-                            .lensShape(Lens.Shape.ELLIPSE)
-                            .dimension(
-                                new Dimension(layoutModel.getWidth(), layoutModel.getHeight()))
-                            .magnification(3.f)
-                            .build())
+                        Lens.builder().lensShape(Lens.Shape.ELLIPSE).magnification(3.f).build())
                     .delegate(
                         vv.getRenderContext()
                             .getMultiLayerTransformer()

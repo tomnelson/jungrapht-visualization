@@ -94,7 +94,7 @@ public class BalloonLayoutForestDemo extends JPanel {
 
     LayoutModel layoutModel = vv.getVisualizationModel().getLayoutModel();
     Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
-    Lens lens = Lens.builder().dimension(d).build();
+    Lens lens = new Lens();
     hyperbolicViewSupport =
         ViewLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
             .lensTransformer(

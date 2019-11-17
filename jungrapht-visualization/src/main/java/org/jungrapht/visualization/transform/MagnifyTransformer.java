@@ -44,7 +44,7 @@ public class MagnifyTransformer extends LensTransformer implements MutableTransf
 
     public T build() {
       if (lens == null && dimension != null) {
-        lens = Lens.builder().dimension(dimension).build();
+        lens = new Lens();
       }
       return (T) new MagnifyTransformer(this);
     }

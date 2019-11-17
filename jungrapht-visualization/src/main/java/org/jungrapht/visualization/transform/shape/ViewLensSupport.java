@@ -8,7 +8,6 @@
  */
 package org.jungrapht.visualization.transform.shape;
 
-import java.awt.Dimension;
 import java.awt.geom.Point2D;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
@@ -17,7 +16,6 @@ import org.jungrapht.visualization.control.LensGraphMouse;
 import org.jungrapht.visualization.control.LensTransformSupport;
 import org.jungrapht.visualization.control.TransformSupport;
 import org.jungrapht.visualization.layout.GraphElementAccessor;
-import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.transform.AbstractLensSupport;
 import org.jungrapht.visualization.transform.LensSupport;
@@ -60,11 +58,6 @@ public class ViewLensSupport<V, E, M extends LensGraphMouse> extends AbstractLen
     this.renderContext = vv.getRenderContext();
     this.pickSupport = renderContext.getPickSupport();
     this.savedGraphicsDecorator = renderContext.getGraphicsContext();
-    //    this.lensTransformer = lensTransformer;
-    LayoutModel layoutModel = vv.getVisualizationModel().getLayoutModel();
-    Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
-    lensTransformer.getLens().setSize(d);
-
     this.lensGraphicsDecorator = new TransformingFlatnessGraphics(lensTransformer);
     this.savedEdgeRenderer = vv.getRenderer().getEdgeRenderer();
   }
@@ -85,10 +78,6 @@ public class ViewLensSupport<V, E, M extends LensGraphMouse> extends AbstractLen
     this.pickSupport = renderContext.getPickSupport();
     this.savedGraphicsDecorator = renderContext.getGraphicsContext();
     this.lensTransformer = lensTransformer;
-    LayoutModel layoutModel = vv.getVisualizationModel().getLayoutModel();
-    Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
-    lensTransformer.getLens().setSize(d);
-
     this.lensGraphicsDecorator = new TransformingFlatnessGraphics(lensTransformer);
     this.savedEdgeRenderer = vv.getRenderer().getEdgeRenderer();
   }

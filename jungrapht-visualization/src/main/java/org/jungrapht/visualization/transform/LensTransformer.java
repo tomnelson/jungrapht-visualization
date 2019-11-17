@@ -61,7 +61,7 @@ public abstract class LensTransformer extends MutableTransformerDecorator
 
   /** @param d the size used for the lens */
   protected LensTransformer(Dimension d) {
-    this(Lens.builder().dimension(d).build());
+    this(new Lens());
   }
 
   /**
@@ -79,7 +79,7 @@ public abstract class LensTransformer extends MutableTransformerDecorator
    * @param delegate the layoutTransformer to use
    */
   protected LensTransformer(Dimension d, MutableTransformer delegate) {
-    this(Lens.builder().dimension(d).build(), delegate);
+    this(new Lens(), delegate);
   }
 
   /**

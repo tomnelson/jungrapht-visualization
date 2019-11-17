@@ -190,18 +190,13 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
     LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
     Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
 
-    Lens lens = Lens.builder().dimension(d).build();
+    Lens lens = new Lens();
     lens.setMagnification(2.f);
     magnifyViewSupport =
         MagnifyImageLensSupport.builder(vv)
             .lensTransformer(
                 MagnifyShapeTransformer.builder(
-                        Lens.builder()
-                            .lensShape(Lens.Shape.RECTANGLE)
-                            .dimension(
-                                new Dimension(layoutModel.getWidth(), layoutModel.getHeight()))
-                            .magnification(3.f)
-                            .build())
+                        Lens.builder().lensShape(Lens.Shape.RECTANGLE).magnification(3.f).build())
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
@@ -209,18 +204,13 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
                 new DefaultLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
             .build();
 
-    lens = Lens.builder().dimension(d).build();
+    lens = new Lens();
     lens.setMagnification(2.f);
     magnifyLayoutSupport =
         LayoutLensSupport.builder(vv)
             .lensTransformer(
                 MagnifyTransformer.builder(
-                        Lens.builder()
-                            .lensShape(Lens.Shape.RECTANGLE)
-                            .dimension(
-                                new Dimension(layoutModel.getWidth(), layoutModel.getHeight()))
-                            .magnification(3.f)
-                            .build())
+                        Lens.builder().lensShape(Lens.Shape.RECTANGLE).magnification(3.f).build())
                     .delegate(
                         vv.getRenderContext()
                             .getMultiLayerTransformer()

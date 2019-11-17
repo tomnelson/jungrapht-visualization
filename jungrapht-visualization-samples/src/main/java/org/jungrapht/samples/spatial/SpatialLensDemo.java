@@ -104,7 +104,7 @@ public class SpatialLensDemo extends JPanel {
     // create a lens to share between the two hyperbolic transformers
     LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
     Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
-    Lens lens = Lens.builder().dimension(d).build();
+    Lens lens = new Lens();
     hyperbolicViewSupport =
         ViewLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
             .lensTransformer(
@@ -128,7 +128,7 @@ public class SpatialLensDemo extends JPanel {
 
     // the magnification lens uses a different magnification than the hyperbolic lens
     // create a new one to share between the two magnigy transformers
-    lens = Lens.builder().dimension(d).build();
+    lens = new Lens();
     lens.setMagnification(3.f);
     magnifyViewSupport =
         ViewLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)

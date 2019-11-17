@@ -42,7 +42,7 @@ public class HyperbolicShapeTransformer extends HyperbolicTransformer
 
     public T build() {
       if (lens == null && dimension != null) {
-        lens = Lens.builder().dimension(dimension).build();
+        lens = new Lens();
       }
       return (T) new HyperbolicShapeTransformer(this);
     }

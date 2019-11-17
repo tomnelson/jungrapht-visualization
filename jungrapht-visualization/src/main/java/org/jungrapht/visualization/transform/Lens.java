@@ -8,8 +8,6 @@
  */
 package org.jungrapht.visualization.transform;
 
-import com.google.common.base.Preconditions;
-import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -17,17 +15,10 @@ import java.awt.geom.RectangularShape;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * LensTransformer wraps a MutableAffineTransformer and modifies the transform and inverseTransform
- * methods so that they create a projection of the graph points within an elliptical lens.
- *
- * <p>LensTransformer uses an affine transform to cause translation, scaling, rotation, and shearing
- * while applying a possibly non-affine filter in its transform and inverseTransform methods.
- *
- * @author Tom Nelson
- */
+/** Provides a magnification area (elliptical or rectangular) in a visualization */
 public class Lens {
 
+  /** supported lens shapes are Ellipse and Rectangle */
   public enum Shape {
     ELLIPSE,
     RECTANGLE
@@ -35,25 +26,28 @@ public class Lens {
 
   private static final Logger log = LoggerFactory.getLogger(Lens.class);
 
+  /** builds a {@Code Lens} with a provided shape and initial magnification */
   public static class Builder {
-    private RectangularShape lensShape = new Ellipse2D.Double();;
-    private Dimension dimension = new Dimension(100, 100);
+    private RectangularShape lensShape;
     private float magnification = 0.7f;
 
-    public Builder lensShape(Lens.Shape shape) {
-      switch (shape) {
+    private Builder(Lens.Shape lensShape) {
+      setShapeFrom(lensShape);
+    }
+
+    private void setShapeFrom(Lens.Shape lensShape) {
+      switch (lensShape) {
         case RECTANGLE:
-          this.lensShape = new Rectangle2D.Double();
+          this.lensShape = new Rectangle2D.Double(0, 0, 1, 1);
           break;
         case ELLIPSE:
         default:
-          this.lensShape = new Ellipse2D.Double();
+          this.lensShape = new Ellipse2D.Double(0, 0, 1, 1);
       }
-      return this;
     }
 
-    public Builder dimension(Dimension dimension) {
-      this.dimension = dimension;
+    public Builder lensShape(Lens.Shape shape) {
+      setShapeFrom(shape);
       return this;
     }
 
@@ -67,29 +61,24 @@ public class Lens {
     }
   }
 
-  public static Builder builder() {
-    return new Builder();
+  public static Builder builder(Lens.Shape lensShape) {
+    return new Builder(lensShape);
   }
+
+  public static Builder builder() {
+    return new Builder(Shape.ELLIPSE);
+  }
+
+  public Lens() {}
 
   private Lens(Builder builder) {
     this.lensShape = builder.lensShape;
     this.magnification = builder.magnification;
-    setSize(builder.dimension);
   }
   /** the area affected by the transform */
-  protected RectangularShape lensShape;
+  protected RectangularShape lensShape = new Ellipse2D.Double(0, 0, 1, 1);
 
-  protected float magnification;
-
-  /** @param d the size used for the lens */
-  public void setSize(Dimension d) {
-    Preconditions.checkNotNull(d);
-    Preconditions.checkArgument(d.width > 0, "width must be > 0");
-    Preconditions.checkArgument(d.height > 0, "height must be > 0");
-    float width = d.width / 1.5f;
-    float height = d.height / 1.5f;
-    lensShape.setFrame((d.width - width) / 2, (d.height - height) / 2, width, height);
-  }
+  protected float magnification = 0.7f;
 
   public float getMagnification() {
     return magnification;
@@ -101,7 +90,6 @@ public class Lens {
   }
 
   public Point2D getCenter() {
-
     return new Point2D.Double(lensShape.getCenterX(), lensShape.getCenterY());
   }
 
@@ -135,6 +123,9 @@ public class Lens {
 
   /** @return the ratio between the lens height and lens width */
   public double getRatio() {
+    if (lensShape.getWidth() == 0) {
+      return 1;
+    }
     return lensShape.getHeight() / lensShape.getWidth();
   }
 
