@@ -120,7 +120,7 @@ public class MagnifyImageLensSupport<V, E, M extends LensGraphMouse>
       double scale =
           multiLayerTransformer.getTransformer(MultiLayerTransformer.Layer.VIEW).getScale();
       log.trace("view scale is {}", scale);
-      lensTransformer.getLens().setRadius(Math.min(vv.getWidth(), vv.getHeight()) / scale / 2.2);
+      lensTransformer.getLens().setRadius(Math.min(vv.getWidth(), vv.getHeight()) / scale / 3);
 
       lensTransformer.setDelegate(
           vv.getRenderContext()

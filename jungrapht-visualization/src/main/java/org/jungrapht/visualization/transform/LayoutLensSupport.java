@@ -98,7 +98,7 @@ public class LayoutLensSupport<V, E, M extends LensGraphMouse> extends AbstractL
       double scale =
           multiLayerTransformer.getTransformer(MultiLayerTransformer.Layer.VIEW).getScale();
       log.trace("view scale is {}", scale);
-      lensTransformer.getLens().setRadius(Math.min(vv.getWidth(), vv.getHeight()) / scale / 2.2);
+      lensTransformer.getLens().setRadius(Math.min(vv.getWidth(), vv.getHeight()) / scale / 3);
 
       vv.getRenderContext()
           .getMultiLayerTransformer()
