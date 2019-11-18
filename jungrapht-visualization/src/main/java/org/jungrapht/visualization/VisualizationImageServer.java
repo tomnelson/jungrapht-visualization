@@ -17,7 +17,7 @@ import java.util.Map;
 import org.jgrapht.Graph;
 
 /**
- * A class that could be used on the server side of a thin-client application. It creates the jung
+ * A class that could be used on the server side of a thin-client application. It creates the graph
  * visualization, then produces an image of it.
  *
  * @author tom

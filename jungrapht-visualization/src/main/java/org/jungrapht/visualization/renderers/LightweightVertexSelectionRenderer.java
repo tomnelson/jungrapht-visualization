@@ -15,6 +15,10 @@ import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @param <V> vertex type
+ * @param <E> edge type
+ */
 public class LightweightVertexSelectionRenderer<V, E> extends LightweightVertexRenderer<V, E>
     implements Renderer.Vertex<V, E> {
 

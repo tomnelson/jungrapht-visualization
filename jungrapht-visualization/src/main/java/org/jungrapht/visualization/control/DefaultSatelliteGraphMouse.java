@@ -7,6 +7,8 @@ import java.awt.event.InputEvent;
  * graph visualization
  *
  * @author Tom Nelson
+ * @param <V> vertex type
+ * @param <E> edge type
  */
 public class DefaultSatelliteGraphMouse<V, E> extends AbstractGraphMouse {
 

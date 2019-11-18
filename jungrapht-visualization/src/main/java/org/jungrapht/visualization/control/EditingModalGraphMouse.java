@@ -21,6 +21,10 @@ import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.annotations.AnnotatingGraphMousePlugin;
 
+/**
+ * @param <V> vertex type
+ * @param <E> edge type
+ */
 public class EditingModalGraphMouse<V, E> extends AbstractModalGraphMouse
     implements ModalGraphMouse, ItemSelectable {
 

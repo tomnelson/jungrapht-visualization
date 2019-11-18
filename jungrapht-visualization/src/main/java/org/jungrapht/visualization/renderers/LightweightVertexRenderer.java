@@ -21,6 +21,10 @@ import org.jungrapht.visualization.layout.model.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @param <V> vertex type
+ * @param <E> edge type
+ */
 public class LightweightVertexRenderer<V, E> extends AbstractVertexRenderer<V, E>
     implements Renderer.Vertex<V, E> {
 

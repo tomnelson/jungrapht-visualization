@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
  * HyperbolicTransformer wraps a MutableAffineTransformer and modifies the transform and
  * inverseTransform methods so that they create a fisheye projection of the graph points, with
  * points near the center spread out and points near the edges collapsed onto the circumference of
- * an ellipse.
+ * an ellipse or the boundaries of a rectangle
  *
  * <p>HyperbolicTransformer is not an affine transform, but it uses an affine transform to cause
  * translation, scaling, rotation, and shearing while applying a non-affine hyperbolic filter in its

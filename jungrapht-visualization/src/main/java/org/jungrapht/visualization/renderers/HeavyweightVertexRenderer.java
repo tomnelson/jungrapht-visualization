@@ -21,6 +21,10 @@ import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @param <V> vertex type
+ * @param <E> edge type
+ */
 public class HeavyweightVertexRenderer<V, E> extends AbstractVertexRenderer<V, E>
     implements Renderer.Vertex<V, E> {
 

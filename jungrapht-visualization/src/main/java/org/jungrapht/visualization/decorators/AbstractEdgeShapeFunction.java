@@ -18,6 +18,8 @@ import org.jungrapht.visualization.util.Context;
  * An interface for decorators that return a <code>Shape</code> for a specified edge.
  *
  * @author Tom Nelson
+ * @param <V> vertex type
+ * @param <E> edge type
  */
 public abstract class AbstractEdgeShapeFunction<V, E>
     implements Function<Context<Graph<V, E>, E>, Shape> {

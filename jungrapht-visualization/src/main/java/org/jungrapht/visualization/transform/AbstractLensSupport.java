@@ -29,6 +29,9 @@ import org.jungrapht.visualization.layout.GraphElementAccessor;
  * HyperbolicTransformerDemo, ViewLensSupport and LayoutLensSupport for examples of how to use it.
  *
  * @author Tom Nelson
+ * @param <V> vertex type
+ * @param <E> edge type
+ * @param <M> LensGraphMouse type
  */
 public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse>
     implements LensSupport<M> {

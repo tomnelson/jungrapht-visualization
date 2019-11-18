@@ -8,7 +8,8 @@ import org.jungrapht.visualization.VisualizationServer;
  * SimpleVertexSupport is a sample implementation.
  *
  * @author Tom Nelson
- * @param <V> the vertex type
+ * @param <V> vertex type
+ * @param <E> edge type
  */
 public interface VertexSupport<V, E> {
 

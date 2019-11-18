@@ -16,7 +16,11 @@ import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** @author Tom Nelson */
+/**
+ * @author Tom Nelson
+ * @param <V> vertex type
+ * @param <E> edge type
+ */
 public class LensTransformSupport<V, E> extends TransformSupport<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(LensTransformSupport.class);

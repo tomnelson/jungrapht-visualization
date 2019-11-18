@@ -6,6 +6,10 @@ import java.util.function.Supplier;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.VisualizationServer;
 
+/**
+ * @param <V> vertex type
+ * @param <E> edge type
+ */
 public class SimpleEdgeSupport<V, E> implements EdgeSupport<V, E> {
 
   protected Point2D down;

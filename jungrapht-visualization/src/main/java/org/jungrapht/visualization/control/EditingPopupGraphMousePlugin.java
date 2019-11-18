@@ -18,6 +18,8 @@ import org.jungrapht.visualization.selection.MutableSelectedState;
  * a plugin that uses popup menus to create vertices, undirected edges, and directed edges.
  *
  * @author Tom Nelson
+ * @param <V> vertex type
+ * @param <E> edge type
  */
 public class EditingPopupGraphMousePlugin<V, E> extends AbstractPopupGraphMousePlugin {
 

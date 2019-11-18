@@ -23,9 +23,12 @@ import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.transform.shape.ShapeTransformer;
 import org.jungrapht.visualization.transform.shape.TransformingGraphics;
 
+/**
+ * @param <V> vertex type
+ * @param <E> edge type
+ */
 public class HeavyweightVertexLabelRenderer<V, E> implements Renderer.VertexLabel<V, E> {
 
-  //  protected Position position = Position.SE;
   private Positioner positioner = new OutsidePositioner();
 
   public Component prepareRenderer(

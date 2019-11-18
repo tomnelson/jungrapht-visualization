@@ -17,6 +17,9 @@ import org.jungrapht.visualization.spatial.Spatial;
 /**
  * The interface for drawing vertices, edges, and their labels. Implementations of this class can
  * set specific renderers for each element, allowing custom control of each.
+ *
+ * @param <V> vertex type
+ * @param <E> edge type
  */
 public interface Renderer<V, E> {
 

@@ -7,6 +7,8 @@ import java.awt.event.InputEvent;
  * is using a LensTransformer.
  *
  * @author Tom Nelson
+ * @param <V> vertex type
+ * @param <E> edge type
  */
 public class DefaultLensGraphMouse<V, E> extends AbstractGraphMouse implements LensGraphMouse {
 

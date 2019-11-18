@@ -19,7 +19,12 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 
-/** This class translates mouse clicks into vertex clicks */
+/**
+ * This class translates mouse clicks into vertex clicks
+ *
+ * @param <V> vertex type
+ * @param <E> edge type
+ */
 public class MouseListenerTranslator<V, E> extends MouseAdapter {
 
   private VisualizationViewer<V, E> visualizationViewer;

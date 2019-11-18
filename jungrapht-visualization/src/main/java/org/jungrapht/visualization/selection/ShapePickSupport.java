@@ -40,6 +40,8 @@ import org.slf4j.LoggerFactory;
  * specified pick point or region.
  *
  * @author Tom Nelson
+ * @param <V> vertex type
+ * @param <E> edge type
  */
 public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
 

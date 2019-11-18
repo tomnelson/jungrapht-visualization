@@ -5,6 +5,10 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import org.jungrapht.visualization.RenderContext;
 
+/**
+ * @param <V> vertex type
+ * @param <E> edge type
+ */
 public interface EdgeArrowRenderingSupport<V, E> {
 
   /**

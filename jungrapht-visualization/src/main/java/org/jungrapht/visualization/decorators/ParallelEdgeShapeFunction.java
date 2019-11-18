@@ -19,6 +19,8 @@ import org.jungrapht.visualization.util.EdgeIndexFunction;
  * An abstract class for edge-to-Shape functions that work with parallel edges.
  *
  * @author Tom Nelson
+ * @param <V> vertex type
+ * @param <E> edge type
  */
 public abstract class ParallelEdgeShapeFunction<V, E>
     implements Function<Context<Graph<V, E>, E>, Shape> {

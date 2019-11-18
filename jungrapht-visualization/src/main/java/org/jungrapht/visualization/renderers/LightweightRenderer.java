@@ -6,6 +6,10 @@ import org.jungrapht.visualization.spatial.Spatial;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @param <V> vertex type
+ * @param <E> edge type
+ */
 public class LightweightRenderer<V, E> implements Renderer<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(LightweightRenderer.class);

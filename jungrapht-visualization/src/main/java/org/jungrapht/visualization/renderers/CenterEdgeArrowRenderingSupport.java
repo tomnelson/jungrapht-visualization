@@ -17,6 +17,10 @@ import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import org.jungrapht.visualization.RenderContext;
 
+/**
+ * @param <V> vertex type
+ * @param <E> edge type
+ */
 public class CenterEdgeArrowRenderingSupport<V, E> implements EdgeArrowRenderingSupport<V, E> {
 
   public AffineTransform getArrowTransform(

@@ -6,6 +6,10 @@ import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 
+/**
+ * @param <V> vertex type
+ * @param <E> edge type
+ */
 public abstract class AbstractEdgeRenderer<V, E> implements Renderer.Edge<V, E> {
 
   @Override

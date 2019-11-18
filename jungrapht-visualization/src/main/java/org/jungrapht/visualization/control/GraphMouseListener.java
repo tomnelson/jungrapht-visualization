@@ -18,6 +18,7 @@ import java.awt.event.MouseEvent;
  * This interface allows users to register listeners to register to receive vertex clicks.
  *
  * @author danyelf
+ * @param <V> vertex type
  */
 public interface GraphMouseListener<V> {
 

@@ -27,7 +27,6 @@ import javax.swing.border.EmptyBorder;
  *
  * @author Tom Nelson
  */
-@SuppressWarnings("serial")
 public class JLabelVertexLabelRenderer extends JLabel implements VertexLabelRenderer, Serializable {
 
   protected static Border noFocusBorder = new EmptyBorder(0, 0, 0, 0);

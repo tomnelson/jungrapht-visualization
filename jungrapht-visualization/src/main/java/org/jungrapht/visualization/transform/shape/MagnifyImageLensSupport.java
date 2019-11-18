@@ -25,10 +25,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Changes various visualization settings to activate or deactivate an examining lens for a jung
- * graph application.
+ * Changes various visualization settings to activate or deactivate an examining lens for a graph
+ * visualization.
  *
  * @author Tom Nelson
+ * @param <V> vertex type
+ * @param <E> edge type
+ * @param <M> LensGraphMouse type
  */
 public class MagnifyImageLensSupport<V, E, M extends LensGraphMouse>
     extends AbstractLensSupport<V, E, M> {
@@ -56,7 +59,6 @@ public class MagnifyImageLensSupport<V, E, M extends LensGraphMouse>
   }
 
   protected MagnifyImageLensSupport(Builder<V, E, M, ?, ?> builder) {
-
     super(builder);
     this.renderContext = vv.getRenderContext();
     this.pickSupport = renderContext.getPickSupport();

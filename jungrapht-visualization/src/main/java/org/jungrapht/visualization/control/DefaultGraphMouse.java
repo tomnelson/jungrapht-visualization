@@ -12,8 +12,8 @@ import java.awt.event.InputEvent;
  *   <li>{@link SelectingGraphMousePlugin} operates via CTRL+mouse gestures
  * </ul>
  *
- * @param <V>
- * @param <E>
+ * @param <V> vertex type
+ * @param <E> edge type
  */
 public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
 

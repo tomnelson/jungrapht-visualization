@@ -26,6 +26,10 @@ import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.util.Context;
 
+/**
+ * @param <V> vertex type
+ * @param <E> edge type
+ */
 public class LightweightEdgeRenderer<V, E> extends AbstractEdgeRenderer<V, E>
     implements Renderer.Edge<V, E> {
 

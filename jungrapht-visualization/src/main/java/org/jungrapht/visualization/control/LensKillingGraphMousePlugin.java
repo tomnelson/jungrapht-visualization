@@ -17,6 +17,8 @@ import org.slf4j.LoggerFactory;
  * A subclass of SelectingGraphMousePlugin that will deactivate the lens
  *
  * @author Tom Nelson
+ * @param <V> vertex type
+ * @param <E> edge type
  */
 public class LensKillingGraphMousePlugin<V, E> extends SelectingGraphMousePlugin<V, E> {
 

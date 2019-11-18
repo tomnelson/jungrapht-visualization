@@ -21,6 +21,8 @@ import org.jungrapht.visualization.util.Context;
  * An abstract class for edge-to-Shape functions that work with passed articulation points.
  *
  * @author Tom Nelson
+ * @param <V> vertex type
+ * @param <E> edge type
  */
 public abstract class ArticulatedEdgeShapeFunction<V, E>
     implements Function<Context<Graph<V, E>, E>, Shape> {

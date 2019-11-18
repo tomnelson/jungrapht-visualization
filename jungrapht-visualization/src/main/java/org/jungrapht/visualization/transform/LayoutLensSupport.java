@@ -25,6 +25,9 @@ import org.slf4j.LoggerFactory;
  * HyperbolicTransformerDemo for an example of how to use it.
  *
  * @author Tom Nelson
+ * @param <V> vertex type
+ * @param <E> edge type
+ * @param <M> LensGraphMouse type
  */
 public class LayoutLensSupport<V, E, M extends LensGraphMouse> extends AbstractLensSupport<V, E, M>
     implements LensSupport<M> {

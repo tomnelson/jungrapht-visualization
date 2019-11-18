@@ -24,6 +24,8 @@ import org.slf4j.LoggerFactory;
  * VisualizationViewer.
  *
  * @author Tom Nelson
+ * @param <V> vertex type
+ * @param <E> edge type
  */
 class DefaultRenderer<V, E> implements Renderer<V, E> {
 

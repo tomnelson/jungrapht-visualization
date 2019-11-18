@@ -24,7 +24,11 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 
-/** @author Tom Nelson */
+/**
+ * @author Tom Nelson
+ * @param <V> vertex type
+ * @param <E> edge type
+ */
 public class LabelEditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     implements MouseListener {
 

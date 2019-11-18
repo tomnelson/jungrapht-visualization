@@ -20,6 +20,10 @@ import org.jungrapht.visualization.RenderContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @param <V> vertex type
+ * @param <E> edge type
+ */
 public class DefaultEdgeArrowRenderingSupport<V, E> implements EdgeArrowRenderingSupport<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(DefaultEdgeArrowRenderingSupport.class);

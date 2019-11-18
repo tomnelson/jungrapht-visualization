@@ -20,6 +20,8 @@ import org.slf4j.LoggerFactory;
  * graph elements, and for repainting the view when changes were made.
  *
  * @author Tom Nelson
+ * @param <V> vertex type
+ * @param <E> edge type
  */
 public class EditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     implements MouseListener, MouseMotionListener {

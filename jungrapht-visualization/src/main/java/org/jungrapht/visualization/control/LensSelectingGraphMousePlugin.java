@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
  * the Lens effects that are in the view projection
  *
  * @author Tom Nelson
+ * @param <V> vertex type
+ * @param <E> edge type
  */
 public class LensSelectingGraphMousePlugin<V, E> extends SelectingGraphMousePlugin<V, E> {
 

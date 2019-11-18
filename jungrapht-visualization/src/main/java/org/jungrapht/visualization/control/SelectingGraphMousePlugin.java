@@ -40,6 +40,8 @@ import org.slf4j.LoggerFactory;
  * that Vertex will be repositioned to follow the mouse until the button is released.
  *
  * @author Tom Nelson
+ * @param <V> vertex type
+ * @param <E> edge type
  */
 public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     implements MouseListener, MouseMotionListener {

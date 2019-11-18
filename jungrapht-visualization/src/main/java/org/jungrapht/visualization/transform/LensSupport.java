@@ -16,6 +16,7 @@ import org.jungrapht.visualization.control.LensGraphMouse;
  * basic API for implementing lens projection support
  *
  * @author Tom Nelson
+ * @parm <M> LensGraphMouse type
  */
 public interface LensSupport<M extends LensGraphMouse> {
 

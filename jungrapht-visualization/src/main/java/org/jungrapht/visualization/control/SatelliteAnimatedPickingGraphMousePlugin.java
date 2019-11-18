@@ -29,6 +29,8 @@ import org.jungrapht.visualization.layout.model.Point;
  *
  * @see AnimatedPickingGraphMousePlugin
  * @author Tom Nelson
+ * @param <V> vertex type
+ * @param <E> edge type
  */
 public class SatelliteAnimatedPickingGraphMousePlugin<V, E>
     extends AnimatedPickingGraphMousePlugin<V, E> implements MouseListener, MouseMotionListener {
