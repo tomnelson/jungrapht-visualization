@@ -13,9 +13,8 @@ package org.jungrapht.visualization.transform;
 import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 
 import java.awt.*;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Line2D;
-import java.awt.geom.RectangularShape;
+import java.awt.geom.*;
+import java.util.Arrays;
 import java.util.Optional;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
@@ -108,7 +107,7 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse>
 
   protected static final String instructions =
       "<html><center>Mouse-Drag the Lens center to move it<p>"
-          + "Mouse-Drag the Lens edge to resize it<p>"
+          + "Mouse-Drag the Lens edge or handles to resize it<p>"
           + "Ctrl+MouseWheel to change magnification</center></html>";
 
   protected AbstractLensSupport(Builder<V, E, M, ?, ?> builder) {
@@ -176,7 +175,7 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse>
   public static class LensPaintable implements VisualizationServer.Paintable {
     RectangularShape lensShape;
 
-    Paint paint = Color.getColor("jungrapht.lensColor", Color.decode("0xFAFAFA"));
+    Paint paint = Color.getColor(PREFIX + "lensColor", Color.decode("0xFAFAFA"));
 
     public LensPaintable(LensTransformer lensTransformer) {
       this.lensShape = lensTransformer.getLens().getLensShape();
@@ -210,8 +209,8 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse>
    */
   public static class LensControls implements VisualizationServer.Paintable {
     RectangularShape lensShape;
-    Paint lensControlsDrawColor = Color.getColor("jungrapht.lensControlsColor", Color.gray);
-    Paint lensControlsFillColor = Color.getColor("jungrapht.lensColor", Color.decode("0xFAFAFA"));
+    Paint lensControlsDrawColor = Color.getColor(PREFIX + "lensControlsColor", Color.gray);
+    Paint lensControlsFillColor = Color.getColor(PREFIX + "lensColor", Color.decode("0xFAFAFA"));
     float lensStrokeWidth = Float.parseFloat(System.getProperty(LENS_STROKE_WIDTH, "2.0f"));
 
     public LensControls(LensTransformer lensTransformer) {
@@ -259,6 +258,7 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse>
 
       g2d.setPaint(lensControlsFillColor);
       g2d.fill(killShape);
+
       // kill button 'X'
       double radius = killShape.getWidth() / 2;
       double xmin = killShape.getCenterX() - radius * Math.cos(Math.PI / 4);
@@ -268,6 +268,10 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse>
       g2d.setPaint(lensControlsDrawColor);
       g2d.draw(new Line2D.Double(xmin, ymin, xmax, ymax));
       g2d.draw(new Line2D.Double(xmin, ymax, xmax, ymin));
+
+      if (lensShape instanceof Rectangle2D) {
+        Arrays.stream(getRectangularLensHandles((Rectangle2D) lensShape)).forEach(g2d::draw);
+      }
       g2d.setStroke(savedStroke);
       g2d.setRenderingHints(savedRenderingHints);
     }
@@ -275,6 +279,41 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse>
     public boolean useTransform() {
       return true;
     }
+  }
+
+  private static Shape[] getRectangularLensHandles(Rectangle2D lensShape) {
+    float handlePercentage =
+        .01f * Float.parseFloat(System.getProperty(PREFIX + "lensHandlePercentage", "3.f"));
+
+    double size = Math.max(lensShape.getWidth(), lensShape.getHeight()) * handlePercentage;
+    Shape[] handles = new Shape[4];
+    handles[0] =
+        diamondShape( // top
+            new Rectangle2D.Double(
+                lensShape.getCenterX() - size / 2, lensShape.getMinY() - size / 2, size, size));
+    handles[1] =
+        diamondShape( // right
+            new Rectangle2D.Double(
+                lensShape.getMaxX() - size / 2, lensShape.getCenterY() - size / 2, size, size));
+    handles[2] =
+        diamondShape( // bottom
+            new Rectangle2D.Double(
+                lensShape.getCenterX() - size / 2, lensShape.getMaxY() - size / 2, size, size));
+    handles[3] =
+        diamondShape( // right
+            new Rectangle2D.Double(
+                lensShape.getMinX() - size / 2, lensShape.getCenterY() - size / 2, size, size));
+    return handles;
+  }
+
+  private static Shape diamondShape(Rectangle2D bounds) {
+    Path2D path = new Path2D.Double();
+    path.moveTo(bounds.getMinX(), bounds.getCenterY());
+    path.lineTo(bounds.getCenterX(), bounds.getMinY());
+    path.lineTo(bounds.getMaxX(), bounds.getCenterY());
+    path.lineTo(bounds.getCenterX(), bounds.getMaxY());
+    path.closePath();
+    return path;
   }
 
   /** @return the lensPaintable */
