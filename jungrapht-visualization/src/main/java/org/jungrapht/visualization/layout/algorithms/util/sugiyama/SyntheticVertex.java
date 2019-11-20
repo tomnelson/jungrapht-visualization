@@ -1,5 +1,11 @@
 package org.jungrapht.visualization.layout.algorithms.util.sugiyama;
 
+/**
+ * a vertex that is not in the original graph, but is synthesed in order to position bends in the
+ * articulated edges of the SugiyamaLayoutAlgorithm
+ *
+ * @param <V> vertex type
+ */
 public class SyntheticVertex<V> extends SV<V> {
 
   final int hash;

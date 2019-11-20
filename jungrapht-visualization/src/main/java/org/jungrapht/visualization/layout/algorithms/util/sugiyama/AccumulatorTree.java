@@ -4,6 +4,12 @@ import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Implementation of the Accumulator Tree, 0 based instead of 1 based indexing
+ *
+ * @see "An E log E Line Crossing Algorithm for Levelled Graphs. Vance Waddle and Ashok Malhotra IBM
+ *     Thomas J. Watson Research Center"
+ */
 public class AccumulatorTree {
 
   private static final Logger log = LoggerFactory.getLogger(AccumulatorTree.class);

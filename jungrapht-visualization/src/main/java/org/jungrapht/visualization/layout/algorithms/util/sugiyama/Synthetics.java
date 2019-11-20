@@ -19,24 +19,9 @@ public class Synthetics<V, E> {
   public List<List<SV<V>>> createVirtualVerticesAndEdges(
       List<SE<V, E>> edges, List<List<SV<V>>> layers) {
     for (int i = 0; i < layers.size() - 1; i++) {
-      //      log.info("i = {}", i);
       List<SV<V>> currentLayer = layers.get(i);
 
       for (SV<V> v : currentLayer) {
-        //        log.info(
-        //            "outgoing of {} are {} targets are {}",
-        //            v,
-        //            edges.stream().map(e -> e.source).collect(Collectors.toList()));
-        //        log.info("targets are {}", edges.stream().map(e -> e.target).collect(Collectors.toList()));
-        // find all edges where the source vertex is in the current layer and the target vertex rank is
-        // more than one layer away
-        //        List<SE<V, E>> outgoingMulti =
-        //            edges
-        //                .stream()
-        //                .filter(e -> e.source.equals(v))
-        //                .filter(e -> Math.abs(e.target.rank - v.rank) > 1)
-        //                .collect(Collectors.toList());
-
         List<SE<V, E>> outgoingMulti = new ArrayList<>();
         for (SE<V, E> edge : edges) {
           if (edge.source.equals(v)) {
@@ -47,12 +32,6 @@ public class Synthetics<V, E> {
         }
         // find all edges where the target vertex is in the current layer and the source vertex rank is
         // more than one layer away
-        //        List<SE<V, E>> incomingMulti =
-        //            edges
-        //                .stream()
-        //                .filter(e -> e.target.equals(v))
-        //                .filter(e -> Math.abs(e.source.rank - v.rank) > 1)
-        //                .collect(Collectors.toList());
         List<SE<V, E>> incomingMulti = new ArrayList<>();
         for (SE<V, E> edge : edges) {
           if (edge.target.equals(v)) {
@@ -96,12 +75,10 @@ public class Synthetics<V, E> {
 
   private void updateIndices(List<SV<V>> layer) {
 
-    //    log.info("layer had {}", layer);
     for (int i = 0; i < layer.size(); i++) {
       SV<V> sv = layer.get(i);
       sv.index = i;
     }
-    //    log.info("layer has {}", layer);
   }
 
   private void replaceEdgeWithTwo(List<SE<V, E>> edges, SE<V, E> loser, SV<V> virtualVertex) {
@@ -109,8 +86,6 @@ public class Synthetics<V, E> {
     SV<V> to = loser.target;
     SyntheticEdge<V, E> virtualEdgeOne = SyntheticEdge.of(loser, from, virtualVertex);
     SyntheticEdge<V, E> virtualEdgeTwo = SyntheticEdge.of(loser, virtualVertex, to);
-
-    //    log.info("replaced edge {} with {} and {}", loser, virtualEdgeOne, virtualEdgeTwo);
 
     edges.add(virtualEdgeOne);
     edges.add(virtualEdgeTwo);

@@ -6,7 +6,7 @@ import java.util.function.Function;
 /**
  * an interface for {@code LayoutAlgorithm} with a settable Shape Function for vertices
  *
- * @param <V>
+ * @param <V> vertex type
  */
 public interface ShapeFunctionAware<V> {
 

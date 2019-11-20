@@ -8,11 +8,19 @@ import org.jgrapht.Graph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Implementation of the LevelCross algorithm
+ *
+ * @see "An E log E Line Crossing Algorithm for Levelled Graphs. Vance Waddle and Ashok Malhotra IBM
+ *     Thomas J. Watson Research Center"
+ * @param <V> vertex type
+ * @param <E> edge type
+ */
 public class LevelCross<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(LevelCross.class);
 
-  private List<SE<V, E>> edges = new ArrayList<>();
+  private List<SE<V, E>> edges;
 
   private List<SV<V>> level;
   private List<SV<V>> successorLevel;

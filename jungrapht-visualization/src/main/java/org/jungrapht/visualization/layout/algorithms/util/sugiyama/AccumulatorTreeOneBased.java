@@ -2,6 +2,12 @@ package org.jungrapht.visualization.layout.algorithms.util.sugiyama;
 
 import java.util.Arrays;
 
+/**
+ * Implementation of the Accumulator Tree
+ *
+ * @see "An E log E Line Crossing Algorithm for Levelled Graphs. Vance Waddle and Ashok Malhotra IBM
+ *     Thomas J. Watson Research Center"
+ */
 public class AccumulatorTreeOneBased {
 
   int[] accumulatorTree;

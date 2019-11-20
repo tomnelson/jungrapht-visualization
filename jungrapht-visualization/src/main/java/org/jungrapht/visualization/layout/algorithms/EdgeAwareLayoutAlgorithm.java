@@ -3,8 +3,8 @@ package org.jungrapht.visualization.layout.algorithms;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 
 /**
- * LayoutAlgorithm is a visitor to the LayoutModel. When it visits, it runs the algorithm to place
- * the graph vertices at locations.
+ * A marker interface for LayoutAlgorithms that are aware of graph edges and can use the edges as
+ * part of the layout vertex positioning
  *
  * @author Tom Nelson.
  */

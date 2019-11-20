@@ -74,7 +74,7 @@ public class KKLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
   private double EPSILON = 0.1d;
 
   private int currentIteration;
-  private int maxIterations = 2000;
+  private int maxIterations;
   private String status = "KKLayout";
 
   private double L; // the ideal length of an edge

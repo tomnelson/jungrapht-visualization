@@ -49,7 +49,7 @@ public class FRLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
 
   private int currentIteration;
 
-  private int mMaxIterations = 700;
+  private int maxIterations;
 
   protected LoadingCache<V, Point> frVertexData =
       CacheBuilder.newBuilder()
@@ -80,9 +80,15 @@ public class FRLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
       implements LayoutAlgorithm.Builder<V, T, B> {
     private StandardFRRepulsion.Builder repulsionContractBuilder =
         new StandardFRRepulsion.Builder();
+    private int maxIterations = 700;
 
     public B repulsionContractBuilder(StandardFRRepulsion.Builder repulsionContractBuilder) {
       this.repulsionContractBuilder = repulsionContractBuilder;
+      return self();
+    }
+
+    public B maxIterations(int maxIterations) {
+      this.maxIterations = maxIterations;
       return self();
     }
 
@@ -102,6 +108,7 @@ public class FRLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
   protected FRLayoutAlgorithm(Builder<V, ?, ?> builder) {
     super(builder);
     this.repulsionContractBuilder = builder.repulsionContractBuilder;
+    this.maxIterations = builder.maxIterations;
   }
 
   @Override
@@ -271,11 +278,11 @@ public class FRLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
   }
 
   private void cool() {
-    temperature *= (1.0 - currentIteration / (double) mMaxIterations);
+    temperature *= (1.0 - currentIteration / (double) maxIterations);
   }
 
   public void setMaxIterations(int maxIterations) {
-    mMaxIterations = maxIterations;
+    this.maxIterations = maxIterations;
   }
 
   protected Point getFRData(V vertex) {
@@ -290,6 +297,6 @@ public class FRLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
   /** @return true once the current iteration has passed the maximum count. */
   @Override
   public boolean done() {
-    return currentIteration > mMaxIterations || temperature < 1.0 / max_dimension;
+    return currentIteration > maxIterations || temperature < 1.0 / max_dimension;
   }
 }

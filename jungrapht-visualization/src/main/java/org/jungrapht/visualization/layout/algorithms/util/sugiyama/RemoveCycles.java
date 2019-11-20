@@ -21,7 +21,6 @@ public class RemoveCycles<V, E> {
   }
 
   public Graph<V, E> removeCycles() {
-    //    log.info("vertices in order: {}", graph.vertexSet());
     graph.vertexSet().forEach(this::remove);
     return buildGraph(edges);
   }
@@ -51,17 +50,13 @@ public class RemoveCycles<V, E> {
 
   private void remove(V v) {
     if (marked.add(v)) {
-      //      log.info("added {}", v);
       stack.add(v);
       for (E edge : graph.outgoingEdgesOf(v)) {
         V target = graph.getEdgeTarget(edge);
         if (stack.contains(target)) {
-          //          log.info("removing edge {} because {} has been seen", edge, target);
           edges.remove(edge);
           feedbackEdges.add(edge);
         } else if (!marked.contains(target)) {
-
-          //          log.info("not removing edge {} because {} has not been seen", edge, target);
           remove(target);
         }
       }

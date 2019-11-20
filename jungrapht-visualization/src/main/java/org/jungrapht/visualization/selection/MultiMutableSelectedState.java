@@ -55,8 +55,8 @@ public class MultiMutableSelectedState<T> extends AbstractMutableSelectedState<T
   /**
    * if t is was already selected, remove it
    *
-   * @param t
-   * @return
+   * @param t item to de-select
+   * @return true if the collection of selected things was modified
    */
   @Override
   public boolean deselect(T t, boolean fireEvents) {
@@ -134,7 +134,6 @@ public class MultiMutableSelectedState<T> extends AbstractMutableSelectedState<T
   }
 
   /** for the ItemSelectable interface contract */
-  @SuppressWarnings("unchecked")
   @Override
   public T[] getSelectedObjects() {
     List<T> list = new ArrayList<>(selected);

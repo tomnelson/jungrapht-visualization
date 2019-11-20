@@ -21,8 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A radial layout for Tree or Forest graphs. Positions vertices in concentric circles with the root
- * at the center
+ * A radial layout for Tree or Forest graphs. Positions vertices in concentric circles with the
+ * root(s) at the center
  *
  * @author Tom Nelson
  */

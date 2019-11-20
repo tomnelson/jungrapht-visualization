@@ -12,8 +12,11 @@ JUNGRAPHT-VISUALIZATION can be used to render any of the following:
 * com.google.common.graph.Graph
 
 JUNGRAPHT-VISUALIZATION includes performance enhancements for visualization of large networks, including R*Tree for visualization, Barnes-Hut Quad Tree for force-directed layouts, and a lightweight rendering layer that can swap in while graphs are being animated or when they are zoomed out to a point where details are very small.
-Many values may be set via java properties (see [sample.jungrapht.properties](https://github.com/tomnelson/jungrapht-visualization/blob/master/jungrapht-visualization/src/main/resources/sample.jungrapht.properties) for keys and default values).
+In the ShowLayoutsWithJGraptIO demonstration program, the lightweight rendering layer allows fast enough rendering that the performance impact of the Barnes Hut Quad Tree for the force directed layout becomes obvious.
 
+Many rendering features may be set via java properties (see [sample.jungrapht.properties](https://github.com/tomnelson/jungrapht-visualization/blob/master/jungrapht-visualization/src/main/resources/sample.jungrapht.properties) for keys and default values). 
+
+JUNGRAPHT-VISUALIZATION includes improved layout algorithms for directed graphs and Trees, including the TidierTreeLayoutAlgorithm and the SugiyamaLayoutAlgorithm. All TreeLayoutAlgorithms will make a best attempt to draw any directed graph (by ignoring cycles and feedback edges) for which one or more Root vertices can be determined. There are Vertex/Edge predicates and Vertex/Edge Comparators that are used to coerce out the desired tree structure based on a user-defined procedure to find roots and follow the desired path. All TreeLayoutAlgorithms, including the TidierTreeLayoutAlgorithm, will draw either single or multiple rooted 'forest' graphs.
 ### Latest Release
 
 The most recent version of JUNGRAPHT-VISUALIZATION is [version 1.0-RC4](https://github.com/tomnelson/jungrapht-visualization/releases/tag/v1.0_RC4), released 27 October 2019.

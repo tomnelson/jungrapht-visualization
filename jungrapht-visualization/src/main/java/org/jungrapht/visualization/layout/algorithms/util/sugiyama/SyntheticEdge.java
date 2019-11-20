@@ -1,5 +1,12 @@
 package org.jungrapht.visualization.layout.algorithms.util.sugiyama;
 
+/**
+ * an edge that is not in the original graph, but is sythesized to replace one or more original
+ * graph edges.
+ *
+ * @param <V> vertex type
+ * @param <E> edge type
+ */
 public class SyntheticEdge<V, E> extends SE<V, E> {
 
   public static <V, E> SyntheticEdge of(SE<V, E> edge, SV<V> source, SV<V> target) {

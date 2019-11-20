@@ -1,13 +1,3 @@
-/*
- * Copyright (c) 2005, The JUNG Authors
- * All rights reserved.
- *
- * This software is open-source under the BSD license; see either "license.txt"
- * or https://github.com/tomnelson/jungrapht-visualization/blob/master/LICENSE for a description.
- *
- * Created on Jul 9, 2005
- */
-
 package org.jungrapht.visualization.layout.algorithms;
 
 import java.util.*;
@@ -16,7 +6,6 @@ import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.PolarPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /**
  * A radial layout for Tree or Forest graphs. Positions vertices in concentric circles with the root

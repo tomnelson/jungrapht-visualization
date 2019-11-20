@@ -3,6 +3,13 @@ package org.jungrapht.visualization.layout.algorithms.util.sugiyama;
 import java.util.Objects;
 import org.jungrapht.visualization.layout.model.Point;
 
+/**
+ * a vertex type for the SugiyamaLayoutAlgorithm instances of SV<V> replace instances of V during
+ * layout The SV<V> holds state information about the position of the vertex in the layered graph
+ * for the SugiyamaLayoutAlgorithm
+ *
+ * @param <V>
+ */
 public class SV<V> {
   public final V vertex;
   protected int rank;
