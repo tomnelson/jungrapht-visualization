@@ -87,8 +87,8 @@ public class RTreeVisualization<V> extends JPanel {
     graph = createTreeFromRTree(rtree);
 
     treeLayoutAlgorithm = TreeLayoutAlgorithm.builder().verticalVertexSpacing(200).build();
-    radialLayoutAlgorithm = RadialTreeLayoutAlgorithm.builder().build();
-    balloonLayoutAlgorithm = BalloonLayoutAlgorithm.builder().build();
+    radialLayoutAlgorithm = new RadialTreeLayoutAlgorithm<>();
+    balloonLayoutAlgorithm = new BalloonLayoutAlgorithm<>();
 
     vv =
         VisualizationViewer.builder(graph)

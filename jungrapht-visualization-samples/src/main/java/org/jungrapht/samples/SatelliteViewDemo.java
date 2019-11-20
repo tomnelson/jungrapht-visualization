@@ -86,7 +86,7 @@ public class SatelliteViewDemo extends JPanel {
     Dimension layoutSize = new Dimension(1000, 1000);
 
     // create one layout for the graph
-    FRLayoutAlgorithm<String> layoutAlgorithm = FRLayoutAlgorithm.<String>builder().build();
+    FRLayoutAlgorithm<String> layoutAlgorithm = new FRLayoutAlgorithm<>();
 
     layoutAlgorithm.setMaxIterations(500);
 

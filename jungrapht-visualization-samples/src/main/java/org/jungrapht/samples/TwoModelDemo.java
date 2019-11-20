@@ -51,8 +51,8 @@ public class TwoModelDemo extends JPanel {
     graph = TestGraphs.getOneComponentGraph();
 
     // create two layouts for the one graph, one layout for each model
-    LayoutAlgorithm<String> layoutAlgorithm1 = FRLayoutAlgorithm.<String>builder().build();
-    LayoutAlgorithm<String> layoutAlgorithm2 = ISOMLayoutAlgorithm.<String>builder().build();
+    LayoutAlgorithm<String> layoutAlgorithm1 = new FRLayoutAlgorithm<>();
+    LayoutAlgorithm<String> layoutAlgorithm2 = new ISOMLayoutAlgorithm<>();
 
     // create the two models, each with a different layout
     VisualizationModel<String, Integer> vm1 =

@@ -62,9 +62,8 @@ public class TidierL2RTreeLayoutDemo extends JPanel {
     // create a simple graph for the demo
     graph = DemoTreeSupplier.createTreeOne();
 
-    treeLayoutAlgorithm = TidierTreeLayoutAlgorithm.<String, Integer>edgeAwareBuilder().build();
-    radialLayoutAlgorithm =
-        TidierRadialTreeLayoutAlgorithm.<String, Integer>edgeAwareBuilder().build();
+    treeLayoutAlgorithm = new TidierTreeLayoutAlgorithm<>();
+    radialLayoutAlgorithm = new TidierRadialTreeLayoutAlgorithm<>();
     vv =
         VisualizationViewer.builder(graph)
             .layoutAlgorithm(treeLayoutAlgorithm)

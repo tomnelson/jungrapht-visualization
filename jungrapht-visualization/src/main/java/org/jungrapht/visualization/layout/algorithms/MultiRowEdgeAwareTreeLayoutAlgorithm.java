@@ -109,6 +109,10 @@ public class MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> extends MultiRowTreeLayo
     return new Builder<>();
   }
 
+  public MultiRowEdgeAwareTreeLayoutAlgorithm() {
+    this(MultiRowEdgeAwareTreeLayoutAlgorithm.edgeAwareBuilder());
+  }
+
   /**
    * create an instance with the passed builder's parameters
    *

@@ -42,7 +42,7 @@ public class VisualizationImageServerDemo {
 
     vv =
         VisualizationImageServer.builder(graph)
-            .layoutAlgorithm(KKLayoutAlgorithm.<Integer>builder().build())
+            .layoutAlgorithm(new KKLayoutAlgorithm<>())
             .viewSize(new Dimension(600, 600))
             .build();
 

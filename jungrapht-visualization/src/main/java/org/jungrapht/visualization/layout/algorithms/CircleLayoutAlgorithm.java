@@ -62,7 +62,9 @@ public class CircleLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
     this.radius = radius;
   }
 
-  private CircleLayoutAlgorithm() {}
+  public CircleLayoutAlgorithm() {
+    this(CircleLayoutAlgorithm.builder());
+  }
 
   /** @return the radius of the circle. */
   public double getRadius() {

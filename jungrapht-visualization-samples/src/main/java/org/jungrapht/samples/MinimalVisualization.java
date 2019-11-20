@@ -39,7 +39,7 @@ public class MinimalVisualization {
     vv =
         VisualizationViewer.builder(graph)
             .viewSize(new Dimension(700, 700))
-            .layoutAlgorithm(KKLayoutAlgorithm.<Integer>builder().build())
+            .layoutAlgorithm(new KKLayoutAlgorithm<>())
             .build();
 
     vv.setBackground(Color.white);

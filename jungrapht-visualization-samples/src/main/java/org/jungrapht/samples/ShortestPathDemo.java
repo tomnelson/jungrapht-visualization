@@ -48,7 +48,7 @@ public class ShortestPathDemo extends JPanel {
     this.graph = getGraph();
     setBackground(Color.WHITE);
 
-    final LayoutAlgorithm<String> layoutAlgorithm = FRLayoutAlgorithm.<String>builder().build();
+    final LayoutAlgorithm<String> layoutAlgorithm = new FRLayoutAlgorithm<>();
     final VisualizationViewer<String, Integer> vv =
         VisualizationViewer.builder(graph)
             .layoutAlgorithm(layoutAlgorithm)

@@ -159,6 +159,10 @@ public class SugiyamaLayoutAlgorithm<V, E>
   CompletableFuture theFuture;
   Runnable after;
 
+  public SugiyamaLayoutAlgorithm() {
+    this(SugiyamaLayoutAlgorithm.edgeAwareBuilder());
+  }
+
   private SugiyamaLayoutAlgorithm(Builder builder) {
     this(
         builder.rootPredicate,

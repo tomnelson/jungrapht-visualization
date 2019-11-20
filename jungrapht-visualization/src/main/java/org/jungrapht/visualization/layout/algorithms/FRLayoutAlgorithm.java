@@ -95,6 +95,10 @@ public class FRLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
     return new Builder<>();
   }
 
+  public FRLayoutAlgorithm() {
+    this(FRLayoutAlgorithm.builder());
+  }
+
   protected FRLayoutAlgorithm(Builder<V, ?, ?> builder) {
     super(builder);
     this.repulsionContractBuilder = builder.repulsionContractBuilder;

@@ -14,16 +14,16 @@ import org.jungrapht.visualization.layout.algorithms.repulsion.StandardSpringRep
 public class SubLayoutHelper {
 
   public enum Layouts {
-    KK("Kamada Kawai", KKLayoutAlgorithm.builder().build()),
-    CIRCLE("Circle", CircleLayoutAlgorithm.builder().build()),
-    SELF_ORGANIZING_MAP("Self Organizing Map", ISOMLayoutAlgorithm.builder().build()),
-    FR("Fruchterman Reingold (FR)", FRLayoutAlgorithm.builder().build()),
+    KK("Kamada Kawai", new KKLayoutAlgorithm<>()),
+    CIRCLE("Circle", new CircleLayoutAlgorithm<>()),
+    SELF_ORGANIZING_MAP("Self Organizing Map", new ISOMLayoutAlgorithm<>()),
+    FR("Fruchterman Reingold (FR)", new FRLayoutAlgorithm<>()),
     FR_BH_VISITOR(
         "Fruchterman Reingold",
         FRLayoutAlgorithm.builder()
             .repulsionContractBuilder(BarnesHutFRRepulsion.barnesHutBuilder())
             .build()),
-    SPRING("Spring", SpringLayoutAlgorithm.builder().build()),
+    SPRING("Spring", new SpringLayoutAlgorithm<>()),
     SPRING_BH_VISITOR(
         "Spring (BH Optimized)",
         SpringLayoutAlgorithm.builder()

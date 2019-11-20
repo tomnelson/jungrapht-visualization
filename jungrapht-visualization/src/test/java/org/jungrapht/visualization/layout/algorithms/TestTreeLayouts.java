@@ -40,10 +40,10 @@ public class TestTreeLayouts {
               graph.addEdge("A" + i, "C" + i);
             });
 
-    TreeLayoutAlgorithm<String> treeLayoutAlgorithm = TreeLayoutAlgorithm.<String>builder().build();
+    TreeLayoutAlgorithm<String> treeLayoutAlgorithm = new TreeLayoutAlgorithm<>();
 
     EdgeAwareTreeLayoutAlgorithm<String, Integer> multiRowEdgeAwareTreeLayoutAlgorithm =
-        EdgeAwareTreeLayoutAlgorithm.<String, Integer>edgeAwareBuilder().build();
+        new EdgeAwareTreeLayoutAlgorithm<>();
 
     testEdgeAwareTrees(graph, treeLayoutAlgorithm, multiRowEdgeAwareTreeLayoutAlgorithm);
   }
@@ -61,11 +61,10 @@ public class TestTreeLayouts {
               graph.addEdge("A" + i, "C" + i);
             });
 
-    MultiRowTreeLayoutAlgorithm<String> treeLayoutAlgorithm =
-        MultiRowTreeLayoutAlgorithm.<String>builder().build();
+    MultiRowTreeLayoutAlgorithm<String> treeLayoutAlgorithm = new MultiRowTreeLayoutAlgorithm<>();
 
     MultiRowEdgeAwareTreeLayoutAlgorithm<String, Integer> multiRowEdgeAwareTreeLayoutAlgorithm =
-        MultiRowEdgeAwareTreeLayoutAlgorithm.<String, Integer>edgeAwareBuilder().build();
+        new MultiRowEdgeAwareTreeLayoutAlgorithm<>();
 
     testEdgeAwareTrees(graph, treeLayoutAlgorithm, multiRowEdgeAwareTreeLayoutAlgorithm);
   }

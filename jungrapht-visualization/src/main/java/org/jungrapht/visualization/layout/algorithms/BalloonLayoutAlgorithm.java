@@ -65,6 +65,10 @@ public class BalloonLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
     return (Builder<V, ?, ?>) new Builder<>().expandLayout(false);
   }
 
+  public BalloonLayoutAlgorithm() {
+    this(BalloonLayoutAlgorithm.builder());
+  }
+
   protected BalloonLayoutAlgorithm(Builder<V, ?, ?> builder) {
     super(builder);
   }

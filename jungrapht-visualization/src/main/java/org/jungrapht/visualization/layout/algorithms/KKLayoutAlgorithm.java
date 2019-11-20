@@ -105,6 +105,10 @@ public class KKLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
    */
   private double disconnected_multiplier = 0.5;
 
+  public KKLayoutAlgorithm() {
+    this(KKLayoutAlgorithm.builder());
+  }
+
   protected KKLayoutAlgorithm(Builder<V, ?, ?> builder) {
     super(builder);
     this.maxIterations = builder.maxIterations;

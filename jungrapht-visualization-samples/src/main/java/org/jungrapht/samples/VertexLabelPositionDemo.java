@@ -47,7 +47,7 @@ public class VertexLabelPositionDemo extends JPanel {
     // create a simple graph for the demo
     graph = TestGraphs.getOneComponentGraph();
 
-    graphLayoutAlgorithm = FRLayoutAlgorithm.<String>builder().build();
+    graphLayoutAlgorithm = new FRLayoutAlgorithm<>();
     graphLayoutAlgorithm.setMaxIterations(1000);
 
     Dimension preferredSize = new Dimension(600, 600);

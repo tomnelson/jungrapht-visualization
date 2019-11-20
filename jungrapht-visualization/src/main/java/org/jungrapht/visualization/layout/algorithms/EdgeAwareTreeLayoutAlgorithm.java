@@ -146,6 +146,10 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
     return new Builder<>();
   }
 
+  public EdgeAwareTreeLayoutAlgorithm() {
+    this(EdgeAwareTreeLayoutAlgorithm.edgeAwareBuilder());
+  }
+
   /**
    * Create an instance with the passed builder parameters
    *

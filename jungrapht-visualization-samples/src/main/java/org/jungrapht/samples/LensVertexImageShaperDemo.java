@@ -115,7 +115,7 @@ public class LensVertexImageShaperDemo extends JPanel {
       }
     }
 
-    FRLayoutAlgorithm<Number> layoutAlgorithm = FRLayoutAlgorithm.<Number>builder().build();
+    FRLayoutAlgorithm<Number> layoutAlgorithm = new FRLayoutAlgorithm<>();
     layoutAlgorithm.setMaxIterations(100);
     vv =
         VisualizationViewer.builder(graph)

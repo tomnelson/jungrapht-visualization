@@ -72,6 +72,10 @@ public class SpringLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V
     return new Builder<>();
   }
 
+  public SpringLayoutAlgorithm() {
+    this(SpringLayoutAlgorithm.builder());
+  }
+
   protected SpringLayoutAlgorithm(Builder<V, ?, ?> builder) {
     super(builder);
     this.lengthFunction = builder.lengthFunction;

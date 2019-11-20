@@ -51,7 +51,7 @@ public class ImageEdgeLabelDemo extends JPanel {
     // create a simple graph for the demo
     graph = createGraph(VERTEX_COUNT);
 
-    FRLayoutAlgorithm<Number> layoutAlgorithm = FRLayoutAlgorithm.<Number>builder().build();
+    FRLayoutAlgorithm<Number> layoutAlgorithm = new FRLayoutAlgorithm<>();
     layoutAlgorithm.setMaxIterations(100);
     vv =
         VisualizationViewer.builder(graph)

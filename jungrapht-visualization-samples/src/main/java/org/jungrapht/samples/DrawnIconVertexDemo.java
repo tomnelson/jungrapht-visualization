@@ -43,7 +43,7 @@ public class DrawnIconVertexDemo {
 
     vv =
         VisualizationViewer.builder(graph)
-            .layoutAlgorithm(FRLayoutAlgorithm.<Integer>builder().build())
+            .layoutAlgorithm(new FRLayoutAlgorithm<>())
             .viewSize(new Dimension(700, 700))
             .build();
     vv.getRenderContext().setVertexLabelFunction(v -> "Vertex " + v);

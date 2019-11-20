@@ -77,7 +77,7 @@ public class SubLayoutDemo extends JPanel {
 
   MutableSelectedState<String> ps;
 
-  LayoutAlgorithm<String> subLayoutType = CircleLayoutAlgorithm.<String>builder().build();
+  LayoutAlgorithm<String> subLayoutType = new CircleLayoutAlgorithm<>();
 
   public SubLayoutDemo() {
 
@@ -90,7 +90,7 @@ public class SubLayoutDemo extends JPanel {
     // layout of sub-sets of vertices in circular clusters.
     Dimension preferredSize = new Dimension(600, 600);
 
-    LayoutAlgorithm<String> layoutAlgorithm = FRLayoutAlgorithm.<String>builder().build();
+    LayoutAlgorithm<String> layoutAlgorithm = new FRLayoutAlgorithm<>();
     clusteringLayoutModel =
         new AggregateLayoutModel<>(
             LoadingCacheLayoutModel.<String>builder()

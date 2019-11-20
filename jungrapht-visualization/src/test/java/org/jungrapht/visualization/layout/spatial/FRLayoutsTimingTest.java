@@ -55,7 +55,7 @@ public class FRLayoutsTimingTest {
 
   @Test
   public void testFRLayouts() {
-    FRLayoutAlgorithm layoutAlgorithmOne = FRLayoutAlgorithm.builder().build();
+    FRLayoutAlgorithm layoutAlgorithmOne = new FRLayoutAlgorithm<>();
     doTest(layoutAlgorithmOne);
     doTest(layoutAlgorithmOne);
     doTest(layoutAlgorithmOne);

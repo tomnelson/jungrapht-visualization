@@ -51,6 +51,10 @@ public class ISOMLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
     return new Builder<>();
   }
 
+  public ISOMLayoutAlgorithm() {
+    this(ISOMLayoutAlgorithm.builder());
+  }
+
   protected ISOMLayoutAlgorithm(Builder<V, ?, ?> builder) {
     super(builder);
   }

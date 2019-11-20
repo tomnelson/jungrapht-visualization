@@ -18,25 +18,25 @@ import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutSpringRe
 public class LayoutHelper {
 
   public enum Layouts {
-    KK("Kamada Kawai", KKLayoutAlgorithm.builder().build()),
-    CIRCLE("Circle", CircleLayoutAlgorithm.builder().build()),
-    SELF_ORGANIZING_MAP("Self Organizing Map", ISOMLayoutAlgorithm.builder().build()),
-    FR("Fruchterman Reingold", FRLayoutAlgorithm.builder().build()),
+    KK("Kamada Kawai", new KKLayoutAlgorithm<>()),
+    CIRCLE("Circle", new CircleLayoutAlgorithm<>()),
+    SELF_ORGANIZING_MAP("Self Organizing Map", new ISOMLayoutAlgorithm<>()),
+    FR("Fruchterman Reingold", new FRLayoutAlgorithm<>()),
     FR_BH_VISITOR(
         "Fruchterman Reingold (BH Optimized)",
         FRLayoutAlgorithm.builder()
             .repulsionContractBuilder(BarnesHutFRRepulsion.barnesHutBuilder())
             .build()),
-    SPRING("Spring", SpringLayoutAlgorithm.builder().build()),
+    SPRING("Spring", new SpringLayoutAlgorithm<>()),
     SPRING_BH_VISITOR(
         "Spring (BH Optimized)",
         SpringLayoutAlgorithm.builder()
             .repulsionContractBuilder(BarnesHutSpringRepulsion.barnesHutBuilder())
             .build()),
-    TREE("Tree", TreeLayoutAlgorithm.builder().build()),
-    MULTI_ROW_TREE("Multirow Tree", MultiRowTreeLayoutAlgorithm.builder().build()),
-    BALLOON("Balloon", BalloonLayoutAlgorithm.builder().build()),
-    RADIAL("Radial", RadialTreeLayoutAlgorithm.builder().build());
+    TREE("Tree", new TreeLayoutAlgorithm<>()),
+    MULTI_ROW_TREE("Multirow Tree", new MultiRowTreeLayoutAlgorithm<>()),
+    BALLOON("Balloon", new BalloonLayoutAlgorithm<>()),
+    RADIAL("Radial", new RadialTreeLayoutAlgorithm<>());
 
     private static final Map<String, Layouts> BY_NAME = new HashMap<>();
 

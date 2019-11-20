@@ -68,7 +68,7 @@ public class AnnotationsDemo extends JPanel {
     Dimension preferredSize1 = new Dimension(600, 600);
 
     // create one layout for the graph
-    FRLayoutAlgorithm<String> layoutAlgorithm = FRLayoutAlgorithm.<String>builder().build();
+    FRLayoutAlgorithm<String> layoutAlgorithm = new FRLayoutAlgorithm<>();
     layoutAlgorithm.setMaxIterations(500);
 
     VisualizationModel<String, Integer> vm =

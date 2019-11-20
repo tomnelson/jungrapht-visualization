@@ -74,7 +74,7 @@ public class InternalFrameSatelliteViewDemo {
     // create a simple graph for the demo
     graph = TestGraphs.getOneComponentGraph();
 
-    LayoutAlgorithm<String> layout = ISOMLayoutAlgorithm.<String>builder().build();
+    LayoutAlgorithm<String> layout = new ISOMLayoutAlgorithm<>();
 
     vv =
         VisualizationViewer.builder(graph)

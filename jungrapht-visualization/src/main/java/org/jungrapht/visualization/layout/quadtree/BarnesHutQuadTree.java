@@ -70,6 +70,10 @@ public class BarnesHutQuadTree<T> {
 
   private final Object lock = new Object();
 
+  public BarnesHutQuadTree() {
+    this(BarnesHutQuadTree.builder());
+  }
+
   private BarnesHutQuadTree(Builder<T> builder) {
     this.root = Node.<T>builder().withArea(builder.bounds).withTheta(builder.theta).build();
   }

@@ -39,6 +39,10 @@ public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
     return new Builder<>();
   }
 
+  public MultiRowTreeLayoutAlgorithm() {
+    this(MultiRowTreeLayoutAlgorithm.builder());
+  }
+
   protected MultiRowTreeLayoutAlgorithm(Builder<V, ?, ?> builder) {
     super(builder);
   }

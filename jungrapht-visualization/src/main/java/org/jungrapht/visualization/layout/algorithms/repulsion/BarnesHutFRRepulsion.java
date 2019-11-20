@@ -23,7 +23,7 @@ public class BarnesHutFRRepulsion<V>
           V, BarnesHutFRRepulsion<V>, BarnesHutFRRepulsion.Builder<V>> {
 
     private double theta = Node.DEFAULT_THETA;
-    private BarnesHutQuadTree<V> tree = BarnesHutQuadTree.<V>builder().build();
+    private BarnesHutQuadTree<V> tree = new BarnesHutQuadTree();
 
     public Builder<V> layoutModel(LayoutModel<V> layoutModel) {
       this.layoutModel = layoutModel;

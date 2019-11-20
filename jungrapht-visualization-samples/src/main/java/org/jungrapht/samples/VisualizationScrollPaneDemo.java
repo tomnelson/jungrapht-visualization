@@ -60,7 +60,7 @@ public class VisualizationScrollPaneDemo {
     final ImageIcon icon = sandstoneIcon;
     vv =
         VisualizationViewer.builder(graph)
-            .layoutAlgorithm(KKLayoutAlgorithm.<Integer>builder().build())
+            .layoutAlgorithm(new KKLayoutAlgorithm<>())
             .viewSize(new Dimension(700, 700))
             .build();
 

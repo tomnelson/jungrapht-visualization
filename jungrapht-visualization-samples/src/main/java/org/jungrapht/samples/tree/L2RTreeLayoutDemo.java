@@ -63,8 +63,8 @@ public class L2RTreeLayoutDemo extends JPanel {
     // create a simple graph for the demo
     graph = DemoTreeSupplier.createTreeOne();
 
-    treeLayoutAlgorithm = TreeLayoutAlgorithm.<String>builder().build();
-    radialLayoutAlgorithm = RadialTreeLayoutAlgorithm.<String>builder().build();
+    treeLayoutAlgorithm = new TreeLayoutAlgorithm<>();
+    radialLayoutAlgorithm = new RadialTreeLayoutAlgorithm<>();
     vv =
         VisualizationViewer.builder(graph)
             .layoutAlgorithm(treeLayoutAlgorithm)

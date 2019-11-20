@@ -75,7 +75,7 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
     // create a simple graph for the demo
     graph = TestGraphs.getOneComponentGraph();
 
-    FRLayoutAlgorithm<String> layoutAlgorithm = FRLayoutAlgorithm.<String>builder().build();
+    FRLayoutAlgorithm<String> layoutAlgorithm = new FRLayoutAlgorithm<>();
     layoutAlgorithm.setMaxIterations(100);
     vv =
         VisualizationViewer.builder(graph)

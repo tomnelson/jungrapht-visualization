@@ -69,8 +69,8 @@ public class MinimumSpanningTreeDemo extends JPanel {
 
     tree = SpanningTreeAdapter.getSpanningTree(graph);
 
-    LayoutAlgorithm<String> kkLayoutAlgorithm = KKLayoutAlgorithm.<String>builder().build();
-    LayoutAlgorithm<String> treeLayoutAlgorithm = TreeLayoutAlgorithm.<String>builder().build();
+    LayoutAlgorithm<String> kkLayoutAlgorithm = new KKLayoutAlgorithm<>();
+    LayoutAlgorithm<String> treeLayoutAlgorithm = new TreeLayoutAlgorithm<>();
     LayoutAlgorithm<String> staticLayoutAlgorithm = new StaticLayoutAlgorithm<>();
 
     // create the models, each with a different layout

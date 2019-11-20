@@ -54,7 +54,7 @@ public class VertexSizeAwareTreeDAGLayoutDemo extends JFrame {
 
     vv =
         VisualizationViewer.builder(graph)
-            .layoutAlgorithm(TreeLayoutAlgorithm.<String>builder().build())
+            .layoutAlgorithm(new TreeLayoutAlgorithm<>())
             .viewSize(new Dimension(600, 600))
             .build();
 

@@ -49,11 +49,7 @@ public class SugiyamaLayoutExample extends JFrame {
     // create a simple graph for the demo
     graph = TestGraphs.createDirectedAcyclicGraph(5, 6, .4);
 
-    vv =
-        VisualizationViewer.builder(graph)
-            //            .layoutAlgorithm(TreeLayoutAlgorithm.<String>builder().build())
-            .viewSize(new Dimension(600, 600))
-            .build();
+    vv = VisualizationViewer.builder(graph).viewSize(new Dimension(600, 600)).build();
 
     vv.setBackground(Color.white);
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());

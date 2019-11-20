@@ -105,7 +105,7 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
 
     collapser = new GraphCollapser<>(graph);
 
-    layoutAlgorithm = FRLayoutAlgorithm.<Collapsable<?>>builder().build();
+    layoutAlgorithm = new FRLayoutAlgorithm<>();
 
     Dimension preferredSize = new Dimension(400, 400);
 

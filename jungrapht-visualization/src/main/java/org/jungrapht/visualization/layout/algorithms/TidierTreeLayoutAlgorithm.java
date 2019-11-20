@@ -172,6 +172,10 @@ public class TidierTreeLayoutAlgorithm<V, E>
     private int childCount;
   }
 
+  public TidierTreeLayoutAlgorithm() {
+    this(TidierTreeLayoutAlgorithm.edgeAwareBuilder());
+  }
+
   protected TidierTreeLayoutAlgorithm(Builder builder) {
     this(
         builder.rootPredicate,

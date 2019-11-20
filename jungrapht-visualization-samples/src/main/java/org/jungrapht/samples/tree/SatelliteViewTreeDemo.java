@@ -96,7 +96,7 @@ public class SatelliteViewTreeDemo extends JPanel {
     Dimension layoutSize = new Dimension(500, 500);
 
     // create one layout for the graph
-    TreeLayoutAlgorithm<String> layoutAlgorithm = TreeLayoutAlgorithm.<String>builder().build();
+    TreeLayoutAlgorithm<String> layoutAlgorithm = new TreeLayoutAlgorithm<>();
 
     // create one model that both views will share
     VisualizationModel<String, Integer> vm =

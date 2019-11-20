@@ -81,7 +81,7 @@ public class MultiViewDemo extends JPanel {
     graph = TestGraphs.getOneComponentGraph();
 
     // create one layout for the graph
-    FRLayoutAlgorithm<String> layoutAlgorithm = FRLayoutAlgorithm.<String>builder().build();
+    FRLayoutAlgorithm<String> layoutAlgorithm = new FRLayoutAlgorithm<>();
     layoutAlgorithm.setMaxIterations(1000);
 
     // create one model that all 3 views will share

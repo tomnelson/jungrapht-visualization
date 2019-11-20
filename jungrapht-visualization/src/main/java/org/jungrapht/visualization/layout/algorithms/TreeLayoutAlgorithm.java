@@ -126,6 +126,10 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
     return new Builder<>();
   }
 
+  public TreeLayoutAlgorithm() {
+    this(TreeLayoutAlgorithm.builder());
+  }
+
   /**
    * Create a {@link TreeLayoutAlgorithm} instance with the passed {@code Builder}
    *

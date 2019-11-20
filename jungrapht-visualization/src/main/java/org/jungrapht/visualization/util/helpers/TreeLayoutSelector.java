@@ -212,7 +212,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
 
     int layoutNumber = 0;
 
-    BalloonLayoutAlgorithm<V> balloonLayoutAlgorithm = BalloonLayoutAlgorithm.<V>builder().build();
+    BalloonLayoutAlgorithm<V> balloonLayoutAlgorithm = new BalloonLayoutAlgorithm<>();
 
     RadialTreeLayoutAlgorithm<V> radialTreeLayoutAlgorithm =
         RadialTreeLayoutAlgorithm.<V>builder()

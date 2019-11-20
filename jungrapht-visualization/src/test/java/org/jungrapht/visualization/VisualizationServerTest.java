@@ -18,7 +18,7 @@ public class VisualizationServerTest {
   @Test
   public void testRenderContextNotOverridden() {
     Graph<Object, Object> graph = DirectedPseudograph.createBuilder(Object::new).build();
-    CircleLayoutAlgorithm algorithm = CircleLayoutAlgorithm.builder().build();
+    CircleLayoutAlgorithm algorithm = new CircleLayoutAlgorithm();
 
     VisualizationServer server =
         VisualizationServer.builder(graph)

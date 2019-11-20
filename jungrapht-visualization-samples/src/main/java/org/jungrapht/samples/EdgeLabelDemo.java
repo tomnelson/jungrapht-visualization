@@ -61,7 +61,7 @@ public class EdgeLabelDemo extends JPanel {
     // create a simple graph for the demo
     graph = buildGraph();
 
-    LayoutAlgorithm<Integer> layoutAlgorithm = CircleLayoutAlgorithm.<Integer>builder().build();
+    LayoutAlgorithm<Integer> layoutAlgorithm = new CircleLayoutAlgorithm<>();
     vv =
         VisualizationViewer.builder(graph)
             .layoutAlgorithm(layoutAlgorithm)

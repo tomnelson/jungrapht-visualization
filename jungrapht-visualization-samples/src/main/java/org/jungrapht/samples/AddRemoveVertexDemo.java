@@ -52,7 +52,7 @@ public class AddRemoveVertexDemo extends JPanel {
         GraphTypeBuilder.<Number, Number>forGraphType(DefaultGraphType.directedPseudograph())
             .buildGraph();
 
-    layoutAlgorithm = FRLayoutAlgorithm.<Number>builder().build();
+    layoutAlgorithm = new FRLayoutAlgorithm<>();
 
     LayoutAlgorithm<Number> staticLayoutAlgorithm = new StaticLayoutAlgorithm<>();
 

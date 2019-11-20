@@ -81,7 +81,7 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
     graph = buildOneVertex();
     //        TestGraphs.getOneComponentGraph();
 
-    graphLayoutAlgorithm = FRLayoutAlgorithm.<String>builder().build();
+    graphLayoutAlgorithm = new FRLayoutAlgorithm<>();
 
     Dimension preferredSize = new Dimension(600, 600);
 

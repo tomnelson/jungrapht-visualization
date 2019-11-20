@@ -17,6 +17,7 @@ import org.jungrapht.visualization.layout.model.PolarPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  * A radial layout for Tree or Forest graphs. Positions vertices in concentric circles with the root
  * at the center
@@ -42,6 +43,10 @@ public class TidierRadialTreeLayoutAlgorithm<V, E> extends TidierTreeLayoutAlgor
 
   public static <V, E> Builder<V, E, ?, ?> edgeAwareBuilder() {
     return (Builder<V, E, ?, ?>) new Builder<>().expandLayout(false);
+  }
+
+  public TidierRadialTreeLayoutAlgorithm() {
+    this(TidierRadialTreeLayoutAlgorithm.edgeAwareBuilder());
   }
 
   protected TidierRadialTreeLayoutAlgorithm(Builder<V, E, ?, ?> builder) {

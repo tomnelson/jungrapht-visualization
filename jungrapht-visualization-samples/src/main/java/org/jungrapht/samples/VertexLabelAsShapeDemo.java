@@ -49,7 +49,7 @@ public class VertexLabelAsShapeDemo extends JPanel {
     // create a simple graph for the demo
     graph = TestGraphs.getOneComponentGraph();
 
-    layoutAlgorithm = FRLayoutAlgorithm.<String>builder().build();
+    layoutAlgorithm = new FRLayoutAlgorithm<>();
 
     Dimension preferredSize = new Dimension(400, 400);
     final VisualizationModel<String, Integer> visualizationModel =
