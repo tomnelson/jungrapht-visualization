@@ -65,7 +65,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   protected int addToSelectionModifiers;
 
   /** used to draw a rectangle to contain selected vertices */
-  protected Rectangle2D viewRectangle = new Rectangle2D.Float();
+  protected Shape viewRectangle = new Rectangle2D.Float();
   // viewRectangle projected onto the layout coordinate system
   protected Shape layoutTargetShape = viewRectangle;
 
@@ -78,7 +78,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   /** color for the picking rectangle */
   protected Color lensColor = Color.cyan;
 
-  protected Point2D deltaDown;
+  protected Point2D deltaDown; // what's that flower you have on...
 
   /** on mouse press, record the current state of the vertexSpatial.isActive() */
   protected boolean vertexSpatialActiveInitialState;
@@ -86,15 +86,20 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   /** on mouse press, record the current state of the edgeSpatial.isActive() */
   protected boolean edgeSpatialActiveInitialState;
 
+  protected MultiSelectionStrategy multiSelectionStrategy =
+      new MultiSelectionStrategy.Rectangular();
+
   /** create an instance with default settings */
   public SelectingGraphMousePlugin() {
     this(
-        InputEvent.BUTTON1_DOWN_MASK | InputEvent.CTRL_DOWN_MASK,
-        InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK);
+        InputEvent.BUTTON1_DOWN_MASK
+            | InputEvent.CTRL_DOWN_MASK, // select or drag select in rectangle
+        InputEvent.SHIFT_DOWN_MASK // drag select in non-rectangular shape
+        );
   }
 
   /**
-   * create an instance with overides
+   * create an instance with overrides
    *
    * @param selectionModifiers for primary selection
    * @param addToSelectionModifiers for additional selection
@@ -105,6 +110,10 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     this.lensPaintable = new LensPaintable();
     this.pickFootprintPaintable = new FootprintPaintable();
     this.cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+  }
+
+  public void setMultiSelectionStrategy(MultiSelectionStrategy multiSelectionStrategy) {
+    this.multiSelectionStrategy = multiSelectionStrategy;
   }
 
   /** @return Returns the lensColor. */
@@ -161,7 +170,6 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    *
    * @param e the event
    */
-  @SuppressWarnings("unchecked")
   public void mousePressed(MouseEvent e) {
     down = e.getPoint();
     log.trace("mouse pick at screen coords {}", e.getPoint());
@@ -174,6 +182,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
     MutableSelectedState<V> selectedVertexState = vv.getSelectedVertexState();
     MutableSelectedState<E> selectedEdgeState = vv.getSelectedEdgeState();
+    viewRectangle = multiSelectionStrategy.getInitialShape(e.getPoint());
 
     MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
 
@@ -298,6 +307,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     log.trace("down:{} out:{}", down, out);
     if (vertex != null && !down.equals(out)) {
 
+      multiSelectionStrategy.closeShape();
       // dragging points and changing their layout locations
       Point2D graphPoint = multiLayerTransformer.inverseTransform(out);
       log.trace("p in graph coords is {}", graphPoint);
@@ -321,7 +331,6 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     down = null;
     vertex = null;
     edge = null;
-    viewRectangle.setFrame(0, 0, 0, 0);
     layoutTargetShape = multiLayerTransformer.inverseTransform(viewRectangle);
     vv.removePostRenderPaintable(lensPaintable);
     vv.removePostRenderPaintable(pickFootprintPaintable);
@@ -332,7 +341,6 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    * If the mouse is over a selected vertex, drag all selected vertices with the mouse. If the mouse
    * is not over a Vertex, draw the rectangle to select multiple Vertices
    */
-  @SuppressWarnings("unchecked")
   public void mouseDragged(MouseEvent e) {
     log.trace("mouseDragged");
     VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
@@ -373,7 +381,8 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
 
       } else {
         Point2D out = e.getPoint();
-        updatePickingTargets(vv, multiLayerTransformer, down, out);
+        multiSelectionStrategy.updateShape(down, out);
+        layoutTargetShape = multiLayerTransformer.inverseTransform(viewRectangle);
       }
       if (vertex != null) {
         e.consume();
@@ -433,7 +442,8 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
       Point2D down,
       Point2D out) {
     log.trace("updatePickingTargets with {} to {}", down, out);
-    viewRectangle.setFrameFromDiagonal(down, out);
+
+    multiSelectionStrategy.updateShape(down, down);
 
     layoutTargetShape = multiLayerTransformer.inverseTransform(viewRectangle);
 

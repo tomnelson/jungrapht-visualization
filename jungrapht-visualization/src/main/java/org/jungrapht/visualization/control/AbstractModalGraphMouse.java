@@ -52,7 +52,6 @@ public abstract class AbstractModalGraphMouse extends AbstractGraphMouse
   /** listeners for mode changes */
   protected EventListenerList listenerList = new EventListenerList();
 
-  protected GraphMousePlugin pickingPlugin;
   protected GraphMousePlugin translatingPlugin;
   protected GraphMousePlugin animatedPickingPlugin;
   protected GraphMousePlugin rotatingPlugin;
@@ -84,6 +83,7 @@ public abstract class AbstractModalGraphMouse extends AbstractGraphMouse
           new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, mode, ItemEvent.SELECTED));
     }
   }
+
   /* (non-Javadoc)
    * @see ModalGraphMouse#setPickingMode()
    */

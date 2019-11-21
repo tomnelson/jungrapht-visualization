@@ -17,7 +17,7 @@ public class Pair<T> {
   public final T right;
 
   public static <T> Pair<T> of(T left, T right) {
-    return new Pair(left, right);
+    return new Pair<>(left, right);
   }
 
   public Pair(T left, T right) {

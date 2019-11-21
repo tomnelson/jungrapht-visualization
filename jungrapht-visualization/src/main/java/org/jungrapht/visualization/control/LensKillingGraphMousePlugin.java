@@ -145,8 +145,7 @@ public class LensKillingGraphMousePlugin<V, E> extends SelectingGraphMousePlugin
       MultiLayerTransformer multiLayerTransformer,
       Point2D down,
       Point2D out) {
-    viewRectangle.setFrameFromDiagonal(down, out);
-
+    multiSelectionStrategy.updateShape(down, down);
     layoutTargetShape = transformSupport.inverseTransform(vv, viewRectangle);
   }
 }

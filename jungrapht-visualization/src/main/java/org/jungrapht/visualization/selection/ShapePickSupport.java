@@ -594,8 +594,6 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
       }
       pathIterator.next();
     }
-    log.info(
-        "segmentCount: {}, line {}", segmentCount, new Line2D.Float(startx, starty, endx, endy));
     if (segmentCount > 1) {
       return new Line2D.Float(startx, starty, endx, endy);
     } else {

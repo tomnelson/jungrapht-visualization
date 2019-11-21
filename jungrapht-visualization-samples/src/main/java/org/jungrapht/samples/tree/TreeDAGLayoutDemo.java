@@ -17,6 +17,7 @@ import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.ModalGraphMouse.Mode;
+import org.jungrapht.visualization.control.MultiSelectionStrategy;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.Renderer;
@@ -63,6 +64,8 @@ public class TreeDAGLayoutDemo extends JPanel {
     add(panel);
 
     final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
+
+    graphMouse.setMultiSelectionStrategy(new MultiSelectionStrategy.Arbitrary());
 
     vv.setGraphMouse(graphMouse);
 

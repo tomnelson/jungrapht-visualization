@@ -37,7 +37,8 @@ public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
   protected void loadPlugins() {
     scalingPlugin = new ScalingGraphMousePlugin(new CrossoverScalingControl(), 0, in, out);
     add(new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK));
-    add(new SelectingGraphMousePlugin<V, E>());
+    pickingPlugin = new SelectingGraphMousePlugin<>();
+    add(pickingPlugin);
     add(scalingPlugin);
   }
 

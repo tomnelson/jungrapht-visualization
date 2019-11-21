@@ -30,9 +30,15 @@ public abstract class AbstractGraphMouse extends PluggableGraphMouse {
 
   protected GraphMousePlugin scalingPlugin;
 
+  protected SelectingGraphMousePlugin pickingPlugin;
+
   protected AbstractGraphMouse(float in, float out) {
     this.in = in;
     this.out = out;
+  }
+
+  public void setMultiSelectionStrategy(MultiSelectionStrategy multiSelectionStrategy) {
+    this.pickingPlugin.setMultiSelectionStrategy(multiSelectionStrategy);
   }
 
   /** create the plugins, and load the plugins for TRANSFORMING mode */

@@ -24,12 +24,7 @@ import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.annotations.MultiSelectedVertexPaintable;
-import org.jungrapht.visualization.control.CrossoverScalingControl;
-import org.jungrapht.visualization.control.DefaultGraphMouse;
-import org.jungrapht.visualization.control.DefaultLensGraphMouse;
-import org.jungrapht.visualization.control.LensGraphMouse;
-import org.jungrapht.visualization.control.LensMagnificationGraphMousePlugin;
-import org.jungrapht.visualization.control.ScalingControl;
+import org.jungrapht.visualization.control.*;
 import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.decorators.IconShapeFunction;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
@@ -169,6 +164,7 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
     add(panel);
 
     final DefaultGraphMouse<String, Integer> graphMouse = new DefaultGraphMouse<>();
+    graphMouse.setMultiSelectionStrategy(new MultiSelectionStrategy.Arbitrary());
     vv.setGraphMouse(graphMouse);
 
     Renderer<String, Integer> renderer = vv.getRenderer();
