@@ -93,11 +93,16 @@ public class MinimumSpanningTreeDemo extends JPanel {
             .layoutSize(vm1.getLayoutSize())
             .build();
 
+    // create a GraphMouse for each view
+    DefaultModalGraphMouse<String, Integer> gm0 = new DefaultModalGraphMouse<>();
+    DefaultModalGraphMouse<String, Integer> gm1 = new DefaultModalGraphMouse<>();
+    DefaultModalGraphMouse<String, Integer> gm2 = new DefaultModalGraphMouse<>();
+
     // create the two views, one for each model
     // they share the same renderer
-    vv0 = VisualizationViewer.builder(vm0).viewSize(preferredSize).build();
-    vv1 = VisualizationViewer.builder(vm1).viewSize(viewSizeRect).build();
-    vv2 = VisualizationViewer.builder(vm2).viewSize(viewSizeRect).build();
+    vv0 = VisualizationViewer.builder(vm0).graphMouse(gm0).viewSize(preferredSize).build();
+    vv1 = VisualizationViewer.builder(vm1).graphMouse(gm1).viewSize(viewSizeRect).build();
+    vv2 = VisualizationViewer.builder(vm2).graphMouse(gm2).viewSize(viewSizeRect).build();
 
     vv1.getRenderContext()
         .setMultiLayerTransformer(vv0.getRenderContext().getMultiLayerTransformer());
@@ -188,15 +193,6 @@ public class MinimumSpanningTreeDemo extends JPanel {
     panel.add(grid);
 
     add(panel);
-
-    // create a GraphMouse for each view
-    DefaultModalGraphMouse<String, Integer> gm0 = new DefaultModalGraphMouse<>();
-    DefaultModalGraphMouse<String, Integer> gm1 = new DefaultModalGraphMouse<>();
-    DefaultModalGraphMouse<String, Integer> gm2 = new DefaultModalGraphMouse<>();
-
-    vv0.setGraphMouse(gm0);
-    vv1.setGraphMouse(gm1);
-    vv2.setGraphMouse(gm2);
 
     // create zoom buttons for scaling the Function that is
     // shared between the two models.

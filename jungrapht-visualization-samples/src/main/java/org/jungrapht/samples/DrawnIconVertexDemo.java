@@ -41,8 +41,11 @@ public class DrawnIconVertexDemo {
     // create a simple graph for the demo
     graph = createGraph();
 
+    final DefaultModalGraphMouse<Integer, Number> gm = new DefaultModalGraphMouse<>();
+
     vv =
         VisualizationViewer.builder(graph)
+            .graphMouse(gm)
             .layoutAlgorithm(new FRLayoutAlgorithm<>())
             .viewSize(new Dimension(700, 700))
             .build();
@@ -100,9 +103,6 @@ public class DrawnIconVertexDemo {
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     content.add(panel);
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-    final DefaultModalGraphMouse<Integer, Number> gm = new DefaultModalGraphMouse<>();
-    vv.setGraphMouse(gm);
 
     JPanel controls = new JPanel();
     controls.add(ControlHelpers.getZoomControls(vv));

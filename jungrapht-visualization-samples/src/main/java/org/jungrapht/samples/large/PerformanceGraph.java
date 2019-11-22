@@ -27,6 +27,8 @@ public class PerformanceGraph {
 
     Dimension layoutSize = new Dimension(1600, 1600);
     Dimension viewSize = new Dimension(800, 800);
+    DefaultModalGraphMouse<String, Double> graphMouse = new DefaultModalGraphMouse<>();
+
     VisualizationViewer<String, Integer> vv =
         VisualizationViewer.builder(graph)
             .layoutAlgorithm(
@@ -35,13 +37,10 @@ public class PerformanceGraph {
                     .build())
             .layoutSize(layoutSize)
             .viewSize(viewSize)
+            .graphMouse(graphMouse)
             .build();
 
     vv.scaleToLayout(new CrossoverScalingControl());
-
-    DefaultModalGraphMouse<String, Double> graphMouse = new DefaultModalGraphMouse<>();
-    vv.setGraphMouse(graphMouse);
-    vv.addKeyListener(graphMouse.getModeKeyListener());
 
     f.getContentPane().add(vv.getComponent());
     f.setSize(viewSize);

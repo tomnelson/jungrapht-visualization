@@ -50,6 +50,9 @@ public class TreeLayoutDemo extends JPanel {
     int height = 20;
     Function<String, Shape> vertexShapeFunction =
         v -> new Ellipse2D.Float(-width / 2.f, -height / 2.f, width, height);
+
+    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
+
     vv =
         VisualizationViewer.builder(graph)
             .layoutAlgorithm(
@@ -57,6 +60,7 @@ public class TreeLayoutDemo extends JPanel {
                     .vertexShapeFunction(vertexShapeFunction)
                     .build())
             .viewSize(new Dimension(600, 600))
+            .graphMouse(graphMouse)
             .build();
     vv.setBackground(Color.white);
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
@@ -76,8 +80,6 @@ public class TreeLayoutDemo extends JPanel {
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
 
-    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
-    vv.setGraphMouse(graphMouse);
     // temporary feature to draw the layout bounds in the viewer
     vv.addPreRenderPaintable(
         new LayoutPaintable.LayoutBounds(

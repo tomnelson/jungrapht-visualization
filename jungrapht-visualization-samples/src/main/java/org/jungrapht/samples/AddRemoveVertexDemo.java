@@ -58,6 +58,7 @@ public class AddRemoveVertexDemo extends JPanel {
 
     vv =
         VisualizationViewer.builder(graph)
+            .graphMouse(new DefaultModalGraphMouse<>())
             .layoutAlgorithm(staticLayoutAlgorithm)
             .viewSize(new Dimension(600, 600))
             .build();
@@ -65,8 +66,6 @@ public class AddRemoveVertexDemo extends JPanel {
     this.setLayout(new BorderLayout());
     this.setBackground(java.awt.Color.lightGray);
     this.setFont(new Font("Serif", Font.PLAIN, 12));
-
-    vv.setGraphMouse(new DefaultModalGraphMouse<Number, Number>());
 
     vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
     vv.getRenderContext().setVertexLabelFunction(Object::toString);

@@ -49,8 +49,12 @@ public class ShortestPathDemo extends JPanel {
     setBackground(Color.WHITE);
 
     final LayoutAlgorithm<String> layoutAlgorithm = new FRLayoutAlgorithm<>();
+
+    final AbstractModalGraphMouse graphMouse = new DefaultModalGraphMouse<Integer, Number>();
+
     final VisualizationViewer<String, Integer> vv =
         VisualizationViewer.builder(graph)
+            .graphMouse(graphMouse)
             .layoutAlgorithm(layoutAlgorithm)
             .viewSize(new Dimension(1000, 1000))
             .build();
@@ -102,9 +106,6 @@ public class ShortestPathDemo extends JPanel {
               }
             });
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
-    final AbstractModalGraphMouse graphMouse = new DefaultModalGraphMouse<Integer, Number>();
-    vv.setGraphMouse(graphMouse);
-    vv.addKeyListener(graphMouse.getModeKeyListener());
     vv.getSelectedVertexState()
         .addItemListener(new SelectedState.StateChangeListener<>(this::select, this::deselect));
 

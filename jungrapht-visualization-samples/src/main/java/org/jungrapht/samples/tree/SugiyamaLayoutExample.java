@@ -18,7 +18,6 @@ import org.jgrapht.Graph;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.decorators.IconShapeFunction;
@@ -63,10 +62,6 @@ public class SugiyamaLayoutExample extends JFrame {
 
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     container.add(panel);
-
-    final DefaultGraphMouse<String, Integer> graphMouse = new DefaultGraphMouse<>();
-
-    vv.setGraphMouse(graphMouse);
 
     IconCache<String> iconCache =
         IconCache.<String>builder(Object::toString)

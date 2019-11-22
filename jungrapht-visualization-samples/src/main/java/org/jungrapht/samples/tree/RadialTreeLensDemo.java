@@ -63,7 +63,13 @@ public class RadialTreeLensDemo extends JPanel {
             .layoutAlgorithm(new StaticLayoutAlgorithm())
             .layoutSize(preferredSize)
             .build();
-    vv = VisualizationViewer.builder(visualizationModel).viewSize(preferredSize).build();
+    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
+
+    vv =
+        VisualizationViewer.builder(visualizationModel)
+            .graphMouse(graphMouse)
+            .viewSize(preferredSize)
+            .build();
 
     MutableSelectedState<String> ps = vv.getSelectedVertexState();
     MutableSelectedState<Integer> pes = vv.getSelectedEdgeState();
@@ -84,14 +90,9 @@ public class RadialTreeLensDemo extends JPanel {
     VisualizationScrollPane visualizationScrollPane = new VisualizationScrollPane(vv);
     add(visualizationScrollPane);
 
-    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
-
-    vv.setGraphMouse(graphMouse);
-    vv.addKeyListener(graphMouse.getModeKeyListener());
     LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
     Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
 
-    //    Lens lens = new Lens();
     hyperbolicViewSupport =
         ViewLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
             .lensTransformer(

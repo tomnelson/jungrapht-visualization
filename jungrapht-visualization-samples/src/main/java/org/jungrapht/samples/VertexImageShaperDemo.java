@@ -29,9 +29,7 @@ import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
-import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.decorators.IconShapeFunction;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
@@ -111,6 +109,9 @@ public class VertexImageShaperDemo extends JPanel {
     FRLayoutAlgorithm<Number> layoutAlgorithm = new FRLayoutAlgorithm<>();
     layoutAlgorithm.setMaxIterations(100);
     //    treeLayoutAlgorithm.setInitializer(new RandomLocationTransformer<>(new Dimension(400, 400), 0));
+
+    final DefaultModalGraphMouse<Number, Number> graphMouse = new DefaultModalGraphMouse<>();
+
     vv =
         VisualizationViewer.builder(
                 (VisualizationModel<Number, Number>)
@@ -120,6 +121,7 @@ public class VertexImageShaperDemo extends JPanel {
                         .layoutSize(new Dimension(400, 400))
                         .build())
             .viewSize(new Dimension(400, 400))
+            .graphMouse(graphMouse)
             .build();
 
     // This demo uses a special renderer to turn outlines on and off.
@@ -195,11 +197,6 @@ public class VertexImageShaperDemo extends JPanel {
 
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
-
-    final DefaultModalGraphMouse<Number, Number> graphMouse = new DefaultModalGraphMouse<>();
-    vv.setGraphMouse(graphMouse);
-    vv.addKeyListener(graphMouse.getModeKeyListener());
-    final ScalingControl scaler = new CrossoverScalingControl();
 
     JCheckBox shape = new JCheckBox("Shape");
     shape.addItemListener(

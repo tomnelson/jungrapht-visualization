@@ -66,18 +66,15 @@ public class TwoModelDemo extends JPanel {
             .layoutSize(preferredSize)
             .build();
 
+    // create a GraphMouse for each view
+    final DefaultModalGraphMouse<String, Integer> gm1 = new DefaultModalGraphMouse<>();
+    final DefaultModalGraphMouse<String, Integer> gm2 = new DefaultModalGraphMouse<>();
+
     // create the two views, one for each model
     // they share the same renderer
-    vv1 = VisualizationViewer.builder(vm1).viewSize(preferredSize).build();
-    vv2 = VisualizationViewer.builder(vm2).viewSize(preferredSize).build();
+    vv1 = VisualizationViewer.builder(vm1).graphMouse(gm1).viewSize(preferredSize).build();
+    vv2 = VisualizationViewer.builder(vm2).graphMouse(gm2).viewSize(preferredSize).build();
     vv1.setRenderContext(vv2.getRenderContext());
-
-    // share the model Function between the two models
-    //        layoutTransformer = vv1.getLayoutTransformer();
-    //        vv2.setLayoutTransformer(layoutTransformer);
-    //
-    //        // share the view Function between the two models
-    //        vv2.setViewTransformer(vv1.getViewTransformer());
 
     vv2.getRenderContext()
         .setMultiLayerTransformer(vv1.getRenderContext().getMultiLayerTransformer());
@@ -111,14 +108,6 @@ public class TwoModelDemo extends JPanel {
     panel.add(new VisualizationScrollPane(vv2));
 
     add(panel);
-
-    // create a GraphMouse for each view
-    final DefaultModalGraphMouse<String, Integer> gm1 = new DefaultModalGraphMouse<>();
-
-    DefaultModalGraphMouse<String, Integer> gm2 = new DefaultModalGraphMouse<>();
-
-    vv1.setGraphMouse(gm1);
-    vv2.setGraphMouse(gm2);
 
     JPanel modePanel = new JPanel();
     modePanel.setBorder(BorderFactory.createTitledBorder("Mouse Mode"));

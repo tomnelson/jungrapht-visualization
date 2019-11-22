@@ -93,7 +93,14 @@ public class SpatialLensLargeGraphDemo extends JPanel {
             .layoutAlgorithm(graphLayoutAlgorithm)
             .layoutSize(preferredSize)
             .build();
-    vv = VisualizationViewer.builder(visualizationModel).viewSize(viewPreferredSize).build();
+    // the regular graph mouse for the normal view
+    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
+
+    vv =
+        VisualizationViewer.builder(visualizationModel)
+            .graphMouse(graphMouse)
+            .viewSize(viewPreferredSize)
+            .build();
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.getRenderContext().setVertexShapeFunction(n -> new Rectangle2D.Float(-8, -8, 16, 16));
     vv.setBackground(Color.white);
@@ -102,12 +109,6 @@ public class SpatialLensLargeGraphDemo extends JPanel {
 
     VisualizationScrollPane visualizationScrollPane = new VisualizationScrollPane(vv);
     add(visualizationScrollPane);
-
-    // the regular graph mouse for the normal view
-    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
-
-    vv.setGraphMouse(graphMouse);
-    vv.addKeyListener(graphMouse.getModeKeyListener());
 
     // create a lens to share between the two hyperbolic transformers
     LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();

@@ -45,10 +45,14 @@ public class TreeDAGLayoutDemo extends JPanel {
     // create a simple graph for the demo
     graph = createDAG();
 
+    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
+    graphMouse.setMultiSelectionStrategy(new MultiSelectionStrategy.Arbitrary());
+
     vv =
         VisualizationViewer.builder(graph)
             .layoutAlgorithm(new StaticLayoutAlgorithm<>())
             .viewSize(new Dimension(600, 600))
+            .graphMouse(graphMouse)
             .build();
     vv.setBackground(Color.white);
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
@@ -62,12 +66,6 @@ public class TreeDAGLayoutDemo extends JPanel {
 
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
-
-    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
-
-    graphMouse.setMultiSelectionStrategy(new MultiSelectionStrategy.Arbitrary());
-
-    vv.setGraphMouse(graphMouse);
 
     JComboBox<Mode> modeBox = graphMouse.getModeComboBox();
     modeBox.addItemListener(graphMouse.getModeListener());

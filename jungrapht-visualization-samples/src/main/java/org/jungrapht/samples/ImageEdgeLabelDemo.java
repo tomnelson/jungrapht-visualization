@@ -17,10 +17,8 @@ import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.ModalGraphMouse.Mode;
-import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.JLabelEdgeLabelRenderer;
@@ -53,8 +51,11 @@ public class ImageEdgeLabelDemo extends JPanel {
 
     FRLayoutAlgorithm<Number> layoutAlgorithm = new FRLayoutAlgorithm<>();
     layoutAlgorithm.setMaxIterations(100);
+
+    final DefaultModalGraphMouse<Number, Number> graphMouse = new DefaultModalGraphMouse<>();
     vv =
         VisualizationViewer.builder(graph)
+            .graphMouse(graphMouse)
             .layoutAlgorithm(layoutAlgorithm)
             .viewSize(new Dimension(600, 600))
             .build();
@@ -82,11 +83,6 @@ public class ImageEdgeLabelDemo extends JPanel {
     vv.setEdgeToolTipFunction(Object::toString);
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
-
-    final DefaultModalGraphMouse<Number, Number> graphMouse = new DefaultModalGraphMouse<>();
-    vv.setGraphMouse(graphMouse);
-    vv.addKeyListener(graphMouse.getModeKeyListener());
-    final ScalingControl scaler = new CrossoverScalingControl();
 
     JComboBox<Mode> modeBox = graphMouse.getModeComboBox();
     JPanel modePanel = new JPanel();

@@ -42,6 +42,7 @@ class DefaultVisualizationViewer<V, E> extends DefaultVisualizationServer<V, E>
     this(
         builder.graph,
         builder.visualizationModel,
+        builder.graphMouse,
         builder.layoutAlgorithm,
         builder.layoutSize,
         builder.viewSize);
@@ -50,11 +51,16 @@ class DefaultVisualizationViewer<V, E> extends DefaultVisualizationServer<V, E>
   protected DefaultVisualizationViewer(
       Graph<V, E> graph,
       VisualizationModel<V, E> visualizationModel,
+      GraphMouse graphMouse,
       LayoutAlgorithm<V> layoutAlgorithm,
       Dimension layoutSize,
       Dimension viewSize) {
     super(graph, visualizationModel, layoutAlgorithm, layoutSize, viewSize);
     addMouseListener(requestFocusListener);
+    setGraphMouse(graphMouse);
+    if (graphMouse instanceof ModalGraphMouse) {
+      addKeyListener(((ModalGraphMouse) graphMouse).getModeKeyListener());
+    }
   }
 
   protected Function<V, String> vertexToolTipFunction;

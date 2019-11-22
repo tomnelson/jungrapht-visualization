@@ -16,54 +16,39 @@ import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
-import org.jungrapht.visualization.util.helpers.ControlHelpers;
 
 /**
- * A demo that shows a minimal visualization
+ * A demo that shows a minimal visualization configuration
+ *
+ * <p>Use the mouse wheel to scale Use Mouse Button 1 to pan Use CTRL-Mouse Button 1 to select
+ * (select individual vertices/edges or drag a rectangular area to select contained vertices)
  *
  * @author Tom Nelson
  */
 public class MinimalVisualization {
 
-  Graph<Integer, Integer> graph;
+  private MinimalVisualization() {
 
-  VisualizationViewer<Integer, Integer> vv;
-
-  public MinimalVisualization() {
-
-    // create a simple graph for the demo
-    graph = createGraph();
-
-    vv =
-        VisualizationViewer.builder(graph)
+    VisualizationViewer<Integer, Integer> vv =
+        VisualizationViewer.builder(createGraph())
             .viewSize(new Dimension(700, 700))
             .layoutAlgorithm(new KKLayoutAlgorithm<>())
             .build();
 
-    vv.setBackground(Color.white);
-
-    // create a frame to hold the graph
+    // create a frame to hold the graph visualization
     final JFrame frame = new JFrame();
-    Container content = frame.getContentPane();
-    content.add(vv.getComponent());
+    frame.getContentPane().add(vv.getComponent());
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-    final DefaultModalGraphMouse<Integer, Number> gm = new DefaultModalGraphMouse<>();
-    vv.setGraphMouse(gm);
-
-    Box controls = Box.createHorizontalBox();
-    controls.add(ControlHelpers.getZoomControls("Zoom", vv));
-    controls.add(Box.createGlue());
-    controls.add(ControlHelpers.getCenteredContainer("Mouse Mode", gm.getModeComboBox()));
-    content.add(controls, BorderLayout.SOUTH);
-
     frame.pack();
     frame.setVisible(true);
   }
 
-  Graph<Integer, Integer> createGraph() {
+  public static void main(String[] args) {
+    new MinimalVisualization();
+  }
+
+  private Graph<Integer, Integer> createGraph() {
     Graph<Integer, Integer> graph =
         GraphTypeBuilder.<Integer, Integer>forGraphType(DefaultGraphType.dag())
             .edgeSupplier(SupplierUtil.createIntegerSupplier())
@@ -91,9 +76,5 @@ public class MinimalVisualization {
     graph.addEdge(10, 4);
 
     return graph;
-  }
-
-  public static void main(String[] args) {
-    new MinimalVisualization();
   }
 }

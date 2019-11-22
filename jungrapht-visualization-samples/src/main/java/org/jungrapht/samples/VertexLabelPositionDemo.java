@@ -57,7 +57,14 @@ public class VertexLabelPositionDemo extends JPanel {
             .layoutAlgorithm(graphLayoutAlgorithm)
             .layoutSize(preferredSize)
             .build();
-    vv = VisualizationViewer.builder(visualizationModel).viewSize(preferredSize).build();
+    // the regular graph mouse for the normal view
+    final AbstractModalGraphMouse graphMouse = new DefaultModalGraphMouse<>();
+
+    vv =
+        VisualizationViewer.builder(visualizationModel)
+            .graphMouse(graphMouse)
+            .viewSize(preferredSize)
+            .build();
 
     MutableSelectedState<String> ps = vv.getSelectedVertexState();
     MutableSelectedState<Integer> pes = vv.getSelectedEdgeState();
@@ -76,12 +83,6 @@ public class VertexLabelPositionDemo extends JPanel {
 
     VisualizationScrollPane visualizationScrollPane = new VisualizationScrollPane(vv);
     add(visualizationScrollPane);
-
-    // the regular graph mouse for the normal view
-    final AbstractModalGraphMouse graphMouse = new DefaultModalGraphMouse<>();
-
-    vv.setGraphMouse(graphMouse);
-    vv.addKeyListener(graphMouse.getModeKeyListener());
 
     JPanel positionPanel = new JPanel();
     JMenuBar menubar = new JMenuBar();

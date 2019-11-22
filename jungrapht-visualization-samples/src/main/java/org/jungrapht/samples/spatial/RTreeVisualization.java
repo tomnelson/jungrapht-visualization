@@ -29,7 +29,6 @@ import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
@@ -111,9 +110,6 @@ public class RTreeVisualization<V> extends JPanel {
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
 
-    final DefaultGraphMouse<Object, Integer> graphMouse = new DefaultGraphMouse<>();
-
-    vv.setGraphMouse(graphMouse);
     MutableSelectedState selectedState = othervv.getSelectedVertexState();
     selectedState.addItemListener(
         e -> {

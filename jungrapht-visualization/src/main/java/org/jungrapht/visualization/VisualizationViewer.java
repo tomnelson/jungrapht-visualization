@@ -16,6 +16,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelListener;
 import java.util.function.Function;
 import org.jgrapht.Graph;
+import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.control.GraphMouseListener;
 
 /**
@@ -36,8 +37,14 @@ public interface VisualizationViewer<V, E> extends VisualizationServer<V, E> {
   class Builder<V, E, T extends DefaultVisualizationViewer<V, E>, B extends Builder<V, E, T, B>>
       extends DefaultVisualizationServer.Builder<V, E, T, B> {
 
+    protected GraphMouse graphMouse = new DefaultGraphMouse();
     /** create an instance with no initial args */
     protected Builder() {}
+
+    public B graphMouse(GraphMouse graphMouse) {
+      this.graphMouse = graphMouse;
+      return self();
+    }
 
     /** @param graph the graph to be visualized */
     protected Builder(Graph<V, E> graph) {

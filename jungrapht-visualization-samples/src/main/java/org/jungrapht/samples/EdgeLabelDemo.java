@@ -62,8 +62,12 @@ public class EdgeLabelDemo extends JPanel {
     graph = buildGraph();
 
     LayoutAlgorithm<Integer> layoutAlgorithm = new CircleLayoutAlgorithm<>();
+
+    final DefaultModalGraphMouse<Integer, Number> graphMouse = new DefaultModalGraphMouse<>();
+
     vv =
         VisualizationViewer.builder(graph)
+            .graphMouse(graphMouse)
             .layoutAlgorithm(layoutAlgorithm)
             .viewSize(new Dimension(600, 400))
             .build();
@@ -90,9 +94,6 @@ public class EdgeLabelDemo extends JPanel {
     // create a frame to hold the graph
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
-
-    final DefaultModalGraphMouse<Integer, Number> graphMouse = new DefaultModalGraphMouse<>();
-    vv.setGraphMouse(graphMouse);
 
     ButtonGroup radio = new ButtonGroup();
     JRadioButton lineButton = new JRadioButton("Line");

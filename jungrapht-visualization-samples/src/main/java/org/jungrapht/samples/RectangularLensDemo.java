@@ -93,12 +93,19 @@ public class RectangularLensDemo extends JPanel {
     grid = this.generateVertexGrid(map, preferredSize, 25);
     gridLayoutAlgorithm = new StaticLayoutAlgorithm<>();
 
+    // the regular graph mouse for the normal view
+    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
+
     final VisualizationModel<String, Integer> visualizationModel =
         VisualizationModel.builder(graph)
             .layoutAlgorithm(graphLayoutAlgorithm)
             .layoutSize(preferredSize)
             .build();
-    vv = VisualizationViewer.builder(visualizationModel).viewSize(preferredSize).build();
+    vv =
+        VisualizationViewer.builder(visualizationModel)
+            .graphMouse(graphMouse)
+            .viewSize(preferredSize)
+            .build();
 
     MutableSelectedState<String> ps = vv.getSelectedVertexState();
     MutableSelectedState<Integer> pes = vv.getSelectedEdgeState();
@@ -119,12 +126,6 @@ public class RectangularLensDemo extends JPanel {
 
     VisualizationScrollPane visualizationScrollPane = new VisualizationScrollPane(vv);
     add(visualizationScrollPane);
-
-    // the regular graph mouse for the normal view
-    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
-
-    vv.setGraphMouse(graphMouse);
-    vv.addKeyListener(graphMouse.getModeKeyListener());
 
     // create a lens to share between the two hyperbolic transformers
     LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();

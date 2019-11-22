@@ -43,7 +43,13 @@ public class TidierTreeLayoutDemo extends JPanel {
     setLayout(new BorderLayout());
     // create a simple graph for the demo
     graph = DemoTreeSupplier.createForest();
-    vv = VisualizationViewer.builder(graph).viewSize(new Dimension(600, 600)).build();
+    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
+
+    vv =
+        VisualizationViewer.builder(graph)
+            .graphMouse(graphMouse)
+            .viewSize(new Dimension(600, 600))
+            .build();
     Function<String, Shape> vertexShapeFunction = vv.getRenderContext().getVertexShapeFunction();
     TidierTreeLayoutAlgorithm<String, Integer> layoutAlgorithm =
         TidierTreeLayoutAlgorithm.<String, Integer>edgeAwareBuilder()
@@ -68,8 +74,6 @@ public class TidierTreeLayoutDemo extends JPanel {
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
 
-    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
-    vv.setGraphMouse(graphMouse);
     // temporary feature to draw the layout bounds in the viewer
     vv.addPreRenderPaintable(
         new LayoutPaintable.LayoutBounds(

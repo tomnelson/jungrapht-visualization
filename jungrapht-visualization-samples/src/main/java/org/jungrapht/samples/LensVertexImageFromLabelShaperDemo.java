@@ -72,8 +72,13 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
 
     FRLayoutAlgorithm<String> layoutAlgorithm = new FRLayoutAlgorithm<>();
     layoutAlgorithm.setMaxIterations(100);
+
+    final DefaultGraphMouse<String, Integer> graphMouse = new DefaultGraphMouse<>();
+    graphMouse.setMultiSelectionStrategy(new MultiSelectionStrategy.Arbitrary());
+
     vv =
         VisualizationViewer.builder(graph)
+            .graphMouse(graphMouse)
             .layoutAlgorithm(layoutAlgorithm)
             .layoutSize(layoutSize)
             .viewSize(viewSize)
@@ -162,10 +167,6 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
 
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
-
-    final DefaultGraphMouse<String, Integer> graphMouse = new DefaultGraphMouse<>();
-    graphMouse.setMultiSelectionStrategy(new MultiSelectionStrategy.Arbitrary());
-    vv.setGraphMouse(graphMouse);
 
     Renderer<String, Integer> renderer = vv.getRenderer();
     if (renderer instanceof ModalRenderer) {

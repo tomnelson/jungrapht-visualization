@@ -22,7 +22,6 @@ import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.samples.util.DemoTreeSupplier;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -81,9 +80,6 @@ public class TreeCollapseDemo extends JPanel {
     vv.scaleToLayout();
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
-
-    final DefaultGraphMouse<String, Integer> graphMouse = new DefaultGraphMouse<>();
-    vv.setGraphMouse(graphMouse);
 
     JButton collapse = new JButton("Collapse");
     collapse.addActionListener(

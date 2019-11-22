@@ -65,10 +65,13 @@ public class L2RTreeLayoutDemo extends JPanel {
 
     treeLayoutAlgorithm = new TreeLayoutAlgorithm<>();
     radialLayoutAlgorithm = new RadialTreeLayoutAlgorithm<>();
+    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
+
     vv =
         VisualizationViewer.builder(graph)
             .layoutAlgorithm(treeLayoutAlgorithm)
             .viewSize(new Dimension(600, 600))
+            .graphMouse(graphMouse)
             .build();
     vv.setBackground(Color.white);
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
@@ -81,10 +84,6 @@ public class L2RTreeLayoutDemo extends JPanel {
 
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
-
-    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
-
-    vv.setGraphMouse(graphMouse);
 
     JComboBox<Mode> modeBox = graphMouse.getModeComboBox();
     modeBox.addItemListener(graphMouse.getModeListener());

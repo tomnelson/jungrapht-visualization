@@ -58,10 +58,13 @@ public class VisualizationScrollPaneDemo {
       System.err.println("Can't load \"" + imageLocation + "\"");
     }
     final ImageIcon icon = sandstoneIcon;
+    final AbstractModalGraphMouse graphMouse = new DefaultModalGraphMouse<Integer, Number>();
+
     vv =
         VisualizationViewer.builder(graph)
             .layoutAlgorithm(new KKLayoutAlgorithm<>())
             .viewSize(new Dimension(700, 700))
+            .graphMouse(graphMouse)
             .build();
 
     if (icon != null) {
@@ -142,10 +145,6 @@ public class VisualizationScrollPaneDemo {
         new org.jungrapht.visualization.VisualizationScrollPane(vv);
     content.add(panel);
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-    final AbstractModalGraphMouse graphMouse = new DefaultModalGraphMouse<Integer, Number>();
-    vv.setGraphMouse(graphMouse);
-
-    vv.addKeyListener(graphMouse.getModeKeyListener());
     vv.setToolTipText("<html><center>Type 'p' for Pick mode<p>Type 't' for Transform mode");
 
     JButton reset = new JButton("reset");

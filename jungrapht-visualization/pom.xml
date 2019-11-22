@@ -19,10 +19,6 @@
             <artifactId>guava</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.github.kostaskougios</groupId>
-            <artifactId>cloning</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.jgrapht</groupId>
             <artifactId>jgrapht-core</artifactId>
         </dependency>

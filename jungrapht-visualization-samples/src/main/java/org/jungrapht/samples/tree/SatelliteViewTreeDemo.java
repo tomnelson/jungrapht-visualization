@@ -31,7 +31,6 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.annotations.MultiSelectedVertexPaintable;
 import org.jungrapht.visualization.annotations.SingleSelectedVertexPaintable;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
-import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.control.DefaultSatelliteGraphMouse;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
@@ -196,10 +195,6 @@ public class SatelliteViewTreeDemo extends JPanel {
 
     helpDialog = new JDialog();
     helpDialog.getContentPane().add(new JLabel(instructions));
-
-    // create a GraphMouse for the main view
-    final DefaultGraphMouse<String, Integer> graphMouse = new DefaultGraphMouse<>();
-    mainVisualizationViewer.setGraphMouse(graphMouse);
 
     JCheckBox gridBox = new JCheckBox("Show Grid");
     gridBox.addItemListener(

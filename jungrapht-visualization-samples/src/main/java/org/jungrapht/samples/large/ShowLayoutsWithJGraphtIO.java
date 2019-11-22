@@ -92,16 +92,16 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
     EdgeProvider<String, DefaultEdge> ep =
         (from, to, label, attributes) -> graph.getEdgeSupplier().get();
 
+    final DefaultModalGraphMouse<Integer, DefaultEdge> graphMouse = new DefaultModalGraphMouse<>();
+
     final VisualizationViewer<String, DefaultEdge> vv =
         VisualizationViewer.builder(graph)
             .layoutSize(new Dimension(3000, 3000))
             .viewSize(new Dimension(900, 900))
+            .graphMouse(graphMouse)
             .build();
 
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
-
-    final DefaultModalGraphMouse<Integer, DefaultEdge> graphMouse = new DefaultModalGraphMouse<>();
-    vv.setGraphMouse(graphMouse);
 
     vv.setVertexToolTipFunction(
         vertex ->

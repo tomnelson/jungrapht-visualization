@@ -106,7 +106,14 @@ public class SubLayoutDemo extends JPanel {
             .layoutAlgorithm(layoutAlgorithm)
             .build();
 
-    vv = VisualizationViewer.builder(visualizationModel).viewSize(preferredSize).build();
+    // the regular graph mouse for the normal view
+    final DefaultModalGraphMouse<?, ?> graphMouse = new DefaultModalGraphMouse<>();
+
+    vv =
+        VisualizationViewer.builder(visualizationModel)
+            .graphMouse(graphMouse)
+            .viewSize(preferredSize)
+            .build();
 
     ps = vv.getSelectedVertexState();
     vv.getRenderContext()
@@ -120,11 +127,6 @@ public class SubLayoutDemo extends JPanel {
 
     // add a listener for ToolTips
     vv.setVertexToolTipFunction(Object::toString);
-
-    // the regular graph mouse for the normal view
-    final DefaultModalGraphMouse<?, ?> graphMouse = new DefaultModalGraphMouse<>();
-
-    vv.setGraphMouse(graphMouse);
 
     VisualizationScrollPane visualizationScrollPane = new VisualizationScrollPane(vv);
     add(visualizationScrollPane);

@@ -57,7 +57,13 @@ public class VertexLabelAsShapeDemo extends JPanel {
             .layoutAlgorithm(layoutAlgorithm)
             .layoutSize(preferredSize)
             .build();
-    vv = VisualizationViewer.builder(visualizationModel).viewSize(preferredSize).build();
+    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
+
+    vv =
+        VisualizationViewer.builder(visualizationModel)
+            .graphMouse(graphMouse)
+            .viewSize(preferredSize)
+            .build();
 
     // this class will provide both label drawing and vertex shapes
     VertexLabelAsShapeRenderer<String, Integer> vlasr =
@@ -82,11 +88,6 @@ public class VertexLabelAsShapeDemo extends JPanel {
 
     // add a listener for ToolTips
     vv.setVertexToolTipFunction(n -> n);
-
-    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
-
-    vv.setGraphMouse(graphMouse);
-    vv.addKeyListener(graphMouse.getModeKeyListener());
 
     VisualizationScrollPane visualizationScrollPane = new VisualizationScrollPane(vv);
     add(visualizationScrollPane);

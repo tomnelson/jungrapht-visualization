@@ -117,8 +117,12 @@ public class LensVertexImageShaperDemo extends JPanel {
 
     FRLayoutAlgorithm<Number> layoutAlgorithm = new FRLayoutAlgorithm<>();
     layoutAlgorithm.setMaxIterations(100);
+
+    final DefaultModalGraphMouse<Number, Number> graphMouse = new DefaultModalGraphMouse<>();
+
     vv =
         VisualizationViewer.builder(graph)
+            .graphMouse(graphMouse)
             .layoutAlgorithm(layoutAlgorithm)
             .viewSize(new Dimension(600, 600))
             .build();
@@ -188,9 +192,6 @@ public class LensVertexImageShaperDemo extends JPanel {
 
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
-
-    final DefaultModalGraphMouse<Number, Number> graphMouse = new DefaultModalGraphMouse<>();
-    vv.setGraphMouse(graphMouse);
 
     JComboBox<Mode> modeBox = graphMouse.getModeComboBox();
     JPanel modePanel = new JPanel();

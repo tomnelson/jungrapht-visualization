@@ -76,8 +76,11 @@ public class InternalFrameSatelliteViewDemo {
 
     LayoutAlgorithm<String> layout = new ISOMLayoutAlgorithm<>();
 
+    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
+
     vv =
         VisualizationViewer.builder(graph)
+            .graphMouse(graphMouse)
             .layoutAlgorithm(layout)
             .viewSize(new Dimension(600, 600))
             .build();
@@ -91,9 +94,6 @@ public class InternalFrameSatelliteViewDemo {
 
     // add my listener for ToolTips
     vv.setVertexToolTipFunction(Object::toString);
-    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
-    vv.setGraphMouse(graphMouse);
-
     satellite = SatelliteVisualizationViewer.builder(vv).viewSize(new Dimension(200, 200)).build();
     satellite
         .getRenderContext()

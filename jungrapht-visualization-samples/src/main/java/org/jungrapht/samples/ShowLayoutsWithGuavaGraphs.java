@@ -78,13 +78,12 @@ public class ShowLayoutsWithGuavaGraphs extends JPanel {
 
     Graph<String, Integer> g = g_array[2]; // initial graph
 
+    final DefaultModalGraphMouse<Integer, Number> graphMouse = new DefaultModalGraphMouse<>();
+
     final VisualizationViewer<String, Integer> vv =
-        VisualizationViewer.<String, Integer>builder().build();
+        VisualizationViewer.<String, Integer>builder().graphMouse(graphMouse).build();
 
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
-
-    final DefaultModalGraphMouse<Integer, Number> graphMouse = new DefaultModalGraphMouse<>();
-    vv.setGraphMouse(graphMouse);
 
     vv.setVertexToolTipFunction(
         vertex ->

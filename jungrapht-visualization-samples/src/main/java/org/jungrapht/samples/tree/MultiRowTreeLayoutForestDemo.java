@@ -69,11 +69,14 @@ public class MultiRowTreeLayoutForestDemo extends JPanel {
     setLayout(new BorderLayout());
     graph = DemoTreeSupplier.createForest2();
 
+    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
+
     vv =
         VisualizationViewer.builder(graph)
             .layoutAlgorithm(new StaticLayoutAlgorithm<>())
             .layoutSize(layoutSize)
             .viewSize(viewSize)
+            .graphMouse(graphMouse)
             .build();
     vv.setBackground(Color.white);
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
@@ -85,11 +88,7 @@ public class MultiRowTreeLayoutForestDemo extends JPanel {
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
 
-    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
-
     Predicate<Integer> edgePredicate = e -> false;
-    vv.setGraphMouse(graphMouse);
-    vv.addKeyListener(graphMouse.getModeKeyListener());
     vv.addPreRenderPaintable(
         new LayoutPaintable.LayoutBounds(
             vv.getVisualizationModel(), vv.getRenderContext().getMultiLayerTransformer()));

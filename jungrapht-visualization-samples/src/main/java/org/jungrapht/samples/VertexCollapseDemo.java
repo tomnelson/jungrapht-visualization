@@ -112,7 +112,15 @@ public class VertexCollapseDemo extends JPanel {
             .layoutAlgorithm(layoutAlgorithm)
             .layoutSize(preferredSize)
             .build();
-    vv = VisualizationViewer.builder(visualizationModel).viewSize(preferredSize).build();
+
+    // the regular graph mouse for the normal view
+    final DefaultModalGraphMouse<Collapsable<?>, Number> graphMouse = new DefaultModalGraphMouse();
+
+    vv =
+        VisualizationViewer.builder(visualizationModel)
+            .graphMouse(graphMouse)
+            .viewSize(preferredSize)
+            .build();
 
     vv.getRenderContext().setVertexShapeFunction(new ClusterShapeFunction());
 
@@ -127,11 +135,6 @@ public class VertexCollapseDemo extends JPanel {
     // add a listener for ToolTips
     vv.setVertexToolTipFunction(Object::toString);
     vv.setEdgeToolTipFunction(Object::toString);
-
-    // the regular graph mouse for the normal view
-    final DefaultModalGraphMouse<Collapsable<?>, Number> graphMouse = new DefaultModalGraphMouse();
-
-    vv.setGraphMouse(graphMouse);
 
     VisualizationScrollPane visualizationScrollPane = new VisualizationScrollPane(vv);
     add(visualizationScrollPane);

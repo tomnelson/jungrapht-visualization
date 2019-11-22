@@ -93,16 +93,17 @@ public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
 
     Graph<String, Integer> g = g_array[2]; // initial graph
 
+    final DefaultModalGraphMouse<Integer, Number> graphMouse = new DefaultModalGraphMouse<>();
+
     final VisualizationViewer<String, Integer> vv =
         new DecoratedVisualizationViewer<>(
-            VisualizationViewer.builder(g).viewSize(new Dimension(600, 600)));
+            VisualizationViewer.builder(g)
+                .graphMouse(graphMouse)
+                .viewSize(new Dimension(600, 600)));
 
     vv.setBackground(Color.white);
 
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
-
-    final DefaultModalGraphMouse<Integer, Number> graphMouse = new DefaultModalGraphMouse<>();
-    vv.setGraphMouse(graphMouse);
 
     vv.setVertexToolTipFunction(
         vertex ->

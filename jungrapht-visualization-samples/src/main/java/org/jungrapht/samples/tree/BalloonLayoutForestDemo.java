@@ -64,12 +64,14 @@ public class BalloonLayoutForestDemo extends JPanel {
     setLayout(new BorderLayout());
     // create a simple graph for the demo
     graph = DemoTreeSupplier.createForest();
+    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
 
     vv =
         VisualizationViewer.builder(graph)
             .layoutAlgorithm(new StaticLayoutAlgorithm<>())
             .layoutSize(layoutSize)
             .viewSize(viewSize)
+            .graphMouse(graphMouse)
             .build();
     vv.setBackground(Color.white);
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
@@ -81,10 +83,6 @@ public class BalloonLayoutForestDemo extends JPanel {
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
 
-    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
-
-    vv.setGraphMouse(graphMouse);
-    vv.addKeyListener(graphMouse.getModeKeyListener());
     vv.addPreRenderPaintable(
         new LayoutPaintable.LayoutBounds(
             vv.getVisualizationModel(), vv.getRenderContext().getMultiLayerTransformer()));

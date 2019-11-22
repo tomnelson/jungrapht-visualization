@@ -55,13 +55,15 @@ public class SimpleGraphSpatialTest extends JPanel {
             .initializer(new RandomLocationTransformer(600, 600, System.currentTimeMillis()))
             .layoutSize(layoutPreferredSize)
             .build();
-    VisualizationViewer<String, Integer> vv =
-        VisualizationViewer.builder(model).viewSize(viewPreferredSize).build();
     final DefaultModalGraphMouse graphMouse = new DefaultModalGraphMouse();
-    vv.setGraphMouse(graphMouse);
+
+    VisualizationViewer<String, Integer> vv =
+        VisualizationViewer.builder(model)
+            .graphMouse(graphMouse)
+            .viewSize(viewPreferredSize)
+            .build();
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
-    vv.addKeyListener(graphMouse.getModeKeyListener());
     vv.setToolTipText("<html><center>Type 'p' for Pick mode<p>Type 't' for Transform mode");
     vv.setForeground(Color.white);
     vv.scaleToLayout(scaler);

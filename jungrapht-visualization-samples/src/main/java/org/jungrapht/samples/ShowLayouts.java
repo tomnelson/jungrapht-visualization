@@ -19,7 +19,6 @@ import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.samples.spatial.RTreeVisualization;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.layout.algorithms.*;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -84,9 +83,6 @@ public class ShowLayouts extends JPanel {
         VisualizationViewer.<String, Integer>builder().build();
 
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
-
-    final DefaultGraphMouse<Integer, Number> graphMouse = new DefaultGraphMouse<>();
-    vv.setGraphMouse(graphMouse);
 
     vv.setVertexToolTipFunction(
         vertex ->

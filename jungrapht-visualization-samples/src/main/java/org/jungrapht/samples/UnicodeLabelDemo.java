@@ -48,8 +48,11 @@ public class UnicodeLabelDemo {
     graph = createGraph();
     Map<Integer, Icon> iconMap = new HashMap<>();
 
+    final DefaultModalGraphMouse<Integer, Number> gm = new DefaultModalGraphMouse<>();
+
     vv =
         VisualizationViewer.builder(graph)
+            .graphMouse(gm)
             .layoutAlgorithm(new FRLayoutAlgorithm<>())
             .viewSize(new Dimension(700, 700))
             .build();
@@ -83,9 +86,6 @@ public class UnicodeLabelDemo {
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     content.add(panel);
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-    final DefaultModalGraphMouse<Integer, Number> gm = new DefaultModalGraphMouse<>();
-    vv.setGraphMouse(gm);
 
     JCheckBox lo = new JCheckBox("Show Labels");
     lo.addItemListener(
