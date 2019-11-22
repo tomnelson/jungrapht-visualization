@@ -12,9 +12,6 @@ import com.google.common.graph.MutableGraph;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
@@ -24,6 +21,7 @@ import org.jungrapht.samples.util.TestGuavaGraphs;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
 import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
@@ -44,9 +42,9 @@ import org.jungrapht.visualization.util.helpers.SpanningTreeAdapter;
  */
 public class ShowLayoutsWithGuavaGraphs extends JPanel {
 
-  protected static Graph<String, Integer>[] g_array;
-  protected static int graph_index;
-  protected static String[] graph_names = {
+  protected static Graph<String, Integer>[] graphArray;
+  protected static int graphIndex;
+  protected static String[] graphNames = {
     "Two component graph",
     "Random mixed-mode graph",
     "One component graph",
@@ -61,27 +59,30 @@ public class ShowLayoutsWithGuavaGraphs extends JPanel {
 
   public ShowLayoutsWithGuavaGraphs() {
 
-    g_array = new Graph[graph_names.length];
+    graphArray = new Graph[graphNames.length];
 
-    g_array[0] = new MutableGraphAdapter(TestGuavaGraphs.createTestGraph(false));
-    g_array[1] = new MutableGraphAdapter(TestGuavaGraphs.getDemoGraph());
-    g_array[2] = new MutableGraphAdapter(TestGuavaGraphs.getOneComponentGraph());
-    g_array[3] = new MutableGraphAdapter(TestGuavaGraphs.createChainPlusIsolates(18, 5));
-    g_array[4] = new MutableGraphAdapter(TestGuavaGraphs.createChainPlusIsolates(0, 20));
+    graphArray[0] = new MutableGraphAdapter(TestGuavaGraphs.createTestGraph(false));
+    graphArray[1] = new MutableGraphAdapter(TestGuavaGraphs.getDemoGraph());
+    graphArray[2] = new MutableGraphAdapter(TestGuavaGraphs.getOneComponentGraph());
+    graphArray[3] = new MutableGraphAdapter(TestGuavaGraphs.createChainPlusIsolates(18, 5));
+    graphArray[4] = new MutableGraphAdapter(TestGuavaGraphs.createChainPlusIsolates(0, 20));
     MutableGraph<String> graph = GraphBuilder.directed().build();
 
     graph.putEdge("A", "B");
     graph.putEdge("A", "C");
 
-    g_array[5] = new MutableGraphAdapter(graph);
-    g_array[6] = new MutableGraphAdapter(TestGuavaGraphs.getGeneratedGraph());
+    graphArray[5] = new MutableGraphAdapter(graph);
+    graphArray[6] = new MutableGraphAdapter(TestGuavaGraphs.getGeneratedGraph());
 
-    Graph<String, Integer> g = g_array[2]; // initial graph
+    Graph<String, Integer> initialGraph = graphArray[2]; // initial graph
 
     final DefaultModalGraphMouse<Integer, Number> graphMouse = new DefaultModalGraphMouse<>();
 
     final VisualizationViewer<String, Integer> vv =
-        VisualizationViewer.<String, Integer>builder().graphMouse(graphMouse).build();
+        VisualizationViewer.builder(initialGraph)
+            .layoutAlgorithm(new KKLayoutAlgorithm<>())
+            .graphMouse(graphMouse)
+            .build();
 
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
 
@@ -103,6 +104,9 @@ public class ShowLayoutsWithGuavaGraphs extends JPanel {
     final JRadioButton animateLayoutTransition = new JRadioButton("Animate Layout Transition");
 
     final JComboBox jcb = new JComboBox(combos);
+
+    jcb.setSelectedItem(LayoutHelper.Layouts.KK);
+
     jcb.addActionListener(
         e ->
             SwingUtilities.invokeLater(
@@ -138,8 +142,6 @@ public class ShowLayoutsWithGuavaGraphs extends JPanel {
                   }
                 }));
 
-    jcb.setSelectedItem(LayoutHelper.Layouts.FR);
-
     JPanel control_panel = new JPanel(new GridLayout(2, 1));
     JPanel topControls = new JPanel();
     JPanel bottomControls = new JPanel();
@@ -147,25 +149,25 @@ public class ShowLayoutsWithGuavaGraphs extends JPanel {
     control_panel.add(bottomControls);
     add(control_panel, BorderLayout.NORTH);
 
-    final JComboBox graph_chooser = new JComboBox(graph_names);
+    final JComboBox graphChooser = new JComboBox(graphNames);
     // do this before adding the listener so there is no event fired
-    graph_chooser.setSelectedIndex(2);
+    graphChooser.setSelectedIndex(2);
 
-    graph_chooser.addActionListener(
+    graphChooser.addActionListener(
         e ->
             SwingUtilities.invokeLater(
                 () -> {
-                  graph_index = graph_chooser.getSelectedIndex();
+                  graphIndex = graphChooser.getSelectedIndex();
                   vv.getVertexSpatial().clear();
                   vv.getEdgeSpatial().clear();
-                  vv.getVisualizationModel().setGraph(g_array[graph_index]);
+                  vv.getVisualizationModel().setGraph(graphArray[graphIndex]);
                 }));
 
     JButton showRTree = new JButton("Show RTree");
     showRTree.addActionListener(e -> RTreeVisualization.showRTree(vv));
 
     topControls.add(jcb);
-    topControls.add(graph_chooser);
+    topControls.add(graphChooser);
     bottomControls.add(animateLayoutTransition);
     bottomControls.add(ControlHelpers.getZoomControls("Zoom", vv));
     bottomControls.add(modeBox);
@@ -176,16 +178,6 @@ public class ShowLayoutsWithGuavaGraphs extends JPanel {
     LayoutModel model = LoadingCacheLayoutModel.builder().size(600, 600).graph(tree).build();
     model.accept(treeLayout);
     return model;
-  }
-
-  private Collection getRoots(Graph graph) {
-    Set roots = new HashSet<>();
-    for (Object v : graph.vertexSet()) {
-      if (Graphs.predecessorListOf(graph, v).isEmpty()) {
-        roots.add(v);
-      }
-    }
-    return roots;
   }
 
   public static void main(String[] args) {

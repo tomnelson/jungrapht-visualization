@@ -69,7 +69,7 @@ public class EdgeLabelDemo extends JPanel {
         VisualizationViewer.builder(graph)
             .graphMouse(graphMouse)
             .layoutAlgorithm(layoutAlgorithm)
-            .viewSize(new Dimension(600, 400))
+            .viewSize(new Dimension(600, 700))
             .build();
     vv.setBackground(Color.white);
 

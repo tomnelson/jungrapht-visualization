@@ -8,9 +8,6 @@
 package org.jungrapht.samples;
 
 import java.awt.*;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
@@ -38,9 +35,9 @@ import org.jungrapht.visualization.util.helpers.SpanningTreeAdapter;
  */
 public class ShowLayouts extends JPanel {
 
-  protected static Graph<String, Integer>[] g_array;
-  protected static int graph_index;
-  protected static String[] graph_names = {
+  protected static Graph<String, Integer>[] graphArray;
+  protected static int graphIndex;
+  protected static String[] graphNames = {
     "Two component graph",
     "Random mixed-mode graph",
     "Miscellaneous multicomponent graph",
@@ -56,14 +53,14 @@ public class ShowLayouts extends JPanel {
 
   public ShowLayouts() {
 
-    g_array = new Graph[graph_names.length];
+    graphArray = new Graph[graphNames.length];
 
-    g_array[0] = TestGraphs.createTestGraph(false);
-    g_array[1] = TestGraphs.getGeneratedGraph();
-    g_array[2] = TestGraphs.getDemoGraph();
-    g_array[3] = TestGraphs.getOneComponentGraph();
-    g_array[4] = TestGraphs.createChainPlusIsolates(18, 5);
-    g_array[5] = TestGraphs.createChainPlusIsolates(0, 20);
+    graphArray[0] = TestGraphs.createTestGraph(false);
+    graphArray[1] = TestGraphs.getGeneratedGraph();
+    graphArray[2] = TestGraphs.getDemoGraph();
+    graphArray[3] = TestGraphs.getOneComponentGraph();
+    graphArray[4] = TestGraphs.createChainPlusIsolates(18, 5);
+    graphArray[5] = TestGraphs.createChainPlusIsolates(0, 20);
     Graph<String, Integer> graph =
         GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.directedMultigraph())
             .buildGraph();
@@ -74,13 +71,15 @@ public class ShowLayouts extends JPanel {
     graph.addEdge("A", "B", 1);
     graph.addEdge("A", "C", 2);
 
-    g_array[6] = graph;
-    g_array[7] = TestGraphs.getGeneratedBipartiteGraph();
+    graphArray[6] = graph;
+    graphArray[7] = TestGraphs.getGeneratedBipartiteGraph();
 
-    Graph<String, Integer> g = g_array[3]; // initial graph
+    Graph<String, Integer> initialGraph = graphArray[3]; // initial graph
 
     final VisualizationViewer<String, Integer> vv =
-        VisualizationViewer.<String, Integer>builder().build();
+        VisualizationViewer.builder(initialGraph)
+            .layoutAlgorithm(new KKLayoutAlgorithm<>())
+            .build();
 
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
 
@@ -100,6 +99,8 @@ public class ShowLayouts extends JPanel {
     LayoutFunction<String> layoutFunction = new LayoutFunction.FullLayoutFunction<>();
 
     final JComboBox jcb = new JComboBox(layoutFunction.getNames().toArray());
+    jcb.setSelectedItem(LayoutHelper.Layouts.KK);
+
     jcb.addActionListener(
         e ->
             SwingUtilities.invokeLater(
@@ -135,8 +136,6 @@ public class ShowLayouts extends JPanel {
                   }
                 }));
 
-    jcb.setSelectedItem(LayoutHelper.Layouts.FR);
-
     JPanel control_panel = new JPanel(new GridLayout(2, 1));
     JPanel topControls = new JPanel();
     JPanel bottomControls = new JPanel();
@@ -144,25 +143,24 @@ public class ShowLayouts extends JPanel {
     control_panel.add(bottomControls);
     add(control_panel, BorderLayout.NORTH);
 
-    final JComboBox graph_chooser = new JComboBox(graph_names);
-    // do this before adding the listener so there is no event fired
-    graph_chooser.setSelectedIndex(2);
+    final JComboBox graphChooser = new JComboBox(graphNames);
+    graphChooser.setSelectedIndex(3);
 
-    graph_chooser.addActionListener(
+    graphChooser.addActionListener(
         e ->
             SwingUtilities.invokeLater(
                 () -> {
-                  graph_index = graph_chooser.getSelectedIndex();
+                  graphIndex = graphChooser.getSelectedIndex();
                   vv.getVertexSpatial().clear();
                   vv.getEdgeSpatial().clear();
-                  vv.getVisualizationModel().setGraph(g_array[graph_index]);
+                  vv.getVisualizationModel().setGraph(graphArray[graphIndex]);
                 }));
 
     JButton showRTree = new JButton("Show RTree");
     showRTree.addActionListener(e -> RTreeVisualization.showRTree(vv));
 
     topControls.add(jcb);
-    topControls.add(graph_chooser);
+    topControls.add(graphChooser);
     bottomControls.add(animateLayoutTransition);
     bottomControls.add(ControlHelpers.getZoomControls("Zoom", vv));
     bottomControls.add(showRTree);
@@ -172,16 +170,6 @@ public class ShowLayouts extends JPanel {
     LayoutModel model = LoadingCacheLayoutModel.builder().size(600, 600).graph(tree).build();
     model.accept(treeLayout);
     return model;
-  }
-
-  private Collection getRoots(Graph graph) {
-    Set roots = new HashSet<>();
-    for (Object v : graph.vertexSet()) {
-      if (Graphs.predecessorListOf(graph, v).isEmpty()) {
-        roots.add(v);
-      }
-    }
-    return roots;
   }
 
   public static void main(String[] args) {
