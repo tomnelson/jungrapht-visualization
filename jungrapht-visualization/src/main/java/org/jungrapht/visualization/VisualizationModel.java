@@ -38,7 +38,8 @@ public interface VisualizationModel<V, E>
    */
   class Builder<V, E, T extends VisualizationModel, B extends Builder<V, E, T, B>> {
     /** a {@code Graph} to visualize */
-    protected Graph<V, E> graph = GraphTypeBuilder.<V, E>directed().buildGraph();
+    protected Graph<V, E> graph =
+        GraphTypeBuilder.<V, E>directed().buildGraph(); // default non-null empty graph
     /** a {@code LayoutAlgorithm} to position the graph vertices */
     protected LayoutAlgorithm<V> layoutAlgorithm;
     /** a {@code LayoutModel} to hold the positions of the vertices */

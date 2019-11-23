@@ -60,12 +60,18 @@ public class ControlHelpers {
   }
 
   public static JComponent getModeControls(VisualizationViewer vv) {
-    final DefaultModalGraphMouse<Integer, Number> graphMouse = new DefaultModalGraphMouse();
-    vv.setGraphMouse(graphMouse);
-
-    JPanel modePanel = new JPanel(new GridLayout(2, 1));
-    modePanel.add(graphMouse.getModeComboBox());
-    return modePanel;
+    VisualizationViewer.GraphMouse graphMouse = vv.getGraphMouse();
+    if (graphMouse == null) {
+      graphMouse = new DefaultModalGraphMouse();
+      vv.setGraphMouse(graphMouse);
+    }
+    if (graphMouse instanceof DefaultModalGraphMouse) {
+      JPanel modePanel = new JPanel(new GridLayout(2, 1));
+      modePanel.add(((DefaultModalGraphMouse) graphMouse).getModeComboBox());
+      return modePanel;
+    } else {
+      return new JPanel();
+    }
   }
 
   public static JComponent getModeControls(String title, DefaultModalGraphMouse graphMouse) {

@@ -220,7 +220,7 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
     return baseBounds;
   }
 
-  protected <V, E> Dimension computeAverageVertexDimension(
+  protected <E> Dimension computeAverageVertexDimension(
       Graph<V, E> graph, Function<V, Shape> shapeFunction) {
     DimensionSummaryStatistics dss = new DimensionSummaryStatistics();
     graph

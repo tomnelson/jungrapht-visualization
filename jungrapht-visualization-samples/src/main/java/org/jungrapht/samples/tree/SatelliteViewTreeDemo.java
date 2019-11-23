@@ -34,7 +34,8 @@ import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultSatelliteGraphMouse;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
-import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.TidierTreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.TreeLayout;
 import org.jungrapht.visualization.renderers.GradientVertexRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.transform.shape.ShapeTransformer;
@@ -95,7 +96,7 @@ public class SatelliteViewTreeDemo extends JPanel {
     Dimension layoutSize = new Dimension(500, 500);
 
     // create one layout for the graph
-    TreeLayoutAlgorithm<String> layoutAlgorithm = new TreeLayoutAlgorithm<>();
+    TreeLayout<String> layoutAlgorithm = new TidierTreeLayoutAlgorithm<String, Integer>();
 
     // create one model that both views will share
     VisualizationModel<String, Integer> vm =
@@ -115,7 +116,6 @@ public class SatelliteViewTreeDemo extends JPanel {
     MultiSelectedVertexPaintable<String, Integer> multiSelectedVertexPaintable =
         MultiSelectedVertexPaintable.builder(mainVisualizationViewer).build();
     mainVisualizationViewer.addPostRenderPaintable(multiSelectedVertexPaintable);
-    //    multiSelectedVertexPaintable.setSelectedVertices(mainVisualizationViewer.getRenderContext().getSelectedVertexState().getSelected());
 
     SingleSelectedVertexPaintable<String, Integer> singleSelectedVertexPaintable =
         SingleSelectedVertexPaintable.builder(mainVisualizationViewer).build();

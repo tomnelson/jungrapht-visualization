@@ -12,7 +12,6 @@ package org.jungrapht.visualization.control;
 
 import java.awt.event.InputEvent;
 /** @author Tom Nelson */
-@SuppressWarnings("rawtypes")
 public class ModalSatelliteGraphMouse extends DefaultModalGraphMouse implements ModalGraphMouse {
 
   public ModalSatelliteGraphMouse() {

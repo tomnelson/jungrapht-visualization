@@ -23,9 +23,8 @@ public class AssignLayers<V, E> {
   public List<List<SV<V>>> assignLayers() {
     int rank = 0;
     List<List<SV<V>>> sorted = new ArrayList<>();
-    List<SE<V, E>> edges = dag.edgeSet().stream().collect(Collectors.toCollection(LinkedList::new));
-    List<SV<V>> vertices =
-        dag.vertexSet().stream().collect(Collectors.toCollection(LinkedList::new));
+    List<SE<V, E>> edges = new LinkedList<>(dag.edgeSet());
+    List<SV<V>> vertices = new LinkedList<>(dag.vertexSet());
     List<SV<V>> start = getVerticesWithoutIncomingEdges(edges, vertices); // should be the roots
 
     while (start.size() > 0) {

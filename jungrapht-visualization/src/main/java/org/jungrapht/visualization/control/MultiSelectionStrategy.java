@@ -6,6 +6,10 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
 
+/**
+ * supports multiple vertex selection by either a containing Rectangle or a containing arbitrarily
+ * drawn shape.
+ */
 public interface MultiSelectionStrategy {
 
   Shape getInitialShape(Point2D location);

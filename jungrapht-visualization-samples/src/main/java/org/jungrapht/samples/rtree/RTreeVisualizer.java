@@ -252,7 +252,7 @@ public class RTreeVisualizer extends JPanel {
           map.put(kidShape.getBounds(), color);
         }
       } catch (Exception ex) {
-        ex.printStackTrace();
+        log.info("hashString was {}", hashString);
       }
     } else {
       map.put(parent.getBounds(), Color.pink);

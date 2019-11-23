@@ -546,7 +546,7 @@ public class TidierTreeLayoutAlgorithm<V, E>
   }
 
   private int getDistance(V v, V w) {
-    log.trace("getDistance({}, {}) = {}", v, w);
+    log.trace("getDistance({}, {})", v, w);
     int sizeOfNodes = shape(v).getBounds().width + shape(w).getBounds().width;
 
     int distance = sizeOfNodes / 2 + horizontalVertexSpacing;

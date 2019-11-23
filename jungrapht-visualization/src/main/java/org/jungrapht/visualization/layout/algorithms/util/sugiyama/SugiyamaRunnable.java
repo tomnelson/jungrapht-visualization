@@ -172,7 +172,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
             .build();
     this.svGraph = transformedGraphSupplier.get();
     long transformTime = System.currentTimeMillis();
-    log.info("transform Graph took {}", (transformTime - startTime));
+    log.trace("transform Graph took {}", (transformTime - startTime));
 
     if (checkStopped()) {
       return;
@@ -180,13 +180,13 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     RemoveCycles<SV<V>, SE<V, E>> removeCycles = new RemoveCycles<>(svGraph);
     svGraph = removeCycles.removeCycles();
     long cycles = System.currentTimeMillis();
-    log.info("remove cycles took {}", (cycles - transformTime));
+    log.trace("remove cycles took {}", (cycles - transformTime));
 
     AssignLayers<V, E> assignLayers = new AssignLayers<>(svGraph);
 
     List<List<SV<V>>> layers = assignLayers.assignLayers();
     long assignLayersTime = System.currentTimeMillis();
-    log.info("assign layers took {} ", (assignLayersTime - cycles));
+    log.trace("assign layers took {} ", (assignLayersTime - cycles));
     if (log.isTraceEnabled()) {
       AssignLayers.checkLayers(layers);
     }
@@ -204,7 +204,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     }
 
     long syntheticsTime = System.currentTimeMillis();
-    log.info("synthetics took {}", (syntheticsTime - assignLayersTime));
+    log.trace("synthetics took {}", (syntheticsTime - assignLayersTime));
 
     List<List<SV<V>>> best = null;
     int lowestCrossCount = Integer.MAX_VALUE;
@@ -230,7 +230,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     }
 
     long crossCountTests = System.currentTimeMillis();
-    log.info("cross counts took {}", (crossCountTests - syntheticsTime));
+    log.trace("cross counts took {}", (crossCountTests - syntheticsTime));
 
     Map<SV<V>, SV<V>> vertexMap = new HashMap<>();
     for (List<SV<V>> layer : best) {
@@ -305,7 +305,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
 
     layoutModel.setSize(totalWidth + horizontalOffset, totalHeight);
     long pointsSetTime = System.currentTimeMillis();
-    log.info("setting points took {}", (pointsSetTime - crossCountTests));
+    log.trace("setting points took {}", (pointsSetTime - crossCountTests));
 
     // now all the vertices in layers (best) have points associated with them
     // every vertex in vertexMap has a point value
@@ -343,7 +343,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     renderContext.setEdgeShapeFunction(edgeShape);
 
     long articulatedEdgeTime = System.currentTimeMillis();
-    log.info("articulated edges took {}", (articulatedEdgeTime - pointsSetTime));
+    log.trace("articulated edges took {}", (articulatedEdgeTime - pointsSetTime));
 
     svGraph.vertexSet().forEach(v -> layoutModel.set(v.vertex, v.getPoint()));
   }
@@ -476,16 +476,14 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     layer.sort(
         (a, b) -> {
           // if a or b is not a key in pos, return 0
-          if (!pos.containsKey(a) || !pos.containsKey(b) || pos.get(a) == pos.get(b)) return 0;
+          if (!pos.containsKey(a) || !pos.containsKey(b) || Objects.equals(pos.get(a), pos.get(b)))
+            return 0;
           if (pos.get(a) < pos.get(b)) return -1;
           return 1;
         });
     // update the indices of the layer
     for (int i = 0; i < layer.size(); i++) {
       layer.get(i).setIndex(i);
-    }
-    if (checkStopped()) {
-      return;
     }
   }
 

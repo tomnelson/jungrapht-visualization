@@ -53,16 +53,17 @@ public class Intersections {
     double line2x2 = line2.getX2();
     double line2y2 = line2.getY2();
 
+    double denomintator =
+        ((line1x1 - line1x2) * (line2y1 - line2y2) - (line1y1 - line1y2) * (line2x1 - line2x2));
+
     double x =
         ((line1x2 - line1x1) * (line2x1 * line2y2 - line2x2 * line2y1)
                 - (line2x2 - line2x1) * (line1x1 * line1y2 - line1x2 * line1y1))
-            / ((line1x1 - line1x2) * (line2y1 - line2y2)
-                - (line1y1 - line1y2) * (line2x1 - line2x2));
+            / denomintator;
     double y =
         ((line2y1 - line2y2) * (line1x1 * line1y2 - line1x2 * line1y1)
                 - (line1y1 - line1y2) * (line2x1 * line2y2 - line2x2 * line2y1))
-            / ((line1x1 - line1x2) * (line2y1 - line2y2)
-                - (line1y1 - line1y2) * (line2x1 - line2x2));
+            / denomintator;
 
     return new Point2D.Double(x, y);
   }
