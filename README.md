@@ -19,11 +19,11 @@ Many rendering features may be set via java properties (see [sample.jungrapht.pr
 JUNGRAPHT-VISUALIZATION includes improved layout algorithms for directed graphs and Trees, including the TidierTreeLayoutAlgorithm and the SugiyamaLayoutAlgorithm. All TreeLayoutAlgorithms will make a best attempt to draw any directed graph (by ignoring cycles and feedback edges) for which one or more Root vertices can be determined. There are Vertex/Edge predicates and Vertex/Edge Comparators that are used to coerce out the desired tree structure based on a user-defined procedure to find roots and follow the desired path. All TreeLayoutAlgorithms, including the TidierTreeLayoutAlgorithm, will draw either single or multiple rooted 'forest' graphs.
 ### Latest Release
 
-The most recent version of JUNGRAPHT-VISUALIZATION is [version 1.0-RC4](https://github.com/tomnelson/jungrapht-visualization/releases/tag/v1.0_RC4), released 27 October 2019.
+The most recent version of JUNGRAPHT-VISUALIZATION is [version 1.0-RC5](https://github.com/tomnelson/jungrapht-visualization/releases/tag/v1.0_RC5), released 24 November 2019.
 *   [Javadoc](http://tomnelson.github.io/jungrapht-visualization/javadoc/index.html)
-*   [Maven Search Repository](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.tomnelson%22%20AND%20v%3A%221.0-RC4%22%20AND%20(a%3A%22jungrapht-visualization%22%20OR%20a%3A%22jungrapht-visualization-samples%22))
-    *   `jungrapht-visualization`: [jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization/1.0-RC4/jungrapht-visualization-1.0-RC4.jar), [source jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization/1.0-RC4/jungrapht-visualization-1.0-RC4-sources.jar), [documentation jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization/1.0-RC4/jungrapht-visualization-1.0-RC4-javadoc.jar)
-    *   `jungrapht-visualization-samples`: [jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization-samples/1.0-RC4/jungrapht-visualization-samples-1.0-RC4.jar), [source jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization-samples/1.0-RC4/jungrapht-visualization-samples-1.0-RC4-sources.jar), [documentation jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization-samples/1.0-RC4/jungrapht-visualization-samples-1.0-RC4-javadoc.jar)
+*   [Maven Search Repository](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.tomnelson%22%20AND%20v%3A%221.0-RC5%22%20AND%20(a%3A%22jungrapht-visualization%22%20OR%20a%3A%22jungrapht-visualization-samples%22))
+    *   `jungrapht-visualization`: [jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization/1.0-RC5/jungrapht-visualization-1.0-RC5.jar), [source jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization/1.0-RC5/jungrapht-visualization-1.0-RC5-sources.jar), [documentation jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization/1.0-RC5/jungrapht-visualization-1.0-RC5-javadoc.jar)
+    *   `jungrapht-visualization-samples`: [jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization-samples/1.0-RC5/jungrapht-visualization-samples-1.0-RC5.jar), [source jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization-samples/1.0-RC5/jungrapht-visualization-samples-1.0-RC5-sources.jar), [documentation jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization-samples/1.0-RC5/jungrapht-visualization-samples-1.0-RC5-javadoc.jar)
 
 To add a dependency on this release of JUNGRAPHT-VISUALIZATION using Maven, use the following:
 
@@ -31,7 +31,7 @@ To add a dependency on this release of JUNGRAPHT-VISUALIZATION using Maven, use 
 <dependency>
   <groupId>com.github.tomnelson</groupId>
   <artifactId>jungrapht-visualization</artifactId>
-  <version>1.0-RC4</version>
+  <version>1.0-RC5</version>
 </dependency>
 ```
 
