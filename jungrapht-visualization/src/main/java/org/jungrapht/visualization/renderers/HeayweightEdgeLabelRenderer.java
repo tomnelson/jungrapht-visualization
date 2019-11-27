@@ -74,8 +74,8 @@ public class HeayweightEdgeLabelRenderer<V, E> implements Renderer.EdgeLabel<V, 
     Point p2 = visualizationModel.getLayoutModel().apply(v2);
 
     // if this in an articulated edge, use only the first segment for label positioning
-    // get the edge shape, move it into position, get the first articulation point
-    // and use that for p2d2
+    // get the edge shape, move it into position (layout coords), get the first articulation point
+    // and use that for p2
     Function<Context<Graph<V, E>, E>, Shape> edgeShapeFunction =
         renderContext.getEdgeShapeFunction();
     if (edgeShapeFunction instanceof ArticulatedEdgeShapeFunction) {
@@ -227,9 +227,6 @@ public class HeayweightEdgeLabelRenderer<V, E> implements Renderer.EdgeLabel<V, 
     } else {
       xform.scale(dist, 1.0);
     }
-
-    edgeShape = xform.createTransformedShape(edgeShape);
-
-    return edgeShape;
+    return xform.createTransformedShape(edgeShape);
   }
 }
