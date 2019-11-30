@@ -266,6 +266,7 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
     }
     this.width = width;
     this.height = height;
+    log.trace("setSize to {} by {}", this.width, this.height);
   }
 
   protected void setPreferredSize(int preferredWidth, int preferredHeight) {

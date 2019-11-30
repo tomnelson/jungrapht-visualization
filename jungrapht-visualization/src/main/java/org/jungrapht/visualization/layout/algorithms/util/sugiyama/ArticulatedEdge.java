@@ -9,7 +9,7 @@ public class ArticulatedEdge<V, E> extends SE<V, E> {
 
   public static <V, E> ArticulatedEdge of(SE<V, E> edge, SV<V> source, SV<V> target) {
 
-    return new ArticulatedEdge(edge, source, target);
+    return new ArticulatedEdge<>(edge, source, target);
   }
 
   protected ArticulatedEdge(SE<V, E> edge, SV<V> source, SV<V> target) {
@@ -42,6 +42,18 @@ public class ArticulatedEdge<V, E> extends SE<V, E> {
 
   public List<SV<V>> getIntermediateVertices() {
     return Collections.unmodifiableList(intermediateVertices);
+  }
+
+  /**
+   * reverse the direction and endpoints of this edge Done for reverting a feedback edge into its
+   * original form
+   */
+  public ArticulatedEdge<V, E> reversed() {
+    ArticulatedEdge<V, E> reversed = ArticulatedEdge.of(this, this.target, this.source);
+
+    this.intermediateVertices.forEach(v -> reversed.intermediateVertices.add(0, v));
+    this.intermediatePoints.forEach(v -> reversed.intermediatePoints.add(0, v));
+    return reversed;
   }
 
   @Override

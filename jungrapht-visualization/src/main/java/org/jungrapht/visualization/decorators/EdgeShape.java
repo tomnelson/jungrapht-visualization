@@ -12,14 +12,13 @@ package org.jungrapht.visualization.decorators;
 
 import java.awt.Shape;
 import java.awt.geom.*;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.util.Context;
 import org.jungrapht.visualization.util.EdgeIndexFunction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * An interface for decorators that return a <code>Shape</code> for a specified edge.
@@ -75,15 +74,26 @@ public interface EdgeShape {
 
   class ArticulatedLine<V, E> extends ArticulatedEdgeShapeFunction<V, E>
       implements Function<Context<Graph<V, E>, E>, Shape> {
-    private static Logger log = LoggerFactory.getLogger(ArticulatedLine.class);
+
+    /**
+     * feedback edges (that would cause cycles) were reversed before the graph layering stage. They
+     * need to be modified so that the articulation points are 'reversed' in coordinate space
+     */
+    Collection<E> reversedEdges;
+
+    public ArticulatedLine(Collection<E> reversedEdges) {
+      this.reversedEdges = reversedEdges;
+    }
 
     public Shape apply(Context<Graph<V, E>, E> context) {
       E e = context.element;
       List<Point> points = edgeArticulationFunction.apply(e);
       if (points.isEmpty()) {
         return LINE;
+      } else if (reversedEdges.contains(e)) {
+        return ArticulatedEdgeShapeFunctions.makeReverseUnitShape(points);
       } else {
-        return ShapeFunctions.makeShape(points);
+        return ArticulatedEdgeShapeFunctions.makeUnitShape(points);
       }
     }
   }

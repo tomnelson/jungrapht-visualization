@@ -1,6 +1,7 @@
 package org.jungrapht.visualization.layout.algorithms;
 
 import com.google.common.base.Preconditions;
+import java.awt.Dimension;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.util.*;
@@ -9,6 +10,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
+import org.jungrapht.visualization.layout.algorithms.util.DimensionSummaryStatistics;
 import org.jungrapht.visualization.layout.algorithms.util.TreeView;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
@@ -554,6 +556,17 @@ public class TidierTreeLayoutAlgorithm<V, E>
     return distance;
   }
 
+  protected <E> Dimension computeAverageVertexDimension(
+      Graph<V, E> graph, Function<V, Shape> shapeFunction) {
+    DimensionSummaryStatistics dss = new DimensionSummaryStatistics();
+    graph
+        .vertexSet()
+        .stream()
+        .map(vertex -> shapeFunction.apply(vertex).getBounds())
+        .forEach(dss::accept);
+    return dss.getAverage();
+  }
+
   @Override
   public void visit(LayoutModel<V> layoutModel) {
     this.layoutModel = layoutModel;
@@ -562,6 +575,11 @@ public class TidierTreeLayoutAlgorithm<V, E>
     this.heights.clear();
     if (this.rootPredicate == null) {
       this.rootPredicate = v -> graph.incomingEdgesOf(v).isEmpty();
+    }
+    if (vertexShapeFunction != null) {
+      Dimension averageVertexSize = computeAverageVertexDimension(graph, vertexShapeFunction);
+      this.horizontalVertexSpacing = averageVertexSize.width * 2;
+      this.verticalVertexSpacing = averageVertexSize.height * 2;
     }
 
     TreeView.Builder<V, E, ?, ?> builder =

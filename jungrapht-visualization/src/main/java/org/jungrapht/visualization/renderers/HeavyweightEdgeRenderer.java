@@ -10,6 +10,7 @@
 package org.jungrapht.visualization.renderers;
 
 import static org.jungrapht.visualization.DefaultRenderContext.EDGE_WIDTH;
+import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 
 import java.awt.*;
 import java.awt.geom.*;
@@ -32,7 +33,17 @@ public class HeavyweightEdgeRenderer<V, E> extends AbstractEdgeRenderer<V, E>
     implements Renderer.Edge<V, E> {
 
   protected EdgeArrowRenderingSupport<V, E> edgeArrowRenderingSupport =
-      new DefaultEdgeArrowRenderingSupport<>();
+      getPreferredEdgeArrowRenderingSupport();
+
+  private EdgeArrowRenderingSupport<V, E> getPreferredEdgeArrowRenderingSupport() {
+    switch (System.getProperty(PREFIX + "edgeArrowPlacement", "ENDPOINTS")) {
+      case "CENTER":
+        return new CenterEdgeArrowRenderingSupport<>();
+      case "ENDPOINTS":
+      default:
+        return new DefaultEdgeArrowRenderingSupport<>();
+    }
+  }
 
   protected Shape prepareFinalEdgeShape(
       RenderContext<V, E> renderContext,

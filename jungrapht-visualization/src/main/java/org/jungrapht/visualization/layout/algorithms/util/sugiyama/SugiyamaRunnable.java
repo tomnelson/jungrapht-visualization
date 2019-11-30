@@ -4,7 +4,18 @@ import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 
 import java.awt.Rectangle;
 import java.awt.Shape;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -44,6 +55,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     protected Predicate<E> edgePredicate; // can be null
     protected Comparator<V> vertexComparator = (v1, v2) -> 0;
     protected Comparator<E> edgeComparator = (e1, e2) -> 0;
+    protected boolean straightenEdges;
 
     /** {@inheritDoc} */
     protected B self() {
@@ -96,6 +108,11 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       return self();
     }
 
+    public B straightenEdges(boolean straightenEdges) {
+      this.straightenEdges = straightenEdges;
+      return self();
+    }
+
     /** {@inheritDoc} */
     public T build() {
       return (T) new SugiyamaRunnable<>(this);
@@ -120,6 +137,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
   protected Predicate<E> edgePredicate;
   protected Comparator<V> vertexComparator;
   protected Comparator<E> edgeComparator;
+  protected boolean straightenEdges;
 
   private SugiyamaRunnable(Builder<V, E, ?, ?> builder) {
     this(
@@ -128,7 +146,8 @@ public class SugiyamaRunnable<V, E> implements Runnable {
         builder.vertexPredicate,
         builder.edgePredicate,
         builder.vertexComparator,
-        builder.edgeComparator);
+        builder.edgeComparator,
+        builder.straightenEdges);
   }
 
   private SugiyamaRunnable(
@@ -137,13 +156,15 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       Predicate<V> vertexPredicate,
       Predicate<E> edgePredicate,
       Comparator<V> vertexComparator,
-      Comparator<E> edgeComparator) {
+      Comparator<E> edgeComparator,
+      boolean straightenEdges) {
     this.layoutModel = layoutModel;
     this.renderContext = renderContext;
     this.vertexComparator = vertexComparator;
     this.vertexPredicate = vertexPredicate;
     this.edgeComparator = edgeComparator;
     this.edgePredicate = edgePredicate;
+    this.straightenEdges = straightenEdges;
   }
 
   private boolean checkStopped() {
@@ -177,18 +198,24 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     if (checkStopped()) {
       return;
     }
-    RemoveCycles<SV<V>, SE<V, E>> removeCycles = new RemoveCycles<>(svGraph);
-    svGraph = removeCycles.removeCycles();
+    GreedyCycleRemoval<SV<V>, SE<V, E>> greedyCycleRemoval = new GreedyCycleRemoval(svGraph);
+    Collection<SE<V, E>> feedbackArcs = greedyCycleRemoval.getFeedbackArcs();
+
+    // reverse the direction of feedback arcs so that they no longer introduce cycles in the graph
+    // the feedback arcs will be processed later to draw with the correct direction and correct articulation points
+    for (SE<V, E> se : feedbackArcs) {
+      svGraph.removeEdge(se);
+      SE<V, E> newEdge = SE.of(se.edge, se.target, se.source);
+      svGraph.addEdge(newEdge.source, newEdge.target, newEdge);
+    }
     long cycles = System.currentTimeMillis();
     log.trace("remove cycles took {}", (cycles - transformTime));
 
-    AssignLayers<V, E> assignLayers = new AssignLayers<>(svGraph);
-
-    List<List<SV<V>>> layers = assignLayers.assignLayers();
+    List<List<SV<V>>> layers = GraphLayers.assign(svGraph);
     long assignLayersTime = System.currentTimeMillis();
     log.trace("assign layers took {} ", (assignLayersTime - cycles));
     if (log.isTraceEnabled()) {
-      AssignLayers.checkLayers(layers);
+      GraphLayers.checkLayers(layers);
     }
 
     if (checkStopped()) {
@@ -322,9 +349,54 @@ public class SugiyamaRunnable<V, E> implements Runnable {
 
     List<ArticulatedEdge<V, E>> articulatedEdges = synthetics.makeArticulatedEdges();
 
+    Set<E> feedbackEdges = new HashSet<>();
+    feedbackArcs.forEach(a -> feedbackEdges.add(a.edge));
     for (ArticulatedEdge<V, E> ae : articulatedEdges) {
-      for (SV<V> sv : ae.getIntermediateVertices()) {
-        sv.setPoint(vertexMap.get(sv).getPoint());
+      if (feedbackEdges.contains(ae.edge)) {
+        svGraph.removeEdge(ae);
+        SE<V, E> reversed = ae.reversed();
+        svGraph.addEdge(reversed.source, reversed.target, reversed);
+      }
+    }
+
+    if (straightenEdges) {
+      // if the edges are to be straigntened, find the extreme compared to source/vertex
+      for (ArticulatedEdge<V, E> ae : articulatedEdges) {
+        // source x
+        SV<V> source = svGraph.getEdgeSource(ae);
+        double sourceX = vertexMap.get(source).getPoint().x;
+        SV<V> target = svGraph.getEdgeTarget(ae);
+        double targetX = vertexMap.get(target).getPoint().x;
+
+        double maxX =
+            ae.getIntermediateVertices()
+                .stream()
+                .mapToDouble(v -> vertexMap.get(v).getPoint().x)
+                .max()
+                .orElse(sourceX);
+        double minX =
+            ae.getIntermediateVertices()
+                .stream()
+                .mapToDouble(v -> vertexMap.get(v).getPoint().x)
+                .max()
+                .orElse(sourceX);
+        List<SV<V>> intermediateVertices = ae.getIntermediateVertices();
+        List<Point> intermediatePoints = ae.getIntermediatePoints();
+
+        double newX = maxX >= Math.max(sourceX, targetX) ? maxX : minX;
+        for (int i = 0; i < intermediateVertices.size(); i++) {
+          SV<V> v = intermediateVertices.get(i);
+          Point newPoint = Point.of(newX, vertexMap.get(v).getPoint().y);
+          intermediatePoints.set(i, newPoint);
+          v.setPoint(newPoint);
+        }
+        log.trace("intermediates now {}", ae.getIntermediateVertices());
+      }
+    } else {
+      for (ArticulatedEdge<V, E> ae : articulatedEdges) {
+        for (SV<V> sv : ae.getIntermediateVertices()) {
+          sv.setPoint(vertexMap.get(sv).getPoint());
+        }
       }
     }
 
@@ -336,7 +408,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       points.add(ae.target.getPoint());
       edgePointMap.put(ae.edge, points);
     }
-    EdgeShape.ArticulatedLine<V, E> edgeShape = new EdgeShape.ArticulatedLine<>();
+    EdgeShape.ArticulatedLine<V, E> edgeShape = new EdgeShape.ArticulatedLine<>(feedbackEdges);
     edgeShape.setEdgeArticulationFunction(
         e -> edgePointMap.getOrDefault(e, Collections.emptyList()));
 

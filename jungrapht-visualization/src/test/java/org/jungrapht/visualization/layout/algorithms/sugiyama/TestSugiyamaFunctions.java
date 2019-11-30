@@ -35,7 +35,9 @@ public class TestSugiyamaFunctions {
     graph.addEdge("10", "20"); // connect from rank 1 to rank 2
     graph.addEdge("00", "11"); // connect from rank 0 -> 1
     graph.addEdge("11", "21"); // connect from rank 1 -> 2
-    graph.addEdge("01", "20"); // connect from rank 1 -> 2 (this edge should be replaced with 2)
+    graph.addEdge(
+        "01",
+        "20"); // connect from rank 1 -> 2 (this edge should be replaced with 2 synthetic edges)
     log.info(
         "graph has {} vertices and {} edges", graph.vertexSet().size(), graph.edgeSet().size());
     log.info("graph: {}", graph);
@@ -78,8 +80,9 @@ public class TestSugiyamaFunctions {
         SVTransformedGraphSupplier.<String, Integer>builder().graph(graph).build();
     Graph<SV<String>, SE<String, Integer>> sgraph = svTransformedGraphSupplier.get();
 
-    AssignLayers<String, Integer> assignLayers = new AssignLayers<>(sgraph);
-    List<List<SV<String>>> layers = assignLayers.assignLayers();
+    List<List<SV<String>>> layers = GraphLayers.assign(sgraph);
+
+    Assert.assertEquals(3, layers.size()); // this graph should have 3 layers
 
     this.checkLayers(layers);
     log.info("assign layers:");
@@ -114,8 +117,10 @@ public class TestSugiyamaFunctions {
 
     log.info("incoming dag: {}", sgraph);
 
-    AssignLayers<String, Integer> assignLayers = new AssignLayers<>(sgraph);
-    List<List<SV<String>>> layers = assignLayers.assignLayers();
+    //    AssignLayers<String, Integer> assignLayers = new AssignLayers<>(sgraph);
+    List<List<SV<String>>> layers = GraphLayers.assign(sgraph);
+
+    //            assignLayers.assignLayers();
     this.checkLayers(layers);
 
     log.info("assign layers:");
@@ -239,6 +244,12 @@ public class TestSugiyamaFunctions {
     testConsecutive(ranks.stream().mapToInt(Integer::intValue).toArray());
   }
 
+  /**
+   * ensure that every SV vertex has the rank and index data assigned that matches that vertex's
+   * actual rank (layer number) and index (position in layer)
+   *
+   * @param layers
+   */
   private void checkLayers(List<List<SV<String>>> layers) {
     for (int i = 0; i < layers.size(); i++) {
       List<SV<String>> layer = layers.get(i);
@@ -274,23 +285,40 @@ public class TestSugiyamaFunctions {
 
   @Test
   public void testInsertionSortCounter() {
-    int[] array = new int[] {0, 1, 2, 0, 3, 4, 0, 2, 3, 2, 4};
-    log.info("count is {}", insertionSortCounter(array));
+    int[] array = new int[] {0, 1, 2, 3, 4, 5};
+    int count = insertionSortCounter(array);
+    log.info("count is {}", count);
+    Assert.assertEquals(0, count);
+
+    array = new int[] {0, 1, 2, 0, 3, 4, 0, 2, 3, 2, 4};
+    count = insertionSortCounter(array);
+    log.info("count is {}", count);
+    Assert.assertEquals(12, count);
 
     array = new int[] {0, 1, 3, 1, 2};
-    log.info("count is {}", insertionSortCounter(array));
+    count = insertionSortCounter(array);
+    log.info("count is {}", count);
+    Assert.assertEquals(2, count);
 
     array = new int[] {1, 2, 0, 1, 3};
-    log.info("count is {}", insertionSortCounter(array));
+    count = insertionSortCounter(array);
+    log.info("count is {}", count);
+    Assert.assertEquals(3, count);
 
     List<Integer> list = Arrays.asList(0, 1, 2, 0, 3, 4, 0, 2, 3, 2, 4);
-    log.info("count is {}", insertionSortCounter(list));
+    count = insertionSortCounter(list);
+    log.info("count is {}", count);
+    Assert.assertEquals(12, count);
 
     list = Arrays.asList(0, 1, 3, 1, 2);
-    log.info("count is {}", insertionSortCounter(list));
+    count = insertionSortCounter(list);
+    log.info("count is {}", count);
+    Assert.assertEquals(2, count);
 
     list = Arrays.asList(1, 2, 0, 1, 3);
-    log.info("count is {}", insertionSortCounter(list));
+    count = insertionSortCounter(list);
+    log.info("count is {}", count);
+    Assert.assertEquals(3, count);
   }
 
   private int insertionSortCounter(List<Integer> list) {
