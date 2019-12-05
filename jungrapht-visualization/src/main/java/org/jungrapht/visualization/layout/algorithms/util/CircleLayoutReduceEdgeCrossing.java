@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.traverse.DepthFirstIterator;
@@ -134,7 +135,8 @@ public class CircleLayoutReduceEdgeCrossing<V, E> {
         }
       }
     }
-    return vertexList;
+
+    return postProcessing(originalGraph, vertexList);
   }
 
   private void buildTable() {
@@ -183,5 +185,51 @@ public class CircleLayoutReduceEdgeCrossing<V, E> {
       }
     }
     return numberOfCrossings;
+  }
+
+  public static <V, E> List<V> postProcessing(Graph<V, E> graph, List<V> list) {
+    int currentCrossings = countCrossings(graph, list);
+    log.info("originalCrossings: {}", currentCrossings);
+    int originalCrossings = currentCrossings;
+    List<Integer> positions = new ArrayList<>();
+    for (int i = 0; i < 9; i++) {
+      for (V v : graph.vertexSet()) {
+        positions.clear();
+        if (graph.degreeOf(v) > 1) {
+          // there are at least 2
+          List<E> incidentEdges = new ArrayList<>(graph.edgesOf(v));
+          // get two nodes
+          V one = Graphs.getOppositeVertex(graph, incidentEdges.get(0), v);
+          V two = Graphs.getOppositeVertex(graph, incidentEdges.get(1), v);
+          int idxOne = list.indexOf(one);
+          int idxTwo = list.indexOf(two);
+          IntStream.range(idxOne + 1, idxTwo).forEach(positions::add);
+          if (positions.isEmpty()) {
+            positions.add(idxOne - 1);
+            positions.add(idxOne + 1);
+          }
+          for (int pos = 0; pos < positions.size(); pos++) {
+            // put u at pos and whatever was at pos at u's position
+            int vpos = list.indexOf(v);
+            V temp = list.get(pos);
+            list.set(pos, v);
+            list.set(vpos, temp);
+            int newCrossings = countCrossings(graph, list);
+            if (newCrossings < currentCrossings) {
+              currentCrossings = newCrossings;
+              log.info("reduced crossings to {}", currentCrossings);
+            } else {
+              list.set(vpos, v);
+              list.set(pos, temp);
+            }
+          }
+        }
+      }
+      if (currentCrossings >= originalCrossings) {
+        log.info("break {} >= {}", currentCrossings, originalCrossings);
+        break;
+      }
+    }
+    return list;
   }
 }
