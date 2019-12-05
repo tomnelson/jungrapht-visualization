@@ -133,10 +133,12 @@ public class CircleLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
         vertexOrderedList.addAll(circleLayouts.getVertexOrderedList());
       }
       this.vertexOrderedList = vertexOrderedList;
-
     } else {
       this.vertexOrderedList = new ArrayList<>(graph.vertexSet());
     }
+    log.info(
+        "crossing count {}",
+        CircleLayoutReduceEdgeCrossing.countCrossings(graph, vertexOrderedList));
   }
 
   /**

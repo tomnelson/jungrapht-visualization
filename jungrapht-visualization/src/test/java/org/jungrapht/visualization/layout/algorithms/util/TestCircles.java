@@ -1,11 +1,13 @@
 package org.jungrapht.visualization.layout.algorithms.util;
 
+import java.util.List;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.layout.util.synthetics.SE;
 import org.jungrapht.visualization.layout.util.synthetics.SV;
 import org.jungrapht.visualization.layout.util.synthetics.SVTransformedGraphSupplier;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -58,11 +60,20 @@ public class TestCircles {
   }
 
   @Test
+  public void testCount() {
+    CircleLayoutReduceEdgeCrossing cl = new CircleLayoutReduceEdgeCrossing(graph);
+    List<Integer> vertexList = List.of(1, 10, 9, 7, 8, 6, 5, 4, 2, 3);
+    int count = CircleLayoutReduceEdgeCrossing.countCrossings(graph, vertexList);
+    Assert.assertEquals(7, count);
+  }
+
+  @Test
   public void testThis() {
     CircleLayoutReduceEdgeCrossing<Integer, Integer> circleLayouts =
         new CircleLayoutReduceEdgeCrossing<>(graph);
-
-    //        circleLayouts.circular(graph.vertexSet());
+    int count =
+        CircleLayoutReduceEdgeCrossing.countCrossings(graph, circleLayouts.getVertexOrderedList());
+    Assert.assertEquals(0, count);
 
     /*
 
@@ -133,8 +144,6 @@ with undirected as graph type
 09:14:19.218 [main] INFO  o.j.v.l.a.util.CircleLayouts - dfi next: SV{vertex=3}
 09:14:19.218 [main] INFO  o.j.v.l.a.util.CircleLayouts - dfi next: SV{vertex=2}
 
-
-with pseudo as graph type forGraphType(DefaultGraphType.pseudograph())
 
 
 

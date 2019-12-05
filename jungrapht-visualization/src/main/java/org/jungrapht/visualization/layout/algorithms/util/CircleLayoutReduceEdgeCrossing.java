@@ -5,9 +5,11 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
@@ -148,5 +150,38 @@ public class CircleLayoutReduceEdgeCrossing<V, E> {
               .collect(Collectors.toList()));
       tableList.sort(ascendingDegreeComparator);
     }
+  }
+
+  public static <V, E> int countCrossings(Graph<V, E> graph, List<V> vertices) {
+    int numberOfCrossings = 0;
+    Set<E> openEdgeList = new LinkedHashSet<>();
+    List<V> verticesSeen = new LinkedList<>();
+    for (V v : vertices) {
+      log.trace("for vertex {}", v);
+      verticesSeen.add(v);
+      for (E e : graph.edgesOf(v)) {
+        V opposite = Graphs.getOppositeVertex(graph, e, v);
+        if (!verticesSeen.contains(opposite)) {
+          // e is an open edge
+          openEdgeList.add(e);
+        } else {
+          openEdgeList.remove(e);
+          for (int i = verticesSeen.indexOf(opposite) + 1; i < verticesSeen.indexOf(v); i++) {
+            V tween = verticesSeen.get(i);
+            numberOfCrossings +=
+                graph
+                    .edgesOf(tween)
+                    .stream()
+                    .filter(openEdgeList::contains)
+                    .filter(e1 -> !graph.getEdgeSource(e1).equals(v))
+                    .filter(e2 -> !graph.getEdgeTarget(e2).equals(v))
+                    .count();
+            log.trace("numberOfCrossings now {}", numberOfCrossings);
+          }
+        }
+        log.trace("added edge {}", e);
+      }
+    }
+    return numberOfCrossings;
   }
 }

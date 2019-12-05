@@ -41,6 +41,7 @@ public class CircleLayoutDemo extends JPanel {
             .build();
 
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
+    vv.getRenderContext().setEdgeLabelFunction(Object::toString);
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
     // add listeners for ToolTips
     vv.setVertexToolTipFunction(Object::toString);
