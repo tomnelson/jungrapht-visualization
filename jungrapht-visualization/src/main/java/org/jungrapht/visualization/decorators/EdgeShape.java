@@ -13,6 +13,7 @@ package org.jungrapht.visualization.decorators;
 import java.awt.Shape;
 import java.awt.geom.*;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import org.jgrapht.Graph;
@@ -83,6 +84,10 @@ public interface EdgeShape {
 
     public ArticulatedLine(Collection<E> reversedEdges) {
       this.reversedEdges = reversedEdges;
+    }
+
+    public ArticulatedLine() {
+      this(Collections.emptySet());
     }
 
     public Shape apply(Context<Graph<V, E>, E> context) {

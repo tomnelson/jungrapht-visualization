@@ -403,12 +403,19 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     Map<E, List<Point>> edgePointMap = new HashMap<>();
     for (ArticulatedEdge<V, E> ae : articulatedEdges) {
       List<Point> points = new ArrayList<>();
-      points.add(ae.source.getPoint());
-      points.addAll(ae.getIntermediatePoints());
-      points.add(ae.target.getPoint());
+      if (feedbackEdges.contains(ae.edge)) {
+        points.add(ae.target.getPoint());
+        points.addAll(ae.reversed().getIntermediatePoints());
+        points.add(ae.source.getPoint());
+      } else {
+        points.add(ae.source.getPoint());
+        points.addAll(ae.getIntermediatePoints());
+        points.add(ae.target.getPoint());
+      }
+
       edgePointMap.put(ae.edge, points);
     }
-    EdgeShape.ArticulatedLine<V, E> edgeShape = new EdgeShape.ArticulatedLine<>(feedbackEdges);
+    EdgeShape.ArticulatedLine<V, E> edgeShape = new EdgeShape.ArticulatedLine<>();
     edgeShape.setEdgeArticulationFunction(
         e -> edgePointMap.getOrDefault(e, Collections.emptyList()));
 
