@@ -1,6 +1,5 @@
 package org.jungrapht.visualization.layout.algorithms;
 
-import com.google.common.base.Preconditions;
 import java.awt.Dimension;
 import java.awt.Shape;
 import java.util.Collection;
@@ -99,7 +98,7 @@ public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
             .filter(rootPredicate)
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
-    Preconditions.checkArgument(roots.size() > 0);
+    assert roots.size() > 0;
     // the width of the tree under 'roots'. Includes one 'horizontalVertexSpacing' per child vertex
     int overallWidth = calculateWidth(layoutModel, roots, new HashSet<>());
     int overallHeight = calculateOverallHeight(layoutModel, roots, overallWidth);

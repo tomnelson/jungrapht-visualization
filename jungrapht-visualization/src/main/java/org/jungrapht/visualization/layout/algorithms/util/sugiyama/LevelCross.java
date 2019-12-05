@@ -20,19 +20,25 @@ public class LevelCross<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(LevelCross.class);
 
-  private List<SE<V, E>> edges;
+  private List<SugiyamaEdge<V, E>> edges;
 
-  private List<SV<V>> level;
-  private List<SV<V>> successorLevel;
+  private List<SugiyamaVertex<V>> level;
+  private List<SugiyamaVertex<V>> successorLevel;
 
   private AccumulatorTree levelTree;
   private AccumulatorTree successorTree;
 
-  public LevelCross(Graph<SV<V>, SE<V, E>> graph, List<SV<V>> level, List<SV<V>> successorLevel) {
+  public LevelCross(
+      Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> graph,
+      List<SugiyamaVertex<V>> level,
+      List<SugiyamaVertex<V>> successorLevel) {
     this(new ArrayList<>(graph.edgeSet()), level, successorLevel);
   }
 
-  public LevelCross(List<SE<V, E>> edgeList, List<SV<V>> level, List<SV<V>> successorLevel) {
+  public LevelCross(
+      List<SugiyamaEdge<V, E>> edgeList,
+      List<SugiyamaVertex<V>> level,
+      List<SugiyamaVertex<V>> successorLevel) {
     this.edges = edgeList;
     this.level = level;
     this.successorLevel = successorLevel;
@@ -48,33 +54,33 @@ public class LevelCross<V, E> {
     return successorTree;
   }
 
-  boolean isTop(SE<V, E> edge) {
+  boolean isTop(SugiyamaEdge<V, E> edge) {
     return edge.source.index < edge.target.index;
   }
 
-  boolean isBottom(SE<V, E> edge) {
+  boolean isBottom(SugiyamaEdge<V, E> edge) {
     return edge.source.index > edge.target.index;
   }
 
-  boolean isPair(SE<V, E> edge) {
+  boolean isPair(SugiyamaEdge<V, E> edge) {
     return edge.source.index == edge.target.index;
   }
 
-  boolean isRight(SE<V, E> edge, int sweepPos) {
+  boolean isRight(SugiyamaEdge<V, E> edge, int sweepPos) {
     return (edge.source.index == sweepPos && isTop(edge))
         || (edge.target.index == sweepPos && isBottom(edge));
   }
 
-  boolean isTrailing(SE<V, E> edge, int sweepPos) {
+  boolean isTrailing(SugiyamaEdge<V, E> edge, int sweepPos) {
     return (edge.source.index < sweepPos && sweepPos < edge.target.index)
         || (edge.target.index < sweepPos && sweepPos < edge.source.index);
   }
 
-  boolean isTrailingTop(SE<V, E> edge, int sweepPos) {
+  boolean isTrailingTop(SugiyamaEdge<V, E> edge, int sweepPos) {
     return edge.source.index < sweepPos && sweepPos < edge.target.index;
   }
 
-  boolean isTrailingBottom(SE<V, E> edge, int sweepPos) {
+  boolean isTrailingBottom(SugiyamaEdge<V, E> edge, int sweepPos) {
     return edge.target.index < sweepPos && sweepPos < edge.source.index;
   }
 
@@ -82,10 +88,10 @@ public class LevelCross<V, E> {
     int max = Arrays.stream(levelTree.accumulatorTree).max().getAsInt();
 
     assert max == 0;
-    List<SE<V, E>> rightTop = new ArrayList<>();
-    List<SE<V, E>> rightBottom = new ArrayList<>();
-    List<SE<V, E>> topTrailing = new ArrayList<>();
-    List<SE<V, E>> bottomTrailing = new ArrayList<>();
+    List<SugiyamaEdge<V, E>> rightTop = new ArrayList<>();
+    List<SugiyamaEdge<V, E>> rightBottom = new ArrayList<>();
+    List<SugiyamaEdge<V, E>> topTrailing = new ArrayList<>();
+    List<SugiyamaEdge<V, E>> bottomTrailing = new ArrayList<>();
 
     //trees should be all zeros
     int count = 0;
@@ -98,12 +104,12 @@ public class LevelCross<V, E> {
       // if i changed any right edges to trailing edges last time thru,
       // remove any that and at sweepPos (top trailing with target at sweep
       // or bottom trailing with source at sweep
-      for (SE<V, E> edge : topTrailing) {
+      for (SugiyamaEdge<V, E> edge : topTrailing) {
         if (edge.target.index == sweepPosition) {
           successorTree.subtractEdge(edge.target.index);
         }
       }
-      for (SE<V, E> edge : bottomTrailing) {
+      for (SugiyamaEdge<V, E> edge : bottomTrailing) {
         if (edge.source.index == sweepPosition) {
           levelTree.subtractEdge(edge.source.index);
         }
@@ -111,13 +117,13 @@ public class LevelCross<V, E> {
       // any left-over right edges that are trailing edges get
       // added to their accumulatorTree and to the topTrailing list, likewise for right bottom edges
       //      log.trace("top of loop. rightTop: {}, rightBottom: {}", rightTop, rightBottom);
-      for (SE<V, E> edge : rightTop) {
+      for (SugiyamaEdge<V, E> edge : rightTop) {
         if (isTrailingTop(edge, sweepPosition)) {
           topTrailing.add(edge);
           successorTree.addEdge(edge.target.index);
         }
       }
-      for (SE<V, E> edge : rightBottom) {
+      for (SugiyamaEdge<V, E> edge : rightBottom) {
         if (isTrailingBottom(edge, sweepPosition)) {
           bottomTrailing.add(edge);
           levelTree.addEdge(edge.source.index);
@@ -133,7 +139,7 @@ public class LevelCross<V, E> {
       rightBottom.clear(); // same
 
       int sweepPos = sweepPosition;
-      List<SE<V, E>> topEdges =
+      List<SugiyamaEdge<V, E>> topEdges =
           edges
               .stream()
               .filter(e -> level.contains(e.source))
@@ -142,7 +148,7 @@ public class LevelCross<V, E> {
 
       //      log.trace("at sweep {}, topEdges are {}", sweepPosition, topEdges);
 
-      for (SE<V, E> edge : topEdges) {
+      for (SugiyamaEdge<V, E> edge : topEdges) {
         int Li = sweepPosition;
         int x = edge.target.index;
         if (isRight(edge, sweepPosition)) {
@@ -158,7 +164,7 @@ public class LevelCross<V, E> {
       // these are swapped from what is in the published algorithm:
       int trb = levelTree.accumulatorTree[0];
       int trt = successorTree.accumulatorTree[0];
-      List<SE<V, E>> bottomEdges =
+      List<SugiyamaEdge<V, E>> bottomEdges =
           edges
               .stream()
               .filter(e -> successorLevel.contains(e.target))
@@ -166,7 +172,7 @@ public class LevelCross<V, E> {
               .collect(Collectors.toList());
 
       //      log.trace("at sweep {}, bottomEdges are {}", bottomEdges);
-      for (SE<V, E> edge : bottomEdges) {
+      for (SugiyamaEdge<V, E> edge : bottomEdges) {
         int x = edge.source.index;
         int Mi = sweepPosition;
         if (isRight(edge, sweepPosition)) {

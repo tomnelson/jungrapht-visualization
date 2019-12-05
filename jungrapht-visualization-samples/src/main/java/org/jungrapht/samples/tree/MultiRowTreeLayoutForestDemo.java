@@ -8,11 +8,11 @@
  */
 package org.jungrapht.samples.tree;
 
-import com.google.common.collect.ImmutableSortedMap;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.util.Map;
 import java.util.function.Predicate;
 import javax.swing.*;
 import org.jgrapht.Graph;
@@ -149,7 +149,7 @@ public class MultiRowTreeLayoutForestDemo extends JPanel {
         ControlHelpers.getCenteredContainer("Mouse Mode", ControlHelpers.getModeRadio(graphMouse)));
     controls.add(
         LensControlHelper.builder(
-                ImmutableSortedMap.of(
+                Map.of(
                     "Hyperbolic View", hyperbolicViewSupport,
                     "Hyperbolic Layout", hyperbolicSupport))
             .containerSupplier(Box::createVerticalBox)

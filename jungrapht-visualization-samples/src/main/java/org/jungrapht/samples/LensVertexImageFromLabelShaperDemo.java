@@ -10,10 +10,10 @@ package org.jungrapht.samples;
 
 import static org.jungrapht.visualization.renderers.BiModalRenderer.LIGHTWEIGHT;
 
-import com.google.common.collect.ImmutableSortedMap;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.util.Map;
 import java.util.function.Function;
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -219,7 +219,7 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
 
     controls.add(
         LensControlHelper.builder(
-                ImmutableSortedMap.of(
+                Map.of(
                     "Magnified View", magnifyViewSupport,
                     "Magnified Layout", magnifyLayoutSupport))
             .title("Lens Controls")

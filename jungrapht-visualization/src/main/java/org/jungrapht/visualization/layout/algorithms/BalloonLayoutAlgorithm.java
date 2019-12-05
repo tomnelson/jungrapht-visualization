@@ -10,17 +10,9 @@
 
 package org.jungrapht.visualization.layout.algorithms;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.Iterables;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
@@ -50,14 +42,15 @@ public class BalloonLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
     }
   }
 
-  protected LoadingCache<V, PolarPoint> polarLocations =
-      CacheBuilder.newBuilder()
-          .build(
-              new CacheLoader<>() {
-                public PolarPoint load(V vertex) {
-                  return PolarPoint.ORIGIN;
-                }
-              });
+  protected ConcurrentHashMap<V, PolarPoint> polarLocations = new ConcurrentHashMap<>();
+  private Function<V, PolarPoint> initializer = v -> PolarPoint.ORIGIN;
+  //      CacheBuilder.newBuilder()
+  //          .build(
+  //              new CacheLoader<>() {
+  //                public PolarPoint load(V vertex) {
+  //                  return PolarPoint.ORIGIN;
+  //                }
+  //              });
 
   protected Map<V, Double> radii = new HashMap<>();
 
@@ -94,7 +87,7 @@ public class BalloonLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
     int width = layoutModel.getWidth();
     if (roots.size() == 1) {
       // its a Tree
-      V root = Iterables.getOnlyElement(roots);
+      V root = roots.stream().findFirst().get();
       setRootPolar(layoutModel, root);
       setPolars(
           layoutModel,
@@ -177,7 +170,8 @@ public class BalloonLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
    */
   public Point getCenter(LayoutModel<V> layoutModel, V vertex) {
     Graph<V, ?> graph = layoutModel.getGraph();
-    V parent = Iterables.getOnlyElement(Graphs.predecessorListOf(graph, vertex), null);
+    V parent = Graphs.predecessorListOf(graph, vertex).stream().findFirst().orElse(null);
+    //            Iterables.getOnlyElement(Graphs.predecessorListOf(graph, vertex), null);
     if (parent == null) {
       return getCenter(layoutModel);
     }
@@ -185,7 +179,7 @@ public class BalloonLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
   }
 
   private Point getCartesian(LayoutModel<V> layoutModel, V vertex) {
-    PolarPoint pp = polarLocations.getUnchecked(vertex);
+    PolarPoint pp = polarLocations.computeIfAbsent(vertex, initializer);
     double centerX = layoutModel.getWidth() / 2;
     double centerY = layoutModel.getHeight() / 2;
     Point cartesian = PolarPoint.polarToCartesian(pp);

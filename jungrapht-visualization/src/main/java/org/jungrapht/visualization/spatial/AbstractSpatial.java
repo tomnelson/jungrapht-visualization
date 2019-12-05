@@ -1,9 +1,9 @@
 package org.jungrapht.visualization.spatial;
 
-import com.google.common.collect.EvictingQueue;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -24,7 +24,16 @@ public abstract class AbstractSpatial<T, NT> implements Spatial<T> {
 
   protected Rectangle2D rectangle;
 
-  protected Collection<Shape> pickShapes = EvictingQueue.create(4);
+  protected Collection<Shape> pickShapes =
+      new LinkedList<>() {
+        @Override
+        public boolean add(Shape shape) {
+          if (super.size() > 4) {
+            super.remove();
+          }
+          return super.add(shape);
+        }
+      };
 
   /** a memoization of the grid rectangles used for rendering as Paintables for debugging */
   protected List<Shape> gridCache;

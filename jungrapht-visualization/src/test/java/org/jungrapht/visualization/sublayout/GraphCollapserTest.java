@@ -1,6 +1,5 @@
 package org.jungrapht.visualization.sublayout;
 
-import com.google.common.collect.Sets;
 import java.util.Collection;
 import java.util.Set;
 import org.jgrapht.Graph;
@@ -37,14 +36,10 @@ public class GraphCollapserTest {
     }
 
     Assert.assertEquals(
-        Sets.newHashSet(Collapsable.of("A"), Collapsable.of("B"), Collapsable.of("C")),
-        graph.vertexSet());
-    Assert.assertEquals(
-        Sets.newHashSet(Collapsable.of("B"), Collapsable.of("A")), endpoints(graph, 0));
-    Assert.assertEquals(
-        Sets.newHashSet(Collapsable.of("C"), Collapsable.of("A")), endpoints(graph, 1));
-    Assert.assertEquals(
-        Sets.newHashSet(Collapsable.of("B"), Collapsable.of("C")), endpoints(graph, 2));
+        Set.of(Collapsable.of("A"), Collapsable.of("B"), Collapsable.of("C")), graph.vertexSet());
+    Assert.assertEquals(Set.of(Collapsable.of("B"), Collapsable.of("A")), endpoints(graph, 0));
+    Assert.assertEquals(Set.of(Collapsable.of("C"), Collapsable.of("A")), endpoints(graph, 1));
+    Assert.assertEquals(Set.of(Collapsable.of("B"), Collapsable.of("C")), endpoints(graph, 2));
 
     GraphCollapser<Integer> collapser = new GraphCollapser(graph);
     MultiMutableSelectedState picker = new MultiMutableSelectedState();
@@ -56,13 +51,13 @@ public class GraphCollapserTest {
     Graph<Collapsable<?>, Integer> collapsed = collapser.collapse(graph, clusterGraph);
     for (Collapsable<?> vertex : collapsed.vertexSet()) {
       if (vertex.get() instanceof Graph) {
-        Assert.assertEquals(((Graph) vertex.get()).edgeSet(), Sets.newHashSet(2));
+        Assert.assertEquals(((Graph) vertex.get()).edgeSet(), Set.of(2));
       } else {
         Assert.assertEquals(vertex, Collapsable.of("A"));
       }
     }
 
-    Assert.assertEquals(collapsed.edgeSet(), Sets.newHashSet(0, 1));
+    Assert.assertEquals(collapsed.edgeSet(), Set.of(0, 1));
     for (Integer edge : collapsed.edgeSet()) {
       Assert.assertEquals(Collapsable.of("A"), collapsed.getEdgeSource(edge));
       Assert.assertTrue(collapsed.getEdgeTarget(edge).get() instanceof Graph);
@@ -78,14 +73,10 @@ public class GraphCollapserTest {
     Graph<Collapsable<?>, Integer> expanded =
         collapser.expand(graph, collapsed, Collapsable.of(clusterGraph));
     Assert.assertEquals(
-        Sets.newHashSet(Collapsable.of("A"), Collapsable.of("B"), Collapsable.of("C")),
-        graph.vertexSet());
-    Assert.assertEquals(
-        Sets.newHashSet(Collapsable.of("B"), Collapsable.of("A")), endpoints(expanded, 0));
-    Assert.assertEquals(
-        Sets.newHashSet(Collapsable.of("C"), Collapsable.of("A")), endpoints(expanded, 1));
-    Assert.assertEquals(
-        Sets.newHashSet(Collapsable.of("B"), Collapsable.of("C")), endpoints(expanded, 2));
+        Set.of(Collapsable.of("A"), Collapsable.of("B"), Collapsable.of("C")), graph.vertexSet());
+    Assert.assertEquals(Set.of(Collapsable.of("B"), Collapsable.of("A")), endpoints(expanded, 0));
+    Assert.assertEquals(Set.of(Collapsable.of("C"), Collapsable.of("A")), endpoints(expanded, 1));
+    Assert.assertEquals(Set.of(Collapsable.of("B"), Collapsable.of("C")), endpoints(expanded, 2));
   }
 
   @Test
@@ -182,6 +173,6 @@ public class GraphCollapserTest {
   }
 
   private static <V, E> Set<V> endpoints(Graph<V, E> graph, E edge) {
-    return Sets.newHashSet(graph.getEdgeSource(edge), graph.getEdgeTarget(edge));
+    return Set.of(graph.getEdgeSource(edge), graph.getEdgeTarget(edge));
   }
 }

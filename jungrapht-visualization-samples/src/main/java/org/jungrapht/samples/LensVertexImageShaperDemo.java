@@ -8,7 +8,6 @@
  */
 package org.jungrapht.samples;
 
-import com.google.common.collect.ImmutableSortedMap;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -32,7 +31,8 @@ import org.jungrapht.visualization.control.ModalLensGraphMouse;
 import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.decorators.IconShapeFunction;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
-import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.CircleLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.renderers.Checkmark;
 import org.jungrapht.visualization.renderers.JLabelEdgeLabelRenderer;
@@ -115,8 +115,8 @@ public class LensVertexImageShaperDemo extends JPanel {
       }
     }
 
-    FRLayoutAlgorithm<Number> layoutAlgorithm = new FRLayoutAlgorithm<>();
-    layoutAlgorithm.setMaxIterations(100);
+    LayoutAlgorithm<Number> layoutAlgorithm = new CircleLayoutAlgorithm<>();
+    //    layoutAlgorithm.setMaxIterations(100);
 
     final DefaultModalGraphMouse<Number, Number> graphMouse = new DefaultModalGraphMouse<>();
 
@@ -241,7 +241,7 @@ public class LensVertexImageShaperDemo extends JPanel {
     menubar.add(modeMenu);
     controls.add(
         LensControlHelper.builder(
-                ImmutableSortedMap.of(
+                Map.of(
                     "Magnified View", magnifyViewSupport,
                     "Magnified Layout", magnifyLayoutSupport))
             .title("Lens Controls")

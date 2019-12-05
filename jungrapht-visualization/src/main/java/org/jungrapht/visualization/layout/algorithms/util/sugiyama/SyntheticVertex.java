@@ -6,7 +6,7 @@ package org.jungrapht.visualization.layout.algorithms.util.sugiyama;
  *
  * @param <V> vertex type
  */
-public class SyntheticVertex<V> extends SV<V> {
+public class SyntheticVertex<V> extends SugiyamaVertex<V> {
 
   final int hash;
 

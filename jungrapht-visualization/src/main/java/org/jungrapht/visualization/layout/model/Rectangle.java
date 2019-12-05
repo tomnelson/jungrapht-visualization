@@ -1,6 +1,5 @@
 package org.jungrapht.visualization.layout.model;
 
-import com.google.common.base.Preconditions;
 import java.util.Objects;
 
 /**
@@ -55,7 +54,7 @@ public class Rectangle {
    * @param height vertical size of rectangle when aligned
    */
   public Rectangle(double x, double y, double width, double height) {
-    Preconditions.checkArgument(width >= 0 && height >= 0, "width and height must be non-negative");
+    assert width >= 0 && height >= 0 : "width and height must be non-negative";
     this.x = x;
     this.y = y;
     this.width = width;

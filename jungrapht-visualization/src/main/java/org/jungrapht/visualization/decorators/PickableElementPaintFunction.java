@@ -11,7 +11,7 @@
  */
 package org.jungrapht.visualization.decorators;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 import java.util.function.Function;
 import org.jungrapht.visualization.selection.SelectedState;
 
@@ -33,9 +33,9 @@ public class PickableElementPaintFunction<E, P> implements Function<E, P> {
    */
   public PickableElementPaintFunction(
       SelectedState<E> selectedState, P drawPaint, P selectedPaint) {
-    this.selectedState = Preconditions.checkNotNull(selectedState);
-    this.drawPaint = Preconditions.checkNotNull(drawPaint);
-    this.selectedPaint = Preconditions.checkNotNull(selectedPaint);
+    this.selectedState = Objects.requireNonNull(selectedState);
+    this.drawPaint = Objects.requireNonNull(drawPaint);
+    this.selectedPaint = Objects.requireNonNull(selectedPaint);
   }
 
   /** */

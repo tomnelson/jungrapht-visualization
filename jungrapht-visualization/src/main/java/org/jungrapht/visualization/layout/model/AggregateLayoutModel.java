@@ -10,8 +10,8 @@
  */
 package org.jungrapht.visualization.layout.model;
 
-import com.google.common.collect.Maps;
 import java.awt.geom.AffineTransform;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.function.Function;
@@ -36,7 +36,7 @@ public class AggregateLayoutModel<V> implements LayoutModel<V> {
 
   private static final Logger log = LoggerFactory.getLogger(AggregateLayoutModel.class);
   protected final LayoutModel<V> delegate;
-  protected Map<LayoutModel<V>, Point> layouts = Maps.newHashMap();
+  protected Map<LayoutModel<V>, Point> layouts = new HashMap<>();
 
   /**
    * Creates an instance backed by the specified {@code delegate}.

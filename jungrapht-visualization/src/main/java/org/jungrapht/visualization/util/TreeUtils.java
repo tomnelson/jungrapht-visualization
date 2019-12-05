@@ -11,11 +11,9 @@
  */
 package org.jungrapht.visualization.util;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
@@ -31,7 +29,7 @@ public class TreeUtils {
   private static Logger log = LoggerFactory.getLogger(TreeUtils.class);
 
   public static <V> Set<V> roots(Graph<V, ?> graph) {
-    checkNotNull(graph, "graph");
+    Objects.requireNonNull(graph, "graph");
     return graph
         .vertexSet()
         .stream()
@@ -44,7 +42,7 @@ public class TreeUtils {
    * predecessor.
    */
   public static <V> boolean isForestShaped(Graph<V, ?> graph) {
-    checkNotNull(graph, "graph");
+    Objects.requireNonNull(graph, "graph");
     return graph.getType().isDirected()
         && !graph.getType().isAllowingCycles()
         && graph.vertexSet().stream().allMatch(vertex -> graph.incomingEdgesOf(vertex).size() <= 1);
@@ -59,9 +57,9 @@ public class TreeUtils {
    * @param root the root of the subtree to be extracted
    */
   public static <V, E> Graph<V, E> getSubTree(Graph<V, E> tree, V root) {
-    checkNotNull(tree, "tree");
-    checkNotNull(root, "root");
-    checkArgument(
+    Objects.requireNonNull(tree, "tree");
+    Objects.requireNonNull(root, "root");
+    Objects.requireNonNull(
         tree.vertexSet().contains(root), "Input tree does not contain the input subtree root");
     // subtree must allow parallel and loop edges
     DirectedPseudograph<V, E> subtree =
@@ -85,9 +83,9 @@ public class TreeUtils {
    */
   public static <V, E> void growSubTree(
       Graph<V, E> tree, DirectedPseudograph<V, E> subTree, V root) {
-    checkNotNull(tree, "tree");
-    checkNotNull(subTree, "subTree");
-    checkNotNull(root, "root");
+    Objects.requireNonNull(tree, "tree");
+    Objects.requireNonNull(subTree, "subTree");
+    Objects.requireNonNull(root, "root");
     for (E edge : tree.outgoingEdgesOf(root)) {
       V kid = tree.getEdgeTarget(edge);
       subTree.addVertex(root);
@@ -111,11 +109,11 @@ public class TreeUtils {
    */
   public static <V, E> void addSubTree(
       Graph<V, E> tree, Graph<V, E> subTree, V subTreeParent, E connectingEdge) {
-    checkNotNull(tree, "tree");
-    checkNotNull(subTree, "subTree");
-    checkNotNull(subTreeParent, "subTreeParent");
-    checkNotNull(connectingEdge, "connectingEdge");
-    checkArgument(
+    Objects.requireNonNull(tree, "tree");
+    Objects.requireNonNull(subTree, "subTree");
+    Objects.requireNonNull(subTreeParent, "subTreeParent");
+    Objects.requireNonNull(connectingEdge, "connectingEdge");
+    Objects.requireNonNull(
         tree.vertexSet().contains(subTreeParent), "'tree' does not contain 'subTreeParent'");
 
     Set<V> roots = TreeUtils.roots(subTree);
@@ -137,9 +135,9 @@ public class TreeUtils {
   }
 
   private static <V, E> void addFromSubTree(Graph<V, E> tree, Graph<V, E> subTree, V subTreeRoot) {
-    checkNotNull(tree, "tree");
-    checkNotNull(subTree, "subTree");
-    checkNotNull(subTreeRoot, "subTreeRoot");
+    Objects.requireNonNull(tree, "tree");
+    Objects.requireNonNull(subTree, "subTree");
+    Objects.requireNonNull(subTreeRoot, "subTreeRoot");
     for (E edge : subTree.outgoingEdgesOf(subTreeRoot)) {
       V child = subTree.getEdgeTarget(edge);
       log.trace("addVertex {} to \n{}", subTreeRoot, tree);

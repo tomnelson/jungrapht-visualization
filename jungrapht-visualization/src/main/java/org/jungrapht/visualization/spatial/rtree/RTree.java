@@ -1,18 +1,10 @@
 package org.jungrapht.visualization.spatial.rtree;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,8 +42,7 @@ public class RTree<T> {
    * @param node the node that will be the root
    */
   private RTree(Node<T> node) {
-    Preconditions.checkArgument(
-        node.getParent().isEmpty(), "Error creating R-Tree with root that has parent");
+    assert node.getParent().isEmpty() : "Error creating R-Tree with root that has parent";
     root = Optional.of(node);
   }
 
@@ -103,8 +94,7 @@ public class RTree<T> {
       LeafNode<T> leafVertex = (LeafNode) node;
 
       Node<T> got = leafVertex.add(splitterContext, element, bounds);
-      Preconditions.checkArgument(
-          got.getParent().isEmpty(), "return from LeafVertex add has a parent");
+      assert got.getParent().isEmpty() : "return from LeafVertex add has a parent";
       return new RTree(got);
 
     } else {
@@ -114,8 +104,7 @@ public class RTree<T> {
       if (got == null) {
         log.error("add did not work");
       }
-      Preconditions.checkArgument(
-          got.getParent().isEmpty(), "return from InnerVertex add has a parent");
+      assert got.getParent().isEmpty() : "return from InnerVertex add has a parent";
       return new RTree(got);
     }
   }
@@ -299,7 +288,7 @@ public class RTree<T> {
 
   /** @return a collection of rectangular bounds of the R-Tree nodes */
   public Set<Shape> getGrid() {
-    Set<Shape> areas = Sets.newHashSet();
+    Set<Shape> areas = new HashSet<>();
     if (root.isPresent()) {
       Node<T> node = root.get();
       node.collectGrids(areas);
@@ -320,7 +309,7 @@ public class RTree<T> {
       if (theRoot instanceof LeafNode) {
         return Collections.singleton(theRoot);
       } else if (theRoot instanceof InnerNode) {
-        return ((InnerNode) theRoot).getContainingLeafs(Sets.newHashSet(), p);
+        return ((InnerNode) theRoot).getContainingLeafs(new HashSet<>(), p);
       }
     }
     return Collections.emptySet();

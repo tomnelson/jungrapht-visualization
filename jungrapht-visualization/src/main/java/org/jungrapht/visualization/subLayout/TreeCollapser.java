@@ -9,7 +9,6 @@
  */
 package org.jungrapht.visualization.subLayout;
 
-import com.google.common.collect.Iterables;
 import java.util.Set;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
@@ -39,8 +38,8 @@ public class TreeCollapser {
       log.trace("collapse at subroot {}", subRoot);
       for (Collapsable<?> parent : Graphs.predecessorListOf(tree, subRoot)) {
         // subRoot has a parent, so attach its parent to subTree in its place
-        E parentEdge =
-            Iterables.getOnlyElement(tree.incomingEdgesOf(subRoot)); // THERE CAN BE ONLY ONE
+        E parentEdge = tree.incomingEdgesOf(subRoot).stream().findFirst().get();
+        //            Iterables.getOnlyElement(tree.incomingEdgesOf(subRoot)); // THERE CAN BE ONLY ONE
 
         TreeUtils.removeTreeVertex(tree, subRoot);
 

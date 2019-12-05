@@ -2,7 +2,6 @@ package org.jungrapht.samples.tree;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
-import com.google.common.collect.Sets;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.geom.AffineTransform;
@@ -33,7 +32,7 @@ public class SugiyamaLayoutExample extends JFrame {
 
   private static final Logger log = LoggerFactory.getLogger(SugiyamaLayoutExample.class);
 
-  static Set<Integer> prioritySet = Sets.newHashSet(0, 2, 6, 8);
+  static Set<Integer> prioritySet = Set.of(0, 2, 6, 8);
 
   static Predicate<Integer> edgePredicate = e -> false;
 

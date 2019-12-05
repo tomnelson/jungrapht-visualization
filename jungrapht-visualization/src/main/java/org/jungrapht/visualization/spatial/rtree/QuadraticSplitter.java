@@ -1,12 +1,9 @@
 package org.jungrapht.visualization.spatial.rtree;
 
-import static org.jungrapht.visualization.spatial.rtree.Node.M;
-import static org.jungrapht.visualization.spatial.rtree.Node.area;
-import static org.jungrapht.visualization.spatial.rtree.Node.m;
+import static org.jungrapht.visualization.spatial.rtree.Node.*;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,7 +20,7 @@ public class QuadraticSplitter<T> extends AbstractSplitter<T> implements Splitte
   private Pair<InnerNode<T>> quadraticSplit(List<Node<T>> children, Node<T> newEntry) {
     // make a collection of kids from leafVertex that also include the new element
     // items will be removed from the entryList as they are distributed
-    List<Node<T>> entryList = Lists.newArrayList(children);
+    List<Node<T>> entryList = new ArrayList<>(children);
     entryList.add(newEntry);
     // get the best pair to split on trom the leafVertex elements
     Pair<InnerNode<T>> pickedSeeds = pickSeeds(entryList);
@@ -104,7 +101,7 @@ public class QuadraticSplitter<T> extends AbstractSplitter<T> implements Splitte
         }
       }
     }
-    Preconditions.checkArgument(winningPair.isPresent(), "No winning pair returned");
+    assert winningPair.isPresent() : "No winning pair returned";
     Node<T> leftEntry = winningPair.get().left;
     InnerNode<T> leftVertex = InnerNode.create(leftEntry);
     Node<T> rightEntry = winningPair.get().right;

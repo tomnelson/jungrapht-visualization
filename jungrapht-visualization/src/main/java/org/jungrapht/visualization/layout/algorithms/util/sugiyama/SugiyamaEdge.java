@@ -1,6 +1,7 @@
 package org.jungrapht.visualization.layout.algorithms.util.sugiyama;
 
 import java.util.Objects;
+import org.jungrapht.visualization.layout.util.synthetics.SE;
 
 /**
  * An edge type used for the application of the SugiyamaLayoutAlgorithm. instances of SE<V,E>
@@ -9,18 +10,18 @@ import java.util.Objects;
  * @param <V> vertex type
  * @param <E> edge type
  */
-public class SE<V, E> {
+public class SugiyamaEdge<V, E> extends SE<E> {
 
-  public final E edge;
-  public final SV<V> source;
-  public final SV<V> target;
+  public final SugiyamaVertex<V> source;
+  public final SugiyamaVertex<V> target;
 
-  public static <V, E> SE<V, E> of(E edge, SV<V> source, SV<V> target) {
-    return new SE(edge, source, target);
+  public static <V, E> SugiyamaEdge<V, E> of(
+      E edge, SugiyamaVertex<V> source, SugiyamaVertex<V> target) {
+    return new SugiyamaEdge(edge, source, target);
   }
 
-  public SE(E edge, SV<V> source, SV<V> target) {
-    this.edge = edge;
+  public SugiyamaEdge(E edge, SugiyamaVertex<V> source, SugiyamaVertex<V> target) {
+    super(edge);
     this.source = source;
     this.target = target;
   }
@@ -34,7 +35,7 @@ public class SE<V, E> {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    SE<?, ?> se = (SE<?, ?>) o;
+    SugiyamaEdge<?, ?> se = (SugiyamaEdge<?, ?>) o;
     return Objects.equals(edge, se.edge);
   }
 

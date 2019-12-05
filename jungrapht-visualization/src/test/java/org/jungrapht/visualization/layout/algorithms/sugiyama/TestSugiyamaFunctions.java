@@ -1,11 +1,25 @@
 package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
-import org.jungrapht.visualization.layout.algorithms.util.sugiyama.*;
+import org.jungrapht.visualization.layout.algorithms.util.sugiyama.ArticulatedEdge;
+import org.jungrapht.visualization.layout.algorithms.util.sugiyama.GraphLayers;
+import org.jungrapht.visualization.layout.algorithms.util.sugiyama.RemoveCycles;
+import org.jungrapht.visualization.layout.algorithms.util.sugiyama.SugiyamaEdge;
+import org.jungrapht.visualization.layout.algorithms.util.sugiyama.SugiyamaTransformedGraphSupplier;
+import org.jungrapht.visualization.layout.algorithms.util.sugiyama.SugiyamaVertex;
+import org.jungrapht.visualization.layout.algorithms.util.sugiyama.SyntheticVertex;
+import org.jungrapht.visualization.layout.algorithms.util.sugiyama.Synthetics;
+import org.jungrapht.visualization.layout.util.synthetics.SE;
+import org.jungrapht.visualization.layout.util.synthetics.SV;
+import org.jungrapht.visualization.layout.util.synthetics.SVTransformedGraphSupplier;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,8 +61,8 @@ public class TestSugiyamaFunctions {
   public void testTransformedGraph() {
 
     SVTransformedGraphSupplier<String, Integer> svTransformedGraphSupplier =
-        SVTransformedGraphSupplier.<String, Integer>builder().graph(graph).build();
-    Graph<SV<String>, SE<String, Integer>> sgraph = svTransformedGraphSupplier.get();
+        new SVTransformedGraphSupplier(graph);
+    Graph<SV<String>, SE<Integer>> sgraph = svTransformedGraphSupplier.get();
 
     Assert.assertEquals(graph.vertexSet().size(), sgraph.vertexSet().size());
     Assert.assertEquals(graph.edgeSet().size(), sgraph.edgeSet().size());
@@ -76,26 +90,27 @@ public class TestSugiyamaFunctions {
   @Test
   public void testAssignLayers() {
 
-    SVTransformedGraphSupplier<String, Integer> svTransformedGraphSupplier =
-        SVTransformedGraphSupplier.<String, Integer>builder().graph(graph).build();
-    Graph<SV<String>, SE<String, Integer>> sgraph = svTransformedGraphSupplier.get();
+    SugiyamaTransformedGraphSupplier<String, Integer> svTransformedGraphSupplier =
+        new SugiyamaTransformedGraphSupplier(graph);
+    Graph<SugiyamaVertex<String>, SugiyamaEdge<String, Integer>> sgraph =
+        svTransformedGraphSupplier.get();
 
-    List<List<SV<String>>> layers = GraphLayers.assign(sgraph);
+    List<List<SugiyamaVertex<String>>> layers = GraphLayers.assign(sgraph);
 
     Assert.assertEquals(3, layers.size()); // this graph should have 3 layers
 
     this.checkLayers(layers);
     log.info("assign layers:");
-    for (List<SV<String>> layer : layers) {
+    for (List<SugiyamaVertex<String>> layer : layers) {
       log.info("Layer: {}", layer);
     }
     log.info("virtual vertices and edges:");
     Synthetics<String, Integer> synthetics = new Synthetics<>(sgraph);
-    List<SE<String, Integer>> edges = new ArrayList<>(sgraph.edgeSet());
+    List<SugiyamaEdge<String, Integer>> edges = new ArrayList<>(sgraph.edgeSet());
     log.info("there are {} edges ", edges.size());
     log.info("edges: {}", edges);
     layers = synthetics.createVirtualVerticesAndEdges(edges, layers);
-    for (List<SV<String>> layer : layers) {
+    for (List<SugiyamaVertex<String>> layer : layers) {
       log.info("Layer: {}", layer);
     }
     log.info("there are {} edges ", edges.size());
@@ -111,29 +126,30 @@ public class TestSugiyamaFunctions {
     graph.addEdge("20", "30");
     graph.addEdge("00", "30"); // connect from rank 0 to rank 3. should add 3, subtract 1
 
-    SVTransformedGraphSupplier<String, Integer> svTransformedGraphSupplier =
-        SVTransformedGraphSupplier.<String, Integer>builder().graph(graph).build();
-    Graph<SV<String>, SE<String, Integer>> sgraph = svTransformedGraphSupplier.get();
+    SugiyamaTransformedGraphSupplier<String, Integer> svTransformedGraphSupplier =
+        new SugiyamaTransformedGraphSupplier(graph);
+    Graph<SugiyamaVertex<String>, SugiyamaEdge<String, Integer>> sgraph =
+        svTransformedGraphSupplier.get();
 
     log.info("incoming dag: {}", sgraph);
 
     //    AssignLayers<String, Integer> assignLayers = new AssignLayers<>(sgraph);
-    List<List<SV<String>>> layers = GraphLayers.assign(sgraph);
+    List<List<SugiyamaVertex<String>>> layers = GraphLayers.assign(sgraph);
 
     //            assignLayers.assignLayers();
     this.checkLayers(layers);
 
     log.info("assign layers:");
-    for (List<SV<String>> layer : layers) {
+    for (List<SugiyamaVertex<String>> layer : layers) {
       log.info("Layer: {}", layer);
     }
     log.info("virtual vertices and edges:");
     Synthetics<String, Integer> synthetics = new Synthetics<>(sgraph);
-    List<SE<String, Integer>> edges = new ArrayList<>(sgraph.edgeSet());
+    List<SugiyamaEdge<String, Integer>> edges = new ArrayList<>(sgraph.edgeSet());
     log.info("there are {} edges ", edges.size());
     log.info("edges: {}", edges);
     layers = synthetics.createVirtualVerticesAndEdges(edges, layers);
-    for (List<SV<String>> layer : layers) {
+    for (List<SugiyamaVertex<String>> layer : layers) {
       log.info("Layer: {}", layer);
     }
     log.info("there are {} edges ", edges.size());
@@ -201,7 +217,11 @@ public class TestSugiyamaFunctions {
     List<Integer> ranks = new ArrayList<>();
     ranks.add(bentEdge.source.getRank());
     ranks.addAll(
-        bentEdge.getIntermediateVertices().stream().map(SV::getRank).collect(Collectors.toList()));
+        bentEdge
+            .getIntermediateVertices()
+            .stream()
+            .map(SugiyamaVertex::getRank)
+            .collect(Collectors.toList()));
     ranks.add(bentEdge.target.getRank());
     Assert.assertEquals(ranks, List.of(0, 1, 2, 3));
 
@@ -221,7 +241,11 @@ public class TestSugiyamaFunctions {
     ranks = new ArrayList<>();
     ranks.add(bentEdge.source.getRank());
     ranks.addAll(
-        bentEdge.getIntermediateVertices().stream().map(SV::getRank).collect(Collectors.toList()));
+        bentEdge
+            .getIntermediateVertices()
+            .stream()
+            .map(SugiyamaVertex::getRank)
+            .collect(Collectors.toList()));
     ranks.add(bentEdge.target.getRank());
     Assert.assertEquals(ranks, List.of(0, 1, 2));
 
@@ -229,7 +253,7 @@ public class TestSugiyamaFunctions {
     log.info("dag edges: {}", sgraph.edgeSet());
   }
 
-  private void testEdgeHasCorrectRanks(SE<String, Integer> edge) {
+  private void testEdgeHasCorrectRanks(SugiyamaEdge<String, Integer> edge) {
     List<Integer> ranks = new ArrayList<>();
     ranks.add(edge.source.getRank());
     if (edge instanceof ArticulatedEdge) {
@@ -237,7 +261,7 @@ public class TestSugiyamaFunctions {
           ((ArticulatedEdge<String, Integer>) edge)
               .getIntermediateVertices()
               .stream()
-              .map(SV::getRank)
+              .map(SugiyamaVertex::getRank)
               .collect(Collectors.toList()));
     }
     ranks.add(edge.target.getRank());
@@ -250,15 +274,15 @@ public class TestSugiyamaFunctions {
    *
    * @param layers
    */
-  private void checkLayers(List<List<SV<String>>> layers) {
+  private void checkLayers(List<List<SugiyamaVertex<String>>> layers) {
     for (int i = 0; i < layers.size(); i++) {
-      List<SV<String>> layer = layers.get(i);
+      List<SugiyamaVertex<String>> layer = layers.get(i);
       log.info("layer: {}", layer);
       for (int j = 0; j < layer.size(); j++) {
-        SV<String> sv = layer.get(j);
-        log.info("sv {},{}: {}", i, j, sv);
-        Assert.assertEquals(i, sv.getRank());
-        Assert.assertEquals(j, sv.getIndex());
+        SugiyamaVertex<String> sugiyamaVertex = layer.get(j);
+        log.info("sv {},{}: {}", i, j, sugiyamaVertex);
+        Assert.assertEquals(i, sugiyamaVertex.getRank());
+        Assert.assertEquals(j, sugiyamaVertex.getIndex());
       }
     }
   }

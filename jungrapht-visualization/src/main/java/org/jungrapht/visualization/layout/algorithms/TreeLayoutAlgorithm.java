@@ -10,7 +10,6 @@
 
 package org.jungrapht.visualization.layout.algorithms;
 
-import com.google.common.base.Preconditions;
 import java.awt.Dimension;
 import java.awt.Shape;
 import java.util.*;
@@ -73,8 +72,7 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
      * @return this Builder
      */
     public B horizontalVertexSpacing(int horizontalVertexSpacing) {
-      Preconditions.checkArgument(
-          horizontalVertexSpacing > 0, "horizontalVertexSpacing must be positive");
+      assert horizontalVertexSpacing > 0 : "horizontalVertexSpacing must be positive";
       this.horizontalVertexSpacing = horizontalVertexSpacing;
       return self();
     }
@@ -84,8 +82,7 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
      * @return this Builder
      */
     public B verticalVertexSpacing(int verticalVertexSpacing) {
-      Preconditions.checkArgument(
-          verticalVertexSpacing > 0, "verticalVertexSpacing must be positive");
+      assert verticalVertexSpacing > 0 : "verticalVertexSpacing must be positive";
       this.verticalVertexSpacing = verticalVertexSpacing;
       return self();
     }
@@ -158,7 +155,7 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
       int verticalVertexSpacing,
       Function<V, Shape> vertexShapeFunction,
       boolean expandLayout) {
-    Preconditions.checkNotNull(vertexShapeFunction);
+    Objects.requireNonNull(vertexShapeFunction);
     this.rootPredicate = rootPredicate;
     this.horizontalVertexSpacing = horizontalVertexSpacing;
     this.verticalVertexSpacing = verticalVertexSpacing;
@@ -175,7 +172,7 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
 
   @Override
   public void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
-    Preconditions.checkNotNull(vertexShapeFunction);
+    Objects.requireNonNull(vertexShapeFunction);
     this.vertexShapeFunction = vertexShapeFunction;
   }
 
@@ -254,7 +251,7 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
             .filter(this.rootPredicate)
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
-    Preconditions.checkArgument(roots.size() > 0);
+    assert roots.size() > 0;
     // the width of the tree under 'roots'. Includes one 'horizontalVertexSpacing' per child vertex
     int overallWidth = calculateWidth(layoutModel, roots, new HashSet<>());
     // add one additional 'horizontalVertexSpacing' for each tree (each root) + 1

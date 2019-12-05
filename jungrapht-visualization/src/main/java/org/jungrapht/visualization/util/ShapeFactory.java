@@ -9,14 +9,8 @@
  */
 package org.jungrapht.visualization.util;
 
-import com.google.common.base.Preconditions;
-import java.awt.Shape;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.RoundRectangle2D;
+import java.awt.*;
+import java.awt.geom.*;
 import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,7 +122,7 @@ public class ShapeFactory<T> {
    */
   public Shape getRegularPolygon(T t, int sides, double rotation) {
     GeneralPath thePolygon = new GeneralPath();
-    Preconditions.checkArgument(sides >= 3, "Number of sides must be >= 3");
+    assert sides >= 3 : "Number of sides must be >= 3";
     Rectangle2D frame = getRectangle(t).getBounds2D();
     float width = (float) frame.getWidth();
     float height = (float) frame.getHeight();
@@ -185,7 +179,7 @@ public class ShapeFactory<T> {
    */
   public Shape getRegularStar(T t, int points) {
     GeneralPath thePolygon = new GeneralPath();
-    Preconditions.checkArgument(points >= 5, "Number of points must be >= 5");
+    assert points >= 5 : "Number of points must be >= 5";
     Rectangle2D frame = getRectangle(t).getBounds2D();
     float width = (float) frame.getWidth();
     float height = (float) frame.getHeight();

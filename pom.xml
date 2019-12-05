@@ -61,7 +61,6 @@
         <fmt.plugin.version>1.8.0</fmt.plugin.version>
         <google-java-format.version>1.3</google-java-format.version>
         <gpg.plugin.version>1.6</gpg.plugin.version>
-        <guava.version>28.0-jre</guava.version>
         <jar.plugin.version>2.6</jar.plugin.version>
         <java.version>11</java.version>
         <javadoc.plugin.version>3.1.0</javadoc.plugin.version>
@@ -78,16 +77,6 @@
     </properties>
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${guava.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava-testlib</artifactId>
-                <version>${guava.version}</version>
-            </dependency>
             <dependency>
                 <groupId>com.google.truth</groupId>
                 <artifactId>truth</artifactId>

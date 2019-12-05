@@ -2,6 +2,7 @@ package org.jungrapht.visualization.layout.algorithms.util.sugiyama;
 
 import java.util.Objects;
 import org.jungrapht.visualization.layout.model.Point;
+import org.jungrapht.visualization.layout.util.synthetics.SV;
 
 /**
  * a vertex type for the SugiyamaLayoutAlgorithm instances of SV<V> replace instances of V during
@@ -10,42 +11,41 @@ import org.jungrapht.visualization.layout.model.Point;
  *
  * @param <V>
  */
-public class SV<V> {
-  public final V vertex;
+public class SugiyamaVertex<V> extends SV<V> {
   protected int rank;
   protected int index;
   protected Point p;
 
-  public static <V> SV<V> of(V vertex) {
-    return new SV(vertex);
+  public static <V> SugiyamaVertex<V> of(V vertex) {
+    return new SugiyamaVertex(vertex);
   }
 
-  public static <V> SV<V> of(V vertex, int rank, int index) {
-    return new SV(vertex, rank, index);
+  public static <V> SugiyamaVertex<V> of(V vertex, int rank, int index) {
+    return new SugiyamaVertex(vertex, rank, index);
   }
 
-  protected SV() {
-    this.vertex = null;
+  protected SugiyamaVertex() {
+    super();
   }
 
-  protected SV(V vertex) {
-    this.vertex = vertex;
+  protected SugiyamaVertex(V vertex) {
+    super(vertex);
   }
 
-  protected SV(V vertex, int rank, int index) {
-    this.vertex = vertex;
+  protected SugiyamaVertex(V vertex, int rank, int index) {
+    super(vertex);
     this.rank = rank;
     this.index = index;
   }
 
-  protected SV(V vertex, int rank, int index, Point p) {
-    this.vertex = vertex;
+  protected SugiyamaVertex(V vertex, int rank, int index, Point p) {
+    super(vertex);
     this.rank = rank;
     this.index = index;
     this.p = p;
   }
 
-  public SV(SV<V> other) {
+  public SugiyamaVertex(SugiyamaVertex<V> other) {
     this(other.vertex, other.rank, other.index, other.p);
   }
 
@@ -77,11 +77,11 @@ public class SV<V> {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    SV<?> sv = (SV<?>) o;
+    SugiyamaVertex<?> sugiyamaVertex = (SugiyamaVertex<?>) o;
     if (o instanceof SyntheticVertex) {
       return false;
     }
-    return Objects.equals(vertex, sv.vertex);
+    return Objects.equals(vertex, sugiyamaVertex.vertex);
   }
 
   @Override
@@ -91,6 +91,15 @@ public class SV<V> {
 
   @Override
   public String toString() {
-    return "SV{" + "vertex=" + vertex + ", rank=" + rank + ", index=" + index + ", p=" + p + '}';
+    return "SugiyamaVertex{"
+        + "vertex="
+        + vertex
+        + ", rank="
+        + rank
+        + ", index="
+        + index
+        + ", p="
+        + p
+        + '}';
   }
 }

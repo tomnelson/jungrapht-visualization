@@ -9,10 +9,10 @@ package org.jungrapht.visualization;
 
 import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 
-import com.google.common.base.Preconditions;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -22,11 +22,8 @@ import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.decorators.ParallelEdgeShapeFunction;
 import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.event.RenderContextStateChange;
-import org.jungrapht.visualization.renderers.EdgeLabelRenderer;
-import org.jungrapht.visualization.renderers.JLabelEdgeLabelRenderer;
-import org.jungrapht.visualization.renderers.JLabelVertexLabelRenderer;
+import org.jungrapht.visualization.renderers.*;
 import org.jungrapht.visualization.renderers.Renderer;
-import org.jungrapht.visualization.renderers.VertexLabelRenderer;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.util.ArrowFactory;
@@ -506,7 +503,7 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
   }
 
   public void setPickSupport(GraphElementAccessor<V, E> pickSupport) {
-    Preconditions.checkNotNull(pickSupport);
+    Objects.requireNonNull(pickSupport);
     this.pickSupport = pickSupport;
   }
 

@@ -33,7 +33,8 @@ import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.decorators.IconShapeFunction;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
-import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.CircleLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.util.RandomLocationTransformer;
 import org.jungrapht.visualization.renderers.Checkmark;
@@ -106,8 +107,8 @@ public class VertexImageShaperDemo extends JPanel {
       }
     }
 
-    FRLayoutAlgorithm<Number> layoutAlgorithm = new FRLayoutAlgorithm<>();
-    layoutAlgorithm.setMaxIterations(100);
+    LayoutAlgorithm<Number> layoutAlgorithm = new CircleLayoutAlgorithm<>();
+    //    layoutAlgorithm.setMaxIterations(100);
     //    treeLayoutAlgorithm.setInitializer(new RandomLocationTransformer<>(new Dimension(400, 400), 0));
 
     final DefaultModalGraphMouse<Number, Number> graphMouse = new DefaultModalGraphMouse<>();

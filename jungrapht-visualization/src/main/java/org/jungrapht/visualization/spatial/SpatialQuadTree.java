@@ -2,9 +2,6 @@ package org.jungrapht.visualization.spatial;
 
 import static org.jungrapht.visualization.spatial.SpatialQuadTree.Quadrant.*;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
@@ -97,7 +94,7 @@ public class SpatialQuadTree<V> extends AbstractSpatial<V, V>
   public SpatialQuadTree(LayoutModel<V> layoutModel, int pLevel, Rectangle2D area) {
     super(layoutModel);
     level = pLevel;
-    nodes = Collections.synchronizedSet(Sets.newHashSet());
+    nodes = Collections.synchronizedSet(new HashSet<>());
     this.area = area;
   }
 
@@ -160,7 +157,7 @@ public class SpatialQuadTree<V> extends AbstractSpatial<V, V>
     SpatialQuadTree<V> se =
         new SpatialQuadTree(layoutModel, childLevel, x + width, y + height, width, height);
     synchronized (lock) {
-      children = ImmutableMap.of(NE, ne, NW, nw, SW, sw, SE, se);
+      children = Map.of(NE, ne, NW, nw, SW, sw, SE, se);
     }
   }
 
@@ -288,7 +285,7 @@ public class SpatialQuadTree<V> extends AbstractSpatial<V, V>
 
   @Override
   public List<Shape> getGrid() {
-    List<Shape> areas = Lists.newArrayList();
+    List<Shape> areas = new ArrayList<>();
 
     return collectGrids(areas, this);
   }
@@ -325,7 +322,7 @@ public class SpatialQuadTree<V> extends AbstractSpatial<V, V>
     }
 
     pickShapes.add(shape);
-    Set<V> set = Sets.newHashSet();
+    Set<V> set = new HashSet<>();
     Set<V> visibleVertices = this.retrieve(set, shape);
     if (log.isDebugEnabled()) {
       log.debug("visibleVertices:{}", visibleVertices);
@@ -344,7 +341,7 @@ public class SpatialQuadTree<V> extends AbstractSpatial<V, V>
       return layoutModel.getGraph().vertexSet();
     }
 
-    Set<V> set = Sets.newHashSet();
+    Set<V> set = new HashSet<>();
     Set<V> visibleVertices = this.retrieve(set, r);
     if (log.isDebugEnabled()) {
       log.debug("visibleVertices:{}", visibleVertices);

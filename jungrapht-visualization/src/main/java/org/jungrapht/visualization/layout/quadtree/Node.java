@@ -1,6 +1,5 @@
 package org.jungrapht.visualization.layout.quadtree;
 
-import com.google.common.base.Preconditions;
 import org.jungrapht.visualization.layout.model.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -213,7 +212,7 @@ public class Node<T> {
    * @param visitor the visitor
    */
   public void applyForcesTo(ForceObject<T> visitor) {
-    Preconditions.checkArgument(visitor != null, "Cannot apply forces to a null ForceObject");
+    assert visitor != null : "Cannot apply forces to a null ForceObject";
     if (this.forceObject == null || visitor.getElement().equals(this.forceObject.getElement())) {
       return;
     }

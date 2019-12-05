@@ -127,17 +127,20 @@ public class TestGreedyCycleRemoval {
     Assert.assertEquals(graph.getEdgeSource(3), "D");
     Assert.assertEquals(graph.getEdgeTarget(3), "B");
 
-    SVTransformedGraphSupplier<String, Integer> transformedGraphSupplier =
-        SVTransformedGraphSupplier.<String, Integer>builder().graph(graph).build();
-    Graph<SV<String>, SE<String, Integer>> svGraph = transformedGraphSupplier.get();
+    SugiyamaTransformedGraphSupplier<String, Integer> transformedGraphSupplier =
+        new SugiyamaTransformedGraphSupplier(graph);
+    Graph<SugiyamaVertex<String>, SugiyamaEdge<String, Integer>> svGraph =
+        transformedGraphSupplier.get();
 
-    GreedyCycleRemoval<SV<String>, SE<String, Integer>> gcr = new GreedyCycleRemoval<>(svGraph);
+    GreedyCycleRemoval<SugiyamaVertex<String>, SugiyamaEdge<String, Integer>> gcr =
+        new GreedyCycleRemoval<>(svGraph);
 
-    Collection<SE<String, Integer>> feedbackArcs = gcr.getFeedbackArcs();
+    Collection<SugiyamaEdge<String, Integer>> feedbackArcs = gcr.getFeedbackArcs();
 
-    for (SE<String, Integer> se : feedbackArcs) {
+    for (SugiyamaEdge<String, Integer> se : feedbackArcs) {
       svGraph.removeEdge(se);
-      SE<String, Integer> newEdge = SE.<String, Integer>of(se.edge, se.target, se.source);
+      SugiyamaEdge<String, Integer> newEdge =
+          SugiyamaEdge.<String, Integer>of(se.edge, se.target, se.source);
       svGraph.addEdge(newEdge.source, newEdge.target, newEdge);
     }
     log.info("reverseArcs: {}", gcr.getFeedbackArcs());

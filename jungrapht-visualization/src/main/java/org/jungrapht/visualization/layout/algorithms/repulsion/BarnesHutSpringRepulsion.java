@@ -1,10 +1,11 @@
 package org.jungrapht.visualization.layout.algorithms.repulsion;
 
-import com.google.common.cache.LoadingCache;
+import static org.jungrapht.visualization.layout.algorithms.SpringLayoutAlgorithm.*;
+
 import java.util.ConcurrentModificationException;
+import java.util.Map;
 import java.util.Random;
 import org.jgrapht.Graph;
-import org.jungrapht.visualization.layout.algorithms.SpringLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.quadtree.BarnesHutQuadTree;
@@ -45,8 +46,7 @@ public class BarnesHutSpringRepulsion<V>
       return this;
     }
 
-    public Builder<V> nodeData(
-        LoadingCache<V, SpringLayoutAlgorithm.SpringVertexData> springVertexData) {
+    public Builder<V> nodeData(Map<V, SpringVertexData> springVertexData) {
       this.springVertexData = springVertexData;
       return this;
     }
@@ -92,7 +92,7 @@ public class BarnesHutSpringRepulsion<V>
           continue;
         }
 
-        SpringLayoutAlgorithm.SpringVertexData svd = springVertexData.getUnchecked(vertex);
+        SpringVertexData svd = springVertexData.getOrDefault(vertex, new SpringVertexData());
         if (svd == null) {
           continue;
         }

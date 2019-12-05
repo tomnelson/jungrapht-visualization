@@ -1,8 +1,23 @@
 package org.jungrapht.visualization.util.helpers;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.Function;
-import org.jungrapht.visualization.layout.algorithms.*;
+import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.CircleLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.EdgeAwareTreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.ISOMLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.MultiRowEdgeAwareTreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.MultiRowTreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.RadialEdgeAwareTreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.SpringLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFRRepulsion;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutSpringRepulsion;
 
@@ -42,6 +57,7 @@ public class LayoutFunction<V> implements Function<String, LayoutAlgorithm.Build
       super(
           Layout.of("Kamada Kawai", KKLayoutAlgorithm.<V>builder()),
           Layout.of("Circle", CircleLayoutAlgorithm.<V>builder()),
+          Layout.of("RECCircle", CircleLayoutAlgorithm.<V>builder().reduceEdgeCrossing(true)),
           Layout.of("Self Organizing Map", ISOMLayoutAlgorithm.<V>builder()),
           Layout.of("Fruchterman Reingold", FRLayoutAlgorithm.<V>builder()),
           Layout.of(

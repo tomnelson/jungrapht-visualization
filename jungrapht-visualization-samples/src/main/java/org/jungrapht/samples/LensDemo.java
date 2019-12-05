@@ -8,7 +8,6 @@
  */
 package org.jungrapht.samples;
 
-import com.google.common.collect.ImmutableSortedMap;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.geom.AffineTransform;
@@ -239,7 +238,7 @@ public class LensDemo extends JPanel {
     controls.add(ControlHelpers.getZoomControls("Zoom", vv));
     controls.add(
         LensControlHelper.builder(
-                ImmutableSortedMap.of(
+                Map.of(
                     "Hyperbolic View",
                     hyperbolicViewSupport,
                     "Hyperbolic Layout",

@@ -1,22 +1,12 @@
 package org.jungrapht.visualization.spatial;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
-import com.google.common.collect.Sets;
 import java.awt.*;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.ConcurrentModificationException;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
@@ -50,8 +40,8 @@ public class SpatialGrid<V> extends AbstractSpatial<V, V>
   private Dimension size;
 
   /** A mapping of grid cell identified to a collection of contained vertices */
-  private final Multimap<Integer, V> map =
-      Multimaps.synchronizedListMultimap(ArrayListMultimap.create());
+  private final Map<Integer, List<V>> map = Collections.synchronizedMap(new HashMap<>());
+  //      Multimaps.synchronizedListMultimap(ArrayListMultimap.create());
 
   /** the width of a grid cell */
   private double boxWidth;
@@ -120,7 +110,7 @@ public class SpatialGrid<V> extends AbstractSpatial<V, V>
 
   @Override
   public TreeNode getContainingLeaf(Object element) {
-    for (Map.Entry<Integer, Collection<V>> entry : map.asMap().entrySet()) {
+    for (Map.Entry<Integer, ? extends Collection<V>> entry : map.entrySet()) {
       if (entry.getValue().contains(element)) {
         int index = entry.getKey();
         Rectangle2D r = (Rectangle2D) this.gridCache.get(index);
@@ -144,7 +134,7 @@ public class SpatialGrid<V> extends AbstractSpatial<V, V>
   @Override
   public List<Shape> getGrid() {
     if (gridCache == null) {
-      gridCache = Lists.newArrayList();
+      gridCache = new ArrayList<>();
       for (int j = 0; j < verticalCount; j++) {
         for (int i = 0; i < horizontalCount; i++) {
           gridCache.add(
@@ -164,7 +154,7 @@ public class SpatialGrid<V> extends AbstractSpatial<V, V>
    *
    * @return the map of box numbers to contained vertices
    */
-  public Multimap<Integer, V> getMap() {
+  public Map<Integer, ? extends Collection<V>> getMap() {
     return map;
   }
 
@@ -295,7 +285,15 @@ public class SpatialGrid<V> extends AbstractSpatial<V, V>
     while (true) {
       try {
         for (V vertex : vertices) {
-          this.map.put(this.getBoxNumberFromLocation(layoutModel.apply(vertex)), vertex);
+          int box = this.getBoxNumberFromLocation(layoutModel.apply(vertex));
+          if (this.map.containsKey(box)) {
+            this.map.get(box).add(vertex);
+          } else {
+            List<V> list = new ArrayList<>();
+            list.add(vertex);
+            this.map.put(box, list);
+          }
+          //          this.map.put(this.getBoxNumberFromLocation(layoutModel.apply(vertex)), vertex);
         }
         break;
       } catch (ConcurrentModificationException ex) {
@@ -321,7 +319,7 @@ public class SpatialGrid<V> extends AbstractSpatial<V, V>
       int rightBox = this.getBoxNumberFromLocation(layoutModel.apply(vertex));
       // vertex should end up in box 'rightBox'
       // check to see if it is already there
-      if (map.get(rightBox).contains(vertex)) {
+      if (map.get(rightBox).size() > 0 && map.get(rightBox).contains(vertex)) {
         // nothing to do here, just return
         return;
       }
@@ -329,7 +327,7 @@ public class SpatialGrid<V> extends AbstractSpatial<V, V>
       Integer wrongBox = null;
       synchronized (map) {
         for (Integer box : map.keySet()) {
-          if (map.get(box).contains(vertex)) {
+          if (map.get(box).size() > 0 && map.get(box).contains(vertex)) {
             // remove it and stop, because vertex can be in only one box
             wrongBox = box;
             break;
@@ -339,7 +337,14 @@ public class SpatialGrid<V> extends AbstractSpatial<V, V>
       if (wrongBox != null) {
         map.remove(wrongBox, vertex);
       }
-      map.put(rightBox, vertex);
+      if (map.get(rightBox).size() > 0) {
+        map.get(rightBox).add(vertex);
+      } else {
+        List<V> list = new ArrayList<>();
+        list.add(vertex);
+        map.put(rightBox, list);
+      }
+      //      map.put(rightBox, vertex);
     }
   }
 
@@ -390,7 +395,7 @@ public class SpatialGrid<V> extends AbstractSpatial<V, V>
    * @return the tile numbers that intersect with the visibleArea
    */
   protected Collection<Integer> getVisibleTiles(Shape visibleArea) {
-    Set<Integer> visibleTiles = Sets.newHashSet();
+    Set<Integer> visibleTiles = new HashSet<>();
     List<Shape> grid = getGrid();
     for (int i = 0; i < this.horizontalCount * this.verticalCount; i++) {
       if (visibleArea.intersects(grid.get(i).getBounds2D())) {
@@ -423,7 +428,7 @@ public class SpatialGrid<V> extends AbstractSpatial<V, V>
     if (log.isTraceEnabled()) {
       log.trace("map is {}", map);
     }
-    Set<V> visibleVertices = Sets.newHashSet();
+    Set<V> visibleVertices = new HashSet<>();
     Collection<Integer> tiles = getVisibleTiles(area);
     for (Integer index : tiles) {
       Collection<V> toAdd = this.map.get(index);

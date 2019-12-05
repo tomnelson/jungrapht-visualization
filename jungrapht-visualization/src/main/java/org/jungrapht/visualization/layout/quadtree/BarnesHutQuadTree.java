@@ -1,6 +1,5 @@
 package org.jungrapht.visualization.layout.quadtree;
 
-import com.google.common.base.Preconditions;
 import java.util.Map;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
@@ -90,7 +89,7 @@ public class BarnesHutQuadTree<T> {
    *     their forces
    */
   public void applyForcesTo(ForceObject<T> visitor) {
-    Preconditions.checkArgument(visitor != null, "Cannot apply forces to a null ForceObject");
+    assert visitor != null : "Cannot apply forces to a null ForceObject";
     if (root != null && root.forceObject != visitor) {
       root.applyForcesTo(visitor);
     }

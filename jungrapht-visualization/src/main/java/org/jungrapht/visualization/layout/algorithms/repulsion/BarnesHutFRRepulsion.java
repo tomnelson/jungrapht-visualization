@@ -1,6 +1,6 @@
 package org.jungrapht.visualization.layout.algorithms.repulsion;
 
-import com.google.common.cache.LoadingCache;
+import java.util.Map;
 import java.util.Random;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
@@ -40,7 +40,7 @@ public class BarnesHutFRRepulsion<V>
       return this;
     }
 
-    public Builder<V> nodeData(LoadingCache<V, Point> frVertexData) {
+    public Builder<V> nodeData(Map<V, Point> frVertexData) {
       this.frVertexData = frVertexData;
       return this;
     }
@@ -81,7 +81,7 @@ public class BarnesHutFRRepulsion<V>
   @Override
   public void calculateRepulsion() {
     for (V vertex : layoutModel.getGraph().vertexSet()) {
-      Point fvd = frVertexData.getUnchecked(vertex);
+      Point fvd = frVertexData.computeIfAbsent(vertex, initializer);
       if (fvd == null) {
         return;
       }

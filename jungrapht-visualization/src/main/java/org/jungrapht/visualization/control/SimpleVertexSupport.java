@@ -1,7 +1,7 @@
 package org.jungrapht.visualization.control;
 
-import com.google.common.base.Preconditions;
 import java.awt.geom.Point2D;
+import java.util.Objects;
 import java.util.function.Supplier;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.VisualizationModel;
@@ -25,7 +25,7 @@ public class SimpleVertexSupport<V, E> implements VertexSupport<V, E> {
   }
 
   public void startVertexCreate(VisualizationServer<V, E> vv, Point2D point) {
-    Preconditions.checkState(
+    Objects.requireNonNull(
         vv.getVisualizationModel().getGraph().getType().isModifiable(), "graph must be mutable");
     V newVertex = vertexFactory.get();
     VisualizationModel<V, E> visualizationModel = vv.getVisualizationModel();

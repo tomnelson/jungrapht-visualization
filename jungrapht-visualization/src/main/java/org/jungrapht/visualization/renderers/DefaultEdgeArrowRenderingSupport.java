@@ -9,7 +9,6 @@
  */
 package org.jungrapht.visualization.renderers;
 
-import com.google.common.base.Preconditions;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
@@ -136,9 +135,8 @@ public class DefaultEdgeArrowRenderingSupport<V, E> implements EdgeArrowRenderin
    * @throws IllegalArgumentException if the passed line's point2 is not inside the shape
    */
   protected Line2D getLastOutsideSegment(Line2D line, Shape shape) {
-    Preconditions.checkArgument(
-        shape.contains(line.getP2()),
-        "line end point: " + line.getP2() + " is not contained in shape: " + shape.getBounds2D());
+    assert shape.contains(line.getP2())
+        : "line end point: " + line.getP2() + " is not contained in shape: " + shape.getBounds2D();
     Line2D left = new Line2D.Double();
     Line2D right = new Line2D.Double();
     // subdivide the line until its left segment intersects
@@ -161,9 +159,11 @@ public class DefaultEdgeArrowRenderingSupport<V, E> implements EdgeArrowRenderin
    * @throws IllegalArgumentException if the passed line's point1 is not inside the shape
    */
   protected Line2D getFirstOutsideSegment(Line2D line, Shape shape) {
-    Preconditions.checkArgument(
-        shape.contains(line.getP1()),
-        "line start point: " + line.getP1() + " is not contained in shape: " + shape.getBounds2D());
+    assert shape.contains(line.getP1())
+        : "line start point: "
+            + line.getP1()
+            + " is not contained in shape: "
+            + shape.getBounds2D();
     Line2D left = new Line2D.Float();
     Line2D right = new Line2D.Float();
     // subdivide the line until its right side intersects the

@@ -1,7 +1,7 @@
 package org.jungrapht.visualization.selection;
 
-import com.google.common.collect.Sets;
 import java.util.Collections;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.Assert;
 import org.junit.Before;
@@ -58,8 +58,8 @@ public class MultiMutableSelectedStateTest {
   public void testSelectMany() {
     multiMutableSelectedState.addItemListener(
         new SelectedState.StateChangeListener<>(this::selected, this::forbidden));
-    multiMutableSelectedState.select(Sets.newHashSet("A", "B", "C"));
-    Assert.assertEquals(multiMutableSelectedState.getSelected(), Sets.newHashSet("A", "B", "C"));
+    multiMutableSelectedState.select(Set.of("A", "B", "C"));
+    Assert.assertEquals(multiMutableSelectedState.getSelected(), Set.of("A", "B", "C"));
     Assert.assertTrue(atomicBoolean.get());
   }
 
@@ -69,11 +69,11 @@ public class MultiMutableSelectedStateTest {
    */
   @Test
   public void testToggleSelectionOfMany() {
-    multiMutableSelectedState.select(Sets.newHashSet("A", "B", "C"));
+    multiMutableSelectedState.select(Set.of("A", "B", "C"));
     multiMutableSelectedState.addItemListener(
         new SelectedState.StateChangeListener<>(this::forbidden, this::forbidden));
-    multiMutableSelectedState.select(Sets.newHashSet("A", "B", "C"));
-    Assert.assertEquals(multiMutableSelectedState.getSelected(), Sets.newHashSet("A", "B", "C"));
+    multiMutableSelectedState.select(Set.of("A", "B", "C"));
+    Assert.assertEquals(multiMutableSelectedState.getSelected(), Set.of("A", "B", "C"));
     Assert.assertFalse(atomicBoolean.get());
   }
 
@@ -83,13 +83,12 @@ public class MultiMutableSelectedStateTest {
    */
   @Test
   public void testSelectOneWithExistingSelection() {
-    multiMutableSelectedState.select(Sets.newHashSet("A", "B", "C"));
+    multiMutableSelectedState.select(Set.of("A", "B", "C"));
     multiMutableSelectedState.addItemListener(
         new SelectedState.StateChangeListener<>(this::selected, this::deselected));
     multiMutableSelectedState.select("D");
     Assert.assertTrue(multiMutableSelectedState.getSelected().contains("D"));
-    Assert.assertEquals(
-        multiMutableSelectedState.getSelected(), Sets.newHashSet("A", "B", "C", "D"));
+    Assert.assertEquals(multiMutableSelectedState.getSelected(), Set.of("A", "B", "C", "D"));
     Assert.assertTrue(atomicBoolean.get());
   }
 

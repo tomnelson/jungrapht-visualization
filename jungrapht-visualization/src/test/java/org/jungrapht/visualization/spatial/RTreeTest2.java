@@ -1,14 +1,12 @@
 package org.jungrapht.visualization.spatial;
 
-import static com.google.common.truth.Truth.assertThat;
-
-import com.google.common.collect.Maps;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -43,7 +41,7 @@ public class RTreeTest2 {
   private Rectangle2D r6;
   private Rectangle2D r7;
   private Rectangle2D r8;
-  Map<String, Rectangle2D> linkedMap = Maps.newLinkedHashMap();
+  Map<String, Rectangle2D> linkedMap = new LinkedHashMap<>();
 
   @Before
   public void before() {
@@ -242,10 +240,15 @@ public class RTreeTest2 {
     if (rootVertex instanceof InnerNode) {
       InnerNode innerVertex = (InnerNode) rootVertex;
       Rectangle2D unionBounds = Node.union(innerVertex.getChildren());
-      assertThat(rootBounds.getMinX()).isWithin(1.0E-3).of(unionBounds.getMinX());
-      assertThat(rootBounds.getMinY()).isWithin(1.0E-3).of(unionBounds.getMinY());
-      assertThat(rootBounds.getMaxX()).isWithin(1.0E-3).of(unionBounds.getMaxX());
-      assertThat(rootBounds.getMaxY()).isWithin(1.0E-3).of(unionBounds.getMaxY());
+      Assert.assertTrue(Math.abs(rootBounds.getMinX() - unionBounds.getMinX()) < 1.0E-3);
+      Assert.assertTrue(Math.abs(rootBounds.getMinY() - unionBounds.getMinY()) < 1.0E-3);
+      Assert.assertTrue(Math.abs(rootBounds.getMaxX() - unionBounds.getMaxX()) < 1.0E-3);
+      Assert.assertTrue(Math.abs(rootBounds.getMaxY() - unionBounds.getMaxY()) < 1.0E-3);
+
+      //      assertThat(rootBounds.getMinX()).isWithin(1.0E-3).of(unionBounds.getMinX());
+      //      assertThat(rootBounds.getMinY()).isWithin(1.0E-3).of(unionBounds.getMinY());
+      //      assertThat(rootBounds.getMaxX()).isWithin(1.0E-3).of(unionBounds.getMaxX());
+      //      assertThat(rootBounds.getMaxY()).isWithin(1.0E-3).of(unionBounds.getMaxY());
     }
 
     for (TreeNode rt : rootVertex.getChildren()) {

@@ -3,13 +3,8 @@ package org.jungrapht.visualization.spatial.rtree;
 import static org.jungrapht.visualization.spatial.rtree.Node.M;
 import static org.jungrapht.visualization.spatial.rtree.Node.m;
 
-import com.google.common.collect.Lists;
 import java.awt.geom.Rectangle2D;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,9 +45,9 @@ public class RStarLeafSplitter<T> implements LeafSplitter<T> {
   private Pair<List<Map.Entry<T, Rectangle2D>>> chooseSplit(
       Collection<Map.Entry<T, Rectangle2D>> entries, Map.Entry<T, Rectangle2D> newEntry) {
     // make 2 lists to sort
-    List<Map.Entry<T, Rectangle2D>> xAxisList = Lists.newArrayList(entries);
+    List<Map.Entry<T, Rectangle2D>> xAxisList = new ArrayList<>(entries);
     xAxisList.add(newEntry);
-    List<Map.Entry<T, Rectangle2D>> yAxisList = Lists.newArrayList(entries);
+    List<Map.Entry<T, Rectangle2D>> yAxisList = new ArrayList<>(entries);
     yAxisList.add(newEntry);
 
     // sort them by min value then max value
@@ -60,8 +55,8 @@ public class RStarLeafSplitter<T> implements LeafSplitter<T> {
     yAxisList.sort(verticalEdgeComparator);
 
     // create containers for the 2 lists to split
-    List<Pair<List<Map.Entry<T, Rectangle2D>>>> horizontalGroup = Lists.newArrayList();
-    List<Pair<List<Map.Entry<T, Rectangle2D>>>> verticalGroup = Lists.newArrayList();
+    List<Pair<List<Map.Entry<T, Rectangle2D>>>> horizontalGroup = new ArrayList<>();
+    List<Pair<List<Map.Entry<T, Rectangle2D>>>> verticalGroup = new ArrayList<>();
 
     // iterate over the lists to create collections with different midpoints
     for (int k = 0; k < M - 2 * m + 2; k++) {

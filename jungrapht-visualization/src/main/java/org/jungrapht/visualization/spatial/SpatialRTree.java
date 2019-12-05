@@ -1,19 +1,12 @@
 package org.jungrapht.visualization.spatial;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.layout.BoundingRectangleCollector;
@@ -135,7 +128,7 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
         // just return the entire layout area
         return Collections.singletonList(getLayoutArea());
       }
-      List<Shape> areas = Lists.newArrayList();
+      List<Shape> areas = new ArrayList<>();
 
       gridCache = collectGrids(areas, rtree);
       log.trace("getGrid got {} and {}", areas.size(), gridCache.size());
@@ -162,7 +155,7 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
     }
 
     Node<T> theRoot = rtree.getRoot().get();
-    return theRoot.getContainingLeafs(Sets.newHashSet(), x, y);
+    return theRoot.getContainingLeafs(new HashSet<>(), x, y);
   }
 
   @Override
@@ -267,7 +260,7 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
 
       Node<V> root = rtree.getRoot().get();
       log.trace("out of nodes {}", layoutModel.getGraph().vertexSet());
-      Set<V> visibleElements = Sets.newHashSet();
+      Set<V> visibleElements = new HashSet<>();
       return root.getVisibleElements(visibleElements, shape);
     }
 
@@ -453,7 +446,7 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
       }
       pickShapes.add(shape);
       Node<E> root = rtree.getRoot().get();
-      Set<E> visibleElements = Sets.newHashSet();
+      Set<E> visibleElements = new HashSet<>();
       return root.getVisibleElements(visibleElements, shape);
     }
 

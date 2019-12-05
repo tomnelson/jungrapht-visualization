@@ -10,20 +10,20 @@ public class Synthetics<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(Synthetics.class);
 
-  protected final Graph<SV<V>, SE<V, E>> dag;
+  protected final Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> dag;
 
-  public Synthetics(Graph<SV<V>, SE<V, E>> dag) {
+  public Synthetics(Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> dag) {
     this.dag = dag;
   }
 
-  public List<List<SV<V>>> createVirtualVerticesAndEdges(
-      List<SE<V, E>> edges, List<List<SV<V>>> layers) {
+  public List<List<SugiyamaVertex<V>>> createVirtualVerticesAndEdges(
+      List<SugiyamaEdge<V, E>> edges, List<List<SugiyamaVertex<V>>> layers) {
     for (int i = 0; i < layers.size() - 1; i++) {
-      List<SV<V>> currentLayer = layers.get(i);
+      List<SugiyamaVertex<V>> currentLayer = layers.get(i);
 
-      for (SV<V> v : currentLayer) {
-        List<SE<V, E>> outgoingMulti = new ArrayList<>();
-        for (SE<V, E> edge : edges) {
+      for (SugiyamaVertex<V> v : currentLayer) {
+        List<SugiyamaEdge<V, E>> outgoingMulti = new ArrayList<>();
+        for (SugiyamaEdge<V, E> edge : edges) {
           if (edge.source.equals(v)) {
             if (Math.abs(edge.target.rank - v.rank) > 1) {
               outgoingMulti.add(edge);
@@ -32,8 +32,8 @@ public class Synthetics<V, E> {
         }
         // find all edges where the target vertex is in the current layer and the source vertex rank is
         // more than one layer away
-        List<SE<V, E>> incomingMulti = new ArrayList<>();
-        for (SE<V, E> edge : edges) {
+        List<SugiyamaEdge<V, E>> incomingMulti = new ArrayList<>();
+        for (SugiyamaEdge<V, E> edge : edges) {
           if (edge.target.equals(v)) {
             if (Math.abs(edge.source.rank - v.rank) > 1) {
               incomingMulti.add(edge);
@@ -42,7 +42,7 @@ public class Synthetics<V, E> {
         }
         // for edges that 'jump' a row, create a new vertex at the next row's rank
         // and add edges that route the original edge thru the new vertex
-        for (SE<V, E> edge : outgoingMulti) {
+        for (SugiyamaEdge<V, E> edge : outgoingMulti) {
           //          log.info("will replace outgoingMulti edge {}", edge);
           SyntheticVertex<V> virtualVertex = SyntheticVertex.of();
           // rank of new vertex is the rank of the source vertex + 1
@@ -56,9 +56,9 @@ public class Synthetics<V, E> {
         }
         // for edges that 'jump' a row, create a new vertex at the previous row's rank
         // and add edges that route the original edge thru the new vertex
-        for (SE<V, E> edge : incomingMulti) {
+        for (SugiyamaEdge<V, E> edge : incomingMulti) {
           //          log.info("will replace incomingMulti edge {}", edge);
-          SV<V> virtualVertex = SyntheticVertex.of();
+          SugiyamaVertex<V> virtualVertex = SyntheticVertex.of();
           // rank of new vertex is the rank of the target vertex - 1
           int newVertexRank = edge.target.rank - 1;
           virtualVertex.setRank(newVertexRank);
@@ -73,17 +73,18 @@ public class Synthetics<V, E> {
     return layers;
   }
 
-  private void updateIndices(List<SV<V>> layer) {
+  private void updateIndices(List<SugiyamaVertex<V>> layer) {
 
     for (int i = 0; i < layer.size(); i++) {
-      SV<V> sv = layer.get(i);
-      sv.index = i;
+      SugiyamaVertex<V> sugiyamaVertex = layer.get(i);
+      sugiyamaVertex.index = i;
     }
   }
 
-  private void replaceEdgeWithTwo(List<SE<V, E>> edges, SE<V, E> loser, SV<V> virtualVertex) {
-    SV<V> from = loser.source;
-    SV<V> to = loser.target;
+  private void replaceEdgeWithTwo(
+      List<SugiyamaEdge<V, E>> edges, SugiyamaEdge<V, E> loser, SugiyamaVertex<V> virtualVertex) {
+    SugiyamaVertex<V> from = loser.source;
+    SugiyamaVertex<V> to = loser.target;
     SyntheticEdge<V, E> virtualEdgeOne = SyntheticEdge.of(loser, from, virtualVertex);
     SyntheticEdge<V, E> virtualEdgeTwo = SyntheticEdge.of(loser, virtualVertex, to);
 
@@ -105,22 +106,22 @@ public class Synthetics<V, E> {
     List<ArticulatedEdge<V, E>> articulatedEdges = new ArrayList<>();
     List<SyntheticVertex<V>> syntheticVerticesToRemove = new ArrayList<>();
     List<SyntheticEdge<V, E>> syntheticEdgesToRemove = new ArrayList<>();
-    for (SE<V, E> edge : dag.edgeSet()) {
+    for (SugiyamaEdge<V, E> edge : dag.edgeSet()) {
       if (edge instanceof SyntheticEdge) {
         SyntheticEdge<V, E> syntheticEdge = (SyntheticEdge<V, E>) edge;
         List<SyntheticVertex<V>> syntheticVertices = new ArrayList<>();
-        SV<V> source = dag.getEdgeSource(edge);
+        SugiyamaVertex<V> source = dag.getEdgeSource(edge);
         if (source instanceof SyntheticVertex) {
           continue;
         }
         syntheticEdgesToRemove.add(syntheticEdge);
-        SV<V> target = dag.getEdgeTarget(syntheticEdge);
+        SugiyamaVertex<V> target = dag.getEdgeTarget(syntheticEdge);
         while (target instanceof SyntheticVertex) {
           SyntheticVertex<V> syntheticTarget = (SyntheticVertex<V>) target;
           syntheticVerticesToRemove.add(syntheticTarget);
           syntheticVertices.add(syntheticTarget);
           // a SyntheticVertex will have one and only one outgoing edge
-          SE<V, E> outgoingEdge = dag.outgoingEdgesOf(target).stream().findFirst().get();
+          SugiyamaEdge<V, E> outgoingEdge = dag.outgoingEdgesOf(target).stream().findFirst().get();
           syntheticEdgesToRemove.add((SyntheticEdge<V, E>) outgoingEdge);
           target = dag.getEdgeTarget(outgoingEdge);
         }

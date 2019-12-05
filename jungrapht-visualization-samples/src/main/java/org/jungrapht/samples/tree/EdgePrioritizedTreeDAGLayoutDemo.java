@@ -1,9 +1,8 @@
 package org.jungrapht.samples.tree;
 
-import com.google.common.collect.Sets;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
+import java.awt.*;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -33,7 +32,7 @@ public class EdgePrioritizedTreeDAGLayoutDemo extends JFrame {
 
   private static final Logger log = LoggerFactory.getLogger(EdgePrioritizedTreeDAGLayoutDemo.class);
 
-  static Set<Integer> prioritySet = Sets.newHashSet(0, 2, 6, 8);
+  static Set<Integer> prioritySet = new HashSet<>(Arrays.asList(0, 2, 6, 8));
 
   static Predicate<Integer> edgePredicate = e -> e < 100;
 

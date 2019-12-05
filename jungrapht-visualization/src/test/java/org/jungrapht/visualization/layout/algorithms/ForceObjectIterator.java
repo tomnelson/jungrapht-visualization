@@ -1,8 +1,8 @@
 package org.jungrapht.visualization.layout.algorithms;
 
-import com.google.common.collect.Sets;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import org.jungrapht.visualization.layout.quadtree.BarnesHutQuadTree;
 import org.jungrapht.visualization.layout.quadtree.ForceObject;
@@ -24,7 +24,7 @@ class ForceObjectIterator<T> implements Iterator<ForceObject<T>> {
 
   public ForceObjectIterator(BarnesHutQuadTree<T> tree, ForceObject<T> target) {
     this.tree = tree;
-    Set<ForceObject<T>> forceObjects = getForceObjectsFor(Sets.newLinkedHashSet(), target);
+    Set<ForceObject<T>> forceObjects = getForceObjectsFor(new LinkedHashSet<>(), target);
     this.iterator = forceObjects.iterator();
   }
 

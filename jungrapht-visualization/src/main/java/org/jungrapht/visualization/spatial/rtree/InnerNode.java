@@ -1,15 +1,10 @@
 package org.jungrapht.visualization.spatial.rtree;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +67,8 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
     node.setParent(this);
     updateBounds(node.getBounds());
     leafChildren = node instanceof LeafNode;
-    children = Lists.newArrayList(node);
+    children = new ArrayList();
+    children.add(node);
   }
 
   /**
@@ -81,7 +77,7 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
    * @param nodes the children for the new InnerVertex
    */
   InnerNode(Collection<Node<T>> nodes) {
-    children = Lists.newArrayList();
+    children = new ArrayList<>();
     Node<T> sample = null;
     for (Node<T> node : nodes) {
       sample = node;
@@ -345,8 +341,8 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
    * @param node
    */
   void addVertex(Node<T> node) {
-    Preconditions.checkArgument(node != this, "Attempt to add self as child");
-    Preconditions.checkArgument(!children.contains(node), "Attempt to add duplicate child");
+    assert node != this : "Attempt to add self as child";
+    assert !children.contains(node) : "Attempt to add duplicate child";
     node.setParent(this);
     updateBounds(node.getBounds());
     children.add(node);
@@ -395,7 +391,7 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
    * @return the parent, if exists, or this
    */
   private InnerNode<T> add(SplitterContext<T> splitterContext, Node<T> node) {
-    Preconditions.checkArgument(node != this, "Attempt to add self as child");
+    assert node != this : "Attempt to add self as child";
 
     updateBounds(node.getBounds());
 
@@ -406,12 +402,8 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
       if (parent.isPresent()) {
         InnerNode<T> innerVertexParent = (InnerNode<T>) parent.get();
         // sanity check
-        Preconditions.checkArgument(
-            this != pair.left && this != pair.right,
-            "Pair left {} or right {} the same as this {}",
-            pair.left,
-            pair.right,
-            this);
+        assert this != pair.left && this != pair.right
+            : "Pair left " + pair.left + " or right " + pair.right + " the same as this" + this;
 
         return innerVertexParent.replaceVertex(this, splitterContext, pair.left, pair.right);
 

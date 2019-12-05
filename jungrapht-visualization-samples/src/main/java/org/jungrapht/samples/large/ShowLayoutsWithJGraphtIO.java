@@ -1,14 +1,12 @@
 package org.jungrapht.samples.large;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSortedMap;
-import com.google.common.collect.Sets;
 import java.awt.*;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipInputStream;
@@ -184,22 +182,18 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
                     vv.addPreRenderPaintable(radialLayoutRings);
                   }
 
-                  Preconditions.checkState(
-                      true,
-                      "oops3",
-                      vv.getVisualizationModel()
+                  assert true
+                      == vv.getVisualizationModel()
                           .getModelChangeSupport()
                           .getModelChangeListeners()
-                          .contains(this));
+                          .contains(this);
 
-                  Preconditions.checkState(
-                      true,
-                      "oops4",
-                      vv.getVisualizationModel()
+                  assert true
+                      == vv.getVisualizationModel()
                           .getLayoutModel()
                           .getModelChangeSupport()
                           .getModelChangeListeners()
-                          .contains(vv.getVisualizationModel()));
+                          .contains(vv.getVisualizationModel());
                 }));
 
     layoutComboBox.setSelectedItem(LayoutHelper.Layouts.FR_BH_VISITOR);
@@ -282,7 +276,7 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
 
     JComponent lensBox =
         LensControlHelper.builder(
-                ImmutableSortedMap.of(
+                Map.of(
                     "Hyperbolic View", hyperbolicViewSupport,
                     "Hyperbolic Layout", hyperbolicLayoutSupport,
                     "Magnified View", magnifyViewSupport,
@@ -328,8 +322,8 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
   }
 
   void clear(Graph graph) {
-    Set edges = Sets.newHashSet(graph.edgeSet());
-    Set vertices = Sets.newHashSet(graph.vertexSet());
+    Set edges = Set.of(graph.edgeSet());
+    Set vertices = Set.of(graph.vertexSet());
     edges.forEach(graph::removeEdge);
     vertices.forEach(graph::removeVertex);
   }

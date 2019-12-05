@@ -12,23 +12,25 @@ public class GraphLayers<V, E> {
 
   private GraphLayers() {}
 
-  public static <V, E> List<List<SV<V>>> assign(Graph<SV<V>, SE<V, E>> dag) {
+  public static <V, E> List<List<SugiyamaVertex<V>>> assign(
+      Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> dag) {
     int rank = 0;
-    List<List<SV<V>>> sorted = new ArrayList<>();
-    List<SE<V, E>> edges = dag.edgeSet().stream().collect(Collectors.toCollection(LinkedList::new));
-    List<SV<V>> vertices =
+    List<List<SugiyamaVertex<V>>> sorted = new ArrayList<>();
+    List<SugiyamaEdge<V, E>> edges =
+        dag.edgeSet().stream().collect(Collectors.toCollection(LinkedList::new));
+    List<SugiyamaVertex<V>> vertices =
         dag.vertexSet().stream().collect(Collectors.toCollection(LinkedList::new));
-    List<SV<V>> start =
+    List<SugiyamaVertex<V>> start =
         getVerticesWithoutIncomingEdges(dag, edges, vertices); // should be the roots
 
     while (start.size() > 0) {
       for (int i = 0; i < start.size(); i++) {
-        SV<V> v = start.get(i);
+        SugiyamaVertex<V> v = start.get(i);
         v.rank = rank;
         v.index = i;
       }
       sorted.add(start); // add a row
-      Set<SV<V>> fstart = new HashSet<>(start);
+      Set<SugiyamaVertex<V>> fstart = new HashSet<>(start);
       // remove any edges that start in the new row
       edges.removeIf(e -> fstart.contains(dag.getEdgeSource(e)));
       // remove any vertices that have been added to the row
@@ -39,21 +41,24 @@ public class GraphLayers<V, E> {
     return sorted;
   }
 
-  private static <V, E> List<SV<V>> getVerticesWithoutIncomingEdges(
-      Graph<SV<V>, SE<V, E>> dag, Collection<SE<V, E>> edges, Collection<SV<V>> vertices) {
+  private static <V, E> List<SugiyamaVertex<V>> getVerticesWithoutIncomingEdges(
+      Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> dag,
+      Collection<SugiyamaEdge<V, E>> edges,
+      Collection<SugiyamaVertex<V>> vertices) {
     // get targets of all edges
-    Set<SV<V>> targets = edges.stream().map(e -> dag.getEdgeTarget(e)).collect(Collectors.toSet());
+    Set<SugiyamaVertex<V>> targets =
+        edges.stream().map(e -> dag.getEdgeTarget(e)).collect(Collectors.toSet());
     // from vertices, filter out any that are an edge target
     return vertices.stream().filter(v -> !targets.contains(v)).collect(Collectors.toList());
   }
 
-  public static <V> void checkLayers(List<List<SV<V>>> layers) {
+  public static <V> void checkLayers(List<List<SugiyamaVertex<V>>> layers) {
     for (int i = 0; i < layers.size(); i++) {
-      List<SV<V>> layer = layers.get(i);
+      List<SugiyamaVertex<V>> layer = layers.get(i);
       for (int j = 0; j < layer.size(); j++) {
-        SV<V> sv = layer.get(j);
-        assert i == sv.getRank();
-        assert j == sv.getIndex();
+        SugiyamaVertex<V> sugiyamaVertex = layer.get(j);
+        assert i == sugiyamaVertex.getRank();
+        assert j == sugiyamaVertex.getIndex();
       }
     }
   }

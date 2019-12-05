@@ -1,7 +1,7 @@
 package org.jungrapht.visualization.control;
 
-import com.google.common.base.Preconditions;
 import java.awt.geom.Point2D;
+import java.util.Objects;
 import java.util.function.Supplier;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.VisualizationServer;
@@ -46,8 +46,7 @@ public class SimpleEdgeSupport<V, E> implements EdgeSupport<V, E> {
 
   @Override
   public void endEdgeCreate(VisualizationServer<V, E> vv, V endVertex) {
-    Preconditions.checkState(
-        vv.getVisualizationModel().getGraph() != null, "graph must be non-null");
+    Objects.requireNonNull(vv.getVisualizationModel().getGraph() != null, "graph must be non-null");
     if (startVertex != null) {
       Graph<V, E> graph = vv.getVisualizationModel().getGraph();
       graph.addEdge(startVertex, endVertex, edgeFactory.get());

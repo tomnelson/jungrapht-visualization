@@ -35,10 +35,10 @@ import org.slf4j.LoggerFactory;
 public class SugiyamaLayoutAlgorithm<V, E>
     implements LayoutAlgorithm<V>,
         EdgeAwareLayoutAlgorithm<V, E>,
-        EdgeSorting<E>,
-        EdgePredicated<E>,
-        VertexSorting<V>,
-        VertexPredicated<V>,
+        //        EdgeSorting<E>,
+        //        EdgePredicated<E>,
+        //        VertexSorting<V>,
+        //        VertexPredicated<V>,
         RenderContextAware<V, E>,
         ShapeFunctionAware<V>,
         AfterRunnable,
@@ -238,7 +238,9 @@ public class SugiyamaLayoutAlgorithm<V, E>
 
   @Override
   public void setEdgePredicate(Predicate<E> edgePredicate) {
-    this.edgePredicate = edgePredicate;
+
+    this.edgePredicate = e -> true;
+    //edgePredicate;
   }
 
   @Override

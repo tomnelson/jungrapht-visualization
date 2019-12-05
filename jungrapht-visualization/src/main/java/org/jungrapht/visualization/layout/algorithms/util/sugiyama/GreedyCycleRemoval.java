@@ -44,7 +44,7 @@ public class GreedyCycleRemoval<V, E> {
     return graph
         .vertexSet()
         .stream()
-        .filter(v -> graph.incomingEdgesOf(v).isEmpty() && graph.outgoingEdgesOf(v).isEmpty())
+        .filter(v -> graph.degreeOf(v) == 0)
         .collect(Collectors.toList());
   }
 
@@ -80,14 +80,17 @@ public class GreedyCycleRemoval<V, E> {
     List<V> orderedBy = new ArrayList<>(copy.vertexSet());
     orderedBy.sort(
         (l, r) -> {
-          if (copy.outDegreeOf(l) - copy.inDegreeOf(l) > copy.outDegreeOf(r) - copy.inDegreeOf(r)) {
-            return -1;
-          } else if (copy.outDegreeOf(l) - copy.inDegreeOf(l)
-              == copy.outDegreeOf(r) - copy.inDegreeOf(r)) {
-            return 0;
-          } else {
-            return 1;
-          }
+          int leftDiff = copy.outDegreeOf(l) - copy.inDegreeOf(l);
+          int rightDiff = copy.outDegreeOf(r) - copy.inDegreeOf(r);
+          return -Integer.compare(leftDiff, rightDiff);
+
+          //          if (leftDiff > rightDiff) {
+          //            return -1;
+          //          } else if (leftDiff == rightDiff) {
+          //            return 0;
+          //          } else {
+          //            return 1;
+          //          }
         });
     for (V v : orderedBy) {
       Collection<E> outgoingEdges = new HashSet<>(copy.outgoingEdgesOf(v));

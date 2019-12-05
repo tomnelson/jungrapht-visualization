@@ -8,8 +8,8 @@
  */
 package org.jungrapht.samples.tree;
 
-import com.google.common.collect.ImmutableSortedMap;
 import java.awt.*;
+import java.util.Map;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.DemoTreeSupplier;
@@ -126,7 +126,7 @@ public class BalloonLayoutForestDemo extends JPanel {
 
     JComponent lensBox =
         LensControlHelper.builder(
-                ImmutableSortedMap.of(
+                Map.of(
                     "Hyperbolic View", hyperbolicViewSupport,
                     "Hyperbolic Layout", hyperbolicSupport))
             .containerSupplier(Box::createVerticalBox)

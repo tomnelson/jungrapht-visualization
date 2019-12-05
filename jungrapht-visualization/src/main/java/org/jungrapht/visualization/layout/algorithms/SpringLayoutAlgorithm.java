@@ -7,11 +7,10 @@
  */
 package org.jungrapht.visualization.layout.algorithms;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import java.util.ConcurrentModificationException;
+import java.util.HashMap;
 import java.util.function.Function;
+import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.repulsion.StandardSpringRepulsion;
 import org.jungrapht.visualization.layout.algorithms.util.IterativeContext;
@@ -39,8 +38,7 @@ public class SpringLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V
   protected double force_multiplier = 1.0 / 3.0;
   boolean done = false;
 
-  protected LoadingCache<V, SpringVertexData> springVertexData =
-      CacheBuilder.newBuilder().build(CacheLoader.from(SpringVertexData::new));
+  protected HashMap<V, SpringVertexData> springVertexData = new HashMap<>();
 
   protected StandardSpringRepulsion.Builder repulsionContractBuilder;
   protected StandardSpringRepulsion repulsionContract;
@@ -133,10 +131,11 @@ public class SpringLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V
     Graph<V, ?> graph = layoutModel.getGraph();
     try {
       for (V vertex : graph.vertexSet()) {
-        SpringVertexData svd = springVertexData.getUnchecked(vertex);
-        if (svd == null) {
-          continue;
-        }
+        SpringVertexData svd =
+            springVertexData.computeIfAbsent(vertex, v -> new SpringVertexData());
+        //        if (svd == null) {
+        //          continue;
+        //        }
         svd.dx /= 4;
         svd.dy /= 4;
         svd.edgedx = svd.edgedy = 0;
@@ -180,8 +179,8 @@ public class SpringLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V
         double dx = f * vx;
         double dy = f * vy;
         SpringVertexData v1D, v2D;
-        v1D = springVertexData.getUnchecked(vertex1);
-        v2D = springVertexData.getUnchecked(vertex2);
+        v1D = springVertexData.computeIfAbsent(vertex1, v -> new SpringVertexData());
+        v2D = springVertexData.computeIfAbsent(vertex2, v -> new SpringVertexData());
         v1D.edgedx += dx;
         v1D.edgedy += dy;
         v2D.edgedx += -dx;
@@ -206,7 +205,8 @@ public class SpringLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V
           if (layoutModel.isLocked(vertex)) {
             continue;
           }
-          SpringVertexData vd = springVertexData.getUnchecked(vertex);
+          SpringVertexData vd =
+              springVertexData.computeIfAbsent(vertex, v -> new SpringVertexData());
           if (vd == null) {
             continue;
           }

@@ -9,13 +9,12 @@
  */
 package org.jungrapht.visualization.layout.algorithms;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jungrapht.visualization.layout.algorithms.util.IterativeContext;
@@ -59,14 +58,8 @@ public class ISOMLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
     super(builder);
   }
 
-  private LoadingCache<V, ISOMVertexData> isomVertexData =
-      CacheBuilder.newBuilder()
-          .build(
-              new CacheLoader<>() {
-                public ISOMVertexData load(V vertex) {
-                  return new ISOMVertexData();
-                }
-              });
+  private ConcurrentHashMap<V, ISOMVertexData> isomVertexData = new ConcurrentHashMap<>();
+  private Function<V, ISOMVertexData> initializer = v -> new ISOMVertexData();
 
   protected int maxEpoch;
   protected int epoch;
@@ -218,7 +211,7 @@ public class ISOMLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
   }
 
   private ISOMVertexData getISOMVertexData(V vertex) {
-    return isomVertexData.getUnchecked(vertex);
+    return isomVertexData.computeIfAbsent(vertex, initializer);
   }
 
   /**

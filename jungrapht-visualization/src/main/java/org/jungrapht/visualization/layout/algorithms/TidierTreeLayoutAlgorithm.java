@@ -1,6 +1,5 @@
 package org.jungrapht.visualization.layout.algorithms;
 
-import com.google.common.base.Preconditions;
 import java.awt.Dimension;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
@@ -77,8 +76,7 @@ public class TidierTreeLayoutAlgorithm<V, E>
 
     /** {@inheritDoc} */
     public B horizontalVertexSpacing(int horizontalVertexSpacing) {
-      Preconditions.checkArgument(
-          horizontalVertexSpacing > 0, "horizontalVertexSpacing must be positive");
+      assert horizontalVertexSpacing > 0 : "horizontalVertexSpacing must be positive";
       this.horizontalVertexSpacing = horizontalVertexSpacing;
       return self();
     }
@@ -121,8 +119,7 @@ public class TidierTreeLayoutAlgorithm<V, E>
 
     /** {@inheritDoc} */
     public B verticalVertexSpacing(int verticalVertexSpacing) {
-      Preconditions.checkArgument(
-          verticalVertexSpacing > 0, "verticalVertexSpacing must be positive");
+      assert verticalVertexSpacing > 0 : "verticalVertexSpacing must be positive";
       this.verticalVertexSpacing = verticalVertexSpacing;
       return self();
     }

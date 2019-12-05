@@ -1,6 +1,6 @@
 package org.jungrapht.visualization.layout.event;
 
-import com.google.common.collect.Lists;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.jgrapht.Graph;
@@ -60,8 +60,7 @@ public interface LayoutVertexPositionChange {
     protected boolean fireEvents = true;
 
     /** listeners for these changes */
-    protected List<Listener<V>> changeListeners =
-        Collections.synchronizedList(Lists.newArrayList());
+    protected List<Listener<V>> changeListeners = Collections.synchronizedList(new ArrayList<>());
 
     @Override
     public boolean isFireEvents() {

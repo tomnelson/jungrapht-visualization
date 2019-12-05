@@ -1,6 +1,5 @@
 package org.jungrapht.samples.tree;
 
-import com.google.common.collect.Sets;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
@@ -32,7 +31,7 @@ public class VertexSizeAwareTreeDAGLayoutDemo extends JFrame {
 
   private static final Logger log = LoggerFactory.getLogger(VertexSizeAwareTreeDAGLayoutDemo.class);
 
-  static Set<Integer> prioritySet = Sets.newHashSet(0, 2, 6, 8);
+  static Set<Integer> prioritySet = Set.of(0, 2, 6, 8);
 
   static Predicate<Integer> edgePredicate =
       //          e -> false;

@@ -7,11 +7,10 @@
  */
 package org.jungrapht.visualization.layout.algorithms;
 
-import com.google.common.base.Preconditions;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import java.util.ConcurrentModificationException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.repulsion.StandardFRRepulsion;
 import org.jungrapht.visualization.layout.algorithms.util.IterativeContext;
@@ -51,14 +50,9 @@ public class FRLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
 
   private int maxIterations;
 
-  protected LoadingCache<V, Point> frVertexData =
-      CacheBuilder.newBuilder()
-          .build(
-              new CacheLoader<>() {
-                public Point load(V vertex) {
-                  return Point.ORIGIN;
-                }
-              });
+  protected Map<V, Point> frVertexData = new HashMap<>();
+
+  protected Function<V, Point> initializer = v -> Point.ORIGIN;
 
   private double attractionMultiplier = 0.75;
 
@@ -123,6 +117,7 @@ public class FRLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
         repulsionContractBuilder
             .layoutModel(layoutModel)
             .nodeData(frVertexData)
+            .initializer(initializer)
             .repulsionConstant(repulsionConstant)
             .random(random)
             .build();
@@ -262,8 +257,8 @@ public class FRLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
 
     double force = (deltaLength * deltaLength) / attractionConstant;
 
-    Preconditions.checkState(
-        !Double.isNaN(force), "Unexpected mathematical result in FRLayout:calcPositions [force]");
+    assert !Double.isNaN(force)
+        : "Unexpected mathematical result in FRLayout:calcPositions [force]";
 
     double dx = (xDelta / deltaLength) * force;
     double dy = (yDelta / deltaLength) * force;
@@ -286,7 +281,7 @@ public class FRLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
   }
 
   protected Point getFRData(V vertex) {
-    return frVertexData.getUnchecked(vertex);
+    return frVertexData.computeIfAbsent(vertex, initializer);
   }
 
   @Override

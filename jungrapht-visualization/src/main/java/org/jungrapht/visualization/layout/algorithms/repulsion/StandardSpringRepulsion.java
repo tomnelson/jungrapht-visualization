@@ -1,10 +1,10 @@
 package org.jungrapht.visualization.layout.algorithms.repulsion;
 
-import com.google.common.cache.LoadingCache;
 import java.util.ConcurrentModificationException;
+import java.util.Map;
 import java.util.Random;
 import org.jgrapht.Graph;
-import org.jungrapht.visualization.layout.algorithms.SpringLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.SpringLayoutAlgorithm.SpringVertexData;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 
@@ -22,12 +22,12 @@ public class StandardSpringRepulsion<
           V, R extends StandardSpringRepulsion<V, R, B>, B extends Builder<V, R, B>>
       implements StandardRepulsion.Builder<V, R, B> {
 
-    protected LoadingCache<V, SpringLayoutAlgorithm.SpringVertexData> springVertexData;
+    protected Map<V, SpringVertexData> springVertexData;
     protected int repulsionRangeSquared = 100 * 100;
     protected Random random = new Random();
     protected LayoutModel<V> layoutModel;
 
-    public B nodeData(LoadingCache<V, SpringLayoutAlgorithm.SpringVertexData> springVertexData) {
+    public B nodeData(Map<V, SpringVertexData> springVertexData) {
       this.springVertexData = springVertexData;
       return (B) this;
     }
@@ -54,7 +54,7 @@ public class StandardSpringRepulsion<
     }
   }
 
-  protected LoadingCache<V, SpringLayoutAlgorithm.SpringVertexData> springVertexData;
+  protected Map<V, SpringVertexData> springVertexData;
   protected int repulsionRangeSquared = 100 * 100;
   protected Random random = new Random();
   protected LayoutModel<V> layoutModel;
@@ -81,7 +81,7 @@ public class StandardSpringRepulsion<
           continue;
         }
 
-        SpringLayoutAlgorithm.SpringVertexData svd = springVertexData.getUnchecked(vertex);
+        SpringVertexData svd = springVertexData.getOrDefault(vertex, new SpringVertexData());
         if (svd == null) {
           continue;
         }

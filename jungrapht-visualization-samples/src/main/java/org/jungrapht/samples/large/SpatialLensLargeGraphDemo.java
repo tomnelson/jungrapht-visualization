@@ -10,12 +10,12 @@ package org.jungrapht.samples.large;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
-import com.google.common.collect.ImmutableSortedMap;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
+import java.util.Map;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicLabelUI;
 import org.jgrapht.Graph;
@@ -177,7 +177,7 @@ public class SpatialLensLargeGraphDemo extends JPanel {
 
     JComponent lensBox =
         LensControlHelper.builder(
-                ImmutableSortedMap.of(
+                Map.of(
                     "Hyperbolic View", hyperbolicViewSupport,
                     "Hyperbolic Layout", hyperbolicLayoutSupport,
                     "Magnified View", magnifyViewSupport,

@@ -9,7 +9,6 @@
 */
 package org.jungrapht.visualization;
 
-import com.google.common.base.Preconditions;
 import java.awt.*;
 import java.awt.RenderingHints.Key;
 import java.awt.event.ComponentAdapter;
@@ -20,10 +19,8 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -49,11 +46,7 @@ import org.jungrapht.visualization.spatial.Spatial;
 import org.jungrapht.visualization.spatial.SpatialGrid;
 import org.jungrapht.visualization.spatial.SpatialQuadTree;
 import org.jungrapht.visualization.spatial.SpatialRTree;
-import org.jungrapht.visualization.spatial.rtree.QuadraticLeafSplitter;
-import org.jungrapht.visualization.spatial.rtree.QuadraticSplitter;
-import org.jungrapht.visualization.spatial.rtree.RStarLeafSplitter;
-import org.jungrapht.visualization.spatial.rtree.RStarSplitter;
-import org.jungrapht.visualization.spatial.rtree.SplitterContext;
+import org.jungrapht.visualization.spatial.rtree.*;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.util.ChangeEventSupport;
 import org.jungrapht.visualization.util.DefaultChangeEventSupport;
@@ -187,13 +180,13 @@ class DefaultVisualizationServer<V, E> extends JPanel
       Dimension layoutSize,
       Dimension viewSize) {
     if (visualizationModel == null) {
-      Preconditions.checkNotNull(graph);
-      Preconditions.checkNotNull(viewSize);
+      Objects.requireNonNull(graph);
+      Objects.requireNonNull(viewSize);
       if (layoutSize == null) {
         layoutSize = viewSize;
       }
-      Preconditions.checkArgument(layoutSize.width > 0, "width must be > 0");
-      Preconditions.checkArgument(layoutSize.height > 0, "height must be > 0");
+      assert layoutSize.width > 0 : "width must be > 0";
+      assert layoutSize.height > 0 : "height must be > 0";
       visualizationModel =
           VisualizationModel.builder(graph)
               .layoutAlgorithm(layoutAlgorithm)
@@ -701,7 +694,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
 
   @Override
   public void setSelectedVertexState(MutableSelectedState<V> selectedVertexState) {
-    Preconditions.checkNotNull(selectedVertexState);
+    Objects.requireNonNull(selectedVertexState);
     if (pickEventListener != null && this.selectedVertexState != null) {
       this.selectedVertexState.removeItemListener(pickEventListener);
     }
@@ -715,7 +708,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
 
   @Override
   public void setSelectedEdgeState(MutableSelectedState<E> selectedEdgeState) {
-    Preconditions.checkNotNull(selectedEdgeState);
+    Objects.requireNonNull(selectedEdgeState);
     if (pickEventListener != null && this.selectedEdgeState != null) {
       this.selectedEdgeState.removeItemListener(pickEventListener);
     }

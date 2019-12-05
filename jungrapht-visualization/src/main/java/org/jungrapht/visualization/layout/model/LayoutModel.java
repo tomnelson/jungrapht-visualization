@@ -9,8 +9,8 @@
  */
 package org.jungrapht.visualization.layout.model;
 
-import com.google.common.collect.Maps;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.function.Function;
@@ -58,7 +58,9 @@ public interface LayoutModel<V>
 
   /** @return a mapping of Vertices to Point locations */
   default Map<V, Point> getLocations() {
-    return Collections.unmodifiableMap(Maps.asMap(getGraph().vertexSet(), this::apply));
+    Map<V, Point> map = new HashMap<>();
+    getGraph().vertexSet().forEach(v -> map.put(v, apply(v)));
+    return Collections.unmodifiableMap(map);
   }
 
   /**

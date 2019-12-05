@@ -2,7 +2,7 @@ package org.jungrapht.visualization.layout.spatial;
 
 import static com.google.common.truth.Truth.assertThat;
 
-import com.google.common.collect.Maps;
+import java.util.HashMap;
 import java.util.Map;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
@@ -16,6 +16,7 @@ import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.LoadingCacheLayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -49,9 +50,9 @@ public class FRLayoutsTest {
   private static final Logger log = LoggerFactory.getLogger(FRLayoutsTest.class);
   Graph<String, Integer> graph;
   LayoutModel<String> layoutModel;
-  static Map<String, Point> mapOne = Maps.newHashMap();
-  static Map<String, Point> mapThree = Maps.newHashMap();
-  static Map<String, Point> mapFour = Maps.newHashMap();
+  static Map<String, Point> mapOne = new HashMap<>();
+  static Map<String, Point> mapThree = new HashMap<>();
+  static Map<String, Point> mapFour = new HashMap<>();
 
   /**
    * this runs again before each test. Build a simple graph, build a custom layout model (see below)
@@ -136,10 +137,15 @@ public class FRLayoutsTest {
     log.debug("mapThree:{}", mapThree);
     log.debug("mapFour:{}", mapFour);
 
-    assertThat(mapOne.keySet()).isEqualTo(mapFour.keySet());
+    Assert.assertEquals(mapOne.keySet(), mapFour.keySet());
     for (String key : mapOne.keySet()) {
       Point p2 = mapOne.get(key);
       Point p3 = mapFour.get(key);
+      double abs = Math.abs(p2.x - p3.x);
+      //      Assert.assertTrue(Math.abs(p2.x - p3.x) < 1.0E-3);
+      //              (p2.x).isWithin(1.0E-3).of(p3.x);
+      //      Assert.assertTrue(Math.abs(p2.y - p3.y) < 1.0E-3);
+      //      assertThat(p2.y).isWithin(1.0E-3).of(p3.y);
       assertThat(p2.x).isWithin(1.0E-3).of(p3.x);
       assertThat(p2.y).isWithin(1.0E-3).of(p3.y);
     }

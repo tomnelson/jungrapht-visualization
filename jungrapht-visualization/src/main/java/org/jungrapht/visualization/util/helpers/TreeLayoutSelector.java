@@ -1,14 +1,9 @@
 package org.jungrapht.visualization.util.helpers;
 
-import com.google.common.base.Preconditions;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import javax.swing.*;
@@ -189,7 +184,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     this.vertexComparator = vertexComparator;
     this.edgeComparator = edgeComparator;
     this.alignFavoredEdgess = alignFavoredEdges;
-    Preconditions.checkNotNull(after);
+    Objects.requireNonNull(after);
     this.after = after;
 
     TreeLayoutAlgorithm<V> treeLayoutAlgorithm =
@@ -257,6 +252,10 @@ public class TreeLayoutSelector<V, E> extends JPanel {
             .alignFavoredEdges(alignFavoredEdges)
             .build();
 
+    CircleLayoutAlgorithm<V> circleLayoutAlgorithm = new CircleLayoutAlgorithm<>();
+    CircleLayoutAlgorithm<V> reduceEdgeCrossingCircleLayoutAlgorithm =
+        CircleLayoutAlgorithm.<V>builder().reduceEdgeCrossing(true).build();
+
     JRadioButton treeButton = new JRadioButton("Tree");
     treeButton.addItemListener(new LayoutItemListener(treeLayoutAlgorithm, vv));
     treeButton.setSelected(initialSelection == layoutNumber++);
@@ -300,6 +299,15 @@ public class TreeLayoutSelector<V, E> extends JPanel {
         new LayoutItemListener(multiRowEdgeAwareTreeLayoutAlgorithm, vv));
     multiRowEdgeAwareTreeButton.setSelected(initialSelection == layoutNumber++);
 
+    JRadioButton circleButton = new JRadioButton("Circle");
+    circleButton.addItemListener(new LayoutItemListener(circleLayoutAlgorithm, vv));
+    circleButton.setSelected(initialSelection == layoutNumber++);
+
+    JRadioButton betterCircleButton = new JRadioButton("BetterCircle");
+    betterCircleButton.addItemListener(
+        new LayoutItemListener(reduceEdgeCrossingCircleLayoutAlgorithm, vv));
+    betterCircleButton.setSelected(initialSelection == layoutNumber++);
+
     ButtonGroup layoutRadio = new ButtonGroup();
     layoutRadio.add(treeButton);
     layoutRadio.add(tidierTreeButton);
@@ -311,6 +319,8 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     layoutRadio.add(tidierRadialEdgeAwareButton);
     layoutRadio.add(edgeAwareTreeButton);
     layoutRadio.add(multiRowEdgeAwareTreeButton);
+    layoutRadio.add(circleButton);
+    layoutRadio.add(betterCircleButton);
 
     this.add(treeButton);
     this.add(edgeAwareTreeButton);
@@ -322,6 +332,8 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     this.add(tidierTreeButton);
     this.add(mySugiyamaButton);
     this.add(tidierRadialEdgeAwareButton);
+    this.add(circleButton);
+    this.add(betterCircleButton);
     this.add(animateTransition);
   }
 

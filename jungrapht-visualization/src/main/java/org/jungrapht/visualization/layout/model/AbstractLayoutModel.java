@@ -1,9 +1,8 @@
 package org.jungrapht.visualization.layout.model;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import com.google.common.collect.Sets;
 import java.util.ConcurrentModificationException;
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
@@ -57,7 +56,7 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
     }
   }
 
-  protected Set<V> lockedVertices = Sets.newHashSet();
+  protected Set<V> lockedVertices = new HashSet<>();
   protected boolean locked;
   protected int width;
   protected int height;
@@ -77,13 +76,13 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
   protected ViewChange.Support viewChangeSupport = ViewChange.Support.create();
 
   protected AbstractLayoutModel(Builder builder) {
-    this.graph = checkNotNull(builder.graph);
+    this.graph = Objects.requireNonNull(builder.graph);
     setSize(builder.width, builder.height);
     setPreferredSize(builder.width, builder.height);
   }
 
   protected AbstractLayoutModel(Graph<V, ?> graph, int width, int height) {
-    this.graph = checkNotNull(graph);
+    this.graph = Objects.requireNonNull(graph);
     setSize(width, height);
   }
 

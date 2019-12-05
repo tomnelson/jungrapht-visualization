@@ -10,10 +10,10 @@ package org.jungrapht.samples.spatial;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
-import com.google.common.collect.ImmutableSortedMap;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.geom.AffineTransform;
+import java.util.Map;
 import java.util.function.Function;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicLabelUI;
@@ -240,7 +240,7 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
     controls.add(leftControls);
     controls.add(
         LensControlHelper.builder(
-                ImmutableSortedMap.of(
+                Map.of(
                     "Hyperbolic Layout", hyperbolicLayoutSupport,
                     "Hyperbolic View", hyperbolicViewSupport,
                     "Magnify Layout", magnifyLayoutSupport,

@@ -1,8 +1,9 @@
 package org.jungrapht.visualization.layout.algorithms.repulsion;
 
-import com.google.common.cache.LoadingCache;
 import java.util.ConcurrentModificationException;
+import java.util.Map;
 import java.util.Random;
+import java.util.function.Function;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 
@@ -19,13 +20,19 @@ public class StandardFRRepulsion<
   public static class Builder<V, R extends StandardFRRepulsion<V, R, B>, B extends Builder<V, R, B>>
       implements StandardRepulsion.Builder<V, R, B> {
 
-    protected LoadingCache<V, Point> frVertexData;
+    protected Map<V, Point> frVertexData;
+    protected Function<V, Point> initializer = v -> Point.ORIGIN;
     protected double repulsionConstant;
     protected Random random = new Random();
     protected LayoutModel<V> layoutModel;
 
-    public B nodeData(LoadingCache<V, Point> frVertexData) {
+    public B nodeData(Map<V, Point> frVertexData) {
       this.frVertexData = frVertexData;
+      return (B) this;
+    }
+
+    public B initializer(Function<V, Point> initializer) {
+      this.initializer = initializer;
       return (B) this;
     }
 
@@ -51,7 +58,8 @@ public class StandardFRRepulsion<
     }
   }
 
-  protected LoadingCache<V, Point> frVertexData;
+  protected Map<V, Point> frVertexData;
+  protected Function<V, Point> initializer;
   protected double repulsionConstant;
   protected double EPSILON = 0.000001D;
   protected Random random = new Random();
@@ -65,6 +73,7 @@ public class StandardFRRepulsion<
     this.layoutModel = builder.layoutModel;
     this.random = builder.random;
     this.frVertexData = builder.frVertexData;
+    this.initializer = builder.initializer;
     this.repulsionConstant = builder.repulsionConstant;
   }
 
@@ -77,7 +86,7 @@ public class StandardFRRepulsion<
   @Override
   public void calculateRepulsion() {
     for (V vertex1 : layoutModel.getGraph().vertexSet()) {
-      Point fvd1 = frVertexData.getUnchecked(vertex1);
+      Point fvd1 = frVertexData.computeIfAbsent(vertex1, initializer);
       if (fvd1 == null) {
         return;
       }
@@ -87,7 +96,7 @@ public class StandardFRRepulsion<
         for (V vertex2 : layoutModel.getGraph().vertexSet()) {
 
           if (vertex1 != vertex2) {
-            fvd1 = frVertexData.getUnchecked(vertex1);
+            fvd1 = frVertexData.computeIfAbsent(vertex1, initializer);
             Point p1 = layoutModel.apply(vertex1);
             Point p2 = layoutModel.apply(vertex2);
             if (p1 == null || p2 == null) {

@@ -10,8 +10,8 @@
  */
 package org.jungrapht.visualization;
 
-import com.google.common.base.Preconditions;
-import java.awt.Dimension;
+import java.awt.*;
+import java.util.Objects;
 import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -46,10 +46,12 @@ class DefaultVisualizationModel<V, E> implements VisualizationModel<V, E> {
       Function<V, Point> initializer) {
     if (layoutModel == null) {
       // I must have both a graph and a layoutSize to create a layoutModel
-      Preconditions.checkNotNull(graph);
-      Preconditions.checkNotNull(layoutSize);
-      Preconditions.checkArgument(layoutSize.width > 0, "width must be > 0");
-      Preconditions.checkArgument(layoutSize.height > 0, "height must be > 0");
+      Objects.requireNonNull(graph);
+      Objects.requireNonNull(layoutSize);
+      assert layoutSize.width > 0 : "width must be > 0";
+      assert layoutSize.height > 0 : "height must be > 0";
+      //       assert layoutSize.width > 0,  : "width must be > 0";
+      //       assert layoutSize.height > 0,  : "height must be > 0";
       if (initializer == null) {
         initializer =
             new RandomLocationTransformer<>(

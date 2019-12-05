@@ -13,7 +13,6 @@ package org.jungrapht.visualization.selection;
 
 import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 
-import com.google.common.collect.Sets;
 import java.awt.*;
 import java.awt.geom.*;
 import java.util.Collection;
@@ -22,6 +21,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.layout.GraphElementAccessor;
@@ -366,7 +366,7 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
    */
   protected Collection<V> getContained(Spatial spatial, LayoutModel<V> layoutModel, Shape shape) {
 
-    Collection<V> visible = Sets.newHashSet(spatial.getVisibleElements(shape));
+    Collection<V> visible = new HashSet<>(spatial.getVisibleElements(shape));
     if (log.isTraceEnabled()) {
       log.trace("your shape intersects tree cells with these vertices: {}", visible);
     }
@@ -660,14 +660,22 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
   protected Collection<V> getFilteredVertices() {
     Set<V> vertices = vv.getVisualizationModel().getGraph().vertexSet();
     return verticesAreFiltered()
-        ? Sets.filter(vertices, vv.getRenderContext().getVertexIncludePredicate()::test)
+        ? vertices
+            .stream()
+            .filter(vv.getRenderContext().getVertexIncludePredicate()::test)
+            .collect(Collectors.toSet())
+        //            Sets.filter(vertices, vv.getRenderContext().getVertexIncludePredicate()::test)
         : vertices;
   }
 
   protected Collection<E> getFilteredEdges() {
     Set<E> edges = vv.getVisualizationModel().getGraph().edgeSet();
     return edgesAreFiltered()
-        ? Sets.filter(edges, vv.getRenderContext().getEdgeIncludePredicate()::test)
+        ? edges
+            .stream()
+            .filter(vv.getRenderContext().getEdgeIncludePredicate()::test)
+            .collect(Collectors.toSet())
+        //Sets.filter(edges, vv.getRenderContext().getEdgeIncludePredicate()::test)
         : edges;
   }
 

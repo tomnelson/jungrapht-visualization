@@ -1,6 +1,5 @@
 package org.jungrapht.visualization.layout.algorithms;
 
-import com.google.common.base.Preconditions;
 import java.awt.Shape;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
@@ -70,8 +69,7 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
 
     /** {@inheritDoc} */
     public B horizontalVertexSpacing(int horizontalVertexSpacing) {
-      Preconditions.checkArgument(
-          horizontalVertexSpacing > 0, "horizontalVertexSpacing must be positive");
+      assert horizontalVertexSpacing > 0 : "horizontalVertexSpacing must be positive";
       this.horizontalVertexSpacing = horizontalVertexSpacing;
       return self();
     }
@@ -114,8 +112,7 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
 
     /** {@inheritDoc} */
     public B verticalVertexSpacing(int verticalVertexSpacing) {
-      Preconditions.checkArgument(
-          verticalVertexSpacing > 0, "verticalVertexSpacing must be positive");
+      assert verticalVertexSpacing > 0 : "verticalVertexSpacing must be positive";
       this.verticalVertexSpacing = verticalVertexSpacing;
       return self();
     }

@@ -12,20 +12,20 @@ public class TestLevelCross {
   private static final Logger log = LoggerFactory.getLogger(TestLevelCross.class);
 
   // vertices for any tests
-  SV<String> a = SV.of("a", 0, 0);
-  SV<String> b = SV.of("b", 0, 1);
-  SV<String> c = SV.of("c", 0, 2);
-  SV<String> d = SV.of("d", 0, 3);
-  SV<String> e = SV.of("e", 0, 4);
+  SugiyamaVertex<String> a = SugiyamaVertex.of("a", 0, 0);
+  SugiyamaVertex<String> b = SugiyamaVertex.of("b", 0, 1);
+  SugiyamaVertex<String> c = SugiyamaVertex.of("c", 0, 2);
+  SugiyamaVertex<String> d = SugiyamaVertex.of("d", 0, 3);
+  SugiyamaVertex<String> e = SugiyamaVertex.of("e", 0, 4);
 
-  SV<String> z = SV.of("z", 1, 0);
-  SV<String> x = SV.of("x", 1, 1);
-  SV<String> y = SV.of("y", 1, 2);
-  SV<String> v = SV.of("v", 1, 3);
-  SV<String> u = SV.of("u", 1, 4);
-  List<SV<String>> topLevel = new ArrayList<>();
-  List<SV<String>> botLevel = new ArrayList<>();
-  List<SE<String, Integer>> edgeList = new ArrayList<>();
+  SugiyamaVertex<String> z = SugiyamaVertex.of("z", 1, 0);
+  SugiyamaVertex<String> x = SugiyamaVertex.of("x", 1, 1);
+  SugiyamaVertex<String> y = SugiyamaVertex.of("y", 1, 2);
+  SugiyamaVertex<String> v = SugiyamaVertex.of("v", 1, 3);
+  SugiyamaVertex<String> u = SugiyamaVertex.of("u", 1, 4);
+  List<SugiyamaVertex<String>> topLevel = new ArrayList<>();
+  List<SugiyamaVertex<String>> botLevel = new ArrayList<>();
+  List<SugiyamaEdge<String, Integer>> edgeList = new ArrayList<>();
 
   @Test
   public void testLevelCross() {
@@ -43,35 +43,35 @@ public class TestLevelCross {
 
     // all edges
     int edge = 0;
-    edgeList.add(SE.of(edge++, a, z));
-    edgeList.add(SE.of(edge++, a, x));
-    edgeList.add(SE.of(edge++, a, y));
-    edgeList.add(SE.of(edge++, a, v));
-    edgeList.add(SE.of(edge++, a, u));
+    edgeList.add(SugiyamaEdge.of(edge++, a, z));
+    edgeList.add(SugiyamaEdge.of(edge++, a, x));
+    edgeList.add(SugiyamaEdge.of(edge++, a, y));
+    edgeList.add(SugiyamaEdge.of(edge++, a, v));
+    edgeList.add(SugiyamaEdge.of(edge++, a, u));
 
-    edgeList.add(SE.of(edge++, b, z));
-    edgeList.add(SE.of(edge++, b, x));
-    edgeList.add(SE.of(edge++, b, y));
-    edgeList.add(SE.of(edge++, b, v));
-    edgeList.add(SE.of(edge++, b, u));
+    edgeList.add(SugiyamaEdge.of(edge++, b, z));
+    edgeList.add(SugiyamaEdge.of(edge++, b, x));
+    edgeList.add(SugiyamaEdge.of(edge++, b, y));
+    edgeList.add(SugiyamaEdge.of(edge++, b, v));
+    edgeList.add(SugiyamaEdge.of(edge++, b, u));
 
-    edgeList.add(SE.of(edge++, c, z));
-    edgeList.add(SE.of(edge++, c, x));
-    edgeList.add(SE.of(edge++, c, y));
-    edgeList.add(SE.of(edge++, c, v));
-    edgeList.add(SE.of(edge++, c, u));
+    edgeList.add(SugiyamaEdge.of(edge++, c, z));
+    edgeList.add(SugiyamaEdge.of(edge++, c, x));
+    edgeList.add(SugiyamaEdge.of(edge++, c, y));
+    edgeList.add(SugiyamaEdge.of(edge++, c, v));
+    edgeList.add(SugiyamaEdge.of(edge++, c, u));
 
-    edgeList.add(SE.of(edge++, d, z));
-    edgeList.add(SE.of(edge++, d, x));
-    edgeList.add(SE.of(edge++, d, y));
-    edgeList.add(SE.of(edge++, d, v));
-    edgeList.add(SE.of(edge++, d, u));
+    edgeList.add(SugiyamaEdge.of(edge++, d, z));
+    edgeList.add(SugiyamaEdge.of(edge++, d, x));
+    edgeList.add(SugiyamaEdge.of(edge++, d, y));
+    edgeList.add(SugiyamaEdge.of(edge++, d, v));
+    edgeList.add(SugiyamaEdge.of(edge++, d, u));
 
-    edgeList.add(SE.of(edge++, e, z));
-    edgeList.add(SE.of(edge++, e, x));
-    edgeList.add(SE.of(edge++, e, y));
-    edgeList.add(SE.of(edge++, e, v));
-    edgeList.add(SE.of(edge++, e, u));
+    edgeList.add(SugiyamaEdge.of(edge++, e, z));
+    edgeList.add(SugiyamaEdge.of(edge++, e, x));
+    edgeList.add(SugiyamaEdge.of(edge++, e, y));
+    edgeList.add(SugiyamaEdge.of(edge++, e, v));
+    edgeList.add(SugiyamaEdge.of(edge++, e, u));
     go();
   }
 
@@ -88,11 +88,11 @@ public class TestLevelCross {
 
     int e = 0;
     // pairs
-    edgeList.add(SE.of(e++, a, z));
-    edgeList.add(SE.of(e++, b, x));
-    edgeList.add(SE.of(e++, c, y));
+    edgeList.add(SugiyamaEdge.of(e++, a, z));
+    edgeList.add(SugiyamaEdge.of(e++, b, x));
+    edgeList.add(SugiyamaEdge.of(e++, c, y));
     // trt
-    edgeList.add(SE.of(e++, a, y));
+    edgeList.add(SugiyamaEdge.of(e++, a, y));
     assert 1 == go();
   }
 
@@ -108,11 +108,11 @@ public class TestLevelCross {
     botLevel.add(y);
 
     int e = 0;
-    edgeList.add(SE.of(e++, a, z));
-    edgeList.add(SE.of(e++, a, x));
-    edgeList.add(SE.of(e++, b, x));
-    edgeList.add(SE.of(e++, c, y));
-    edgeList.add(SE.of(e++, a, y));
+    edgeList.add(SugiyamaEdge.of(e++, a, z));
+    edgeList.add(SugiyamaEdge.of(e++, a, x));
+    edgeList.add(SugiyamaEdge.of(e++, b, x));
+    edgeList.add(SugiyamaEdge.of(e++, c, y));
+    edgeList.add(SugiyamaEdge.of(e++, a, y));
     assert 1 == go();
   }
 
@@ -128,13 +128,13 @@ public class TestLevelCross {
 
     int e = 0;
     //pairs
-    edgeList.add(SE.of(e++, a, z));
-    edgeList.add(SE.of(e++, b, x));
-    edgeList.add(SE.of(e++, c, y));
+    edgeList.add(SugiyamaEdge.of(e++, a, z));
+    edgeList.add(SugiyamaEdge.of(e++, b, x));
+    edgeList.add(SugiyamaEdge.of(e++, c, y));
     // trt
-    edgeList.add(SE.of(e++, a, y));
+    edgeList.add(SugiyamaEdge.of(e++, a, y));
     // trb
-    edgeList.add(SE.of(e++, c, z));
+    edgeList.add(SugiyamaEdge.of(e++, c, z));
     assert 3 == go();
   }
 
@@ -149,9 +149,9 @@ public class TestLevelCross {
     botLevel.add(y);
 
     int e = 0;
-    edgeList.add(SE.of(e++, a, z));
-    edgeList.add(SE.of(e++, c, y));
-    edgeList.add(SE.of(e++, a, y));
+    edgeList.add(SugiyamaEdge.of(e++, a, z));
+    edgeList.add(SugiyamaEdge.of(e++, c, y));
+    edgeList.add(SugiyamaEdge.of(e++, a, y));
     assert 0 == go();
   }
 
@@ -166,10 +166,10 @@ public class TestLevelCross {
     botLevel.add(y);
 
     int e = 0;
-    edgeList.add(SE.of(e++, a, z));
-    edgeList.add(SE.of(e++, c, y));
-    edgeList.add(SE.of(e++, a, y));
-    edgeList.add(SE.of(e++, c, z));
+    edgeList.add(SugiyamaEdge.of(e++, a, z));
+    edgeList.add(SugiyamaEdge.of(e++, c, y));
+    edgeList.add(SugiyamaEdge.of(e++, a, y));
+    edgeList.add(SugiyamaEdge.of(e++, c, z));
     assert 1 == go();
   }
 
@@ -182,8 +182,8 @@ public class TestLevelCross {
     botLevel.add(x);
 
     int e = 0;
-    edgeList.add(SE.of(e++, a, x));
-    edgeList.add(SE.of(e++, b, z));
+    edgeList.add(SugiyamaEdge.of(e++, a, x));
+    edgeList.add(SugiyamaEdge.of(e++, b, z));
 
     assert 1 == go();
   }
@@ -200,10 +200,10 @@ public class TestLevelCross {
     botLevel.add(y);
 
     int e = 0;
-    edgeList.add(SE.of(e++, a, z));
-    edgeList.add(SE.of(e++, b, x));
-    edgeList.add(SE.of(e++, c, y));
-    edgeList.add(SE.of(e++, c, z));
+    edgeList.add(SugiyamaEdge.of(e++, a, z));
+    edgeList.add(SugiyamaEdge.of(e++, b, x));
+    edgeList.add(SugiyamaEdge.of(e++, c, y));
+    edgeList.add(SugiyamaEdge.of(e++, c, z));
     assert 1 == go();
   }
 
@@ -215,7 +215,7 @@ public class TestLevelCross {
     //        svGraph = removeCycles.removeCycles();
     //
     //        AssignLayers<String,Integer> assignLayers = new AssignLayers<>(svGraph);
-    List<List<SV<String>>> layers = List.of(topLevel, botLevel);
+    List<List<SugiyamaVertex<String>>> layers = List.of(topLevel, botLevel);
     log.info("layer 0: {}", layers.get(0));
     log.info("layer 1: {}", layers.get(1));
 
