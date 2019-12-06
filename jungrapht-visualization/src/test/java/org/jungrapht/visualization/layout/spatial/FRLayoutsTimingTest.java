@@ -7,8 +7,8 @@ import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFRRepulsion;
+import org.jungrapht.visualization.layout.model.DefaultLayoutModel;
 import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.jungrapht.visualization.layout.model.LoadingCacheLayoutModel;
 import org.jungrapht.visualization.layout.util.RandomLocationTransformer;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,7 +49,7 @@ public class FRLayoutsTimingTest {
         graph.addEdge("N" + i, "N" + j, edge++);
       }
     }
-    layoutModel = LoadingCacheLayoutModel.<String>builder().graph(graph).size(500, 500).build();
+    layoutModel = DefaultLayoutModel.<String>builder().graph(graph).size(500, 500).build();
     layoutModel.setInitializer(new RandomLocationTransformer<>(500, 500));
   }
 

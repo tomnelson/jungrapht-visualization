@@ -10,8 +10,13 @@
 
 package org.jungrapht.visualization.layout.algorithms;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
@@ -42,15 +47,9 @@ public class BalloonLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
     }
   }
 
-  protected ConcurrentHashMap<V, PolarPoint> polarLocations = new ConcurrentHashMap<>();
+  protected Map<V, PolarPoint> polarLocations = new HashMap<>();
+
   private Function<V, PolarPoint> initializer = v -> PolarPoint.ORIGIN;
-  //      CacheBuilder.newBuilder()
-  //          .build(
-  //              new CacheLoader<>() {
-  //                public PolarPoint load(V vertex) {
-  //                  return PolarPoint.ORIGIN;
-  //                }
-  //              });
 
   protected Map<V, Double> radii = new HashMap<>();
 
@@ -171,7 +170,6 @@ public class BalloonLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
   public Point getCenter(LayoutModel<V> layoutModel, V vertex) {
     Graph<V, ?> graph = layoutModel.getGraph();
     V parent = Graphs.predecessorListOf(graph, vertex).stream().findFirst().orElse(null);
-    //            Iterables.getOnlyElement(Graphs.predecessorListOf(graph, vertex), null);
     if (parent == null) {
       return getCenter(layoutModel);
     }

@@ -3,8 +3,8 @@ package org.jungrapht.visualization.spatial;
 import java.util.stream.IntStream;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.Pseudograph;
+import org.jungrapht.visualization.layout.model.DefaultLayoutModel;
 import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.jungrapht.visualization.layout.model.LoadingCacheLayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.util.RadiusVertexAccessor;
 import org.jungrapht.visualization.layout.util.RandomLocationTransformer;
@@ -40,7 +40,7 @@ public class SpatialQuadTreeTest {
     IntStream.range(0, 100).mapToObj(i -> "N" + i).forEach(graph::addVertex);
     this.graph = graph;
     layoutModel =
-        LoadingCacheLayoutModel.<String>builder()
+        DefaultLayoutModel.<String>builder()
             .graph(graph)
             .size(width, height)
             .initializer(new RandomLocationTransformer(width, height, System.currentTimeMillis()))

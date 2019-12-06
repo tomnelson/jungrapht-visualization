@@ -12,8 +12,9 @@ package org.jungrapht.visualization.layout.algorithms;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
+import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Map;
 import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
@@ -58,7 +59,8 @@ public class ISOMLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
     super(builder);
   }
 
-  private ConcurrentHashMap<V, ISOMVertexData> isomVertexData = new ConcurrentHashMap<>();
+  private Map<V, ISOMVertexData> isomVertexData = new HashMap<>();
+
   private Function<V, ISOMVertexData> initializer = v -> new ISOMVertexData();
 
   protected int maxEpoch;

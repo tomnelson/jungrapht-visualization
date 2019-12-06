@@ -31,8 +31,8 @@ import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TreeLayout;
 import org.jungrapht.visualization.layout.model.AggregateLayoutModel;
+import org.jungrapht.visualization.layout.model.DefaultLayoutModel;
 import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.jungrapht.visualization.layout.model.LoadingCacheLayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.util.RandomLocationTransformer;
 import org.jungrapht.visualization.selection.MutableSelectedState;
@@ -93,7 +93,7 @@ public class SubLayoutDemo extends JPanel {
     LayoutAlgorithm<String> layoutAlgorithm = new FRLayoutAlgorithm<>();
     clusteringLayoutModel =
         new AggregateLayoutModel<>(
-            LoadingCacheLayoutModel.<String>builder()
+            DefaultLayoutModel.<String>builder()
                 .graph(graph)
                 .size(preferredSize.width, preferredSize.height)
                 .build());
@@ -317,7 +317,7 @@ public class SubLayoutDemo extends JPanel {
           LayoutAlgorithm<String> subLayoutAlgorithm = subLayoutType;
 
           LayoutModel<String> newLayoutModel =
-              LoadingCacheLayoutModel.<String>builder()
+              DefaultLayoutModel.<String>builder()
                   .graph(subGraph)
                   .size(subLayoutSize.width, subLayoutSize.height)
                   .initializer(
@@ -349,7 +349,7 @@ public class SubLayoutDemo extends JPanel {
   }
 
   LayoutModel getTreeLayoutPositions(Graph tree, LayoutAlgorithm treeLayout) {
-    LayoutModel model = LoadingCacheLayoutModel.builder().size(600, 600).graph(tree).build();
+    LayoutModel model = DefaultLayoutModel.builder().size(600, 600).graph(tree).build();
     model.accept(treeLayout);
     return model;
   }

@@ -10,8 +10,8 @@ import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.SpringLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutSpringRepulsion;
 import org.jungrapht.visualization.layout.algorithms.repulsion.StandardSpringRepulsion;
+import org.jungrapht.visualization.layout.model.DefaultLayoutModel;
 import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.jungrapht.visualization.layout.model.LoadingCacheLayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -70,8 +70,7 @@ public class SpringLayoutsTest {
     graph.addEdge("D", "C", i++);
 
     layoutModel =
-        new TestLayoutModel<>(
-            LoadingCacheLayoutModel.<String>builder().graph(graph).size(500, 500), 30);
+        new TestLayoutModel<>(DefaultLayoutModel.<String>builder().graph(graph).size(500, 500), 30);
     layoutModel.set("A", Point.of(200, 100));
     layoutModel.set("B", Point.of(100, 200));
     layoutModel.set("C", Point.of(100, 100));
@@ -153,7 +152,7 @@ public class SpringLayoutsTest {
    *
    * @param <T>
    */
-  private static class TestLayoutModel<T> extends LoadingCacheLayoutModel<T> {
+  private static class TestLayoutModel<T> extends DefaultLayoutModel<T> {
 
     // how many steps
     private int steps;

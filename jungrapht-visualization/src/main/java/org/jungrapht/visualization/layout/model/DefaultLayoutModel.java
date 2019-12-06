@@ -1,38 +1,37 @@
 package org.jungrapht.visualization.layout.model;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 import org.jungrapht.visualization.layout.util.Caching;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A LayoutModel that uses a lazy cache for vertex locations (LoadingCache)
+ * A LayoutModel that uses a lazy loading
  *
  * @param <V> the vertex type
  * @author Tom Nelson
  */
-public class LoadingCacheLayoutModel<V> extends AbstractLayoutModel<V>
+public class DefaultLayoutModel<V> extends AbstractLayoutModel<V>
     implements LayoutModel<V>, Caching {
 
-  private static final Logger log = LoggerFactory.getLogger(LoadingCacheLayoutModel.class);
+  private static final Logger log = LoggerFactory.getLogger(DefaultLayoutModel.class);
 
-  protected ConcurrentMap<V, Point> locations = new ConcurrentHashMap<>();
-  Function<V, Point> initializer = v -> Point.ORIGIN;
+  protected Map<V, Point> locations = new HashMap<>();
+
+  Function<V, Point> initializer;
+
   /**
    * a builder for LoadingCache instances
    *
    * @param <V> the vertex type
    * @param <T> the type of the superclass of the LayoutModel to be built
    */
-  public static class Builder<V, T extends LoadingCacheLayoutModel<V>, B extends Builder<V, T, B>>
+  public static class Builder<V, T extends DefaultLayoutModel<V>, B extends Builder<V, T, B>>
       extends AbstractLayoutModel.Builder<V, T, B> {
 
     Function<V, Point> initializer = v -> Point.ORIGIN;
-
-    //    protected ConcurrentMap<V, Point> locations  = new ConcurrentHashMap<>();
-    //        CacheBuilder.newBuilder().build(CacheLoader.from(() -> Point.ORIGIN));
 
     /**
      * set the LayoutModel to copy with this builder
@@ -54,13 +53,6 @@ public class LoadingCacheLayoutModel<V> extends AbstractLayoutModel<V>
      */
     public B initializer(Function<V, Point> initializer) {
       this.initializer = initializer;
-      //      this.locations = new ConcurrentHashMap<>() {
-      //        @Override
-      //        public Point computeIfAbsent(V key, Function<? super V, ? extends Point> mappingFunction) {
-      //          return initializer.apply(key);
-      //        }
-      //      };
-      //              CacheBuilder.newBuilder().build(CacheLoader.from(initializer::apply));
       return (B) this;
     }
 
@@ -70,7 +62,7 @@ public class LoadingCacheLayoutModel<V> extends AbstractLayoutModel<V>
      * @return
      */
     public T build() {
-      return (T) new LoadingCacheLayoutModel<>(this);
+      return (T) new DefaultLayoutModel<>(this);
     }
   }
 
@@ -78,33 +70,28 @@ public class LoadingCacheLayoutModel<V> extends AbstractLayoutModel<V>
     return new Builder<>();
   }
 
-  public static <V> LoadingCacheLayoutModel<V> from(LoadingCacheLayoutModel<V> other) {
-    return new LoadingCacheLayoutModel<>(other);
+  public static <V> DefaultLayoutModel<V> from(DefaultLayoutModel<V> other) {
+    return new DefaultLayoutModel<>(other);
   }
 
-  protected LoadingCacheLayoutModel(LoadingCacheLayoutModel.Builder builder) {
+  protected DefaultLayoutModel(DefaultLayoutModel.Builder builder) {
     super(builder);
     this.initializer = builder.initializer;
   }
 
-  private LoadingCacheLayoutModel(LoadingCacheLayoutModel<V> other) {
+  private DefaultLayoutModel(DefaultLayoutModel<V> other) {
     super(other.graph, other.width, other.height);
     this.initializer = other.initializer;
   }
 
   public void setInitializer(Function<V, Point> initializer) {
     this.initializer = initializer;
-    //    this.locations = CacheBuilder.newBuilder().build(CacheLoader.from(initializer::apply));
   }
 
   @Override
   public void set(V vertex, Point location) {
-    if (location == null) {
-      log.error("whoa");
-    }
-    if (vertex == null) {
-      log.error("whoa");
-    }
+    assert location != null : "Location cannot be null";
+    assert vertex != null : "vertex cannot be null";
     if (!locked) {
       this.locations.put(vertex, location);
       super.set(vertex, location); // will fire events
@@ -118,11 +105,7 @@ public class LoadingCacheLayoutModel<V> extends AbstractLayoutModel<V>
 
   @Override
   public Point get(V vertex) {
-    //    if (log.isTraceEnabled()) {
-    //      log.trace(this.locations.get(vertex) + " gotten for " + vertex);
-    //    }
     return this.locations.computeIfAbsent(vertex, initializer);
-    //    return this.locations.get(vertex);
   }
 
   @Override
