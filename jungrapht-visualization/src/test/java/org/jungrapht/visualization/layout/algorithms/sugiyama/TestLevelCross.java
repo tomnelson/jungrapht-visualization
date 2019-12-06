@@ -2,7 +2,6 @@ package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.jungrapht.visualization.layout.algorithms.util.sugiyama.*;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

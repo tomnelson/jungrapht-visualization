@@ -1,4 +1,4 @@
-package org.jungrapht.visualization.layout.algorithms.util.sugiyama;
+package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
 import java.util.List;
 import org.jgrapht.Graph;

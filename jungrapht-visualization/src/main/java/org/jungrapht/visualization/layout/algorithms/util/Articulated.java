@@ -1,4 +1,4 @@
-package org.jungrapht.visualization.layout.algorithms.sugiyama;
+package org.jungrapht.visualization.layout.algorithms.util;
 
 import java.util.Collections;
 import java.util.List;

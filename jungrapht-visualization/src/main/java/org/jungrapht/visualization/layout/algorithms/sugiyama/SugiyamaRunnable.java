@@ -1,4 +1,4 @@
-package org.jungrapht.visualization.layout.algorithms.util.sugiyama;
+package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
 import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 

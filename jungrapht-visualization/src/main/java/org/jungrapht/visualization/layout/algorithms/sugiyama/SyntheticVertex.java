@@ -1,4 +1,4 @@
-package org.jungrapht.visualization.layout.algorithms.util.sugiyama;
+package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
 /**
  * a vertex that is not in the original graph, but is synthesed in order to position bends in the

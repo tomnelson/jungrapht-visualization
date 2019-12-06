@@ -1,4 +1,4 @@
-package org.jungrapht.visualization.layout.algorithms.sugiyama;
+package org.jungrapht.visualization.layout.algorithms.util;
 
 import org.jungrapht.visualization.RenderContext;
 
