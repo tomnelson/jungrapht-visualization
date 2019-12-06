@@ -73,20 +73,9 @@
         <release.plugin.version>2.5.3</release.plugin.version>
         <source.plugin.version>3.0.1</source.plugin.version>
         <surefire.plugin.version>2.19.1</surefire.plugin.version>
-        <truth.version>0.36</truth.version>
     </properties>
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>com.google.truth</groupId>
-                <artifactId>truth</artifactId>
-                <version>${truth.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.truth.extensions</groupId>
-                <artifactId>truth-java8-extension</artifactId>
-                <version>${truth.version}</version>
-            </dependency>
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>

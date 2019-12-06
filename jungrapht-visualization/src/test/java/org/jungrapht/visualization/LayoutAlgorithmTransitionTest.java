@@ -5,7 +5,6 @@ import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
-import org.jungrapht.visualization.layout.model.DefaultLayoutModel;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.junit.Test;
 
@@ -16,8 +15,7 @@ public class LayoutAlgorithmTransitionTest {
     Graph<String, Integer> graph =
         GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.simple()).buildGraph();
     graph.addVertex("A");
-    LayoutModel<String> model =
-        DefaultLayoutModel.<String>builder().graph(graph).size(100, 100).build();
+    LayoutModel<String> model = LayoutModel.<String>builder().graph(graph).size(100, 100).build();
 
     model.set("A", 0, 0);
     LayoutAlgorithm newLayoutAlgorithm = new StaticLayoutAlgorithm();

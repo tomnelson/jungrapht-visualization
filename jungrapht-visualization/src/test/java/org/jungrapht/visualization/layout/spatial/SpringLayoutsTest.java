@@ -70,7 +70,7 @@ public class SpringLayoutsTest {
     graph.addEdge("D", "C", i++);
 
     layoutModel =
-        new TestLayoutModel<>(DefaultLayoutModel.<String>builder().graph(graph).size(500, 500), 30);
+        new TestLayoutModel<>(LayoutModel.<String>builder().graph(graph).size(500, 500), 30);
     layoutModel.set("A", Point.of(200, 100));
     layoutModel.set("B", Point.of(100, 200));
     layoutModel.set("C", Point.of(100, 100));
@@ -157,7 +157,7 @@ public class SpringLayoutsTest {
     // how many steps
     private int steps;
 
-    public TestLayoutModel(Builder<T, ?, ?> builder, int steps) {
+    public TestLayoutModel(LayoutModel.Builder<T, ?, ?> builder, int steps) {
       super(builder);
       this.steps = steps;
     }

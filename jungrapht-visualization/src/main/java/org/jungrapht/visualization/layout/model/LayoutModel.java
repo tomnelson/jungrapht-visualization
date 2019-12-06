@@ -35,6 +35,54 @@ public interface LayoutModel<V>
         LayoutStateChange.Producer,
         LayoutVertexPositionChange.Listener<V> {
 
+  /**
+   * a builder for LayoutModel instances
+   *
+   * @param <V> the vertex type
+   * @param <T> the type of the superclass of the LayoutModel to be built
+   */
+  class Builder<V, T extends DefaultLayoutModel<V>, B extends Builder<V, T, B>>
+      extends AbstractLayoutModel.Builder<V, T, B> {
+
+    Function<V, Point> initializer = v -> Point.ORIGIN;
+
+    /**
+     * set the LayoutModel to copy with this builder
+     *
+     * @param layoutModel
+     * @return this builder for further use
+     */
+    public B layoutModel(LayoutModel<V> layoutModel) {
+      this.width = layoutModel.getWidth();
+      this.height = layoutModel.getHeight();
+      return (B) this;
+    }
+
+    /**
+     * sets the initializer to use for new vertices
+     *
+     * @param initializer
+     * @return the builder
+     */
+    public B initializer(Function<V, Point> initializer) {
+      this.initializer = initializer;
+      return (B) this;
+    }
+
+    /**
+     * build an instance of the requested LayoutModel of type T
+     *
+     * @return
+     */
+    public T build() {
+      return (T) new DefaultLayoutModel<>(this);
+    }
+  }
+
+  static <V> Builder<V, ?, ?> builder() {
+    return new Builder<>();
+  }
+
   /** @return the width of the layout area */
   int getWidth();
 

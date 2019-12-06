@@ -6,7 +6,6 @@ import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.jungrapht.visualization.layout.model.TestLayoutModel;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -73,8 +72,8 @@ public class TestTreeLayouts {
       Graph<V, E> graph,
       TreeLayoutAlgorithm<V> layoutAlgorithmOne,
       TreeLayout<V> layoutAlgorithmTwo) {
-    LayoutModel<V> layoutModelOne = new TestLayoutModel<>(graph, 100, 100);
-    LayoutModel<V> layoutModelTwo = new TestLayoutModel<>(graph, 100, 100);
+    LayoutModel<V> layoutModelOne = LayoutModel.<V>builder().size(100, 100).graph(graph).build();
+    LayoutModel<V> layoutModelTwo = LayoutModel.<V>builder().size(100, 100).graph(graph).build();
     layoutAlgorithmOne.visit(layoutModelOne);
     layoutAlgorithmTwo.visit(layoutModelTwo);
 
@@ -92,8 +91,10 @@ public class TestTreeLayouts {
   private <V> void testTrees(
       Graph<V, ?> graph, TreeLayout<V> layoutAlgorithmOne, TreeLayout<V> layoutAlgorithmTwo) {
 
-    LayoutModel<V> layoutModelOne = new TestLayoutModel<>(graph, 100, 100);
-    LayoutModel<V> layoutModelTwo = new TestLayoutModel<>(graph, 100, 100);
+    LayoutModel<V> layoutModelOne = LayoutModel.<V>builder().size(100, 100).graph(graph).build();
+
+    LayoutModel<V> layoutModelTwo = LayoutModel.<V>builder().size(100, 100).graph(graph).build();
+
     layoutAlgorithmOne.visit(layoutModelOne);
     layoutAlgorithmTwo.visit(layoutModelTwo);
 

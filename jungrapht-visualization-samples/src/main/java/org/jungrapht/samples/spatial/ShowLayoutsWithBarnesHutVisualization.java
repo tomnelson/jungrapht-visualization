@@ -36,7 +36,6 @@ import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TreeLayout;
 import org.jungrapht.visualization.layout.algorithms.repulsion.StandardRepulsion;
-import org.jungrapht.visualization.layout.model.DefaultLayoutModel;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
@@ -272,7 +271,7 @@ public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
   }
 
   LayoutModel getTreeLayoutPositions(Graph tree, LayoutAlgorithm treeLayout) {
-    LayoutModel model = DefaultLayoutModel.builder().size(600, 600).graph(tree).build();
+    LayoutModel model = LayoutModel.builder().size(600, 600).graph(tree).build();
     model.accept(treeLayout);
     return model;
   }

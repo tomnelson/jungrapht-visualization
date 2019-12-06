@@ -1,7 +1,5 @@
 package org.jungrapht.visualization.layout.spatial;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import java.util.HashMap;
 import java.util.Map;
 import org.jgrapht.Graph;
@@ -75,8 +73,7 @@ public class FRLayoutsTest {
     graph.addEdge("D", "C", i);
 
     layoutModel =
-        new TestLayoutModel<>(
-            DefaultLayoutModel.<String>builder().graph(graph).size(500, 500), 200);
+        new TestLayoutModel<>(LayoutModel.<String>builder().graph(graph).size(500, 500), 200);
     layoutModel.set("A", Point.of(200, 100));
     layoutModel.set("B", Point.of(100, 200));
     layoutModel.set("C", Point.of(100, 100));
@@ -141,13 +138,8 @@ public class FRLayoutsTest {
     for (String key : mapOne.keySet()) {
       Point p2 = mapOne.get(key);
       Point p3 = mapFour.get(key);
-      double abs = Math.abs(p2.x - p3.x);
-      //      Assert.assertTrue(Math.abs(p2.x - p3.x) < 1.0E-3);
-      //              (p2.x).isWithin(1.0E-3).of(p3.x);
-      //      Assert.assertTrue(Math.abs(p2.y - p3.y) < 1.0E-3);
-      //      assertThat(p2.y).isWithin(1.0E-3).of(p3.y);
-      assertThat(p2.x).isWithin(1.0E-3).of(p3.x);
-      assertThat(p2.y).isWithin(1.0E-3).of(p3.y);
+      Assert.assertTrue(Math.abs(p2.x - p3.x) < 1.0E-3);
+      Assert.assertTrue(Math.abs(p2.y - p3.y) < 1.0E-3);
     }
   }
 
@@ -171,7 +163,7 @@ public class FRLayoutsTest {
     // how many steps
     private int steps;
 
-    public TestLayoutModel(Builder<T, ?, ?> builder, int steps) {
+    public TestLayoutModel(LayoutModel.Builder<T, ?, ?> builder, int steps) {
       super(builder);
       this.steps = steps;
     }

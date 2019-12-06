@@ -33,7 +33,6 @@ import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TreeLayout;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
-import org.jungrapht.visualization.layout.model.DefaultLayoutModel;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.transform.HyperbolicTransformer;
 import org.jungrapht.visualization.transform.LayoutLensSupport;
@@ -331,7 +330,7 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
   LayoutModel getTreeLayoutPositions(
       Graph tree, LayoutAlgorithm treeLayout, LayoutModel layoutModel) {
     LayoutModel model =
-        DefaultLayoutModel.builder()
+        LayoutModel.builder()
             .size(layoutModel.getWidth(), layoutModel.getHeight())
             .graph(tree)
             .build();

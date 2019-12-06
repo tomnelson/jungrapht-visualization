@@ -28,7 +28,6 @@ import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TreeLayout;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
-import org.jungrapht.visualization.layout.model.DefaultLayoutModel;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.util.helpers.ControlHelpers;
 import org.jungrapht.visualization.util.helpers.LayoutHelper;
@@ -175,7 +174,7 @@ public class ShowLayoutsWithGuavaGraphs extends JPanel {
   }
 
   LayoutModel getTreeLayoutPositions(Graph tree, LayoutAlgorithm treeLayout) {
-    LayoutModel model = DefaultLayoutModel.builder().size(600, 600).graph(tree).build();
+    LayoutModel model = LayoutModel.builder().size(600, 600).graph(tree).build();
     model.accept(treeLayout);
     return model;
   }

@@ -18,7 +18,6 @@ import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.layout.algorithms.*;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
-import org.jungrapht.visualization.layout.model.DefaultLayoutModel;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.util.helpers.ControlHelpers;
 import org.jungrapht.visualization.util.helpers.LayoutFunction;
@@ -167,7 +166,7 @@ public class ShowLayouts extends JPanel {
   }
 
   LayoutModel getTreeLayoutPositions(Graph tree, LayoutAlgorithm treeLayout) {
-    LayoutModel model = DefaultLayoutModel.builder().size(600, 600).graph(tree).build();
+    LayoutModel model = LayoutModel.builder().size(600, 600).graph(tree).build();
     model.accept(treeLayout);
     return model;
   }

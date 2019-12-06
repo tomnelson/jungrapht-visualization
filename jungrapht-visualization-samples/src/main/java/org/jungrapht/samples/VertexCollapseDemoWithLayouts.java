@@ -28,7 +28,6 @@ import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.layout.algorithms.*;
-import org.jungrapht.visualization.layout.model.DefaultLayoutModel;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.subLayout.Collapsable;
@@ -318,7 +317,7 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
   }
 
   LayoutModel getTreeLayoutPositions(Graph tree, LayoutAlgorithm treeLayout) {
-    LayoutModel model = DefaultLayoutModel.builder().size(600, 600).graph(tree).build();
+    LayoutModel model = LayoutModel.builder().size(600, 600).graph(tree).build();
     model.accept(treeLayout);
     return model;
   }

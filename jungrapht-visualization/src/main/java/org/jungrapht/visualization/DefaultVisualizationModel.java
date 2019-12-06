@@ -17,7 +17,6 @@ import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.event.ModelChange;
 import org.jungrapht.visualization.layout.event.ViewChange;
-import org.jungrapht.visualization.layout.model.DefaultLayoutModel;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.util.RandomLocationTransformer;
@@ -58,7 +57,7 @@ class DefaultVisualizationModel<V, E> implements VisualizationModel<V, E> {
                 layoutSize.width, layoutSize.height, System.currentTimeMillis());
       }
       layoutModel =
-          DefaultLayoutModel.<V>builder()
+          LayoutModel.<V>builder()
               .graph(graph)
               .size(layoutSize.width, layoutSize.height)
               .initializer(initializer)

@@ -2,7 +2,6 @@ package org.jungrapht.visualization.layout.algorithms;
 
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.layout.algorithms.util.IterativeContext;
-import org.jungrapht.visualization.layout.model.DefaultLayoutModel;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.slf4j.Logger;
@@ -71,7 +70,7 @@ public class AnimationLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorith
     this.layoutModel = layoutModel;
     // create a LayoutModel to hold points for the transition
     this.transitionLayoutModel =
-        DefaultLayoutModel.<V>builder()
+        LayoutModel.<V>builder()
             .graph(visualizationServer.getVisualizationModel().getGraph())
             .layoutModel(layoutModel)
             .initializer(layoutModel)
