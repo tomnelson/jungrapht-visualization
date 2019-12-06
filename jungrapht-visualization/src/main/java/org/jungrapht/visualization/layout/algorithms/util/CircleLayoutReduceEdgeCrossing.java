@@ -154,7 +154,7 @@ public class CircleLayoutReduceEdgeCrossing<V, E> {
     }
   }
 
-  public static <V, E> int countCrossings(Graph<V, E> graph, List<V> vertices) {
+  public static <V, E> int countCrossings1(Graph<V, E> graph, List<V> vertices) {
     int numberOfCrossings = 0;
     Set<E> openEdgeList = new LinkedHashSet<>();
     List<V> verticesSeen = new LinkedList<>();
@@ -178,6 +178,60 @@ public class CircleLayoutReduceEdgeCrossing<V, E> {
                     .filter(e1 -> !graph.getEdgeSource(e1).equals(v))
                     .filter(e2 -> !graph.getEdgeTarget(e2).equals(v))
                     .count();
+            log.trace("numberOfCrossings now {}", numberOfCrossings);
+          }
+        }
+        log.trace("added edge {}", e);
+      }
+    }
+    return numberOfCrossings;
+  }
+
+  public static <V, E> int countCrossings(Graph<V, E> graph, List<V> vertices) {
+    int numberOfCrossings = 0;
+    Set<E> openEdgeList = new LinkedHashSet<>();
+    Set<E> sortedEdges = new LinkedHashSet<>();
+    List<V> verticesSeen = new LinkedList<>();
+    for (V v : vertices) {
+      log.trace("for vertex {}", v);
+      verticesSeen.add(v);
+      // sort the incident edges....
+      List<E> incidentEdges = new ArrayList<>(graph.edgesOf(v));
+      incidentEdges.sort(
+          (e, f) -> {
+            V oppe = Graphs.getOppositeVertex(graph, e, v);
+            V oppf = Graphs.getOppositeVertex(graph, f, v);
+            int idxv = vertices.indexOf(v);
+            int idxe = vertices.indexOf(oppe);
+            int idxf = vertices.indexOf(oppf);
+            int deltae = idxv - idxe;
+            if (deltae < 0) {
+              deltae += vertices.size();
+            }
+            int deltaf = idxv - idxf;
+            if (deltaf < 0) {
+              deltaf += vertices.size();
+            }
+            if (deltae < deltaf) {
+              return -1;
+            } else if (deltae == deltaf) {
+              return 0;
+            } else {
+              return 1;
+            }
+          });
+
+      for (E e : incidentEdges) {
+        V opposite = Graphs.getOppositeVertex(graph, e, v);
+        if (!verticesSeen.contains(opposite)) {
+          // e is an open edge
+          openEdgeList.add(e);
+        } else {
+          openEdgeList.remove(e);
+          for (int i = verticesSeen.indexOf(opposite) + 1; i < verticesSeen.indexOf(v); i++) {
+            V tween = verticesSeen.get(i);
+            numberOfCrossings +=
+                graph.edgesOf(tween).stream().filter(openEdgeList::contains).count();
             log.trace("numberOfCrossings now {}", numberOfCrossings);
           }
         }

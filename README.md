@@ -22,19 +22,19 @@ TidierTreeLayoutAlgorithm and the SugiyamaLayoutAlgorithm. All TreeLayoutAlgorit
 There are Vertex/Edge Predicates and Vertex/Edge Comparators that are used to coerce out the desired tree structure based on a user-defined procedure to find roots and follow the desired path. 
 All TreeLayoutAlgorithms, including the TidierTreeLayoutAlgorithm, will draw either single or multiple rooted 'forest' graphs. CircleLayout has been improved with an option to reduce edge crossing.
 
-Graph using TidierTreeLayout
+Graph using TidierTreeLayoutAlgorithm
 
 ![Image TidierTree](images/tidiertree.jpg)
 
-Graph using SugiyamaLayout
+Graph using SugiyamaLayoutAlgorithm
 
 ![Image SugiyamaLayout](images/sugiyama.jpg)
 
-Graph using CircleLayout
+Graph using CircleLayoutAlgorithm
 
 ![Image CircleLayout](images/CircleLayout.jpg)
 
-Same graph using CirceLayout with reduced edge crossing enabled
+Same graph using CircleLayoutAlgorithm with reduced edge crossing
 
 ![Image ReducedEdgeCrossing](images/ReducedEdgeCrossingCircleLayout.jpg)
 
