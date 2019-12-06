@@ -16,13 +16,25 @@ In the ShowLayoutsWithJGraptIO demonstration program, the lightweight rendering 
 
 Many rendering features may be set via java properties (see [sample.jungrapht.properties](https://github.com/tomnelson/jungrapht-visualization/blob/master/jungrapht-visualization/src/main/resources/sample.jungrapht.properties) for keys and default values). 
 
-JUNGRAPHT-VISUALIZATION includes improved layout algorithms for directed graphs and Trees, including the TidierTreeLayoutAlgorithm and the SugiyamaLayoutAlgorithm. All TreeLayoutAlgorithms will make a best attempt to draw any directed graph (by ignoring cycles and feedback edges) for which one or more Root vertices can be determined. There are Vertex/Edge predicates and Vertex/Edge Comparators that are used to coerce out the desired tree structure based on a user-defined procedure to find roots and follow the desired path. All TreeLayoutAlgorithms, including the TidierTreeLayoutAlgorithm, will draw either single or multiple rooted 'forest' graphs.
+JUNGRAPHT-VISUALIZATION includes improved layout algorithms for directed graphs and Trees, including the 
+TidierTreeLayoutAlgorithm and the SugiyamaLayoutAlgorithm. All TreeLayoutAlgorithms will make a best attempt to draw any directed graph 
+(by ignoring cycles and reversing feedback edges) for which one or more Root vertices can be determined. 
+There are Vertex/Edge Predicates and Vertex/Edge Comparators that are used to coerce out the desired tree structure based on a user-defined procedure to find roots and follow the desired path. 
+All TreeLayoutAlgorithms, including the TidierTreeLayoutAlgorithm, will draw either single or multiple rooted 'forest' graphs. CircleLayout has been improved with an option to reduce edge crossing.
 
-Original CircleLayout
+Graph using TidierTreeLayout
+
+![Image TidierTree](images/tidiertree.jpg)
+
+Graph using SugiyamaLayout
+
+![Image SugiyamaLayout](images/sugiyama.jpg)
+
+Graph using CircleLayout
 
 ![Image CircleLayout](images/CircleLayout.jpg)
 
-ReducedEdgeCrossingCircleLayout
+Same graph using CirceLayout with reduced edge crossing enabled
 
 ![Image ReducedEdgeCrossing](images/ReducedEdgeCrossingCircleLayout.jpg)
 

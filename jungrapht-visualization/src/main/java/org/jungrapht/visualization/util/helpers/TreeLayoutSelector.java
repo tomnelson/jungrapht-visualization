@@ -381,18 +381,22 @@ public class TreeLayoutSelector<V, E> extends JPanel {
           paintables.add(new LayoutPaintable.RadialRings<>(vv, (RadialTreeLayout) layoutAlgorithm));
 
         } else if (layoutAlgorithm instanceof TreeLayout) {
-          Map<V, Rectangle> cellMap = ((TreeLayout) layoutAlgorithm).getBaseBounds();
-          paintables.add(
-              new LayoutPaintable.TreeCells(
-                  vv.getVisualizationModel().getLayoutModel(),
-                  cellMap,
-                  vv.getRenderContext().getMultiLayerTransformer()));
+          if (log.isTraceEnabled()) {
+            Map<V, Rectangle> cellMap = ((TreeLayout) layoutAlgorithm).getBaseBounds();
+            paintables.add(
+                    new LayoutPaintable.TreeCells(
+                            vv.getVisualizationModel().getLayoutModel(),
+                            cellMap,
+                            vv.getRenderContext().getMultiLayerTransformer()));
+          }
         }
-        paintables.add(
-            new LayoutPaintable.LayoutBounds(
-                vv.getVisualizationModel(),
-                vv.getRenderContext().getMultiLayerTransformer(),
-                Color.pink));
+        if (log.isTraceEnabled()) {
+          paintables.add(
+                  new LayoutPaintable.LayoutBounds(
+                          vv.getVisualizationModel(),
+                          vv.getRenderContext().getMultiLayerTransformer(),
+                          Color.pink));
+        }
         paintables.forEach(p -> vv.addPreRenderPaintable(p));
       }
       vv.repaint();

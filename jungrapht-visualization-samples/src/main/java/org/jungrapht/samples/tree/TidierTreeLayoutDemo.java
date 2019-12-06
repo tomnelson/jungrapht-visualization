@@ -75,9 +75,9 @@ public class TidierTreeLayoutDemo extends JPanel {
     add(panel);
 
     // temporary feature to draw the layout bounds in the viewer
-    vv.addPreRenderPaintable(
-        new LayoutPaintable.LayoutBounds(
-            vv.getVisualizationModel(), vv.getRenderContext().getMultiLayerTransformer()));
+//    vv.addPreRenderPaintable(
+//        new LayoutPaintable.LayoutBounds(
+//            vv.getVisualizationModel(), vv.getRenderContext().getMultiLayerTransformer()));
 
     JComboBox<Mode> modeBox = graphMouse.getModeComboBox();
     modeBox.addItemListener(graphMouse.getModeListener());
