@@ -80,7 +80,6 @@ public class AnnotationsDemo extends JPanel {
     final VisualizationViewer<String, Integer> vv =
         VisualizationViewer.builder(vm).viewSize(preferredSize1).build();
 
-    vv.setBackground(Color.white);
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
 

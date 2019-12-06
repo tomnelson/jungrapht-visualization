@@ -49,7 +49,6 @@ public class SugiyamaLayoutExample extends JFrame {
 
     vv = VisualizationViewer.builder(graph).viewSize(new Dimension(600, 600)).build();
 
-    vv.setBackground(Color.white);
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
     // need to update the edge spatial structure
     // add a listener for ToolTips

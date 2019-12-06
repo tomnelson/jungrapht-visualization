@@ -79,7 +79,6 @@ public class RadialTreeLensDemo extends JPanel {
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.getRenderContext()
         .setEdgeDrawPaintFunction(new PickableElementPaintFunction<>(pes, Color.black, Color.cyan));
-    vv.setBackground(Color.white);
 
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());

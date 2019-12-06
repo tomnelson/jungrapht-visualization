@@ -64,8 +64,6 @@ public class ImageEdgeLabelDemo extends JPanel {
         .setEdgeDrawPaintFunction(
             new PickableElementPaintFunction<>(vv.getSelectedEdgeState(), Color.black, Color.cyan));
 
-    vv.setBackground(Color.white);
-
     vv.getRenderContext().setVertexLabelRenderer(new JLabelVertexLabelRenderer(Color.cyan));
     vv.getRenderContext().setEdgeLabelRenderer(new JLabelEdgeLabelRenderer(Color.cyan));
     vv.getRenderContext()

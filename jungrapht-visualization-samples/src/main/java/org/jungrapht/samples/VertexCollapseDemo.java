@@ -130,8 +130,6 @@ public class VertexCollapseDemo extends JPanel {
 
     vv.getRenderContext().setParallelEdgeIndexFunction(eif);
 
-    vv.setBackground(Color.white);
-
     // add a listener for ToolTips
     vv.setVertexToolTipFunction(Object::toString);
     vv.setEdgeToolTipFunction(Object::toString);

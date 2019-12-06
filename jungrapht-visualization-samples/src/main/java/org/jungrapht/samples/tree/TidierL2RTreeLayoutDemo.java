@@ -73,7 +73,7 @@ public class TidierL2RTreeLayoutDemo extends JPanel {
             .viewSize(new Dimension(600, 600))
             .graphMouse(graphMouse)
             .build();
-    vv.setBackground(Color.white);
+
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     // add a listener for ToolTips

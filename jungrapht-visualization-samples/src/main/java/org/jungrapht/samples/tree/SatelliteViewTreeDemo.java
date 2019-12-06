@@ -135,7 +135,6 @@ public class SatelliteViewTreeDemo extends JPanel {
               }
             });
 
-    mainVisualizationViewer.setBackground(Color.white);
     mainVisualizationViewer
         .getRenderContext()
         .setEdgeDrawPaintFunction(

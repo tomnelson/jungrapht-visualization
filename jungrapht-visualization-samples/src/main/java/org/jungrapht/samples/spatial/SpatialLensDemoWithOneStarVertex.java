@@ -99,7 +99,6 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
             .viewSize(preferredSize)
             .build();
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
-    vv.setBackground(Color.white);
 
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
 

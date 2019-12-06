@@ -10,7 +10,6 @@ package org.jungrapht.samples;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.GridLayout;
 import javax.swing.*;
 import org.jgrapht.Graph;
@@ -94,8 +93,6 @@ public class ShowLayoutsWithGuavaGraphs extends JPanel {
     JComboBox modeBox = graphMouse.getModeComboBox();
     modeBox.addItemListener(
         ((DefaultModalGraphMouse<Integer, Number>) vv.getGraphMouse()).getModeListener());
-
-    vv.setBackground(Color.WHITE);
 
     setLayout(new BorderLayout());
     add(vv.getComponent(), BorderLayout.CENTER);

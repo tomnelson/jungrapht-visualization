@@ -108,7 +108,6 @@ public class SatelliteViewDemo extends JPanel {
             .viewSize(preferredSize2)
             .transparent(true)
             .build();
-    mainVisualizationViewer.setBackground(Color.white);
     mainVisualizationViewer
         .getRenderContext()
         .setEdgeDrawPaintFunction(

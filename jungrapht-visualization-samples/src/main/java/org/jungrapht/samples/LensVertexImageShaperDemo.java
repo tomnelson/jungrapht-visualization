@@ -134,8 +134,6 @@ public class LensVertexImageShaperDemo extends JPanel {
         .setEdgeDrawPaintFunction(
             new PickableElementPaintFunction<>(vv.getSelectedEdgeState(), Color.black, Color.cyan));
 
-    vv.setBackground(Color.white);
-
     vv.getRenderContext().setVertexLabelFunction(map::get);
     vv.getRenderContext().setVertexLabelRenderer(new JLabelVertexLabelRenderer(Color.cyan));
     vv.getRenderContext().setEdgeLabelRenderer(new JLabelEdgeLabelRenderer(Color.cyan));

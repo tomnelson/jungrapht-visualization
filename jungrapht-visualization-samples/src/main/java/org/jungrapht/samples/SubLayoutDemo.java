@@ -122,7 +122,6 @@ public class SubLayoutDemo extends JPanel {
         .setVertexFillPaintFunction(
             new PickableElementPaintFunction<>(
                 vv.getSelectedVertexState(), Color.red, Color.yellow));
-    vv.setBackground(Color.white);
 
     // add a listener for ToolTips
     vv.setVertexToolTipFunction(Object::toString);

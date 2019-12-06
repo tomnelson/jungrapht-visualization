@@ -88,8 +88,6 @@ public class ShowLayouts extends JPanel {
                 + ". with neighbors:"
                 + Graphs.neighborListOf(vv.getVisualizationModel().getGraph(), vertex));
 
-    vv.setBackground(Color.WHITE);
-
     setLayout(new BorderLayout());
     add(vv.getComponent(), BorderLayout.CENTER);
 

@@ -78,7 +78,7 @@ public class MultiRowTreeLayoutForestDemo extends JPanel {
             .viewSize(viewSize)
             .graphMouse(graphMouse)
             .build();
-    vv.setBackground(Color.white);
+
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     // add a listener for ToolTips

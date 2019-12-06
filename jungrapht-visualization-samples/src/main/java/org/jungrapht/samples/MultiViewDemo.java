@@ -112,10 +112,6 @@ public class MultiViewDemo extends JPanel {
     vv2.getRenderContext().getMultiLayerTransformer().addChangeListener(vv2);
     vv3.getRenderContext().getMultiLayerTransformer().addChangeListener(vv3);
 
-    vv1.setBackground(Color.white);
-    vv2.setBackground(Color.white);
-    vv3.setBackground(Color.white);
-
     // create one pick support for all 3 views to share
     GraphElementAccessor<String, Integer> pickSupport = new ShapePickSupport<>(vv1);
     vv1.setPickSupport(pickSupport);

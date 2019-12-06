@@ -56,7 +56,6 @@ public class VertexSizeAwareTreeDAGLayoutDemo extends JFrame {
             .viewSize(new Dimension(600, 600))
             .build();
 
-    vv.setBackground(Color.white);
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
     //    vv.getRenderContext().setVertexLabelFunction(Object::toString);
     // add a listener for ToolTips

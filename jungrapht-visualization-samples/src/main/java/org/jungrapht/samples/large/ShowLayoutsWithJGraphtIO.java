@@ -113,8 +113,6 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
     modeBox.addItemListener(
         ((DefaultModalGraphMouse<Integer, DefaultEdge>) vv.getGraphMouse()).getModeListener());
 
-    vv.setBackground(Color.WHITE);
-
     final JComboBox graphComboBox = new JComboBox(getCombos());
     graphComboBox.addActionListener(
         e ->

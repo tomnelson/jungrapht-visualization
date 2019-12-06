@@ -70,7 +70,6 @@ public class BalloonLayoutDemo extends JPanel {
             .graphMouse(graphMouse)
             .build();
 
-    vv.setBackground(Color.white);
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     // add a listener for ToolTips
     vv.setVertexToolTipFunction(Object::toString);

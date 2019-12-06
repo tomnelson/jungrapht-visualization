@@ -609,7 +609,7 @@ public class TidierTreeLayoutAlgorithm<V, E>
 
     // normalize all the layoutModel points
     // and center in the layout area
-    layoutModel.setSize((int) bounds.width, (int) bounds.height);
+    layoutModel.setSize((int) bounds.width + 2 * horizontalVertexSpacing, (int) bounds.height);
     int xoffset = (int) (layoutModel.getWidth() - this.bounds.width) / 2;
     int yoffset = (int) (layoutModel.getHeight() - this.bounds.height) / 2;
     for (Map.Entry<V, Point> entry : layoutModel.getLocations().entrySet()) {

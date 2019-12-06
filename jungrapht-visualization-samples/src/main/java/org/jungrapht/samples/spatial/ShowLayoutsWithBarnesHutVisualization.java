@@ -100,8 +100,6 @@ public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
                 .graphMouse(graphMouse)
                 .viewSize(new Dimension(600, 600)));
 
-    vv.setBackground(Color.white);
-
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
 
     vv.setVertexToolTipFunction(

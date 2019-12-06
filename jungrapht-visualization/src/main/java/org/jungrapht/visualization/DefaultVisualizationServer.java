@@ -193,6 +193,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
               .layoutSize(layoutSize)
               .build();
     }
+    setBackground(Color.white);
     setVisualizationModel(visualizationModel);
     renderContext = RenderContext.builder(this.visualizationModel.getGraph()).build();
     renderContext.getRenderContextStateChangeSupport().addRenderContextStateChangeListener(this);

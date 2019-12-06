@@ -103,7 +103,6 @@ public class SpatialLensLargeGraphDemo extends JPanel {
             .build();
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.getRenderContext().setVertexShapeFunction(n -> new Rectangle2D.Float(-8, -8, 16, 16));
-    vv.setBackground(Color.white);
 
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
 

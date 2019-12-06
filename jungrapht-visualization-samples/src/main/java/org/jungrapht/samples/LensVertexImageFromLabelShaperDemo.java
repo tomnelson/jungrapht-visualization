@@ -91,8 +91,6 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
         .setEdgeDrawPaintFunction(
             new PickableElementPaintFunction<>(vv.getSelectedEdgeState(), Color.black, Color.cyan));
 
-    vv.setBackground(Color.white);
-
     IconCache<String> iconCache =
         IconCache.<String>builder(n -> "<html>This<br>is a<br>multiline<br>label " + n + "</html>")
             .vertexShapeFunction(vv.getRenderContext().getVertexShapeFunction())

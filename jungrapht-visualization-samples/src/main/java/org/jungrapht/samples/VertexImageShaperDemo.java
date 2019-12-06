@@ -137,8 +137,6 @@ public class VertexImageShaperDemo extends JPanel {
         .setEdgeDrawPaintFunction(
             new PickableElementPaintFunction<>(vv.getSelectedEdgeState(), Color.black, Color.cyan));
 
-    vv.setBackground(Color.white);
-
     final Function<Number, String> vertexStringerImpl = new VertexStringerImpl<>(map);
     vv.getRenderContext().setVertexLabelFunction(vertexStringerImpl);
     vv.getRenderContext().setVertexLabelRenderer(new JLabelVertexLabelRenderer(Color.cyan));

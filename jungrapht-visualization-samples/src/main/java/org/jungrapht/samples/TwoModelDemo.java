@@ -80,9 +80,6 @@ public class TwoModelDemo extends JPanel {
         .setMultiLayerTransformer(vv1.getRenderContext().getMultiLayerTransformer());
     vv2.getRenderContext().getMultiLayerTransformer().addChangeListener(vv1);
 
-    vv1.setBackground(Color.white);
-    vv2.setBackground(Color.white);
-
     // share one MutableSelectedState between the two views
     MutableSelectedState<String> ps = new MultiMutableSelectedState<>();
     vv1.setSelectedVertexState(ps);

@@ -123,7 +123,6 @@ public class GraphEditorDemo extends JPanel implements Printable {
             .layoutAlgorithm(layoutAlgorithm)
             .viewSize(new Dimension(600, 600))
             .build();
-    vv.setBackground(Color.white);
 
     vv.getRenderContext().setParallelEdgeIndexFunction(new ParallelEdgeIndexFunction<>());
     vv.getRenderContext()

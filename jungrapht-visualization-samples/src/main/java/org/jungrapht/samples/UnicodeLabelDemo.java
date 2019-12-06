@@ -75,8 +75,6 @@ public class UnicodeLabelDemo {
             new PickableElementPaintFunction<>(
                 vv.getSelectedEdgeState(), Color.black, Color.lightGray));
 
-    vv.setBackground(Color.white);
-
     // add my listener for ToolTips
     vv.setVertexToolTipFunction(Object::toString);
 

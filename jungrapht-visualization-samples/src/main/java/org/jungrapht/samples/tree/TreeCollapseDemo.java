@@ -71,7 +71,7 @@ public class TreeCollapseDemo extends JPanel {
     Dimension layoutSize = new Dimension(600, 600);
 
     vv = VisualizationViewer.builder(graph).layoutSize(layoutSize).viewSize(viewSize).build();
-    vv.setBackground(Color.white);
+
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
     vv.getRenderContext().setVertexShapeFunction(new ClusterShapeFunction());
     // add a listener for ToolTips

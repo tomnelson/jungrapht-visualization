@@ -62,7 +62,7 @@ public class TreeLayoutDemo extends JPanel {
             .viewSize(new Dimension(600, 600))
             .graphMouse(graphMouse)
             .build();
-    vv.setBackground(Color.white);
+
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);

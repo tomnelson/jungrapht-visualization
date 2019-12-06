@@ -95,7 +95,6 @@ public class RTreeVisualization<V> extends JPanel {
             .layoutSize(new Dimension(2400, 2400))
             .viewSize(new Dimension(600, 600))
             .build();
-    vv.setBackground(Color.white);
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.orthogonal());
     vv.getRenderContext().setVertexShapeFunction(v -> new Rectangle2D.Double(-10, -10, 20, 20));
 

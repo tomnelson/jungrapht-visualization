@@ -71,7 +71,6 @@ public class EdgeLabelDemo extends JPanel {
             .layoutAlgorithm(layoutAlgorithm)
             .viewSize(new Dimension(600, 700))
             .build();
-    vv.setBackground(Color.white);
 
     vertexLabelRenderer = vv.getRenderContext().getVertexLabelRenderer();
     edgeLabelRenderer = vv.getRenderContext().getEdgeLabelRenderer();

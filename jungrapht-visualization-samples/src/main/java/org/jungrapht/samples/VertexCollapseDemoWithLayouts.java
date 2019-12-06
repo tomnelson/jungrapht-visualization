@@ -130,8 +130,6 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
         new PredicatedParallelEdgeIndexFunction(exclusions::contains);
     vv.getRenderContext().setParallelEdgeIndexFunction(eif);
 
-    vv.setBackground(Color.white);
-
     // add a listener for ToolTips
     vv.setVertexToolTipFunction(Object::toString);
 
