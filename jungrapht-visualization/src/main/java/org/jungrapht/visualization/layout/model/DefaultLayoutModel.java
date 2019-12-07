@@ -1,5 +1,6 @@
 package org.jungrapht.visualization.layout.model;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -38,6 +39,11 @@ public class DefaultLayoutModel<V> extends AbstractLayoutModel<V>
 
   public void setInitializer(Function<V, Point> initializer) {
     this.initializer = initializer;
+  }
+
+  @Override
+  public Map<V, Point> getLocations() {
+    return Collections.unmodifiableMap(this.locations);
   }
 
   @Override

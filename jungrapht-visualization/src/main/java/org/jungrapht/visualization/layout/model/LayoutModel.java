@@ -10,10 +10,10 @@
 package org.jungrapht.visualization.layout.model;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
@@ -106,9 +106,8 @@ public interface LayoutModel<V>
 
   /** @return a mapping of Vertices to Point locations */
   default Map<V, Point> getLocations() {
-    Map<V, Point> map = new HashMap<>();
-    getGraph().vertexSet().forEach(v -> map.put(v, apply(v)));
-    return Collections.unmodifiableMap(map);
+    return Collections.unmodifiableMap(
+        getGraph().vertexSet().stream().collect(Collectors.toMap(v -> v, this::apply)));
   }
 
   /**
