@@ -181,12 +181,12 @@ public class TestSugiyamaFunctions {
     sgraph.edgeSet().forEach(this::testEdgeHasCorrectRanks);
 
     // test that the graph has 3 virtualVertices
-    List<SyntheticVertex<String>> virtualVertices =
+    List<SyntheticSugiyamaVertex<String>> virtualVertices =
         sgraph
             .vertexSet()
             .stream()
-            .filter(v -> v instanceof SyntheticVertex)
-            .map(v -> (SyntheticVertex<String>) v)
+            .filter(v -> v instanceof SyntheticSugiyamaVertex)
+            .map(v -> (SyntheticSugiyamaVertex<String>) v)
             .collect(Collectors.toList());
 
     Assert.assertEquals(3, virtualVertices.size());

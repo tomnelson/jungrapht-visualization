@@ -2,7 +2,11 @@ package org.jungrapht.visualization.layout.util.synthetics;
 
 import java.util.Objects;
 
-/** @param <V> vertex type */
+/**
+ * A delegate class for a generic type V
+ *
+ * @param <V> vertex type
+ */
 public class SV<V> {
 
   public final V vertex;
@@ -27,11 +31,11 @@ public class SV<V> {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    SV<?> sugiyamaVertex = (SV<?>) o;
+    SV<?> se = (SV<?>) o;
     if (o instanceof SyntheticVertex) {
       return false;
     }
-    return Objects.equals(vertex, sugiyamaVertex.vertex);
+    return Objects.equals(vertex, se.vertex);
   }
 
   @Override

@@ -273,7 +273,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       int width = horizontalOffset;
       int maxHeight = 0;
       for (SugiyamaVertex<V> sugiyamaVertex : layer) {
-        if (!(sugiyamaVertex instanceof SyntheticVertex)) {
+        if (!(sugiyamaVertex instanceof SyntheticSugiyamaVertex)) {
           Rectangle bounds = vertexShapeFunction.apply(sugiyamaVertex.vertex).getBounds();
           width += bounds.width + horizontalOffset;
           maxHeight = Math.max(maxHeight, bounds.height);
@@ -303,7 +303,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       int rowWidth = 0;
       for (SugiyamaVertex<V> sugiyamaVertex : layer) {
         int vertexWidth = 0;
-        if (!(sugiyamaVertex instanceof SyntheticVertex)) {
+        if (!(sugiyamaVertex instanceof SyntheticSugiyamaVertex)) {
           vertexWidth = vertexShapeFunction.apply(sugiyamaVertex.vertex).getBounds().width;
         }
 
@@ -363,9 +363,9 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       // if the edges are to be straigntened, find the extreme compared to source/vertex
       for (ArticulatedEdge<V, E> ae : articulatedEdges) {
         // source x
-        SugiyamaVertex<V> source = svGraph.getEdgeSource(ae);
+        SugiyamaVertex<V> source = ae.source;
         double sourceX = vertexMap.get(source).getPoint().x;
-        SugiyamaVertex<V> target = svGraph.getEdgeTarget(ae);
+        SugiyamaVertex<V> target = ae.target;
         double targetX = vertexMap.get(target).getPoint().x;
 
         double maxX =
@@ -632,8 +632,8 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     for (List<SugiyamaVertex<V>> list : in) {
       LinkedList<SugiyamaVertex<V>> ll = new LinkedList<>();
       for (SugiyamaVertex<V> sugiyamaVertex : list) {
-        if (sugiyamaVertex instanceof SyntheticVertex) {
-          ll.add(new SyntheticVertex<>((SyntheticVertex) sugiyamaVertex));
+        if (sugiyamaVertex instanceof SyntheticSugiyamaVertex) {
+          ll.add(new SyntheticSugiyamaVertex<>((SyntheticSugiyamaVertex) sugiyamaVertex));
         } else {
           ll.add(new SugiyamaVertex<>(sugiyamaVertex));
         }

@@ -6,6 +6,12 @@ import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Early implementation that ignores cycles by removing them from the graph
+ *
+ * @param <V>
+ * @param <E>
+ */
 public class RemoveCycles<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(RemoveCycles.class);

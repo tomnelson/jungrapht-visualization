@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaEdge;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaVertex;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SyntheticVertex;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.SyntheticSugiyamaVertex;
 
 public class BrandesKopf<V, E> {
 
@@ -27,9 +27,9 @@ public class BrandesKopf<V, E> {
       for (int el1 = 1; el1 <= nextLayer.size(); el1++) {
         // get the vertex at next layer index el1
         SugiyamaVertex<V> vel1nextLayer = nextLayer.get(el1);
-        if (el1 == nextLayer.size() || vel1nextLayer instanceof SyntheticVertex) {
+        if (el1 == nextLayer.size() || vel1nextLayer instanceof SyntheticSugiyamaVertex) {
           int k1 = thisLayer.size();
-          if (vel1nextLayer instanceof SyntheticVertex) {
+          if (vel1nextLayer instanceof SyntheticSugiyamaVertex) {
             Optional<SugiyamaEdge<V, E>> incomingEdgeOpt =
                 graph.incomingEdgesOf(vel1nextLayer).stream().findFirst();
             if (incomingEdgeOpt.isPresent()) {

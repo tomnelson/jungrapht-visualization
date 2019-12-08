@@ -10,7 +10,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
@@ -34,11 +33,6 @@ import org.slf4j.LoggerFactory;
  */
 public class SugiyamaLayoutAlgorithm<V, E>
     implements LayoutAlgorithm<V>,
-        EdgeAwareLayoutAlgorithm<V, E>,
-        //        EdgeSorting<E>,
-        //        EdgePredicated<E>,
-        //        VertexSorting<V>,
-        //        VertexPredicated<V>,
         RenderContextAware<V, E>,
         ShapeFunctionAware<V>,
         AfterRunnable,
@@ -57,14 +51,13 @@ public class SugiyamaLayoutAlgorithm<V, E>
    * @param <B> the builder type
    */
   public static class Builder<
-          V, E, T extends SugiyamaLayoutAlgorithm<V, E>, B extends Builder<V, E, T, B>>
-      implements LayoutAlgorithm.Builder<V, T, B>, EdgeAwareLayoutAlgorithm.Builder<V, E, T, B> {
-    protected Predicate<V> rootPredicate;
+          V,
+          E,
+          T extends SugiyamaLayoutAlgorithm<V, E> & EdgeAwareLayoutAlgorithm<V, E>,
+          B extends Builder<V, E, T, B>>
+      implements LayoutAlgorithm.Builder<V, T, B> {
     protected Function<V, Shape> vertexShapeFunction = v -> IDENTITY_SHAPE;
-    protected Predicate<V> vertexPredicate = v -> true;
-    protected Predicate<E> edgePredicate = e -> true;
-    protected Comparator<V> vertexComparator = (v1, v2) -> 0;
-    protected Comparator<E> edgeComparator = (e1, e2) -> 0;
+    protected boolean straightenEdges;
     protected boolean expandLayout = true;
     protected Runnable after = () -> {};
 
@@ -77,45 +70,9 @@ public class SugiyamaLayoutAlgorithm<V, E>
       this.vertexShapeFunction = vertexShapeFunction;
       return self();
     }
-    /** {@inheritDoc} */
-    public B rootPredicate(Predicate<V> rootPredicate) {
-      this.rootPredicate = rootPredicate;
-      return self();
-    }
 
-    /**
-     * @param vertexPredicate {@link Predicate} to apply to vertices
-     * @return this Builder
-     */
-    public B vertexPredicate(Predicate<V> vertexPredicate) {
-      this.vertexPredicate = vertexPredicate;
-      return self();
-    }
-
-    /**
-     * @param edgePredicate {@link Predicate} to apply to edges
-     * @return this Builder
-     */
-    public B edgePredicate(Predicate<E> edgePredicate) {
-      this.edgePredicate = edgePredicate;
-      return self();
-    }
-
-    /**
-     * @param vertexComparator {@link Comparator} to sort vertices
-     * @return this Builder
-     */
-    public B vertexComparator(Comparator<V> vertexComparator) {
-      this.vertexComparator = vertexComparator;
-      return self();
-    }
-
-    /**
-     * @param edgeComparator {@link Comparator} to sort edges
-     * @return this Builder
-     */
-    public B edgeComparator(Comparator<E> edgeComparator) {
-      this.edgeComparator = edgeComparator;
+    public B straightenEdges(boolean straightenEdges) {
+      this.straightenEdges = straightenEdges;
       return self();
     }
 
@@ -148,12 +105,8 @@ public class SugiyamaLayoutAlgorithm<V, E>
   protected Rectangle bounds = Rectangle.IDENTITY;
   protected List<V> roots;
 
-  protected Predicate<V> rootPredicate;
   protected Function<V, Shape> vertexShapeFunction;
-  protected Predicate<V> vertexPredicate;
-  protected Predicate<E> edgePredicate;
-  protected Comparator<V> vertexComparator;
-  protected Comparator<E> edgeComparator;
+  protected boolean straightenEdges;
   protected boolean expandLayout;
   protected RenderContext<V, E> renderContext;
   CompletableFuture theFuture;
@@ -164,32 +117,16 @@ public class SugiyamaLayoutAlgorithm<V, E>
   }
 
   private SugiyamaLayoutAlgorithm(Builder builder) {
-    this(
-        builder.rootPredicate,
-        builder.vertexShapeFunction,
-        builder.vertexPredicate,
-        builder.vertexComparator,
-        builder.edgePredicate,
-        builder.edgeComparator,
-        builder.expandLayout,
-        builder.after);
+    this(builder.vertexShapeFunction, builder.straightenEdges, builder.expandLayout, builder.after);
   }
 
   private SugiyamaLayoutAlgorithm(
-      Predicate<V> rootPredicate,
       Function<V, Shape> vertexShapeFunction,
-      Predicate<V> vertexPredicate,
-      Comparator<V> vertexComparator,
-      Predicate<E> edgePredicate,
-      Comparator<E> edgeComparator,
+      boolean straightenEdges,
       boolean expandLayout,
       Runnable after) {
-    this.rootPredicate = rootPredicate;
     this.vertexShapeFunction = vertexShapeFunction;
-    this.vertexPredicate = vertexPredicate;
-    this.vertexComparator = vertexComparator;
-    this.edgePredicate = edgePredicate;
-    this.edgeComparator = edgeComparator;
+    this.straightenEdges = straightenEdges;
     this.expandLayout = expandLayout;
     this.after = after;
   }
@@ -211,10 +148,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
         SugiyamaRunnable.<V, E>builder()
             .layoutModel(layoutModel)
             .renderContext(renderContext)
-            .edgeComparator(edgeComparator)
-            .edgePredicate(edgePredicate)
-            .vertexComparator(vertexComparator)
-            .vertexPredicate(vertexPredicate)
+            .straightenEdges(straightenEdges)
             .build();
     theFuture =
         CompletableFuture.runAsync(runnable)
@@ -234,28 +168,6 @@ public class SugiyamaLayoutAlgorithm<V, E>
     if (theFuture != null) {
       theFuture.cancel(true);
     }
-  }
-
-  @Override
-  public void setEdgePredicate(Predicate<E> edgePredicate) {
-
-    this.edgePredicate = e -> true;
-    //edgePredicate;
-  }
-
-  @Override
-  public void setEdgeComparator(Comparator<E> comparator) {
-    this.edgeComparator = edgeComparator;
-  }
-
-  @Override
-  public void setVertexPredicate(Predicate<V> vertexPredicate) {
-    this.vertexPredicate = vertexPredicate;
-  }
-
-  @Override
-  public void setVertexComparator(Comparator<V> comparator) {
-    this.vertexComparator = vertexComparator;
   }
 
   /**

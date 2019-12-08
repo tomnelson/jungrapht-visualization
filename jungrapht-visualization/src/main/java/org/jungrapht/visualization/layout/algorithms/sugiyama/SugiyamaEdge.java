@@ -4,7 +4,7 @@ import java.util.Objects;
 import org.jungrapht.visualization.layout.util.synthetics.SE;
 
 /**
- * An edge type used for the application of the SugiyamaLayoutAlgorithm. instances of SE<V,E>
+ * An edge type used for the application of the SugiyamaLayoutAlgorithm. Instances of SE<V,E>
  * replace instances of E during layout
  *
  * @param <V> vertex type

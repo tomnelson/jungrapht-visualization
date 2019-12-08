@@ -2,7 +2,11 @@ package org.jungrapht.visualization.layout.util.synthetics;
 
 import java.util.Objects;
 
-/** @param <E> edge type */
+/**
+ * A delegate class for a generic edge of type E
+ *
+ * @param <E> edge type
+ */
 public class SE<E> {
 
   public final E edge;

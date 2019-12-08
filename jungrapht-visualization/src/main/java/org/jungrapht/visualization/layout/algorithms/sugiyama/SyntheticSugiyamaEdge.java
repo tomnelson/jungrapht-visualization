@@ -7,15 +7,15 @@ package org.jungrapht.visualization.layout.algorithms.sugiyama;
  * @param <V> vertex type
  * @param <E> edge type
  */
-public class SyntheticEdge<V, E> extends SugiyamaEdge<V, E> {
+public class SyntheticSugiyamaEdge<V, E> extends SugiyamaEdge<V, E> {
 
-  public static <V, E> SyntheticEdge of(
+  public static <V, E> SyntheticSugiyamaEdge of(
       SugiyamaEdge<V, E> edge, SugiyamaVertex<V> source, SugiyamaVertex<V> target) {
 
-    return new SyntheticEdge(edge, source, target);
+    return new SyntheticSugiyamaEdge(edge, source, target);
   }
 
-  protected SyntheticEdge(
+  protected SyntheticSugiyamaEdge(
       SugiyamaEdge<V, E> edge, SugiyamaVertex<V> source, SugiyamaVertex<V> target) {
 
     super(edge.edge, source, target);

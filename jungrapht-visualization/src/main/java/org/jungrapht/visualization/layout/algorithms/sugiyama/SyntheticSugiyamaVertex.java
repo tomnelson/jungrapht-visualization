@@ -1,33 +1,33 @@
 package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
 /**
- * a vertex that is not in the original graph, but is synthesed in order to position bends in the
+ * a vertex that is not in the original graph, but is synthesized in order to position bends in the
  * articulated edges of the SugiyamaLayoutAlgorithm
  *
  * @param <V> vertex type
  */
-public class SyntheticVertex<V> extends SugiyamaVertex<V> {
+public class SyntheticSugiyamaVertex<V> extends SugiyamaVertex<V> {
 
   final int hash;
 
-  public static <V> SyntheticVertex<V> of() {
-    return new SyntheticVertex();
+  public static <V> SyntheticSugiyamaVertex<V> of() {
+    return new SyntheticSugiyamaVertex();
   }
 
-  protected SyntheticVertex() {
+  protected SyntheticSugiyamaVertex() {
     super();
     this.hash = System.identityHashCode(this);
   }
 
-  public SyntheticVertex(SyntheticVertex<V> other) {
+  public SyntheticSugiyamaVertex(SyntheticSugiyamaVertex<V> other) {
     super();
     this.hash = other.hash;
   }
 
   @Override
   public boolean equals(Object o) {
-    if (o instanceof SyntheticVertex) {
-      return hash == ((SyntheticVertex) o).hash;
+    if (o instanceof SyntheticSugiyamaVertex) {
+      return hash == ((SyntheticSugiyamaVertex) o).hash;
     }
     return false;
   }

@@ -5,16 +5,16 @@ import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.util.synthetics.SV;
 
 /**
- * a vertex type for the SugiyamaLayoutAlgorithm instances of SV<V> replace instances of V during
- * layout The SV<V> holds state information about the position of the vertex in the layered graph
- * for the SugiyamaLayoutAlgorithm
+ * a vertex type for the SugiyamaLayoutAlgorithm instances of SugiyamaVertex<V> replace instances of
+ * V during layout The SugiyamaVertex<V> holds metadata information about the position of the vertex
+ * in the layered graph for the SugiyamaLayoutAlgorithm
  *
  * @param <V>
  */
 public class SugiyamaVertex<V> extends SV<V> {
-  protected int rank;
-  protected int index;
-  protected Point p;
+  protected int rank; // the layer number for this vertex
+  protected int index; // the position within the layer for this vertex
+  protected Point p; // the cartesian coordinates for this articulation point
 
   public static <V> SugiyamaVertex<V> of(V vertex) {
     return new SugiyamaVertex(vertex);
@@ -78,7 +78,7 @@ public class SugiyamaVertex<V> extends SV<V> {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     SugiyamaVertex<?> sugiyamaVertex = (SugiyamaVertex<?>) o;
-    if (o instanceof SyntheticVertex) {
+    if (o instanceof SyntheticSugiyamaVertex) {
       return false;
     }
     return Objects.equals(vertex, sugiyamaVertex.vertex);

@@ -12,6 +12,14 @@ import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Remove cycles in the graph and place them in a collection of feedback edges. A later operation
+ * will reverse the direction of the feedback arcs for DAG processing. Once complete, the feedback
+ * arcs will be restored to their original direction.
+ *
+ * @param <V> vertex type
+ * @param <E> edge type
+ */
 public class GreedyCycleRemoval<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(GreedyCycleRemoval.class);
@@ -24,22 +32,40 @@ public class GreedyCycleRemoval<V, E> {
     this.graph = graph;
     copy = GraphTypeBuilder.forGraph(graph).buildGraph();
     Graphs.addGraph(copy, graph); // dest, source
-
     getFeedbackEdges();
   }
 
+  /** @return */
   public Collection<E> getFeedbackArcs() {
     return this.feedbackArcs;
   }
 
+  /**
+   * Get a sink vertex (a vertex with no outgoing edges)
+   *
+   * @param graph the graph to examine
+   * @return the first sink vertex, if present
+   */
   private Optional<V> getSink(Graph<V, E> graph) {
     return graph.vertexSet().stream().filter(v -> graph.outgoingEdgesOf(v).isEmpty()).findFirst();
   }
 
+  /**
+   * Get a source vertex (a vertex with no incoming edges)
+   *
+   * @param graph the graph to examine
+   * @return the first source vertex, if present
+   */
   private Optional<V> getSource(Graph<V, E> graph) {
     return graph.vertexSet().stream().filter(v -> graph.incomingEdgesOf(v).isEmpty()).findFirst();
   }
 
+  /**
+   * get all vertices that are incident to no edges (degree 0)
+   *
+   * @param graph the incoming graph to examine
+   * @return a List of vertices of degree 0
+   */
   private Collection<V> getIsolatedVerties(Graph<V, E> graph) {
     return graph
         .vertexSet()
@@ -48,6 +74,7 @@ public class GreedyCycleRemoval<V, E> {
         .collect(Collectors.toList());
   }
 
+  /** */
   private void getFeedbackEdges() {
 
     Optional<V> opt;
@@ -83,14 +110,6 @@ public class GreedyCycleRemoval<V, E> {
           int leftDiff = copy.outDegreeOf(l) - copy.inDegreeOf(l);
           int rightDiff = copy.outDegreeOf(r) - copy.inDegreeOf(r);
           return -Integer.compare(leftDiff, rightDiff);
-
-          //          if (leftDiff > rightDiff) {
-          //            return -1;
-          //          } else if (leftDiff == rightDiff) {
-          //            return 0;
-          //          } else {
-          //            return 1;
-          //          }
         });
     for (V v : orderedBy) {
       Collection<E> outgoingEdges = new HashSet<>(copy.outgoingEdgesOf(v));
