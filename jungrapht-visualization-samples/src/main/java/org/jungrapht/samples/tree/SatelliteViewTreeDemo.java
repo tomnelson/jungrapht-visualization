@@ -96,13 +96,13 @@ public class SatelliteViewTreeDemo extends JPanel {
     Dimension layoutSize = new Dimension(500, 500);
 
     // create one layout for the graph
-    TreeLayout<String> layoutAlgorithm = new TidierTreeLayoutAlgorithm<String, Integer>();
+    TreeLayout<String> layoutAlgorithm = new TidierTreeLayoutAlgorithm<>();
 
     // create one model that both views will share
     VisualizationModel<String, Integer> vm =
         VisualizationModel.builder(graph)
-            .layoutAlgorithm(layoutAlgorithm)
             .layoutSize(layoutSize)
+            .layoutAlgorithm(layoutAlgorithm)
             .build();
 
     // create 2 views that share the same model

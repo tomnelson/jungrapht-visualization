@@ -46,6 +46,7 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
   public static class Builder<V, T extends TreeLayoutAlgorithm<V>, B extends Builder<V, T, B>>
       implements LayoutAlgorithm.Builder<V, T, B> {
     protected Predicate<V> rootPredicate;
+    protected Comparator<V> rootComparator = (v1, v2) -> 0;
     protected int horizontalVertexSpacing = TREE_LAYOUT_HORIZONTAL_SPACING;
     protected int verticalVertexSpacing = TREE_LAYOUT_VERTICAL_SPACING;
     protected boolean expandLayout = true;
@@ -64,6 +65,15 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
      */
     public B rootPredicate(Predicate<V> rootPredicate) {
       this.rootPredicate = rootPredicate;
+      return self();
+    }
+
+    /**
+     * @param rootComparator used to sort the roots if an order is desired
+     * @return this Builder
+     */
+    public B rootComparator(Comparator<V> rootComparator) {
+      this.rootComparator = rootComparator;
       return self();
     }
 
@@ -135,6 +145,7 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
   protected TreeLayoutAlgorithm(Builder<V, ?, ?> builder) {
     this(
         builder.rootPredicate,
+        builder.rootComparator,
         builder.horizontalVertexSpacing,
         builder.verticalVertexSpacing,
         builder.vertexShapeFunction,
@@ -151,12 +162,14 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
    */
   protected TreeLayoutAlgorithm(
       Predicate<V> rootPredicate,
+      Comparator<V> rootComparator,
       int horizontalVertexSpacing,
       int verticalVertexSpacing,
       Function<V, Shape> vertexShapeFunction,
       boolean expandLayout) {
     Objects.requireNonNull(vertexShapeFunction);
     this.rootPredicate = rootPredicate;
+    this.rootComparator = rootComparator;
     this.horizontalVertexSpacing = horizontalVertexSpacing;
     this.verticalVertexSpacing = verticalVertexSpacing;
     this.vertexShapeFunction = vertexShapeFunction;
@@ -166,8 +179,14 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
   /** the {}@link Predicate} to determine root vertices */
   protected Predicate<V> rootPredicate;
 
+  protected Comparator<V> rootComparator;
+
   public void setRootPredicate(Predicate<V> rootPredicate) {
     this.rootPredicate = rootPredicate;
+  }
+
+  public void setRootComparator(Comparator<V> rootComparator) {
+    this.rootComparator = rootComparator;
   }
 
   @Override
@@ -249,6 +268,7 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
             .vertexSet()
             .stream()
             .filter(this.rootPredicate)
+            .sorted(rootComparator)
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
     assert roots.size() > 0;

@@ -57,6 +57,12 @@ public class GraphLayers<V, E> {
       List<SugiyamaVertex<V>> layer = layers.get(i);
       for (int j = 0; j < layer.size(); j++) {
         SugiyamaVertex<V> sugiyamaVertex = layer.get(j);
+        if (i != sugiyamaVertex.getRank()) {
+          log.error("{} is not the rank of {}", i, sugiyamaVertex);
+        }
+        if (j != sugiyamaVertex.getIndex()) {
+          log.error("{} is not the index of {}", j, sugiyamaVertex);
+        }
         assert i == sugiyamaVertex.getRank();
         assert j == sugiyamaVertex.getIndex();
       }

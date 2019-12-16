@@ -3,6 +3,7 @@ package org.jungrapht.visualization.layout.algorithms;
 import java.awt.Dimension;
 import java.awt.Shape;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -57,12 +58,14 @@ public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
    */
   protected MultiRowTreeLayoutAlgorithm(
       Predicate<V> rootPredicate,
+      Comparator<V> rootComparator,
       int horizontalVertexSpacing,
       int verticalVertexSpacing,
       Function<V, Shape> vertexShapeFunction,
       boolean expandLayout) {
     super(
         rootPredicate,
+        rootComparator,
         horizontalVertexSpacing,
         verticalVertexSpacing,
         vertexShapeFunction,

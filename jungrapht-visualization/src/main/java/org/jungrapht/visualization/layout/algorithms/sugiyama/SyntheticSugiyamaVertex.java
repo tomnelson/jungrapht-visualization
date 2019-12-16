@@ -20,7 +20,7 @@ public class SyntheticSugiyamaVertex<V> extends SugiyamaVertex<V> {
   }
 
   public SyntheticSugiyamaVertex(SyntheticSugiyamaVertex<V> other) {
-    super();
+    super(other);
     this.hash = other.hash;
   }
 
@@ -39,7 +39,7 @@ public class SyntheticSugiyamaVertex<V> extends SugiyamaVertex<V> {
 
   @Override
   public String toString() {
-    return "SyntheticVertex{"
+    return "SyntheticSugiyamaVertex{"
         + "vertex="
         + hashCode()
         + ", rank="

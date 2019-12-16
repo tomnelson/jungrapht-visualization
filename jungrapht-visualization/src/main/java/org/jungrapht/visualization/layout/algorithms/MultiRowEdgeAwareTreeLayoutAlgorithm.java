@@ -121,6 +121,7 @@ public class MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> extends MultiRowTreeLayo
   protected MultiRowEdgeAwareTreeLayoutAlgorithm(Builder<V, E, ?, ?> builder) {
     this(
         builder.rootPredicate,
+        builder.rootComparator,
         builder.horizontalVertexSpacing,
         builder.verticalVertexSpacing,
         builder.vertexShapeFunction,
@@ -145,6 +146,7 @@ public class MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> extends MultiRowTreeLayo
    */
   protected MultiRowEdgeAwareTreeLayoutAlgorithm(
       Predicate<V> rootPredicate,
+      Comparator<V> rootComparator,
       int horizontalVertexSpacing,
       int verticalVertexSpacing,
       Function<V, Shape> vertexShapeFunction,
@@ -156,6 +158,7 @@ public class MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> extends MultiRowTreeLayo
       boolean alignFavoredEdges) {
     super(
         rootPredicate,
+        rootComparator,
         horizontalVertexSpacing,
         verticalVertexSpacing,
         vertexShapeFunction,

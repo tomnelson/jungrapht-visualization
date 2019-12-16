@@ -36,7 +36,7 @@ public class TidierTreeLayoutAlgorithm<V, E>
 
   private static final Logger log = LoggerFactory.getLogger(TidierTreeLayoutAlgorithm.class);
 
-  private static final Shape IDENTITY_SHAPE = new Ellipse2D.Double();
+  private static final Shape IDENTITY_SHAPE = new Ellipse2D.Double(-5, -5, 10, 10);
 
   /**
    * a Builder to create a configured instance of an AnotherTreeLayoutAlgorithm
@@ -50,6 +50,7 @@ public class TidierTreeLayoutAlgorithm<V, E>
           V, E, T extends TidierTreeLayoutAlgorithm<V, E>, B extends Builder<V, E, T, B>>
       implements LayoutAlgorithm.Builder<V, T, B>, EdgeAwareLayoutAlgorithm.Builder<V, E, T, B> {
     protected Predicate<V> rootPredicate;
+    protected Comparator<V> rootComparator = (v1, v2) -> 0;
     protected Function<V, Shape> vertexShapeFunction = v -> IDENTITY_SHAPE;
     protected int horizontalVertexSpacing = TREE_LAYOUT_HORIZONTAL_SPACING;
     protected int verticalVertexSpacing = TREE_LAYOUT_VERTICAL_SPACING;
@@ -71,6 +72,11 @@ public class TidierTreeLayoutAlgorithm<V, E>
     /** {@inheritDoc} */
     public B rootPredicate(Predicate<V> rootPredicate) {
       this.rootPredicate = rootPredicate;
+      return self();
+    }
+
+    public B rootComparator(Comparator<V> rootComparator) {
+      this.rootComparator = rootComparator;
       return self();
     }
 
@@ -150,6 +156,7 @@ public class TidierTreeLayoutAlgorithm<V, E>
   protected List<V> roots;
 
   protected Predicate<V> rootPredicate;
+  protected Comparator<V> rootComparator;
   protected Function<V, Shape> vertexShapeFunction;
   protected int horizontalVertexSpacing;
   protected int verticalVertexSpacing;
@@ -178,6 +185,7 @@ public class TidierTreeLayoutAlgorithm<V, E>
   protected TidierTreeLayoutAlgorithm(Builder builder) {
     this(
         builder.rootPredicate,
+        builder.rootComparator,
         builder.vertexShapeFunction,
         builder.vertexPredicate,
         builder.vertexComparator,
@@ -190,6 +198,7 @@ public class TidierTreeLayoutAlgorithm<V, E>
 
   private TidierTreeLayoutAlgorithm(
       Predicate<V> rootPredicate,
+      Comparator<V> rootComparator,
       Function<V, Shape> vertexShapeFunction,
       Predicate<V> vertexPredicate,
       Comparator<V> vertexComparator,
@@ -199,6 +208,7 @@ public class TidierTreeLayoutAlgorithm<V, E>
       int verticalVertexSpacing,
       boolean expandLayout) {
     this.rootPredicate = rootPredicate;
+    this.rootComparator = rootComparator;
     this.vertexShapeFunction = vertexShapeFunction;
     this.vertexPredicate = vertexPredicate;
     this.vertexComparator = vertexComparator;
@@ -264,6 +274,11 @@ public class TidierTreeLayoutAlgorithm<V, E>
   @Override
   public void setRootPredicate(Predicate<V> rootPredicate) {
     this.rootPredicate = rootPredicate;
+  }
+
+  @Override
+  public void setRootComparator(Comparator<V> rootComparator) {
+    this.rootComparator = rootComparator;
   }
 
   public void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction) {

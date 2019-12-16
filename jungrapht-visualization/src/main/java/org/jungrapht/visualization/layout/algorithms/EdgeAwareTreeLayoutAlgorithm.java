@@ -46,32 +46,15 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
           V, E, T extends EdgeAwareTreeLayoutAlgorithm<V, E>, B extends Builder<V, E, T, B>>
       extends TreeLayoutAlgorithm.Builder<V, T, B>
       implements EdgeAwareLayoutAlgorithm.Builder<V, E, T, B> {
-    protected Predicate<V> rootPredicate;
-    protected int horizontalVertexSpacing = TREE_LAYOUT_HORIZONTAL_SPACING;
-    protected int verticalVertexSpacing = TREE_LAYOUT_VERTICAL_SPACING;
     protected Predicate<V> vertexPredicate = v -> false;
     protected Predicate<E> edgePredicate = e -> false;
     protected Comparator<V> vertexComparator = (v1, v2) -> 0;
     protected Comparator<E> edgeComparator = (e1, e2) -> 0;
-    protected boolean expandLayout = true;
     protected boolean alignFavoredEdges = true;
 
     /** {@inheritDoc} */
     protected B self() {
       return (B) this;
-    }
-
-    /** {@inheritDoc} */
-    public B rootPredicate(Predicate<V> rootPredicate) {
-      this.rootPredicate = rootPredicate;
-      return self();
-    }
-
-    /** {@inheritDoc} */
-    public B horizontalVertexSpacing(int horizontalVertexSpacing) {
-      assert horizontalVertexSpacing > 0 : "horizontalVertexSpacing must be positive";
-      this.horizontalVertexSpacing = horizontalVertexSpacing;
-      return self();
     }
 
     /**
@@ -110,19 +93,6 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
       return self();
     }
 
-    /** {@inheritDoc} */
-    public B verticalVertexSpacing(int verticalVertexSpacing) {
-      assert verticalVertexSpacing > 0 : "verticalVertexSpacing must be positive";
-      this.verticalVertexSpacing = verticalVertexSpacing;
-      return self();
-    }
-
-    /** {@inheritDoc} */
-    public B expandLayout(boolean expandLayout) {
-      this.expandLayout = expandLayout;
-      return self();
-    }
-
     public B alignFavoredEdges(boolean alignFavoredEdges) {
       this.alignFavoredEdges = alignFavoredEdges;
       return self();
@@ -155,6 +125,7 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
   protected EdgeAwareTreeLayoutAlgorithm(Builder<V, E, ?, ?> builder) {
     this(
         builder.rootPredicate,
+        builder.rootComparator,
         builder.horizontalVertexSpacing,
         builder.verticalVertexSpacing,
         builder.vertexShapeFunction,
@@ -180,6 +151,7 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
    */
   protected EdgeAwareTreeLayoutAlgorithm(
       Predicate<V> rootPredicate,
+      Comparator<V> rootComparator,
       int horizontalVertexSpacing,
       int verticalVertexSpacing,
       Function<V, Shape> vertexShapeFunction,
@@ -191,6 +163,7 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
       boolean alignFavoredEdges) {
     super(
         rootPredicate,
+        rootComparator,
         horizontalVertexSpacing,
         verticalVertexSpacing,
         vertexShapeFunction,
