@@ -266,9 +266,9 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     Rectangle maxVertexBounds = maxVertexBounds(best, renderContext.getVertexShapeFunction());
 
     int horizontalOffset =
-        maxVertexBounds.width + Integer.getInteger(PREFIX + "sugiyama.horizontal.offset", 50);
+        maxVertexBounds.width / 2 + Integer.getInteger(PREFIX + "sugiyama.horizontal.offset", 50);
     int verticalOffset =
-        maxVertexBounds.height + Integer.getInteger(PREFIX + "sugiyama.vertical.offset", 50);
+        maxVertexBounds.height / 2 + Integer.getInteger(PREFIX + "sugiyama.vertical.offset", 50);
     GraphLayers.checkLayers(best);
     HorizontalCoordinateAssignment.horizontalCoordinateAssignment(
         best, svGraph, new HashSet<>(), horizontalOffset, verticalOffset);
