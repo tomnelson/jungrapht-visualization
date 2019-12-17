@@ -59,13 +59,13 @@ public class UnicodeLabelDemo {
     vv.getRenderContext().setVertexLabelFunction(new UnicodeVertexStringer());
     vv.getRenderContext().setVertexLabelRenderer(new JLabelVertexLabelRenderer(Color.cyan));
     vv.getRenderContext().setEdgeLabelRenderer(new JLabelEdgeLabelRenderer(Color.cyan));
+    loadImages(iconMap);
     IconShapeFunction<Integer> iconShapeFunction =
         new IconShapeFunction<>(new EllipseShapeFunction<>());
+    iconShapeFunction.setIconMap(iconMap);
     Function<Integer, Icon> vertexIconFunction = iconMap::get;
     vv.getRenderContext().setVertexShapeFunction(iconShapeFunction);
     vv.getRenderContext().setVertexIconFunction(vertexIconFunction);
-    loadImages(iconMap);
-    iconShapeFunction.setIconMap(iconMap);
     vv.getRenderContext()
         .setVertexFillPaintFunction(
             new PickableElementPaintFunction<>(
