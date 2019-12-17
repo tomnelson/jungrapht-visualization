@@ -71,7 +71,7 @@ public class RadiusVertexAccessor<V> implements VertexAccessor<V> {
     V closest = null;
     while (true) {
       try {
-        for (V vertex : layoutModel.getLocations().keySet()) {
+        for (V vertex : layoutModel.getGraph().vertexSet()) {
 
           Point p = layoutModel.apply(vertex);
           double dx = p.x - x;
