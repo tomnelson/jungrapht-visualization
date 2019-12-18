@@ -28,7 +28,7 @@ Graph using TidierTreeLayoutAlgorithm
 
 Graph using SugiyamaLayoutAlgorithm
 
-![Image SugiyamaLayout](images/sugiyama.jpg)
+![Image SugiyamaLayout](images/sugiyamabrandeskopf.jpg)
 
 Graph using CircleLayoutAlgorithm
 
