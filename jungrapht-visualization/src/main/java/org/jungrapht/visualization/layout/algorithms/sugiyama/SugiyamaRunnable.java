@@ -264,15 +264,15 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     // done optimizing for edge crossing
 
     // figure out the largest rendered vertex
-    Rectangle maxVertexBounds = avgVertexBounds(best, renderContext.getVertexShapeFunction());
+    Rectangle avgVertexBounds = avgVertexBounds(best, renderContext.getVertexShapeFunction());
 
     int horizontalOffset =
         Math.max(
-            maxVertexBounds.width / 2,
+            avgVertexBounds.width / 2,
             Integer.getInteger(PREFIX + "sugiyama.horizontal.offset", 50));
     int verticalOffset =
         Math.max(
-            maxVertexBounds.height / 2,
+            avgVertexBounds.height / 2,
             Integer.getInteger(PREFIX + "sugiyama.vertical.offset", 50));
     GraphLayers.checkLayers(best);
     HorizontalCoordinateAssignment.horizontalCoordinateAssignment(

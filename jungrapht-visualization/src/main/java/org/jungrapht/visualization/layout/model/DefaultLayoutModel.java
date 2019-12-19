@@ -37,6 +37,7 @@ public class DefaultLayoutModel<V> extends AbstractLayoutModel<V>
     this.initializer = other.initializer;
   }
 
+  @Override
   public void setInitializer(Function<V, Point> initializer) {
     this.initializer = initializer;
     this.locations.clear();
@@ -74,7 +75,6 @@ public class DefaultLayoutModel<V> extends AbstractLayoutModel<V>
 
   @Override
   public void clear() {
-
     this.locations.clear();
     this.initializer = v -> Point.ORIGIN;
   }
