@@ -39,6 +39,7 @@ public class DefaultLayoutModel<V> extends AbstractLayoutModel<V>
 
   public void setInitializer(Function<V, Point> initializer) {
     this.initializer = initializer;
+    this.locations.clear();
   }
 
   @Override
