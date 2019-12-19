@@ -81,6 +81,12 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
     setPreferredSize(builder.width, builder.height);
   }
 
+  protected AbstractLayoutModel(LayoutModel<V> other) {
+    this.graph = other.getGraph();
+    setSize(other.getWidth(), other.getHeight());
+    setPreferredSize(other.getWidth(), other.getHeight());
+  }
+
   protected AbstractLayoutModel(Graph<V, ?> graph, int width, int height) {
     this.graph = Objects.requireNonNull(graph);
     setSize(width, height);

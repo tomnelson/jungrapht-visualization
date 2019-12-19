@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.LongSummaryStatistics;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -263,12 +264,16 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     // done optimizing for edge crossing
 
     // figure out the largest rendered vertex
-    Rectangle maxVertexBounds = maxVertexBounds(best, renderContext.getVertexShapeFunction());
+    Rectangle maxVertexBounds = avgVertexBounds(best, renderContext.getVertexShapeFunction());
 
     int horizontalOffset =
-        maxVertexBounds.width / 2 + Integer.getInteger(PREFIX + "sugiyama.horizontal.offset", 50);
+        Math.max(
+            maxVertexBounds.width / 2,
+            Integer.getInteger(PREFIX + "sugiyama.horizontal.offset", 50));
     int verticalOffset =
-        maxVertexBounds.height / 2 + Integer.getInteger(PREFIX + "sugiyama.vertical.offset", 50);
+        Math.max(
+            maxVertexBounds.height / 2,
+            Integer.getInteger(PREFIX + "sugiyama.vertical.offset", 50));
     GraphLayers.checkLayers(best);
     HorizontalCoordinateAssignment.horizontalCoordinateAssignment(
         best, svGraph, new HashSet<>(), horizontalOffset, verticalOffset);
@@ -284,40 +289,6 @@ public class SugiyamaRunnable<V, E> implements Runnable {
 
     Map<Integer, Integer> maxColWidths = new HashMap<>();
     Map<Integer, Integer> maxRowHeights = new HashMap<>();
-    // find the max height of each row and add vertical spacing to accomodate
-    // find the max width of each column and add horizontal spacing to points to accomodate
-    //    for (List<SugiyamaVertex<V>> list : best) {
-    //      for (SugiyamaVertex<V> v : list) {
-    //        if (!(v instanceof SyntheticSugiyamaVertex)) {
-    //          log.info("consider {}", v);
-    //          int xkey = (int) v.p.x;
-    //          int ykey = (int) v.p.y;
-    //          Rectangle r = renderContext.getVertexShapeFunction().apply(v.vertex).getBounds();
-    //          if (maxColWidths.containsKey(xkey)) {
-    //            maxColWidths.put(xkey, Math.max(r.width, maxColWidths.get(xkey)));
-    //          } else {
-    //            maxColWidths.put(xkey, r.width);
-    //          }
-    //          if (maxRowHeights.containsKey(ykey)) {
-    //            maxRowHeights.put(ykey, Math.max(r.height, maxRowHeights.get(ykey)));
-    //          } else {
-    //            maxRowHeights.put(ykey, r.height);
-    //          }
-    //          log.info("point of {} is {}", v, v.p);
-    //        }
-    //      }
-    //    }
-    //    log.info("maxColWidths: {}", maxColWidths);
-    //    log.info("maxRowHeights: {}", maxRowHeights);
-    //    for (List<SugiyamaVertex<V>> list : best) {
-    //      for (SugiyamaVertex<V> v : list) {
-    //        int xkey = (int)v.p.x;
-    //        int ykey = (int)v.p.y;
-    //        Point p = v.getPoint();
-    //        p = p.add(maxColWidths.get(xkey), maxRowHeights.get(ykey));
-    //        v.setPoint(p);
-    //      }
-    //    }
 
     Map<Integer, Integer> rowWidthMap = new HashMap<>(); // all the row widths
     Map<Integer, Integer> rowMaxHeightMap = new HashMap<>(); // all the row heights
@@ -368,11 +339,6 @@ public class SugiyamaRunnable<V, E> implements Runnable {
 
         rowWidth = x + vertexWidth / 2;
         log.trace("layerIndex {} y is {}", layerIndex, y);
-        //        sugiyamaVertex.setPoint(Point.of(x, y));
-
-        //        if (vertexMap.containsKey(sugiyamaVertex)) {
-        //          vertexMap.get(sugiyamaVertex).setPoint(sugiyamaVertex.getPoint());
-        //        }
         previousVertexWidth = vertexWidth;
       }
       totalWidth = Math.max(totalWidth, rowWidth);
@@ -415,47 +381,6 @@ public class SugiyamaRunnable<V, E> implements Runnable {
               SugiyamaEdge<V, E> reversed = ae.reversed();
               svGraph.addEdge(reversed.source, reversed.target, reversed);
             });
-
-    //    if (straightenEdges) {
-    //      // if the edges are to be straigntened, find the extreme compared to source/vertex
-    //      for (ArticulatedEdge<V, E> ae : articulatedEdges) {
-    //        // source x
-    //        SugiyamaVertex<V> source = ae.source;
-    //        double sourceX = vertexMap.get(source).getPoint().x;
-    //        SugiyamaVertex<V> target = ae.target;
-    //        double targetX = vertexMap.get(target).getPoint().x;
-    //
-    //        double maxX =
-    //            ae.getIntermediateVertices()
-    //                .stream()
-    //                .mapToDouble(v -> vertexMap.get(v).getPoint().x)
-    //                .max()
-    //                .orElse(sourceX);
-    //        double minX =
-    //            ae.getIntermediateVertices()
-    //                .stream()
-    //                .mapToDouble(v -> vertexMap.get(v).getPoint().x)
-    //                .max()
-    //                .orElse(sourceX);
-    //        List<SugiyamaVertex<V>> intermediateVertices = ae.getIntermediateVertices();
-    //        List<Point> intermediatePoints = ae.getIntermediatePoints();
-    //
-    //        double newX = maxX >= Math.max(sourceX, targetX) ? maxX : minX;
-    //        for (int i = 0; i < intermediateVertices.size(); i++) {
-    //          SugiyamaVertex<V> v = intermediateVertices.get(i);
-    //          Point newPoint = Point.of(newX, vertexMap.get(v).getPoint().y);
-    //          intermediatePoints.set(i, newPoint);
-    //          v.setPoint(newPoint);
-    //        }
-    //        log.trace("intermediates now {}", ae.getIntermediateVertices());
-    //      }
-    //    } else {
-    //      for (ArticulatedEdge<V, E> ae : articulatedEdges) {
-    //        for (SugiyamaVertex<V> sugiyamaVertex : ae.getIntermediateVertices()) {
-    //          sugiyamaVertex.setPoint(vertexMap.get(sugiyamaVertex).getPoint());
-    //        }
-    //      }
-    //    }
 
     Map<E, List<Point>> edgePointMap = new HashMap<>();
     for (ArticulatedEdge<V, E> ae : articulatedEdges) {
@@ -716,5 +641,22 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       }
     }
     return maxVertexBounds;
+  }
+
+  private static <V> Rectangle avgVertexBounds(
+      List<List<SugiyamaVertex<V>>> layers, Function<V, Shape> vertexShapeFunction) {
+
+    LongSummaryStatistics w = new LongSummaryStatistics();
+    LongSummaryStatistics h = new LongSummaryStatistics();
+    for (List<SugiyamaVertex<V>> list : layers) {
+      for (SugiyamaVertex<V> v : list) {
+        if (!(v instanceof SyntheticSugiyamaVertex)) {
+          Rectangle bounds = vertexShapeFunction.apply(v.vertex).getBounds();
+          w.accept(bounds.width);
+          h.accept(bounds.height);
+        }
+      }
+    }
+    return new Rectangle((int) w.getAverage(), (int) h.getAverage());
   }
 }
