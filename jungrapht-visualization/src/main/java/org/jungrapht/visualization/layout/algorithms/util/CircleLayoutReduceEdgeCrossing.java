@@ -2,6 +2,7 @@ package org.jungrapht.visualization.layout.algorithms.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -265,16 +266,18 @@ public class CircleLayoutReduceEdgeCrossing<V, E> {
           for (int pos = 0; pos < positions.size(); pos++) {
             // put u at pos and whatever was at pos at u's position
             int vpos = list.indexOf(v);
+            Collections.swap(list, vpos, pos);
             V temp = list.get(pos);
-            list.set(pos, v);
-            list.set(vpos, temp);
+            //            list.set(pos, v);
+            //            list.set(vpos, temp);
             int newCrossings = countCrossings(graph, list);
             if (newCrossings < currentCrossings) {
               currentCrossings = newCrossings;
               log.info("reduced crossings to {}", currentCrossings);
             } else {
-              list.set(vpos, v);
-              list.set(pos, temp);
+              Collections.swap(list, vpos, pos);
+              //              list.set(vpos, v);
+              //              list.set(pos, temp);
             }
           }
         }
