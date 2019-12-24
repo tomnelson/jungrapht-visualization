@@ -2,6 +2,7 @@ package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,7 +93,7 @@ public class TestLevelCross {
     edgeList.add(SugiyamaEdge.of(e++, c, y));
     // trt
     edgeList.add(SugiyamaEdge.of(e++, a, y));
-    assert 1 == go();
+    Assert.assertEquals(1, go());
   }
 
   @Test
@@ -134,7 +135,7 @@ public class TestLevelCross {
     edgeList.add(SugiyamaEdge.of(e++, a, y));
     // trb
     edgeList.add(SugiyamaEdge.of(e++, c, z));
-    assert 3 == go();
+    Assert.assertEquals(3, go());
   }
 
   @Test
@@ -151,7 +152,7 @@ public class TestLevelCross {
     edgeList.add(SugiyamaEdge.of(e++, a, z));
     edgeList.add(SugiyamaEdge.of(e++, c, y));
     edgeList.add(SugiyamaEdge.of(e++, a, y));
-    assert 0 == go();
+    Assert.assertEquals(0, go());
   }
 
   @Test
@@ -169,7 +170,7 @@ public class TestLevelCross {
     edgeList.add(SugiyamaEdge.of(e++, c, y));
     edgeList.add(SugiyamaEdge.of(e++, a, y));
     edgeList.add(SugiyamaEdge.of(e++, c, z));
-    assert 1 == go();
+    Assert.assertEquals(1, go());
   }
 
   @Test
@@ -184,7 +185,7 @@ public class TestLevelCross {
     edgeList.add(SugiyamaEdge.of(e++, a, x));
     edgeList.add(SugiyamaEdge.of(e++, b, z));
 
-    assert 1 == go();
+    Assert.assertEquals(1, go());
   }
 
   @Test
@@ -203,7 +204,7 @@ public class TestLevelCross {
     edgeList.add(SugiyamaEdge.of(e++, b, x));
     edgeList.add(SugiyamaEdge.of(e++, c, y));
     edgeList.add(SugiyamaEdge.of(e++, c, z));
-    assert 1 == go();
+    Assert.assertEquals(1, go());
   }
 
   private int go() {

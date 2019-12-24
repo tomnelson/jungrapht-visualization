@@ -83,7 +83,7 @@ public class QuadraticLeafSplitter<T> implements LeafSplitter<T> {
         }
       }
     }
-    assert winningPair.isPresent() : "Winning pair not found";
+    if (!winningPair.isPresent()) throw new RuntimeException("Winning pair not found");
     Map.Entry<T, Rectangle2D> leftEntry = winningPair.get().left;
     LeafNode leftVertex = LeafNode.create(leftEntry);
     Map.Entry<T, Rectangle2D> rightEntry = winningPair.get().right;

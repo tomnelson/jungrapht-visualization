@@ -60,8 +60,10 @@ public class AssignLayers<V, E> {
       List<SugiyamaVertex<V>> layer = layers.get(i);
       for (int j = 0; j < layer.size(); j++) {
         SugiyamaVertex<V> sugiyamaVertex = layer.get(j);
-        assert i == sugiyamaVertex.getRank();
-        assert j == sugiyamaVertex.getIndex();
+        if (i != sugiyamaVertex.getRank())
+          throw new IllegalArgumentException("fails rank check: " + i + ", " + sugiyamaVertex);
+        if (j != sugiyamaVertex.getIndex())
+          throw new IllegalArgumentException("fails index check: " + j + ", " + sugiyamaVertex);
       }
     }
   }

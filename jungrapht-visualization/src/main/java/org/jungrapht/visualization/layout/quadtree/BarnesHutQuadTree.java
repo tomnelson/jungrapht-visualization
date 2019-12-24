@@ -89,7 +89,8 @@ public class BarnesHutQuadTree<T> {
    *     their forces
    */
   public void applyForcesTo(ForceObject<T> visitor) {
-    assert visitor != null : "Cannot apply forces to a null ForceObject";
+    if (visitor == null)
+      throw new IllegalArgumentException("Cannot apply forces to a null ForceObject");
     if (root != null && root.forceObject != visitor) {
       root.applyForcesTo(visitor);
     }

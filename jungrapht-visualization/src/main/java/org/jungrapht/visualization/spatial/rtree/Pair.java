@@ -20,7 +20,8 @@ public class Pair<T> {
   }
 
   public Pair(T left, T right) {
-    assert left != right : "Attempt to create pair with 2 equal elements";
+    if (left == right)
+      throw new IllegalArgumentException("Attempt to create pair with 2 equal elements");
     this.left = left;
     this.right = right;
   }

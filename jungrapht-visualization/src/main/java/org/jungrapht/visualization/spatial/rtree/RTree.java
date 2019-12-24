@@ -42,7 +42,8 @@ public class RTree<T> {
    * @param node the node that will be the root
    */
   private RTree(Node<T> node) {
-    assert node.getParent().isEmpty() : "Error creating R-Tree with root that has parent";
+    if (!node.getParent().isEmpty())
+      throw new RuntimeException("Error creating R-Tree with root that has parent");
     root = Optional.of(node);
   }
 
@@ -94,7 +95,8 @@ public class RTree<T> {
       LeafNode<T> leafVertex = (LeafNode) node;
 
       Node<T> got = leafVertex.add(splitterContext, element, bounds);
-      assert got.getParent().isEmpty() : "return from LeafVertex add has a parent";
+      if (!got.getParent().isEmpty())
+        throw new RuntimeException("return from LeafVertex add has a parent");
       return new RTree(got);
 
     } else {
@@ -104,7 +106,8 @@ public class RTree<T> {
       if (got == null) {
         log.error("add did not work");
       }
-      assert got.getParent().isEmpty() : "return from InnerVertex add has a parent";
+      if (!got.getParent().isEmpty())
+        throw new RuntimeException("return from InnerVertex add has a parent");
       return new RTree(got);
     }
   }

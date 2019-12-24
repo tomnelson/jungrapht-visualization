@@ -1,15 +1,17 @@
 package org.jungrapht.visualization.layout.model;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.util.Caching;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A LayoutModel that uses a lazy loading
+ * A LayoutModel that uses a ConcurrentHashMap. Values not already in the Map are loaded with an
+ * initializer and computeIfAbsent.
  *
  * @param <V> the vertex type
  * @author Tom Nelson
@@ -19,9 +21,9 @@ public class DefaultLayoutModel<V> extends AbstractLayoutModel<V>
 
   private static final Logger log = LoggerFactory.getLogger(DefaultLayoutModel.class);
 
-  protected Map<V, Point> locations = new HashMap<>();
+  protected Map<V, Point> locations = new ConcurrentHashMap<>();
 
-  Function<V, Point> initializer;
+  protected Function<V, Point> initializer;
 
   public static <V> DefaultLayoutModel<V> from(DefaultLayoutModel<V> other) {
     return new DefaultLayoutModel<>(other);
@@ -50,12 +52,18 @@ public class DefaultLayoutModel<V> extends AbstractLayoutModel<V>
 
   @Override
   public void set(V vertex, Point location) {
-    assert location != null : "Location cannot be null";
-    assert vertex != null : "vertex cannot be null";
+    if (location == null) throw new IllegalArgumentException("Location cannot be null");
+    if (vertex == null) throw new IllegalArgumentException("vertex cannot be null");
     if (!locked) {
       this.locations.put(vertex, location);
       super.set(vertex, location); // will fire events
     }
+  }
+
+  @Override
+  public void setGraph(Graph<V, ?> graph) {
+    this.locations.clear();
+    super.setGraph(graph);
   }
 
   @Override

@@ -341,8 +341,8 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
    * @param node
    */
   void addVertex(Node<T> node) {
-    assert node != this : "Attempt to add self as child";
-    assert !children.contains(node) : "Attempt to add duplicate child";
+    if (node == this) throw new RuntimeException("Attempt to add self as child");
+    if (children.contains(node)) throw new RuntimeException("Attempt to add duplicate child");
     node.setParent(this);
     updateBounds(node.getBounds());
     children.add(node);
@@ -391,7 +391,7 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
    * @return the parent, if exists, or this
    */
   private InnerNode<T> add(SplitterContext<T> splitterContext, Node<T> node) {
-    assert node != this : "Attempt to add self as child";
+    if (node == this) throw new RuntimeException("Attempt to add self as child");
 
     updateBounds(node.getBounds());
 
@@ -402,8 +402,9 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
       if (parent.isPresent()) {
         InnerNode<T> innerVertexParent = (InnerNode<T>) parent.get();
         // sanity check
-        assert this != pair.left && this != pair.right
-            : "Pair left " + pair.left + " or right " + pair.right + " the same as this" + this;
+        if (this == pair.left || this == pair.right)
+          throw new RuntimeException(
+              "Pair left " + pair.left + " or right " + pair.right + " the same as this" + this);
 
         return innerVertexParent.replaceVertex(this, splitterContext, pair.left, pair.right);
 

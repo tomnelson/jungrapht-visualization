@@ -47,10 +47,8 @@ class DefaultVisualizationModel<V, E> implements VisualizationModel<V, E> {
       // I must have both a graph and a layoutSize to create a layoutModel
       Objects.requireNonNull(graph);
       Objects.requireNonNull(layoutSize);
-      assert layoutSize.width > 0 : "width must be > 0";
-      assert layoutSize.height > 0 : "height must be > 0";
-      //       assert layoutSize.width > 0,  : "width must be > 0";
-      //       assert layoutSize.height > 0,  : "height must be > 0";
+      if (layoutSize.width <= 0 || layoutSize.height <= 0)
+        throw new IllegalArgumentException("width and height must be > 0");
       if (initializer == null) {
         initializer =
             new RandomLocationTransformer<>(

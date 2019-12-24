@@ -82,7 +82,8 @@ public class TidierTreeLayoutAlgorithm<V, E>
 
     /** {@inheritDoc} */
     public B horizontalVertexSpacing(int horizontalVertexSpacing) {
-      assert horizontalVertexSpacing > 0 : "horizontalVertexSpacing must be positive";
+      if (horizontalVertexSpacing <= 0)
+        throw new IllegalArgumentException("horizontalVertexSpacing must be positive");
       this.horizontalVertexSpacing = horizontalVertexSpacing;
       return self();
     }
@@ -125,7 +126,8 @@ public class TidierTreeLayoutAlgorithm<V, E>
 
     /** {@inheritDoc} */
     public B verticalVertexSpacing(int verticalVertexSpacing) {
-      assert verticalVertexSpacing > 0 : "verticalVertexSpacing must be positive";
+      if (verticalVertexSpacing <= 0)
+        throw new IllegalArgumentException("verticalVertexSpacing must be positive");
       this.verticalVertexSpacing = verticalVertexSpacing;
       return self();
     }

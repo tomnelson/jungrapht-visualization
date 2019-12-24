@@ -54,7 +54,8 @@ public class Rectangle {
    * @param height vertical size of rectangle when aligned
    */
   public Rectangle(double x, double y, double width, double height) {
-    assert width >= 0 && height >= 0 : "width and height must be non-negative";
+    if (width < 0 || height < 0)
+      throw new IllegalArgumentException("width and height must be non-negative");
     this.x = x;
     this.y = y;
     this.width = width;

@@ -87,7 +87,7 @@ public class LevelCross<V, E> {
   public int levelCross() {
     int max = Arrays.stream(levelTree.accumulatorTree).max().getAsInt();
 
-    assert max == 0;
+    if (max != 0) throw new IllegalArgumentException("max " + max + " should be 0");
     List<SugiyamaEdge<V, E>> rightTop = new ArrayList<>();
     List<SugiyamaEdge<V, E>> rightBottom = new ArrayList<>();
     List<SugiyamaEdge<V, E>> topTrailing = new ArrayList<>();

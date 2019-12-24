@@ -464,11 +464,12 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       for (int j = 0; j < layer.size(); j++) {
         SugiyamaVertex<V> sugiyamaVertex = layer.get(j);
         log.trace("sv {},{}: {}", i, j, sugiyamaVertex);
-        assert i == sugiyamaVertex.getRank();
-        if (j != sugiyamaVertex.getIndex()) {
-          log.error("j = {} and index = {}", j, sugiyamaVertex.getIndex());
+        if (i != sugiyamaVertex.getRank()) {
+          log.error("expected rank:{}} does not match vertex metadata:{}", i, sugiyamaVertex);
         }
-        assert j == sugiyamaVertex.getIndex();
+        if (j != sugiyamaVertex.getIndex()) {
+          log.error("expected index:{}} does not match vertex metadata:{}", j, sugiyamaVertex);
+        }
       }
     }
   }

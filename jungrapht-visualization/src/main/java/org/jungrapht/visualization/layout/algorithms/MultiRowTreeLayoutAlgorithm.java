@@ -101,7 +101,7 @@ public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
             .filter(rootPredicate)
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
-    assert roots.size() > 0;
+    if (roots.size() == 0) throw new IllegalArgumentException("graph has no root vertices");
     // the width of the tree under 'roots'. Includes one 'horizontalVertexSpacing' per child vertex
     int overallWidth = calculateWidth(layoutModel, roots, new HashSet<>());
     int overallHeight = calculateOverallHeight(layoutModel, roots, overallWidth);

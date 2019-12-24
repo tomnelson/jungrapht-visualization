@@ -212,7 +212,8 @@ public class Node<T> {
    * @param visitor the visitor
    */
   public void applyForcesTo(ForceObject<T> visitor) {
-    assert visitor != null : "Cannot apply forces to a null ForceObject";
+    if (visitor == null)
+      throw new IllegalArgumentException("Cannot apply forces to a null ForceObject");
     if (this.forceObject == null || visitor.getElement().equals(this.forceObject.getElement())) {
       return;
     }

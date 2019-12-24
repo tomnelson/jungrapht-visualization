@@ -257,8 +257,9 @@ public class FRLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
 
     double force = (deltaLength * deltaLength) / attractionConstant;
 
-    assert !Double.isNaN(force)
-        : "Unexpected mathematical result in FRLayout:calcPositions [force]";
+    if (Double.isNaN(force))
+      throw new IllegalArgumentException(
+          "Unexpected mathematical result in FRLayout:calcPositions [force]");
 
     double dx = (xDelta / deltaLength) * force;
     double dy = (yDelta / deltaLength) * force;

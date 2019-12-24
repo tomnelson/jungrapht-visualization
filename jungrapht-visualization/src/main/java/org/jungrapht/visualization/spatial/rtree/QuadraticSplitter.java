@@ -101,7 +101,7 @@ public class QuadraticSplitter<T> extends AbstractSplitter<T> implements Splitte
         }
       }
     }
-    assert winningPair.isPresent() : "No winning pair returned";
+    if (!winningPair.isPresent()) throw new RuntimeException("No winning pair returned");
     Node<T> leftEntry = winningPair.get().left;
     InnerNode<T> leftVertex = InnerNode.create(leftEntry);
     Node<T> rightEntry = winningPair.get().right;

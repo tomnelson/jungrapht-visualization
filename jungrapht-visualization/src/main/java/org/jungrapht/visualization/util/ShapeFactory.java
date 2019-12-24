@@ -122,7 +122,7 @@ public class ShapeFactory<T> {
    */
   public Shape getRegularPolygon(T t, int sides, double rotation) {
     GeneralPath thePolygon = new GeneralPath();
-    assert sides >= 3 : "Number of sides must be >= 3";
+    if (sides < 3) throw new IllegalArgumentException("Number of sides must be >= 3");
     Rectangle2D frame = getRectangle(t).getBounds2D();
     float width = (float) frame.getWidth();
     float height = (float) frame.getHeight();
@@ -179,7 +179,7 @@ public class ShapeFactory<T> {
    */
   public Shape getRegularStar(T t, int points) {
     GeneralPath thePolygon = new GeneralPath();
-    assert points >= 5 : "Number of points must be >= 5";
+    if (points < 5) throw new IllegalArgumentException("Number of points must be >= 5");
     Rectangle2D frame = getRectangle(t).getBounds2D();
     float width = (float) frame.getWidth();
     float height = (float) frame.getHeight();

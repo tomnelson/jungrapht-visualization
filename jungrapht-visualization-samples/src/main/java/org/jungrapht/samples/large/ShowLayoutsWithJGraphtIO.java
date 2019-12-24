@@ -319,8 +319,8 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
   }
 
   void clear(Graph graph) {
-    Set edges = Set.of(graph.edgeSet());
-    Set vertices = Set.of(graph.vertexSet());
+    Set edges = new HashSet(graph.edgeSet());
+    Set vertices = new HashSet(graph.vertexSet());
     edges.forEach(graph::removeEdge);
     vertices.forEach(graph::removeVertex);
   }
