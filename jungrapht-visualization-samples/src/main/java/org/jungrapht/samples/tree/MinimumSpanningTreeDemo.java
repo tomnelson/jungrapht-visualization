@@ -110,6 +110,8 @@ public class MinimumSpanningTreeDemo extends JPanel {
         .setMultiLayerTransformer(vv0.getRenderContext().getMultiLayerTransformer());
 
     vv1.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
+    vv2.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
+    vv2.getRenderContext().setArrowsOnUndirectedEdges(true);
 
     vv0.addChangeListener(vv1);
     vv1.addChangeListener(vv2);

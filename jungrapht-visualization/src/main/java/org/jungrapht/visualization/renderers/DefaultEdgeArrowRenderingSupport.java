@@ -161,7 +161,7 @@ public class DefaultEdgeArrowRenderingSupport<V, E> implements EdgeArrowRenderin
    * @throws IllegalArgumentException if the passed line's point1 is not inside the shape
    */
   protected Line2D getFirstOutsideSegment(Line2D line, Shape shape) {
-    if (shape.contains(line.getP1())) {
+    if (!shape.contains(line.getP1())) {
       throw new RuntimeException(
           "line start point: "
               + line.getP1()

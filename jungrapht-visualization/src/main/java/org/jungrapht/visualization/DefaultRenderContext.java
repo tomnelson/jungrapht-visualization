@@ -87,6 +87,7 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
   private static final String EDGE_ARROW_NOTCH_DEPTH = PREFIX + "edgeArrowNotchDepth";
   private static final String EDGE_ARROW_STROKE = PREFIX + "edgeArrowStroke";
   private static final String ARROW_PLACEMENT_TOLERANCE = PREFIX + "arrowPlacementTolerance";
+  private static final String ARROWS_ON_UNDIRECTED_EDGES = PREFIX + "arrowsOnUndirectedEdges";
 
   protected MutableSelectedState<V> pickedVertexState;
   protected MutableSelectedState<E> pickedEdgeState;
@@ -158,6 +159,8 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
       e -> pickedEdgeState != null && pickedEdgeState.isSelected(e) ? pickedEdgePaint : edgePaint;
   protected Function<E, Paint> arrowDrawPaintFunction =
       e -> pickedEdgeState != null && pickedEdgeState.isSelected(e) ? pickedEdgePaint : edgePaint;
+  protected boolean arrowsOnUndirectedEdges =
+      Boolean.parseBoolean(System.getProperty(ARROWS_ON_UNDIRECTED_EDGES, "false"));
 
   protected Function<V, String> vertexLabelFunction = n -> null;
   protected Function<V, Icon> vertexIconFunction;
@@ -221,7 +224,7 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
       this.edgeLabelCloseness = directedEdgeLabelCloseness;
     } else {
       this.edgeArrow = ArrowFactory.getWedgeArrow(edgeArrowWidth, edgeArrowLength);
-      this.renderEdgeArrow = false;
+      this.renderEdgeArrow = arrowsOnUndirectedEdges;
       this.edgeLabelCloseness = undirectedEdgeLabelCloseness;
     }
   }
@@ -273,11 +276,21 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
   }
 
   public boolean renderEdgeArrow() {
-    return this.renderEdgeArrow;
+    return this.renderEdgeArrow || arrowsOnUndirectedEdges;
   }
 
   public void setRenderEdgeArrow(boolean render) {
     this.renderEdgeArrow = render;
+  }
+
+  @Override
+  public void setArrowsOnUndirectedEdges(boolean arrowsOnUndirectedEdges) {
+    this.arrowsOnUndirectedEdges = arrowsOnUndirectedEdges;
+  }
+
+  @Override
+  public boolean getArrowsOnUndirectedEdges() {
+    return this.arrowsOnUndirectedEdges;
   }
 
   public Function<E, Font> getEdgeFontFunction() {

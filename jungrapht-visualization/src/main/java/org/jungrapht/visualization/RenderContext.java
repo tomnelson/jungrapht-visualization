@@ -78,6 +78,10 @@ public interface RenderContext<V, E> extends RenderContextStateChange.Producer {
 
   void setRenderEdgeArrow(boolean render);
 
+  void setArrowsOnUndirectedEdges(boolean setArrowsOnUndirectedEdges);
+
+  boolean getArrowsOnUndirectedEdges();
+
   Function<E, Font> getEdgeFontFunction();
 
   void setEdgeFontFunction(Function<E, Font> edgeFontFunction);

@@ -379,7 +379,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
         }
         deltaDown = p;
 
-      } else {
+      } else if (down != null) {
         Point2D out = e.getPoint();
         multiSelectionStrategy.updateShape(down, out);
         layoutTargetShape = multiLayerTransformer.inverseTransform(viewRectangle);

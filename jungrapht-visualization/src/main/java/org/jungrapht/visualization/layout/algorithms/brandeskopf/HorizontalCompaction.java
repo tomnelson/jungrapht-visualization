@@ -55,7 +55,6 @@ public class HorizontalCompaction<V> {
 
     for (int i = 0; i < layers.size(); i++) {
       List<SugiyamaVertex<V>> list = layers.get(i);
-      //    for (List<SugiyamaVertex<V>> list : layers) {
       for (SugiyamaVertex<V> v : list) {
         // x[v] <- x[root[v]]
         x(v, x(root(v)));
@@ -71,8 +70,6 @@ public class HorizontalCompaction<V> {
 
   void placeBlock(SugiyamaVertex<V> v) {
     // if x[v] undefined
-    log.info("placeBlock {}", v);
-
     if (!x.containsKey(v)) {
       // x[v] <- 0, w <- v
       x(v, 0);
@@ -81,9 +78,6 @@ public class HorizontalCompaction<V> {
         // if pos[w] > 0
         if (pos(w) > 0) {
           // u gets root[pred[w]]
-          //          SugiyamaVertex<V> predecessorOfW = layers.get(w.getRank()).get(w.getIndex() - 1);
-          //          log.info("predecessor of {} is {}", w, predecessorOfW);
-          //          SugiyamaVertex<V> u = root(predecessorOfW);
           SugiyamaVertex<V> u = root(pred(w));
           placeBlock(u);
           if (sink(v) == v) {
@@ -96,7 +90,6 @@ public class HorizontalCompaction<V> {
           } else {
             // x[v] <- max{x[v], x[u] + delta}
             x(v, Math.max(x(v), x(u) + deltaX));
-            //                        log.info("x.get(v) is {} and v is {}", x.get(v), v);
           }
         }
         w = align(w);
