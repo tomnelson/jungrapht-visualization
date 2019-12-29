@@ -101,9 +101,11 @@ public class TestSugiyamaFunctions {
     List<SugiyamaEdge<String, Integer>> edges = new ArrayList<>(sgraph.edgeSet());
     log.info("there are {} edges ", edges.size());
     log.info("edges: {}", edges);
-    layers = synthetics.createVirtualVerticesAndEdges(edges, layers);
-    for (List<SugiyamaVertex<String>> layer : layers) {
-      log.info("Layer: {}", layer);
+    SugiyamaVertex<String>[][] layersArray =
+        synthetics.createVirtualVerticesAndEdges(edges, layers);
+    for (int i = 0; i < layersArray.length; i++) {
+      //    for (List<SugiyamaVertex<String>> layer : layers) {
+      log.info("Layer: {}", Arrays.toString(layersArray[i]));
     }
     log.info("there are {} edges ", edges.size());
     log.info("edges: {}", edges);
@@ -140,9 +142,10 @@ public class TestSugiyamaFunctions {
     List<SugiyamaEdge<String, Integer>> edges = new ArrayList<>(sgraph.edgeSet());
     log.info("there are {} edges ", edges.size());
     log.info("edges: {}", edges);
-    layers = synthetics.createVirtualVerticesAndEdges(edges, layers);
-    for (List<SugiyamaVertex<String>> layer : layers) {
-      log.info("Layer: {}", layer);
+    SugiyamaVertex<String>[][] layersArray =
+        synthetics.createVirtualVerticesAndEdges(edges, layers);
+    for (int i = 0; i < layersArray.length; i++) {
+      log.info("Layer: {}", Arrays.toString(layersArray[i]));
     }
     log.info("there are {} edges ", edges.size());
     log.info("edges: {}", edges);

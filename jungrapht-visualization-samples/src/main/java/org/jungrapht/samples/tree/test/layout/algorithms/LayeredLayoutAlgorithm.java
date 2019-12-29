@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -22,9 +23,6 @@ import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.EdgeAwareLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.ShapeFunctionAware;
-import org.jungrapht.visualization.layout.algorithms.brandeskopf.AverageMedian;
-import org.jungrapht.visualization.layout.algorithms.brandeskopf.HorizontalCompaction;
-import org.jungrapht.visualization.layout.algorithms.brandeskopf.VerticalAlignment;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.ArticulatedEdge;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.GraphLayers;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.GreedyCycleRemoval;
@@ -171,11 +169,13 @@ public class LayeredLayoutAlgorithm<V, E>
 
     Synthetics<V, E> synthetics = new Synthetics<>(svGraph);
     List<SugiyamaEdge<V, E>> edges = new ArrayList<>(svGraph.edgeSet());
-    this.layers = synthetics.createVirtualVerticesAndEdges(edges, layers);
+    SugiyamaVertex<V>[][] layersArray = synthetics.createVirtualVerticesAndEdges(edges, layers);
 
     // rearranged locations of sythetic vertices to match the graph layering from the
     // Brandes Kopf paper
+    layers = arrayToList(layersArray);
     LayeredLayoutAlgorithm.rearrangeLayers(layers);
+    layersArray = listToArray(layers);
 
     Map<SugiyamaVertex<V>, SugiyamaVertex<V>> vertexMap = new HashMap<>();
     for (List<SugiyamaVertex<V>> layer : layers) {
@@ -334,13 +334,6 @@ public class LayeredLayoutAlgorithm<V, E>
         }
       }
     }
-    //    renderContext.setEdgeDrawPaintFunction(e -> {
-    //      if (markedSegments.stream().map(s -> s.edge).collect(Collectors.toList())
-    //              .contains(e)) {
-    //        return Color.cyan;
-    //      }
-    //      return Color.black;
-    //    });
   }
 
   List<SugiyamaVertex<V>> getUpperNeighbors(
@@ -436,48 +429,27 @@ public class LayeredLayoutAlgorithm<V, E>
     }
   }
 
-  public void horizontalCoordinateAssignment() {
-    preprocessing();
-    VerticalAlignment.LeftmostUpper<V, E> upLeft =
-        new VerticalAlignment.LeftmostUpper<>(layers, svGraph, markedSegments);
-    HorizontalCompaction<V> upLeftCompaction =
-        new HorizontalCompaction<>(layers, upLeft.getRootMap(), upLeft.getAlignMap(), 50, 50);
-    //
-    //    VerticalAlignment.RightmostUpper<V, E> upRight =
-    //        new VerticalAlignment.RightmostUpper<>(layers, svGraph, markedSegments);
-    //    HorizontalCompaction<V> upRightCompaction =
-    //        new HorizontalCompaction<>(layers, upRight.getRootMap(), upRight.getAlignMap(), 50, 50);
-
-    //    VerticalAlignment.LeftmostLower<V, E> downLeft =
-    //        new VerticalAlignment.LeftmostLower<>(layers, svGraph, markedSegments);
-    //    HorizontalCompaction<V> downLeftCompaction =
-    //        new HorizontalCompaction<>(layers, downLeft.getRootMap(), downLeft.getAlignMap(), 50, 50);
-
-    //    VerticalAlignment.RightmostLower<V, E> downRight =
-    //            new VerticalAlignment.RightmostLower<>(layers, svGraph, markedSegments);
-    //    HorizontalCompaction<V> downRightCompaction =
-    //            new HorizontalCompaction<>(layers, downRight.getRootMap(), downRight.getAlignMap(), 50, 50);
-
-    for (List<SugiyamaVertex<V>> list : layers) {
-      for (SugiyamaVertex<V> v : list) {
-        Point upLeftPoint = upLeftCompaction.getPoint(v);
-        //        Point upRightPoint = upRightCompaction.getPoint(v);
-        //        Point downLeftPoint = downLeftCompaction.getPoint(v);
-        //        Point downRightPoint = downRightCompaction.getPoint(v);
-
-        Point balancedPoint =
-            AverageMedian.averageMedianPoint(
-                upLeftPoint // ok
-                //                    ,
-                //                                upRightPoint // ok
-                //    ,
-                //                downLeftPoint // ok
-                //                    ,
-                //                        downRightPoint // no
-                //                    ,
-                );
-        v.setPoint(balancedPoint);
+  static <V> List<List<SugiyamaVertex<V>>> arrayToList(SugiyamaVertex<V>[][] array) {
+    List<List<SugiyamaVertex<V>>> layers = new ArrayList<>();
+    for (int i = 0; i < array.length; i++) {
+      List<SugiyamaVertex<V>> list = new LinkedList<>();
+      layers.add(list);
+      for (int j = 0; j < array[i].length; j++) {
+        list.add(array[i][j]);
       }
     }
+    return layers;
+  }
+
+  static <V> SugiyamaVertex<V>[][] listToArray(List<List<SugiyamaVertex<V>>> layers) {
+    SugiyamaVertex<V>[][] array = new SugiyamaVertex[layers.size()][];
+    for (int i = 0; i < layers.size(); i++) {
+      List<SugiyamaVertex<V>> list = layers.get(i);
+      array[i] = new SugiyamaVertex[list.size()];
+      for (int j = 0; j < list.size(); j++) {
+        array[i][j] = list.get(j);
+      }
+    }
+    return array;
   }
 }

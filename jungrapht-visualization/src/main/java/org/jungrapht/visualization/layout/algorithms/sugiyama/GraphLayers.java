@@ -68,4 +68,20 @@ public class GraphLayers<V, E> {
       }
     }
   }
+
+  public static <V> void checkLayers(SugiyamaVertex<V>[][] layers) {
+    for (int i = 0; i < layers.length; i++) {
+      for (int j = 0; j < layers[i].length; j++) {
+        if (i != layers[i][j].getRank()) {
+          log.error("{} is not the rank of {}", i, layers[i][j]);
+        }
+        if (j != layers[i][j].getIndex()) {
+          log.error("{} is not the index of {}", j, layers[i][j]);
+        }
+        SugiyamaVertex<V> sugiyamaVertex = layers[i][j];
+        assert i == sugiyamaVertex.getRank();
+        assert j == sugiyamaVertex.getIndex();
+      }
+    }
+  }
 }

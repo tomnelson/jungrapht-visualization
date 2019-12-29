@@ -13,7 +13,7 @@ import org.jungrapht.visualization.layout.model.Point;
 public class HorizontalCoordinateAssignment {
 
   public static <V, E> void horizontalCoordinateAssignment(
-      List<List<SugiyamaVertex<V>>> layers,
+      SugiyamaVertex<V>[][] layers,
       Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> svGraph,
       Set<SugiyamaEdge<V, E>> markedSegments,
       int horizontalOffset,
@@ -51,8 +51,11 @@ public class HorizontalCoordinateAssignment {
             horizontalOffset,
             verticalOffset);
 
-    for (List<SugiyamaVertex<V>> list : layers) {
-      for (SugiyamaVertex<V> v : list) {
+    for (int i = 0; i < layers.length; i++) {
+      for (int j = 0; j < layers[i].length; j++) {
+        SugiyamaVertex<V> v = layers[i][j];
+        //    for (List<SugiyamaVertex<V>> list : layers) {
+        //      for (SugiyamaVertex<V> v : list) {
         Point upLeftPoint = upLeftCompaction.getPoint(v).add(horizontalOffset, verticalOffset);
         Point upRightPoint = upRightCompaction.getPoint(v).add(horizontalOffset, verticalOffset);
         Point downLeftPoint = downLeftCompaction.getPoint(v).add(horizontalOffset, verticalOffset);
@@ -67,11 +70,11 @@ public class HorizontalCoordinateAssignment {
     }
   }
 
-  static <V, E> void preprocessing(
-      List<List<SugiyamaVertex<V>>> layers,
+  public static <V, E> void preprocessing(
+      SugiyamaVertex<V>[][] layers,
       Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> svGraph,
       Set<SugiyamaEdge<V, E>> markedSegments) {
-    int h = layers.size();
+    int h = layers.length;
     // compares current row 'i' with 'i+1' row
     // i starts at row 1 and goes to row h-2-1
     //    for (int i = 2; i <= h - 2; i++) {
@@ -79,15 +82,15 @@ public class HorizontalCoordinateAssignment {
 
       int k0 = 0;
       int el = 0;
-      List<SugiyamaVertex<V>> thisLayer = layers.get(i); // Li
-      List<SugiyamaVertex<V>> nextLayer = layers.get(i + 1); // Li+1
+      SugiyamaVertex<V>[] thisLayer = layers[i]; // Li
+      SugiyamaVertex<V>[] nextLayer = layers[i + 1]; // Li+1
       //      for (int el1 = 1; el1 <= nextLayer.size(); el1++) {
-      for (int el1 = 0; el1 <= nextLayer.size() - 1; el1++) { // zero based
+      for (int el1 = 0; el1 <= nextLayer.length - 1; el1++) { // zero based
         // get the vertex at next layer index el1
-        SugiyamaVertex<V> vel1nextLayer = nextLayer.get(el1);
+        SugiyamaVertex<V> vel1nextLayer = nextLayer[el1];
         //        SugiyamaVertex<V> velNextLayer = nextLayer.get(el);
-        if (el1 == nextLayer.size() - 1 || vel1nextLayer instanceof SyntheticSugiyamaVertex) {
-          int k1 = thisLayer.size() - 1;
+        if (el1 == nextLayer.length - 1 || vel1nextLayer instanceof SyntheticSugiyamaVertex) {
+          int k1 = thisLayer.length - 1;
           if (vel1nextLayer instanceof SyntheticSugiyamaVertex) {
             Optional<SugiyamaEdge<V, E>> incomingEdgeOpt =
                 svGraph.incomingEdgesOf(vel1nextLayer).stream().findFirst();
@@ -98,7 +101,7 @@ public class HorizontalCoordinateAssignment {
             }
           }
           while (el <= el1) {
-            SugiyamaVertex<V> velNextLayer = nextLayer.get(el);
+            SugiyamaVertex<V> velNextLayer = nextLayer[el];
             for (SugiyamaVertex<V> upperNeighbor : getUpperNeighbors(svGraph, velNextLayer)) {
               int k = upperNeighbor.getIndex();
               if (k < k0 || k > k1) {

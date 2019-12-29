@@ -1,6 +1,5 @@
 package org.jungrapht.visualization.layout.algorithms.brandeskopf;
 
-import java.util.List;
 import java.util.stream.IntStream;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
@@ -97,23 +96,24 @@ public class BrandesKopfTest {
   @Test
   public void makeBrandesKopf() {
     BrandesKopf brandesKopf = new BrandesKopf(graph);
-    List<List<SugiyamaVertex<Integer>>> layers = brandesKopf.layers;
-    Assert.assertEquals(10, layers.size());
-    Assert.assertEquals(2, layers.get(0).size());
-    Assert.assertEquals(5, layers.get(1).size());
-    Assert.assertEquals(6, layers.get(2).size());
-    Assert.assertEquals(6, layers.get(3).size());
-    Assert.assertEquals(8, layers.get(4).size());
-    Assert.assertEquals(9, layers.get(5).size());
-    Assert.assertEquals(9, layers.get(6).size());
-    Assert.assertEquals(7, layers.get(7).size());
-    Assert.assertEquals(4, layers.get(8).size());
-    Assert.assertEquals(1, layers.get(9).size());
+    SugiyamaVertex<Integer>[][] layers = brandesKopf.layersArray;
+    Assert.assertEquals(10, layers.length);
+    Assert.assertEquals(2, layers[0].length);
+    Assert.assertEquals(5, layers[1].length);
+    Assert.assertEquals(6, layers[2].length);
+    Assert.assertEquals(6, layers[3].length);
+    Assert.assertEquals(8, layers[4].length);
+    Assert.assertEquals(9, layers[5].length);
+    Assert.assertEquals(9, layers[6].length);
+    Assert.assertEquals(7, layers[7].length);
+    Assert.assertEquals(4, layers[8].length);
+    Assert.assertEquals(1, layers[9].length);
 
     brandesKopf.horizontalCoordinateAssignment();
 
-    for (List<SugiyamaVertex<Integer>> list : layers) {
-      for (SugiyamaVertex<Integer> v : list) {
+    for (int i = 0; i < layers.length; i++) {
+      for (int j = 0; j < layers[i].length; j++) {
+        SugiyamaVertex<Integer> v = layers[i][j];
         log.info("{} - {}", v.getClass(), v.getPoint());
       }
     }

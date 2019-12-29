@@ -1,6 +1,7 @@
 package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.jgrapht.Graph;
 import org.slf4j.Logger;
@@ -25,7 +26,7 @@ public class Synthetics<V, E> {
    * @param layers all horizontal layers for a layered graph
    * @return updated layers to include synthetic vertices
    */
-  public List<List<SugiyamaVertex<V>>> createVirtualVerticesAndEdges(
+  public SugiyamaVertex<V>[][] createVirtualVerticesAndEdges(
       List<SugiyamaEdge<V, E>> edges, List<List<SugiyamaVertex<V>>> layers) {
     for (int i = 0; i < layers.size() - 1; i++) {
       List<SugiyamaVertex<V>> currentLayer = layers.get(i);
@@ -81,7 +82,21 @@ public class Synthetics<V, E> {
         }
       }
     }
-    return layers;
+    log.info("layers are {}, array is {}", layers, Arrays.toString(convertToArrays(layers)));
+    return convertToArrays(layers);
+  }
+
+  private SugiyamaVertex<V>[][] convertToArrays(List<List<SugiyamaVertex<V>>> layers) {
+    SugiyamaVertex<V>[][] ranks = new SugiyamaVertex[layers.size()][];
+    int rank = 0;
+    for (int i = 0; i < layers.size(); i++) {
+      List<SugiyamaVertex<V>> list = layers.get(i);
+      ranks[i] = new SugiyamaVertex[list.size()];
+      for (int j = 0; j < list.size(); j++) {
+        ranks[i][j] = list.get(j);
+      }
+    }
+    return ranks;
   }
 
   /**

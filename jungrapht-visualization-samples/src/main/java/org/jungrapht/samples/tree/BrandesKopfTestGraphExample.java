@@ -7,7 +7,6 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.samples.tree.test.layout.algorithms.BrandesKopfLayoutAlgorithm;
-import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.renderers.Renderer;
@@ -25,17 +24,86 @@ public class BrandesKopfTestGraphExample extends JFrame {
 
   private static final Logger log = LoggerFactory.getLogger(BrandesKopfTestGraphExample.class);
 
-  Graph<Integer, Integer> graph;
-
-  VisualizationViewer<Integer, Integer> vv;
-
   public BrandesKopfTestGraphExample() {
 
-    JPanel container = new JPanel(new BorderLayout());
+    JPanel container = new JPanel(new GridLayout(2, 3));
 
-    graph = createInitialGraph();
+    Graph<Integer, Integer> graph = createInitialGraph();
 
-    vv = VisualizationViewer.builder(graph).viewSize(new Dimension(600, 600)).build();
+    VisualizationViewer<Integer, Integer> vv1 = configureVisualizationViewer(graph);
+    vv1.addPreRenderPaintable(new TitlePaintable("Upper Left", vv1.getPreferredSize()));
+    VisualizationViewer<Integer, Integer> vv2 = configureVisualizationViewer(graph);
+    vv2.addPreRenderPaintable(new TitlePaintable("Upper Right", vv2.getPreferredSize()));
+    VisualizationViewer<Integer, Integer> vv3 = configureVisualizationViewer(graph);
+    vv3.addPreRenderPaintable(new TitlePaintable("Lower Left", vv3.getPreferredSize()));
+    VisualizationViewer<Integer, Integer> vv4 = configureVisualizationViewer(graph);
+    vv4.addPreRenderPaintable(new TitlePaintable("Lower Right", vv4.getPreferredSize()));
+    VisualizationViewer<Integer, Integer> vv5 = configureVisualizationViewer(graph);
+    vv5.addPreRenderPaintable(new TitlePaintable("Average Median", vv5.getPreferredSize()));
+
+    BrandesKopfLayoutAlgorithm<Integer, Integer> layoutAlgorithm1 =
+        BrandesKopfLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+            .doUpLeft(true)
+            .after(vv1::scaleToLayout)
+            .build();
+    layoutAlgorithm1.setRenderContext(vv1.getRenderContext());
+    vv1.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm1);
+
+    BrandesKopfLayoutAlgorithm<Integer, Integer> layoutAlgorithm2 =
+        BrandesKopfLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+            .doUpRight(true)
+            .after(vv2::scaleToLayout)
+            .build();
+    layoutAlgorithm2.setRenderContext(vv2.getRenderContext());
+    vv2.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm2);
+
+    BrandesKopfLayoutAlgorithm<Integer, Integer> layoutAlgorithm3 =
+        BrandesKopfLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+            .doDownLeft(true)
+            .after(vv3::scaleToLayout)
+            .build();
+    layoutAlgorithm3.setRenderContext(vv3.getRenderContext());
+    vv3.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm3);
+
+    BrandesKopfLayoutAlgorithm<Integer, Integer> layoutAlgorithm4 =
+        BrandesKopfLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+            .doDownRight(true)
+            .after(vv4::scaleToLayout)
+            .build();
+    layoutAlgorithm4.setRenderContext(vv4.getRenderContext());
+    vv4.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm4);
+
+    BrandesKopfLayoutAlgorithm<Integer, Integer> layoutAlgorithm5 =
+        BrandesKopfLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+            .doUpLeft(true)
+            .doUpRight(true)
+            .doDownLeft(true)
+            .doDownRight(true)
+            .after(vv5::scaleToLayout)
+            .build();
+    layoutAlgorithm5.setRenderContext(vv5.getRenderContext());
+    vv5.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm5);
+
+    container.add(vv1.getComponent());
+    container.add(vv2.getComponent());
+    container.add(vv3.getComponent());
+    container.add(vv4.getComponent());
+    container.add(vv5.getComponent());
+
+    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+    add(container);
+    pack();
+    setVisible(true);
+  }
+
+  private VisualizationViewer<Integer, Integer> configureVisualizationViewer(
+      Graph<Integer, Integer> graph) {
+    VisualizationViewer<Integer, Integer> vv =
+        VisualizationViewer.builder(graph)
+            .layoutSize(new Dimension(600, 600))
+            .viewSize(new Dimension(300, 300))
+            .build();
 
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
     vv.setVertexToolTipFunction(Object::toString);
@@ -45,21 +113,7 @@ public class BrandesKopfTestGraphExample extends JFrame {
     vv.getRenderContext().setVertexLabelDrawPaintFunction(c -> Color.white);
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
-
-    BrandesKopfLayoutAlgorithm<Integer, Integer> layoutAlgorithm =
-        BrandesKopfLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder().build();
-    layoutAlgorithm.setRenderContext(vv.getRenderContext());
-
-    vv.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm);
-
-    final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
-    container.add(panel);
-
-    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-    add(container);
-    pack();
-    setVisible(true);
+    return vv;
   }
 
   /**
@@ -130,6 +184,43 @@ public class BrandesKopfTestGraphExample extends JFrame {
 
     graph.addEdge(22, 23);
     return graph;
+  }
+
+  static class TitlePaintable implements VisualizationViewer.Paintable {
+    int x;
+    int y;
+    Font font;
+    FontMetrics metrics;
+    int swidth;
+    int sheight;
+    String str;
+    Dimension overallSize;
+
+    TitlePaintable(String title, Dimension overallSize) {
+      this.str = title;
+      this.overallSize = overallSize;
+    }
+
+    public void paint(Graphics g) {
+      Dimension d = overallSize;
+      if (font == null) {
+        font = new Font(g.getFont().getName(), Font.BOLD, 30);
+        metrics = g.getFontMetrics(font);
+        swidth = metrics.stringWidth(str);
+        sheight = metrics.getMaxAscent() + metrics.getMaxDescent();
+        x = (d.width - swidth) / 2;
+        y = (int) (d.height - sheight * 1.5);
+      }
+      g.setFont(font);
+      Color oldColor = g.getColor();
+      g.setColor(Color.lightGray);
+      g.drawString(str, x, y);
+      g.setColor(oldColor);
+    }
+
+    public boolean useTransform() {
+      return false;
+    }
   }
 
   public static void main(String[] args) {

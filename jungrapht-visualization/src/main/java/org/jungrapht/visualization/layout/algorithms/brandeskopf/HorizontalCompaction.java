@@ -1,8 +1,7 @@
 package org.jungrapht.visualization.layout.algorithms.brandeskopf;
 
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaVertex;
 import org.jungrapht.visualization.layout.model.Point;
@@ -13,7 +12,7 @@ public class HorizontalCompaction<V> {
 
   private static final Logger log = LoggerFactory.getLogger(HorizontalCompaction.class);
 
-  protected List<List<SugiyamaVertex<V>>> layers;
+  protected SugiyamaVertex<V>[][] layers;
   protected Map<SugiyamaVertex<V>, SugiyamaVertex<V>> rootMap;
   protected Map<SugiyamaVertex<V>, SugiyamaVertex<V>> alignMap;
   int deltaX;
@@ -25,7 +24,7 @@ public class HorizontalCompaction<V> {
   Map<SugiyamaVertex<V>, Integer> y = new HashMap<>();
 
   public HorizontalCompaction(
-      List<List<SugiyamaVertex<V>>> layers,
+      SugiyamaVertex<V>[][] layers,
       Map<SugiyamaVertex<V>, SugiyamaVertex<V>> rootMap,
       Map<SugiyamaVertex<V>, SugiyamaVertex<V>> alignMap,
       int deltaX,
@@ -35,9 +34,10 @@ public class HorizontalCompaction<V> {
     this.alignMap = alignMap;
     this.deltaX = deltaX;
     this.deltaY = deltaY;
-    layers
-        .stream()
-        .flatMap(Collection::stream)
+    Arrays.stream(layers)
+        .flatMap(Arrays::stream)
+        //        .stream()
+        //        .flatMap(Collection::stream)
         .forEach(
             v -> {
               sink.put(v, v);
@@ -51,10 +51,14 @@ public class HorizontalCompaction<V> {
   }
 
   public void horizontalCompaction() {
-    layers.stream().flatMap(Collection::stream).filter(v -> root(v) == v).forEach(this::placeBlock);
+    Arrays.stream(layers)
+        .flatMap(Arrays::stream)
+        //    layers.stream().flatMap(Collection::stream)
+        .filter(v -> root(v) == v)
+        .forEach(this::placeBlock);
 
-    for (int i = 0; i < layers.size(); i++) {
-      List<SugiyamaVertex<V>> list = layers.get(i);
+    for (int i = 0; i < layers.length; i++) {
+      SugiyamaVertex<V>[] list = layers[i];
       for (SugiyamaVertex<V> v : list) {
         // x[v] <- x[root[v]]
         x(v, x(root(v)));
@@ -153,7 +157,7 @@ public class HorizontalCompaction<V> {
     int layerOfV = v.getRank();
     int indexOfV = v.getIndex();
     if (indexOfV < 1) return null;
-    List<SugiyamaVertex<V>> list = layers.get(layerOfV);
-    return list.get(indexOfV - 1);
+    SugiyamaVertex<V>[] list = layers[layerOfV];
+    return list[indexOfV - 1];
   }
 }

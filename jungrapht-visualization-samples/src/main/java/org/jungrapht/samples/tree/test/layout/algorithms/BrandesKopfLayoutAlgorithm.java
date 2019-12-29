@@ -19,7 +19,6 @@ import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.EdgeAwareLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.ShapeFunctionAware;
-import org.jungrapht.visualization.layout.algorithms.brandeskopf.HorizontalCoordinateAssignment;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.ArticulatedEdge;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.GraphLayers;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.GreedyCycleRemoval;
@@ -65,6 +64,10 @@ public class BrandesKopfLayoutAlgorithm<V, E>
     protected Function<V, Shape> vertexShapeFunction = v -> IDENTITY_SHAPE;
     protected boolean expandLayout = true;
     protected Runnable after = () -> {};
+    boolean doUpLeft = false;
+    boolean doDownLeft = false;
+    boolean doUpRight = false;
+    boolean doDownRight = false;
 
     /** {@inheritDoc} */
     protected B self() {
@@ -84,6 +87,26 @@ public class BrandesKopfLayoutAlgorithm<V, E>
 
     public B after(Runnable after) {
       this.after = after;
+      return self();
+    }
+
+    public B doUpLeft(boolean doUpLeft) {
+      this.doUpLeft = doUpLeft;
+      return self();
+    }
+
+    public B doUpRight(boolean doUpRight) {
+      this.doUpRight = doUpRight;
+      return self();
+    }
+
+    public B doDownLeft(boolean doDownLeft) {
+      this.doDownLeft = doDownLeft;
+      return self();
+    }
+
+    public B doDownRight(boolean doDownRight) {
+      this.doDownRight = doDownRight;
       return self();
     }
 
@@ -111,20 +134,41 @@ public class BrandesKopfLayoutAlgorithm<V, E>
   Runnable after;
   int horizontalOffset = Integer.getInteger(PREFIX + "sugiyama.horizontal.offset", 50);
   int verticalOffset = Integer.getInteger(PREFIX + "sugiyama.vertical.offset", 50);
+  boolean doUpLeft;
+  boolean doDownLeft;
+  boolean doUpRight;
+  boolean doDownRight;
 
   public BrandesKopfLayoutAlgorithm() {
     this(BrandesKopfLayoutAlgorithm.edgeAwareBuilder());
   }
 
   private BrandesKopfLayoutAlgorithm(Builder builder) {
-    this(builder.vertexShapeFunction, builder.expandLayout, builder.after);
+    this(
+        builder.vertexShapeFunction,
+        builder.expandLayout,
+        builder.after,
+        builder.doUpLeft,
+        builder.doUpRight,
+        builder.doDownLeft,
+        builder.doDownRight);
   }
 
   private BrandesKopfLayoutAlgorithm(
-      Function<V, Shape> vertexShapeFunction, boolean expandLayout, Runnable after) {
+      Function<V, Shape> vertexShapeFunction,
+      boolean expandLayout,
+      Runnable after,
+      boolean doUpLeft,
+      boolean doUpRight,
+      boolean doDownLeft,
+      boolean doDownRight) {
     this.vertexShapeFunction = vertexShapeFunction;
     this.expandLayout = expandLayout;
     this.after = after;
+    this.doUpLeft = doUpLeft;
+    this.doUpRight = doUpRight;
+    this.doDownLeft = doDownLeft;
+    this.doDownRight = doDownRight;
   }
 
   @Override
@@ -138,7 +182,7 @@ public class BrandesKopfLayoutAlgorithm<V, E>
   }
 
   Graph<V, E> originalGraph;
-  List<List<SugiyamaVertex<V>>> layers;
+  //  List<List<SugiyamaVertex<V>>> layers;
   Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> svGraph;
   Set<SugiyamaEdge<V, E>> markedSegments = new HashSet<>();
 
@@ -162,7 +206,7 @@ public class BrandesKopfLayoutAlgorithm<V, E>
     }
 
     // build the layered graph
-    this.layers = GraphLayers.assign(svGraph);
+    List<List<SugiyamaVertex<V>>> layers = GraphLayers.assign(svGraph);
 
     // check that the rank/index metadata matches the actual rank/index in layers
     GraphLayers.checkLayers(layers);
@@ -170,24 +214,23 @@ public class BrandesKopfLayoutAlgorithm<V, E>
     Synthetics<V, E> synthetics = new Synthetics<>(svGraph);
     List<SugiyamaEdge<V, E>> edges = new ArrayList<>(svGraph.edgeSet());
     // create the synthetic vertices and edges
-    this.layers = synthetics.createVirtualVerticesAndEdges(edges, layers);
-
+    SugiyamaVertex<V>[][] layersArray = synthetics.createVirtualVerticesAndEdges(edges, layers);
+    GraphLayers.checkLayers(layersArray);
     // special case only for the test graph, pretend we did the swaps to get the
     // indices to match what is in the paper
+    layers = LayeredLayoutAlgorithm.arrayToList(layersArray);
+
     LayeredLayoutAlgorithm.rearrangeLayers(layers);
+
+    layersArray = LayeredLayoutAlgorithm.listToArray(layers);
 
     // check the metadata
     GraphLayers.checkLayers(layers);
+    //      GraphLayers.checkLayers(layersArray);
 
     //    justSetThePoints();
-    HorizontalCoordinateAssignment.horizontalCoordinateAssignment(
-        layers, svGraph, markedSegments, 50, 50);
-
-    //    horizontalCoordinateAssignment();
-    //        leftmostUpperHorizontalCoordinateAssignment();   // looks good
-    //        leftmostLowerHorizontalCoordinateAssignment();  // looks good
-    //        rightmostUpperHorizontalCoordinateAssignment();  // looks good
-    //        rightmostLowerHorizontalCoordinateAssignment(); // looks good
+    SelectiveHorizontalCoordinateAssignment.horizontalCoordinateAssignment(
+        layersArray, svGraph, markedSegments, 50, 50, doUpLeft, doUpRight, doDownLeft, doDownRight);
 
     Map<SugiyamaVertex<V>, SugiyamaVertex<V>> vertexMap = new HashMap<>();
     for (List<SugiyamaVertex<V>> layer : layers) {
@@ -281,9 +324,10 @@ public class BrandesKopfLayoutAlgorithm<V, E>
     renderContext.setEdgeShapeFunction(edgeShape);
 
     svGraph.vertexSet().forEach(v -> layoutModel.set(v.vertex, v.getPoint()));
+    after.run();
   }
 
-  private void justSetThePoints() {
+  private void justSetThePoints(List<List<SugiyamaVertex<V>>> layers) {
     int y = 0;
     int x = 0;
     for (int i = 0; i < layers.size(); i++) {

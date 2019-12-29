@@ -25,7 +25,7 @@
 
   <Logger name="org.jungrapht.visualization.layout.spatial" level="info"/>
 
-  <Logger name="org.jungrapht.visualization.layout.algorithms" level="info"/>
+  <Logger name="org.jungrapht.visualization.layout.algorithms" level="trace"/>
   <Logger name="org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm" level="info"/>
   <Logger name="org.jungrapht.visualization.layout.algorithms.MultiRowTreeLayoutAlgorithm" level="info"/>
   <Logger name="org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm" level="info"/>
