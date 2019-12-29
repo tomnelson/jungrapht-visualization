@@ -21,29 +21,41 @@ public class LevelCross<V, E> {
   private static final Logger log = LoggerFactory.getLogger(LevelCross.class);
 
   private List<SugiyamaEdge<V, E>> edges;
-
-  private List<SugiyamaVertex<V>> level;
-  private List<SugiyamaVertex<V>> successorLevel;
+  private int levelSize;
+  private int levelRank;
+  private int successorLevelSize;
+  private int successorLevelRank;
 
   private AccumulatorTree levelTree;
   private AccumulatorTree successorTree;
 
   public LevelCross(
       Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> graph,
-      List<SugiyamaVertex<V>> level,
-      List<SugiyamaVertex<V>> successorLevel) {
-    this(new ArrayList<>(graph.edgeSet()), level, successorLevel);
+      int levelSize,
+      int levelRank,
+      int successorLevelSize,
+      int successorLevelRank) {
+    this(
+        new ArrayList<>(graph.edgeSet()),
+        levelSize,
+        levelRank,
+        successorLevelSize,
+        successorLevelRank);
   }
 
   public LevelCross(
       List<SugiyamaEdge<V, E>> edgeList,
-      List<SugiyamaVertex<V>> level,
-      List<SugiyamaVertex<V>> successorLevel) {
+      int levelSize,
+      int levelRank,
+      int successorLevelSize,
+      int successorLevelRank) {
     this.edges = edgeList;
-    this.level = level;
-    this.successorLevel = successorLevel;
-    this.levelTree = new AccumulatorTree(level.size());
-    this.successorTree = new AccumulatorTree(successorLevel.size());
+    this.levelSize = levelSize;
+    this.levelRank = levelRank;
+    this.successorLevelSize = successorLevelSize;
+    this.successorLevelRank = successorLevelRank;
+    this.levelTree = new AccumulatorTree(levelSize);
+    this.successorTree = new AccumulatorTree(successorLevelSize);
   }
 
   public AccumulatorTree getLevelTree() {
@@ -96,7 +108,7 @@ public class LevelCross<V, E> {
     //trees should be all zeros
     int count = 0;
     for (int sweepPosition = 0;
-        sweepPosition < Math.min(level.size(), successorLevel.size());
+        sweepPosition < Math.min(levelSize, successorLevelSize);
         sweepPosition++) {
 
       //      log.trace("top of loop. topTrailing: {}, bottomTrailing: {}", topTrailing, bottomTrailing);
@@ -142,7 +154,7 @@ public class LevelCross<V, E> {
       List<SugiyamaEdge<V, E>> topEdges =
           edges
               .stream()
-              .filter(e -> level.contains(e.source))
+              .filter(e -> levelRank == e.source.rank)
               .filter(e -> e.source.index == sweepPos)
               .collect(Collectors.toList());
 
@@ -167,7 +179,7 @@ public class LevelCross<V, E> {
       List<SugiyamaEdge<V, E>> bottomEdges =
           edges
               .stream()
-              .filter(e -> successorLevel.contains(e.target))
+              .filter(e -> successorLevelRank == e.target.rank)
               .filter(e -> e.target.index == sweepPos)
               .collect(Collectors.toList());
 
@@ -196,10 +208,14 @@ public class LevelCross<V, E> {
     return "LevelCross{"
         + "\nedges="
         + edges
-        + "\nlevel="
-        + level
-        + "\nsuccessorLevel="
-        + successorLevel
+        + "\nlevelSize="
+        + levelSize
+        + "\nsuccessorLevelSize="
+        + successorLevelSize
+        + "\nlevelRank="
+        + levelRank
+        + "\nsuccessorLevelRank="
+        + successorLevelRank
         + "\nlevelTree="
         + levelTree
         + "\nsuccessorTree="

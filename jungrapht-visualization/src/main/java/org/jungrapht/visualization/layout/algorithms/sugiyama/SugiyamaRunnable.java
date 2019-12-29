@@ -26,6 +26,7 @@ import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.SugiyamaLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.brandeskopf.HorizontalCoordinateAssignment;
+import org.jungrapht.visualization.layout.algorithms.util.InsertionSortCounter;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.slf4j.Logger;
@@ -474,30 +475,25 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     }
   }
 
-  private int insertionSortCounter(List<Integer> list) {
-    int counter = 0;
-    for (int i = 1; i < list.size(); i++) {
-      int value = list.get(i);
-      int j = i - 1;
-      while (j >= 0 && list.get(j) > value) {
-        list.set(j + 1, list.get(j));
-        counter++;
-        j--;
-      }
-      list.set(j + 1, value);
-    }
-    return counter;
-  }
-
   int crossing(SugiyamaVertex<V> v, SugiyamaVertex<V> w, List<SugiyamaEdge<V, E>> edges) {
 
-    List<Integer> targetIndices = new LinkedList<>();
+    List<Integer> targetIndices = new ArrayList<>();
     for (SugiyamaEdge<V, E> edge : edges) {
       if (edge.source.equals(v) || edge.source.equals(w)) {
         targetIndices.add(edge.target.getIndex());
       }
     }
-    return this.insertionSortCounter(targetIndices);
+    return InsertionSortCounter.insertionSortCounter(targetIndices);
+  }
+
+  int crossing(SugiyamaVertex<V> v, SugiyamaVertex<V> w, SugiyamaEdge<V, E>[] edges) {
+    List<Integer> targetIndices = new ArrayList<>();
+    for (SugiyamaEdge<V, E> edge : edges) {
+      if (edge.source.equals(v) || edge.source.equals(w)) {
+        targetIndices.add(edge.target.getIndex());
+      }
+    }
+    return InsertionSortCounter.insertionSortCounter(targetIndices);
   }
 
   //http://www.graphviz.org/Documentation/TSE93.pdf p 15

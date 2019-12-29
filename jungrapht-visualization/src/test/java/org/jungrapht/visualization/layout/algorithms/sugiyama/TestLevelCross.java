@@ -220,7 +220,7 @@ public class TestLevelCross {
     log.info("layer 1: {}", layers.get(1));
 
     LevelCross<String, Integer> levelCross =
-        new LevelCross<>(edgeList, layers.get(0), layers.get(1));
+        new LevelCross<>(edgeList, layers.get(0).size(), 0, layers.get(1).size(), 1);
     log.info("levelCross: {}", levelCross);
 
     int crossCount = levelCross.levelCross();

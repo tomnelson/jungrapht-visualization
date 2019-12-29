@@ -17,7 +17,8 @@ public class AllLevelCross<V, E> {
   public int allLevelCross() {
     int count = 0;
     for (int i = 0; i < levels.size() - 2; i++) {
-      LevelCross<V, E> levelCross = new LevelCross(graph, levels.get(i), levels.get(i + 1));
+      LevelCross<V, E> levelCross =
+          new LevelCross(graph, levels.get(i).size(), i, levels.get(i + 1).size(), i + 1);
       count += levelCross.levelCross();
     }
     return count;
