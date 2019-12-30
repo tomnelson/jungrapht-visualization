@@ -6,7 +6,7 @@ import org.jgrapht.Graph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GraphLayers<V, E> {
+public class GraphLayers {
 
   private static final Logger log = LoggerFactory.getLogger(GraphLayers.class);
 
