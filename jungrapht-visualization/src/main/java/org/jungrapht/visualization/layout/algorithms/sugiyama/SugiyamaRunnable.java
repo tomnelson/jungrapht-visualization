@@ -290,11 +290,11 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       GraphLayers.checkLayers(best);
     }
 
-    Map<SugiyamaVertex<V>, SugiyamaVertex<V>> vertexMap = new HashMap<>();
+    Map<SugiyamaVertex<V>, Point> vertexPointMap = new HashMap<>();
     for (int i = 0; i < best.length; i++) {
       for (int j = 0; j < best[i].length; j++) {
         SugiyamaVertex<V> sugiyamaVertex = best[i][j];
-        vertexMap.put(sugiyamaVertex, sugiyamaVertex);
+        vertexPointMap.put(sugiyamaVertex, sugiyamaVertex.getPoint());
       }
     }
 
@@ -366,18 +366,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     // now all the vertices in layers (best) have points associated with them
     // every vertex in vertexMap has a point value
 
-    svGraph
-        .vertexSet()
-        .forEach(
-            v -> {
-              SugiyamaVertex<V> sugiyamaVertex2 = vertexMap.get(v);
-              if (sugiyamaVertex2 != null) {
-                Point p = sugiyamaVertex2.getPoint();
-                v.setPoint(p);
-              } else {
-                log.error("got null");
-              }
-            });
+    svGraph.vertexSet().forEach(v -> v.setPoint(vertexPointMap.get(v)));
 
     List<ArticulatedEdge<V, E>> articulatedEdges = synthetics.makeArticulatedEdges();
 
