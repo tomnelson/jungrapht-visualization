@@ -63,7 +63,8 @@ public class TestCircles {
   public void testCount() {
     CircleLayoutReduceEdgeCrossing cl = new CircleLayoutReduceEdgeCrossing(graph);
     List<Integer> vertexList = List.of(1, 10, 9, 7, 8, 6, 5, 4, 2, 3);
-    int count = CircleLayoutReduceEdgeCrossing.countCrossings(graph, vertexList);
+    int count =
+        CircleLayoutReduceEdgeCrossing.countCrossings(graph, vertexList.toArray(new Integer[0]));
     Assert.assertEquals(7, count);
   }
 
@@ -72,7 +73,8 @@ public class TestCircles {
     CircleLayoutReduceEdgeCrossing<Integer, Integer> circleLayouts =
         new CircleLayoutReduceEdgeCrossing<>(graph);
     int count =
-        CircleLayoutReduceEdgeCrossing.countCrossings(graph, circleLayouts.getVertexOrderedList());
+        CircleLayoutReduceEdgeCrossing.countCrossings(
+            graph, circleLayouts.getVertexOrderedList().toArray(new Integer[0]));
     Assert.assertEquals(0, count);
 
     /*

@@ -57,7 +57,6 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     protected Predicate<E> edgePredicate; // can be null
     protected Comparator<V> vertexComparator = (v1, v2) -> 0;
     protected Comparator<E> edgeComparator = (e1, e2) -> 0;
-    protected boolean straightenEdges;
 
     /** {@inheritDoc} */
     protected B self() {
@@ -110,11 +109,6 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       return self();
     }
 
-    public B straightenEdges(boolean straightenEdges) {
-      this.straightenEdges = straightenEdges;
-      return self();
-    }
-
     /** {@inheritDoc} */
     public T build() {
       return (T) new SugiyamaRunnable<>(this);
@@ -139,7 +133,6 @@ public class SugiyamaRunnable<V, E> implements Runnable {
   protected Predicate<E> edgePredicate;
   protected Comparator<V> vertexComparator;
   protected Comparator<E> edgeComparator;
-  protected boolean straightenEdges;
 
   private SugiyamaRunnable(Builder<V, E, ?, ?> builder) {
     this(
@@ -148,8 +141,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
         builder.vertexPredicate,
         builder.edgePredicate,
         builder.vertexComparator,
-        builder.edgeComparator,
-        builder.straightenEdges);
+        builder.edgeComparator);
   }
 
   private SugiyamaRunnable(
@@ -158,15 +150,13 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       Predicate<V> vertexPredicate,
       Predicate<E> edgePredicate,
       Comparator<V> vertexComparator,
-      Comparator<E> edgeComparator,
-      boolean straightenEdges) {
+      Comparator<E> edgeComparator) {
     this.layoutModel = layoutModel;
     this.renderContext = renderContext;
     this.vertexComparator = vertexComparator;
     this.vertexPredicate = vertexPredicate;
     this.edgeComparator = edgeComparator;
     this.edgePredicate = edgePredicate;
-    this.straightenEdges = straightenEdges;
   }
 
   private boolean checkStopped() {

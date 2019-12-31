@@ -57,9 +57,9 @@ public class SugiyamaLayoutAlgorithm<V, E>
           B extends Builder<V, E, T, B>>
       implements LayoutAlgorithm.Builder<V, T, B> {
     protected Function<V, Shape> vertexShapeFunction = v -> IDENTITY_SHAPE;
-    protected boolean straightenEdges;
     protected boolean expandLayout = true;
     protected Runnable after = () -> {};
+    protected boolean threaded;
 
     /** {@inheritDoc} */
     protected B self() {
@@ -71,14 +71,14 @@ public class SugiyamaLayoutAlgorithm<V, E>
       return self();
     }
 
-    public B straightenEdges(boolean straightenEdges) {
-      this.straightenEdges = straightenEdges;
-      return self();
-    }
-
     /** {@inheritDoc} */
     public B expandLayout(boolean expandLayout) {
       this.expandLayout = expandLayout;
+      return self();
+    }
+
+    public B threaded(boolean threaded) {
+      this.threaded = threaded;
       return self();
     }
 
@@ -106,9 +106,9 @@ public class SugiyamaLayoutAlgorithm<V, E>
   protected List<V> roots;
 
   protected Function<V, Shape> vertexShapeFunction;
-  protected boolean straightenEdges;
   protected boolean expandLayout;
   protected RenderContext<V, E> renderContext;
+  boolean threaded;
   CompletableFuture theFuture;
   Runnable after;
 
@@ -117,16 +117,15 @@ public class SugiyamaLayoutAlgorithm<V, E>
   }
 
   private SugiyamaLayoutAlgorithm(Builder builder) {
-    this(builder.vertexShapeFunction, builder.straightenEdges, builder.expandLayout, builder.after);
+    this(builder.vertexShapeFunction, builder.expandLayout, builder.threaded, builder.after);
   }
 
   private SugiyamaLayoutAlgorithm(
       Function<V, Shape> vertexShapeFunction,
-      boolean straightenEdges,
       boolean expandLayout,
+      boolean threaded,
       Runnable after) {
     this.vertexShapeFunction = vertexShapeFunction;
-    this.straightenEdges = straightenEdges;
     this.expandLayout = expandLayout;
     this.after = after;
   }
@@ -148,20 +147,28 @@ public class SugiyamaLayoutAlgorithm<V, E>
         SugiyamaRunnable.<V, E>builder()
             .layoutModel(layoutModel)
             .renderContext(renderContext)
-            .straightenEdges(straightenEdges)
             .build();
-    theFuture =
-        CompletableFuture.runAsync(runnable)
-            .thenRun(
-                () -> {
-                  log.trace("Sugiyama layout done");
-                  this.run(); // run the after function
-                  layoutModel.getViewChangeSupport().fireViewChanged();
-                  // fire an event to say that the layout is done
-                  layoutModel
-                      .getLayoutStateChangeSupport()
-                      .fireLayoutStateChanged(layoutModel, false);
-                });
+    if (threaded) {
+
+      theFuture =
+          CompletableFuture.runAsync(runnable)
+              .thenRun(
+                  () -> {
+                    log.trace("Sugiyama layout done");
+                    this.run(); // run the after function
+                    layoutModel.getViewChangeSupport().fireViewChanged();
+                    // fire an event to say that the layout is done
+                    layoutModel
+                        .getLayoutStateChangeSupport()
+                        .fireLayoutStateChanged(layoutModel, false);
+                  });
+    } else {
+      runnable.run();
+      after.run();
+      layoutModel.getViewChangeSupport().fireViewChanged();
+      // fire an event to say that the layout is done
+      layoutModel.getLayoutStateChangeSupport().fireLayoutStateChanged(layoutModel, false);
+    }
   }
 
   public void cancel() {

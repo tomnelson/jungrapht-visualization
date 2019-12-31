@@ -138,7 +138,7 @@ public class CircleLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
     }
     log.info(
         "crossing count {}",
-        CircleLayoutReduceEdgeCrossing.countCrossings(graph, vertexOrderedList));
+        CircleLayoutReduceEdgeCrossing.countCrossings(graph, (V[]) vertexOrderedList.toArray()));
   }
 
   /**
