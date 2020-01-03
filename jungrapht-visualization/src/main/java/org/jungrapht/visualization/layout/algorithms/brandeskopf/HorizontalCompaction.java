@@ -36,8 +36,6 @@ public class HorizontalCompaction<V> {
     this.deltaY = deltaY;
     Arrays.stream(layers)
         .flatMap(Arrays::stream)
-        //        .stream()
-        //        .flatMap(Collection::stream)
         .forEach(
             v -> {
               sink.put(v, v);
@@ -53,7 +51,6 @@ public class HorizontalCompaction<V> {
   public void horizontalCompaction() {
     Arrays.stream(layers)
         .flatMap(Arrays::stream)
-        //    layers.stream().flatMap(Collection::stream)
         .filter(v -> root(v) == v)
         .forEach(this::placeBlock);
 

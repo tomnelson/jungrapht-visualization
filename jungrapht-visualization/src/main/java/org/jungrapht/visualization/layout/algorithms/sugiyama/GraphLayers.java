@@ -59,9 +59,11 @@ public class GraphLayers {
         SugiyamaVertex<V> sugiyamaVertex = layer.get(j);
         if (i != sugiyamaVertex.getRank()) {
           log.error("{} is not the rank of {}", i, sugiyamaVertex);
+          throw new RuntimeException("rank is wrong");
         }
         if (j != sugiyamaVertex.getIndex()) {
           log.error("{} is not the index of {}", j, sugiyamaVertex);
+          throw new RuntimeException("index is wrong");
         }
         assert i == sugiyamaVertex.getRank();
         assert j == sugiyamaVertex.getIndex();

@@ -36,6 +36,10 @@ public interface MultiSelectionStrategy {
     }
   }
 
+  static Rectangular rectangular() {
+    return new Rectangular();
+  }
+
   class Arbitrary implements MultiSelectionStrategy {
 
     Path2D shape;
@@ -56,5 +60,9 @@ public interface MultiSelectionStrategy {
       path.lineTo(out.getX(), out.getY());
       return this.shape;
     }
+  }
+
+  static Arbitrary arbitrary() {
+    return new Arbitrary();
   }
 }

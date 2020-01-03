@@ -35,12 +35,25 @@ public class SugiyamaEdge<V, E> extends SE<E> {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    SugiyamaEdge<?, ?> se = (SugiyamaEdge<?, ?>) o;
-    return Objects.equals(edge, se.edge);
+    if (!super.equals(o)) return false;
+    SugiyamaEdge<?, ?> that = (SugiyamaEdge<?, ?>) o;
+    return Objects.equals(source, that.source) && Objects.equals(target, that.target);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(edge);
+    return Objects.hash(super.hashCode(), source, target);
   }
+  //  @Override
+  //  public boolean equals(Object o) {
+  //    if (this == o) return true;
+  //    if (o == null || getClass() != o.getClass()) return false;
+  //    SugiyamaEdge<?, ?> se = (SugiyamaEdge<?, ?>) o;
+  //    return Objects.equals(edge, se.edge);
+  //  }
+  //
+  //  @Override
+  //  public int hashCode() {
+  //    return Objects.hash(edge);
+  //  }
 }

@@ -21,7 +21,7 @@ public class SE<E> {
 
   @Override
   public String toString() {
-    return "SE{" + "edge=" + edge + '}';
+    return "SE{" + "edge=" + edge + "hash:" + hashCode() + "'}'";
   }
 
   @Override

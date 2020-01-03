@@ -1,5 +1,6 @@
 package org.jungrapht.visualization.layout.algorithms.brandeskopf;
 
+import java.util.HashSet;
 import java.util.stream.IntStream;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
@@ -109,7 +110,9 @@ public class BrandesKopfTest {
     Assert.assertEquals(4, layers[8].length);
     Assert.assertEquals(1, layers[9].length);
 
-    brandesKopf.horizontalCoordinateAssignment();
+    //    brandesKopf.horizontalCoordinateAssignment();
+    HorizontalCoordinateAssignment.horizontalCoordinateAssignment(
+        layers, brandesKopf.svGraph, new HashSet<>(), 20, 20);
 
     for (int i = 0; i < layers.length; i++) {
       for (int j = 0; j < layers[i].length; j++) {

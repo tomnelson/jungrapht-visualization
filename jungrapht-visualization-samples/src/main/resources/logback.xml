@@ -30,6 +30,8 @@
   <Logger name="org.jungrapht.visualization.layout.algorithms.MultiRowTreeLayoutAlgorithm" level="info"/>
   <Logger name="org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm" level="info"/>
 
+  <Logger name="org.jungrapht.visualization.layout.algorithms.sugiyama" level="info"/>
+
 
 
   <Logger name="ch.qos.logback" level="WARN" />

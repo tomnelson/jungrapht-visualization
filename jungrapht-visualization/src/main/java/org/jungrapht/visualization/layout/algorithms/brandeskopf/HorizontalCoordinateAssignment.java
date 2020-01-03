@@ -1,16 +1,20 @@
 package org.jungrapht.visualization.layout.algorithms.brandeskopf;
 
+import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
+import org.jgrapht.Graphs;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaEdge;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaVertex;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.SyntheticSugiyamaVertex;
 import org.jungrapht.visualization.layout.model.Point;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HorizontalCoordinateAssignment {
+  private static Logger log = LoggerFactory.getLogger(HorizontalCoordinateAssignment.class);
 
   public static <V, E> void horizontalCoordinateAssignment(
       SugiyamaVertex<V>[][] layers,
@@ -54,8 +58,6 @@ public class HorizontalCoordinateAssignment {
     for (int i = 0; i < layers.length; i++) {
       for (int j = 0; j < layers[i].length; j++) {
         SugiyamaVertex<V> v = layers[i][j];
-        //    for (List<SugiyamaVertex<V>> list : layers) {
-        //      for (SugiyamaVertex<V> v : list) {
         Point upLeftPoint = upLeftCompaction.getPoint(v).add(horizontalOffset, verticalOffset);
         Point upRightPoint = upRightCompaction.getPoint(v).add(horizontalOffset, verticalOffset);
         Point downLeftPoint = downLeftCompaction.getPoint(v).add(horizontalOffset, verticalOffset);
@@ -70,6 +72,16 @@ public class HorizontalCoordinateAssignment {
     }
   }
 
+  static <V, E> int upperNeighborIndexFor(
+      SyntheticSugiyamaVertex<V> v, Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> svGraph) {
+    // any Synthetic vertex must have one upper and one lower neighbor
+    return Graphs.predecessorListOf(svGraph, v).get(0).getIndex();
+  }
+
+  private static <V> boolean incidentToInnerSegment(SugiyamaVertex<V> v) {
+    return v instanceof SyntheticSugiyamaVertex;
+  }
+
   public static <V, E> void preprocessing(
       SugiyamaVertex<V>[][] layers,
       Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> svGraph,
@@ -82,31 +94,28 @@ public class HorizontalCoordinateAssignment {
 
       int k0 = 0;
       int el = 0;
-      SugiyamaVertex<V>[] thisLayer = layers[i]; // Li
-      SugiyamaVertex<V>[] nextLayer = layers[i + 1]; // Li+1
+      SugiyamaVertex<V>[] Li = layers[i]; // Li
+      SugiyamaVertex<V>[] Liplus1 = layers[i + 1]; // Li+1
       //      for (int el1 = 1; el1 <= nextLayer.size(); el1++) {
-      for (int el1 = 0; el1 <= nextLayer.length - 1; el1++) { // zero based
+      for (int el1 = 0; el1 <= Liplus1.length - 1; el1++) { // zero based
         // get the vertex at next layer index el1
-        SugiyamaVertex<V> vel1nextLayer = nextLayer[el1];
-        //        SugiyamaVertex<V> velNextLayer = nextLayer.get(el);
-        if (el1 == nextLayer.length - 1 || vel1nextLayer instanceof SyntheticSugiyamaVertex) {
-          int k1 = thisLayer.length - 1;
-          if (vel1nextLayer instanceof SyntheticSugiyamaVertex) {
-            Optional<SugiyamaEdge<V, E>> incomingEdgeOpt =
-                svGraph.incomingEdgesOf(vel1nextLayer).stream().findFirst();
-            if (incomingEdgeOpt.isPresent()) {
-              SugiyamaEdge<V, E> incomingEdge = incomingEdgeOpt.get();
-              SugiyamaVertex<V> upperNeighbor = svGraph.getEdgeSource(incomingEdge);
-              k1 = upperNeighbor.getIndex();
-            }
+        SugiyamaVertex<V> vel1iplus1 = Liplus1[el1];
+        if (el1 == Liplus1.length - 1 || incidentToInnerSegment(vel1iplus1)) {
+          int k1 = Li.length - 1;
+          if (incidentToInnerSegment(vel1iplus1)) {
+            // vel1iplus1 is a SyntheticSugiyamaVertex and must have one upper neighbor
+            k1 = upperNeighborIndexFor((SyntheticSugiyamaVertex) vel1iplus1, svGraph);
           }
           while (el <= el1) {
-            SugiyamaVertex<V> velNextLayer = nextLayer[el];
+            SugiyamaVertex<V> velNextLayer = Liplus1[el];
             for (SugiyamaVertex<V> upperNeighbor : getUpperNeighbors(svGraph, velNextLayer)) {
               int k = upperNeighbor.getIndex();
               if (k < k0 || k > k1) {
-                markedSegments.add(svGraph.getEdge(upperNeighbor, velNextLayer));
-                //                                log.info("added edge from {} to {} to marked segments", upperNeighbor, velNextLayer);
+                if (!(upperNeighbor instanceof SyntheticSugiyamaVertex
+                    && velNextLayer instanceof SyntheticSugiyamaVertex)) {
+                  // only marking segments that are not inner segments
+                  markedSegments.add(svGraph.getEdge(upperNeighbor, velNextLayer));
+                }
               }
             }
             el++;
@@ -117,8 +126,20 @@ public class HorizontalCoordinateAssignment {
     }
   }
 
+  /**
+   * return a list of the upper neighbors for the supplied vertex, sorted in index order
+   *
+   * @param graph graph with vertex/edge relationships
+   * @param v the vertex of interest
+   * @param <V> vertex type
+   * @param <E> edge type
+   * @return a list of the upper neighbors for the supplied vertex, sorted in index order
+   */
   static <V, E> List<SugiyamaVertex<V>> getUpperNeighbors(
       Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> graph, SugiyamaVertex<V> v) {
-    return graph.incomingEdgesOf(v).stream().map(graph::getEdgeSource).collect(Collectors.toList());
+    return Graphs.predecessorListOf(graph, v)
+        .stream()
+        .sorted(Comparator.comparingInt(SugiyamaVertex::getIndex))
+        .collect(Collectors.toList());
   }
 }

@@ -41,6 +41,13 @@ public class SyntheticSugiyamaEdge<V, E> extends SugiyamaEdge<V, E> {
 
   @Override
   public String toString() {
-    return "SyntheticEdge{" + "edge=" + edge + ", source=" + source + ", target=" + target + '}';
+    return "SyntheticSugiyamaEdge{"
+        + "edge="
+        + edge
+        + ", source="
+        + source
+        + ", target="
+        + target
+        + '}';
   }
 }

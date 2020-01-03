@@ -57,6 +57,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
           B extends Builder<V, E, T, B>>
       implements LayoutAlgorithm.Builder<V, T, B> {
     protected Function<V, Shape> vertexShapeFunction = v -> IDENTITY_SHAPE;
+    protected boolean straightenEdges = true;
     protected boolean expandLayout = true;
     protected Runnable after = () -> {};
     protected boolean threaded;
@@ -68,6 +69,11 @@ public class SugiyamaLayoutAlgorithm<V, E>
 
     public B vertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
       this.vertexShapeFunction = vertexShapeFunction;
+      return self();
+    }
+
+    public B straightenEdges(boolean straightenEdges) {
+      this.straightenEdges = straightenEdges;
       return self();
     }
 
@@ -106,6 +112,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
   protected List<V> roots;
 
   protected Function<V, Shape> vertexShapeFunction;
+  protected boolean straightenEdges;
   protected boolean expandLayout;
   protected RenderContext<V, E> renderContext;
   boolean threaded;
@@ -117,15 +124,22 @@ public class SugiyamaLayoutAlgorithm<V, E>
   }
 
   private SugiyamaLayoutAlgorithm(Builder builder) {
-    this(builder.vertexShapeFunction, builder.expandLayout, builder.threaded, builder.after);
+    this(
+        builder.vertexShapeFunction,
+        builder.straightenEdges,
+        builder.expandLayout,
+        builder.threaded,
+        builder.after);
   }
 
   private SugiyamaLayoutAlgorithm(
       Function<V, Shape> vertexShapeFunction,
+      boolean straightenEdges,
       boolean expandLayout,
       boolean threaded,
       Runnable after) {
     this.vertexShapeFunction = vertexShapeFunction;
+    this.straightenEdges = straightenEdges;
     this.expandLayout = expandLayout;
     this.after = after;
   }
@@ -147,6 +161,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
         SugiyamaRunnable.<V, E>builder()
             .layoutModel(layoutModel)
             .renderContext(renderContext)
+            .straightenEdges(straightenEdges)
             .build();
     if (threaded) {
 

@@ -15,8 +15,7 @@ import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.DefaultModalGraphMouse;
-import org.jungrapht.visualization.control.ModalGraphMouse.Mode;
+import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.control.MultiSelectionStrategy;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
@@ -27,28 +26,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Demonstrates TreeLayout and RadialTreeLayout.
+ * Demonstrates mulit-selection with arbitrary containing shape instead of a rectangle.<br>
+ * CTRL-click and drag to trace a shape containing vertices to select.
  *
  * @author Tom Nelson
  */
-public class TreeDAGLayoutDemo extends JPanel {
+public class ArbitraryShapeMultiSelectDemo extends JPanel {
 
-  private static final Logger log = LoggerFactory.getLogger(TreeDAGLayoutDemo.class);
-  Graph<String, Integer> graph;
+  private static final Logger log = LoggerFactory.getLogger(ArbitraryShapeMultiSelectDemo.class);
 
-  /** the visual component and renderer for the graph */
-  VisualizationViewer<String, Integer> vv;
-
-  public TreeDAGLayoutDemo() {
+  public ArbitraryShapeMultiSelectDemo() {
 
     setLayout(new BorderLayout());
-    // create a simple graph for the demo
-    graph = createDAG();
 
-    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
-    graphMouse.setMultiSelectionStrategy(new MultiSelectionStrategy.Arbitrary());
+    Graph<String, Integer> graph = createDAG();
 
-    vv =
+    final DefaultGraphMouse<String, Integer> graphMouse = new DefaultGraphMouse<>();
+    graphMouse.setMultiSelectionStrategy(MultiSelectionStrategy.arbitrary());
+
+    VisualizationViewer<String, Integer> vv =
         VisualizationViewer.builder(graph)
             .layoutAlgorithm(new StaticLayoutAlgorithm<>())
             .viewSize(new Dimension(600, 600))
@@ -57,7 +53,7 @@ public class TreeDAGLayoutDemo extends JPanel {
 
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
-    // add a listener for ToolTips
+
     vv.setVertexToolTipFunction(Object::toString);
     vv.getRenderContext().setArrowFillPaintFunction(n -> Color.lightGray);
 
@@ -67,10 +63,6 @@ public class TreeDAGLayoutDemo extends JPanel {
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
 
-    JComboBox<Mode> modeBox = graphMouse.getModeComboBox();
-    modeBox.addItemListener(graphMouse.getModeListener());
-    graphMouse.setMode(Mode.TRANSFORMING);
-
     JPanel layoutPanel = new JPanel(new GridLayout(0, 1));
     layoutPanel.add(
         ControlHelpers.getCenteredContainer(
@@ -78,7 +70,6 @@ public class TreeDAGLayoutDemo extends JPanel {
     Box controls = Box.createHorizontalBox();
     controls.add(layoutPanel);
     controls.add(ControlHelpers.getCenteredContainer("Zoom", ControlHelpers.getZoomControls(vv)));
-    controls.add(ControlHelpers.getCenteredContainer("Mouse Mode", modeBox));
     add(controls, BorderLayout.SOUTH);
   }
 
@@ -119,7 +110,7 @@ public class TreeDAGLayoutDemo extends JPanel {
     Container content = frame.getContentPane();
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-    content.add(new TreeDAGLayoutDemo());
+    content.add(new ArbitraryShapeMultiSelectDemo());
     frame.pack();
     frame.setVisible(true);
   }

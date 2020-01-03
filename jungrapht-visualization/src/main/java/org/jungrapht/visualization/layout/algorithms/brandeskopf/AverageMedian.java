@@ -59,7 +59,6 @@ public class AverageMedian<V> {
         lr.get(i).get(j).setPoint(p);
         ul.get(i).get(j).setPoint(p);
         ll.get(i).get(j).setPoint(p);
-        //                balanced.get(i).add
       }
     }
   }

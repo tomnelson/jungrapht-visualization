@@ -86,8 +86,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   /** on mouse press, record the current state of the edgeSpatial.isActive() */
   protected boolean edgeSpatialActiveInitialState;
 
-  protected MultiSelectionStrategy multiSelectionStrategy =
-      new MultiSelectionStrategy.Rectangular();
+  protected MultiSelectionStrategy multiSelectionStrategy = MultiSelectionStrategy.rectangular();
 
   /** create an instance with default settings */
   public SelectingGraphMousePlugin() {
