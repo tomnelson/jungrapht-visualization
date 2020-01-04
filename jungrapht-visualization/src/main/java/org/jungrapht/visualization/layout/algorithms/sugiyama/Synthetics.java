@@ -1,8 +1,13 @@
 package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.jgrapht.Graph;
+import org.jungrapht.visualization.layout.model.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -185,5 +190,44 @@ public class Synthetics<V, E> {
 
     articulatedEdges.forEach(e -> dag.addEdge(e.source, e.target, e));
     return articulatedEdges;
+  }
+
+  public void alignArticulatedEdges() {
+    Set<Point> allInnerPoints = new HashSet<>();
+    for (SugiyamaEdge<V, E> edge : dag.edgeSet()) {
+      if (edge instanceof SyntheticSugiyamaEdge) {
+        SyntheticSugiyamaEdge<V, E> syntheticEdge = (SyntheticSugiyamaEdge<V, E>) edge;
+        SugiyamaVertex<V> source = dag.getEdgeSource(edge);
+        if (source instanceof SyntheticSugiyamaVertex) {
+          continue;
+        }
+        SugiyamaVertex<V> target = dag.getEdgeTarget(syntheticEdge);
+        Map<SyntheticSugiyamaVertex<V>, Point> innerPoints = new LinkedHashMap<>();
+        while (target instanceof SyntheticSugiyamaVertex) {
+          SyntheticSugiyamaVertex<V> syntheticTarget = (SyntheticSugiyamaVertex<V>) target;
+          innerPoints.put(syntheticTarget, syntheticTarget.getPoint());
+          // a SyntheticVertex will have one and only one outgoing edge
+          SugiyamaEdge<V, E> outgoingEdge = dag.outgoingEdgesOf(target).stream().findFirst().get();
+          target = dag.getEdgeTarget(outgoingEdge);
+        }
+
+        // look at the x coords of all the points in the innerPoints list
+        double avgx = innerPoints.values().stream().mapToDouble(p -> p.x).average().getAsDouble();
+        log.trace("points: {}, avgx: {}", innerPoints.values(), avgx);
+        boolean overlap = false;
+        for (SyntheticSugiyamaVertex<V> v : innerPoints.keySet()) {
+          Point newPoint = Point.of(avgx, v.p.y);
+          overlap |= allInnerPoints.contains(newPoint);
+          allInnerPoints.add(newPoint);
+          v.setPoint(newPoint);
+        }
+        if (overlap) {
+          log.info("overlap at {}", innerPoints.keySet());
+          innerPoints.keySet().forEach(v -> v.setPoint(Point.of(v.p.x + 20, v.p.y)));
+        }
+      }
+    }
+    // check for any duplicate points
+
   }
 }

@@ -57,6 +57,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     protected Comparator<V> vertexComparator = (v1, v2) -> 0;
     protected Comparator<E> edgeComparator = (e1, e2) -> 0;
     protected boolean straightenEdges;
+    protected boolean postStraighten;
 
     /** {@inheritDoc} */
     protected B self() {
@@ -114,6 +115,11 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       return self();
     }
 
+    public B postStraighten(boolean postStraighten) {
+      this.postStraighten = postStraighten;
+      return self();
+    }
+
     /** {@inheritDoc} */
     public T build() {
       return (T) new SugiyamaRunnable<>(this);
@@ -139,6 +145,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
   protected Comparator<V> vertexComparator;
   protected Comparator<E> edgeComparator;
   protected boolean straightenEdges;
+  protected boolean postStraighten;
 
   private SugiyamaRunnable(Builder<V, E, ?, ?> builder) {
     this(
@@ -148,7 +155,8 @@ public class SugiyamaRunnable<V, E> implements Runnable {
         builder.edgePredicate,
         builder.vertexComparator,
         builder.edgeComparator,
-        builder.straightenEdges);
+        builder.straightenEdges,
+        builder.postStraighten);
   }
 
   private SugiyamaRunnable(
@@ -158,7 +166,8 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       Predicate<E> edgePredicate,
       Comparator<V> vertexComparator,
       Comparator<E> edgeComparator,
-      boolean straightenEdges) {
+      boolean straightenEdges,
+      boolean postStraighten) {
     this.layoutModel = layoutModel;
     this.renderContext = renderContext;
     this.vertexComparator = vertexComparator;
@@ -166,6 +175,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     this.edgeComparator = edgeComparator;
     this.edgePredicate = edgePredicate;
     this.straightenEdges = straightenEdges;
+    this.postStraighten = postStraighten;
   }
 
   private boolean checkStopped() {
@@ -377,6 +387,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
 
     svGraph.vertexSet().forEach(v -> v.setPoint(vertexPointMap.get(v)));
 
+    if (postStraighten) synthetics.alignArticulatedEdges();
     List<ArticulatedEdge<V, E>> articulatedEdges = synthetics.makeArticulatedEdges();
 
     Set<E> feedbackEdges = new HashSet<>();
@@ -432,7 +443,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       improvements = 0;
       improved = false;
       for (SugiyamaVertex<V>[] rank : ranks) {
-        for (int j = 0; j < rank.length - 1; j++) {
+        for (int j = 0; j <= rank.length - 2; j++) {
           SugiyamaVertex<V> v = rank[j];
           SugiyamaVertex<V> w = rank[j + 1];
           int vw = crossing(v, w, edges);
@@ -481,9 +492,9 @@ public class SugiyamaRunnable<V, E> implements Runnable {
 
     if (i % 2 == 0) {
       for (int r = 0; r < layers.length; r++) {
-        Map<SugiyamaVertex<V>, Integer> medianMap = new HashMap<>();
+        Map<SugiyamaVertex<V>, Double> medianMap = new HashMap<>();
         for (SugiyamaVertex<V> v : layers[r]) {
-          int median = median_value(v, r - 1, layers, svGraph);
+          double median = median_value(v, r - 1, layers, svGraph);
           medianMap.put(v, median);
         }
         Arrays.sort(layers[r], (v1, v2) -> medianMap.get(v1).compareTo(medianMap.get(v2)));
@@ -495,9 +506,9 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       }
     } else {
       for (int r = layers.length - 1; r >= 0; r--) {
-        Map<SugiyamaVertex<V>, Integer> medianMap = new HashMap<>();
+        Map<SugiyamaVertex<V>, Double> medianMap = new HashMap<>();
         for (SugiyamaVertex<V> v : layers[r]) {
-          int median = median_value(v, r + 1, layers, svGraph);
+          double median = median_value(v, r + 1, layers, svGraph);
           medianMap.put(v, median);
         }
         Arrays.sort(layers[r], (v1, v2) -> medianMap.get(v1).compareTo(medianMap.get(v2)));
@@ -526,7 +537,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     }
   }
 
-  int median_value(
+  double median_value(
       SugiyamaVertex<V> v,
       int adj_rank,
       SugiyamaVertex<V>[][] layers,
@@ -541,8 +552,8 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     } else if (P.length == 2) {
       return (P[0] + P[1]) / 2;
     } else {
-      int left = P[m - 1] - P[0];
-      int right = P[P.length - 1] - P[m];
+      double left = P[m - 1] - P[0];
+      double right = P[P.length - 1] - P[m];
       return (P[m - 1] * right + P[m] * left) / (left + right);
     }
   }

@@ -45,10 +45,9 @@ public class SugiyamaLayoutExample extends JFrame {
 
     JPanel container = new JPanel(new BorderLayout());
     // create a simple graph for the demo
-    graph = TestGraphs.createDirectedAcyclicGraph(5, 3, .4);
+    graph = TestGraphs.createDirectedAcyclicGraph(9, 3, .2, 0L);
 
     vv = VisualizationViewer.builder(graph).viewSize(new Dimension(900, 600)).build();
-
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
     // need to update the edge spatial structure
     // add a listener for ToolTips

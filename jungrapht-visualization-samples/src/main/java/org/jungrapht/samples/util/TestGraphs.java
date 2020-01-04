@@ -13,6 +13,7 @@ package org.jungrapht.samples.util;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.Set;
 import java.util.function.Supplier;
 import org.jgrapht.Graph;
@@ -112,7 +113,13 @@ public class TestGraphs {
    */
   public static Graph<String, Integer> createDirectedAcyclicGraph(
       int layers, int maxVerticesPerLayer, double linkprob) {
+    return createDirectedAcyclicGraph(
+        layers, maxVerticesPerLayer, linkprob, System.currentTimeMillis());
+  }
 
+  public static Graph<String, Integer> createDirectedAcyclicGraph(
+      int layers, int maxVerticesPerLayer, double linkprob, long randomSeed) {
+    Random random = new Random(randomSeed);
     Graph<String, Integer> graph =
         GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.directedMultigraph())
             .edgeSupplier(SupplierUtil.createIntegerSupplier())
@@ -122,14 +129,14 @@ public class TestGraphs {
     Set<String> inThisLayer = new HashSet<>();
     for (int i = 0; i < layers; i++) {
 
-      int verticesThisLayer = (int) (Math.random() * maxVerticesPerLayer) + 1;
+      int verticesThisLayer = (int) (random.nextDouble() * maxVerticesPerLayer) + 1;
       for (int j = 0; j < verticesThisLayer; j++) {
         String v = i + ":" + j;
         graph.addVertex(v);
         inThisLayer.add(v);
         // for each previous vertex...
         for (String v2 : previousLayers) {
-          if (Math.random() < linkprob) {
+          if (random.nextDouble() < linkprob) {
             graph.addEdge(v, v2);
           }
         }

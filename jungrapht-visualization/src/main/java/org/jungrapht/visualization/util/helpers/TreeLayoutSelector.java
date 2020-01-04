@@ -166,6 +166,8 @@ public class TreeLayoutSelector<V, E> extends JPanel {
 
   final JRadioButton animateTransition = new JRadioButton("Animate Transition", true);
 
+  Function<Context<Graph<V, E>, E>, Shape> originalEdgeShapeFunction;
+
   private TreeLayoutSelector(
       VisualizationServer<V, E> vv,
       Function<V, Shape> vertexShapeFunction,
@@ -186,6 +188,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     this.alignFavoredEdgess = alignFavoredEdges;
     Objects.requireNonNull(after);
     this.after = after;
+    this.originalEdgeShapeFunction = vv.getRenderContext().getEdgeShapeFunction();
 
     TreeLayoutAlgorithm<V> treeLayoutAlgorithm =
         TreeLayoutAlgorithm.<V>builder().vertexShapeFunction(vertexShapeFunction).build();
@@ -345,12 +348,10 @@ public class TreeLayoutSelector<V, E> extends JPanel {
 
     LayoutAlgorithm layoutAlgorithm;
     VisualizationServer vv;
-    Function<Context<Graph<V, E>, E>, Shape> originalEdgeShapeFunction;
 
     LayoutItemListener(LayoutAlgorithm layoutAlgorithm, VisualizationServer vv) {
       this.layoutAlgorithm = layoutAlgorithm;
       this.vv = vv;
-      this.originalEdgeShapeFunction = vv.getRenderContext().getEdgeShapeFunction();
     }
 
     @Override

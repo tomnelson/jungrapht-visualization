@@ -58,6 +58,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
       implements LayoutAlgorithm.Builder<V, T, B> {
     protected Function<V, Shape> vertexShapeFunction = v -> IDENTITY_SHAPE;
     protected boolean straightenEdges = true;
+    protected boolean postStraighten = true;
     protected boolean expandLayout = true;
     protected Runnable after = () -> {};
     protected boolean threaded;
@@ -74,6 +75,11 @@ public class SugiyamaLayoutAlgorithm<V, E>
 
     public B straightenEdges(boolean straightenEdges) {
       this.straightenEdges = straightenEdges;
+      return self();
+    }
+
+    public B postStraighten(boolean postStraighten) {
+      this.postStraighten = postStraighten;
       return self();
     }
 
@@ -113,6 +119,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
 
   protected Function<V, Shape> vertexShapeFunction;
   protected boolean straightenEdges;
+  protected boolean postStraighten;
   protected boolean expandLayout;
   protected RenderContext<V, E> renderContext;
   boolean threaded;
@@ -127,6 +134,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
     this(
         builder.vertexShapeFunction,
         builder.straightenEdges,
+        builder.postStraighten,
         builder.expandLayout,
         builder.threaded,
         builder.after);
@@ -135,11 +143,13 @@ public class SugiyamaLayoutAlgorithm<V, E>
   private SugiyamaLayoutAlgorithm(
       Function<V, Shape> vertexShapeFunction,
       boolean straightenEdges,
+      boolean postStraighten,
       boolean expandLayout,
       boolean threaded,
       Runnable after) {
     this.vertexShapeFunction = vertexShapeFunction;
     this.straightenEdges = straightenEdges;
+    this.postStraighten = postStraighten;
     this.expandLayout = expandLayout;
     this.after = after;
   }
@@ -162,6 +172,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
             .layoutModel(layoutModel)
             .renderContext(renderContext)
             .straightenEdges(straightenEdges)
+            .postStraighten(postStraighten)
             .build();
     if (threaded) {
 
