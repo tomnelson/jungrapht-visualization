@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.LongSummaryStatistics;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import org.jgrapht.Graph;
@@ -31,8 +32,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Runnable portion of {@link SugiyamaLayoutAlgorithm}
+ * {@code Runnable} part of the {@link SugiyamaLayoutAlgorithm} The Sugiyama Hierarchical
+ * Minimum-Cross layout algorithm
  *
+ * @see "Methods for Visual Understanding Hierarchical System Structures. KOZO SUGIYAMA, MEMBER,
+ *     IEEE, SHOJIRO TAGAWA, AND MITSUHIKO TODA, MEMBER, IEEE"
+ * @see "An E log E Line Crossing Algorithm for Levelled Graphs. Vance Waddle and Ashok Malhotra IBM
+ *     Thomas J. Watson Research Center"
+ * @see "Fast and Simple Horizontal Coordinate Assignment, Ulrik Brandes and Boris Köpf, Department
+ *     of Computer & Information Science, University of Konstanz, Box D 188, 78457 Konstanz,
+ *     Germany"
  * @param <V> vertex type
  * @param <E> edge type
  */
@@ -221,9 +230,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     long assignLayersTime = System.currentTimeMillis();
     log.trace("assign layers took {} ", (assignLayersTime - cycles));
 
-    if (log.isTraceEnabled()) {
-      GraphLayers.checkLayers(layers);
-    }
+    GraphLayers.checkLayers(layers);
 
     if (checkStopped()) {
       return;
@@ -232,9 +239,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     Synthetics<V, E> synthetics = new Synthetics<>(svGraph);
     List<SugiyamaEdge<V, E>> edges = new ArrayList<>(svGraph.edgeSet());
     SugiyamaVertex<V>[][] layersArray = synthetics.createVirtualVerticesAndEdges(edges, layers);
-    if (log.isTraceEnabled()) {
-      GraphLayers.checkLayers(layersArray);
-    }
+    GraphLayers.checkLayers(layersArray);
 
     if (checkStopped()) {
       return;
@@ -253,11 +258,10 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       AllLevelCross<V, E> allLevelCross = new AllLevelCross<>(svGraph, layersArray);
       int allLevelCrossCount = allLevelCross.allLevelCross();
       if (allLevelCrossCount < lowestCrossCount) {
-        if (log.isTraceEnabled()) {
-          GraphLayers.checkLayers(layersArray);
-        }
+        GraphLayers.checkLayers(layersArray);
 
         best = copy(layersArray);
+        GraphLayers.checkLayers(best);
         lowestCrossCount = allLevelCrossCount;
       }
       if (checkStopped()) {
@@ -272,13 +276,11 @@ public class SugiyamaRunnable<V, E> implements Runnable {
 
     long crossCountTests = System.currentTimeMillis();
     log.trace("cross counts took {}", (crossCountTests - syntheticsTime));
-    if (log.isTraceEnabled()) {
-      GraphLayers.checkLayers(best);
-    }
+    GraphLayers.checkLayers(best);
 
     // done optimizing for edge crossing
 
-    // figure out the largest rendered vertex
+    // figure out the avg size of rendered vertex
     Rectangle avgVertexBounds = avgVertexBounds(best, renderContext.getVertexShapeFunction());
 
     int horizontalOffset =
@@ -289,18 +291,14 @@ public class SugiyamaRunnable<V, E> implements Runnable {
         Math.max(
             avgVertexBounds.height / 2,
             Integer.getInteger(PREFIX + "sugiyama.vertical.offset", 50));
-    if (log.isTraceEnabled()) {
-      GraphLayers.checkLayers(best);
-    }
+    GraphLayers.checkLayers(best);
     Map<SugiyamaVertex<V>, Point> vertexPointMap = new HashMap<>();
 
     if (straightenEdges) {
       HorizontalCoordinateAssignment.horizontalCoordinateAssignment(
           best, svGraph, new HashSet<>(), horizontalOffset, verticalOffset);
 
-      if (log.isTraceEnabled()) {
-        GraphLayers.checkLayers(best);
-      }
+      GraphLayers.checkLayers(best);
 
       for (int i = 0; i < best.length; i++) {
         for (int j = 0; j < best[i].length; j++) {
@@ -308,6 +306,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
           vertexPointMap.put(sugiyamaVertex, sugiyamaVertex.getPoint());
         }
       }
+
     } else {
       Unaligned.setPoints(
           best,
@@ -430,9 +429,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
   }
 
   private void transpose(SugiyamaVertex<V>[][] ranks, List<SugiyamaEdge<V, E>> edges) {
-    if (log.isTraceEnabled()) {
-      GraphLayers.checkLayers(ranks);
-    }
+    GraphLayers.checkLayers(ranks);
 
     boolean improved = true;
     int improvements = 0;
@@ -463,10 +460,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       if (improvements == lastImprovements) break;
       lastImprovements = improvements;
     }
-    if (log.isTraceEnabled()) {
-      // check that all vertices have the right rank and index
-      GraphLayers.checkLayers(ranks);
-    }
+    GraphLayers.checkLayers(ranks);
   }
 
   private <T> void swap(T[] array, int i, int j) {
@@ -494,56 +488,81 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       for (int r = 0; r < layers.length; r++) {
         Map<SugiyamaVertex<V>, Double> medianMap = new HashMap<>();
         for (SugiyamaVertex<V> v : layers[r]) {
-          double median = median_value(v, r - 1, layers, svGraph);
+          double median = medianValue(v, this::upperNeighborIndices, layers, svGraph);
           medianMap.put(v, median);
         }
-        Arrays.sort(layers[r], (v1, v2) -> medianMap.get(v1).compareTo(medianMap.get(v2)));
-        // fix up the metadata!
-        for (int idx = 0; idx < layers[r].length; idx++) {
-          layers[r][idx].setIndex(idx);
-        }
+        medianSortAndFixMetadata(layers[r], medianMap);
         GraphLayers.checkLayers(layers);
       }
     } else {
       for (int r = layers.length - 1; r >= 0; r--) {
         Map<SugiyamaVertex<V>, Double> medianMap = new HashMap<>();
         for (SugiyamaVertex<V> v : layers[r]) {
-          double median = median_value(v, r + 1, layers, svGraph);
+          double median = medianValue(v, this::lowerNeighborIndices, layers, svGraph);
           medianMap.put(v, median);
         }
-        Arrays.sort(layers[r], (v1, v2) -> medianMap.get(v1).compareTo(medianMap.get(v2)));
-        // fix up the metadata!
-        for (int idx = 0; idx < layers[r].length; idx++) {
-          layers[r][idx].setIndex(idx);
-        }
+        medianSortAndFixMetadata(layers[r], medianMap);
         GraphLayers.checkLayers(layers);
       }
     }
   }
 
-  int[] adj_position(
-      SugiyamaVertex<V> v,
-      int adj_rank,
-      SugiyamaVertex<V>[][] layers,
-      Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> svGraph) {
-    if (adj_rank < 0 || adj_rank > layers.length - 1) {
-      return new int[0];
-    } else {
-      return Arrays.stream(layers[adj_rank])
-          .filter(Graphs.neighborListOf(svGraph, v)::contains)
-          .mapToInt(SugiyamaVertex::getIndex)
-          .sorted()
-          .toArray();
+  void medianSortAndFixMetadata(
+      SugiyamaVertex<V>[] layer, Map<SugiyamaVertex<V>, Double> medianMap) {
+    //    Arrays.sort(layer,  (v1, v2) -> medianMap.get(v1).compareTo(medianMap.get(v2)));
+    Arrays.sort(
+        layer,
+        (v1, v2) -> {
+          if (medianMap.get(v1) == -1 || medianMap.get(v2) == -1) {
+            return 0; // don't exchange
+          } else {
+            return medianMap.get(v1).compareTo(medianMap.get(v2));
+          }
+        });
+    // fix up the metadata!
+    fixMetadata(layer);
+  }
+
+  private void fixMetadata(SugiyamaVertex<V>[] layer) {
+    for (int idx = 0; idx < layer.length; idx++) {
+      layer[idx].setIndex(idx);
     }
   }
 
-  double median_value(
+  int[] upperNeighborIndices(
+      Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> graph, SugiyamaVertex<V> vertex) {
+    return Graphs.predecessorListOf(graph, vertex)
+        .stream()
+        .mapToInt(SugiyamaVertex::getIndex)
+        .sorted()
+        .toArray();
+  }
+
+  int[] lowerNeighborIndices(
+      Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> graph, SugiyamaVertex<V> vertex) {
+    return Graphs.successorListOf(graph, vertex)
+        .stream()
+        .mapToInt(SugiyamaVertex::getIndex)
+        .sorted()
+        .toArray();
+  }
+
+  int[] adjPosition(
       SugiyamaVertex<V> v,
-      int adj_rank,
+      BiFunction<Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>>, SugiyamaVertex<V>, int[]>
+          neighborFunction,
+      Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> svGraph) {
+    return neighborFunction.apply(svGraph, v);
+  }
+
+  double medianValue(
+      SugiyamaVertex<V> v,
+      BiFunction<Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>>, SugiyamaVertex<V>, int[]>
+          neighborFunction,
       SugiyamaVertex<V>[][] layers,
       Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> svGraph) {
     // get the positions of adjacent vertices in adj_rank
-    int[] P = adj_position(v, adj_rank, layers, svGraph);
+    int[] P = adjPosition(v, neighborFunction, svGraph);
     int m = P.length / 2;
     if (P.length == 0) {
       return -1;
@@ -563,11 +582,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     for (int i = 0; i < in.length; i++) {
       copy[i] = new SugiyamaVertex[in[i].length];
       for (int j = 0; j < in[i].length; j++) {
-        if (in[i][j] instanceof SyntheticSugiyamaVertex) {
-          copy[i][j] = new SyntheticSugiyamaVertex<>((SyntheticSugiyamaVertex) in[i][j]);
-        } else {
-          copy[i][j] = new SugiyamaVertex<>(in[i][j]);
-        }
+        copy[i][j] = in[i][j].copy();
       }
     }
     return copy;

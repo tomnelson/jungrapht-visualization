@@ -49,6 +49,10 @@ public class SugiyamaVertex<V> extends SV<V> {
     this(other.vertex, other.rank, other.index, other.p);
   }
 
+  public <V, T extends SugiyamaVertex<V>> T copy() {
+    return (T) new SugiyamaVertex<>(this);
+  }
+
   public void setRank(int rank) {
     this.rank = rank;
   }

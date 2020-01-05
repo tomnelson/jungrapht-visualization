@@ -32,7 +32,7 @@ public class SugiyamaWithWithoutStraighteningGraphExample extends JFrame {
 
     JPanel container = new JPanel(new GridLayout(2, 2));
 
-    Graph<String, Integer> graph = TestGraphs.createDirectedAcyclicGraph(9, 3, .3);
+    Graph<String, Integer> graph = TestGraphs.createDirectedAcyclicGraph(9, 3, .3); //, 123);
 
     VisualizationViewer<String, Integer> vv1 = configureVisualizationViewer(graph);
     vv1.addPreRenderPaintable(new TitlePaintable("No Edge Straightening", vv1.getPreferredSize()));

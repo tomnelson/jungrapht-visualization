@@ -24,6 +24,10 @@ public class SyntheticSugiyamaVertex<V> extends SugiyamaVertex<V> {
     this.hash = other.hash;
   }
 
+  public <V, T extends SugiyamaVertex<V>> T copy() {
+    return (T) new SyntheticSugiyamaVertex<>(this);
+  }
+
   @Override
   public boolean equals(Object o) {
     if (o instanceof SyntheticSugiyamaVertex) {
