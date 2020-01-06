@@ -513,11 +513,11 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     Arrays.sort(
         layer,
         (v1, v2) -> {
-          if (medianMap.get(v1) == -1 || medianMap.get(v2) == -1) {
-            return 0; // don't exchange
-          } else {
-            return medianMap.get(v1).compareTo(medianMap.get(v2));
-          }
+          //          if (medianMap.get(v1) == -1 || medianMap.get(v2) == -1) {
+          //            return 0; // don't exchange
+          //          } else {
+          return medianMap.get(v1).compareTo(medianMap.get(v2));
+          //          }
         });
     // fix up the metadata!
     fixMetadata(layer);
