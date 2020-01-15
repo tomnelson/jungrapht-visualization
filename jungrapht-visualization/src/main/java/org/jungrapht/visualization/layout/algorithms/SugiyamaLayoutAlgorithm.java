@@ -151,6 +151,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
     this.straightenEdges = straightenEdges;
     this.postStraighten = postStraighten;
     this.expandLayout = expandLayout;
+    this.threaded = threaded;
     this.after = after;
   }
 
