@@ -5,6 +5,7 @@ import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -434,9 +435,7 @@ public class LayeredLayoutAlgorithm<V, E>
     for (int i = 0; i < array.length; i++) {
       List<SugiyamaVertex<V>> list = new LinkedList<>();
       layers.add(list);
-      for (int j = 0; j < array[i].length; j++) {
-        list.add(array[i][j]);
-      }
+      list.addAll(Arrays.asList(array[i]));
     }
     return layers;
   }

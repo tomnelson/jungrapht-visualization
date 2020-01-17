@@ -77,19 +77,16 @@ public class LensKillingGraphMousePlugin<V, E> extends SelectingGraphMousePlugin
     } else {
       p = viewTransformer.inverseTransform(p);
     }
-    boolean accepted = true;
-    if (accepted) {
-      vv.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
-      if (layoutTransformer instanceof LensTransformer) {
-        Lens lens = ((LensTransformer) layoutTransformer).getLens();
-        testLensExit(lens, p);
-      }
-      if (viewTransformer instanceof LensTransformer) {
-        Lens lens = ((LensTransformer) viewTransformer).getLens();
-        testLensExit(lens, p);
-      }
-      vv.repaint();
+    vv.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+    if (layoutTransformer instanceof LensTransformer) {
+      Lens lens = ((LensTransformer) layoutTransformer).getLens();
+      testLensExit(lens, p);
     }
+    if (viewTransformer instanceof LensTransformer) {
+      Lens lens = ((LensTransformer) viewTransformer).getLens();
+      testLensExit(lens, p);
+    }
+    vv.repaint();
   }
 
   private void testLensExit(Lens lens, Point2D point) {

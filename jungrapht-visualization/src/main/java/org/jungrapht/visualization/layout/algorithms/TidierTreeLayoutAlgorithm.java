@@ -570,7 +570,7 @@ public class TidierTreeLayoutAlgorithm<V, E>
     return distance;
   }
 
-  protected <E> Dimension computeAverageVertexDimension(
+  protected Dimension computeAverageVertexDimension(
       Graph<V, E> graph, Function<V, Shape> shapeFunction) {
     DimensionSummaryStatistics dss = new DimensionSummaryStatistics();
     graph

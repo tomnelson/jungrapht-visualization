@@ -44,7 +44,7 @@ public interface SatelliteVisualizationViewer<V, E> extends VisualizationViewer<
       return self();
     }
 
-    public B lensColor(Color color) {
+    public B lensColor(Color lensColor) {
       this.lensColor = lensColor;
       return self();
     }

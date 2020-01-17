@@ -24,7 +24,7 @@ public class SyntheticSugiyamaVertex<V> extends SugiyamaVertex<V> {
     this.hash = other.hash;
   }
 
-  public <V, T extends SugiyamaVertex<V>> T copy() {
+  public <T extends SugiyamaVertex<V>> T copy() {
     return (T) new SyntheticSugiyamaVertex<>(this);
   }
 

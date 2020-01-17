@@ -10,7 +10,6 @@ package org.jungrapht.visualization.layout.algorithms;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.function.Function;
-import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.repulsion.StandardSpringRepulsion;
 import org.jungrapht.visualization.layout.algorithms.util.IterativeContext;

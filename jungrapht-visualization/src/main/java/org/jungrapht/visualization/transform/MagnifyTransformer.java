@@ -92,8 +92,9 @@ public class MagnifyTransformer extends LensTransformer implements MutableTransf
     super(lens, delegate);
   }
 
-  /** override base class transform to project the fisheye effect */
   /**
+   * override base class transform to project the fisheye effect
+   *
    * @param graphPoint is a location of something in the graph in the layout coordinate system
    * @return that location transformed to the view coordinate system and possibly further
    *     transformed by the lens magnification

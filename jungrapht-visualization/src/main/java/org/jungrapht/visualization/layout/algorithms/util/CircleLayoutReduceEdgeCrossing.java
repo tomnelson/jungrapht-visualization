@@ -155,45 +155,11 @@ public class CircleLayoutReduceEdgeCrossing<V, E> {
     }
   }
 
-  public static <V, E> int countCrossings1(Graph<V, E> graph, List<V> vertices) {
-    int numberOfCrossings = 0;
-    Set<E> openEdgeList = new LinkedHashSet<>();
-    List<V> verticesSeen = new LinkedList<>();
-    for (V v : vertices) {
-      log.trace("for vertex {}", v);
-      verticesSeen.add(v);
-      for (E e : graph.edgesOf(v)) {
-        V opposite = Graphs.getOppositeVertex(graph, e, v);
-        if (!verticesSeen.contains(opposite)) {
-          // e is an open edge
-          openEdgeList.add(e);
-        } else {
-          openEdgeList.remove(e);
-          for (int i = verticesSeen.indexOf(opposite) + 1; i < verticesSeen.indexOf(v); i++) {
-            V tween = verticesSeen.get(i);
-            numberOfCrossings +=
-                graph
-                    .edgesOf(tween)
-                    .stream()
-                    .filter(openEdgeList::contains)
-                    .filter(e1 -> !graph.getEdgeSource(e1).equals(v))
-                    .filter(e2 -> !graph.getEdgeTarget(e2).equals(v))
-                    .count();
-            log.trace("numberOfCrossings now {}", numberOfCrossings);
-          }
-        }
-        log.trace("added edge {}", e);
-      }
-    }
-    return numberOfCrossings;
-  }
-
   public static <V, E> int countCrossings(Graph<V, E> graph, V[] vertices) {
     Map<V, Integer> vertexListPositions = new HashMap<>();
     IntStream.range(0, vertices.length).forEach(i -> vertexListPositions.put(vertices[i], i));
     int numberOfCrossings = 0;
     Set<E> openEdgeList = new LinkedHashSet<>();
-    Set<E> sortedEdges = new LinkedHashSet<>();
     List<V> verticesSeen = new LinkedList<>();
     for (V v : vertices) {
       log.trace("for vertex {}", v);
@@ -205,11 +171,8 @@ public class CircleLayoutReduceEdgeCrossing<V, E> {
             V oppe = Graphs.getOppositeVertex(graph, e, v);
             V oppf = Graphs.getOppositeVertex(graph, f, v);
             int idxv = vertexListPositions.get(v);
-            //vertices.indexOf(v);
             int idxe = vertexListPositions.get(oppe);
-            //                    vertices.indexOf(oppe);
             int idxf = vertexListPositions.get(oppf);
-            //vertices.indexOf(oppf);
             int deltae = idxv - idxe;
             if (deltae < 0) {
               deltae += vertices.length;
@@ -218,13 +181,7 @@ public class CircleLayoutReduceEdgeCrossing<V, E> {
             if (deltaf < 0) {
               deltaf += vertices.length;
             }
-            if (deltae < deltaf) {
-              return -1;
-            } else if (deltae == deltaf) {
-              return 0;
-            } else {
-              return 1;
-            }
+            return Integer.compare(deltae, deltaf);
           });
 
       for (E e : incidentEdges) {
@@ -254,7 +211,7 @@ public class CircleLayoutReduceEdgeCrossing<V, E> {
     int currentCrossings = countCrossings(graph, array);
     log.info("originalCrossings: {}", currentCrossings);
     int originalCrossings = currentCrossings;
-    List<Integer> positions = new ArrayList<>();
+    List<Integer> positions = new LinkedList<>();
     for (int i = 0; i < 9; i++) {
       for (V v : graph.vertexSet()) {
         positions.clear();
@@ -265,13 +222,7 @@ public class CircleLayoutReduceEdgeCrossing<V, E> {
           V one = Graphs.getOppositeVertex(graph, incidentEdges.get(0), v);
           V two = Graphs.getOppositeVertex(graph, incidentEdges.get(1), v);
           int idxOne = vertexListPositions.get(one);
-          //          if (list.indexOf(one) != idxOne) {
-          //            throw new RuntimeException("off");
-          //          }
           int idxTwo = vertexListPositions.get(two);
-          //          if (list.indexOf(two) != idxTwo) {
-          //            throw new RuntimeException("off");
-          //          }
           IntStream.range(idxOne + 1, idxTwo).forEach(positions::add);
           if (positions.isEmpty()) {
             positions.add(idxOne - 1);
@@ -280,9 +231,6 @@ public class CircleLayoutReduceEdgeCrossing<V, E> {
           for (int pos = 0; pos < positions.size(); pos++) {
             // put u at pos and whatever was at pos at u's position
             int vpos = vertexListPositions.get(v);
-            //            if (list.indexOf(v) != vpos) {
-            //              throw new RuntimeException("off");
-            //            }
             swap(array, vpos, pos);
             vertexListPositions.put(array[pos], pos);
             vertexListPositions.put(array[vpos], vpos);

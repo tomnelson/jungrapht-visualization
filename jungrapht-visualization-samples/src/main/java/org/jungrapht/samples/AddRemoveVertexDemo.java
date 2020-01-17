@@ -197,7 +197,7 @@ public class AddRemoveVertexDemo extends JPanel {
     }
   }
 
-  private class AddRemoveTask extends TimerTask {
+  private static class AddRemoveTask extends TimerTask {
     Runnable runnable;
 
     AddRemoveTask(Runnable runnable) {

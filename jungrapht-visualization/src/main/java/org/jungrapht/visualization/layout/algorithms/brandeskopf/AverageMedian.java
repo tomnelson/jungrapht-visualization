@@ -15,9 +15,7 @@ public class AverageMedian<V> {
   List<List<SugiyamaVertex<V>>> balanced;
 
   private static int comparePoints(Point p1, Point p2) {
-    if (p1.x < p2.x) return -1;
-    if (p1.x == p2.x) return 0;
-    return 1;
+    return Double.compare(p1.x, p2.x);
   }
 
   public static Point averageMedianPoint(Point... points) {
