@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.LongSummaryStatistics;
 import java.util.Map;
@@ -245,6 +246,20 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       return;
     }
 
+    // save off a map of edge lists keyed on the source vertex
+    Map<Integer, List<SugiyamaEdge<V, E>>> edgesKeyedOnSource = new LinkedHashMap<>();
+    edges.forEach(
+        e -> {
+          int sourceRank = e.source.rank;
+          if (edgesKeyedOnSource.containsKey(sourceRank)) {
+            edgesKeyedOnSource.get(sourceRank).add(e);
+          } else {
+            ArrayList<SugiyamaEdge<V, E>> list = new ArrayList<>();
+            list.add(e);
+            edgesKeyedOnSource.put(sourceRank, list);
+          }
+        });
+
     long syntheticsTime = System.currentTimeMillis();
     log.trace("synthetics took {}", (syntheticsTime - assignLayersTime));
 
@@ -254,7 +269,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     // order the ranks
     for (int i = 0; i < maxLevelCross; i++) {
       median(layersArray, i, svGraph);
-      transpose(layersArray, edges);
+      transpose(layersArray, edges, edgesKeyedOnSource);
       AllLevelCross<V, E> allLevelCross = new AllLevelCross<>(svGraph, layersArray);
       int allLevelCrossCount = allLevelCross.allLevelCross();
       if (allLevelCrossCount < lowestCrossCount) {
@@ -428,7 +443,10 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     svGraph.vertexSet().forEach(v -> layoutModel.set(v.vertex, v.getPoint()));
   }
 
-  private void transpose(SugiyamaVertex<V>[][] ranks, List<SugiyamaEdge<V, E>> edges) {
+  private void transpose(
+      SugiyamaVertex<V>[][] ranks,
+      List<SugiyamaEdge<V, E>> edges,
+      Map<Integer, List<SugiyamaEdge<V, E>>> reducedEdgeMap) {
     GraphLayers.checkLayers(ranks);
 
     boolean improved = true;
@@ -439,12 +457,13 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     while (improved) {
       improvements = 0;
       improved = false;
-      for (SugiyamaVertex<V>[] rank : ranks) {
+      for (int i = 0; i < ranks.length; i++) {
+        SugiyamaVertex<V>[] rank = ranks[i];
         for (int j = 0; j <= rank.length - 2; j++) {
           SugiyamaVertex<V> v = rank[j];
           SugiyamaVertex<V> w = rank[j + 1];
-          int vw = crossing(v, w, edges);
-          int wv = crossing(w, v, edges);
+          int vw = crossing(v, w, reducedEdgeMap.getOrDefault(i, Collections.emptyList()));
+          int wv = crossing(w, v, reducedEdgeMap.getOrDefault(i, Collections.emptyList()));
           if (vw > wv) {
             improved = true;
             improvements++;
@@ -469,14 +488,19 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     array[j] = temp;
   }
 
-  int crossing(SugiyamaVertex<V> v, SugiyamaVertex<V> w, List<SugiyamaEdge<V, E>> edges) {
+  int crossing(SugiyamaVertex<V> v, SugiyamaVertex<V> w, List<SugiyamaEdge<V, E>> reducedEdges) {
 
     List<Integer> targetIndices = new ArrayList<>();
-    for (SugiyamaEdge<V, E> edge : edges) {
+    List<SugiyamaEdge<V, E>> considered = new ArrayList<>();
+    for (SugiyamaEdge<V, E> edge : reducedEdges) {
       if (edge.source.equals(v) || edge.source.equals(w)) {
         targetIndices.add(edge.target.getIndex());
+        considered.add(edge);
       }
     }
+    //    log.info("passed in {} edges and {} and {}", edges.size(), reducedEdges.size(), reducedEdges);
+    //    log.info("considered {} edges {}", considered.size(), considered);
+
     return InsertionSortCounter.insertionSortCounter(targetIndices);
   }
 
