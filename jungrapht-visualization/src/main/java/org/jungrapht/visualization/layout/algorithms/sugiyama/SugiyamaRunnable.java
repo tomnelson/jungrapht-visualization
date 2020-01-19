@@ -260,6 +260,19 @@ public class SugiyamaRunnable<V, E> implements Runnable {
             edgesKeyedOnTarget.put(targetRank, list);
           }
         });
+    //  save off a map of edge lists keyed on the source vertex rank
+    Map<Integer, List<SugiyamaEdge<V, E>>> edgesKeyedOnSource = new LinkedHashMap<>();
+    edges.forEach(
+        e -> {
+          int sourceRank = e.source.rank;
+          if (edgesKeyedOnSource.containsKey(sourceRank)) {
+            edgesKeyedOnSource.get(sourceRank).add(e);
+          } else {
+            ArrayList<SugiyamaEdge<V, E>> list = new ArrayList<>();
+            list.add(e);
+            edgesKeyedOnSource.put(sourceRank, list);
+          }
+        });
 
     long syntheticsTime = System.currentTimeMillis();
     log.trace("synthetics took {}", (syntheticsTime - assignLayersTime));
@@ -270,7 +283,11 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     // order the ranks
     for (int i = 0; i < maxLevelCross; i++) {
       median(layersArray, i, svGraph);
-      transpose(layersArray, edgesKeyedOnTarget);
+      if (i % 2 == 0) {
+        transposeDownwards(layersArray, edgesKeyedOnTarget);
+      } else {
+        transposeUpwards(layersArray, edgesKeyedOnSource);
+      }
       AllLevelCross<V, E> allLevelCross = new AllLevelCross<>(svGraph, layersArray);
       int allLevelCrossCount = allLevelCross.allLevelCross();
       log.trace(" cross count: {}", allLevelCrossCount);
@@ -446,7 +463,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     svGraph.vertexSet().forEach(v -> layoutModel.set(v.vertex, v.getPoint()));
   }
 
-  private void transpose(
+  private void transposeDownwards(
       SugiyamaVertex<V>[][] ranks, Map<Integer, List<SugiyamaEdge<V, E>>> reducedEdgeMap) {
     GraphLayers.checkLayers(ranks);
 
@@ -456,6 +473,38 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     while (improved) {
       improved = false;
       for (int i = 0; i < ranks.length; i++) {
+        SugiyamaVertex<V>[] rank = ranks[i];
+        for (int j = 0; j < rank.length - 1; j++) {
+          List<SugiyamaEdge<V, E>> biLayerEdges =
+              reducedEdgeMap.getOrDefault(i, Collections.emptyList());
+
+          int vw = crossingCount(biLayerEdges);
+          // count with j and j+1 swapped
+          int wv = crossingCountSwapped(j, j + 1, rank, biLayerEdges);
+          if (vw > wv) {
+            improved = true;
+            swap(rank, j, j + 1);
+          }
+        }
+      }
+      sanityCheck++;
+      if (sanityCheck > sanityLimit) {
+        break;
+      }
+    }
+    GraphLayers.checkLayers(ranks);
+  }
+
+  private void transposeUpwards(
+      SugiyamaVertex<V>[][] ranks, Map<Integer, List<SugiyamaEdge<V, E>>> reducedEdgeMap) {
+    GraphLayers.checkLayers(ranks);
+
+    boolean improved = true;
+    int sanityLimit = Integer.getInteger(PREFIX + "sugiyama.transpose.limit", 10);
+    int sanityCheck = 0;
+    while (improved) {
+      improved = false;
+      for (int i = ranks.length - 1; i >= 0; i--) {
         SugiyamaVertex<V>[] rank = ranks[i];
         for (int j = 0; j < rank.length - 1; j++) {
           List<SugiyamaEdge<V, E>> biLayerEdges =
