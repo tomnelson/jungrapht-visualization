@@ -24,6 +24,7 @@ import org.jgrapht.Graphs;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.SugiyamaLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.barthmutzel.AllLevelCross;
 import org.jungrapht.visualization.layout.algorithms.brandeskopf.HorizontalCoordinateAssignment;
 import org.jungrapht.visualization.layout.algorithms.brandeskopf.Unaligned;
 import org.jungrapht.visualization.layout.algorithms.util.InsertionSortCounter;
@@ -246,17 +247,17 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       return;
     }
 
-    // save off a map of edge lists keyed on the source vertex
-    Map<Integer, List<SugiyamaEdge<V, E>>> edgesKeyedOnSource = new LinkedHashMap<>();
+    //  save off a map of edge lists keyed on the target vertex rank
+    Map<Integer, List<SugiyamaEdge<V, E>>> edgesKeyedOnTarget = new LinkedHashMap<>();
     edges.forEach(
         e -> {
-          int sourceRank = e.source.rank;
-          if (edgesKeyedOnSource.containsKey(sourceRank)) {
-            edgesKeyedOnSource.get(sourceRank).add(e);
+          int targetRank = e.target.rank;
+          if (edgesKeyedOnTarget.containsKey(targetRank)) {
+            edgesKeyedOnTarget.get(targetRank).add(e);
           } else {
             ArrayList<SugiyamaEdge<V, E>> list = new ArrayList<>();
             list.add(e);
-            edgesKeyedOnSource.put(sourceRank, list);
+            edgesKeyedOnTarget.put(targetRank, list);
           }
         });
 
@@ -269,12 +270,13 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     // order the ranks
     for (int i = 0; i < maxLevelCross; i++) {
       median(layersArray, i, svGraph);
-      transpose(layersArray, edges, edgesKeyedOnSource);
+      transpose(layersArray, edgesKeyedOnTarget);
       AllLevelCross<V, E> allLevelCross = new AllLevelCross<>(svGraph, layersArray);
       int allLevelCrossCount = allLevelCross.allLevelCross();
+      log.trace(" cross count: {}", allLevelCrossCount);
+      GraphLayers.checkLayers(layersArray);
       if (allLevelCrossCount < lowestCrossCount) {
         GraphLayers.checkLayers(layersArray);
-
         best = copy(layersArray);
         GraphLayers.checkLayers(best);
         lowestCrossCount = allLevelCrossCount;
@@ -283,6 +285,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
         return;
       }
     }
+    log.trace("lowest cross count: {}", lowestCrossCount);
 
     // in case zero iterations of cross counting were requested:
     if (best == null) {
@@ -444,63 +447,70 @@ public class SugiyamaRunnable<V, E> implements Runnable {
   }
 
   private void transpose(
-      SugiyamaVertex<V>[][] ranks,
-      List<SugiyamaEdge<V, E>> edges,
-      Map<Integer, List<SugiyamaEdge<V, E>>> reducedEdgeMap) {
+      SugiyamaVertex<V>[][] ranks, Map<Integer, List<SugiyamaEdge<V, E>>> reducedEdgeMap) {
     GraphLayers.checkLayers(ranks);
 
     boolean improved = true;
-    int improvements = 0;
-    int lastImprovements = 0;
     int sanityLimit = Integer.getInteger(PREFIX + "sugiyama.transpose.limit", 10);
     int sanityCheck = 0;
     while (improved) {
-      improvements = 0;
       improved = false;
       for (int i = 0; i < ranks.length; i++) {
         SugiyamaVertex<V>[] rank = ranks[i];
-        for (int j = 0; j <= rank.length - 2; j++) {
-          SugiyamaVertex<V> v = rank[j];
-          SugiyamaVertex<V> w = rank[j + 1];
-          int vw = crossing(v, w, reducedEdgeMap.getOrDefault(i, Collections.emptyList()));
-          int wv = crossing(w, v, reducedEdgeMap.getOrDefault(i, Collections.emptyList()));
+        for (int j = 0; j < rank.length - 1; j++) {
+          List<SugiyamaEdge<V, E>> biLayerEdges =
+              reducedEdgeMap.getOrDefault(i, Collections.emptyList());
+
+          int vw = crossingCount(biLayerEdges);
+          // count with j and j+1 swapped
+          int wv = crossingCountSwapped(j, j + 1, rank, biLayerEdges);
           if (vw > wv) {
             improved = true;
-            improvements++;
             swap(rank, j, j + 1);
-            // change the indices of the swapped vertices!!
-            v.setIndex(j + 1);
-            w.setIndex(j);
           }
         }
       }
       sanityCheck++;
-      if (sanityCheck > sanityLimit) break;
-      if (improvements == lastImprovements) break;
-      lastImprovements = improvements;
+      if (sanityCheck > sanityLimit) {
+        break;
+      }
     }
     GraphLayers.checkLayers(ranks);
   }
 
-  private <T> void swap(T[] array, int i, int j) {
-    T temp = array[i];
+  private <V> void swap(SugiyamaVertex<V>[] array, int i, int j) {
+    SugiyamaVertex<V> temp = array[i];
     array[i] = array[j];
     array[j] = temp;
+    array[i].index = i;
+    array[j].index = j;
   }
 
-  int crossing(SugiyamaVertex<V> v, SugiyamaVertex<V> w, List<SugiyamaEdge<V, E>> reducedEdges) {
+  Comparator<SugiyamaEdge<V, E>> sourceIndexComparator =
+      Comparator.comparingInt(e -> e.source.index);
+  Comparator<SugiyamaEdge<V, E>> targetIndexComparator =
+      Comparator.comparingInt(e -> e.target.index);
+  Comparator<SugiyamaEdge<V, E>> biLevelEdgeComparator =
+      sourceIndexComparator.thenComparing(targetIndexComparator);
 
+  private int crossingCount(List<SugiyamaEdge<V, E>> edges) {
+    edges.sort(biLevelEdgeComparator);
     List<Integer> targetIndices = new ArrayList<>();
-    List<SugiyamaEdge<V, E>> considered = new ArrayList<>();
-    for (SugiyamaEdge<V, E> edge : reducedEdges) {
-      if (edge.source.equals(v) || edge.source.equals(w)) {
-        targetIndices.add(edge.target.getIndex());
-        considered.add(edge);
-      }
+    for (SugiyamaEdge<V, E> edge : edges) {
+      targetIndices.add(edge.target.index);
     }
-    //    log.info("passed in {} edges and {} and {}", edges.size(), reducedEdges.size(), reducedEdges);
-    //    log.info("considered {} edges {}", considered.size(), considered);
+    return InsertionSortCounter.insertionSortCounter(targetIndices);
+  }
 
+  private int crossingCountSwapped(
+      int i, int j, SugiyamaVertex<V>[] layer, List<SugiyamaEdge<V, E>> edges) {
+    swap(layer, i, j);
+    edges.sort(biLevelEdgeComparator);
+    List<Integer> targetIndices = new ArrayList<>();
+    for (SugiyamaEdge<V, E> edge : edges) {
+      targetIndices.add(edge.target.index);
+    }
+    swap(layer, i, j);
     return InsertionSortCounter.insertionSortCounter(targetIndices);
   }
 
@@ -533,16 +543,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
 
   void medianSortAndFixMetadata(
       SugiyamaVertex<V>[] layer, Map<SugiyamaVertex<V>, Double> medianMap) {
-    //    Arrays.sort(layer,  (v1, v2) -> medianMap.get(v1).compareTo(medianMap.get(v2)));
-    Arrays.sort(
-        layer,
-        (v1, v2) -> {
-          //          if (medianMap.get(v1) == -1 || medianMap.get(v2) == -1) {
-          //            return 0; // don't exchange
-          //          } else {
-          return medianMap.get(v1).compareTo(medianMap.get(v2));
-          //          }
-        });
+    Arrays.sort(layer, Comparator.comparing(medianMap::get));
     // fix up the metadata!
     fixMetadata(layer);
   }
