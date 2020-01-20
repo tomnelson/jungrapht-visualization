@@ -41,6 +41,27 @@ public class GraphLayers {
     return sorted;
   }
 
+  /**
+   * Find all vertices that have no incoming edges by
+   *
+   * <p>
+   *
+   * <ul>
+   *   <li>collect all vertices that are edge targets
+   *   <li>collect all vertices that are not part of that set of targets
+   * </ul>
+   *
+   * Note that loop edges have already been removed from the graph, so any vertices that have only
+   * loop edges will appear in the set of vertices without incoming edges.
+   *
+   * @param dag the {@code Graph} to examine
+   * @param edges all edges from the {@code Graph}. Note that loop edges have already been removed
+   *     from this set
+   * @param vertices all vertices in the {@code Graph} (including vertices that have only loop edges
+   * @param <V> vertex type
+   * @param <E> edge type
+   * @return vertices in the graph that have no incoming edges (or only loop edges)
+   */
   private static <V, E> List<SugiyamaVertex<V>> getVerticesWithoutIncomingEdges(
       Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> dag,
       Collection<SugiyamaEdge<V, E>> edges,
@@ -65,8 +86,6 @@ public class GraphLayers {
           log.error("{} is not the index of {}", j, sugiyamaVertex);
           throw new RuntimeException("index is wrong");
         }
-        assert i == sugiyamaVertex.getRank();
-        assert j == sugiyamaVertex.getIndex();
       }
     }
   }
@@ -77,13 +96,12 @@ public class GraphLayers {
         for (int j = 0; j < layers[i].length; j++) {
           if (i != layers[i][j].getRank()) {
             log.error("{} is not the rank of {}", i, layers[i][j]);
+            throw new RuntimeException(i + " is not the rank of " + layers[i][j]);
           }
           if (j != layers[i][j].getIndex()) {
             log.error("{} is not the index of {}", j, layers[i][j]);
+            throw new RuntimeException(j + " is not the index of " + layers[i][j]);
           }
-          SugiyamaVertex<V> sugiyamaVertex = layers[i][j];
-          assert i == sugiyamaVertex.getRank();
-          assert j == sugiyamaVertex.getIndex();
         }
       }
     }

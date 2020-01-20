@@ -61,7 +61,7 @@ public class GreedyCycleRemoval<V, E> {
   }
 
   /**
-   * get all vertices that are incident to no edges (degree 0)
+   * get all vertices that are incident to no edges (degree 0) or have only loop edges
    *
    * @param graph the incoming graph to examine
    * @return a List of vertices of degree 0
@@ -70,8 +70,12 @@ public class GreedyCycleRemoval<V, E> {
     return graph
         .vertexSet()
         .stream()
-        .filter(v -> graph.degreeOf(v) == 0)
+        .filter(v -> graph.degreeOf(v) == 0 || isLoopVertex(graph, v))
         .collect(Collectors.toList());
+  }
+
+  private boolean isLoopVertex(Graph<V, E> graph, V v) {
+    return graph.outgoingEdgesOf(v).equals(graph.incomingEdgesOf(v));
   }
 
   /** */
