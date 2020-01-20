@@ -38,7 +38,7 @@ public class AccumulatorTree {
   }
 
   int parentIndex(int childIndex) {
-    return (childIndex + 1) / 2 - 1;
+    return (childIndex - 1) / 2;
   }
 
   /**

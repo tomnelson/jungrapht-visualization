@@ -94,7 +94,7 @@ public interface EdgeShape {
       E e = context.element;
       List<Point> points = edgeArticulationFunction.apply(e);
       if (points.isEmpty()) {
-        return LINE;
+        return isLoop(context.graph, e) ? ELLIPSE : LINE;
       } else if (reversedEdges.contains(e)) {
         return ArticulatedEdgeShapeFunctions.makeReverseUnitShape(points);
       } else {
