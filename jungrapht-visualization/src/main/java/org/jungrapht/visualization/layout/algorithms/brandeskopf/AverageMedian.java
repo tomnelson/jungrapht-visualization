@@ -1,6 +1,5 @@
 package org.jungrapht.visualization.layout.algorithms.brandeskopf;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -43,31 +42,5 @@ public class AverageMedian<V> {
     double avgx = Arrays.stream(points).mapToDouble(p -> p.x).average().getAsDouble();
     double avgy = Arrays.stream(points).mapToDouble(p -> p.y).average().getAsDouble();
     return Point.of(avgx, avgy);
-  }
-
-  public void foo() {
-    for (int i = 0; i < ur.size(); i++) { // rank counter
-      List<SugiyamaVertex<V>> rank = ur.get(i);
-      balanced.add(new ArrayList<>());
-      for (int j = 0; j < rank.size(); j++) {
-        List<Point> list =
-            List.of(
-                ur.get(i).get(j).getPoint(),
-                lr.get(i).get(j).getPoint(),
-                ul.get(i).get(j).getPoint(),
-                ll.get(i).get(j).getPoint());
-        list.sort(AverageMedian::comparePoints);
-        double y = list.get(0).y;
-        int n = list.size();
-        int floor = (int) Math.floor((n - 1) / 2.0);
-        int ceil = (int) Math.ceil((n - 1) / 2.0);
-        double aveMedian = (list.get(floor).x + list.get(ceil).x) / 2.0;
-        Point p = Point.of(aveMedian, y);
-        ur.get(i).get(j).setPoint(p);
-        lr.get(i).get(j).setPoint(p);
-        ul.get(i).get(j).setPoint(p);
-        ll.get(i).get(j).setPoint(p);
-      }
-    }
   }
 }

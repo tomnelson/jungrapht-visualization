@@ -282,10 +282,11 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     int maxLevelCross = Integer.getInteger(PREFIX + "sugiyama.max.level.cross", 23);
     // order the ranks
     for (int i = 0; i < maxLevelCross; i++) {
-      median(layersArray, i, svGraph);
       if (i % 2 == 0) {
+        medianDownwards(layersArray, svGraph);
         transposeDownwards(layersArray, edgesKeyedOnTarget);
       } else {
+        medianUpwards(layersArray, svGraph);
         transposeUpwards(layersArray, edgesKeyedOnSource);
       }
       AllLevelCross<V, E> allLevelCross = new AllLevelCross<>(svGraph, layersArray);
@@ -571,7 +572,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       for (int r = 0; r < layers.length; r++) {
         Map<SugiyamaVertex<V>, Double> medianMap = new HashMap<>();
         for (SugiyamaVertex<V> v : layers[r]) {
-          double median = medianValue(v, this::upperNeighborIndices, layers, svGraph);
+          double median = medianValue(v, this::upperNeighborIndices, svGraph);
           medianMap.put(v, median);
         }
         medianSortAndFixMetadata(layers[r], medianMap);
@@ -581,12 +582,40 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       for (int r = layers.length - 1; r >= 0; r--) {
         Map<SugiyamaVertex<V>, Double> medianMap = new HashMap<>();
         for (SugiyamaVertex<V> v : layers[r]) {
-          double median = medianValue(v, this::lowerNeighborIndices, layers, svGraph);
+          double median = medianValue(v, this::lowerNeighborIndices, svGraph);
           medianMap.put(v, median);
         }
         medianSortAndFixMetadata(layers[r], medianMap);
         GraphLayers.checkLayers(layers);
       }
+    }
+  }
+
+  void medianDownwards(
+      SugiyamaVertex<V>[][] layers, Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> svGraph) {
+
+    for (int r = 0; r < layers.length; r++) {
+      Map<SugiyamaVertex<V>, Double> medianMap = new HashMap<>();
+      for (SugiyamaVertex<V> v : layers[r]) {
+        double median = medianValue(v, this::upperNeighborIndices, svGraph);
+        medianMap.put(v, median);
+      }
+      medianSortAndFixMetadata(layers[r], medianMap);
+      GraphLayers.checkLayers(layers);
+    }
+  }
+
+  void medianUpwards(
+      SugiyamaVertex<V>[][] layers, Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> svGraph) {
+
+    for (int r = layers.length - 1; r >= 0; r--) {
+      Map<SugiyamaVertex<V>, Double> medianMap = new HashMap<>();
+      for (SugiyamaVertex<V> v : layers[r]) {
+        double median = medianValue(v, this::lowerNeighborIndices, svGraph);
+        medianMap.put(v, median);
+      }
+      medianSortAndFixMetadata(layers[r], medianMap);
+      GraphLayers.checkLayers(layers);
     }
   }
 
@@ -633,7 +662,6 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       SugiyamaVertex<V> v,
       BiFunction<Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>>, SugiyamaVertex<V>, int[]>
           neighborFunction,
-      SugiyamaVertex<V>[][] layers,
       Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> svGraph) {
     // get the positions of adjacent vertices in adj_rank
     int[] P = adjPosition(v, neighborFunction, svGraph);
