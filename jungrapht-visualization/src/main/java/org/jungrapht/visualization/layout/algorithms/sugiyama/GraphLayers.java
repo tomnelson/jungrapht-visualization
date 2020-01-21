@@ -23,6 +23,10 @@ public class GraphLayers {
     List<SugiyamaVertex<V>> start =
         getVerticesWithoutIncomingEdges(dag, edges, vertices); // should be the roots
 
+    // sort the first layer so that isolated vertices and loop vertices are grouped together and at
+    // one end of the rank
+    start.sort(Comparator.comparingInt(v -> vertexIsolationScore(dag, v)));
+
     while (start.size() > 0) {
       for (int i = 0; i < start.size(); i++) {
         SugiyamaVertex<V> v = start.get(i);
@@ -105,5 +109,32 @@ public class GraphLayers {
         }
       }
     }
+  }
+
+  public static <V, E> boolean isLoopVertex(Graph<V, E> graph, V v) {
+    return graph.outgoingEdgesOf(v).equals(graph.incomingEdgesOf(v));
+  }
+
+  public static <V, E> boolean isZeroDegreeVertex(Graph<V, E> graph, V v) {
+    return graph.degreeOf(v) == 0;
+  }
+
+  public static <V, E> boolean isIsolatedVertex(Graph<V, E> graph, V v) {
+    return isLoopVertex(graph, v) || isZeroDegreeVertex(graph, v);
+  }
+
+  /**
+   * to set vertex order to normal -> loop -> zeroDegree
+   *
+   * @param graph
+   * @param v
+   * @param <V>
+   * @param <E>
+   * @return
+   */
+  public static <V, E> int vertexIsolationScore(Graph<V, E> graph, V v) {
+    if (isZeroDegreeVertex(graph, v)) return 2;
+    if (isLoopVertex(graph, v)) return 1;
+    return 0;
   }
 }

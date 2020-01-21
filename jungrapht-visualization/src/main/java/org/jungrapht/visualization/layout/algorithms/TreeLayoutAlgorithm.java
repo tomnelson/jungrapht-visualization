@@ -181,6 +181,8 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
   /** the {}@link Predicate} to determine root vertices */
   protected Predicate<V> rootPredicate;
 
+  protected Predicate<V> defaultRootPredicate;
+
   protected Comparator<V> rootComparator;
 
   public void setRootPredicate(Predicate<V> rootPredicate) {
@@ -255,6 +257,9 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
    */
   protected Set<V> buildTree(LayoutModel<V> layoutModel) {
     Graph<V, ?> graph = layoutModel.getGraph();
+
+    this.defaultRootPredicate =
+        v -> graph.incomingEdgesOf(v).isEmpty() || TreeLayout.isIsolatedVertex(graph, v);
     // when provided, replace the horizontal and vertical spacing with twice the average
     // width and height of the Shapes returned by the function
     if (vertexShapeFunction != null) {
@@ -263,7 +268,9 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
       this.verticalVertexSpacing = averageVertexSize.height * 2;
     }
     if (this.rootPredicate == null) {
-      this.rootPredicate = v -> graph.incomingEdgesOf(v).isEmpty();
+      this.rootPredicate = this.defaultRootPredicate;
+    } else {
+      this.rootPredicate = this.rootPredicate.or(this.defaultRootPredicate);
     }
     Set<V> roots =
         graph
@@ -271,6 +278,7 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
             .stream()
             .filter(this.rootPredicate)
             .sorted(rootComparator)
+            .sorted(Comparator.comparingInt(v -> TreeLayout.vertexIsolationScore(graph, v)))
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
     assert roots.size() > 0;

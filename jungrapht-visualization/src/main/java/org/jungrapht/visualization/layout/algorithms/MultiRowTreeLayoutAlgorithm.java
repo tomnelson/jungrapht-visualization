@@ -86,19 +86,24 @@ public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
   protected Set<V> buildTree(LayoutModel<V> layoutModel) {
     rowCount = 1;
     Graph<V, ?> graph = layoutModel.getGraph();
+    this.defaultRootPredicate =
+        v -> graph.incomingEdgesOf(v).isEmpty() || TreeLayout.isIsolatedVertex(graph, v);
     if (vertexShapeFunction != null) {
       Dimension averageVertexSize = computeAverageVertexDimension(graph, vertexShapeFunction);
       this.horizontalVertexSpacing = averageVertexSize.width * 2;
       this.verticalVertexSpacing = averageVertexSize.height * 2;
     }
     if (this.rootPredicate == null) {
-      this.rootPredicate = v -> graph.incomingEdgesOf(v).isEmpty();
+      this.rootPredicate = this.defaultRootPredicate;
+    } else {
+      this.rootPredicate = this.rootPredicate.or(this.defaultRootPredicate);
     }
     Set<V> roots =
         graph
             .vertexSet()
             .stream()
             .filter(rootPredicate)
+            .sorted(Comparator.comparingInt(v -> TreeLayout.vertexIsolationScore(graph, v)))
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
     if (roots.size() == 0) throw new IllegalArgumentException("graph has no root vertices");

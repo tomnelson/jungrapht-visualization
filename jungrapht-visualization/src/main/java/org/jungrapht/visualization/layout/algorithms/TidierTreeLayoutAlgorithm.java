@@ -158,6 +158,7 @@ public class TidierTreeLayoutAlgorithm<V, E>
   protected List<V> roots;
 
   protected Predicate<V> rootPredicate;
+  protected Predicate<V> defaultRootPredicate;
   protected Comparator<V> rootComparator;
   protected Function<V, Shape> vertexShapeFunction;
   protected int horizontalVertexSpacing;
@@ -585,10 +586,14 @@ public class TidierTreeLayoutAlgorithm<V, E>
   public void visit(LayoutModel<V> layoutModel) {
     this.layoutModel = layoutModel;
     Graph<V, E> graph = layoutModel.getGraph();
+    this.defaultRootPredicate =
+        v -> graph.incomingEdgesOf(v).isEmpty() || TreeLayout.isIsolatedVertex(graph, v);
     this.vertexData.clear();
     this.heights.clear();
     if (this.rootPredicate == null) {
-      this.rootPredicate = v -> graph.incomingEdgesOf(v).isEmpty();
+      this.rootPredicate = this.defaultRootPredicate;
+    } else {
+      this.rootPredicate = this.rootPredicate.or(this.defaultRootPredicate);
     }
     if (vertexShapeFunction != null) {
       Dimension averageVertexSize = computeAverageVertexDimension(graph, vertexShapeFunction);
@@ -604,7 +609,13 @@ public class TidierTreeLayoutAlgorithm<V, E>
             .vertexComparator(vertexComparator)
             .vertexPredicate(vertexPredicate);
 
-    this.roots = graph.vertexSet().stream().filter(rootPredicate).collect(Collectors.toList());
+    this.roots =
+        graph
+            .vertexSet()
+            .stream()
+            .filter(rootPredicate)
+            .sorted(Comparator.comparingInt(v -> TreeLayout.vertexIsolationScore(graph, v)))
+            .collect(Collectors.toList());
 
     TreeView<V, E> treeView =
         builder

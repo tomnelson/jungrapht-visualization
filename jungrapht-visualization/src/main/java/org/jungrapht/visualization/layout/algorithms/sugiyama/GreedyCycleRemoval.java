@@ -74,8 +74,12 @@ public class GreedyCycleRemoval<V, E> {
         .collect(Collectors.toList());
   }
 
-  private boolean isLoopVertex(Graph<V, E> graph, V v) {
+  public static <V, E> boolean isLoopVertex(Graph<V, E> graph, V v) {
     return graph.outgoingEdgesOf(v).equals(graph.incomingEdgesOf(v));
+  }
+
+  public static <V, E> boolean isIsolatedVertex(Graph<V, E> graph, V v) {
+    return graph.degreeOf(v) == 0;
   }
 
   /** */
