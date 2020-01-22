@@ -16,10 +16,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.CircleLayoutReduceEdgeCrossing;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.slf4j.Logger;
@@ -31,17 +37,22 @@ import org.slf4j.LoggerFactory;
  * @author Masanori Harada
  * @author Tom Nelson - adapted to an algorithm
  */
-public class CircleLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
+public class CircleLayoutAlgorithm<V> implements LayoutAlgorithm<V>, AfterRunnable, Future {
 
   private static final Logger log = LoggerFactory.getLogger(CircleLayoutAlgorithm.class);
   private double radius;
   private boolean reduceEdgeCrossing;
   private List<V> vertexOrderedList;
+  protected Runnable after;
+  private boolean threaded;
+  CompletableFuture theFuture;
 
   public static class Builder<V, T extends CircleLayoutAlgorithm<V>, B extends Builder<V, T, B>>
       implements LayoutAlgorithm.Builder<V, T, B> {
     protected int radius;
     protected boolean reduceEdgeCrossing = false;
+    protected Runnable after = () -> {};
+    protected boolean threaded = true;
 
     B self() {
       return (B) this;
@@ -57,6 +68,16 @@ public class CircleLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
       return self();
     }
 
+    public B threaded(boolean threaded) {
+      this.threaded = threaded;
+      return self();
+    }
+
+    public B after(Runnable after) {
+      this.after = after;
+      return self();
+    }
+
     public T build() {
       return (T) new CircleLayoutAlgorithm(this);
     }
@@ -67,12 +88,15 @@ public class CircleLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
   }
 
   protected CircleLayoutAlgorithm(Builder<V, ?, ?> builder) {
-    this(builder.radius, builder.reduceEdgeCrossing);
+    this(builder.radius, builder.reduceEdgeCrossing, builder.threaded, builder.after);
   }
 
-  private CircleLayoutAlgorithm(int radius, boolean reduceEdgeCrossing) {
+  private CircleLayoutAlgorithm(
+      int radius, boolean reduceEdgeCrossing, boolean threaded, Runnable after) {
     this.radius = radius;
     this.reduceEdgeCrossing = reduceEdgeCrossing;
+    this.threaded = threaded;
+    this.after = after;
   }
 
   public CircleLayoutAlgorithm() {
@@ -93,52 +117,43 @@ public class CircleLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
     this.radius = radius;
   }
 
-  //  /**
-  //   * Sets the order of the vertices in the layout according to the ordering specified by {@code
-  //   * comparator}.
-  //   *
-  //   * @param comparator the comparator to use to order the vertices
-  //   */
-  //  public void setVertexOrder(LayoutModel<V> layoutModel, Comparator<V> comparator) {
-  //    if (vertexOrderedList == null) {
-  //      vertexOrderedList = new ArrayList<>(layoutModel.getGraph().vertexSet());
-  //    }
-  //    vertexOrderedList.sort(comparator);
-  //  }
-
-  private void computeVertexOrder(Graph<V, Object> graph) {
+  private void computeVertexOrder(LayoutModel<V> layoutModel) {
+    Graph<V, ?> graph = layoutModel.getGraph();
     if (this.reduceEdgeCrossing) {
-      // is this a multicomponent graph?
-      ConnectivityInspector<V, ?> connectivityInspector = new ConnectivityInspector<>(graph);
-      List<Set<V>> componentVertices = connectivityInspector.connectedSets();
-      List<V> vertexOrderedList = new ArrayList<>();
-      if (componentVertices.size() > 1) {
-        for (Set<V> vertexSet : componentVertices) {
-          // get back the graph for these vertices
-          Graph<V, Object> subGraph = GraphTypeBuilder.forGraph(graph).buildGraph();
-          vertexSet.forEach(subGraph::addVertex);
-          for (V v : vertexSet) {
-            // get neighbors
-            Graphs.successorListOf(graph, v)
-                .forEach(s -> subGraph.addEdge(v, s, graph.getEdge(v, s)));
-            Graphs.predecessorListOf(graph, v)
-                .forEach(p -> subGraph.addEdge(p, v, graph.getEdge(p, v)));
-          }
-          vertexOrderedList.addAll(
-              new CircleLayoutReduceEdgeCrossing<>(subGraph).getVertexOrderedList());
-        }
+      this.vertexOrderedList = new ArrayList<>();
+      ReduceCrossingRunnable<V, ?> reduceCrossingRunnable =
+          new ReduceCrossingRunnable<>(graph, this.vertexOrderedList);
+      if (threaded) {
+        theFuture =
+            CompletableFuture.runAsync(reduceCrossingRunnable)
+                .thenRun(
+                    () -> {
+                      log.trace("ReduceEdgeCrossing done");
+                      layoutVertices(layoutModel);
+                      this.run(); // run the after function
+                      layoutModel.getViewChangeSupport().fireViewChanged();
+                      // fire an event to say that the layout is done
+                      layoutModel
+                          .getLayoutStateChangeSupport()
+                          .fireLayoutStateChanged(layoutModel, false);
+                    });
       } else {
-        CircleLayoutReduceEdgeCrossing<V, ?> circleLayouts =
-            new CircleLayoutReduceEdgeCrossing<>(graph);
-        vertexOrderedList.addAll(circleLayouts.getVertexOrderedList());
+        reduceCrossingRunnable.run();
+        layoutVertices(layoutModel);
+        after.run();
+        layoutModel.getViewChangeSupport().fireViewChanged();
+        // fire an event to say that the layout is done
+        layoutModel.getLayoutStateChangeSupport().fireLayoutStateChanged(layoutModel, false);
       }
-      this.vertexOrderedList = vertexOrderedList;
     } else {
       this.vertexOrderedList = new ArrayList<>(graph.vertexSet());
+      layoutVertices(layoutModel);
     }
-    log.info(
-        "crossing count {}",
-        CircleLayoutReduceEdgeCrossing.countCrossings(graph, (V[]) vertexOrderedList.toArray()));
+    if (log.isTraceEnabled()) {
+      log.trace(
+          "crossing count {}",
+          CircleLayoutReduceEdgeCrossing.countCrossings(graph, (V[]) vertexOrderedList.toArray()));
+    }
   }
 
   /**
@@ -156,31 +171,118 @@ public class CircleLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
   @Override
   public void visit(LayoutModel<V> layoutModel) {
     if (layoutModel != null) {
-      computeVertexOrder(layoutModel.getGraph());
-      //       setVertexOrder(
-      //          layoutModel,
-      //          //              vertexOrderList);
-      //          new ArrayList<>(layoutModel.getGraph().vertexSet()));
+      computeVertexOrder(layoutModel);
+    }
+  }
 
-      double height = layoutModel.getHeight();
-      double width = layoutModel.getWidth();
+  private void layoutVertices(LayoutModel<V> layoutModel) {
+    double height = layoutModel.getHeight();
+    double width = layoutModel.getWidth();
 
-      if (radius <= 0) {
-        radius = 0.45 * (Math.min(height, width));
+    if (radius <= 0) {
+      radius = 0.45 * (Math.min(height, width));
+    }
+
+    int i = 0;
+    for (V vertex : vertexOrderedList) {
+
+      double angle = (2 * Math.PI * i) / vertexOrderedList.size();
+
+      double posX = Math.cos(angle) * radius + width / 2;
+      double posY = Math.sin(angle) * radius + height / 2;
+      layoutModel.set(vertex, posX, posY);
+      log.trace("set {} to {},{} ", vertex, posX, posY);
+
+      i++;
+    }
+  }
+
+  @Override
+  public boolean cancel(boolean mayInterruptIfRunning) {
+    if (theFuture != null) {
+      return theFuture.cancel(mayInterruptIfRunning);
+    }
+    return false;
+  }
+
+  @Override
+  public boolean isCancelled() {
+    if (theFuture != null) {
+      return theFuture.isCancelled();
+    }
+    return false;
+  }
+
+  @Override
+  public boolean isDone() {
+    if (theFuture != null) {
+      return theFuture.isDone();
+    }
+    return false;
+  }
+
+  @Override
+  public Object get() throws InterruptedException, ExecutionException {
+    if (theFuture != null) {
+      return theFuture.get();
+    }
+    return null;
+  }
+
+  @Override
+  public Object get(long l, TimeUnit timeUnit)
+      throws InterruptedException, ExecutionException, TimeoutException {
+    return null;
+  }
+
+  @Override
+  public void run() {
+    after.run();
+  }
+
+  @Override
+  public void setAfter(Runnable after) {
+    this.after = after;
+  }
+
+  static class ReduceCrossingRunnable<V, E> implements Runnable {
+
+    Graph<V, E> graph;
+    private List<V> vertexOrderedList;
+
+    ReduceCrossingRunnable(Graph<V, E> graph, List<V> vertexOrderList) {
+      this.graph = graph;
+      this.vertexOrderedList = vertexOrderList;
+    }
+
+    @Override
+    public void run() {
+      // is this a multicomponent graph?
+      ConnectivityInspector<V, ?> connectivityInspector = new ConnectivityInspector<>(graph);
+      List<Set<V>> componentVertices = connectivityInspector.connectedSets();
+      List<V> vertexOrderedList = new ArrayList<>();
+      if (componentVertices.size() > 1) {
+        for (Set<V> vertexSet : componentVertices) {
+          // get back the graph for these vertices
+          Graph<V, E> subGraph = GraphTypeBuilder.forGraph(graph).buildGraph();
+          vertexSet.forEach(subGraph::addVertex);
+          for (V v : vertexSet) {
+            // get neighbors
+            Graphs.successorListOf(graph, v)
+                .forEach(s -> subGraph.addEdge(v, s, graph.getEdge(v, s)));
+            Graphs.predecessorListOf(graph, v)
+                .forEach(p -> subGraph.addEdge(p, v, graph.getEdge(p, v)));
+          }
+          vertexOrderedList.addAll(
+              new CircleLayoutReduceEdgeCrossing<>(subGraph).getVertexOrderedList());
+        }
+      } else {
+        CircleLayoutReduceEdgeCrossing<V, ?> circleLayouts =
+            new CircleLayoutReduceEdgeCrossing<>(graph);
+        vertexOrderedList.addAll(circleLayouts.getVertexOrderedList());
       }
-
-      int i = 0;
-      for (V vertex : vertexOrderedList) {
-
-        double angle = (2 * Math.PI * i) / vertexOrderedList.size();
-
-        double posX = Math.cos(angle) * radius + width / 2;
-        double posY = Math.sin(angle) * radius + height / 2;
-        layoutModel.set(vertex, posX, posY);
-        log.trace("set {} to {},{} ", vertex, posX, posY);
-
-        i++;
-      }
+      this.vertexOrderedList.clear();
+      this.vertexOrderedList.addAll(vertexOrderedList);
     }
   }
 }
