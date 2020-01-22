@@ -45,18 +45,10 @@ public class TidierRadialTreeLayoutAlgorithm<V, E> extends TidierTreeLayoutAlgor
   @Override
   public void visit(LayoutModel<V> layoutModel) {
     super.visit(layoutModel);
-    log.info("roots are {}", roots);
+    log.trace("roots are {}", roots);
     setRadialLocations(super.roots, layoutModel);
     putRadialPointsInModel(layoutModel);
   }
-
-  //  @Override
-  //  protected Set<V> buildTree(LayoutModel<V> layoutModel) {
-  //    Set<V> roots = super.buildTree(layoutModel);
-  //    setRadialLocations(roots, layoutModel);
-  //    putRadialPointsInModel(layoutModel);
-  //    return roots;
-  //  }
 
   /**
    * override for to always start at zero
@@ -65,7 +57,6 @@ public class TidierRadialTreeLayoutAlgorithm<V, E> extends TidierTreeLayoutAlgor
    * @param treeHeight
    * @return 0 for any supplied values
    */
-  //  @Override
   protected int getInitialPosition(int initialPosition, int layoutHeight, int treeHeight) {
     return 0;
   }

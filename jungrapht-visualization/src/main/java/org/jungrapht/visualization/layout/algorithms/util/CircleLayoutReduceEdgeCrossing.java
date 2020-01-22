@@ -209,7 +209,7 @@ public class CircleLayoutReduceEdgeCrossing<V, E> {
     Map<V, Integer> vertexListPositions = new HashMap<>();
     IntStream.range(0, array.length).forEach(i -> vertexListPositions.put(array[i], i));
     int currentCrossings = countCrossings(graph, array);
-    log.info("originalCrossings: {}", currentCrossings);
+    log.trace("originalCrossings: {}", currentCrossings);
     int originalCrossings = currentCrossings;
     List<Integer> positions = new LinkedList<>();
     for (int i = 0; i < 9; i++) {
@@ -237,7 +237,7 @@ public class CircleLayoutReduceEdgeCrossing<V, E> {
             int newCrossings = countCrossings(graph, array);
             if (newCrossings < currentCrossings) {
               currentCrossings = newCrossings;
-              log.info("reduced crossings to {}", currentCrossings);
+              log.trace("reduced crossings to {}", currentCrossings);
             } else {
               swap(array, vpos, pos);
               vertexListPositions.put(array[pos], pos);
@@ -247,7 +247,7 @@ public class CircleLayoutReduceEdgeCrossing<V, E> {
         }
       }
       if (currentCrossings >= originalCrossings) {
-        log.info("break {} >= {}", currentCrossings, originalCrossings);
+        log.trace("break {} >= {}", currentCrossings, originalCrossings);
         break;
       }
     }

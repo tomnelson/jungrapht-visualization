@@ -119,7 +119,6 @@ public class IconCache<V> extends HashMap<V, Icon> implements Function<V, Icon> 
       Stylist<V> stylist,
       Decorator<V> preDecorator,
       Decorator<V> postDecorator) {
-    this.label = label;
     this.vertexLabelFunction = vertexLabelFunction;
     this.vertexShapeFunction = vertexShapeFunction;
     this.colorFunction = colorFunction;
