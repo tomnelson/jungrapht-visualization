@@ -116,6 +116,12 @@ public interface LayoutModel<V>
    */
   void setSize(int width, int helght);
 
+  /**
+   * @param width to set
+   * @param helght to set
+   */
+  void setPreferredSize(int width, int helght);
+
   /** stop a relaxer Thread from continuing to operate */
   void stopRelaxer();
 

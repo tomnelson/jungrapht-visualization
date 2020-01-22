@@ -105,6 +105,11 @@ public class AggregateLayoutModel<V> implements LayoutModel<V> {
   }
 
   @Override
+  public void setPreferredSize(int width, int height) {
+    delegate.setPreferredSize(width, height);
+  }
+
+  @Override
   public void stopRelaxer() {
     delegate.stopRelaxer();
     for (LayoutModel<V> childLayoutModel : layouts.keySet()) {
