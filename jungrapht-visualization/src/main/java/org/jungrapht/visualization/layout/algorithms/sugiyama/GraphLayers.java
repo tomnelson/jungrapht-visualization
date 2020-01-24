@@ -3,6 +3,7 @@ package org.jungrapht.visualization.layout.algorithms.sugiyama;
 import java.util.*;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
+import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +24,15 @@ public class GraphLayers {
     List<SugiyamaVertex<V>> start =
         getVerticesWithoutIncomingEdges(dag, edges, vertices); // should be the roots
 
+    // if there are multiple components, arrange the first row order to group their roots
+    ConnectivityInspector<SugiyamaVertex<V>, ?> connectivityInspector =
+        new ConnectivityInspector<>(dag);
+    List<Set<SugiyamaVertex<V>>> componentVertices = connectivityInspector.connectedSets();
+
+    if (componentVertices.size() > 1) {
+      start = groupByComponentMembership(componentVertices, start);
+    }
+
     // sort the first layer so that isolated vertices and loop vertices are grouped together and at
     // one end of the rank
     start.sort(Comparator.comparingInt(v -> vertexIsolationScore(dag, v)));
@@ -40,9 +50,21 @@ public class GraphLayers {
       // remove any vertices that have been added to the row
       vertices.removeIf(fstart::contains);
       start = getVerticesWithoutIncomingEdges(dag, edges, vertices);
+      if (componentVertices.size() > 1) {
+        start = groupByComponentMembership(componentVertices, start);
+      }
       rank++;
     }
     return sorted;
+  }
+
+  private static <V> List<SugiyamaVertex<V>> groupByComponentMembership(
+      List<Set<SugiyamaVertex<V>>> componentVertices, List<SugiyamaVertex<V>> list) {
+    List<SugiyamaVertex<V>> groupedRow = new ArrayList<>();
+    for (Set<SugiyamaVertex<V>> set : componentVertices) {
+      groupedRow.addAll(list.stream().filter(set::contains).collect(Collectors.toList()));
+    }
+    return groupedRow;
   }
 
   /**
