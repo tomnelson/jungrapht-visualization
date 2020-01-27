@@ -49,6 +49,7 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
     private Paint selectionPaint = Color.red;
     private float selectionStrokeMin =
         Float.parseFloat(System.getProperty(PREFIX + "selectionStrokeMin", "2.f"));
+    private boolean useBounds = true;
 
     /**
      * @param selectionShape the shape to draw as an indicator for selected vertices
@@ -74,6 +75,11 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
 
     public Builder selectionStrokeMin(float selectionStrokeMin) {
       this.selectionStrokeMin = selectionStrokeMin;
+      return this;
+    }
+
+    public Builder useBounds(boolean useBounds) {
+      this.useBounds = useBounds;
       return this;
     }
 
@@ -106,6 +112,8 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
 
   private Icon selectionIcon;
 
+  private boolean useBounds;
+
   private float selectionStrokeMin;
 
   private BiModalSelectionRenderer<V, E> biModalRenderer;
@@ -121,6 +129,7 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
     this(
         builder.visualizationServer,
         builder.selectionShape,
+        builder.useBounds,
         builder.selectionPaint,
         builder.selectionIcon,
         builder.selectionStrokeMin);
@@ -137,6 +146,7 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
   private MultiSelectedVertexPaintable(
       VisualizationServer<V, E> visualizationServer,
       Shape shape,
+      boolean useBounds,
       Paint selectionPaint,
       Icon selectionIcon,
       float selectionStrokeMin) {
@@ -144,6 +154,7 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
     this.selectedVertices =
         visualizationServer.getRenderContext().getSelectedVertexState().getSelected();
     this.selectionShape = shape;
+    this.useBounds = useBounds;
     this.selectionPaint = selectionPaint;
     this.selectionIcon = selectionIcon;
     this.selectionStrokeMin = selectionStrokeMin;
@@ -281,6 +292,9 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
       } else {
         // heavyweight
         shape = visualizationServer.getRenderContext().getVertexShapeFunction().apply(v);
+        if (useBounds) {
+          shape = shape.getBounds();
+        }
       }
     } else {
       shape = renderContext.getVertexShapeFunction().apply(v);
