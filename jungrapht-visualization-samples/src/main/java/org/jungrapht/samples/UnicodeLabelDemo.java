@@ -62,7 +62,7 @@ public class UnicodeLabelDemo {
     loadImages(iconMap);
     IconShapeFunction<Integer> iconShapeFunction =
         new IconShapeFunction<>(new EllipseShapeFunction<>());
-    iconShapeFunction.setIconMap(iconMap);
+    iconShapeFunction.setIconFunction(iconMap::get);
     Function<Integer, Icon> vertexIconFunction = iconMap::get;
     vv.getRenderContext().setVertexShapeFunction(iconShapeFunction);
     vv.getRenderContext().setVertexIconFunction(vertexIconFunction);

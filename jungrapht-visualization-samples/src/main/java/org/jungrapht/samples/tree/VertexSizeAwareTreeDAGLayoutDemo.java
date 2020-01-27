@@ -121,7 +121,7 @@ public class VertexSizeAwareTreeDAGLayoutDemo extends JFrame {
 
     final IconShapeFunction<String> vertexImageShapeFunction =
         new IconShapeFunction<>(new EllipseShapeFunction<>());
-    vertexImageShapeFunction.setIconMap(iconCache);
+    vertexImageShapeFunction.setIconFunction(iconCache::get);
 
     vv.getRenderContext().setVertexShapeFunction(vertexImageShapeFunction);
     vv.getRenderContext().setVertexIconFunction(iconCache::get);

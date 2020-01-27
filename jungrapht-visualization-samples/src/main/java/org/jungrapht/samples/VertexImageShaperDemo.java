@@ -146,7 +146,7 @@ public class VertexImageShaperDemo extends JPanel {
     // features on and off. For a real application, use VertexIconShapeTransformer instead.
     final DemoIconShapeFunction<Number> vertexIconShapeTransformer =
         new DemoIconShapeFunction<>(new EllipseShapeFunction<>());
-    vertexIconShapeTransformer.setIconMap(iconMap);
+    vertexIconShapeTransformer.setIconFunction(iconMap::get);
 
     final DemoVertexIconTransformer<Number> vertexIconTransformer =
         new DemoVertexIconTransformer<>(iconMap);
@@ -399,7 +399,7 @@ public class VertexImageShaperDemo extends JPanel {
 
     @Override
     public Shape apply(V v) {
-      Icon icon = iconMap.get(v);
+      Icon icon = iconFunction.apply(v);
 
       if (icon instanceof ImageIcon) {
 

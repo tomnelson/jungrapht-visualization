@@ -28,7 +28,7 @@ import org.jungrapht.visualization.util.ImageShapeUtils;
  */
 public class IconShapeFunction<T> implements Function<T, Shape> {
   protected Map<Image, Shape> shapeMap = new HashMap<>();
-  protected Map<T, Icon> iconMap;
+  protected Function<T, Icon> iconFunction;
   protected Function<T, Shape> delegate;
 
   /**
@@ -54,7 +54,7 @@ public class IconShapeFunction<T> implements Function<T, Shape> {
    * get the shape from the image. If not available, get the shape from the delegate ShapeFunction
    */
   public Shape apply(T t) {
-    Icon icon = iconMap.get(t);
+    Icon icon = iconFunction.apply(t);
     if (icon instanceof ImageIcon) {
       Image image = ((ImageIcon) icon).getImage();
       Shape shape = shapeMap.get(image);
@@ -76,14 +76,9 @@ public class IconShapeFunction<T> implements Function<T, Shape> {
     }
   }
 
-  /** @return the iconMap */
-  public Map<T, Icon> getIconMap() {
-    return iconMap;
-  }
-
-  /** @param iconMap the iconMap to set */
-  public void setIconMap(Map<T, Icon> iconMap) {
-    this.iconMap = iconMap;
+  /** @param iconFunction the iconFunction to set */
+  public void setIconFunction(Function<T, Icon> iconFunction) {
+    this.iconFunction = iconFunction;
   }
 
   /** @return the shapeMap */

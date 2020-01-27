@@ -143,7 +143,7 @@ public class LensVertexImageShaperDemo extends JPanel {
 
     final Function<Number, Icon> vertexIconFunction = iconMap::get;
 
-    vertexImageShapeFunction.setIconMap(iconMap);
+    vertexImageShapeFunction.setIconFunction(iconMap::get);
 
     vv.getRenderContext().setVertexShapeFunction(vertexImageShapeFunction);
     vv.getRenderContext().setVertexIconFunction(vertexIconFunction);
