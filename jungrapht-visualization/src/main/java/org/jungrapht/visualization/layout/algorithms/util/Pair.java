@@ -3,8 +3,8 @@ package org.jungrapht.visualization.layout.algorithms.util;
 import java.util.Objects;
 
 public class Pair<V> {
-  final V first;
-  final V second;
+  public final V first;
+  public final V second;
 
   public static <V> Pair<V> of(V first, V second) {
     return new Pair(first, second);

@@ -15,7 +15,7 @@ import javax.swing.border.CompoundBorder;
  *
  * @param <V> the vertex type
  */
-public class IconCache<V> extends HashMap<V, Icon> implements Function<V, Icon> {
+public class IconCache<V> implements Function<V, Icon> {
 
   /**
    * Builder for IconCache
@@ -92,6 +92,7 @@ public class IconCache<V> extends HashMap<V, Icon> implements Function<V, Icon> 
     return new Builder<>(vertexLabelFunction);
   }
 
+  Map<V, Icon> iconMap = new HashMap<>();
   protected Function<V, String> vertexLabelFunction;
   protected Function<V, Shape> vertexShapeFunction;
   protected JLabel label = new JLabel();
@@ -129,17 +130,17 @@ public class IconCache<V> extends HashMap<V, Icon> implements Function<V, Icon> 
   }
 
   @Override
-  public Icon get(Object n) {
-    if (!super.containsKey(n)) {
+  public Icon apply(V n) {
+    if (!iconMap.containsKey(n)) {
       cacheIconFor(label, (V) n, vertexLabelFunction, colorFunction);
     }
-    return super.get(n);
+    return iconMap.get(n);
   }
 
-  @Override
-  public Icon apply(V in) {
-    return get(in);
-  }
+  //  @Override
+  //  public Icon apply(V in) {
+  //    return get(in);
+  //  }
 
   /**
    * allows for functional interface method to set the font, colors, etc for the vertex JLabel.
@@ -188,6 +189,6 @@ public class IconCache<V> extends HashMap<V, Icon> implements Function<V, Icon> 
     postDecorator.decorate(graphics, vertex, label.getBounds(), vertexShapeFunction, colorFunction);
     // clean up and return the Icon
     graphics.dispose();
-    super.put(vertex, new ImageIcon(bufferedImage));
+    iconMap.put(vertex, new ImageIcon(bufferedImage));
   }
 }

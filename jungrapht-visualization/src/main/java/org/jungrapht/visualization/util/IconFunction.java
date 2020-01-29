@@ -27,10 +27,6 @@ public class IconFunction<V> implements Function<V, Icon> {
     return iconMap.get(n);
   }
 
-  public Map<V, Icon> getIconMap() {
-    return iconMap;
-  }
-
   private void cacheIconFor(V vertex) {
     stamp.setText(vertexLabelFunction.apply(vertex));
     stamp.setForeground(Color.black);

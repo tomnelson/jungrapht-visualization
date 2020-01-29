@@ -13,21 +13,18 @@ public class GraphLayers {
 
   private GraphLayers() {}
 
-  public static <V, E> List<List<SugiyamaVertex<V>>> assign(
-      Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> dag) {
+  public static <V, E> List<List<LV<V>>> assign(Graph<LV<V>, LE<V, E>> dag) {
     int rank = 0;
-    List<List<SugiyamaVertex<V>>> sorted = new ArrayList<>();
-    List<SugiyamaEdge<V, E>> edges =
-        dag.edgeSet().stream().collect(Collectors.toCollection(LinkedList::new));
-    List<SugiyamaVertex<V>> vertices =
+    List<List<LV<V>>> sorted = new ArrayList<>();
+    List<LE<V, E>> edges = dag.edgeSet().stream().collect(Collectors.toCollection(LinkedList::new));
+    List<LV<V>> vertices =
         dag.vertexSet().stream().collect(Collectors.toCollection(LinkedList::new));
-    List<SugiyamaVertex<V>> start =
+    List<LV<V>> start =
         getVerticesWithoutIncomingEdges(dag, edges, vertices); // should be the roots
 
     // if there are multiple components, arrange the first row order to group their roots
-    ConnectivityInspector<SugiyamaVertex<V>, ?> connectivityInspector =
-        new ConnectivityInspector<>(dag);
-    List<Set<SugiyamaVertex<V>>> componentVertices = connectivityInspector.connectedSets();
+    ConnectivityInspector<LV<V>, ?> connectivityInspector = new ConnectivityInspector<>(dag);
+    List<Set<LV<V>>> componentVertices = connectivityInspector.connectedSets();
 
     if (componentVertices.size() > 1) {
       start = groupByComponentMembership(componentVertices, start);
@@ -39,12 +36,12 @@ public class GraphLayers {
 
     while (start.size() > 0) {
       for (int i = 0; i < start.size(); i++) {
-        SugiyamaVertex<V> v = start.get(i);
-        v.rank = rank;
-        v.index = i;
+        LV<V> v = start.get(i);
+        v.setRank(rank);
+        v.setIndex(i);
       }
       sorted.add(start); // add a row
-      Set<SugiyamaVertex<V>> fstart = new HashSet<>(start);
+      Set<LV<V>> fstart = new HashSet<>(start);
       // remove any edges that start in the new row
       edges.removeIf(e -> fstart.contains(dag.getEdgeSource(e)));
       // remove any vertices that have been added to the row
@@ -58,10 +55,10 @@ public class GraphLayers {
     return sorted;
   }
 
-  private static <V> List<SugiyamaVertex<V>> groupByComponentMembership(
-      List<Set<SugiyamaVertex<V>>> componentVertices, List<SugiyamaVertex<V>> list) {
-    List<SugiyamaVertex<V>> groupedRow = new ArrayList<>();
-    for (Set<SugiyamaVertex<V>> set : componentVertices) {
+  private static <V> List<LV<V>> groupByComponentMembership(
+      List<Set<LV<V>>> componentVertices, List<LV<V>> list) {
+    List<LV<V>> groupedRow = new ArrayList<>();
+    for (Set<LV<V>> set : componentVertices) {
       groupedRow.addAll(list.stream().filter(set::contains).collect(Collectors.toList()));
     }
     return groupedRow;
@@ -88,35 +85,32 @@ public class GraphLayers {
    * @param <E> edge type
    * @return vertices in the graph that have no incoming edges (or only loop edges)
    */
-  private static <V, E> List<SugiyamaVertex<V>> getVerticesWithoutIncomingEdges(
-      Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> dag,
-      Collection<SugiyamaEdge<V, E>> edges,
-      Collection<SugiyamaVertex<V>> vertices) {
+  private static <V, E> List<LV<V>> getVerticesWithoutIncomingEdges(
+      Graph<LV<V>, LE<V, E>> dag, Collection<LE<V, E>> edges, Collection<LV<V>> vertices) {
     // get targets of all edges
-    Set<SugiyamaVertex<V>> targets =
-        edges.stream().map(e -> dag.getEdgeTarget(e)).collect(Collectors.toSet());
+    Set<LV<V>> targets = edges.stream().map(e -> dag.getEdgeTarget(e)).collect(Collectors.toSet());
     // from vertices, filter out any that are an edge target
     return vertices.stream().filter(v -> !targets.contains(v)).collect(Collectors.toList());
   }
 
-  public static <V> void checkLayers(List<List<SugiyamaVertex<V>>> layers) {
+  public static <V> void checkLayers(List<List<LV<V>>> layers) {
     for (int i = 0; i < layers.size(); i++) {
-      List<SugiyamaVertex<V>> layer = layers.get(i);
+      List<LV<V>> layer = layers.get(i);
       for (int j = 0; j < layer.size(); j++) {
-        SugiyamaVertex<V> sugiyamaVertex = layer.get(j);
-        if (i != sugiyamaVertex.getRank()) {
-          log.error("{} is not the rank of {}", i, sugiyamaVertex);
+        LV<V> LV = layer.get(j);
+        if (i != LV.getRank()) {
+          log.error("{} is not the rank of {}", i, LV);
           throw new RuntimeException("rank is wrong");
         }
-        if (j != sugiyamaVertex.getIndex()) {
-          log.error("{} is not the index of {}", j, sugiyamaVertex);
+        if (j != LV.getIndex()) {
+          log.error("{} is not the index of {}", j, LV);
           throw new RuntimeException("index is wrong");
         }
       }
     }
   }
 
-  public static <V> void checkLayers(SugiyamaVertex<V>[][] layers) {
+  public static <V> void checkLayers(LV<V>[][] layers) {
     if (log.isTraceEnabled()) {
       for (int i = 0; i < layers.length; i++) {
         for (int j = 0; j < layers[i].length; j++) {

@@ -13,6 +13,7 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jungrapht.samples.util.TitlePaintable;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultGraphMouse;
@@ -50,6 +51,10 @@ public class ArbitraryShapeMultiSelectDemo extends JPanel {
             .viewSize(new Dimension(600, 600))
             .graphMouse(graphMouse)
             .build();
+
+    vv.addPreRenderPaintable(
+        new TitlePaintable(
+            "Ctrl-MouseButton 1\nand drag to draw\nselection area", vv.getPreferredSize()));
 
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
     vv.getRenderContext().setVertexLabelFunction(Object::toString);

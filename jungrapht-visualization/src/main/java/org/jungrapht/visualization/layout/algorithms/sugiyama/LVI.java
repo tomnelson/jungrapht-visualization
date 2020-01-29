@@ -2,55 +2,50 @@ package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
 import java.util.Objects;
 import org.jungrapht.visualization.layout.model.Point;
-import org.jungrapht.visualization.layout.util.synthetics.SV;
+import org.jungrapht.visualization.layout.util.synthetics.SVI;
 
 /**
- * a vertex type for the SugiyamaLayoutAlgorithm instances of SugiyamaVertex<V> replace instances of
- * V during layout The SugiyamaVertex<V> holds metadata information about the position of the vertex
- * in the layered graph for the SugiyamaLayoutAlgorithm
+ * a vertex type for the SugiyamaLayoutAlgorithm instances of LVI<V> replace instances of V during
+ * layout The LVI<V> holds metadata information about the position of the vertex in the layered
+ * graph for the SugiyamaLayoutAlgorithm
  *
  * @param <V>
  */
-public class SugiyamaVertex<V> extends SV<V> {
+public class LVI<V> extends SVI<V> implements LV<V> {
   protected int rank; // the layer number for this vertex
   protected int index; // the position within the layer for this vertex
+  //  protected int pos = -1;
+  //  protected int measure = -1;
+
   protected Point p; // the cartesian coordinates for this articulation point
 
-  public static <V> SugiyamaVertex<V> of(V vertex) {
-    return new SugiyamaVertex(vertex);
-  }
-
-  public static <V> SugiyamaVertex<V> of(V vertex, int rank, int index) {
-    return new SugiyamaVertex(vertex, rank, index);
-  }
-
-  protected SugiyamaVertex() {
+  protected LVI() {
     super();
   }
 
-  protected SugiyamaVertex(V vertex) {
+  protected LVI(V vertex) {
     super(vertex);
   }
 
-  protected SugiyamaVertex(V vertex, int rank, int index) {
+  protected LVI(V vertex, int rank, int index) {
     super(vertex);
     this.rank = rank;
     this.index = index;
   }
 
-  protected SugiyamaVertex(V vertex, int rank, int index, Point p) {
+  protected LVI(V vertex, int rank, int index, Point p) {
     super(vertex);
     this.rank = rank;
     this.index = index;
     this.p = p;
   }
 
-  public SugiyamaVertex(SugiyamaVertex<V> other) {
+  public LVI(LVI<V> other) {
     this(other.vertex, other.rank, other.index, other.p);
   }
 
-  public <T extends SugiyamaVertex<V>> T copy() {
-    return (T) new SugiyamaVertex<>(this);
+  public <T extends LV<V>> T copy() {
+    return (T) new LVI<>(this);
   }
 
   public void setRank(int rank) {
@@ -81,8 +76,8 @@ public class SugiyamaVertex<V> extends SV<V> {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    SugiyamaVertex<?> sugiyamaVertex = (SugiyamaVertex<?>) o;
-    if (o instanceof SyntheticSugiyamaVertex) {
+    LVI<?> sugiyamaVertex = (LVI<?>) o;
+    if (o instanceof SyntheticLV) {
       return false;
     }
     return Objects.equals(vertex, sugiyamaVertex.vertex);
@@ -102,6 +97,10 @@ public class SugiyamaVertex<V> extends SV<V> {
         + rank
         + ", index="
         + index
+        //        + ", pos="
+        //        + pos
+        //        + ", measure="
+        //        + measure
         + ", p="
         + p
         + '}';

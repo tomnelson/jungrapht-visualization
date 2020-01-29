@@ -22,10 +22,10 @@ import org.jungrapht.visualization.layout.algorithms.ShapeFunctionAware;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.ArticulatedEdge;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.GraphLayers;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.GreedyCycleRemoval;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaEdge;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaTransformedGraphSupplier;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaVertex;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SyntheticSugiyamaVertex;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.SyntheticLV;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Synthetics;
 import org.jungrapht.visualization.layout.algorithms.util.RenderContextAware;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -183,8 +183,8 @@ public class BrandesKopfLayoutAlgorithm<V, E>
 
   Graph<V, E> originalGraph;
   //  List<List<SugiyamaVertex<V>>> layers;
-  Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> svGraph;
-  Set<SugiyamaEdge<V, E>> markedSegments = new HashSet<>();
+  Graph<LV<V>, LE<V, E>> svGraph;
+  Set<LE<V, E>> markedSegments = new HashSet<>();
 
   @Override
   public void visit(LayoutModel<V> layoutModel) {
@@ -192,29 +192,28 @@ public class BrandesKopfLayoutAlgorithm<V, E>
     // transform the graph to the svGraph delegate
     this.svGraph = new SugiyamaTransformedGraphSupplier<>(originalGraph).get();
     // remove (reverse) cycles
-    GreedyCycleRemoval<SugiyamaVertex<V>, SugiyamaEdge<V, E>> greedyCycleRemoval =
-        new GreedyCycleRemoval(svGraph);
+    GreedyCycleRemoval<LV<V>, LE<V, E>> greedyCycleRemoval = new GreedyCycleRemoval(svGraph);
     // save off the feedback arcs for later
-    Collection<SugiyamaEdge<V, E>> feedbackArcs = greedyCycleRemoval.getFeedbackArcs();
+    Collection<LE<V, E>> feedbackArcs = greedyCycleRemoval.getFeedbackArcs();
 
     // reverse the direction of feedback arcs so that they no longer introduce cycles in the graph
     // the feedback arcs will be processed later to draw with the correct direction and correct articulation points
-    for (SugiyamaEdge<V, E> se : feedbackArcs) {
+    for (LE<V, E> se : feedbackArcs) {
       svGraph.removeEdge(se);
-      SugiyamaEdge<V, E> newEdge = SugiyamaEdge.of(se.edge, se.target, se.source);
-      svGraph.addEdge(newEdge.source, newEdge.target, newEdge);
+      LE<V, E> newEdge = LE.of(se.getEdge(), se.getTarget(), se.getSource());
+      svGraph.addEdge(newEdge.getSource(), newEdge.getTarget(), newEdge);
     }
 
     // build the layered graph
-    List<List<SugiyamaVertex<V>>> layers = GraphLayers.assign(svGraph);
+    List<List<LV<V>>> layers = GraphLayers.assign(svGraph);
 
     // check that the rank/index metadata matches the actual rank/index in layers
     GraphLayers.checkLayers(layers);
 
     Synthetics<V, E> synthetics = new Synthetics<>(svGraph);
-    List<SugiyamaEdge<V, E>> edges = new ArrayList<>(svGraph.edgeSet());
+    List<LE<V, E>> edges = new ArrayList<>(svGraph.edgeSet());
     // create the synthetic vertices and edges
-    SugiyamaVertex<V>[][] layersArray = synthetics.createVirtualVerticesAndEdges(edges, layers);
+    LV<V>[][] layersArray = synthetics.createVirtualVerticesAndEdges(edges, layers);
     GraphLayers.checkLayers(layersArray);
     // special case only for the test graph, pretend we did the swaps to get the
     // indices to match what is in the paper
@@ -232,10 +231,10 @@ public class BrandesKopfLayoutAlgorithm<V, E>
     SelectiveHorizontalCoordinateAssignment.horizontalCoordinateAssignment(
         layersArray, svGraph, markedSegments, 50, 50, doUpLeft, doUpRight, doDownLeft, doDownRight);
 
-    Map<SugiyamaVertex<V>, SugiyamaVertex<V>> vertexMap = new HashMap<>();
-    for (List<SugiyamaVertex<V>> layer : layers) {
-      for (SugiyamaVertex<V> sugiyamaVertex : layer) {
-        vertexMap.put(sugiyamaVertex, sugiyamaVertex);
+    Map<LV<V>, LV<V>> vertexMap = new HashMap<>();
+    for (List<LV<V>> layer : layers) {
+      for (LV<V> LV : layer) {
+        vertexMap.put(LV, LV);
       }
     }
 
@@ -245,12 +244,12 @@ public class BrandesKopfLayoutAlgorithm<V, E>
     Function<V, Shape> vertexShapeFunction = renderContext.getVertexShapeFunction();
     int totalHeight = 0;
     int totalWidth = 0;
-    for (List<SugiyamaVertex<V>> layer : layers) {
+    for (List<LV<V>> layer : layers) {
       int width = horizontalOffset;
       int maxHeight = 0;
-      for (SugiyamaVertex<V> sugiyamaVertex : layer) {
-        if (!(sugiyamaVertex instanceof SyntheticSugiyamaVertex)) {
-          java.awt.Rectangle bounds = vertexShapeFunction.apply(sugiyamaVertex.vertex).getBounds();
+      for (LV<V> LV : layer) {
+        if (!(LV instanceof SyntheticLV)) {
+          java.awt.Rectangle bounds = vertexShapeFunction.apply(LV.getVertex()).getBounds();
           width += bounds.width + horizontalOffset;
           maxHeight = Math.max(maxHeight, bounds.height);
         } else {
@@ -273,9 +272,9 @@ public class BrandesKopfLayoutAlgorithm<V, E>
         .vertexSet()
         .forEach(
             v -> {
-              SugiyamaVertex<V> sugiyamaVertex2 = vertexMap.get(v);
-              if (sugiyamaVertex2 != null) {
-                Point p = sugiyamaVertex2.getPoint();
+              LV<V> LV2 = vertexMap.get(v);
+              if (LV2 != null) {
+                Point p = LV2.getPoint();
                 v.setPoint(p);
               } else {
                 log.error("got null");
@@ -285,20 +284,20 @@ public class BrandesKopfLayoutAlgorithm<V, E>
     List<ArticulatedEdge<V, E>> articulatedEdges = synthetics.makeArticulatedEdges();
 
     Set<E> feedbackEdges = new HashSet<>();
-    feedbackArcs.forEach(a -> feedbackEdges.add(a.edge));
+    feedbackArcs.forEach(a -> feedbackEdges.add(a.getEdge()));
     articulatedEdges
         .stream()
         .filter(ae -> feedbackEdges.contains(ae.edge))
         .forEach(
             ae -> {
               svGraph.removeEdge(ae);
-              SugiyamaEdge<V, E> reversed = ae.reversed();
-              svGraph.addEdge(reversed.source, reversed.target, reversed);
+              LE<V, E> reversed = ae.reversed();
+              svGraph.addEdge(reversed.getSource(), reversed.getTarget(), reversed);
             });
 
     for (ArticulatedEdge<V, E> ae : articulatedEdges) {
-      for (SugiyamaVertex<V> sugiyamaVertex : ae.getIntermediateVertices()) {
-        sugiyamaVertex.setPoint(vertexMap.get(sugiyamaVertex).getPoint());
+      for (LV<V> LV : ae.getIntermediateVertices()) {
+        LV.setPoint(vertexMap.get(LV).getPoint());
       }
     }
 
@@ -323,20 +322,20 @@ public class BrandesKopfLayoutAlgorithm<V, E>
 
     renderContext.setEdgeShapeFunction(edgeShape);
 
-    svGraph.vertexSet().forEach(v -> layoutModel.set(v.vertex, v.getPoint()));
+    svGraph.vertexSet().forEach(v -> layoutModel.set(v.getVertex(), v.getPoint()));
     after.run();
   }
 
-  private void justSetThePoints(List<List<SugiyamaVertex<V>>> layers) {
+  private void justSetThePoints(List<List<LV<V>>> layers) {
     int y = 0;
     int x = 0;
     for (int i = 0; i < layers.size(); i++) {
-      List<SugiyamaVertex<V>> list = layers.get(i);
+      List<LV<V>> list = layers.get(i);
       y += verticalOffset;
       x = 0;
       for (int j = 0; j < list.size(); j++) {
-        SugiyamaVertex<V> v = list.get(j);
-        x += horizontalOffset + vertexShapeFunction.apply(v.vertex).getBounds().width;
+        LV<V> v = list.get(j);
+        x += horizontalOffset + vertexShapeFunction.apply(v.getVertex()).getBounds().width;
         v.setPoint(Point.of(x, y));
       }
     }

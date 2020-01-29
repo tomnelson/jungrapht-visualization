@@ -1,37 +1,39 @@
 package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
+import org.jungrapht.visualization.layout.util.synthetics.Synthetic;
+
 /**
  * a vertex that is not in the original graph, but is synthesized in order to position bends in the
  * articulated edges of the SugiyamaLayoutAlgorithm
  *
  * @param <V> vertex type
  */
-public class SyntheticSugiyamaVertex<V> extends SugiyamaVertex<V> {
+public class SyntheticLV<V> extends LVI<V> implements Synthetic {
 
   final int hash;
 
-  public static <V> SyntheticSugiyamaVertex<V> of() {
-    return new SyntheticSugiyamaVertex();
+  public static <V> SyntheticLV<V> of() {
+    return new SyntheticLV();
   }
 
-  protected SyntheticSugiyamaVertex() {
+  protected SyntheticLV() {
     super();
     this.hash = System.identityHashCode(this);
   }
 
-  public SyntheticSugiyamaVertex(SyntheticSugiyamaVertex<V> other) {
+  public SyntheticLV(SyntheticLV<V> other) {
     super(other);
     this.hash = other.hash;
   }
 
-  public <T extends SugiyamaVertex<V>> T copy() {
-    return (T) new SyntheticSugiyamaVertex<>(this);
+  public <T extends LV<V>> T copy() {
+    return (T) new SyntheticLV<>(this);
   }
 
   @Override
   public boolean equals(Object o) {
-    if (o instanceof SyntheticSugiyamaVertex) {
-      return hash == ((SyntheticSugiyamaVertex) o).hash;
+    if (o instanceof SyntheticLV) {
+      return hash == ((SyntheticLV) o).hash;
     }
     return false;
   }
@@ -50,6 +52,10 @@ public class SyntheticSugiyamaVertex<V> extends SugiyamaVertex<V> {
         + rank
         + ", index="
         + index
+        //        + ", pos="
+        //        + pos
+        //        + ", measure="
+        //        + measure
         + ", p="
         + p
         + '}';

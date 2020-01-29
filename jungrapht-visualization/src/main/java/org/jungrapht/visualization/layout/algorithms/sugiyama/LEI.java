@@ -1,7 +1,7 @@
 package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
 import java.util.Objects;
-import org.jungrapht.visualization.layout.util.synthetics.SE;
+import org.jungrapht.visualization.layout.util.synthetics.SEI;
 
 /**
  * An edge type used for the application of the SugiyamaLayoutAlgorithm.<br>
@@ -10,20 +10,25 @@ import org.jungrapht.visualization.layout.util.synthetics.SE;
  * @param <V> vertex type
  * @param <E> edge type
  */
-public class SugiyamaEdge<V, E> extends SE<E> {
+public class LEI<V, E> extends SEI<E> implements LE<V, E> {
 
-  public final SugiyamaVertex<V> source;
-  public final SugiyamaVertex<V> target;
+  public final LV<V> source;
+  public final LV<V> target;
 
-  public static <V, E> SugiyamaEdge<V, E> of(
-      E edge, SugiyamaVertex<V> source, SugiyamaVertex<V> target) {
-    return new SugiyamaEdge(edge, source, target);
-  }
-
-  public SugiyamaEdge(E edge, SugiyamaVertex<V> source, SugiyamaVertex<V> target) {
+  public LEI(E edge, LV<V> source, LV<V> target) {
     super(edge);
     this.source = source;
     this.target = target;
+  }
+
+  @Override
+  public LV<V> getSource() {
+    return source;
+  }
+
+  @Override
+  public LV<V> getTarget() {
+    return target;
   }
 
   @Override
@@ -36,7 +41,7 @@ public class SugiyamaEdge<V, E> extends SE<E> {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    SugiyamaEdge<?, ?> that = (SugiyamaEdge<?, ?>) o;
+    LEI<?, ?> that = (LEI<?, ?>) o;
     return Objects.equals(source, that.source) && Objects.equals(target, that.target);
   }
 

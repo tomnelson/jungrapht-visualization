@@ -1,6 +1,11 @@
 package org.jungrapht.visualization.layout.algorithms.barthmutzel;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 import java.util.function.Function;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,7 +15,7 @@ import org.slf4j.LoggerFactory;
  * @see "W. Barth, M. Jünger, and P. Mutzel. Simple and efficient bilayer cross counting"
  * @see "V. Waddle and A. Malhotra, An E log E line crossing algorithm for levelled graphs"
  */
-public class AccumulatorTree {
+public class AccumulatorTree<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(AccumulatorTree.class);
 
@@ -49,6 +54,25 @@ public class AccumulatorTree {
     return tree[0] - sum;
   }
 
+  public int crossingCount(List<LE<V, E>> edges) {
+    Comparator<LE<V, E>> sourceIndexComparator =
+        Comparator.comparingInt(e -> e.getSource().getIndex());
+    Comparator<LE<V, E>> targetIndexComparator =
+        Comparator.comparingInt(e -> e.getTarget().getIndex());
+    Comparator<LE<V, E>> biLevelEdgeComparator =
+        sourceIndexComparator.thenComparing(targetIndexComparator);
+    edges.sort(biLevelEdgeComparator);
+    List<Integer> targetIndices = new ArrayList<>();
+    int weight = 1;
+    for (LE<V, E> edge : edges) {
+      targetIndices.add(edge.getTarget().getIndex());
+    }
+    int[] southSequence = new int[targetIndices.size()];
+    targetIndices.forEach(i -> southSequence[i] = i);
+    return crossCount(southSequence, southSequence.length);
+    //    return weight * InsertionSortCounter.insertionSortCounter(targetIndices);
+  }
+
   public int crossCount(int[] southSequence, int r) {
     int crossCount = 0;
     for (int k = 0; k < r; k++) {
@@ -62,6 +86,7 @@ public class AccumulatorTree {
         tree[index]++;
       }
     }
+    Arrays.stream(tree).forEach(i -> tree[i] = 0);
     return crossCount;
   }
 

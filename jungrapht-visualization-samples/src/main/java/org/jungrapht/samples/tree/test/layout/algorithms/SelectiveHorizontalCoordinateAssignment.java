@@ -10,9 +10,9 @@ import org.jungrapht.visualization.layout.algorithms.brandeskopf.AverageMedian;
 import org.jungrapht.visualization.layout.algorithms.brandeskopf.HorizontalCompaction;
 import org.jungrapht.visualization.layout.algorithms.brandeskopf.HorizontalCoordinateAssignment;
 import org.jungrapht.visualization.layout.algorithms.brandeskopf.VerticalAlignment;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaEdge;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaVertex;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SyntheticSugiyamaVertex;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.SyntheticLV;
 import org.jungrapht.visualization.layout.model.Point;
 
 /**
@@ -38,9 +38,9 @@ public class SelectiveHorizontalCoordinateAssignment {
    * @param <E> edge type
    */
   public static <V, E> void horizontalCoordinateAssignment(
-      SugiyamaVertex<V>[][] layers,
-      Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> svGraph,
-      Set<SugiyamaEdge<V, E>> markedSegments,
+      LV<V>[][] layers,
+      Graph<LV<V>, LE<V, E>> svGraph,
+      Set<LE<V, E>> markedSegments,
       int horizontalOffset,
       int verticalOffset,
       boolean doUpLeft,
@@ -99,7 +99,7 @@ public class SelectiveHorizontalCoordinateAssignment {
 
     for (int i = 0; i < layers.length; i++) {
       for (int j = 0; j < layers[i].length; j++) {
-        SugiyamaVertex<V> v = layers[i][j];
+        LV<V> v = layers[i][j];
         //    for (List<SugiyamaVertex<V>> list : layers) {
         //      for (SugiyamaVertex<V> v : list) {
         List<Point> points = new ArrayList<>();
@@ -139,9 +139,7 @@ public class SelectiveHorizontalCoordinateAssignment {
    * @param <E>
    */
   static <V, E> void preprocessing(
-      List<List<SugiyamaVertex<V>>> layers,
-      Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> svGraph,
-      Set<SugiyamaEdge<V, E>> markedSegments) {
+      List<List<LV<V>>> layers, Graph<LV<V>, LE<V, E>> svGraph, Set<LE<V, E>> markedSegments) {
     int h = layers.size();
     // compares current row 'i' with 'i+1' row
     // i starts at row 1 and goes to row h-2-1
@@ -150,26 +148,26 @@ public class SelectiveHorizontalCoordinateAssignment {
 
       int k0 = 0;
       int el = 0;
-      List<SugiyamaVertex<V>> thisLayer = layers.get(i); // Li
-      List<SugiyamaVertex<V>> nextLayer = layers.get(i + 1); // Li+1
+      List<LV<V>> thisLayer = layers.get(i); // Li
+      List<LV<V>> nextLayer = layers.get(i + 1); // Li+1
       //      for (int el1 = 1; el1 <= nextLayer.size(); el1++) {
       for (int el1 = 0; el1 <= nextLayer.size() - 1; el1++) { // zero based
         // get the vertex at next layer index el1
-        SugiyamaVertex<V> vel1nextLayer = nextLayer.get(el1);
-        if (el1 == nextLayer.size() - 1 || vel1nextLayer instanceof SyntheticSugiyamaVertex) {
+        LV<V> vel1nextLayer = nextLayer.get(el1);
+        if (el1 == nextLayer.size() - 1 || vel1nextLayer instanceof SyntheticLV) {
           int k1 = thisLayer.size() - 1;
-          if (vel1nextLayer instanceof SyntheticSugiyamaVertex) {
-            Optional<SugiyamaEdge<V, E>> incomingEdgeOpt =
+          if (vel1nextLayer instanceof SyntheticLV) {
+            Optional<LE<V, E>> incomingEdgeOpt =
                 svGraph.incomingEdgesOf(vel1nextLayer).stream().findFirst();
             if (incomingEdgeOpt.isPresent()) {
-              SugiyamaEdge<V, E> incomingEdge = incomingEdgeOpt.get();
-              SugiyamaVertex<V> upperNeighbor = svGraph.getEdgeSource(incomingEdge);
+              LE<V, E> incomingEdge = incomingEdgeOpt.get();
+              LV<V> upperNeighbor = svGraph.getEdgeSource(incomingEdge);
               k1 = upperNeighbor.getIndex();
             }
           }
           while (el <= el1) {
-            SugiyamaVertex<V> velNextLayer = nextLayer.get(el);
-            for (SugiyamaVertex<V> upperNeighbor : getUpperNeighbors(svGraph, velNextLayer)) {
+            LV<V> velNextLayer = nextLayer.get(el);
+            for (LV<V> upperNeighbor : getUpperNeighbors(svGraph, velNextLayer)) {
               int k = upperNeighbor.getIndex();
               if (k < k0 || k > k1) {
                 markedSegments.add(svGraph.getEdge(upperNeighbor, velNextLayer));
@@ -192,8 +190,7 @@ public class SelectiveHorizontalCoordinateAssignment {
    * @param <E> edge type
    * @return a {@List} of the source vertices for the provided vertex
    */
-  static <V, E> List<SugiyamaVertex<V>> getUpperNeighbors(
-      Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> graph, SugiyamaVertex<V> v) {
+  static <V, E> List<LV<V>> getUpperNeighbors(Graph<LV<V>, LE<V, E>> graph, LV<V> v) {
     return graph.incomingEdgesOf(v).stream().map(graph::getEdgeSource).collect(Collectors.toList());
   }
 }

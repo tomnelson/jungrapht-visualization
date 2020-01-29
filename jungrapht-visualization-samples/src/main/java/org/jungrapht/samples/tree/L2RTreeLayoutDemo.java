@@ -8,7 +8,14 @@
  */
 package org.jungrapht.samples.tree;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridLayout;
+import java.awt.Shape;
 import java.awt.event.ItemEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
@@ -23,11 +30,7 @@ import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.CrossoverScalingControl;
-import org.jungrapht.visualization.control.DefaultModalGraphMouse;
-import org.jungrapht.visualization.control.ModalGraphMouse;
-import org.jungrapht.visualization.control.ModalGraphMouse.Mode;
-import org.jungrapht.visualization.control.ScalingControl;
+import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
 import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
@@ -65,7 +68,7 @@ public class L2RTreeLayoutDemo extends JPanel {
 
     treeLayoutAlgorithm = new TreeLayoutAlgorithm<>();
     radialLayoutAlgorithm = new RadialTreeLayoutAlgorithm<>();
-    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
+    final DefaultGraphMouse<String, Integer> graphMouse = new DefaultGraphMouse<>();
 
     vv =
         VisualizationViewer.builder(graph)
@@ -84,12 +87,6 @@ public class L2RTreeLayoutDemo extends JPanel {
 
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
-
-    JComboBox<Mode> modeBox = graphMouse.getModeComboBox();
-    modeBox.addItemListener(graphMouse.getModeListener());
-    graphMouse.setMode(ModalGraphMouse.Mode.TRANSFORMING);
-
-    final ScalingControl scaler = new CrossoverScalingControl();
 
     JToggleButton radial = new JToggleButton("Radial");
     radial.addItemListener(
@@ -117,8 +114,6 @@ public class L2RTreeLayoutDemo extends JPanel {
     Box controls = Box.createHorizontalBox();
     controls.add(ControlHelpers.getCenteredContainer("Layout Control", radial));
     controls.add(ControlHelpers.getCenteredContainer("Scale", ControlHelpers.getZoomControls(vv)));
-    controls.add(
-        ControlHelpers.getCenteredContainer("Mouse Mode", ControlHelpers.getModeRadio(graphMouse)));
     add(controls, BorderLayout.SOUTH);
   }
 

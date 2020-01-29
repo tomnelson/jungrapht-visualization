@@ -1,5 +1,7 @@
 package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
+import org.jungrapht.visualization.layout.util.synthetics.Synthetic;
+
 /**
  * an edge that is not in the original graph, but is synthesized to replace one or more original
  * graph edges.
@@ -7,18 +9,16 @@ package org.jungrapht.visualization.layout.algorithms.sugiyama;
  * @param <V> vertex type
  * @param <E> edge type
  */
-public class SyntheticSugiyamaEdge<V, E> extends SugiyamaEdge<V, E> {
+public class SyntheticLE<V, E> extends LEI<V, E> implements Synthetic {
 
-  public static <V, E> SyntheticSugiyamaEdge of(
-      SugiyamaEdge<V, E> edge, SugiyamaVertex<V> source, SugiyamaVertex<V> target) {
+  public static <V, E> SyntheticLE of(LE<V, E> edge, LV<V> source, LV<V> target) {
 
-    return new SyntheticSugiyamaEdge(edge, source, target);
+    return new SyntheticLE(edge, source, target);
   }
 
-  protected SyntheticSugiyamaEdge(
-      SugiyamaEdge<V, E> edge, SugiyamaVertex<V> source, SugiyamaVertex<V> target) {
+  protected SyntheticLE(LE<V, E> edge, LV<V> source, LV<V> target) {
 
-    super(edge.edge, source, target);
+    super(edge.getEdge(), source, target);
     this.se = edge;
   }
 
@@ -27,7 +27,7 @@ public class SyntheticSugiyamaEdge<V, E> extends SugiyamaEdge<V, E> {
    * reference to that edge The edge what was split will gain an intermediate vertex between the
    * source and target vertices each time it or one of its split-off edges is further split
    */
-  protected SugiyamaEdge<V, E> se;
+  protected LE<V, E> se;
 
   @Override
   public boolean equals(Object o) {

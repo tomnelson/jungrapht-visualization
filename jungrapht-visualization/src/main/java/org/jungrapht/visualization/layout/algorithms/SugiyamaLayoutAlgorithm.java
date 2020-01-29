@@ -1,8 +1,8 @@
 package org.jungrapht.visualization.layout.algorithms;
 
-import java.awt.Shape;
+import java.awt.*;
 import java.awt.geom.Ellipse2D;
-import java.util.*;
+import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -59,6 +59,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
     protected Function<V, Shape> vertexShapeFunction = v -> IDENTITY_SHAPE;
     protected boolean straightenEdges = true;
     protected boolean postStraighten = true;
+    protected boolean transpose = true;
     protected boolean expandLayout = true;
     protected Runnable after = () -> {};
     protected boolean threaded;
@@ -80,6 +81,11 @@ public class SugiyamaLayoutAlgorithm<V, E>
 
     public B postStraighten(boolean postStraighten) {
       this.postStraighten = postStraighten;
+      return self();
+    }
+
+    public B transpose(boolean transpose) {
+      this.transpose = transpose;
       return self();
     }
 
@@ -120,6 +126,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
   protected Function<V, Shape> vertexShapeFunction;
   protected boolean straightenEdges;
   protected boolean postStraighten;
+  protected boolean transpose;
   protected boolean expandLayout;
   protected RenderContext<V, E> renderContext;
   boolean threaded;
@@ -135,6 +142,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
         builder.vertexShapeFunction,
         builder.straightenEdges,
         builder.postStraighten,
+        builder.transpose,
         builder.expandLayout,
         builder.threaded,
         builder.after);
@@ -144,12 +152,14 @@ public class SugiyamaLayoutAlgorithm<V, E>
       Function<V, Shape> vertexShapeFunction,
       boolean straightenEdges,
       boolean postStraighten,
+      boolean transpose,
       boolean expandLayout,
       boolean threaded,
       Runnable after) {
     this.vertexShapeFunction = vertexShapeFunction;
     this.straightenEdges = straightenEdges;
     this.postStraighten = postStraighten;
+    this.transpose = transpose;
     this.expandLayout = expandLayout;
     this.threaded = threaded;
     this.after = after;
@@ -174,6 +184,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
             .renderContext(renderContext)
             .straightenEdges(straightenEdges)
             .postStraighten(postStraighten)
+            .transpose(transpose)
             .build();
     if (threaded) {
 

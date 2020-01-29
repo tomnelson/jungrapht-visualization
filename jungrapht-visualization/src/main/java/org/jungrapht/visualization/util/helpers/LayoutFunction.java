@@ -57,7 +57,8 @@ public class LayoutFunction<V> implements Function<String, LayoutAlgorithm.Build
       super(
           Layout.of("Kamada Kawai", KKLayoutAlgorithm.<V>builder()),
           Layout.of("Circle", CircleLayoutAlgorithm.<V>builder()),
-          Layout.of("RECCircle", CircleLayoutAlgorithm.<V>builder().reduceEdgeCrossing(true)),
+          Layout.of(
+              "Reduced Xing Circle", CircleLayoutAlgorithm.<V>builder().reduceEdgeCrossing(true)),
           Layout.of("Self Organizing Map", ISOMLayoutAlgorithm.<V>builder()),
           Layout.of("Fruchterman Reingold", FRLayoutAlgorithm.<V>builder()),
           Layout.of(

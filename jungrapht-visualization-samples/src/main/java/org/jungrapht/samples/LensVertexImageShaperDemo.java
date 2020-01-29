@@ -31,8 +31,7 @@ import org.jungrapht.visualization.control.ModalLensGraphMouse;
 import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.decorators.IconShapeFunction;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
-import org.jungrapht.visualization.layout.algorithms.CircleLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.renderers.Checkmark;
 import org.jungrapht.visualization.renderers.JLabelEdgeLabelRenderer;
@@ -115,8 +114,8 @@ public class LensVertexImageShaperDemo extends JPanel {
       }
     }
 
-    LayoutAlgorithm<Number> layoutAlgorithm = new CircleLayoutAlgorithm<>();
-    //    layoutAlgorithm.setMaxIterations(100);
+    KKLayoutAlgorithm<Number> layoutAlgorithm = new KKLayoutAlgorithm<>();
+    layoutAlgorithm.setMaxIterations(100);
 
     final DefaultModalGraphMouse<Number, Number> graphMouse = new DefaultModalGraphMouse<>();
 

@@ -7,9 +7,9 @@ import org.jgrapht.graph.builder.GraphBuilder;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.GreedyCycleRemoval;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaEdge;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaTransformedGraphSupplier;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaVertex;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -133,19 +133,17 @@ public class TestGreedyCycleRemoval {
 
     SugiyamaTransformedGraphSupplier<String, Integer> transformedGraphSupplier =
         new SugiyamaTransformedGraphSupplier(graph);
-    Graph<SugiyamaVertex<String>, SugiyamaEdge<String, Integer>> svGraph =
-        transformedGraphSupplier.get();
+    Graph<LV<String>, LE<String, Integer>> svGraph = transformedGraphSupplier.get();
 
-    GreedyCycleRemoval<SugiyamaVertex<String>, SugiyamaEdge<String, Integer>> gcr =
-        new GreedyCycleRemoval<>(svGraph);
+    GreedyCycleRemoval<LV<String>, LE<String, Integer>> gcr = new GreedyCycleRemoval<>(svGraph);
 
-    Collection<SugiyamaEdge<String, Integer>> feedbackArcs = gcr.getFeedbackArcs();
+    Collection<LE<String, Integer>> feedbackArcs = gcr.getFeedbackArcs();
 
-    for (SugiyamaEdge<String, Integer> se : feedbackArcs) {
+    for (LE<String, Integer> se : feedbackArcs) {
       svGraph.removeEdge(se);
-      SugiyamaEdge<String, Integer> newEdge =
-          SugiyamaEdge.<String, Integer>of(se.edge, se.target, se.source);
-      svGraph.addEdge(newEdge.source, newEdge.target, newEdge);
+      LE<String, Integer> newEdge =
+          LE.<String, Integer>of(se.getEdge(), se.getTarget(), se.getSource());
+      svGraph.addEdge(newEdge.getSource(), newEdge.getTarget(), newEdge);
     }
     log.info("reverseArcs: {}", gcr.getFeedbackArcs());
 

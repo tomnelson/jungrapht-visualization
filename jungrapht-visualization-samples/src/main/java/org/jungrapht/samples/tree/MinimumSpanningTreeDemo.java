@@ -8,16 +8,18 @@
  */
 package org.jungrapht.samples.tree;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridLayout;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.CrossoverScalingControl;
-import org.jungrapht.visualization.control.DefaultModalGraphMouse;
-import org.jungrapht.visualization.control.ScalingControl;
+import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
@@ -94,9 +96,9 @@ public class MinimumSpanningTreeDemo extends JPanel {
             .build();
 
     // create a GraphMouse for each view
-    DefaultModalGraphMouse<String, Integer> gm0 = new DefaultModalGraphMouse<>();
-    DefaultModalGraphMouse<String, Integer> gm1 = new DefaultModalGraphMouse<>();
-    DefaultModalGraphMouse<String, Integer> gm2 = new DefaultModalGraphMouse<>();
+    DefaultGraphMouse<String, Integer> gm0 = new DefaultGraphMouse<>();
+    DefaultGraphMouse<String, Integer> gm1 = new DefaultGraphMouse<>();
+    DefaultGraphMouse<String, Integer> gm2 = new DefaultGraphMouse<>();
 
     // create the two views, one for each model
     // they share the same renderer
@@ -196,20 +198,10 @@ public class MinimumSpanningTreeDemo extends JPanel {
 
     add(panel);
 
-    // create zoom buttons for scaling the Function that is
-    // shared between the two models.
-    final ScalingControl scaler = new CrossoverScalingControl();
-    vv0.scaleToLayout(scaler);
-
-    JPanel modePanel = new JPanel();
-    modePanel.setBorder(BorderFactory.createTitledBorder("Mouse Mode"));
-    gm1.getModeComboBox().addItemListener(gm2.getModeListener());
-    gm1.getModeComboBox().addItemListener(gm0.getModeListener());
-    modePanel.add(gm1.getModeComboBox());
+    vv0.scaleToLayout();
 
     JPanel controls = new JPanel();
     controls.add(ControlHelpers.getZoomControls("Zoom", vv1));
-    controls.add(modePanel);
     add(controls, BorderLayout.SOUTH);
   }
 

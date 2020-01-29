@@ -27,10 +27,10 @@ import org.jungrapht.visualization.layout.algorithms.ShapeFunctionAware;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.ArticulatedEdge;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.GraphLayers;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.GreedyCycleRemoval;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaEdge;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaTransformedGraphSupplier;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaVertex;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SyntheticSugiyamaVertex;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.SyntheticLV;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Synthetics;
 import org.jungrapht.visualization.layout.algorithms.util.RenderContextAware;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -143,24 +143,23 @@ public class LayeredLayoutAlgorithm<V, E>
   }
 
   Graph<V, E> originalGraph;
-  List<List<SugiyamaVertex<V>>> layers;
-  Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> svGraph;
-  Set<SugiyamaEdge<V, E>> markedSegments = new HashSet<>();
+  List<List<LV<V>>> layers;
+  Graph<LV<V>, LE<V, E>> svGraph;
+  Set<LE<V, E>> markedSegments = new HashSet<>();
 
   @Override
   public void visit(LayoutModel<V> layoutModel) {
     this.originalGraph = layoutModel.getGraph();
     this.svGraph = new SugiyamaTransformedGraphSupplier<>(originalGraph).get();
-    GreedyCycleRemoval<SugiyamaVertex<V>, SugiyamaEdge<V, E>> greedyCycleRemoval =
-        new GreedyCycleRemoval(svGraph);
-    Collection<SugiyamaEdge<V, E>> feedbackArcs = greedyCycleRemoval.getFeedbackArcs();
+    GreedyCycleRemoval<LV<V>, LE<V, E>> greedyCycleRemoval = new GreedyCycleRemoval(svGraph);
+    Collection<LE<V, E>> feedbackArcs = greedyCycleRemoval.getFeedbackArcs();
 
     // reverse the direction of feedback arcs so that they no longer introduce cycles in the graph
     // the feedback arcs will be processed later to draw with the correct direction and correct articulation points
-    for (SugiyamaEdge<V, E> se : feedbackArcs) {
+    for (LE<V, E> se : feedbackArcs) {
       svGraph.removeEdge(se);
-      SugiyamaEdge<V, E> newEdge = SugiyamaEdge.of(se.edge, se.target, se.source);
-      svGraph.addEdge(newEdge.source, newEdge.target, newEdge);
+      LE<V, E> newEdge = LE.of(se.getEdge(), se.getTarget(), se.getSource());
+      svGraph.addEdge(newEdge.getSource(), newEdge.getTarget(), newEdge);
     }
 
     this.layers = GraphLayers.assign(svGraph);
@@ -169,8 +168,8 @@ public class LayeredLayoutAlgorithm<V, E>
     }
 
     Synthetics<V, E> synthetics = new Synthetics<>(svGraph);
-    List<SugiyamaEdge<V, E>> edges = new ArrayList<>(svGraph.edgeSet());
-    SugiyamaVertex<V>[][] layersArray = synthetics.createVirtualVerticesAndEdges(edges, layers);
+    List<LE<V, E>> edges = new ArrayList<>(svGraph.edgeSet());
+    LV<V>[][] layersArray = synthetics.createVirtualVerticesAndEdges(edges, layers);
 
     // rearranged locations of sythetic vertices to match the graph layering from the
     // Brandes Kopf paper
@@ -178,10 +177,10 @@ public class LayeredLayoutAlgorithm<V, E>
     LayeredLayoutAlgorithm.rearrangeLayers(layers);
     layersArray = listToArray(layers);
 
-    Map<SugiyamaVertex<V>, SugiyamaVertex<V>> vertexMap = new HashMap<>();
-    for (List<SugiyamaVertex<V>> layer : layers) {
-      for (SugiyamaVertex<V> sugiyamaVertex : layer) {
-        vertexMap.put(sugiyamaVertex, sugiyamaVertex);
+    Map<LV<V>, LV<V>> vertexMap = new HashMap<>();
+    for (List<LV<V>> layer : layers) {
+      for (LV<V> LV : layer) {
+        vertexMap.put(LV, LV);
       }
     }
 
@@ -194,12 +193,12 @@ public class LayeredLayoutAlgorithm<V, E>
     int y = 0;
     int x = 0;
     for (int i = 0; i < layers.size(); i++) {
-      List<SugiyamaVertex<V>> list = layers.get(i);
+      List<LV<V>> list = layers.get(i);
       y += verticalOffset;
       x = 0;
       for (int j = 0; j < list.size(); j++) {
-        SugiyamaVertex<V> v = list.get(j);
-        x += horizontalOffset + vertexShapeFunction.apply(v.vertex).getBounds().width;
+        LV<V> v = list.get(j);
+        x += horizontalOffset + vertexShapeFunction.apply(v.getVertex()).getBounds().width;
         v.setPoint(Point.of(x, y));
       }
     }
@@ -211,12 +210,12 @@ public class LayeredLayoutAlgorithm<V, E>
     Function<V, Shape> vertexShapeFunction = renderContext.getVertexShapeFunction();
     int totalHeight = 0;
     int totalWidth = 0;
-    for (List<SugiyamaVertex<V>> layer : layers) {
+    for (List<LV<V>> layer : layers) {
       int width = horizontalOffset;
       int maxHeight = 0;
-      for (SugiyamaVertex<V> sugiyamaVertex : layer) {
-        if (!(sugiyamaVertex instanceof SyntheticSugiyamaVertex)) {
-          java.awt.Rectangle bounds = vertexShapeFunction.apply(sugiyamaVertex.vertex).getBounds();
+      for (LV<V> LV : layer) {
+        if (!(LV instanceof SyntheticLV)) {
+          java.awt.Rectangle bounds = vertexShapeFunction.apply(LV.getVertex()).getBounds();
           width += bounds.width + horizontalOffset;
           maxHeight = Math.max(maxHeight, bounds.height);
         } else {
@@ -238,9 +237,9 @@ public class LayeredLayoutAlgorithm<V, E>
         .vertexSet()
         .forEach(
             v -> {
-              SugiyamaVertex<V> sugiyamaVertex2 = vertexMap.get(v);
-              if (sugiyamaVertex2 != null) {
-                Point p = sugiyamaVertex2.getPoint();
+              LV<V> LV2 = vertexMap.get(v);
+              if (LV2 != null) {
+                Point p = LV2.getPoint();
                 v.setPoint(p);
               } else {
                 log.error("got null");
@@ -252,20 +251,20 @@ public class LayeredLayoutAlgorithm<V, E>
     // reverse the direction of any feedback arcs (put them back in the direction
     // they belong in
     Set<E> feedbackEdges = new HashSet<>();
-    feedbackArcs.forEach(a -> feedbackEdges.add(a.edge));
+    feedbackArcs.forEach(a -> feedbackEdges.add(a.getEdge()));
     articulatedEdges
         .stream()
         .filter(ae -> feedbackEdges.contains(ae.edge))
         .forEach(
             ae -> {
               svGraph.removeEdge(ae);
-              SugiyamaEdge<V, E> reversed = ae.reversed();
-              svGraph.addEdge(reversed.source, reversed.target, reversed);
+              LE<V, E> reversed = ae.reversed();
+              svGraph.addEdge(reversed.getSource(), reversed.getTarget(), reversed);
             });
 
     for (ArticulatedEdge<V, E> ae : articulatedEdges) {
-      for (SugiyamaVertex<V> sugiyamaVertex : ae.getIntermediateVertices()) {
-        sugiyamaVertex.setPoint(vertexMap.get(sugiyamaVertex).getPoint());
+      for (LV<V> LV : ae.getIntermediateVertices()) {
+        LV.setPoint(vertexMap.get(LV).getPoint());
       }
     }
 
@@ -290,7 +289,7 @@ public class LayeredLayoutAlgorithm<V, E>
 
     renderContext.setEdgeShapeFunction(edgeShape);
 
-    svGraph.vertexSet().forEach(v -> layoutModel.set(v.vertex, v.getPoint()));
+    svGraph.vertexSet().forEach(v -> layoutModel.set(v.getVertex(), v.getPoint()));
   }
 
   void preprocessing() {
@@ -300,27 +299,27 @@ public class LayeredLayoutAlgorithm<V, E>
 
       int k0 = 0;
       int el = 0;
-      List<SugiyamaVertex<V>> thisLayer = layers.get(i); // Li
-      List<SugiyamaVertex<V>> nextLayer = layers.get(i + 1); // Li+1
+      List<LV<V>> thisLayer = layers.get(i); // Li
+      List<LV<V>> nextLayer = layers.get(i + 1); // Li+1
       //      for (int el1 = 1; el1 <= nextLayer.size(); el1++) {
       for (int el1 = 0; el1 <= nextLayer.size() - 1; el1++) { // zero based
         // get the vertex at next layer index el1
-        SugiyamaVertex<V> vel1nextLayer = nextLayer.get(el1);
+        LV<V> vel1nextLayer = nextLayer.get(el1);
         //        SugiyamaVertex<V> velNextLayer = nextLayer.get(el);
-        if (el1 == nextLayer.size() - 1 || vel1nextLayer instanceof SyntheticSugiyamaVertex) {
+        if (el1 == nextLayer.size() - 1 || vel1nextLayer instanceof SyntheticLV) {
           int k1 = thisLayer.size() - 1;
-          if (vel1nextLayer instanceof SyntheticSugiyamaVertex) {
-            Optional<SugiyamaEdge<V, E>> incomingEdgeOpt =
+          if (vel1nextLayer instanceof SyntheticLV) {
+            Optional<LE<V, E>> incomingEdgeOpt =
                 svGraph.incomingEdgesOf(vel1nextLayer).stream().findFirst();
             if (incomingEdgeOpt.isPresent()) {
-              SugiyamaEdge<V, E> incomingEdge = incomingEdgeOpt.get();
-              SugiyamaVertex<V> upperNeighbor = svGraph.getEdgeSource(incomingEdge);
+              LE<V, E> incomingEdge = incomingEdgeOpt.get();
+              LV<V> upperNeighbor = svGraph.getEdgeSource(incomingEdge);
               k1 = upperNeighbor.getIndex();
             }
           }
           while (el <= el1) {
-            SugiyamaVertex<V> velNextLayer = nextLayer.get(el);
-            for (SugiyamaVertex<V> upperNeighbor : getUpperNeighbors(svGraph, velNextLayer)) {
+            LV<V> velNextLayer = nextLayer.get(el);
+            for (LV<V> upperNeighbor : getUpperNeighbors(svGraph, velNextLayer)) {
               int k = upperNeighbor.getIndex();
               if (k < k0 || k > k1) {
                 markedSegments.add(
@@ -337,16 +336,15 @@ public class LayeredLayoutAlgorithm<V, E>
     }
   }
 
-  List<SugiyamaVertex<V>> getUpperNeighbors(
-      Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> graph, SugiyamaVertex<V> v) {
+  List<LV<V>> getUpperNeighbors(Graph<LV<V>, LE<V, E>> graph, LV<V> v) {
     return graph.incomingEdgesOf(v).stream().map(graph::getEdgeSource).collect(Collectors.toList());
   }
 
-  public static <V> void rearrangeLayers(List<List<SugiyamaVertex<V>>> layers) {
+  public static <V> void rearrangeLayers(List<List<LV<V>>> layers) {
     // layer 0 is okay
     // layer 1, move 0 to 3
-    List<SugiyamaVertex<V>> list = layers.get(1);
-    SugiyamaVertex<V> v = list.remove(0);
+    List<LV<V>> list = layers.get(1);
+    LV<V> v = list.remove(0);
     list.add(3, v);
     Collections.swap(list, 0, 1);
     Collections.swap(list, 1, 2);
@@ -420,31 +418,31 @@ public class LayeredLayoutAlgorithm<V, E>
 
     // update all the metadata indices
     for (int j = 0; j < layers.size(); j++) {
-      List<SugiyamaVertex<V>> rank = layers.get(j);
+      List<LV<V>> rank = layers.get(j);
       log.info("rank {}", j);
       for (int i = 0; i < rank.size(); i++) {
-        SugiyamaVertex<V> vv = rank.get(i);
+        LV<V> vv = rank.get(i);
         log.info("changed index from {} to {}", vv.getIndex(), i);
         vv.setIndex(i);
       }
     }
   }
 
-  static <V> List<List<SugiyamaVertex<V>>> arrayToList(SugiyamaVertex<V>[][] array) {
-    List<List<SugiyamaVertex<V>>> layers = new ArrayList<>();
+  static <V> List<List<LV<V>>> arrayToList(LV<V>[][] array) {
+    List<List<LV<V>>> layers = new ArrayList<>();
     for (int i = 0; i < array.length; i++) {
-      List<SugiyamaVertex<V>> list = new LinkedList<>();
+      List<LV<V>> list = new LinkedList<>();
       layers.add(list);
       list.addAll(Arrays.asList(array[i]));
     }
     return layers;
   }
 
-  static <V> SugiyamaVertex<V>[][] listToArray(List<List<SugiyamaVertex<V>>> layers) {
-    SugiyamaVertex<V>[][] array = new SugiyamaVertex[layers.size()][];
+  static <V> LV<V>[][] listToArray(List<List<LV<V>>> layers) {
+    LV<V>[][] array = new LV[layers.size()][];
     for (int i = 0; i < layers.size(); i++) {
-      List<SugiyamaVertex<V>> list = layers.get(i);
-      array[i] = new SugiyamaVertex[list.size()];
+      List<LV<V>> list = layers.get(i);
+      array[i] = new LV[list.size()];
       for (int j = 0; j < list.size(); j++) {
         array[i][j] = list.get(j);
       }

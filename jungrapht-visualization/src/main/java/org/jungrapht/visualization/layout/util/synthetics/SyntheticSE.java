@@ -5,9 +5,9 @@ package org.jungrapht.visualization.layout.util.synthetics;
  *
  * @param <E> edge type
  */
-public class SyntheticEdge<E> extends SE<E> {
+public class SyntheticSE<E> extends SEI<E> implements Synthetic {
 
-  public SyntheticEdge() {
+  public SyntheticSE() {
     super(null);
   }
 

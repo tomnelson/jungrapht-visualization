@@ -8,7 +8,10 @@
  */
 package org.jungrapht.samples.tree;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.util.Map;
 import javax.swing.*;
 import org.jgrapht.Graph;
@@ -17,14 +20,17 @@ import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.DefaultModalGraphMouse;
-import org.jungrapht.visualization.control.ModalLensGraphMouse;
+import org.jungrapht.visualization.control.DefaultGraphMouse;
+import org.jungrapht.visualization.control.DefaultLensGraphMouse;
+import org.jungrapht.visualization.control.LensGraphMouse;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.selection.MutableSelectedState;
-import org.jungrapht.visualization.transform.*;
+import org.jungrapht.visualization.transform.HyperbolicTransformer;
+import org.jungrapht.visualization.transform.LayoutLensSupport;
+import org.jungrapht.visualization.transform.LensSupport;
 import org.jungrapht.visualization.transform.shape.HyperbolicShapeTransformer;
 import org.jungrapht.visualization.transform.shape.ViewLensSupport;
 import org.jungrapht.visualization.util.helpers.ControlHelpers;
@@ -45,9 +51,9 @@ public class RadialTreeLensDemo extends JPanel {
   VisualizationViewer<String, Integer> vv;
 
   /** provides a Hyperbolic lens for the view */
-  LensSupport<ModalLensGraphMouse> hyperbolicViewSupport;
+  LensSupport<LensGraphMouse> hyperbolicViewSupport;
 
-  LensSupport<ModalLensGraphMouse> hyperbolicLayoutSupport;
+  LensSupport<LensGraphMouse> hyperbolicLayoutSupport;
 
   /** create an instance of a simple graph with controls to demo the zoomand hyperbolic features. */
   public RadialTreeLensDemo() {
@@ -63,7 +69,7 @@ public class RadialTreeLensDemo extends JPanel {
             .layoutAlgorithm(new StaticLayoutAlgorithm())
             .layoutSize(preferredSize)
             .build();
-    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
+    final DefaultGraphMouse<String, Integer> graphMouse = new DefaultGraphMouse<>();
 
     vv =
         VisualizationViewer.builder(visualizationModel)
@@ -93,17 +99,17 @@ public class RadialTreeLensDemo extends JPanel {
     Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
 
     hyperbolicViewSupport =
-        ViewLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
+        ViewLensSupport.builder(vv)
             .lensTransformer(
                 HyperbolicShapeTransformer.builder(d)
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
-            .lensGraphMouse(new ModalLensGraphMouse())
+            .lensGraphMouse(new DefaultLensGraphMouse())
             .build();
 
     hyperbolicLayoutSupport =
-        LayoutLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
+        LayoutLensSupport.builder(vv)
             .lensTransformer(
                 HyperbolicTransformer.builder(d)
                     .delegate(
@@ -111,7 +117,7 @@ public class RadialTreeLensDemo extends JPanel {
                             .getMultiLayerTransformer()
                             .getTransformer(Layer.LAYOUT))
                     .build())
-            .lensGraphMouse(new ModalLensGraphMouse())
+            .lensGraphMouse(new DefaultLensGraphMouse())
             .build();
 
     final JButton hyperView = new JButton("Hyperbolic View");
@@ -139,11 +145,7 @@ public class RadialTreeLensDemo extends JPanel {
     radio.add(hyperLayout);
     radio.add(noLens);
 
-    graphMouse.addItemListener(hyperbolicViewSupport.getGraphMouse().getModeListener());
-    graphMouse.addItemListener(hyperbolicLayoutSupport.getGraphMouse().getModeListener());
-
     JMenuBar menubar = new JMenuBar();
-    menubar.add(graphMouse.getModeMenu());
     visualizationScrollPane.setCorner(menubar);
 
     Box controls = Box.createHorizontalBox();
@@ -159,7 +161,6 @@ public class RadialTreeLensDemo extends JPanel {
 
     controls.add(ControlHelpers.getZoomControls("Scale", vv));
     controls.add(ControlHelpers.getCenteredContainer("Lens Controls", lensBox));
-    controls.add(ControlHelpers.getModeControls("Mouse Mode", vv));
     JPanel layoutControls = new JPanel(new GridLayout(0, 1));
     layoutControls.add(
         TreeLayoutSelector.builder(vv).initialSelection(5).after(vv::scaleToLayout).build());

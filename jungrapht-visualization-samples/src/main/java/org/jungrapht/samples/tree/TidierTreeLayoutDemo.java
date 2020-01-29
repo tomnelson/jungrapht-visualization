@@ -8,15 +8,19 @@
  */
 package org.jungrapht.samples.tree;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.Shape;
 import java.util.function.Function;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.DemoTreeSupplier;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.DefaultModalGraphMouse;
-import org.jungrapht.visualization.control.ModalGraphMouse.Mode;
+import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.TidierTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
@@ -43,7 +47,7 @@ public class TidierTreeLayoutDemo extends JPanel {
     setLayout(new BorderLayout());
     // create a simple graph for the demo
     graph = DemoTreeSupplier.createForest();
-    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
+    final DefaultGraphMouse<String, Integer> graphMouse = new DefaultGraphMouse<>();
 
     vv =
         VisualizationViewer.builder(graph)
@@ -78,10 +82,6 @@ public class TidierTreeLayoutDemo extends JPanel {
     //        new LayoutPaintable.LayoutBounds(
     //            vv.getVisualizationModel(), vv.getRenderContext().getMultiLayerTransformer()));
 
-    JComboBox<Mode> modeBox = graphMouse.getModeComboBox();
-    modeBox.addItemListener(graphMouse.getModeListener());
-    graphMouse.setMode(Mode.TRANSFORMING);
-
     JPanel layoutPanel = new JPanel(new GridLayout(0, 1));
     layoutPanel.add(
         TreeLayoutSelector.<String, Integer>builder(vv)
@@ -92,7 +92,6 @@ public class TidierTreeLayoutDemo extends JPanel {
     JPanel controls = new JPanel();
     controls.add(layoutPanel);
     controls.add(ControlHelpers.getZoomControls(vv));
-    controls.add(modeBox);
 
     add(controls, BorderLayout.SOUTH);
   }

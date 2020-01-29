@@ -5,24 +5,24 @@ package org.jungrapht.visualization.layout.util.synthetics;
  *
  * @param <V> vertex type
  */
-public class SyntheticVertex<V> extends SV<V> {
+public class SyntheticSV<V> extends SVI<V> implements Synthetic {
 
   final int hash;
 
-  public SyntheticVertex() {
+  public SyntheticSV() {
     super();
     this.hash = System.identityHashCode(this);
   }
 
-  public SyntheticVertex(SyntheticVertex<V> other) {
+  public SyntheticSV(SyntheticSV<V> other) {
     super();
     this.hash = other.hash;
   }
 
   @Override
   public boolean equals(Object o) {
-    if (o instanceof SyntheticVertex) {
-      return hash == ((SyntheticVertex) o).hash;
+    if (o instanceof SyntheticSV) {
+      return hash == ((SyntheticSV) o).hash;
     }
     return false;
   }

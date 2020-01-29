@@ -3,14 +3,34 @@ package org.jungrapht.visualization.util.helpers;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.DefaultRenderContext;
 import org.jungrapht.visualization.VisualizationServer;
-import org.jungrapht.visualization.layout.algorithms.*;
+import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.CircleLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.EdgeAwareTreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
+import org.jungrapht.visualization.layout.algorithms.MultiRowEdgeAwareTreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.MultiRowTreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.RadialEdgeAwareTreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.RadialTreeLayout;
+import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.SugiyamaLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.TidierRadialTreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.TidierTreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.TreeLayout;
+import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.layout.algorithms.util.RenderContextAware;
 import org.jungrapht.visualization.util.Context;
@@ -205,6 +225,13 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     SugiyamaLayoutAlgorithm<V, E> sugiyamaLayoutAlgorithm =
         SugiyamaLayoutAlgorithm.<V, E>edgeAwareBuilder().after(after).build();
 
+    EiglspergerLayoutAlgorithm<V, E> eiglspergerLayoutAlgorithm =
+        EiglspergerLayoutAlgorithm.<V, E>edgeAwareBuilder()
+            .straightenEdges(true)
+            .threaded(false)
+            .after(after)
+            .build();
+
     MultiRowTreeLayoutAlgorithm<V> multiRowTreeLayoutAlgorithm =
         MultiRowTreeLayoutAlgorithm.<V>builder().vertexShapeFunction(vertexShapeFunction).build();
 
@@ -267,9 +294,13 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     tidierTreeButton.addItemListener(new LayoutItemListener(tidierTreeLayoutAlgorithm, vv));
     tidierTreeButton.setSelected(initialSelection == layoutNumber++);
 
-    JRadioButton mySugiyamaButton = new JRadioButton("Sugiyama");
-    mySugiyamaButton.addItemListener(new LayoutItemListener(sugiyamaLayoutAlgorithm, vv));
-    mySugiyamaButton.setSelected(initialSelection == layoutNumber++);
+    JRadioButton sugiyamaButton = new JRadioButton("Sugiyama");
+    sugiyamaButton.addItemListener(new LayoutItemListener(sugiyamaLayoutAlgorithm, vv));
+    sugiyamaButton.setSelected(initialSelection == layoutNumber++);
+
+    JRadioButton eiglspergerButton = new JRadioButton("Eiglsperger");
+    eiglspergerButton.addItemListener(new LayoutItemListener(eiglspergerLayoutAlgorithm, vv));
+    eiglspergerButton.setSelected(initialSelection == layoutNumber++);
 
     JRadioButton multiRowTreeButton = new JRadioButton("MultiRowTree");
     multiRowTreeButton.addItemListener(new LayoutItemListener(multiRowTreeLayoutAlgorithm, vv));
@@ -314,7 +345,8 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     ButtonGroup layoutRadio = new ButtonGroup();
     layoutRadio.add(treeButton);
     layoutRadio.add(tidierTreeButton);
-    layoutRadio.add(mySugiyamaButton);
+    layoutRadio.add(sugiyamaButton);
+    layoutRadio.add(eiglspergerButton);
     layoutRadio.add(multiRowTreeButton);
     layoutRadio.add(balloonButton);
     layoutRadio.add(radialButton);
@@ -333,7 +365,8 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     this.add(radialEdgeAwareButton);
     this.add(balloonButton);
     this.add(tidierTreeButton);
-    this.add(mySugiyamaButton);
+    this.add(sugiyamaButton);
+    this.add(eiglspergerButton);
     this.add(tidierRadialEdgeAwareButton);
     this.add(circleButton);
     this.add(betterCircleButton);

@@ -20,11 +20,9 @@ import org.jungrapht.samples.util.DemoTreeSupplier;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.CrossoverScalingControl;
-import org.jungrapht.visualization.control.DefaultModalGraphMouse;
-import org.jungrapht.visualization.control.ModalGraphMouse;
-import org.jungrapht.visualization.control.ModalLensGraphMouse;
-import org.jungrapht.visualization.control.ScalingControl;
+import org.jungrapht.visualization.control.DefaultGraphMouse;
+import org.jungrapht.visualization.control.DefaultLensGraphMouse;
+import org.jungrapht.visualization.control.LensGraphMouse;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
@@ -58,9 +56,9 @@ public class MultiRowTreeLayoutForestDemo extends JPanel {
   VisualizationViewer<String, Integer> vv;
 
   /** provides a Hyperbolic lens for the view */
-  LensSupport<ModalLensGraphMouse> hyperbolicViewSupport;
+  LensSupport<LensGraphMouse> hyperbolicViewSupport;
 
-  LensSupport<ModalLensGraphMouse> hyperbolicSupport;
+  LensSupport<LensGraphMouse> hyperbolicSupport;
 
   Dimension layoutSize = new Dimension(900, 900);
   Dimension viewSize = new Dimension(600, 600);
@@ -69,7 +67,7 @@ public class MultiRowTreeLayoutForestDemo extends JPanel {
     setLayout(new BorderLayout());
     graph = DemoTreeSupplier.createForest2();
 
-    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
+    final DefaultGraphMouse<String, Integer> graphMouse = new DefaultGraphMouse<>();
 
     vv =
         VisualizationViewer.builder(graph)
@@ -102,16 +100,16 @@ public class MultiRowTreeLayoutForestDemo extends JPanel {
     Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
     Lens lens = new Lens();
     hyperbolicViewSupport =
-        ViewLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
+        ViewLensSupport.builder(vv)
             .lensTransformer(
                 HyperbolicShapeTransformer.builder(lens)
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
-            .lensGraphMouse(new ModalLensGraphMouse())
+            .lensGraphMouse(new DefaultLensGraphMouse())
             .build();
     hyperbolicSupport =
-        LayoutLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
+        LayoutLensSupport.builder(vv)
             .lensTransformer(
                 HyperbolicTransformer.builder(lens)
                     .delegate(
@@ -119,17 +117,9 @@ public class MultiRowTreeLayoutForestDemo extends JPanel {
                             .getMultiLayerTransformer()
                             .getTransformer(Layer.LAYOUT))
                     .build())
-            .lensGraphMouse(new ModalLensGraphMouse())
+            .lensGraphMouse(new DefaultLensGraphMouse())
             .build();
 
-    graphMouse.addItemListener(hyperbolicViewSupport.getGraphMouse().getModeListener());
-    graphMouse.addItemListener(hyperbolicSupport.getGraphMouse().getModeListener());
-
-    JComboBox<?> modeBox = graphMouse.getModeComboBox();
-    modeBox.addItemListener(graphMouse.getModeListener());
-    graphMouse.setMode(ModalGraphMouse.Mode.TRANSFORMING);
-
-    final ScalingControl scaler = new CrossoverScalingControl();
     vv.scaleToLayout();
 
     Box controls = Box.createHorizontalBox();
@@ -145,8 +135,6 @@ public class MultiRowTreeLayoutForestDemo extends JPanel {
 
     controls.add(ControlHelpers.getCenteredContainer("Layout Controls", treeLayoutSelector));
     controls.add(ControlHelpers.getZoomControls("Scale", vv));
-    controls.add(
-        ControlHelpers.getCenteredContainer("Mouse Mode", ControlHelpers.getModeRadio(graphMouse)));
     controls.add(
         LensControlHelper.builder(
                 Map.of(

@@ -19,7 +19,7 @@ import org.jgrapht.traverse.DepthFirstIterator;
 import org.jungrapht.visualization.layout.util.synthetics.SE;
 import org.jungrapht.visualization.layout.util.synthetics.SV;
 import org.jungrapht.visualization.layout.util.synthetics.SVTransformedGraphSupplier;
-import org.jungrapht.visualization.layout.util.synthetics.SyntheticEdge;
+import org.jungrapht.visualization.layout.util.synthetics.SyntheticSE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,9 +71,9 @@ public class CircleLayoutReduceEdgeCrossing<V, E> {
           removalList.add(edge);
         } else {
           log.trace("currentNode: {} edge v, w: {},{} does not exist", currentNode, v, w);
-          SyntheticEdge<E> syntheticEdge = new SyntheticEdge();
-          svGraph.addEdge(v, w, syntheticEdge);
-          removalList.add(syntheticEdge);
+          SyntheticSE<E> syntheticSE = new SyntheticSE();
+          svGraph.addEdge(v, w, syntheticSE);
+          removalList.add(syntheticSE);
         }
         tableMap.get(v).remove(currentNode);
         tableMap.get(w).remove(currentNode);
@@ -99,23 +99,23 @@ public class CircleLayoutReduceEdgeCrossing<V, E> {
     }
     DepthFirstIterator<SV<V>, SE<E>> dfi = new DepthFirstIterator<>(svGraph);
     while (dfi.hasNext()) {
-      vertexList.add(dfi.next().vertex);
+      vertexList.add(dfi.next().getVertex());
     }
     for (SV<V> v : svGraph.vertexSet()) {
-      if (!vertexList.contains(v.vertex)) {
+      if (!vertexList.contains(v.getVertex())) {
         List<SV<V>> neighbors = Graphs.neighborListOf(svGraph, v);
 
         List<V> inList =
             neighbors
                 .stream()
-                .map(nn -> nn.vertex)
+                .map(nn -> nn.getVertex())
                 .filter(vertexList::contains)
                 .collect(Collectors.toList());
         if (inList.size() == 0) {
-          vertexList.add(v.vertex);
+          vertexList.add(v.getVertex());
         } else if (inList.size() == 1) {
           int idx = vertexList.indexOf(inList.get(0));
-          vertexList.add(idx, v.vertex);
+          vertexList.add(idx, v.getVertex());
         } else {
           int[] idxes = new int[inList.size()];
           for (int i = 0; i < inList.size(); i++) {
@@ -125,13 +125,13 @@ public class CircleLayoutReduceEdgeCrossing<V, E> {
           boolean consecutive = false;
           for (int j = 0; j < idxes.length - 1; j++) {
             if (Math.abs(idxes[j] - idxes[j + 1]) == 1) {
-              vertexList.add(Math.max(idxes[j], idxes[j + 1]), v.vertex);
+              vertexList.add(Math.max(idxes[j], idxes[j + 1]), v.getVertex());
               consecutive = true;
               break;
             }
           }
           if (!consecutive) {
-            vertexList.add(idxes[0], v.vertex);
+            vertexList.add(idxes[0], v.getVertex());
           }
         }
       }

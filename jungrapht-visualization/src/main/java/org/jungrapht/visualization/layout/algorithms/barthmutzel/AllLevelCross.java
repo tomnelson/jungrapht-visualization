@@ -1,8 +1,8 @@
 package org.jungrapht.visualization.layout.algorithms.barthmutzel;
 
 import org.jgrapht.Graph;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaEdge;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaVertex;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 
 /**
  * Counts edge crossing on all levels
@@ -12,11 +12,10 @@ import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaVertex;
  */
 public class AllLevelCross<V, E> {
 
-  final SugiyamaVertex<V>[][] levels;
-  final Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> graph;
+  final LV<V>[][] levels;
+  final Graph<LV<V>, LE<V, E>> graph;
 
-  public AllLevelCross(
-      Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> graph, SugiyamaVertex<V>[][] levels) {
+  public AllLevelCross(Graph<LV<V>, LE<V, E>> graph, LV<V>[][] levels) {
     this.levels = levels;
     this.graph = graph;
   }

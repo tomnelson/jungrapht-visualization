@@ -36,6 +36,8 @@ public class BrandesKopfSugiyamaGraphExample extends JFrame {
 
     SugiyamaLayoutAlgorithm<Integer, Integer> layoutAlgorithm =
         SugiyamaLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+            //                .straightenEdges(false)
+            //                .postStraighten(false)
             .after(vv::scaleToLayout)
             .build();
     layoutAlgorithm.setRenderContext(vv.getRenderContext());

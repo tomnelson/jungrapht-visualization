@@ -4,11 +4,10 @@ import org.jgrapht.Graph;
 
 public class AllLevelCross<V, E> {
 
-  final SugiyamaVertex<V>[][] levels;
-  final Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> graph;
+  final LV<V>[][] levels;
+  final Graph<LV<V>, LE<V, E>> graph;
 
-  public AllLevelCross(
-      Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> graph, SugiyamaVertex<V>[][] levels) {
+  public AllLevelCross(Graph<LV<V>, LE<V, E>> graph, LV<V>[][] levels) {
     this.levels = levels;
     this.graph = graph;
   }

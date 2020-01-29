@@ -5,9 +5,9 @@ import java.util.stream.IntStream;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaEdge;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaTransformedGraphSupplier;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaVertex;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +19,7 @@ public class BrandesKopfTest {
   private static final Logger log = LoggerFactory.getLogger(BrandesKopfTest.class);
 
   Graph<Integer, Integer> graph;
-  Graph<SugiyamaVertex<Integer>, SugiyamaEdge<Integer, Integer>> svGraph;
+  Graph<LV<Integer>, LE<Integer, Integer>> svGraph;
 
   private void createInitialGraph() {
     graph =
@@ -97,7 +97,7 @@ public class BrandesKopfTest {
   @Test
   public void makeBrandesKopf() {
     BrandesKopf brandesKopf = new BrandesKopf(graph);
-    SugiyamaVertex<Integer>[][] layers = brandesKopf.layersArray;
+    LV<Integer>[][] layers = brandesKopf.layersArray;
     Assert.assertEquals(10, layers.length);
     Assert.assertEquals(2, layers[0].length);
     Assert.assertEquals(5, layers[1].length);
@@ -116,7 +116,7 @@ public class BrandesKopfTest {
 
     for (int i = 0; i < layers.length; i++) {
       for (int j = 0; j < layers[i].length; j++) {
-        SugiyamaVertex<Integer> v = layers[i][j];
+        LV<Integer> v = layers[i][j];
         log.info("{} - {}", v.getClass(), v.getPoint());
       }
     }

@@ -1,13 +1,13 @@
-package org.jungrapht.visualization.layout.algorithms.util;
+package org.jungrapht.visualization.layout.algorithms.eiglsperger;
 
-import static org.jungrapht.visualization.layout.algorithms.util.SplayTree.Node;
+import static org.jungrapht.visualization.layout.algorithms.eiglsperger.InsertionOrderSplayTreeWithSize.Node;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TreePrinter {
 
-  public static <T extends Comparable<T>> void print(SplayTree<T> tree) {
+  public static <T extends Comparable<T>> void print(InsertionOrderSplayTreeWithSize<T> tree) {
     print(tree.root);
   }
 
@@ -16,7 +16,7 @@ public class TreePrinter {
    *
    * @param root tree root node
    */
-  public static <T extends Comparable<T>> void print(Node<T> root) {
+  public static <T> void print(Node<T> root) {
     List<List<String>> lines = new ArrayList<>();
 
     List<Node> level = new ArrayList<>();
@@ -39,7 +39,7 @@ public class TreePrinter {
           next.add(null);
           next.add(null);
         } else {
-          String aa = n.key.toString();
+          String aa = n.key.toString() + "(" + n.size + ")";
           line.add(aa);
           if (aa.length() > widest) widest = aa.length();
 

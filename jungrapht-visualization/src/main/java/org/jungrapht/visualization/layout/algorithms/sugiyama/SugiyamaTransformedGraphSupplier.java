@@ -6,8 +6,7 @@ import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.util.synthetics.SingletonTransformer;
 import org.jungrapht.visualization.layout.util.synthetics.TransformingGraphView;
 
-public class SugiyamaTransformedGraphSupplier<V, E>
-    implements Supplier<Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>>> {
+public class SugiyamaTransformedGraphSupplier<V, E> implements Supplier<Graph<LV<V>, LE<V, E>>> {
 
   private Graph<V, E> graph;
 
@@ -15,32 +14,32 @@ public class SugiyamaTransformedGraphSupplier<V, E>
     this.graph = graph;
   }
 
-  SingletonTransformer<V, SugiyamaVertex<V>> vertexTransformer;
+  SingletonTransformer<V, LV<V>> vertexTransformer;
 
-  public SingletonTransformer<V, SugiyamaVertex<V>> getVertexTransformer() {
+  public SingletonTransformer<V, LV<V>> getVertexTransformer() {
     return vertexTransformer;
   }
 
   @Override
-  public Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> get() {
-    Function<V, SugiyamaVertex<V>> vertexTransformFunction = SugiyamaVertex::of;
+  public Graph<LV<V>, LE<V, E>> get() {
+    Function<V, LV<V>> vertexTransformFunction = LV::of;
     vertexTransformer = new SingletonTransformer<>(vertexTransformFunction);
 
-    Function<E, SugiyamaEdge<V, E>> edgeTransformFunction =
+    Function<E, LE<V, E>> edgeTransformFunction =
         e ->
-            SugiyamaEdge.of(
+            LE.of(
                 e,
                 vertexTransformer.apply(graph.getEdgeSource(e)),
                 vertexTransformer.apply(graph.getEdgeTarget(e)));
-    SingletonTransformer<E, SugiyamaEdge<V, E>> edgeTransformer =
+    SingletonTransformer<E, LE<V, E>> edgeTransformer =
         new SingletonTransformer<>(edgeTransformFunction);
 
-    TransformingGraphView.Builder<V, SugiyamaVertex<V>, E, SugiyamaEdge<V, E>, ?, ?> builder =
-        TransformingGraphView.<V, SugiyamaVertex<V>, E, SugiyamaEdge<V, E>>builder(graph)
+    TransformingGraphView.Builder<V, LV<V>, E, LE<V, E>, ?, ?> builder =
+        TransformingGraphView.<V, LV<V>, E, LE<V, E>>builder(graph)
             .vertexTransformFunction(vertexTransformer)
             .edgeTransformFunction(edgeTransformer);
 
-    TransformingGraphView<V, SugiyamaVertex<V>, E, SugiyamaEdge<V, E>> graphView = builder.build();
+    TransformingGraphView<V, LV<V>, E, LE<V, E>> graphView = builder.build();
     return graphView.build();
   }
 }

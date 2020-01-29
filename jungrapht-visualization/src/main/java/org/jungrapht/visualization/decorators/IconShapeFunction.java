@@ -29,6 +29,7 @@ import org.jungrapht.visualization.util.ImageShapeUtils;
 public class IconShapeFunction<T> implements Function<T, Shape> {
   protected Map<Image, Shape> shapeMap = new HashMap<>();
   protected Function<T, Icon> iconFunction;
+  protected Function<Image, Shape> shapeFunction = shapeMap::get;
   protected Function<T, Shape> delegate;
 
   /**
@@ -81,13 +82,13 @@ public class IconShapeFunction<T> implements Function<T, Shape> {
     this.iconFunction = iconFunction;
   }
 
-  /** @return the shapeMap */
-  public Map<Image, Shape> getShapeMap() {
-    return shapeMap;
+  /** @return the shapeFunction */
+  public Function<Image, Shape> getShapeFunction() {
+    return shapeFunction::apply;
   }
 
-  /** @param shapeMap the shapeMap to set */
-  public void setShapeMap(Map<Image, Shape> shapeMap) {
-    this.shapeMap = shapeMap;
+  /** @param shapeFunction the shapeFunction to set */
+  public void setShapeFunction(Function<Image, Shape> shapeFunction) {
+    this.shapeFunction = shapeFunction;
   }
 }

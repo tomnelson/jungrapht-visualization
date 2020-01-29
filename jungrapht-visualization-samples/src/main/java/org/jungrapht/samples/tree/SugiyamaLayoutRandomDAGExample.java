@@ -45,7 +45,7 @@ public class SugiyamaLayoutRandomDAGExample extends JFrame {
 
     JPanel container = new JPanel(new BorderLayout());
     // create a simple graph for the demo
-    graph = TestGraphs.createDirectedAcyclicGraph(9, 3, .2); //, 0L);
+    graph = TestGraphs.createDirectedAcyclicGraph(9, 3, .2, 5L);
 
     vv = VisualizationViewer.builder(graph).viewSize(new Dimension(900, 600)).build();
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
@@ -110,10 +110,10 @@ public class SugiyamaLayoutRandomDAGExample extends JFrame {
 
     final IconShapeFunction<String> vertexImageShapeFunction =
         new IconShapeFunction<>(new EllipseShapeFunction<>());
-    vertexImageShapeFunction.setIconFunction(iconCache::get);
+    vertexImageShapeFunction.setIconFunction(iconCache);
 
     vv.getRenderContext().setVertexShapeFunction(vertexImageShapeFunction);
-    vv.getRenderContext().setVertexIconFunction(iconCache::get);
+    vv.getRenderContext().setVertexIconFunction(iconCache);
 
     vv.getRenderContext()
         .getSelectedVertexState()

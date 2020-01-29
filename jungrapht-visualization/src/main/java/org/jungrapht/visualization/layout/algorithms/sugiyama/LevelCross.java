@@ -20,7 +20,7 @@ public class LevelCross<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(LevelCross.class);
 
-  private List<SugiyamaEdge<V, E>> edges;
+  private List<LE<V, E>> edges;
   private int levelSize;
   private int levelRank;
   private int successorLevelSize;
@@ -30,7 +30,7 @@ public class LevelCross<V, E> {
   private AccumulatorTree successorTree;
 
   public LevelCross(
-      Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> graph,
+      Graph<LV<V>, LE<V, E>> graph,
       int levelSize,
       int levelRank,
       int successorLevelSize,
@@ -44,7 +44,7 @@ public class LevelCross<V, E> {
   }
 
   public LevelCross(
-      List<SugiyamaEdge<V, E>> edgeList,
+      List<LE<V, E>> edgeList,
       int levelSize,
       int levelRank,
       int successorLevelSize,
@@ -66,44 +66,44 @@ public class LevelCross<V, E> {
     return successorTree;
   }
 
-  boolean isTop(SugiyamaEdge<V, E> edge) {
-    return edge.source.index < edge.target.index;
+  boolean isTop(LE<V, E> edge) {
+    return edge.getSource().getIndex() < edge.getTarget().getIndex();
   }
 
-  boolean isBottom(SugiyamaEdge<V, E> edge) {
-    return edge.source.index > edge.target.index;
+  boolean isBottom(LE<V, E> edge) {
+    return edge.getSource().getIndex() > edge.getTarget().getIndex();
   }
 
-  boolean isPair(SugiyamaEdge<V, E> edge) {
-    return edge.source.index == edge.target.index;
+  boolean isPair(LE<V, E> edge) {
+    return edge.getSource().getIndex() == edge.getTarget().getIndex();
   }
 
-  boolean isRight(SugiyamaEdge<V, E> edge, int sweepPos) {
-    return (edge.source.index == sweepPos && isTop(edge))
-        || (edge.target.index == sweepPos && isBottom(edge));
+  boolean isRight(LE<V, E> edge, int sweepPos) {
+    return (edge.getSource().getIndex() == sweepPos && isTop(edge))
+        || (edge.getTarget().getIndex() == sweepPos && isBottom(edge));
   }
 
-  boolean isTrailing(SugiyamaEdge<V, E> edge, int sweepPos) {
-    return (edge.source.index < sweepPos && sweepPos < edge.target.index)
-        || (edge.target.index < sweepPos && sweepPos < edge.source.index);
+  boolean isTrailing(LE<V, E> edge, int sweepPos) {
+    return (edge.getSource().getIndex() < sweepPos && sweepPos < edge.getTarget().getIndex())
+        || (edge.getTarget().getIndex() < sweepPos && sweepPos < edge.getSource().getIndex());
   }
 
-  boolean isTrailingTop(SugiyamaEdge<V, E> edge, int sweepPos) {
-    return edge.source.index < sweepPos && sweepPos < edge.target.index;
+  boolean isTrailingTop(LE<V, E> edge, int sweepPos) {
+    return edge.getSource().getIndex() < sweepPos && sweepPos < edge.getTarget().getIndex();
   }
 
-  boolean isTrailingBottom(SugiyamaEdge<V, E> edge, int sweepPos) {
-    return edge.target.index < sweepPos && sweepPos < edge.source.index;
+  boolean isTrailingBottom(LE<V, E> edge, int sweepPos) {
+    return edge.getTarget().getIndex() < sweepPos && sweepPos < edge.getSource().getIndex();
   }
 
   public int levelCross() {
     int max = Arrays.stream(levelTree.accumulatorTree).max().getAsInt();
 
     if (max != 0) throw new IllegalArgumentException("max " + max + " should be 0");
-    List<SugiyamaEdge<V, E>> rightTop = new ArrayList<>();
-    List<SugiyamaEdge<V, E>> rightBottom = new ArrayList<>();
-    List<SugiyamaEdge<V, E>> topTrailing = new ArrayList<>();
-    List<SugiyamaEdge<V, E>> bottomTrailing = new ArrayList<>();
+    List<LE<V, E>> rightTop = new ArrayList<>();
+    List<LE<V, E>> rightBottom = new ArrayList<>();
+    List<LE<V, E>> topTrailing = new ArrayList<>();
+    List<LE<V, E>> bottomTrailing = new ArrayList<>();
 
     //trees should be all zeros
     int count = 0;
@@ -116,29 +116,29 @@ public class LevelCross<V, E> {
       // if i changed any right edges to trailing edges last time thru,
       // remove any that and at sweepPos (top trailing with target at sweep
       // or bottom trailing with source at sweep
-      for (SugiyamaEdge<V, E> edge : topTrailing) {
-        if (edge.target.index == sweepPosition) {
-          successorTree.subtractEdge(edge.target.index);
+      for (LE<V, E> edge : topTrailing) {
+        if (edge.getTarget().getIndex() == sweepPosition) {
+          successorTree.subtractEdge(edge.getTarget().getIndex());
         }
       }
-      for (SugiyamaEdge<V, E> edge : bottomTrailing) {
-        if (edge.source.index == sweepPosition) {
-          levelTree.subtractEdge(edge.source.index);
+      for (LE<V, E> edge : bottomTrailing) {
+        if (edge.getSource().getIndex() == sweepPosition) {
+          levelTree.subtractEdge(edge.getSource().getIndex());
         }
       }
       // any left-over right edges that are trailing edges get
       // added to their accumulatorTree and to the topTrailing list, likewise for right bottom edges
       //      log.trace("top of loop. rightTop: {}, rightBottom: {}", rightTop, rightBottom);
-      for (SugiyamaEdge<V, E> edge : rightTop) {
+      for (LE<V, E> edge : rightTop) {
         if (isTrailingTop(edge, sweepPosition)) {
           topTrailing.add(edge);
-          successorTree.addEdge(edge.target.index);
+          successorTree.addEdge(edge.getTarget().getIndex());
         }
       }
-      for (SugiyamaEdge<V, E> edge : rightBottom) {
+      for (LE<V, E> edge : rightBottom) {
         if (isTrailingBottom(edge, sweepPosition)) {
           bottomTrailing.add(edge);
-          levelTree.addEdge(edge.source.index);
+          levelTree.addEdge(edge.getSource().getIndex());
         }
       }
       // re-initialize things:
@@ -151,18 +151,18 @@ public class LevelCross<V, E> {
       rightBottom.clear(); // same
 
       int sweepPos = sweepPosition;
-      List<SugiyamaEdge<V, E>> topEdges =
+      List<LE<V, E>> topEdges =
           edges
               .stream()
-              .filter(e -> levelRank == e.source.rank)
-              .filter(e -> e.source.index == sweepPos)
+              .filter(e -> levelRank == e.getSource().getRank())
+              .filter(e -> e.getSource().getIndex() == sweepPos)
               .collect(Collectors.toList());
 
       //      log.trace("at sweep {}, topEdges are {}", sweepPosition, topEdges);
 
-      for (SugiyamaEdge<V, E> edge : topEdges) {
+      for (LE<V, E> edge : topEdges) {
         int Li = sweepPosition;
-        int x = edge.target.index;
+        int x = edge.getTarget().getIndex();
         if (isRight(edge, sweepPosition)) {
           //          log.trace("topEdge {} is a right edge", edge);
           rightTop.add(edge);
@@ -176,16 +176,16 @@ public class LevelCross<V, E> {
       // these are swapped from what is in the published algorithm:
       int trb = levelTree.accumulatorTree[0];
       int trt = successorTree.accumulatorTree[0];
-      List<SugiyamaEdge<V, E>> bottomEdges =
+      List<LE<V, E>> bottomEdges =
           edges
               .stream()
-              .filter(e -> successorLevelRank == e.target.rank)
-              .filter(e -> e.target.index == sweepPos)
+              .filter(e -> successorLevelRank == e.getTarget().getRank())
+              .filter(e -> e.getTarget().getIndex() == sweepPos)
               .collect(Collectors.toList());
 
       //      log.trace("at sweep {}, bottomEdges are {}", bottomEdges);
-      for (SugiyamaEdge<V, E> edge : bottomEdges) {
-        int x = edge.source.index;
+      for (LE<V, E> edge : bottomEdges) {
+        int x = edge.getSource().getIndex();
         int Mi = sweepPosition;
         if (isRight(edge, sweepPosition)) {
           //          log.trace("bottomEdge {} is a right edge", edge);

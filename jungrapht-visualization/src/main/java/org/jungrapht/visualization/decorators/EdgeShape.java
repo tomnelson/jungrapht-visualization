@@ -63,6 +63,10 @@ public interface EdgeShape {
     return new Orthogonal();
   }
 
+  static ArticulatedLine articulatedLine() {
+    return new ArticulatedLine();
+  }
+
   /** An edge shape that renders as a straight line between the vertex endpoints. */
   class Line<V, E> implements Function<Context<Graph<V, E>, E>, Shape> {
 

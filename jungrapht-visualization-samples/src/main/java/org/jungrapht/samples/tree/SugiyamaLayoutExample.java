@@ -110,10 +110,10 @@ public class SugiyamaLayoutExample extends JFrame {
 
     final IconShapeFunction<String> vertexImageShapeFunction =
         new IconShapeFunction<>(new EllipseShapeFunction<>());
-    vertexImageShapeFunction.setIconFunction(iconCache::get);
+    vertexImageShapeFunction.setIconFunction(iconCache);
 
     vv.getRenderContext().setVertexShapeFunction(vertexImageShapeFunction);
-    vv.getRenderContext().setVertexIconFunction(iconCache::get);
+    vv.getRenderContext().setVertexIconFunction(iconCache);
 
     vv.getRenderContext()
         .getSelectedVertexState()

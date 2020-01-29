@@ -3,7 +3,7 @@ package org.jungrapht.visualization.layout.algorithms.brandeskopf;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaVertex;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.jungrapht.visualization.layout.model.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,21 +12,21 @@ public class HorizontalCompaction<V> {
 
   private static final Logger log = LoggerFactory.getLogger(HorizontalCompaction.class);
 
-  protected SugiyamaVertex<V>[][] layers;
-  protected Map<SugiyamaVertex<V>, SugiyamaVertex<V>> rootMap;
-  protected Map<SugiyamaVertex<V>, SugiyamaVertex<V>> alignMap;
+  protected LV<V>[][] layers;
+  protected Map<LV<V>, LV<V>> rootMap;
+  protected Map<LV<V>, LV<V>> alignMap;
   int deltaX;
   int deltaY;
 
-  Map<SugiyamaVertex<V>, SugiyamaVertex<V>> sink = new HashMap<>();
-  Map<SugiyamaVertex<V>, Integer> shift = new HashMap<>();
-  Map<SugiyamaVertex<V>, Integer> x = new HashMap<>();
-  Map<SugiyamaVertex<V>, Integer> y = new HashMap<>();
+  Map<LV<V>, LV<V>> sink = new HashMap<>();
+  Map<LV<V>, Integer> shift = new HashMap<>();
+  Map<LV<V>, Integer> x = new HashMap<>();
+  Map<LV<V>, Integer> y = new HashMap<>();
 
   public HorizontalCompaction(
-      SugiyamaVertex<V>[][] layers,
-      Map<SugiyamaVertex<V>, SugiyamaVertex<V>> rootMap,
-      Map<SugiyamaVertex<V>, SugiyamaVertex<V>> alignMap,
+      LV<V>[][] layers,
+      Map<LV<V>, LV<V>> rootMap,
+      Map<LV<V>, LV<V>> alignMap,
       int deltaX,
       int deltaY) {
     this.layers = layers;
@@ -44,7 +44,7 @@ public class HorizontalCompaction<V> {
     horizontalCompaction();
   }
 
-  public Point getPoint(SugiyamaVertex<V> v) {
+  public Point getPoint(LV<V> v) {
     return Point.of(x.get(v), y.get(v));
   }
 
@@ -55,8 +55,8 @@ public class HorizontalCompaction<V> {
         .forEach(this::placeBlock);
 
     for (int i = 0; i < layers.length; i++) {
-      SugiyamaVertex<V>[] list = layers[i];
-      for (SugiyamaVertex<V> v : list) {
+      LV<V>[] list = layers[i];
+      for (LV<V> v : list) {
         // x[v] <- x[root[v]]
         x(v, x(root(v)));
         y(v, i * deltaY); // 'i' is the rank
@@ -69,17 +69,17 @@ public class HorizontalCompaction<V> {
     }
   }
 
-  void placeBlock(SugiyamaVertex<V> v) {
+  void placeBlock(LV<V> v) {
     // if x[v] undefined
     if (!x.containsKey(v)) {
       // x[v] <- 0, w <- v
       x(v, 0);
-      SugiyamaVertex<V> w = v;
+      LV<V> w = v;
       do {
         // if pos[w] > 0
         if (pos(w) > 0) {
           // u gets root[pred[w]]
-          SugiyamaVertex<V> u = root(pred(w));
+          LV<V> u = root(pred(w));
           placeBlock(u);
           if (sink(v) == v) {
             sink(v, sink(u));
@@ -98,63 +98,63 @@ public class HorizontalCompaction<V> {
     }
   }
 
-  private int pos(SugiyamaVertex<V> v) {
+  private int pos(LV<V> v) {
     return v.getIndex();
   }
 
-  private SugiyamaVertex<V> sink(SugiyamaVertex<V> v) {
+  private LV<V> sink(LV<V> v) {
     return sink.get(v);
   }
 
-  private void sink(SugiyamaVertex<V> k, SugiyamaVertex<V> v) {
+  private void sink(LV<V> k, LV<V> v) {
     sink.put(k, v);
   }
 
-  private int shift(SugiyamaVertex<V> v) {
+  private int shift(LV<V> v) {
     return shift.get(v);
   }
 
-  private void shift(SugiyamaVertex<V> k, int v) {
+  private void shift(LV<V> k, int v) {
     shift.put(k, v);
   }
 
-  private int x(SugiyamaVertex<V> v) {
+  private int x(LV<V> v) {
     return x.get(v);
   }
 
-  private void x(SugiyamaVertex<V> v, int d) {
+  private void x(LV<V> v, int d) {
     x.put(v, d);
   }
 
-  private int y(SugiyamaVertex<V> v) {
+  private int y(LV<V> v) {
     return y.get(v);
   }
 
-  private void y(SugiyamaVertex<V> v, int d) {
+  private void y(LV<V> v, int d) {
     y.put(v, d);
   }
 
-  private SugiyamaVertex<V> root(SugiyamaVertex<V> v) {
+  private LV<V> root(LV<V> v) {
     return rootMap.get(v);
   }
 
-  private void root(SugiyamaVertex<V> k, SugiyamaVertex<V> v) {
+  private void root(LV<V> k, LV<V> v) {
     rootMap.put(k, v);
   }
 
-  private SugiyamaVertex<V> align(SugiyamaVertex<V> v) {
+  private LV<V> align(LV<V> v) {
     return alignMap.get(v);
   }
 
-  private void align(SugiyamaVertex<V> k, SugiyamaVertex<V> v) {
+  private void align(LV<V> k, LV<V> v) {
     alignMap.put(k, v);
   }
 
-  private SugiyamaVertex<V> pred(SugiyamaVertex<V> v) {
+  private LV<V> pred(LV<V> v) {
     int layerOfV = v.getRank();
     int indexOfV = v.getIndex();
     if (indexOfV < 1) return null;
-    SugiyamaVertex<V>[] list = layers[layerOfV];
+    LV<V>[] list = layers[layerOfV];
     return list[indexOfV - 1];
   }
 }

@@ -10,8 +10,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaEdge;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaVertex;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,26 +19,24 @@ public abstract class VerticalAlignment<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(VerticalAlignment.class);
 
-  protected Map<SugiyamaVertex<V>, SugiyamaVertex<V>> rootMap = new HashMap<>();
-  protected Map<SugiyamaVertex<V>, SugiyamaVertex<V>> alignMap = new HashMap<>();
-  protected SugiyamaVertex<V>[][] layers;
-  protected Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> svGraph;
-  protected Set<SugiyamaEdge<V, E>> markedSegments;
+  protected Map<LV<V>, LV<V>> rootMap = new HashMap<>();
+  protected Map<LV<V>, LV<V>> alignMap = new HashMap<>();
+  protected LV<V>[][] layers;
+  protected Graph<LV<V>, LE<V, E>> svGraph;
+  protected Set<LE<V, E>> markedSegments;
 
-  public Map<SugiyamaVertex<V>, SugiyamaVertex<V>> getRootMap() {
+  public Map<LV<V>, LV<V>> getRootMap() {
     return rootMap;
   }
 
-  public Map<SugiyamaVertex<V>, SugiyamaVertex<V>> getAlignMap() {
+  public Map<LV<V>, LV<V>> getAlignMap() {
     return alignMap;
   }
 
   public abstract void align();
 
   protected VerticalAlignment(
-      SugiyamaVertex<V>[][] layers,
-      Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> svGraph,
-      Set<SugiyamaEdge<V, E>> markedSegments) {
+      LV<V>[][] layers, Graph<LV<V>, LE<V, E>> svGraph, Set<LE<V, E>> markedSegments) {
     this.layers = layers;
     this.svGraph = svGraph;
     this.markedSegments = markedSegments;
@@ -53,27 +51,27 @@ public abstract class VerticalAlignment<V, E> {
     align();
   }
 
-  boolean notMarked(SugiyamaEdge<V, E> edge) {
+  boolean notMarked(LE<V, E> edge) {
     return !markedSegments.contains(edge);
   }
 
-  SugiyamaVertex<V> root(SugiyamaVertex<V> v) {
+  LV<V> root(LV<V> v) {
     return rootMap.get(v);
   }
 
-  void root(SugiyamaVertex<V> k, SugiyamaVertex<V> v) {
+  void root(LV<V> k, LV<V> v) {
     rootMap.put(k, v);
   }
 
-  SugiyamaVertex<V> align(SugiyamaVertex<V> v) {
+  LV<V> align(LV<V> v) {
     return alignMap.get(v);
   }
 
-  void align(SugiyamaVertex<V> k, SugiyamaVertex<V> v) {
+  void align(LV<V> k, LV<V> v) {
     alignMap.put(k, v);
   }
 
-  int pos(SugiyamaVertex<V> v) {
+  int pos(LV<V> v) {
     return v.getIndex();
   }
 
@@ -86,9 +84,7 @@ public abstract class VerticalAlignment<V, E> {
   public static class LeftmostUpper<V, E> extends VerticalAlignment<V, E> {
 
     public LeftmostUpper(
-        SugiyamaVertex<V>[][] layers,
-        Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> svGraph,
-        Set<SugiyamaEdge<V, E>> markedSegments) {
+        LV<V>[][] layers, Graph<LV<V>, LE<V, E>> svGraph, Set<LE<V, E>> markedSegments) {
       super(layers, svGraph, markedSegments);
     }
 
@@ -97,15 +93,15 @@ public abstract class VerticalAlignment<V, E> {
       //    for (int i=1; i< layers.size(); i++) {
       for (int i = 0; i <= layers.length - 1; i++) { // zero based
         int r = -1;
-        SugiyamaVertex<V>[] currentLayer = layers[i];
+        LV<V>[] currentLayer = layers[i];
         //      for (int k=1; k <= currentLayer.size(); k++) {
         for (int k = 0; k <= currentLayer.length - 1; k++) { // zero based
           // if the vertex at k has source nodes
-          SugiyamaVertex<V> vkofi = currentLayer[k];
-          List<SugiyamaVertex<V>> neighbors =
+          LV<V> vkofi = currentLayer[k];
+          List<LV<V>> neighbors =
               Graphs.predecessorListOf(svGraph, vkofi)
                   .stream()
-                  .sorted(Comparator.comparingInt(SugiyamaVertex::getIndex))
+                  .sorted(Comparator.comparingInt(LV::getIndex))
                   .collect(Collectors.toList());
           log.trace("predecessors of {} are {}", vkofi, neighbors);
           int d = neighbors.size();
@@ -115,9 +111,9 @@ public abstract class VerticalAlignment<V, E> {
             log.trace("ceil: {}, floor: {}", ceil, floor);
             for (int m : new LinkedHashSet<>(Arrays.asList(floor, ceil))) {
               if (align(vkofi) == vkofi) {
-                SugiyamaVertex<V> um = neighbors.get(m);
+                LV<V> um = neighbors.get(m);
                 // if edge um->vkofi is not marked
-                SugiyamaEdge<V, E> edge = svGraph.getEdge(um, vkofi);
+                LE<V, E> edge = svGraph.getEdge(um, vkofi);
                 if (notMarked(edge) && r < pos(um)) {
                   // align[um] <- vkofi
                   align(um, vkofi);
@@ -144,9 +140,7 @@ public abstract class VerticalAlignment<V, E> {
    */
   public static class LeftmostLower<V, E> extends VerticalAlignment<V, E> {
     public LeftmostLower(
-        SugiyamaVertex<V>[][] layers,
-        Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> svGraph,
-        Set<SugiyamaEdge<V, E>> markedSegments) {
+        LV<V>[][] layers, Graph<LV<V>, LE<V, E>> svGraph, Set<LE<V, E>> markedSegments) {
       super(layers, svGraph, markedSegments);
     }
 
@@ -156,15 +150,15 @@ public abstract class VerticalAlignment<V, E> {
       for (int i = layers.length - 2; i >= 0; i--) { // zero based
         //    for (int i = 0; i < layers.size() - 1; i++) { // zero based
         int r = -1;
-        SugiyamaVertex<V>[] currentLayer = layers[i];
+        LV<V>[] currentLayer = layers[i];
         //      for (int k=1; k <= currentLayer.size(); k++) {
         for (int k = 0; k <= currentLayer.length - 1; k++) { // zero based
           // if the vertex at k has source nodes
-          SugiyamaVertex<V> vkofi = currentLayer[k];
-          List<SugiyamaVertex<V>> neighbors =
+          LV<V> vkofi = currentLayer[k];
+          List<LV<V>> neighbors =
               Graphs.successorListOf(svGraph, vkofi)
                   .stream()
-                  .sorted(Comparator.comparingInt(SugiyamaVertex::getIndex))
+                  .sorted(Comparator.comparingInt(LV::getIndex))
                   .collect(Collectors.toList());
           log.trace("successors of {} are {}", vkofi, neighbors);
           int d = neighbors.size();
@@ -173,9 +167,9 @@ public abstract class VerticalAlignment<V, E> {
             int ceil = (int) Math.ceil((d - 1) / 2.0); // zero based
             for (int m : new LinkedHashSet<>(Arrays.asList(floor, ceil))) {
               if (align(vkofi) == vkofi) {
-                SugiyamaVertex<V> um = neighbors.get(m);
+                LV<V> um = neighbors.get(m);
                 // if edge um->vkofi is not marked
-                SugiyamaEdge<V, E> edge = svGraph.getEdge(vkofi, um);
+                LE<V, E> edge = svGraph.getEdge(vkofi, um);
                 if (notMarked(edge) && r < pos(um)) {
                   align(um, vkofi);
                   root(vkofi, root(um));
@@ -192,9 +186,7 @@ public abstract class VerticalAlignment<V, E> {
 
   public static class RightmostUpper<V, E> extends VerticalAlignment<V, E> {
     public RightmostUpper(
-        SugiyamaVertex<V>[][] layers,
-        Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> svGraph,
-        Set<SugiyamaEdge<V, E>> markedSegments) {
+        LV<V>[][] layers, Graph<LV<V>, LE<V, E>> svGraph, Set<LE<V, E>> markedSegments) {
       super(layers, svGraph, markedSegments);
     }
 
@@ -202,17 +194,17 @@ public abstract class VerticalAlignment<V, E> {
     public void align() {
       //    for (int i=1; i< layers.size(); i++) {
       for (int i = 1; i <= layers.length - 1; i++) { // zero based
-        SugiyamaVertex<V>[] currentLayer = layers[i];
-        SugiyamaVertex<V>[] previousLayer = layers[i - 1];
+        LV<V>[] currentLayer = layers[i];
+        LV<V>[] previousLayer = layers[i - 1];
         int r = previousLayer.length + 1;
         //              for (int k=0; k <= currentLayer.size()-1; k++) {
         for (int k = currentLayer.length - 1; k >= 0; k--) {
           // if the vertex at k has source nodes
-          SugiyamaVertex<V> vkofi = currentLayer[k];
-          List<SugiyamaVertex<V>> neighbors =
+          LV<V> vkofi = currentLayer[k];
+          List<LV<V>> neighbors =
               Graphs.predecessorListOf(svGraph, vkofi)
                   .stream()
-                  .sorted(Comparator.comparingInt(SugiyamaVertex::getIndex))
+                  .sorted(Comparator.comparingInt(LV::getIndex))
                   .collect(Collectors.toList());
           int d = neighbors.size();
           if (d > 0) {
@@ -220,9 +212,9 @@ public abstract class VerticalAlignment<V, E> {
             int ceil = (int) Math.ceil((d - 1) / 2.0); // zero based
             for (int m : new LinkedHashSet<>(Arrays.asList(ceil, floor))) {
               if (align(vkofi) == vkofi) {
-                SugiyamaVertex<V> um = neighbors.get(m);
+                LV<V> um = neighbors.get(m);
                 // if edge um->vkofi is not marked
-                SugiyamaEdge<V, E> edge = svGraph.getEdge(um, vkofi);
+                LE<V, E> edge = svGraph.getEdge(um, vkofi);
                 if (notMarked(edge) && r > pos(um)) {
                   align(um, vkofi);
                   root(vkofi, root(um));
@@ -239,9 +231,7 @@ public abstract class VerticalAlignment<V, E> {
 
   public static class RightmostLower<V, E> extends VerticalAlignment<V, E> {
     public RightmostLower(
-        SugiyamaVertex<V>[][] layers,
-        Graph<SugiyamaVertex<V>, SugiyamaEdge<V, E>> svGraph,
-        Set<SugiyamaEdge<V, E>> markedSegments) {
+        LV<V>[][] layers, Graph<LV<V>, LE<V, E>> svGraph, Set<LE<V, E>> markedSegments) {
       super(layers, svGraph, markedSegments);
     }
 
@@ -250,18 +240,18 @@ public abstract class VerticalAlignment<V, E> {
       //    for (int i=1; i< layers.size(); i++) {
       for (int i = layers.length - 2; i >= 0; i--) { // zero based
         //                for (int i = 0; i < layers.size() - 1; i++) { // zero based
-        SugiyamaVertex<V>[] currentLayer = layers[i];
-        SugiyamaVertex<V>[] nextLayer = layers[i + 1];
+        LV<V>[] currentLayer = layers[i];
+        LV<V>[] nextLayer = layers[i + 1];
         int r = nextLayer.length + 1;
         //      for (int k=1; k <= currentLayer.size(); k++) {
         for (int k = currentLayer.length - 1; k >= 0; k--) {
           //                    for (int k = 0; k <= currentLayer.size() - 1; k++) { // zero based
           // if the vertex at k has target nodes
-          SugiyamaVertex<V> vkofi = currentLayer[k];
-          List<SugiyamaVertex<V>> neighbors =
+          LV<V> vkofi = currentLayer[k];
+          List<LV<V>> neighbors =
               Graphs.successorListOf(svGraph, vkofi)
                   .stream()
-                  .sorted(Comparator.comparingInt(SugiyamaVertex::getIndex))
+                  .sorted(Comparator.comparingInt(LV::getIndex))
                   .collect(Collectors.toList());
           int d = neighbors.size();
           if (d > 0) {
@@ -269,9 +259,9 @@ public abstract class VerticalAlignment<V, E> {
             int ceil = (int) Math.ceil((d - 1) / 2.0); // zero based
             for (int m : new LinkedHashSet<>(Arrays.asList(ceil, floor))) {
               if (align(vkofi) == vkofi) {
-                SugiyamaVertex<V> um = neighbors.get(m);
+                LV<V> um = neighbors.get(m);
                 // if edge vm->v is not marked
-                SugiyamaEdge<V, E> edge = svGraph.getEdge(vkofi, um);
+                LE<V, E> edge = svGraph.getEdge(vkofi, um);
                 if (notMarked(edge) && r > pos(um)) {
                   align(um, vkofi);
                   root(vkofi, root(um));
