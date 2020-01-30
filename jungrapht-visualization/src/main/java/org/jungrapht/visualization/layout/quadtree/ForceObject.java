@@ -46,6 +46,11 @@ public class ForceObject<T> {
     this.mass = mass;
   }
 
+  /** @return the mass of this ForceObject */
+  public double getMass() {
+    return mass;
+  }
+
   /**
    * override in the layoutAlgorithm to apply forces in a way that is consistent with the chosen
    * implementation. See FRBHVisitorLayoutAlgorithm and SpringVisitorLayoutAlgorithm.
