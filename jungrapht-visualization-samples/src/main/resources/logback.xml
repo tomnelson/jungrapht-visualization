@@ -32,7 +32,10 @@
 
   <Logger name="org.jungrapht.visualization.layout.algorithms.sugiyama" level="info"/>
   <Logger name="org.jungrapht.visualization.layout.algorithms.sugiyama.GraphLayers" level="trace"/>
-
+  <Logger name="org.jungrapht.visualization.layout.algorithms.eiglsperger.VerticalAlignment" level="error"/>
+  <Logger name="org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerSteps" level="error"/>
+  <Logger name="org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnable" level="error"/>
+  <Logger name="org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerUtil" level="error"/>
 
 
   <Logger name="ch.qos.logback" level="WARN" />

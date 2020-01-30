@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.Comparators;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,12 +56,7 @@ public class AccumulatorTree<V, E> {
   }
 
   public int crossingCount(List<LE<V, E>> edges) {
-    Comparator<LE<V, E>> sourceIndexComparator =
-        Comparator.comparingInt(e -> e.getSource().getIndex());
-    Comparator<LE<V, E>> targetIndexComparator =
-        Comparator.comparingInt(e -> e.getTarget().getIndex());
-    Comparator<LE<V, E>> biLevelEdgeComparator =
-        sourceIndexComparator.thenComparing(targetIndexComparator);
+    Comparator<LE<V, E>> biLevelEdgeComparator = Comparators.biLevelEdgeComparator();
     edges.sort(biLevelEdgeComparator);
     List<Integer> targetIndices = new ArrayList<>();
     int weight = 1;

@@ -1,6 +1,5 @@
 package org.jungrapht.visualization.layout.algorithms.eiglsperger;
 
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SyntheticLV;
 import org.jungrapht.visualization.layout.util.synthetics.Synthetic;
 
 /**
@@ -16,7 +15,7 @@ import org.jungrapht.visualization.layout.util.synthetics.Synthetic;
  *
  * @param <V>
  */
-public class Segment<V> extends SyntheticLV<V> implements Synthetic {
+class Segment<V> extends SyntheticLV<V> implements Synthetic {
 
   public static <V> Segment of(PVertex<V> pVertex, QVertex<V> qVertex) {
     return new Segment<>(pVertex, qVertex);

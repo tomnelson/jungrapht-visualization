@@ -225,6 +225,5 @@ public class Synthetics<V, E> {
       }
     }
     // check for any duplicate points
-
   }
 }

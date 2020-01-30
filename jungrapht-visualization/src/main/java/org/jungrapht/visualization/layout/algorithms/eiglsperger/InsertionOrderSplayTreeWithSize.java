@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  *
  * @param <T> key type that is stored in the tree
  */
-public class InsertionOrderSplayTreeWithSize<T> {
+class InsertionOrderSplayTreeWithSize<T> {
 
   private static final Logger log = LoggerFactory.getLogger(InsertionOrderSplayTreeWithSize.class);
 
@@ -283,7 +283,7 @@ public class InsertionOrderSplayTreeWithSize<T> {
     Node<T> node = find(key);
     if (node != null) {
       splay(node); // so node will be root
-      System.err.println(printTree());
+      //      System.err.println(printTree());
       node.size -= size(node.right);
       // root should be the found node
       if (node.right != null) node.right.parent = null;

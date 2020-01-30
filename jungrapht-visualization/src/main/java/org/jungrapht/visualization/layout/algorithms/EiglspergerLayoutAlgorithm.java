@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import org.jungrapht.visualization.RenderContext;
-import org.jungrapht.visualization.layout.algorithms.eiglsperger.SubEiglspergerRunnable;
+import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.RenderContextAware;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -169,7 +169,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
   public void visit(LayoutModel<V> layoutModel) {
 
     Runnable runnable =
-        SubEiglspergerRunnable.<V, E>builder()
+        EiglspergerRunnable.<V, E>builder()
             .layoutModel(layoutModel)
             .renderContext(renderContext)
             .straightenEdges(straightenEdges)

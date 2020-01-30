@@ -1,13 +1,9 @@
 package org.jungrapht.visualization.layout.algorithms.eiglsperger;
 
 import java.util.List;
-import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import org.jgrapht.Graph;
-import org.jgrapht.Graphs;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 
 /**
  * Represents 2 adjacent layers of a layered graph. If the processing direction is from top to
@@ -31,7 +27,7 @@ import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
  *
  * @param <V>
  */
-public class BiLayer<V, E> {
+class BiLayer<V, E> {
 
   /** this is PVertex when proceeding top to bottom and is QVertex when proceeding bottom to top */
   final Predicate<LV<V>> joinVertexPredicate;
@@ -52,11 +48,8 @@ public class BiLayer<V, E> {
 
   final BiFunction<Graph<LV<V>, LE<V, E>>, LV<V>, List<LV<V>>> neighborFunction;
 
-  Map<LV<V>, Integer> pos;
-
-  Map<LV<V>, Integer> measure;
-
   int currentRank;
+
   int downstreamRank;
 
   public static <V, E> BiLayer<V, E> of(
@@ -67,9 +60,7 @@ public class BiLayer<V, E> {
       LV<V>[] downstreamArray,
       Predicate<LV<V>> joinVertexPredicate,
       Predicate<LV<V>> splitVertexPredicate,
-      BiFunction<Graph<LV<V>, LE<V, E>>, LV<V>, List<LV<V>>> neighborFunction,
-      Map<LV<V>, Integer> pos,
-      Map<LV<V>, Integer> measure) {
+      BiFunction<Graph<LV<V>, LE<V, E>>, LV<V>, List<LV<V>>> neighborFunction) {
     return new BiLayer(
         currentRank,
         downstreamRank,
@@ -78,9 +69,7 @@ public class BiLayer<V, E> {
         downstreamArray,
         joinVertexPredicate,
         splitVertexPredicate,
-        neighborFunction,
-        pos,
-        measure);
+        neighborFunction);
   }
 
   private BiLayer(
@@ -91,10 +80,7 @@ public class BiLayer<V, E> {
       LV<V>[] downstreamArray,
       Predicate<LV<V>> joinVertexPredicate,
       Predicate<LV<V>> splitVertexPredicate,
-      //BiFunction<Graph<LV<V>, LE<V, E>>, LV<V>, int[]> neighborIndexFunction,
-      BiFunction<Graph<LV<V>, LE<V, E>>, LV<V>, List<LV<V>>> neighborFunction,
-      Map<LV<V>, Integer> pos,
-      Map<LV<V>, Integer> measure) {
+      BiFunction<Graph<LV<V>, LE<V, E>>, LV<V>, List<LV<V>>> neighborFunction) {
     this.currentRank = currentRank;
     this.downstreamRank = downstreamRank;
     this.currentLayer = currentLayer;
@@ -103,23 +89,5 @@ public class BiLayer<V, E> {
     this.joinVertexPredicate = joinVertexPredicate;
     this.splitVertexPredicate = splitVertexPredicate;
     this.neighborFunction = neighborFunction;
-    this.pos = pos;
-    this.measure = measure;
-  }
-
-  int[] upperNeighborPoses(Graph<LV<V>, LE<V, E>> graph, LV<V> vertex) {
-    return Graphs.predecessorListOf(graph, vertex)
-        .stream()
-        .mapToInt(v -> pos.getOrDefault(v, 0))
-        .sorted()
-        .toArray();
-  }
-
-  int[] lowerNeighborIndices(Graph<LV<V>, LE<V, E>> graph, LV<V> vertex) {
-    return Graphs.successorListOf(graph, vertex)
-        .stream()
-        .mapToInt(v -> pos.getOrDefault(v, 0))
-        .sorted()
-        .toArray();
   }
 }

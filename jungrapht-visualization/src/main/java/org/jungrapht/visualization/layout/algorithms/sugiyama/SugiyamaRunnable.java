@@ -542,12 +542,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     array[j].setIndex(j);
   }
 
-  Comparator<LE<V, E>> sourceIndexComparator =
-      Comparator.comparingInt(e -> e.getSource().getIndex());
-  Comparator<LE<V, E>> targetIndexComparator =
-      Comparator.comparingInt(e -> e.getTarget().getIndex());
-  Comparator<LE<V, E>> biLevelEdgeComparator =
-      sourceIndexComparator.thenComparing(targetIndexComparator);
+  Comparator<LE<V, E>> biLevelEdgeComparator = Comparators.biLevelEdgeComparator();
 
   private int crossingCount(List<LE<V, E>> edges) {
     edges.sort(biLevelEdgeComparator);
@@ -642,6 +637,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
   }
 
   int[] lowerNeighborIndices(Graph<LV<V>, LE<V, E>> graph, LV<V> vertex) {
+    List<LV<V>> neighbors = Graphs.successorListOf(graph, vertex);
     return Graphs.successorListOf(graph, vertex).stream().mapToInt(LV::getIndex).sorted().toArray();
   }
 
@@ -658,6 +654,21 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       Graph<LV<V>, LE<V, E>> svGraph) {
     // get the positions of adjacent vertices in adj_rank
     int[] P = adjPosition(v, neighborFunction, svGraph);
+    int m = P.length / 2;
+    if (P.length == 0) {
+      return -1;
+    } else if (P.length % 2 == 1) {
+      return P[m];
+    } else if (P.length == 2) {
+      return (P[0] + P[1]) / 2;
+    } else {
+      double left = P[m - 1] - P[0];
+      double right = P[P.length - 1] - P[m];
+      return (P[m - 1] * right + P[m] * left) / (left + right);
+    }
+  }
+
+  double medianValue(int[] P) {
     int m = P.length / 2;
     if (P.length == 0) {
       return -1;

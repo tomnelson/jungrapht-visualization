@@ -12,6 +12,8 @@
  */
 package org.jungrapht.visualization.layout.algorithms;
 
+import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -46,6 +48,7 @@ public class CircleLayoutAlgorithm<V> implements LayoutAlgorithm<V>, AfterRunnab
   protected Runnable after;
   private boolean threaded;
   CompletableFuture theFuture;
+  int reduceEdgeCrossingMaxEdges = 100;
 
   public static class Builder<V, T extends CircleLayoutAlgorithm<V>, B extends Builder<V, T, B>>
       implements LayoutAlgorithm.Builder<V, T, B> {
@@ -97,6 +100,8 @@ public class CircleLayoutAlgorithm<V> implements LayoutAlgorithm<V>, AfterRunnab
     this.reduceEdgeCrossing = reduceEdgeCrossing;
     this.threaded = threaded;
     this.after = after;
+    this.reduceEdgeCrossingMaxEdges =
+        Integer.getInteger(PREFIX + "circle.reduceEdgeCrossingMaxEdges", 100);
   }
 
   public CircleLayoutAlgorithm() {
@@ -119,6 +124,9 @@ public class CircleLayoutAlgorithm<V> implements LayoutAlgorithm<V>, AfterRunnab
 
   private void computeVertexOrder(LayoutModel<V> layoutModel) {
     Graph<V, ?> graph = layoutModel.getGraph();
+    if (reduceEdgeCrossing) {
+      reduceEdgeCrossing = graph.edgeSet().size() < this.reduceEdgeCrossingMaxEdges;
+    }
     if (this.reduceEdgeCrossing) {
       this.vertexOrderedList = new ArrayList<>();
       ReduceCrossingRunnable<V, ?> reduceCrossingRunnable =

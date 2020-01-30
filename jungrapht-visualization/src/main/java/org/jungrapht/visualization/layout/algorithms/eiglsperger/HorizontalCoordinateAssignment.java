@@ -1,5 +1,6 @@
 package org.jungrapht.visualization.layout.algorithms.eiglsperger;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -8,14 +9,11 @@ import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jungrapht.visualization.layout.algorithms.brandeskopf.AverageMedian;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SyntheticLV;
 import org.jungrapht.visualization.layout.model.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HorizontalCoordinateAssignment {
+class HorizontalCoordinateAssignment {
   private static Logger log = LoggerFactory.getLogger(HorizontalCoordinateAssignment.class);
 
   public static <V, E> void horizontalCoordinateAssignment(
@@ -23,58 +21,56 @@ public class HorizontalCoordinateAssignment {
       Graph<LV<V>, LE<V, E>> svGraph,
       Set<LE<V, E>> markedSegments,
       int horizontalOffset,
-      int verticalOffset,
-      Map<LV<V>, Integer> pos,
-      Map<LV<V>, Integer> measure) {
+      int verticalOffset) {
     preprocessing(layers, svGraph, markedSegments);
-    //    log.info("Marked Segments are {}", markedSegments);
+
     VerticalAlignment.LeftmostUpper<V, E> upLeft =
-        new VerticalAlignment.LeftmostUpper<>(layers, svGraph, markedSegments, pos, measure);
+        new VerticalAlignment.LeftmostUpper<>(layers, svGraph, markedSegments);
     HorizontalCompaction<V> upLeftCompaction =
         new HorizontalCompaction<>(
-            layers,
-            upLeft.getRootMap(),
-            upLeft.getAlignMap(),
-            horizontalOffset,
-            verticalOffset,
-            pos,
-            measure);
+            layers, upLeft.getRootMap(), upLeft.getAlignMap(), horizontalOffset, verticalOffset);
+    List<LV<V>> misAligned = misAligned(upLeftCompaction.p);
+    if (misAligned.size() > 0) {
+      log.info("misAligned from upLeft: {}", misAligned.size());
+    }
 
     VerticalAlignment.RightmostUpper<V, E> upRight =
-        new VerticalAlignment.RightmostUpper<>(layers, svGraph, markedSegments, pos, measure);
+        new VerticalAlignment.RightmostUpper<>(layers, svGraph, markedSegments);
     HorizontalCompaction<V> upRightCompaction =
         new HorizontalCompaction<>(
-            layers,
-            upRight.getRootMap(),
-            upRight.getAlignMap(),
-            horizontalOffset,
-            verticalOffset,
-            pos,
-            measure);
+            layers, upRight.getRootMap(), upRight.getAlignMap(), horizontalOffset, verticalOffset);
+    misAligned = misAligned(upRightCompaction.p);
+    if (misAligned.size() > 0) {
+      log.info("misAligned from upRight: {}", misAligned.size());
+    }
 
     VerticalAlignment.LeftmostLower<V, E> downLeft =
-        new VerticalAlignment.LeftmostLower<>(layers, svGraph, markedSegments, pos, measure);
+        new VerticalAlignment.LeftmostLower<>(layers, svGraph, markedSegments);
     HorizontalCompaction<V> downLeftCompaction =
         new HorizontalCompaction<>(
             layers,
             downLeft.getRootMap(),
             downLeft.getAlignMap(),
             horizontalOffset,
-            verticalOffset,
-            pos,
-            measure);
+            verticalOffset);
+    misAligned = misAligned(downLeftCompaction.p);
+    if (misAligned.size() > 0) {
+      log.info("misAligned from downLeft: {}", misAligned.size());
+    }
 
     VerticalAlignment.RightmostLower<V, E> downRight =
-        new VerticalAlignment.RightmostLower<>(layers, svGraph, markedSegments, pos, measure);
+        new VerticalAlignment.RightmostLower<>(layers, svGraph, markedSegments);
     HorizontalCompaction<V> downRightCompaction =
         new HorizontalCompaction<>(
             layers,
             downRight.getRootMap(),
             downRight.getAlignMap(),
             horizontalOffset,
-            verticalOffset,
-            pos,
-            measure);
+            verticalOffset);
+    misAligned = misAligned(downRightCompaction.p);
+    if (misAligned.size() > 0) {
+      log.info("misAligned from downRight: {}", misAligned.size());
+    }
 
     for (int i = 0; i < layers.length; i++) {
       for (int j = 0; j < layers[i].length; j++) {
@@ -91,6 +87,65 @@ public class HorizontalCoordinateAssignment {
         v.setPoint(balancedPoint);
       }
     }
+    misAligned = misAligned(layers);
+    if (misAligned.size() > 0) {
+      log.info("misAligned: {} {}", misAligned, misAligned.size());
+    }
+  }
+
+  private static <V> List<LV<V>> misAligned(Map<LV<V>, Point> pointMap) {
+    List<LV<V>> misAligned = new ArrayList<>();
+    for (Map.Entry<LV<V>, Point> entry : pointMap.entrySet()) {
+      if (misAligned(entry.getKey(), pointMap)) {
+        misAligned.add(entry.getKey());
+      }
+    }
+    return misAligned;
+  }
+
+  private static <V> List<LV<V>> misAligned(LV<V>[][] layers) {
+    List<LV<V>> misAligned = new ArrayList<>();
+    for (int i = 0; i < layers.length; i++) {
+      for (int j = 0; j < layers[i].length; j++) {
+        LV<V> v = layers[i][j];
+        if (misAligned(v)) {
+          misAligned.add(v);
+        }
+      }
+    }
+    return misAligned;
+  }
+
+  private static <V> boolean misAligned(LV<V> v) {
+    if (v instanceof SegmentVertex) {
+      SegmentVertex<V> segmentVertex = (SegmentVertex<V>) v;
+      PVertex<V> pVertex = segmentVertex.getSegment().pVertex;
+      QVertex<V> qVertex = segmentVertex.getSegment().qVertex;
+      // do pVertex and qVertex have different x values?
+      Point p = pVertex.getPoint();
+      Point q = qVertex.getPoint();
+      if (p.x != q.x) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private static <V> boolean misAligned(LV<V> v, Map<LV<V>, Point> map) {
+    if (v instanceof SegmentVertex) {
+      SegmentVertex<V> segmentVertex = (SegmentVertex<V>) v;
+      PVertex<V> pVertex = segmentVertex.getSegment().pVertex;
+      QVertex<V> qVertex = segmentVertex.getSegment().qVertex;
+      // do pVertex and qVertex have different x values?
+      Point p = map.get(pVertex);
+      Point q = map.get(qVertex);
+      if (p.x != q.x) {
+        log.info(
+            "segment {} appears hosed with p at {} and q at {}", segmentVertex.getSegment(), p, q);
+        return true;
+      }
+    }
+    return false;
   }
 
   static <V, E> int upperNeighborIndexFor(SegmentVertex<V> v, Graph<LV<V>, LE<V, E>> svGraph) {
@@ -110,7 +165,7 @@ public class HorizontalCoordinateAssignment {
   }
 
   private static <V> boolean incidentToInnerSegment(LV<V> v) {
-    return v instanceof SegmentVertex || v instanceof SyntheticLV;
+    return v instanceof SegmentVertex; // || v instanceof SyntheticLV;
   }
 
   public static <V, E> void preprocessing(
@@ -153,6 +208,7 @@ public class HorizontalCoordinateAssignment {
         }
       }
     }
+    log.trace("markedSegments are {}", markedSegments);
   }
 
   /**

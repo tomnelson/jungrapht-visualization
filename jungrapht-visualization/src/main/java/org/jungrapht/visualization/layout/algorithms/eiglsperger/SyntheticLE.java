@@ -1,5 +1,7 @@
 package org.jungrapht.visualization.layout.algorithms.eiglsperger;
 
+import org.jungrapht.visualization.layout.util.synthetics.Synthetic;
+
 /**
  * an edge that is not in the original graph, but is synthesized to replace one or more original
  * graph edges.
@@ -7,27 +9,17 @@ package org.jungrapht.visualization.layout.algorithms.eiglsperger;
  * @param <V> vertex type
  * @param <E> edge type
  */
-class VirtualEdge<V, E> extends LEI<V, E> {
+class SyntheticLE<V, E> extends LEI<V, E> implements Synthetic {
 
-  protected int weight;
+  public static <V, E> SyntheticLE of(LE<V, E> edge, LV<V> source, LV<V> target) {
 
-  public static <V, E> VirtualEdge of(LV<V> source, LV<V> target) {
-    return new VirtualEdge(source, target);
+    return new SyntheticLE(edge, source, target);
   }
 
-  protected VirtualEdge(LV<V> source, LV<V> target) {
-    super(null, source, target);
-    if (target instanceof Container) {
-      this.weight = ((Container<V, Segment<V>>) target).size();
-    }
-  }
+  protected SyntheticLE(LE<V, E> edge, LV<V> source, LV<V> target) {
 
-  public int getWeight() {
-    return weight;
-  }
-
-  public void setWeight(int weight) {
-    this.weight = weight;
+    super(edge.getEdge(), source, target);
+    this.se = edge;
   }
 
   /**
@@ -35,7 +27,7 @@ class VirtualEdge<V, E> extends LEI<V, E> {
    * reference to that edge The edge what was split will gain an intermediate vertex between the
    * source and target vertices each time it or one of its split-off edges is further split
    */
-  //  protected SugiyamaEdge<V, E> se;
+  protected LE<V, E> se;
 
   @Override
   public boolean equals(Object o) {
@@ -49,6 +41,13 @@ class VirtualEdge<V, E> extends LEI<V, E> {
 
   @Override
   public String toString() {
-    return "VirtualEdge{" + ", source=" + source + ", target=" + target + '}';
+    return "SyntheticSugiyamaEdge{"
+        + "edge="
+        + edge
+        + ", source="
+        + source
+        + ", target="
+        + target
+        + '}';
   }
 }

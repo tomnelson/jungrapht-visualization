@@ -351,8 +351,6 @@ public class TestInsertionOrderSplayTreeWithSize {
     System.err.println(tree.printTree());
     tree.splay("A");
     System.err.println(tree.printTree());
-
-    TreePrinter.print(tree);
   }
 
   // Implementing Fisher–Yates shuffle

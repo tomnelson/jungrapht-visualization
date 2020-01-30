@@ -3,12 +3,11 @@ package org.jungrapht.visualization.layout.algorithms.eiglsperger;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.jungrapht.visualization.layout.model.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HorizontalCompaction<V> {
+class HorizontalCompaction<V> {
 
   private static final Logger log = LoggerFactory.getLogger(HorizontalCompaction.class);
 
@@ -17,29 +16,24 @@ public class HorizontalCompaction<V> {
   protected Map<LV<V>, LV<V>> alignMap;
   int deltaX;
   int deltaY;
-  protected Map<LV<V>, Integer> pos;
-  protected Map<LV<V>, Integer> measure;
 
   Map<LV<V>, LV<V>> sink = new HashMap<>();
   Map<LV<V>, Integer> shift = new HashMap<>();
   Map<LV<V>, Integer> x = new HashMap<>();
   Map<LV<V>, Integer> y = new HashMap<>();
+  Map<LV<V>, Point> p = new HashMap<>(); // TODO: remove after testing
 
   public HorizontalCompaction(
       LV<V>[][] layers,
       Map<LV<V>, LV<V>> rootMap,
       Map<LV<V>, LV<V>> alignMap,
       int deltaX,
-      int deltaY,
-      Map<LV<V>, Integer> pos,
-      Map<LV<V>, Integer> measure) {
+      int deltaY) {
     this.layers = layers;
     this.rootMap = rootMap;
     this.alignMap = alignMap;
     this.deltaX = deltaX;
     this.deltaY = deltaY;
-    this.pos = pos;
-    this.measure = measure;
     Arrays.stream(layers)
         .flatMap(Arrays::stream)
         .forEach(
@@ -67,10 +61,15 @@ public class HorizontalCompaction<V> {
         x(v, x(root(v)));
         y(v, i * deltaY); // 'i' is the rank
         // if shift[sink[root[v]]] < infinity
+        LV<V> rootav = root(v);
+        LV<V> sinkarootav = sink(rootav);
+        int shiftasinkarootav = shift(sinkarootav);
         if (shift(sink(root(v))) < Integer.MAX_VALUE) {
           // x[v] <- x[v] + shift[sink[root[v]]]
+          int xav = x(v);
           x(v, x(v) + shift(sink(root(v))));
         }
+        p(v, Point.of(x(v), y(v)));
       }
     }
   }
@@ -83,7 +82,7 @@ public class HorizontalCompaction<V> {
       LV<V> w = v;
       do {
         // if pos[w] > 0
-        if (pos(w) > 0) {
+        if (idx(w) > 0) {
           // u gets root[pred[w]]
           LV<V> u = root(pred(w));
           placeBlock(u);
@@ -105,11 +104,11 @@ public class HorizontalCompaction<V> {
   }
 
   private int pos(LV<V> v) {
+    return v.getPos();
+  }
+
+  private int idx(LV<V> v) {
     return v.getIndex();
-    //    if (!pos.containsKey(v)) {
-    //      log.error("error");
-    //    }
-    //    return pos.get(v);
   }
 
   private LV<V> sink(LV<V> v) {
@@ -125,6 +124,9 @@ public class HorizontalCompaction<V> {
   }
 
   private void shift(LV<V> k, int v) {
+    if (v < 0) {
+      log.error("shift zero?");
+    }
     shift.put(k, v);
   }
 
@@ -133,6 +135,9 @@ public class HorizontalCompaction<V> {
   }
 
   private void x(LV<V> v, int d) {
+    //    if (d < 0) {
+    //      log.info("d < 0? {}", d);
+    //    }
     x.put(v, d);
   }
 
@@ -144,9 +149,13 @@ public class HorizontalCompaction<V> {
     y.put(v, d);
   }
 
+  private void p(LV<V> v, Point point) {
+    p.put(v, point);
+  }
+
   private LV<V> root(LV<V> v) {
     if (!rootMap.containsKey(v)) {
-      log.error("err");
+      log.error("err because rootMap has no " + v);
     }
     return rootMap.get(v);
   }

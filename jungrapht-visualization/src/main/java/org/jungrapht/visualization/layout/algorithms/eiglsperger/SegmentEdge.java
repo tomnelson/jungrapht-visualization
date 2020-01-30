@@ -1,7 +1,5 @@
 package org.jungrapht.visualization.layout.algorithms.eiglsperger;
 
-import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SyntheticLE;
 import org.jungrapht.visualization.layout.util.synthetics.Synthetic;
 
 /**
@@ -11,7 +9,7 @@ import org.jungrapht.visualization.layout.util.synthetics.Synthetic;
  * @param <V>
  * @param <E>
  */
-public class SegmentEdge<V, E> extends SyntheticLE<V, E> implements Synthetic {
+class SegmentEdge<V, E> extends SyntheticLE<V, E> implements Synthetic {
 
   public static <V, E> SegmentEdge of(LE<V, E> edge, PVertex<V> pVertex, QVertex<V> qVertex) {
 

@@ -1,24 +1,24 @@
 package org.jungrapht.visualization.layout.algorithms.eiglsperger;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.jgrapht.Graph;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.ArticulatedEdge;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SyntheticLE;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SyntheticLV;
+import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.util.synthetics.Synthetic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EiglspergerSynthetics<V, E> {
+class Synthetics<V, E> {
 
-  private static final Logger log = LoggerFactory.getLogger(EiglspergerSynthetics.class);
+  private static final Logger log = LoggerFactory.getLogger(Synthetics.class);
 
   protected final Graph<LV<V>, LE<V, E>> dag;
 
-  public EiglspergerSynthetics(Graph<LV<V>, LE<V, E>> dag) {
+  public Synthetics(Graph<LV<V>, LE<V, E>> dag) {
     this.dag = dag;
   }
 
@@ -48,28 +48,10 @@ public class EiglspergerSynthetics<V, E> {
             .filter(e -> e.getSource().equals(v))
             .filter(e -> Math.abs(e.getTarget().getRank() - v.getRank()) > 1)
             .forEach(outgoingMulti::add);
-        //        for (LE<V, E> edge : edges) {
-        //          if (edge.getSource().equals(v)) {
-        //            if (Math.abs(edge.getTarget().rank - v.rank) > 1) {
-        //              outgoingMulti.add(edge);
-        //            }
-        //          }
-        //        }
-        // find all edges where the target vertex is in the current layer and the source vertex rank is
-        // more than one layer away
-        //        List<LE<V, E>> incomingMulti = new ArrayList<>();
-        //        for (LE<V, E> edge : edges) {
-        //          if (edge.getTarget().equals(v)) {
-        //            if (Math.abs(edge.getSource().rank - v.rank) > 1) {
-        //              incomingMulti.add(edge);
-        //            }
-        //          }
-        //        }
 
         // for edges that 'jump' a row, create a new vertex at the next row's rank
         // and add edges that route the original edge thru the new vertex
         for (LE<V, E> edge : outgoingMulti) {
-          //          log.info("will replace outgoingMulti edge {}", edge);
           // if the edge has a source and target rank that are only 2 levels apart,
           // make just one sytheticVertex between them. Otherwise, make a segment
           if (edge.getTarget().getRank() - edge.getSource().getRank() == 2) {
@@ -101,23 +83,8 @@ public class EiglspergerSynthetics<V, E> {
             updateIndices(layers.get(pVertexRank));
             updateIndices(layers.get(qVertexRank));
           }
-
           edges.removeIf(edge::equals);
         }
-        // for edges that 'jump' a row, create a new vertex at the previous row's rank
-        // and add edges that route the original edge thru the new vertex
-        //        for (LE<V, E> edge : incomingMulti) {
-        //          //          log.info("will replace incomingMulti edge {}", edge);
-        //          LV<V> virtualVertex = SyntheticLV.of();
-        //          // rank of new vertex is the rank of the target vertex - 1
-        //          int newVertexRank = edge.getTarget().rank - 1;
-        //          virtualVertex.setRank(newVertexRank);
-        //          virtualVertex.setIndex(layers.get(newVertexRank).size());
-        //          replaceEdgeWithTwo(edges, edge, virtualVertex);
-        //          layers.get(newVertexRank).add(virtualVertex);
-        //          updateIndices(layers.get(newVertexRank));
-        //          edges.removeIf(edge::equals);
-        //        }
       }
     }
     return convertToArrays(layers);
@@ -240,5 +207,43 @@ public class EiglspergerSynthetics<V, E> {
 
     articulatedEdges.forEach(e -> dag.addEdge(e.getSource(), e.getTarget(), e));
     return articulatedEdges;
+  }
+
+  public void alignArticulatedEdges() {
+    Set<Point> allInnerPoints = new HashSet<>();
+    for (LE<V, E> edge : dag.edgeSet()) {
+      if (edge instanceof SyntheticLE) {
+        SyntheticLE<V, E> syntheticEdge = (SyntheticLE<V, E>) edge;
+        LV<V> source = dag.getEdgeSource(edge);
+        if (source instanceof SyntheticLV) {
+          continue;
+        }
+        LV<V> target = dag.getEdgeTarget(syntheticEdge);
+        Map<SyntheticLV<V>, Point> innerPoints = new LinkedHashMap<>();
+        while (target instanceof SyntheticLV) {
+          SyntheticLV<V> syntheticTarget = (SyntheticLV<V>) target;
+          innerPoints.put(syntheticTarget, syntheticTarget.getPoint());
+          // a SyntheticVertex will have one and only one outgoing edge
+          LE<V, E> outgoingEdge = dag.outgoingEdgesOf(target).stream().findFirst().get();
+          target = dag.getEdgeTarget(outgoingEdge);
+        }
+
+        // look at the x coords of all the points in the innerPoints list
+        double avgx = innerPoints.values().stream().mapToDouble(p -> p.x).average().getAsDouble();
+        log.trace("points: {}, avgx: {}", innerPoints.values(), avgx);
+        boolean overlap = false;
+        for (SyntheticLV<V> v : innerPoints.keySet()) {
+          Point newPoint = Point.of(avgx, v.p.y);
+          overlap |= allInnerPoints.contains(newPoint);
+          allInnerPoints.add(newPoint);
+          v.setPoint(newPoint);
+        }
+        if (overlap) {
+          //          log.info("overlap at {}", innerPoints.keySet());
+          innerPoints.keySet().forEach(v -> v.setPoint(Point.of(v.p.x + 20, v.p.y)));
+        }
+      }
+    }
+    // check for any duplicate points
   }
 }

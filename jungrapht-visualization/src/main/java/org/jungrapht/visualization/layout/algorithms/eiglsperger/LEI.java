@@ -1,0 +1,64 @@
+package org.jungrapht.visualization.layout.algorithms.eiglsperger;
+
+import java.util.Objects;
+import org.jungrapht.visualization.layout.util.synthetics.SEI;
+
+/**
+ * An edge type used for the application of the SugiyamaLayoutAlgorithm.<br>
+ * Instances of SE&lt;V,E&gt; replace instances of E during layout
+ *
+ * @param <V> vertex type
+ * @param <E> edge type
+ */
+class LEI<V, E> extends SEI<E> implements LE<V, E> {
+
+  public final LV<V> source;
+  public final LV<V> target;
+
+  public LEI(E edge, LV<V> source, LV<V> target) {
+    super(edge);
+    this.source = source;
+    this.target = target;
+  }
+
+  @Override
+  public LV<V> getSource() {
+    return source;
+  }
+
+  @Override
+  public LV<V> getTarget() {
+    return target;
+  }
+
+  @Override
+  public String toString() {
+    return "SugiyamaEdge{" + "edge=" + edge + ", source=" + source + ", target=" + target + '}';
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    if (!super.equals(o)) return false;
+    LEI<?, ?> that = (LEI<?, ?>) o;
+    return Objects.equals(source, that.source) && Objects.equals(target, that.target);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), source, target);
+  }
+  //  @Override
+  //  public boolean equals(Object o) {
+  //    if (this == o) return true;
+  //    if (o == null || getClass() != o.getClass()) return false;
+  //    SugiyamaEdge<?, ?> se = (SugiyamaEdge<?, ?>) o;
+  //    return Objects.equals(edge, se.edge);
+  //  }
+  //
+  //  @Override
+  //  public int hashCode() {
+  //    return Objects.hash(edge);
+  //  }
+}

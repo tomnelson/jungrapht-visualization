@@ -6,7 +6,7 @@ package org.jungrapht.visualization.layout.algorithms.eiglsperger;
  *
  * @param <V> vertex type
  */
-public class PVertex<V> extends SegmentVertex<V> {
+class PVertex<V> extends SegmentVertex<V> {
 
   public static <V> PVertex<V> of() {
     return new PVertex();
@@ -29,10 +29,10 @@ public class PVertex<V> extends SegmentVertex<V> {
         + rank
         + ", index="
         + index
-        //        + ", pos="
-        //        + pos
-        //        + ", measure="
-        //        + measure
+        + ", pos="
+        + pos
+        + ", measure="
+        + measure
         + ", p="
         + p
         + '}';

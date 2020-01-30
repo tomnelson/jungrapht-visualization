@@ -223,11 +223,16 @@ public class TreeLayoutSelector<V, E> extends JPanel {
             .build();
 
     SugiyamaLayoutAlgorithm<V, E> sugiyamaLayoutAlgorithm =
-        SugiyamaLayoutAlgorithm.<V, E>edgeAwareBuilder().after(after).build();
+        SugiyamaLayoutAlgorithm.<V, E>edgeAwareBuilder()
+            .straightenEdges(true)
+            .postStraighten(true)
+            .after(after)
+            .build();
 
     EiglspergerLayoutAlgorithm<V, E> eiglspergerLayoutAlgorithm =
         EiglspergerLayoutAlgorithm.<V, E>edgeAwareBuilder()
             .straightenEdges(true)
+            .postStraighten(true)
             .threaded(false)
             .after(after)
             .build();
@@ -337,7 +342,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     circleButton.addItemListener(new LayoutItemListener(circleLayoutAlgorithm, vv));
     circleButton.setSelected(initialSelection == layoutNumber++);
 
-    JRadioButton betterCircleButton = new JRadioButton("BetterCircle");
+    JRadioButton betterCircleButton = new JRadioButton("Reduced-Xing Circle");
     betterCircleButton.addItemListener(
         new LayoutItemListener(reduceEdgeCrossingCircleLayoutAlgorithm, vv));
     betterCircleButton.setSelected(initialSelection == layoutNumber++);

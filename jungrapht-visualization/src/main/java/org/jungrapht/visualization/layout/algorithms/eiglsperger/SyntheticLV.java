@@ -8,38 +8,32 @@ import org.jungrapht.visualization.layout.util.synthetics.Synthetic;
  *
  * @param <V> vertex type
  */
-class SegmentVertex<V> extends SyntheticLV<V> implements Synthetic {
+class SyntheticLV<V> extends LVI<V> implements Synthetic {
 
   final int hash;
 
-  protected Segment<V> segment;
-
-  public static <V> SegmentVertex<V> of() {
-    return new SegmentVertex();
+  public static <V> SyntheticLV<V> of() {
+    return new SyntheticLV();
   }
 
-  protected SegmentVertex() {
+  protected SyntheticLV() {
     super();
     this.hash = System.identityHashCode(this);
   }
 
-  public SegmentVertex(SegmentVertex<V> other) {
+  public SyntheticLV(SyntheticLV<V> other) {
     super(other);
     this.hash = other.hash;
   }
 
-  public Segment<V> getSegment() {
-    return segment;
-  }
-
-  public void setSegment(Segment<V> segment) {
-    this.segment = segment;
+  public <T extends LV<V>> T copy() {
+    return (T) new SyntheticLV<>(this);
   }
 
   @Override
   public boolean equals(Object o) {
-    if (o instanceof SegmentVertex) {
-      return hash == ((SegmentVertex) o).hash;
+    if (o instanceof SyntheticLV) {
+      return hash == ((SyntheticLV) o).hash;
     }
     return false;
   }
@@ -51,17 +45,17 @@ class SegmentVertex<V> extends SyntheticLV<V> implements Synthetic {
 
   @Override
   public String toString() {
-    return "SegmentVertex{"
+    return "SyntheticSugiyamaVertex{"
         + "vertex="
         + hashCode()
         + ", rank="
         + rank
         + ", index="
         + index
-        //        + ", pos="
-        //        + pos
-        //        + ", measure="
-        //        + measure
+        + ", pos="
+        + pos
+        + ", measure="
+        + measure
         + ", p="
         + p
         + '}';

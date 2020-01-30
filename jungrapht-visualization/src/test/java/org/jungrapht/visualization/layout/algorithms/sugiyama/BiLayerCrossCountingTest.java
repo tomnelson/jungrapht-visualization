@@ -45,12 +45,7 @@ public class BiLayerCrossCountingTest {
   List<LE<String, String>> edges =
       Arrays.asList(new LE[] {e0, e1, e2, e3, e4, e5, e6, e7, e8, e9, e10});
 
-  Comparator<LE<String, String>> sourceIndexComparator =
-      Comparator.comparingInt(e -> e.getSource().getIndex());
-  Comparator<LE<String, String>> targetIndexComparator =
-      Comparator.comparingInt(e -> e.getTarget().getIndex());
-  Comparator<LE<String, String>> biLevelEdgeComparator =
-      sourceIndexComparator.thenComparing(targetIndexComparator);
+  Comparator<LE<String, String>> biLevelEdgeComparator = Comparators.biLevelEdgeComparator();
 
   private int crossingCount(List<LE<String, String>> edges) {
     edges.sort(biLevelEdgeComparator);
