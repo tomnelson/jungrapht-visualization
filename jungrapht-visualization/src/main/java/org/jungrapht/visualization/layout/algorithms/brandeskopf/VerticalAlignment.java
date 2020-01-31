@@ -75,6 +75,13 @@ public abstract class VerticalAlignment<V, E> {
     return v.getIndex();
   }
 
+  int alignMoveCursor(LV<V> um, LV<V> vkofi) {
+    align(um, vkofi);
+    root(vkofi, root(um));
+    align(vkofi, root(vkofi));
+    return pos(um);
+  }
+
   /**
    * start at first layer, work down, looking at predecessors
    *
@@ -115,14 +122,46 @@ public abstract class VerticalAlignment<V, E> {
                 // if edge um->vkofi is not marked
                 LE<V, E> edge = svGraph.getEdge(um, vkofi);
                 if (notMarked(edge) && r < pos(um)) {
-                  // align[um] <- vkofi
-                  align(um, vkofi);
-                  // root[vkofi] <- root[um]
-                  root(vkofi, root(um));
-                  // align[vkofi] <- root[vkofi]
-                  align(vkofi, root(vkofi));
-                  // r = pos[um]
-                  r = pos(um);
+                  r = alignMoveCursor(um, vkofi);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  public static class RightmostUpper<V, E> extends VerticalAlignment<V, E> {
+    public RightmostUpper(
+        LV<V>[][] layers, Graph<LV<V>, LE<V, E>> svGraph, Set<LE<V, E>> markedSegments) {
+      super(layers, svGraph, markedSegments);
+    }
+
+    @Override
+    public void align() {
+      //    for (int i=1; i< layers.size(); i++) {
+      for (int i = 1; i <= layers.length - 1; i++) { // zero based
+        LV<V>[] currentLayer = layers[i];
+        LV<V>[] previousLayer = layers[i - 1];
+        int r = previousLayer.length + 1;
+        for (int k = currentLayer.length - 1; k >= 0; k--) {
+          LV<V> vkofi = currentLayer[k];
+          List<LV<V>> neighbors =
+              Graphs.predecessorListOf(svGraph, vkofi)
+                  .stream()
+                  .sorted(Comparator.comparingInt(LV::getIndex))
+                  .collect(Collectors.toList());
+          int d = neighbors.size();
+          if (d > 0) {
+            int floor = (int) Math.floor((d - 1) / 2.0); // zero based
+            int ceil = (int) Math.ceil((d - 1) / 2.0); // zero based
+            for (int m : new LinkedHashSet<>(Arrays.asList(ceil, floor))) {
+              if (align(vkofi) == vkofi) {
+                LV<V> um = neighbors.get(m);
+                LE<V, E> edge = svGraph.getEdge(um, vkofi);
+                if (notMarked(edge) && r > pos(um)) {
+                  r = alignMoveCursor(um, vkofi);
                 }
               }
             }
@@ -146,14 +185,10 @@ public abstract class VerticalAlignment<V, E> {
 
     @Override
     public void align() {
-      //    for (int i=1; i< layers.size(); i++) {
       for (int i = layers.length - 2; i >= 0; i--) { // zero based
-        //    for (int i = 0; i < layers.size() - 1; i++) { // zero based
         int r = -1;
         LV<V>[] currentLayer = layers[i];
-        //      for (int k=1; k <= currentLayer.size(); k++) {
         for (int k = 0; k <= currentLayer.length - 1; k++) { // zero based
-          // if the vertex at k has source nodes
           LV<V> vkofi = currentLayer[k];
           List<LV<V>> neighbors =
               Graphs.successorListOf(svGraph, vkofi)
@@ -171,55 +206,7 @@ public abstract class VerticalAlignment<V, E> {
                 // if edge um->vkofi is not marked
                 LE<V, E> edge = svGraph.getEdge(vkofi, um);
                 if (notMarked(edge) && r < pos(um)) {
-                  align(um, vkofi);
-                  root(vkofi, root(um));
-                  align(vkofi, root(vkofi));
-                  r = pos(um);
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
-  public static class RightmostUpper<V, E> extends VerticalAlignment<V, E> {
-    public RightmostUpper(
-        LV<V>[][] layers, Graph<LV<V>, LE<V, E>> svGraph, Set<LE<V, E>> markedSegments) {
-      super(layers, svGraph, markedSegments);
-    }
-
-    @Override
-    public void align() {
-      //    for (int i=1; i< layers.size(); i++) {
-      for (int i = 1; i <= layers.length - 1; i++) { // zero based
-        LV<V>[] currentLayer = layers[i];
-        LV<V>[] previousLayer = layers[i - 1];
-        int r = previousLayer.length + 1;
-        //              for (int k=0; k <= currentLayer.size()-1; k++) {
-        for (int k = currentLayer.length - 1; k >= 0; k--) {
-          // if the vertex at k has source nodes
-          LV<V> vkofi = currentLayer[k];
-          List<LV<V>> neighbors =
-              Graphs.predecessorListOf(svGraph, vkofi)
-                  .stream()
-                  .sorted(Comparator.comparingInt(LV::getIndex))
-                  .collect(Collectors.toList());
-          int d = neighbors.size();
-          if (d > 0) {
-            int floor = (int) Math.floor((d - 1) / 2.0); // zero based
-            int ceil = (int) Math.ceil((d - 1) / 2.0); // zero based
-            for (int m : new LinkedHashSet<>(Arrays.asList(ceil, floor))) {
-              if (align(vkofi) == vkofi) {
-                LV<V> um = neighbors.get(m);
-                // if edge um->vkofi is not marked
-                LE<V, E> edge = svGraph.getEdge(um, vkofi);
-                if (notMarked(edge) && r > pos(um)) {
-                  align(um, vkofi);
-                  root(vkofi, root(um));
-                  align(vkofi, root(vkofi));
-                  r = pos(um);
+                  r = alignMoveCursor(um, vkofi);
                 }
               }
             }
@@ -263,10 +250,7 @@ public abstract class VerticalAlignment<V, E> {
                 // if edge vm->v is not marked
                 LE<V, E> edge = svGraph.getEdge(vkofi, um);
                 if (notMarked(edge) && r > pos(um)) {
-                  align(um, vkofi);
-                  root(vkofi, root(um));
-                  align(vkofi, root(vkofi));
-                  r = pos(um);
+                  r = alignMoveCursor(um, vkofi);
                 }
               }
             }

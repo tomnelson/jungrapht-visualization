@@ -81,7 +81,7 @@ abstract class VerticalAlignment<V, E> {
     align(um, vkofi);
     root(vkofi, root(um));
     align(vkofi, root(vkofi));
-    return idx(um);
+    return pos(um);
   }
 
   /**
@@ -122,7 +122,9 @@ abstract class VerticalAlignment<V, E> {
                 if (markedSegments.contains(edge)) {
                   log.info("{} is marked", edge);
                 }
-                if (notMarked(edge) && (r < um.getPos() || um instanceof SegmentVertex)) {
+                if (um instanceof SegmentVertex) {
+                  r = alignMoveCursor(um, vkofi);
+                } else if (notMarked(edge) && (r < pos(um))) {
                   r = alignMoveCursor(um, vkofi);
                 }
               }
@@ -147,7 +149,7 @@ abstract class VerticalAlignment<V, E> {
       for (int i = 1; i <= layers.length - 1; i++) { // TB
         LV<V>[] currentLayer = layers[i];
         LV<V>[] neighborLayer = layers[i - 1];
-        int r = neighborLayer.length;
+        int r = neighborLayer.length + 1;
         for (int k = currentLayer.length - 1; k >= 0; k--) { //RL
           LV<V> vkofi = currentLayer[k];
           List<LV<V>> neighbors =
@@ -166,7 +168,9 @@ abstract class VerticalAlignment<V, E> {
                 if (markedSegments.contains(edge)) {
                   log.info("{} is marked", edge);
                 }
-                if (notMarked(edge) && (r > um.getPos() || um instanceof SegmentVertex)) {
+                if (um instanceof SegmentVertex) {
+                  r = alignMoveCursor(um, vkofi);
+                } else if (notMarked(edge) && (r > pos(um))) {
                   r = alignMoveCursor(um, vkofi);
                 }
               }
@@ -215,7 +219,9 @@ abstract class VerticalAlignment<V, E> {
                 if (markedSegments.contains(edge)) {
                   log.info("{} is marked", edge);
                 }
-                if (notMarked(edge) && (r < um.getPos() || um instanceof SegmentVertex)) {
+                if (um instanceof SegmentVertex) {
+                  r = alignMoveCursor(um, vkofi);
+                } else if (notMarked(edge) && (r < pos(um))) {
                   r = alignMoveCursor(um, vkofi);
                 }
               }
@@ -246,7 +252,7 @@ abstract class VerticalAlignment<V, E> {
       for (int i = layers.length - 2; i >= 0; i--) { // BT
         LV<V>[] currentLayer = layers[i];
         LV<V>[] nextLayer = layers[i + 1];
-        int r = nextLayer.length;
+        int r = nextLayer.length + 1;
         for (int k = currentLayer.length - 1; k >= 0; k--) { // RL
           LV<V> vkofi = currentLayer[k];
           List<LV<V>> neighbors =
@@ -265,7 +271,9 @@ abstract class VerticalAlignment<V, E> {
                 if (markedSegments.contains(edge)) {
                   log.info("{} is marked", edge);
                 }
-                if (notMarked(edge) && (r > um.getPos() || um instanceof SegmentVertex)) {
+                if (um instanceof SegmentVertex) {
+                  r = alignMoveCursor(um, vkofi);
+                } else if (notMarked(edge) && (r > pos(um))) {
                   r = alignMoveCursor(um, vkofi);
                 }
               }

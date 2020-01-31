@@ -1,6 +1,7 @@
 package org.jungrapht.visualization.layout.algorithms.eiglsperger;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -83,7 +84,14 @@ class HorizontalCoordinateAssignment {
 
         Point balancedPoint =
             AverageMedian.averageMedianPoint(
-                upLeftPoint, upRightPoint, downLeftPoint, downRightPoint);
+                upLeftPoint
+                //                    ,
+                //                    upRightPoint
+                ,
+                downLeftPoint
+                //                    ,
+                //                    downRightPoint
+                );
         v.setPoint(balancedPoint);
       }
     }
@@ -170,6 +178,9 @@ class HorizontalCoordinateAssignment {
 
   public static <V, E> void preprocessing(
       LV<V>[][] layers, Graph<LV<V>, LE<V, E>> svGraph, Set<LE<V, E>> markedSegments) {
+
+    log.info("ready to assign:{}", Arrays.toString(layers));
+    Arrays.stream(layers).forEach(a -> log.info("-" + Arrays.toString(a)));
     int h = layers.length;
     // compares current row 'i' with 'i+1' row
     // i starts at row 1 and goes to row h-2-1
