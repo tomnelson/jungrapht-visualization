@@ -132,8 +132,8 @@ public class BrandesKopfLayoutAlgorithm<V, E>
   protected boolean expandLayout;
   protected RenderContext<V, E> renderContext;
   Runnable after;
-  int horizontalOffset = Integer.getInteger(PREFIX + "sugiyama.horizontal.offset", 50);
-  int verticalOffset = Integer.getInteger(PREFIX + "sugiyama.vertical.offset", 50);
+  int horizontalOffset = Integer.getInteger(PREFIX + "mincross.horizontalOffset", 50);
+  int verticalOffset = Integer.getInteger(PREFIX + "mincross.verticalOffset", 50);
   boolean doUpLeft;
   boolean doDownLeft;
   boolean doUpRight;

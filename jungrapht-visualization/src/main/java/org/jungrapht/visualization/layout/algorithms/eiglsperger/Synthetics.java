@@ -230,7 +230,9 @@ class Synthetics<V, E> {
 
         // look at the x coords of all the points in the innerPoints list
         double avgx = innerPoints.values().stream().mapToDouble(p -> p.x).average().getAsDouble();
-        log.trace("points: {}, avgx: {}", innerPoints.values(), avgx);
+        if (log.isTraceEnabled()) {
+          log.trace("points: {}, avgx: {}", innerPoints.values(), avgx);
+        }
         boolean overlap = false;
         for (SyntheticLV<V> v : innerPoints.keySet()) {
           Point newPoint = Point.of(avgx, v.p.y);
@@ -239,7 +241,6 @@ class Synthetics<V, E> {
           v.setPoint(newPoint);
         }
         if (overlap) {
-          //          log.info("overlap at {}", innerPoints.keySet());
           innerPoints.keySet().forEach(v -> v.setPoint(Point.of(v.p.x + 20, v.p.y)));
         }
       }

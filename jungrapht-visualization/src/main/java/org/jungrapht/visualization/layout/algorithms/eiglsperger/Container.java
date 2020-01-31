@@ -88,30 +88,7 @@ class Container<V, NT extends LV<V>> extends InsertionOrderSplayTreeWithSize<NT>
       return splitter;
     }
     return Container.createSubContainer();
-    //            .create(); // return empty 'right' tree and leave tree alone
   }
-
-  //  public static <V, NT extends LV<V>> Pair<Container<V, NT>> split(
-  //      Container<V, NT> tree, int position) {
-  //    // assume we find key
-  //    Node<NT> node = tree.find(position);
-  //    if (node != null) {
-  //      tree.splay(node);
-  ////      System.err.println(tree.printTree("after splay at " + node));
-  //      if (node.left != null) node.left.parent = null;
-  //      if (node.right != null) node.right.parent = null;
-  //      Container<V, NT> left = Container.createSubContainer(node.left);
-  //      left.validate();
-  //      Container<V, NT> right = Container.createSubContainer(node.right);
-  //      right.validate();
-  //      return Pair.of(left, right);
-  //    } else {
-  //      tree.validate();
-  //      Container<V, NT> empty = Container.createSubContainer();
-  //      empty.validate();
-  //      return Pair.of(tree, empty);
-  //    }
-  //  }
 
   @Override
   public LV copy() {

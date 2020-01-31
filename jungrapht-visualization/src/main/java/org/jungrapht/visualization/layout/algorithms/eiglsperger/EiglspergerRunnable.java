@@ -238,7 +238,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
       if (twoWayCrossCount < bestCrossCount) {
         bestCrossCount = twoWayCrossCount;
       } else {
-        log.info("the bext cross count was {}", bestCrossCount);
+        log.trace("the bext cross count was {}", bestCrossCount);
         break;
       }
     }
@@ -253,11 +253,10 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     int horizontalOffset =
         Math.max(
             avgVertexBounds.width / 2,
-            Integer.getInteger(PREFIX + "sugiyama.horizontal.offset", 50));
+            Integer.getInteger(PREFIX + "mincross.horizontalOffset", 50));
     int verticalOffset =
         Math.max(
-            avgVertexBounds.height / 2,
-            Integer.getInteger(PREFIX + "sugiyama.vertical.offset", 50));
+            avgVertexBounds.height / 2, Integer.getInteger(PREFIX + "mincross.verticalOffset", 50));
     GraphLayers.checkLayers(best);
     Map<LV<V>, Point> vertexPointMap = new HashMap<>();
 
@@ -319,7 +318,9 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     int x = horizontalOffset;
     int y = verticalOffset;
     layerIndex = 0;
-    log.trace("layerMaxHeights {}", rowMaxHeightMap);
+    if (log.isTraceEnabled()) {
+      log.trace("layerMaxHeights {}", rowMaxHeightMap);
+    }
     for (int i = 0; i < best.length; i++) {
       int previousVertexWidth = 0;
       // offset against widest row
@@ -445,7 +446,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
 
     int crossCount = 0;
     if (log.isTraceEnabled()) log.trace("sweepForward");
-    //    EiglspergerUtil.check(layersArray);
+
     List<LV<V>> layerEye = null;
 
     for (int i = 0; i < layersArray.length - 1; i++) {
@@ -469,19 +470,27 @@ public class EiglspergerRunnable<V, E> implements Runnable {
 
       EiglspergerSteps.stepOne(biLayer);
       // handled PVertices by merging them into containers
-      log.trace("stepOneOut:{}", biLayer.currentLayer);
+      if (log.isTraceEnabled()) {
+        log.trace("stepOneOut:{}", biLayer.currentLayer);
+      }
 
       List<VirtualEdge<V, E>> virtualEdges = new ArrayList<>();
 
       EiglspergerSteps.stepTwo(biLayer, virtualEdges, svGraph);
-      log.trace("stepTwoOut:{}", biLayer.downstreamLayer);
+      if (log.isTraceEnabled()) {
+        log.trace("stepTwoOut:{}", biLayer.downstreamLayer);
+      }
 
       EiglspergerSteps.stepThree(biLayer);
-      log.trace("stepThreeOut:{}", biLayer.downstreamLayer);
+      if (log.isTraceEnabled()) {
+        log.trace("stepThreeOut:{}", biLayer.downstreamLayer);
+      }
       EiglspergerUtil.fixIndices(biLayer.downstreamLayer);
 
       EiglspergerSteps.stepFour(biLayer, virtualEdges);
-      log.trace("stepFourOut:{}", biLayer.downstreamLayer);
+      if (log.isTraceEnabled()) {
+        log.trace("stepFourOut:{}", biLayer.downstreamLayer);
+      }
 
       // i want the edges keyed on this rank, plus any virtual edges
       List<LE<V, E>> reducedEdges = new ArrayList<>();
@@ -489,18 +498,18 @@ public class EiglspergerRunnable<V, E> implements Runnable {
       reducedEdges.addAll(virtualEdges);
 
       crossCount += EiglspergerSteps.stepFive(svGraph, true, biLayer, virtualEdges);
-      log.info("forward stepFive crossCount:{}", crossCount);
+      log.trace("forward stepFive crossCount:{}", crossCount);
 
       EiglspergerSteps.stepSix(biLayer);
-      log.trace("stepSixOut:{}", biLayer.downstreamLayer);
+      if (log.isTraceEnabled()) {
+        log.trace("stepSixOut:{}", biLayer.downstreamLayer);
+      }
 
       Arrays.sort(layersArray[i], Comparator.comparingInt(LV::getIndex));
       EiglspergerUtil.fixIndices(layersArray[i]);
       Arrays.sort(layersArray[i + 1], Comparator.comparingInt(LV::getIndex));
       EiglspergerUtil.fixIndices(layersArray[i + 1]);
-      log.trace("XXXXXXX\n\n");
       layerEye = biLayer.downstreamLayer;
-      //      EiglspergerUtil.check(layersArray);
     }
     return crossCount;
   }
@@ -536,19 +545,27 @@ public class EiglspergerRunnable<V, E> implements Runnable {
 
       EiglspergerSteps.stepOne(biLayer);
       // handled PVertices by merging them into containers
-      log.trace("stepOneOut:{}", biLayer.currentLayer);
+      if (log.isTraceEnabled()) {
+        log.trace("stepOneOut:{}", biLayer.currentLayer);
+      }
 
       List<VirtualEdge<V, E>> virtualEdges = new ArrayList<>();
 
       EiglspergerSteps.stepTwo(biLayer, virtualEdges, svGraph);
-      log.trace("stepTwoOut:{}", biLayer.downstreamLayer);
+      if (log.isTraceEnabled()) {
+        log.trace("stepTwoOut:{}", biLayer.downstreamLayer);
+      }
 
       EiglspergerSteps.stepThree(biLayer);
-      log.trace("stepThreeOut:{}", biLayer.downstreamLayer);
+      if (log.isTraceEnabled()) {
+        log.trace("stepThreeOut:{}", biLayer.downstreamLayer);
+      }
       EiglspergerUtil.fixIndices(biLayer.downstreamLayer);
 
       EiglspergerSteps.stepFour(biLayer, virtualEdges);
-      log.trace("stepFourOut:{}", biLayer.downstreamLayer);
+      if (log.isTraceEnabled()) {
+        log.trace("stepFourOut:{}", biLayer.downstreamLayer);
+      }
 
       // i want the edges keyed on this rank, plus any virtual edges
       List<LE<V, E>> reducedEdges = new ArrayList<>();
@@ -556,18 +573,20 @@ public class EiglspergerRunnable<V, E> implements Runnable {
       reducedEdges.addAll(virtualEdges);
 
       crossCount += EiglspergerSteps.stepFive(svGraph, false, biLayer, virtualEdges);
-      log.trace("stepFiveOut:{}", biLayer.downstreamLayer);
-      log.info("backwards stepFive crossCount:{}", crossCount);
+      if (log.isTraceEnabled()) {
+        log.trace("stepFiveOut:{}", biLayer.downstreamLayer);
+        log.trace("backwards stepFive crossCount:{}", crossCount);
+      }
       EiglspergerSteps.stepSix(biLayer);
-      log.trace("stepSixOut:{}", biLayer.downstreamLayer);
+      if (log.isTraceEnabled()) {
+        log.trace("stepSixOut:{}", biLayer.downstreamLayer);
+      }
 
       Arrays.sort(layersArray[i], Comparator.comparingInt(LV::getIndex));
       EiglspergerUtil.fixIndices(layersArray[i]);
       Arrays.sort(layersArray[i - 1], Comparator.comparingInt(LV::getIndex));
       EiglspergerUtil.fixIndices(layersArray[i - 1]);
-      log.trace("XXXXXXX\n\n");
       layerEye = biLayer.downstreamLayer;
-      //      EiglspergerUtil.check(layersArray);
     }
     return crossCount;
   }

@@ -125,7 +125,7 @@ class HorizontalCompaction<V> {
 
   private void shift(LV<V> k, int v) {
     if (v < 0) {
-      log.error("shift zero?");
+      log.error("shift < zero?");
     }
     shift.put(k, v);
   }

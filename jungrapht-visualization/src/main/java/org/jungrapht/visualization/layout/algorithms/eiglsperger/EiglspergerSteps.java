@@ -121,12 +121,16 @@ class EiglspergerSteps {
       }
     }
     // sort the list by elements measures
-    log.info("look measures: {}", listS);
+    if (log.isTraceEnabled()) {
+      log.trace("listS measures: {}", listS);
+    }
     if (listS.size() > 0
         && listS.stream().mapToDouble(s -> s.getMeasure()).min().getAsDouble() < 0) {
       log.error("something missing");
     }
-    log.info("look measures: {}", listV);
+    if (log.isTraceEnabled()) {
+      log.trace("listV measures: {}", listV);
+    }
     if (listV.size() > 0
         && listV.stream().mapToDouble(s -> s.getMeasure()).min().getAsDouble() < 0) {
       log.error("something missing");
@@ -135,14 +139,16 @@ class EiglspergerSteps {
       listS.sort(Comparator.comparingDouble(Container::getMeasure));
       listV.sort(Comparator.comparingDouble(LV::getMeasure));
 
-      StringBuilder sbuilder = new StringBuilder("S3 listS:\n");
-      listS.forEach(s -> sbuilder.append(s.toString()).append("\n"));
-      log.info(sbuilder.toString());
-      StringBuilder vbuilder = new StringBuilder("S3 listV:\n");
-      listV.forEach(v -> vbuilder.append(v.toString()).append("\n"));
-      log.info(vbuilder.toString());
+      if (log.isTraceEnabled()) {
+        StringBuilder sbuilder = new StringBuilder("S3 listS:\n");
+        listS.forEach(s -> sbuilder.append(s.toString()).append("\n"));
+        log.trace(sbuilder.toString());
+        StringBuilder vbuilder = new StringBuilder("S3 listV:\n");
+        listV.forEach(v -> vbuilder.append(v.toString()).append("\n"));
+        log.trace(vbuilder.toString());
+      }
     } catch (Exception ex) {
-      log.info("listS: {}, listV: {} exception: {}", listS, listV, ex);
+      log.error("listS: {}, listV: {} exception: {}", listS, listV, ex);
     }
     /*
     if the measure of the head of the vertex list LV is <= position of the head of the container list LS,
@@ -196,7 +202,9 @@ class EiglspergerSteps {
     mergedList.addAll(segmentVertexList);
     StringBuilder builder = new StringBuilder("S3 mergedList:\n");
     mergedList.forEach(v -> builder.append(v.toString()).append("\n"));
-    log.info(builder.toString());
+    if (log.isTraceEnabled()) {
+      log.trace(builder.toString());
+    }
 
     biLayer.downstreamLayer = mergedList;
   }
@@ -239,28 +247,33 @@ class EiglspergerSteps {
       Optional<Container<V, Segment<V>>> containerOpt =
           containerList.stream().filter(c -> c.contains(segment)).findFirst();
       if (containerOpt.isPresent()) {
-        log.info("S4 currentLayer: \n{}", elementStringer(biLayer, currentLayer));
+        if (log.isTraceEnabled()) {
+          log.trace("S4 currentLayer: \n{}", elementStringer(biLayer, currentLayer));
+        }
         Container<V, Segment<V>> container = containerOpt.get();
         int loserIdx = downstreamLayer.indexOf(container);
-        log.info(
-            "found container {} at index {} with list index {} for qVertex {} with index {} and list index {}",
-            container,
-            container.getIndex(),
-            loserIdx,
-            q,
-            q.getIndex(),
-            downstreamLayer.indexOf(q));
-        log.info("downstreamLayer: \n{}", elementStringer(biLayer, downstreamLayer));
-        if (log.isTraceEnabled()) log.trace("splitting on {} because of {}", segment, q);
-        Pair<Container<V, Segment<V>>> containerPair = Container.split(container, segment);
+        if (log.isTraceEnabled()) {
+          log.trace(
+              "found container {} at index {} with list index {} for qVertex {} with index {} and list index {}",
+              container,
+              container.getIndex(),
+              loserIdx,
+              q,
+              q.getIndex(),
+              downstreamLayer.indexOf(q));
+          log.trace("downstreamLayer: \n{}", elementStringer(biLayer, downstreamLayer));
+          log.trace("splitting on {} because of {}", segment, q);
+        }
 
-        log.info("splitFound container into {} and {}", containerPair.first, containerPair.second);
+        Pair<Container<V, Segment<V>>> containerPair = Container.split(container, segment);
 
         if (log.isTraceEnabled())
           log.trace(
-              "container pair is now {} and {}",
-              containerPair.first.printTree("\n"),
-              containerPair.second.printTree("\n"));
+              "splitFound container into {} and {}", containerPair.first, containerPair.second);
+        log.trace(
+            "container pair is now {} and {}",
+            containerPair.first.printTree("\n"),
+            containerPair.second.printTree("\n"));
 
         if (containerPair.first.size() > 0) {
           virtualEdges.add(VirtualEdge.of(container, containerPair.first));
@@ -272,22 +285,23 @@ class EiglspergerSteps {
         virtualEdges.add(VirtualEdge.of(container, q));
         virtualEdges.removeIf(e -> e.getSource() == container && e.getTarget() == container);
         downstreamLayer.remove(q);
-        if (log.isTraceEnabled()) log.trace("removed container {}", container.printTree("\n"));
-        if (log.isTraceEnabled())
+        if (log.isTraceEnabled()) {
+          log.trace("removed container {}", container.printTree("\n"));
           log.trace("adding container {}", containerPair.first.printTree("\n"));
-        if (log.isTraceEnabled())
           log.trace("adding container {}", containerPair.second.printTree("\n"));
+        }
         downstreamLayer.remove(container);
         downstreamLayer.add(loserIdx, containerPair.first);
         downstreamLayer.add(loserIdx + 1, q);
         downstreamLayer.add(loserIdx + 2, containerPair.second);
 
-        log.info("S4 downstreamLayer now: \n{}", elementStringer(biLayer, downstreamLayer));
-        log.info("virtualEdges: \n{}", virtualEdges);
+        if (log.isTraceEnabled()) {
+          log.trace("S4 downstreamLayer now: \n{}", elementStringer(biLayer, downstreamLayer));
+          log.trace("virtualEdges: \n{}", virtualEdges);
+        }
 
       } else {
-        log.error(
-            "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!container opt was empty for segment {}", segment);
+        log.error("container opt was empty for segment {}", segment);
       }
     }
 

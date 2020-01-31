@@ -209,9 +209,11 @@ class EiglspergerUtil {
       }
     }
 
-    log.info(
-        "S2 currentLayer with pos values:\n{}",
-        EiglspergerSteps.elementStringer(biLayer, currentLayer));
+    if (log.isTraceEnabled()) {
+      log.trace(
+          "S2 currentLayer with pos values:\n{}",
+          EiglspergerSteps.elementStringer(biLayer, currentLayer));
+    }
   }
 
   static <V, E> int crossingCount(List<LE<V, E>> edges) {
@@ -270,7 +272,7 @@ class EiglspergerUtil {
       for (int j = 0; j < layers[i].length; j++) {
         LV<V> v = layers[i][j];
         if (v.getIndex() != j) {
-          log.info("{} needs fix", v);
+          log.error("{} needs fix", v);
         }
       }
     }
@@ -325,9 +327,11 @@ class EiglspergerUtil {
       }
     }
 
-    log.info(
-        "S2 downstreamLayer with measure values:\n{}",
-        EiglspergerSteps.elementStringer(biLayer, downstreamLayer));
+    if (log.isTraceEnabled()) {
+      log.trace(
+          "S2 downstreamLayer with measure values:\n{}",
+          EiglspergerSteps.elementStringer(biLayer, downstreamLayer));
+    }
   }
 
   static double medianValue(int[] P) {

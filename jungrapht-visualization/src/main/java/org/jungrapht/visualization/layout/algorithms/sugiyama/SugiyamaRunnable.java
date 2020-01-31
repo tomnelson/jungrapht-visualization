@@ -2,8 +2,7 @@ package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
 import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 
-import java.awt.Rectangle;
-import java.awt.Shape;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -71,6 +70,8 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     protected boolean straightenEdges;
     protected boolean postStraighten;
     protected boolean transpose = true;
+    protected int transposeLimit = 10;
+    protected int maxLevelCross = 23;
 
     /** {@inheritDoc} */
     protected B self() {
@@ -138,6 +139,16 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       return self();
     }
 
+    public B transposeLimit(int transposeLimit) {
+      this.transposeLimit = transposeLimit;
+      return self();
+    }
+
+    public B maxLevelCross(int maxLevelCross) {
+      this.maxLevelCross = maxLevelCross;
+      return self();
+    }
+
     /** {@inheritDoc} */
     public T build() {
       return (T) new SugiyamaRunnable<>(this);
@@ -165,6 +176,8 @@ public class SugiyamaRunnable<V, E> implements Runnable {
   protected boolean straightenEdges;
   protected boolean postStraighten;
   protected boolean transpose;
+  protected int transposeLimit;
+  protected int maxLevelCross;
 
   private SugiyamaRunnable(Builder<V, E, ?, ?> builder) {
     this(
@@ -176,7 +189,9 @@ public class SugiyamaRunnable<V, E> implements Runnable {
         builder.edgeComparator,
         builder.straightenEdges,
         builder.postStraighten,
-        builder.transpose);
+        builder.transpose,
+        builder.transposeLimit,
+        builder.maxLevelCross);
   }
 
   private SugiyamaRunnable(
@@ -188,7 +203,9 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       Comparator<E> edgeComparator,
       boolean straightenEdges,
       boolean postStraighten,
-      boolean transpose) {
+      boolean transpose,
+      int transposeLimit,
+      int maxLevelCross) {
     this.layoutModel = layoutModel;
     this.renderContext = renderContext;
     this.vertexComparator = vertexComparator;
@@ -198,6 +215,8 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     this.straightenEdges = straightenEdges;
     this.postStraighten = postStraighten;
     this.transpose = transpose;
+    this.transposeLimit = transposeLimit;
+    this.maxLevelCross = maxLevelCross;
   }
 
   private boolean checkStopped() {
@@ -289,7 +308,6 @@ public class SugiyamaRunnable<V, E> implements Runnable {
 
     LV<V>[][] best = null;
     int lowestCrossCount = Integer.MAX_VALUE;
-    int maxLevelCross = Integer.getInteger(PREFIX + "sugiyama.max.level.cross", 23);
     // order the ranks
     for (int i = 0; i < maxLevelCross; i++) {
       if (i % 2 == 0) {
@@ -332,11 +350,10 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     int horizontalOffset =
         Math.max(
             avgVertexBounds.width / 2,
-            Integer.getInteger(PREFIX + "sugiyama.horizontal.offset", 50));
+            Integer.getInteger(PREFIX + "mincross.horizontalOffset", 50));
     int verticalOffset =
         Math.max(
-            avgVertexBounds.height / 2,
-            Integer.getInteger(PREFIX + "sugiyama.vertical.offset", 50));
+            avgVertexBounds.height / 2, Integer.getInteger(PREFIX + "mincross.verticalOffset", 50));
     GraphLayers.checkLayers(best);
     Map<LV<V>, Point> vertexPointMap = new HashMap<>();
 
@@ -478,7 +495,6 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     GraphLayers.checkLayers(ranks);
 
     boolean improved = true;
-    int sanityLimit = Integer.getInteger(PREFIX + "sugiyama.transpose.limit", 10);
     int sanityCheck = 0;
     while (improved) {
       improved = false;
@@ -497,7 +513,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
         }
       }
       sanityCheck++;
-      if (sanityCheck > sanityLimit) {
+      if (sanityCheck > transposeLimit) {
         break;
       }
     }
@@ -508,7 +524,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     GraphLayers.checkLayers(ranks);
 
     boolean improved = true;
-    int sanityLimit = Integer.getInteger(PREFIX + "sugiyama.transpose.limit", 10);
+    int sanityLimit = Integer.getInteger(PREFIX + "mincross.transposeLimit", 10);
     int sanityCheck = 0;
     while (improved) {
       improved = false;

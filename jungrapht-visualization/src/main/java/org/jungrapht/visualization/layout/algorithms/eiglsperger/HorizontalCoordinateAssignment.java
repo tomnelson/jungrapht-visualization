@@ -32,7 +32,7 @@ class HorizontalCoordinateAssignment {
             layers, upLeft.getRootMap(), upLeft.getAlignMap(), horizontalOffset, verticalOffset);
     List<LV<V>> misAligned = misAligned(upLeftCompaction.p);
     if (misAligned.size() > 0) {
-      log.info("misAligned from upLeft: {}", misAligned.size());
+      log.warn("misAligned from upLeft: {}", misAligned.size());
     }
 
     VerticalAlignment.RightmostUpper<V, E> upRight =
@@ -42,7 +42,7 @@ class HorizontalCoordinateAssignment {
             layers, upRight.getRootMap(), upRight.getAlignMap(), horizontalOffset, verticalOffset);
     misAligned = misAligned(upRightCompaction.p);
     if (misAligned.size() > 0) {
-      log.info("misAligned from upRight: {}", misAligned.size());
+      log.warn("misAligned from upRight: {}", misAligned.size());
     }
 
     VerticalAlignment.LeftmostLower<V, E> downLeft =
@@ -56,7 +56,7 @@ class HorizontalCoordinateAssignment {
             verticalOffset);
     misAligned = misAligned(downLeftCompaction.p);
     if (misAligned.size() > 0) {
-      log.info("misAligned from downLeft: {}", misAligned.size());
+      log.warn("misAligned from downLeft: {}", misAligned.size());
     }
 
     VerticalAlignment.RightmostLower<V, E> downRight =
@@ -70,7 +70,7 @@ class HorizontalCoordinateAssignment {
             verticalOffset);
     misAligned = misAligned(downRightCompaction.p);
     if (misAligned.size() > 0) {
-      log.info("misAligned from downRight: {}", misAligned.size());
+      log.warn("misAligned from downRight: {}", misAligned.size());
     }
 
     for (int i = 0; i < layers.length; i++) {
@@ -97,7 +97,7 @@ class HorizontalCoordinateAssignment {
     }
     misAligned = misAligned(layers);
     if (misAligned.size() > 0) {
-      log.info("misAligned: {} {}", misAligned, misAligned.size());
+      log.warn("misAligned: {} {}", misAligned, misAligned.size());
     }
   }
 
@@ -148,8 +148,8 @@ class HorizontalCoordinateAssignment {
       Point p = map.get(pVertex);
       Point q = map.get(qVertex);
       if (p.x != q.x) {
-        log.info(
-            "segment {} appears hosed with p at {} and q at {}", segmentVertex.getSegment(), p, q);
+        log.warn(
+            "segment {} misaligned with p at {} and q at {}", segmentVertex.getSegment(), p, q);
         return true;
       }
     }
@@ -179,8 +179,9 @@ class HorizontalCoordinateAssignment {
   public static <V, E> void preprocessing(
       LV<V>[][] layers, Graph<LV<V>, LE<V, E>> svGraph, Set<LE<V, E>> markedSegments) {
 
-    log.info("ready to assign:{}", Arrays.toString(layers));
-    Arrays.stream(layers).forEach(a -> log.info("-" + Arrays.toString(a)));
+    if (log.isTraceEnabled()) {
+      Arrays.stream(layers).forEach(a -> log.trace("-" + Arrays.toString(a)));
+    }
     int h = layers.length;
     // compares current row 'i' with 'i+1' row
     // i starts at row 1 and goes to row h-2-1

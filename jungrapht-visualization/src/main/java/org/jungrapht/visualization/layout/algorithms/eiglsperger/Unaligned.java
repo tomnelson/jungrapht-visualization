@@ -44,7 +44,9 @@ class Unaligned {
     int x = 0; //horizontalOffset;
     int y = verticalOffset;
     layerIndex = 0;
-    log.trace("layerMaxHeights {}", rowMaxHeightMap);
+    if (log.isTraceEnabled()) {
+      log.trace("layerMaxHeights {}", rowMaxHeightMap);
+    }
     for (LV<V>[] layer : layers) {
       int previousVertexWidth = 0;
       // offset against widest row
@@ -95,7 +97,7 @@ class Unaligned {
     int x = horizontalOffset;
     int y = verticalOffset;
     layerIndex = 0;
-    //    log.trace("layerMaxHeights {}", rowMaxHeightMap);
+
     for (LV<V>[] layer : layers) {
 
       for (LV<V> sugiyamaVertex : layer) {
@@ -156,7 +158,9 @@ class Unaligned {
     int x = 0; //horizontalOffset;
     int y = verticalOffset;
     layerIndex = 0;
-    log.trace("layerMaxHeights {}", rowMaxHeightMap);
+    if (log.isTraceEnabled()) {
+      log.trace("layerMaxHeights {}", rowMaxHeightMap);
+    }
     for (List<LV<V>> layer : layers) {
       int previousVertexWidth = 0;
       // offset against widest row

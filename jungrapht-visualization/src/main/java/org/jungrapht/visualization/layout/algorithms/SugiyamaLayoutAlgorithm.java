@@ -1,5 +1,7 @@
 package org.jungrapht.visualization.layout.algorithms;
 
+import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.util.List;
@@ -41,6 +43,11 @@ public class SugiyamaLayoutAlgorithm<V, E>
   private static final Logger log = LoggerFactory.getLogger(SugiyamaLayoutAlgorithm.class);
 
   private static final Shape IDENTITY_SHAPE = new Ellipse2D.Double();
+  protected static final String MINCROSS_STRAIGHTEN_EDGES = PREFIX + "mincross.straightenEdges";
+  protected static final String MINCROSS_POST_STRAIGHTEN = PREFIX + "mincross.postStraighten";
+  protected static final String MINCROSS_THREADED = PREFIX + "mincross.threaded";
+  protected static final String TRANSPOSE_LIMIT = PREFIX + "mincross.transposeLimit";
+  protected static final String MAX_LEVEL_CROSS = PREFIX + "mincross.maxLevelCross";
 
   /**
    * a Builder to create a configured instance
@@ -57,12 +64,17 @@ public class SugiyamaLayoutAlgorithm<V, E>
           B extends Builder<V, E, T, B>>
       implements LayoutAlgorithm.Builder<V, T, B> {
     protected Function<V, Shape> vertexShapeFunction = v -> IDENTITY_SHAPE;
-    protected boolean straightenEdges = true;
-    protected boolean postStraighten = true;
+    protected boolean straightenEdges =
+        Boolean.parseBoolean(System.getProperty(MINCROSS_STRAIGHTEN_EDGES, "true"));
+    protected boolean postStraighten =
+        Boolean.parseBoolean(System.getProperty(MINCROSS_POST_STRAIGHTEN, "true"));;
     protected boolean transpose = true;
+    protected int transposeLimit = Integer.getInteger(TRANSPOSE_LIMIT, 6);
+    protected int maxLevelCross = Integer.getInteger(MAX_LEVEL_CROSS, 23);
     protected boolean expandLayout = true;
     protected Runnable after = () -> {};
-    protected boolean threaded;
+    protected boolean threaded =
+        Boolean.parseBoolean(System.getProperty(MINCROSS_THREADED, "true"));
 
     /** {@inheritDoc} */
     protected B self() {
@@ -86,6 +98,16 @@ public class SugiyamaLayoutAlgorithm<V, E>
 
     public B transpose(boolean transpose) {
       this.transpose = transpose;
+      return self();
+    }
+
+    public B transposeLimit(int transposeLimit) {
+      this.transposeLimit = transposeLimit;
+      return self();
+    }
+
+    public B maxLevelCross(int maxLevelCross) {
+      this.maxLevelCross = maxLevelCross;
       return self();
     }
 
@@ -127,6 +149,8 @@ public class SugiyamaLayoutAlgorithm<V, E>
   protected boolean straightenEdges;
   protected boolean postStraighten;
   protected boolean transpose;
+  protected int transposeLimit;
+  protected int maxLevelCross;
   protected boolean expandLayout;
   protected RenderContext<V, E> renderContext;
   boolean threaded;
@@ -143,6 +167,8 @@ public class SugiyamaLayoutAlgorithm<V, E>
         builder.straightenEdges,
         builder.postStraighten,
         builder.transpose,
+        builder.transposeLimit,
+        builder.maxLevelCross,
         builder.expandLayout,
         builder.threaded,
         builder.after);
@@ -153,6 +179,8 @@ public class SugiyamaLayoutAlgorithm<V, E>
       boolean straightenEdges,
       boolean postStraighten,
       boolean transpose,
+      int transposeLimit,
+      int maxLevelCross,
       boolean expandLayout,
       boolean threaded,
       Runnable after) {
@@ -160,6 +188,8 @@ public class SugiyamaLayoutAlgorithm<V, E>
     this.straightenEdges = straightenEdges;
     this.postStraighten = postStraighten;
     this.transpose = transpose;
+    this.transposeLimit = transposeLimit;
+    this.maxLevelCross = maxLevelCross;
     this.expandLayout = expandLayout;
     this.threaded = threaded;
     this.after = after;
@@ -185,6 +215,8 @@ public class SugiyamaLayoutAlgorithm<V, E>
             .straightenEdges(straightenEdges)
             .postStraighten(postStraighten)
             .transpose(transpose)
+            .transposeLimit(transposeLimit)
+            .maxLevelCross(maxLevelCross)
             .build();
     if (threaded) {
 

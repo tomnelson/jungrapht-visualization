@@ -120,7 +120,7 @@ abstract class VerticalAlignment<V, E> {
                 LV<V> um = neighbors.get(m);
                 LE<V, E> edge = svGraph.getEdge(um, vkofi);
                 if (markedSegments.contains(edge)) {
-                  log.info("{} is marked", edge);
+                  log.trace("{} is marked", edge);
                 }
                 if (um instanceof SegmentVertex) {
                   r = alignMoveCursor(um, vkofi);
@@ -166,7 +166,7 @@ abstract class VerticalAlignment<V, E> {
                 LV<V> um = neighbors.get(m);
                 LE<V, E> edge = svGraph.getEdge(um, vkofi);
                 if (markedSegments.contains(edge)) {
-                  log.info("{} is marked", edge);
+                  log.trace("{} is marked", edge);
                 }
                 if (um instanceof SegmentVertex) {
                   r = alignMoveCursor(um, vkofi);
@@ -217,7 +217,7 @@ abstract class VerticalAlignment<V, E> {
                 LV<V> um = neighbors.get(m);
                 LE<V, E> edge = svGraph.getEdge(vkofi, um);
                 if (markedSegments.contains(edge)) {
-                  log.info("{} is marked", edge);
+                  log.trace("{} is marked", edge);
                 }
                 if (um instanceof SegmentVertex) {
                   r = alignMoveCursor(um, vkofi);
@@ -269,7 +269,7 @@ abstract class VerticalAlignment<V, E> {
                 LV<V> um = neighbors.get(m);
                 LE<V, E> edge = svGraph.getEdge(vkofi, um);
                 if (markedSegments.contains(edge)) {
-                  log.info("{} is marked", edge);
+                  log.trace("{} is marked", edge);
                 }
                 if (um instanceof SegmentVertex) {
                   r = alignMoveCursor(um, vkofi);

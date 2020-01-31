@@ -42,20 +42,29 @@ import org.slf4j.LoggerFactory;
 public class CircleLayoutAlgorithm<V> implements LayoutAlgorithm<V>, AfterRunnable, Future {
 
   private static final Logger log = LoggerFactory.getLogger(CircleLayoutAlgorithm.class);
-  private double radius;
-  private boolean reduceEdgeCrossing;
-  private List<V> vertexOrderedList;
+
+  protected static final String CIRCLE_REDUCE_EDGE_CROSSING = PREFIX + "circle.reduceEdgeCrossing";
+  protected static final String CIRCLE_REDUCE_EDGE_CROSSING_MAX_EDGES =
+      PREFIX + "circle.reduceEdgeCrossingMaxEdges";
+  protected static final String CIRCLE_THREADED = PREFIX + "circle.threaded";
+
+  protected double radius;
+  protected boolean reduceEdgeCrossing;
+  protected List<V> vertexOrderedList;
   protected Runnable after;
   private boolean threaded;
   CompletableFuture theFuture;
-  int reduceEdgeCrossingMaxEdges = 100;
+  protected int reduceEdgeCrossingMaxEdges;
 
   public static class Builder<V, T extends CircleLayoutAlgorithm<V>, B extends Builder<V, T, B>>
       implements LayoutAlgorithm.Builder<V, T, B> {
     protected int radius;
-    protected boolean reduceEdgeCrossing = false;
+    protected boolean reduceEdgeCrossing =
+        Boolean.parseBoolean(System.getProperty(CIRCLE_REDUCE_EDGE_CROSSING, "true"));
+    protected int reduceEdgeCrossingMaxEdges =
+        Integer.getInteger(CIRCLE_REDUCE_EDGE_CROSSING_MAX_EDGES, 100);
     protected Runnable after = () -> {};
-    protected boolean threaded = true;
+    protected boolean threaded = Boolean.parseBoolean(System.getProperty(CIRCLE_THREADED, "true"));
 
     B self() {
       return (B) this;
@@ -63,6 +72,11 @@ public class CircleLayoutAlgorithm<V> implements LayoutAlgorithm<V>, AfterRunnab
 
     public B radius(int radius) {
       this.radius = radius;
+      return self();
+    }
+
+    public B reduceEdgeCrossingMaxEdges(int reduceEdgeCrossingMaxEdges) {
+      this.reduceEdgeCrossingMaxEdges = reduceEdgeCrossingMaxEdges;
       return self();
     }
 
@@ -91,13 +105,23 @@ public class CircleLayoutAlgorithm<V> implements LayoutAlgorithm<V>, AfterRunnab
   }
 
   protected CircleLayoutAlgorithm(Builder<V, ?, ?> builder) {
-    this(builder.radius, builder.reduceEdgeCrossing, builder.threaded, builder.after);
+    this(
+        builder.radius,
+        builder.reduceEdgeCrossing,
+        builder.reduceEdgeCrossingMaxEdges,
+        builder.threaded,
+        builder.after);
   }
 
   private CircleLayoutAlgorithm(
-      int radius, boolean reduceEdgeCrossing, boolean threaded, Runnable after) {
+      int radius,
+      boolean reduceEdgeCrossing,
+      int reduceEdgeCrossingMaxEdges,
+      boolean threaded,
+      Runnable after) {
     this.radius = radius;
     this.reduceEdgeCrossing = reduceEdgeCrossing;
+    this.reduceEdgeCrossingMaxEdges = reduceEdgeCrossingMaxEdges;
     this.threaded = threaded;
     this.after = after;
     this.reduceEdgeCrossingMaxEdges =

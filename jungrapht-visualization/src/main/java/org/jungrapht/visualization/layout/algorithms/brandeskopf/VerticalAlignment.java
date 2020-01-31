@@ -110,7 +110,9 @@ public abstract class VerticalAlignment<V, E> {
                   .stream()
                   .sorted(Comparator.comparingInt(LV::getIndex))
                   .collect(Collectors.toList());
-          log.trace("predecessors of {} are {}", vkofi, neighbors);
+          if (log.isTraceEnabled()) {
+            log.trace("predecessors of {} are {}", vkofi, neighbors);
+          }
           int d = neighbors.size();
           if (d > 0) {
             int floor = (int) Math.floor((d - 1) / 2.0); // zero based
@@ -195,7 +197,9 @@ public abstract class VerticalAlignment<V, E> {
                   .stream()
                   .sorted(Comparator.comparingInt(LV::getIndex))
                   .collect(Collectors.toList());
-          log.trace("successors of {} are {}", vkofi, neighbors);
+          if (log.isTraceEnabled()) {
+            log.trace("successors of {} are {}", vkofi, neighbors);
+          }
           int d = neighbors.size();
           if (d > 0) {
             int floor = (int) Math.floor((d - 1) / 2.0); // zero based

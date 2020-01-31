@@ -1,5 +1,7 @@
 package org.jungrapht.visualization.layout.algorithms;
 
+import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.util.List;
@@ -41,6 +43,9 @@ public class EiglspergerLayoutAlgorithm<V, E>
   private static final Logger log = LoggerFactory.getLogger(EiglspergerLayoutAlgorithm.class);
 
   private static final Shape IDENTITY_SHAPE = new Ellipse2D.Double();
+  protected static final String MINCROSS_STRAIGHTEN_EDGES = PREFIX + "mincross.straightenEdges";
+  protected static final String MINCROSS_POST_STRAIGHTEN = PREFIX + "mincross.postStraighten";
+  protected static final String MINCROSS_THREADED = PREFIX + "mincross.threaded";
 
   /**
    * a Builder to create a configured instance
@@ -57,11 +62,14 @@ public class EiglspergerLayoutAlgorithm<V, E>
           B extends Builder<V, E, T, B>>
       implements LayoutAlgorithm.Builder<V, T, B> {
     protected Function<V, Shape> vertexShapeFunction = v -> IDENTITY_SHAPE;
-    protected boolean straightenEdges = true;
-    protected boolean postStraighten = false;
+    protected boolean straightenEdges =
+        Boolean.parseBoolean(System.getProperty(MINCROSS_STRAIGHTEN_EDGES, "true"));
+    protected boolean postStraighten =
+        Boolean.parseBoolean(System.getProperty(MINCROSS_POST_STRAIGHTEN, "true"));
     protected boolean expandLayout = true;
     protected Runnable after = () -> {};
-    protected boolean threaded;
+    protected boolean threaded =
+        Boolean.parseBoolean(System.getProperty(MINCROSS_THREADED, "true"));
 
     /** {@inheritDoc} */
     protected B self() {
