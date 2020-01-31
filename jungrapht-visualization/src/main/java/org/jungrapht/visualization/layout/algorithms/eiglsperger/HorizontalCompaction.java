@@ -124,9 +124,6 @@ class HorizontalCompaction<V> {
   }
 
   private void shift(LV<V> k, int v) {
-    if (v < 0) {
-      log.error("shift < zero?");
-    }
     shift.put(k, v);
   }
 
@@ -135,9 +132,6 @@ class HorizontalCompaction<V> {
   }
 
   private void x(LV<V> v, int d) {
-    //    if (d < 0) {
-    //      log.info("d < 0? {}", d);
-    //    }
     x.put(v, d);
   }
 

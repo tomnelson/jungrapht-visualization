@@ -31,8 +31,8 @@ class HorizontalCoordinateAssignment {
         new HorizontalCompaction<>(
             layers, upLeft.getRootMap(), upLeft.getAlignMap(), horizontalOffset, verticalOffset);
     List<LV<V>> misAligned = misAligned(upLeftCompaction.p);
-    if (misAligned.size() > 0) {
-      log.warn("misAligned from upLeft: {}", misAligned.size());
+    if (misAligned.size() > 0 && log.isTraceEnabled()) {
+      log.trace("misAligned from upLeft: {}", misAligned.size());
     }
 
     VerticalAlignment.RightmostUpper<V, E> upRight =
@@ -41,8 +41,8 @@ class HorizontalCoordinateAssignment {
         new HorizontalCompaction<>(
             layers, upRight.getRootMap(), upRight.getAlignMap(), horizontalOffset, verticalOffset);
     misAligned = misAligned(upRightCompaction.p);
-    if (misAligned.size() > 0) {
-      log.warn("misAligned from upRight: {}", misAligned.size());
+    if (misAligned.size() > 0 && log.isTraceEnabled()) {
+      log.trace("misAligned from upRight: {}", misAligned.size());
     }
 
     VerticalAlignment.LeftmostLower<V, E> downLeft =
@@ -55,8 +55,8 @@ class HorizontalCoordinateAssignment {
             horizontalOffset,
             verticalOffset);
     misAligned = misAligned(downLeftCompaction.p);
-    if (misAligned.size() > 0) {
-      log.warn("misAligned from downLeft: {}", misAligned.size());
+    if (misAligned.size() > 0 && log.isTraceEnabled()) {
+      log.trace("misAligned from downLeft: {}", misAligned.size());
     }
 
     VerticalAlignment.RightmostLower<V, E> downRight =
@@ -69,8 +69,8 @@ class HorizontalCoordinateAssignment {
             horizontalOffset,
             verticalOffset);
     misAligned = misAligned(downRightCompaction.p);
-    if (misAligned.size() > 0) {
-      log.warn("misAligned from downRight: {}", misAligned.size());
+    if (misAligned.size() > 0 && log.isTraceEnabled()) {
+      log.trace("misAligned from downRight: {}", misAligned.size());
     }
 
     for (int i = 0; i < layers.length; i++) {
@@ -96,8 +96,8 @@ class HorizontalCoordinateAssignment {
       }
     }
     misAligned = misAligned(layers);
-    if (misAligned.size() > 0) {
-      log.warn("misAligned: {} {}", misAligned, misAligned.size());
+    if (misAligned.size() > 0 && log.isTraceEnabled()) {
+      log.trace("misAligned: {} {}", misAligned, misAligned.size());
     }
   }
 
@@ -147,8 +147,8 @@ class HorizontalCoordinateAssignment {
       // do pVertex and qVertex have different x values?
       Point p = map.get(pVertex);
       Point q = map.get(qVertex);
-      if (p.x != q.x) {
-        log.warn(
+      if (p.x != q.x && log.isTraceEnabled()) {
+        log.trace(
             "segment {} misaligned with p at {} and q at {}", segmentVertex.getSegment(), p, q);
         return true;
       }

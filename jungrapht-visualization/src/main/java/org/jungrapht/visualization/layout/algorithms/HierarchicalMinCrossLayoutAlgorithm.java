@@ -12,8 +12,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
+import org.jgrapht.Graph;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnable;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.RenderContextAware;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -22,7 +24,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The Sugiyama Hierarchical Minimum-Cross layout algorithm
+ * A Hierarchical Minimum-Cross layout algorithm based on Sugiyama. Uses the Eiglsperger optimations
+ * for large graphs. A threshold property may be used to control the decision to switch from the
+ * standard Sugiyama layout to the faster Eiglsperger layout.
  *
  * <p>Using level crossing algorithm from Waddle and Malhotra
  *
@@ -35,19 +39,23 @@ import org.slf4j.LoggerFactory;
  * @param <V> vertex type
  * @param <E> edge type
  */
-public class EiglspergerLayoutAlgorithm<V, E>
+public class HierarchicalMinCrossLayoutAlgorithm<V, E>
     implements LayoutAlgorithm<V>,
         RenderContextAware<V, E>,
         ShapeFunctionAware<V>,
         AfterRunnable,
         Future {
 
-  private static final Logger log = LoggerFactory.getLogger(EiglspergerLayoutAlgorithm.class);
+  private static final Logger log =
+      LoggerFactory.getLogger(HierarchicalMinCrossLayoutAlgorithm.class);
 
   private static final Shape IDENTITY_SHAPE = new Ellipse2D.Double();
   protected static final String MINCROSS_STRAIGHTEN_EDGES = PREFIX + "mincross.straightenEdges";
   protected static final String MINCROSS_POST_STRAIGHTEN = PREFIX + "mincross.postStraighten";
   protected static final String MINCROSS_THREADED = PREFIX + "mincross.threaded";
+  protected static final String TRANSPOSE_LIMIT = PREFIX + "mincross.transposeLimit";
+  protected static final String MAX_LEVEL_CROSS = PREFIX + "mincross.maxLevelCross";
+  protected static final String EIGLSPERGER_THRESHOLD = PREFIX + "mincross.eiglspergerThreshold";
 
   /**
    * a Builder to create a configured instance
@@ -60,22 +68,31 @@ public class EiglspergerLayoutAlgorithm<V, E>
   public static class Builder<
           V,
           E,
-          T extends EiglspergerLayoutAlgorithm<V, E> & EdgeAwareLayoutAlgorithm<V, E>,
+          T extends HierarchicalMinCrossLayoutAlgorithm<V, E> & EdgeAwareLayoutAlgorithm<V, E>,
           B extends Builder<V, E, T, B>>
       implements LayoutAlgorithm.Builder<V, T, B> {
     protected Function<V, Shape> vertexShapeFunction = v -> IDENTITY_SHAPE;
     protected boolean straightenEdges =
         Boolean.parseBoolean(System.getProperty(MINCROSS_STRAIGHTEN_EDGES, "true"));
     protected boolean postStraighten =
-        Boolean.parseBoolean(System.getProperty(MINCROSS_POST_STRAIGHTEN, "true"));
+        Boolean.parseBoolean(System.getProperty(MINCROSS_POST_STRAIGHTEN, "true"));;
+    protected boolean transpose = true;
+    protected int transposeLimit = Integer.getInteger(TRANSPOSE_LIMIT, 6);
+    protected int maxLevelCross = Integer.getInteger(MAX_LEVEL_CROSS, 23);
     protected boolean expandLayout = true;
     protected Runnable after = () -> {};
     protected boolean threaded =
         Boolean.parseBoolean(System.getProperty(MINCROSS_THREADED, "true"));
+    protected int eiglspergerThreshold = Integer.getInteger(EIGLSPERGER_THRESHOLD, 500);
 
     /** {@inheritDoc} */
     protected B self() {
       return (B) this;
+    }
+
+    public B eiglspergerThreshold(int eiglspergerThreshold) {
+      this.eiglspergerThreshold = eiglspergerThreshold;
+      return self();
     }
 
     public B vertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
@@ -90,6 +107,21 @@ public class EiglspergerLayoutAlgorithm<V, E>
 
     public B postStraighten(boolean postStraighten) {
       this.postStraighten = postStraighten;
+      return self();
+    }
+
+    public B transpose(boolean transpose) {
+      this.transpose = transpose;
+      return self();
+    }
+
+    public B transposeLimit(int transposeLimit) {
+      this.transposeLimit = transposeLimit;
+      return self();
+    }
+
+    public B maxLevelCross(int maxLevelCross) {
+      this.maxLevelCross = maxLevelCross;
       return self();
     }
 
@@ -111,7 +143,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
 
     /** {@inheritDoc} */
     public T build() {
-      return (T) new EiglspergerLayoutAlgorithm<>(this);
+      return (T) new HierarchicalMinCrossLayoutAlgorithm<>(this);
     }
   }
 
@@ -128,41 +160,57 @@ public class EiglspergerLayoutAlgorithm<V, E>
   protected List<V> roots;
 
   protected Function<V, Shape> vertexShapeFunction;
+  protected int eiglspergerThreshold;
   protected boolean straightenEdges;
   protected boolean postStraighten;
+  protected boolean transpose;
+  protected int transposeLimit;
+  protected int maxLevelCross;
   protected boolean expandLayout;
   protected RenderContext<V, E> renderContext;
   boolean threaded;
   CompletableFuture theFuture;
   Runnable after;
 
-  public EiglspergerLayoutAlgorithm() {
-    this(EiglspergerLayoutAlgorithm.edgeAwareBuilder());
+  public HierarchicalMinCrossLayoutAlgorithm() {
+    this(HierarchicalMinCrossLayoutAlgorithm.edgeAwareBuilder());
   }
 
-  private EiglspergerLayoutAlgorithm(Builder builder) {
+  private HierarchicalMinCrossLayoutAlgorithm(Builder builder) {
     this(
         builder.vertexShapeFunction,
+        builder.eiglspergerThreshold,
         builder.straightenEdges,
         builder.postStraighten,
+        builder.transpose,
+        builder.transposeLimit,
+        builder.maxLevelCross,
         builder.expandLayout,
         builder.threaded,
         builder.after);
   }
 
-  private EiglspergerLayoutAlgorithm(
+  private HierarchicalMinCrossLayoutAlgorithm(
       Function<V, Shape> vertexShapeFunction,
+      int eiglspergerThreshold,
       boolean straightenEdges,
       boolean postStraighten,
+      boolean transpose,
+      int transposeLimit,
+      int maxLevelCross,
       boolean expandLayout,
       boolean threaded,
       Runnable after) {
     this.vertexShapeFunction = vertexShapeFunction;
+    this.eiglspergerThreshold = eiglspergerThreshold;
     this.straightenEdges = straightenEdges;
     this.postStraighten = postStraighten;
+    this.transpose = transpose;
+    this.transposeLimit = transposeLimit;
+    this.maxLevelCross = maxLevelCross;
     this.expandLayout = expandLayout;
-    this.after = after;
     this.threaded = threaded;
+    this.after = after;
   }
 
   @Override
@@ -178,20 +226,35 @@ public class EiglspergerLayoutAlgorithm<V, E>
   @Override
   public void visit(LayoutModel<V> layoutModel) {
 
-    Runnable runnable =
-        EiglspergerRunnable.<V, E>builder()
-            .layoutModel(layoutModel)
-            .renderContext(renderContext)
-            .straightenEdges(straightenEdges)
-            .postStraighten(postStraighten)
-            .build();
+    Graph<V, E> graph = layoutModel.getGraph();
+    Runnable runnable;
+    if (graph.vertexSet().size() + graph.edgeSet().size() < eiglspergerThreshold) {
+      runnable =
+          SugiyamaRunnable.<V, E>builder()
+              .layoutModel(layoutModel)
+              .renderContext(renderContext)
+              .straightenEdges(straightenEdges)
+              .postStraighten(postStraighten)
+              .transpose(transpose)
+              .transposeLimit(transposeLimit)
+              .maxLevelCross(maxLevelCross)
+              .build();
+    } else {
+      runnable =
+          EiglspergerRunnable.<V, E>builder()
+              .layoutModel(layoutModel)
+              .renderContext(renderContext)
+              .straightenEdges(straightenEdges)
+              .postStraighten(postStraighten)
+              .build();
+    }
     if (threaded) {
 
       theFuture =
           CompletableFuture.runAsync(runnable)
               .thenRun(
                   () -> {
-                    log.trace("Eiglsperger layout done");
+                    log.trace("Sugiyama layout done");
                     this.run(); // run the after function
                     layoutModel.getViewChangeSupport().fireViewChanged();
                     // fire an event to say that the layout is done

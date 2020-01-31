@@ -219,7 +219,9 @@ public class Synthetics<V, E> {
           v.setPoint(newPoint);
         }
         if (overlap) {
-          log.info("overlap at {}", innerPoints.keySet());
+          if (log.isTraceEnabled()) {
+            log.trace("overlap at {}", innerPoints.keySet());
+          }
           innerPoints.keySet().forEach(v -> v.setPoint(Point.of(v.p.x + 20, v.p.y)));
         }
       }
