@@ -390,9 +390,9 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       int width = horizontalOffset;
       int maxHeight = 0;
       for (int j = 0; j < best[i].length; j++) {
-        LV<V> LV = best[i][j];
-        if (!(LV instanceof Synthetic)) {
-          Rectangle bounds = vertexShapeFunction.apply(LV.getVertex()).getBounds();
+        LV<V> v = best[i][j];
+        if (!(v instanceof Synthetic)) {
+          Rectangle bounds = vertexShapeFunction.apply(v.getVertex()).getBounds();
           width += bounds.width + horizontalOffset;
           maxHeight = Math.max(maxHeight, bounds.height);
         } else {
@@ -440,9 +440,45 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       layerIndex++;
     }
 
-    layoutModel.setSize(totalWidth + horizontalOffset, totalHeight);
+    int minX = Integer.MAX_VALUE;
+    int minY = Integer.MAX_VALUE;
+    int maxX = -1;
+    int maxY = -1;
+    for (Point p : vertexPointMap.values()) {
+      minX = Math.min((int) p.x, minX);
+      maxX = Math.max((int) p.x, maxX);
+      minY = Math.min((int) p.y, minY);
+      maxY = Math.max((int) p.y, maxY);
+    }
+    maxX += horizontalOffset;
+    maxY += verticalOffset;
+    int pointRangeWidth = maxX - minX;
+    int pointRangeHeight = maxY - minY;
+    int offsetX = 0;
+    int offsetY = 0;
+    if (minX < 0) {
+      offsetX += -minX + horizontalOffset;
+    }
+    if (minY < 0) {
+      offsetY += -minY + verticalOffset;
+    }
+    pointRangeWidth *= 1.1;
+    pointRangeHeight *= 1.1;
+
+    int maxDimension = Math.max(totalWidth, totalHeight);
+
+    layoutModel.setSize(
+        Math.max(maxDimension, layoutModel.getWidth()),
+        Math.max(maxDimension, layoutModel.getHeight()));
     long pointsSetTime = System.currentTimeMillis();
-    log.trace("setting points took {}", (pointsSetTime - crossCountTests));
+    double scalex = (double) layoutModel.getWidth() / pointRangeWidth;
+    double scaley = (double) layoutModel.getHeight() / pointRangeHeight;
+
+    for (Map.Entry<LV<V>, Point> entry : vertexPointMap.entrySet()) {
+      Point p = entry.getValue();
+      Point q = Point.of((offsetX + p.x) * scalex, (offsetY + p.y) * scaley);
+      entry.setValue(q);
+    }
 
     // now all the vertices in layers (best) have points associated with them
     // every vertex in vertexMap has a point value

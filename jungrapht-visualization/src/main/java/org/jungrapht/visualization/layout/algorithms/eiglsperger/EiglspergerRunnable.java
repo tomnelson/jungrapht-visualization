@@ -300,9 +300,9 @@ public class EiglspergerRunnable<V, E> implements Runnable {
       int width = horizontalOffset;
       int maxHeight = 0;
       for (int j = 0; j < best[i].length; j++) {
-        LV<V> EiglspergerVertex = best[i][j];
-        if (!(EiglspergerVertex instanceof SyntheticLV)) {
-          Rectangle bounds = vertexShapeFunction.apply(EiglspergerVertex.getVertex()).getBounds();
+        LV<V> v = best[i][j];
+        if (!(v instanceof SyntheticLV)) {
+          Rectangle bounds = vertexShapeFunction.apply(v.getVertex()).getBounds();
           width += bounds.width + horizontalOffset;
           maxHeight = Math.max(maxHeight, bounds.height);
         } else {
