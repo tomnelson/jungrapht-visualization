@@ -247,7 +247,8 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     LV<V>[][] best = layersArray;
 
     // figure out the avg size of rendered vertex
-    Rectangle avgVertexBounds = avgVertexBounds(best, renderContext.getVertexShapeFunction());
+    java.awt.Rectangle avgVertexBounds =
+        avgVertexBounds(best, renderContext.getVertexShapeFunction());
 
     int horizontalOffset =
         Math.max(
@@ -294,6 +295,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     Function<V, Shape> vertexShapeFunction = renderContext.getVertexShapeFunction();
     int totalHeight = 0;
     int totalWidth = 0;
+
     for (int i = 0; i < best.length; i++) {
 
       int width = horizontalOffset;
@@ -343,19 +345,55 @@ public class EiglspergerRunnable<V, E> implements Runnable {
         previousVertexWidth = vertexWidth;
       }
       totalWidth = Math.max(totalWidth, rowWidth);
+
       x = horizontalOffset;
       y += verticalOffset;
       totalHeight = y + rowMaxHeightMap.get(layerIndex) / 2;
       layerIndex++;
     }
 
-    layoutModel.setSize(totalWidth + horizontalOffset, totalHeight);
+    int minX = Integer.MAX_VALUE;
+    int minY = Integer.MAX_VALUE;
+    int maxX = -1;
+    int maxY = -1;
+    for (Point p : vertexPointMap.values()) {
+      minX = Math.min((int) p.x, minX);
+      maxX = Math.max((int) p.x, maxX);
+      minY = Math.min((int) p.y, minY);
+      maxY = Math.max((int) p.y, maxY);
+    }
+    maxX += horizontalOffset;
+    maxY += verticalOffset;
+    int pointRangeWidth = maxX - minX;
+    int pointRangeHeight = maxY - minY;
+    int offsetX = 0;
+    int offsetY = 0;
+    if (minX < 0) {
+      offsetX += -minX + horizontalOffset;
+    }
+    if (minY < 0) {
+      offsetY += -minY + verticalOffset;
+    }
+    pointRangeWidth *= 1.1;
+    pointRangeHeight *= 1.1;
+
+    int maxDimension = Math.max(totalWidth, totalHeight);
+
+    layoutModel.setSize(
+        Math.max(maxDimension, layoutModel.getWidth()),
+        Math.max(maxDimension, layoutModel.getHeight()));
     long pointsSetTime = System.currentTimeMillis();
-    //    log.trace("setting points took {}", (pointsSetTime - crossCountTests));
+    double scalex = (double) layoutModel.getWidth() / pointRangeWidth;
+    double scaley = (double) layoutModel.getHeight() / pointRangeHeight;
+
+    for (Map.Entry<LV<V>, Point> entry : vertexPointMap.entrySet()) {
+      Point p = entry.getValue();
+      Point q = Point.of((offsetX + p.x) * scalex, (offsetY + p.y) * scaley);
+      entry.setValue(q);
+    }
 
     // now all the vertices in layers (best) have points associated with them
     // every vertex in vertexMap has a point value
-
     svGraph.vertexSet().forEach(v -> v.setPoint(vertexPointMap.get(v)));
 
     if (postStraighten) synthetics.alignArticulatedEdges();
