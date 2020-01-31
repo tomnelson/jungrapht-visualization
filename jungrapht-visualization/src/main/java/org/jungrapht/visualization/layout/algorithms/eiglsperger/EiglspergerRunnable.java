@@ -49,6 +49,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     protected RenderContext<V, E> renderContext;
     protected boolean straightenEdges;
     protected boolean postStraighten;
+    protected int maxLevelCross;
 
     /** {@inheritDoc} */
     protected B self() {
@@ -72,6 +73,11 @@ public class EiglspergerRunnable<V, E> implements Runnable {
 
     public B postStraighten(boolean postStraighten) {
       this.postStraighten = postStraighten;
+      return self();
+    }
+
+    public B maxLevelCross(int maxLevelCross) {
+      this.maxLevelCross = maxLevelCross;
       return self();
     }
 
@@ -101,24 +107,28 @@ public class EiglspergerRunnable<V, E> implements Runnable {
   protected Comparator<E> edgeComparator;
   protected boolean straightenEdges;
   protected boolean postStraighten;
+  protected int maxLevelCross;
 
   private EiglspergerRunnable(Builder<V, E, ?, ?> builder) {
     this(
         builder.layoutModel,
         builder.renderContext,
         builder.straightenEdges,
-        builder.postStraighten);
+        builder.postStraighten,
+        builder.maxLevelCross);
   }
 
   private EiglspergerRunnable(
       LayoutModel<V> layoutModel,
       RenderContext<V, E> renderContext,
       boolean straightenEdges,
-      boolean postStraighten) {
+      boolean postStraighten,
+      int maxLevelCross) {
     this.layoutModel = layoutModel;
     this.renderContext = renderContext;
     this.straightenEdges = straightenEdges;
     this.postStraighten = postStraighten;
+    this.maxLevelCross = maxLevelCross;
   }
 
   private boolean checkStopped() {
@@ -217,11 +227,10 @@ public class EiglspergerRunnable<V, E> implements Runnable {
 
     int bestCrossCount = Integer.MAX_VALUE;
     int edgeCount = svGraph.edgeSet().size();
-    int repetitions = 6;
     if (edgeCount > 200) {
-      repetitions = 2;
+      maxLevelCross = 1;
     }
-    for (int i = 0; i < repetitions; i++) {
+    for (int i = 0; i < maxLevelCross; i++) {
       int forwardCrossCount = 0;
       int reverseCrossCount = 0;
       if (i % 2 == 0) {

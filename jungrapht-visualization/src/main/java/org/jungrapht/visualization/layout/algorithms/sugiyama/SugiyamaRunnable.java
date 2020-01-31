@@ -69,9 +69,9 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     protected Comparator<E> edgeComparator = (e1, e2) -> 0;
     protected boolean straightenEdges;
     protected boolean postStraighten;
-    protected boolean transpose = true;
-    protected int transposeLimit = 10;
-    protected int maxLevelCross = 23;
+    protected boolean transpose;
+    protected int transposeLimit;
+    protected int maxLevelCross;
 
     /** {@inheritDoc} */
     protected B self() {

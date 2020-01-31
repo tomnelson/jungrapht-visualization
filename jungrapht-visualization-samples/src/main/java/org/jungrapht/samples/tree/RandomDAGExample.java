@@ -246,6 +246,8 @@ public class RandomDAGExample extends JFrame {
     this.graph =
         TestGraphs.createDirectedAcyclicGraph(
             layers, maxVerticesPerLayer, linkProbability, randomSeed);
+    vv.getVisualizationModel().getLayoutModel().setSize(600, 600); // put back original size
+    vv.getRenderContext().getMultiLayerTransformer().setToIdentity();
     vv.getVisualizationModel().setGraph(this.graph, true);
   }
 

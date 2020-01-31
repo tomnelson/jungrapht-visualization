@@ -48,6 +48,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
   protected static final String MINCROSS_STRAIGHTEN_EDGES = PREFIX + "mincross.straightenEdges";
   protected static final String MINCROSS_POST_STRAIGHTEN = PREFIX + "mincross.postStraighten";
   protected static final String MINCROSS_THREADED = PREFIX + "mincross.threaded";
+  protected static final String MAX_LEVEL_CROSS = PREFIX + "mincross.maxLevelCross";
 
   /**
    * a Builder to create a configured instance
@@ -68,6 +69,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
         Boolean.parseBoolean(System.getProperty(MINCROSS_STRAIGHTEN_EDGES, "true"));
     protected boolean postStraighten =
         Boolean.parseBoolean(System.getProperty(MINCROSS_POST_STRAIGHTEN, "true"));
+    protected int maxLevelCross = Integer.getInteger(MAX_LEVEL_CROSS, 23);
     protected boolean expandLayout = true;
     protected Runnable after = () -> {};
     protected boolean threaded =
@@ -90,6 +92,11 @@ public class EiglspergerLayoutAlgorithm<V, E>
 
     public B postStraighten(boolean postStraighten) {
       this.postStraighten = postStraighten;
+      return self();
+    }
+
+    public B maxLevelCross(int maxLevelCross) {
+      this.maxLevelCross = maxLevelCross;
       return self();
     }
 
@@ -130,6 +137,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
   protected Function<V, Shape> vertexShapeFunction;
   protected boolean straightenEdges;
   protected boolean postStraighten;
+  protected int maxLevelCross;
   protected boolean expandLayout;
   protected RenderContext<V, E> renderContext;
   boolean threaded;
@@ -145,6 +153,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
         builder.vertexShapeFunction,
         builder.straightenEdges,
         builder.postStraighten,
+        builder.maxLevelCross,
         builder.expandLayout,
         builder.threaded,
         builder.after);
@@ -154,12 +163,14 @@ public class EiglspergerLayoutAlgorithm<V, E>
       Function<V, Shape> vertexShapeFunction,
       boolean straightenEdges,
       boolean postStraighten,
+      int maxLevelCross,
       boolean expandLayout,
       boolean threaded,
       Runnable after) {
     this.vertexShapeFunction = vertexShapeFunction;
     this.straightenEdges = straightenEdges;
     this.postStraighten = postStraighten;
+    this.maxLevelCross = maxLevelCross;
     this.expandLayout = expandLayout;
     this.after = after;
     this.threaded = threaded;
@@ -184,6 +195,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
             .renderContext(renderContext)
             .straightenEdges(straightenEdges)
             .postStraighten(postStraighten)
+            .maxLevelCross(maxLevelCross)
             .build();
     if (threaded) {
 
