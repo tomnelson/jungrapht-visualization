@@ -1,7 +1,7 @@
 package org.jungrapht.visualization.layout.util.synthetics;
 
 /**
- * A delegate class for a generic type V
+ * Interface for a delegate class for a generic type V
  *
  * @param <V> vertex type
  */

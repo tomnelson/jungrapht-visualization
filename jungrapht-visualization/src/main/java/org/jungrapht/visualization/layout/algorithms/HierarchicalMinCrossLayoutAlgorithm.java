@@ -254,7 +254,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
           CompletableFuture.runAsync(runnable)
               .thenRun(
                   () -> {
-                    log.trace("Sugiyama layout done");
+                    log.trace("MinCross layout done");
                     this.run(); // run the after function
                     layoutModel.getViewChangeSupport().fireViewChanged();
                     // fire an event to say that the layout is done

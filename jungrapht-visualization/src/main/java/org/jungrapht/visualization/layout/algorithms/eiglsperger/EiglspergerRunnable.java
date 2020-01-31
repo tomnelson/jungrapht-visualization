@@ -233,7 +233,6 @@ public class EiglspergerRunnable<V, E> implements Runnable {
         reverseCrossCount = count;
         EiglspergerUtil.check(layersArray);
       }
-      //      int count = sweepForward(svGraph, layersArray, edgesKeyedOnSource);
       int twoWayCrossCount = forwardCrossCount + reverseCrossCount;
       if (twoWayCrossCount < bestCrossCount) {
         bestCrossCount = twoWayCrossCount;

@@ -5,17 +5,15 @@ import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.util.synthetics.SVI;
 
 /**
- * a vertex type for the SugiyamaLayoutAlgorithm instances of LVI<V> replace instances of V during
- * layout The LVI<V> holds metadata information about the position of the vertex in the layered
- * graph for the SugiyamaLayoutAlgorithm
+ * Implementation of a vertex type for a layered layout algorithm.<br>
+ * Instances of LVI&lt;V&gt; replace instances of V during layout The LVI&lt;V&gt; holds metadata
+ * information about the position of the vertex in the layered graph.
  *
  * @param <V>
  */
 public class LVI<V> extends SVI<V> implements LV<V> {
   protected int rank; // the layer number for this vertex
   protected int index; // the position within the layer for this vertex
-  //  protected int pos = -1;
-  //  protected int measure = -1;
 
   protected Point p; // the cartesian coordinates for this articulation point
 
@@ -97,10 +95,6 @@ public class LVI<V> extends SVI<V> implements LV<V> {
         + rank
         + ", index="
         + index
-        //        + ", pos="
-        //        + pos
-        //        + ", measure="
-        //        + measure
         + ", p="
         + p
         + '}';

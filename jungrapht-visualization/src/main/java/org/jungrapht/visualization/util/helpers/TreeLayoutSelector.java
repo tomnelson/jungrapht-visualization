@@ -295,7 +295,9 @@ public class TreeLayoutSelector<V, E> extends JPanel {
             .alignFavoredEdges(alignFavoredEdges)
             .build();
 
-    CircleLayoutAlgorithm<V> circleLayoutAlgorithm = new CircleLayoutAlgorithm<>();
+    CircleLayoutAlgorithm<V> circleLayoutAlgorithm =
+        CircleLayoutAlgorithm.<V>builder().reduceEdgeCrossing(false).build();
+
     CircleLayoutAlgorithm<V> reduceEdgeCrossingCircleLayoutAlgorithm =
         CircleLayoutAlgorithm.<V>builder().reduceEdgeCrossing(true).build();
 

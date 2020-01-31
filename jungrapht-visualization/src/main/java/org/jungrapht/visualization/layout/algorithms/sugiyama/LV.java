@@ -4,9 +4,9 @@ import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.util.synthetics.SV;
 
 /**
- * a vertex type for the SugiyamaLayoutAlgorithm instances of LV<V> replace instances of V during
- * layout The LV<V> holds metadata information about the position of the vertex in the layered graph
- * for the SugiyamaLayoutAlgorithm
+ * Interface for a vertex type for the SugiyamaLayoutAlgorithm.<br>
+ * Implementations of LV<V> replace instances of V during layout The LV&lt;V&gt; holds metadata
+ * information about the position of the vertex in the layered graph for the SugiyamaLayoutAlgorithm
  *
  * @param <V>
  */

@@ -3,8 +3,8 @@ package org.jungrapht.visualization.layout.algorithms.sugiyama;
 import org.jungrapht.visualization.layout.util.synthetics.SE;
 
 /**
- * An edge type used for the application of the SugiyamaLayoutAlgorithm.<br>
- * Instances of SE&lt;V,E&gt; replace instances of E during layout
+ * Interface for an edge type used for the application of a layered graph layout algorithm<br>
+ * Instances of LE&lt;V,E&gt; replace instances of E during layout
  *
  * @param <V> vertex type
  * @param <E> edge type

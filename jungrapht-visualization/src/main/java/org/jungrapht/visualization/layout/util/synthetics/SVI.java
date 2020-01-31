@@ -3,7 +3,7 @@ package org.jungrapht.visualization.layout.util.synthetics;
 import java.util.Objects;
 
 /**
- * A delegate class for a generic type V
+ * Implementation of a delegate class for a generic type V
  *
  * @param <V> vertex type
  */

@@ -1,7 +1,7 @@
 package org.jungrapht.visualization.layout.util.synthetics;
 
 /**
- * A delegate class for a generic edge of type E
+ * Interface for a delegate class for a generic edge of type E
  *
  * @param <E> edge type
  */
@@ -11,5 +11,5 @@ public interface SE<E> {
     return new SEI(edge);
   }
 
-  public E getEdge();
+  E getEdge();
 }

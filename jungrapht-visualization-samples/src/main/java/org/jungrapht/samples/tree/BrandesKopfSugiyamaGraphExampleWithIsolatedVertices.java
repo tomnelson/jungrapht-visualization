@@ -9,7 +9,7 @@ import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
-import org.jungrapht.visualization.layout.algorithms.SugiyamaLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.HierarchicalMinCrossLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,8 +34,8 @@ public class BrandesKopfSugiyamaGraphExampleWithIsolatedVertices extends JFrame 
 
     VisualizationViewer<Integer, Integer> vv = configureVisualizationViewer(graph);
 
-    SugiyamaLayoutAlgorithm<Integer, Integer> layoutAlgorithm =
-        SugiyamaLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+    HierarchicalMinCrossLayoutAlgorithm<Integer, Integer> layoutAlgorithm =
+        HierarchicalMinCrossLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .after(vv::scaleToLayout)
             .build();
     layoutAlgorithm.setRenderContext(vv.getRenderContext());
