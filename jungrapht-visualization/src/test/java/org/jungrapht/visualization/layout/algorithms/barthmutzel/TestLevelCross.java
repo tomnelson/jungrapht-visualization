@@ -1,7 +1,9 @@
-package org.jungrapht.visualization.layout.algorithms.sugiyama;
+package org.jungrapht.visualization.layout.algorithms.barthmutzel;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
