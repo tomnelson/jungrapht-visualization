@@ -10,7 +10,7 @@ import org.jungrapht.visualization.layout.util.synthetics.SEI;
  * @param <V> vertex type
  * @param <E> edge type
  */
-public class LEI<V, E> extends SEI<E> implements LE<V, E> {
+class LEI<V, E> extends SEI<E> implements LE<V, E> {
 
   public final LV<V> source;
   public final LV<V> target;

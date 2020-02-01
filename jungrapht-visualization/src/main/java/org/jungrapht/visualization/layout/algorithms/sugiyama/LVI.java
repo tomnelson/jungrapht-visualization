@@ -11,7 +11,7 @@ import org.jungrapht.visualization.layout.util.synthetics.SVI;
  *
  * @param <V>
  */
-public class LVI<V> extends SVI<V> implements LV<V> {
+class LVI<V> extends SVI<V> implements LV<V> {
   protected int rank; // the layer number for this vertex
   protected int index; // the position within the layer for this vertex
 

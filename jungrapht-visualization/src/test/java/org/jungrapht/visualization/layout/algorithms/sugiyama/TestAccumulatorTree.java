@@ -1,13 +1,9 @@
-package org.jungrapht.visualization.layout.algorithms.barthmutzel;
+package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.AccumulatorTree;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.Comparators;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.jungrapht.visualization.layout.algorithms.util.InsertionSortCounter;
 import org.junit.Before;
 import org.junit.Test;

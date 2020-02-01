@@ -1,4 +1,4 @@
-package org.jungrapht.visualization.layout.algorithms.util.sugiyama;
+package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
 import java.util.Collection;
 import org.jgrapht.Graph;
@@ -6,10 +6,6 @@ import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphBuilder;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.GreedyCycleRemoval;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaTransformedGraphSupplier;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

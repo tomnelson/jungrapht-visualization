@@ -1,7 +1,6 @@
 package org.jungrapht.visualization.layout.algorithms.eiglsperger;
 
 import java.util.Objects;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SyntheticLV;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.util.synthetics.SVI;
 
@@ -14,9 +13,9 @@ import org.jungrapht.visualization.layout.util.synthetics.SVI;
  */
 class LVI<V> extends SVI<V> implements LV<V> {
   protected int rank; // the layer number for this vertex
-  protected int index; // the position within the layer for this vertex
+  protected int index; // the index within the layer array for this vertex
   protected int pos = -1;
-  protected double measure = -1;
+  protected double measure = -1; // the median of the positions of the neighbors of this LV
 
   protected Point p; // the cartesian coordinates for this articulation point
 
