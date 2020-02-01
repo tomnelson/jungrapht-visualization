@@ -15,7 +15,11 @@ package org.jungrapht.visualization.layout.algorithms;
 import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -23,6 +27,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.IntStream;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.alg.connectivity.ConnectivityInspector;
@@ -48,6 +53,7 @@ public class CircleLayoutAlgorithm<V> implements LayoutAlgorithm<V>, AfterRunnab
       PREFIX + "circle.reduceEdgeCrossingMaxEdges";
   protected static final String CIRCLE_THREADED = PREFIX + "circle.threaded";
 
+  protected LayoutModel<V> layoutModel;
   protected double radius;
   protected boolean reduceEdgeCrossing;
   protected List<V> vertexOrderedList;
@@ -55,6 +61,7 @@ public class CircleLayoutAlgorithm<V> implements LayoutAlgorithm<V>, AfterRunnab
   private boolean threaded;
   CompletableFuture theFuture;
   protected int reduceEdgeCrossingMaxEdges;
+  int crossingCount = -1;
 
   public static class Builder<V, T extends CircleLayoutAlgorithm<V>, B extends Builder<V, T, B>>
       implements LayoutAlgorithm.Builder<V, T, B> {
@@ -160,7 +167,7 @@ public class CircleLayoutAlgorithm<V> implements LayoutAlgorithm<V>, AfterRunnab
             CompletableFuture.runAsync(reduceCrossingRunnable)
                 .thenRun(
                     () -> {
-                      log.trace("ReduceEdgeCrossing done");
+                      log.info("ReduceEdgeCrossing done");
                       layoutVertices(layoutModel);
                       this.run(); // run the after function
                       layoutModel.getViewChangeSupport().fireViewChanged();
@@ -188,6 +195,13 @@ public class CircleLayoutAlgorithm<V> implements LayoutAlgorithm<V>, AfterRunnab
     }
   }
 
+  public int getCrossingCount() {
+    if (this.crossingCount < 0) {
+      this.crossingCount = countCrossings();
+    }
+    return this.crossingCount;
+  }
+
   /**
    * Sets the order of the vertices in the layout according to the ordering of {@code vertex_list}.
    *
@@ -202,6 +216,7 @@ public class CircleLayoutAlgorithm<V> implements LayoutAlgorithm<V>, AfterRunnab
 
   @Override
   public void visit(LayoutModel<V> layoutModel) {
+    this.layoutModel = layoutModel;
     if (layoutModel != null) {
       computeVertexOrder(layoutModel);
     }
@@ -227,6 +242,7 @@ public class CircleLayoutAlgorithm<V> implements LayoutAlgorithm<V>, AfterRunnab
 
       i++;
     }
+    crossingCount = countCrossings();
   }
 
   @Override
@@ -281,6 +297,7 @@ public class CircleLayoutAlgorithm<V> implements LayoutAlgorithm<V>, AfterRunnab
 
     Graph<V, E> graph;
     private List<V> vertexOrderedList;
+    int edgeCrossCount = 0;
 
     ReduceCrossingRunnable(Graph<V, E> graph, List<V> vertexOrderList) {
       this.graph = graph;
@@ -305,16 +322,69 @@ public class CircleLayoutAlgorithm<V> implements LayoutAlgorithm<V>, AfterRunnab
             Graphs.predecessorListOf(graph, v)
                 .forEach(p -> subGraph.addEdge(p, v, graph.getEdge(p, v)));
           }
-          vertexOrderedList.addAll(
-              new CircleLayoutReduceEdgeCrossing<>(subGraph).getVertexOrderedList());
+          CircleLayoutReduceEdgeCrossing<V, E> rec = new CircleLayoutReduceEdgeCrossing<>(subGraph);
+          vertexOrderedList.addAll(rec.getVertexOrderedList());
         }
       } else {
-        CircleLayoutReduceEdgeCrossing<V, ?> circleLayouts =
-            new CircleLayoutReduceEdgeCrossing<>(graph);
-        vertexOrderedList.addAll(circleLayouts.getVertexOrderedList());
+        CircleLayoutReduceEdgeCrossing<V, ?> rec = new CircleLayoutReduceEdgeCrossing<>(graph);
+        vertexOrderedList.addAll(rec.getVertexOrderedList());
       }
       this.vertexOrderedList.clear();
       this.vertexOrderedList.addAll(vertexOrderedList);
     }
+  }
+
+  public <E> int countCrossings() {
+    if (vertexOrderedList.size() == 0) {
+      return -1;
+    }
+    V[] vertices = (V[]) vertexOrderedList.toArray(new Object[0]);
+    Map<V, Integer> vertexListPositions = new HashMap<>();
+    Graph<V, E> graph = this.layoutModel.getGraph();
+    IntStream.range(0, vertices.length).forEach(i -> vertexListPositions.put(vertices[i], i));
+    int numberOfCrossings = 0;
+    Set<E> openEdgeList = new LinkedHashSet<>();
+    List<V> verticesSeen = new LinkedList<>();
+    for (V v : vertices) {
+      log.trace("for vertex {}", v);
+      verticesSeen.add(v);
+      // sort the incident edges....
+      List<E> incidentEdges = new ArrayList<>(graph.edgesOf(v));
+      incidentEdges.sort(
+          (e, f) -> {
+            V oppe = Graphs.getOppositeVertex(graph, e, v);
+            V oppf = Graphs.getOppositeVertex(graph, f, v);
+            int idxv = vertexListPositions.get(v);
+            int idxe = vertexListPositions.get(oppe);
+            int idxf = vertexListPositions.get(oppf);
+            int deltae = idxv - idxe;
+            if (deltae < 0) {
+              deltae += vertices.length;
+            }
+            int deltaf = idxv - idxf;
+            if (deltaf < 0) {
+              deltaf += vertices.length;
+            }
+            return Integer.compare(deltae, deltaf);
+          });
+
+      for (E e : incidentEdges) {
+        V opposite = Graphs.getOppositeVertex(graph, e, v);
+        if (!verticesSeen.contains(opposite)) {
+          // e is an open edge
+          openEdgeList.add(e);
+        } else {
+          openEdgeList.remove(e);
+          for (int i = verticesSeen.indexOf(opposite) + 1; i < verticesSeen.indexOf(v); i++) {
+            V tween = verticesSeen.get(i);
+            numberOfCrossings +=
+                graph.edgesOf(tween).stream().filter(openEdgeList::contains).count();
+            log.trace("numberOfCrossings now {}", numberOfCrossings);
+          }
+        }
+        log.trace("added edge {}", e);
+      }
+    }
+    return numberOfCrossings;
   }
 }

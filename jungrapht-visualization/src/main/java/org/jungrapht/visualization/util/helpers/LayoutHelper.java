@@ -19,7 +19,12 @@ public class LayoutHelper {
 
   public enum Layouts {
     KK("Kamada Kawai", new KKLayoutAlgorithm<>()),
-    CIRCLE("Circle", CircleLayoutAlgorithm.builder().reduceEdgeCrossing(true).build()),
+    CIRCLE(
+        "Circle",
+        CircleLayoutAlgorithm.builder().reduceEdgeCrossing(false).threaded(false).build()),
+    REDUCE_XING_CIRCLE(
+        "Reduce Xing Circle",
+        CircleLayoutAlgorithm.builder().reduceEdgeCrossing(true).threaded(false).build()),
     SELF_ORGANIZING_MAP("Self Organizing Map", new ISOMLayoutAlgorithm<>()),
     FR("Fruchterman Reingold", new FRLayoutAlgorithm<>()),
     FR_BH_VISITOR(

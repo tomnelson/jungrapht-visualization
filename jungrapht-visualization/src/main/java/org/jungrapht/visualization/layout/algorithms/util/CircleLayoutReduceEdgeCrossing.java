@@ -34,6 +34,7 @@ public class CircleLayoutReduceEdgeCrossing<V, E> {
 
   private List<SV<V>> tableList = new LinkedList<>();
   private Map<SV<V>, List<SV<V>>> tableMap = new HashMap<>();
+  private V[] vertices;
 
   public CircleLayoutReduceEdgeCrossing(Graph<V, E> originalGraph) {
     this.originalGraph = originalGraph;
@@ -135,6 +136,7 @@ public class CircleLayoutReduceEdgeCrossing<V, E> {
           }
         }
       }
+      this.vertices = (V[]) vertexList.toArray(new Object[0]);
     }
 
     return postProcessing(originalGraph, vertexList);

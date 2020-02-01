@@ -1,6 +1,8 @@
 package org.jungrapht.samples;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
@@ -10,10 +12,8 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.decorators.EdgeShape;
-import org.jungrapht.visualization.layout.algorithms.CircleLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
-import org.jungrapht.visualization.util.helpers.LayoutFunction;
 import org.jungrapht.visualization.util.helpers.LayoutHelper;
 
 /**
@@ -35,7 +35,6 @@ public class CircleLayoutDemo extends JPanel {
 
     vv =
         VisualizationViewer.builder(graph)
-            .layoutAlgorithm(new CircleLayoutAlgorithm<>())
             .layoutSize(new Dimension(900, 900))
             .viewSize(new Dimension(600, 600))
             .build();
@@ -43,7 +42,7 @@ public class CircleLayoutDemo extends JPanel {
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.getRenderContext().setEdgeLabelFunction(Object::toString);
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
-    // add listeners for ToolTips
+
     vv.setVertexToolTipFunction(Object::toString);
     vv.setEdgeToolTipFunction(Object::toString);
 
@@ -53,31 +52,29 @@ public class CircleLayoutDemo extends JPanel {
     final ScalingControl scaler = new CrossoverScalingControl();
     vv.scaleToLayout(scaler);
 
-    LayoutFunction<Integer> layoutFunction =
-        new LayoutFunction<>(
-            LayoutFunction.Layout.of("Random Circle", CircleLayoutAlgorithm.<Integer>builder()),
-            LayoutFunction.Layout.of(
-                "Reduced Edge Crossing Circle",
-                CircleLayoutAlgorithm.<Integer>builder().reduceEdgeCrossing(true)));
-
     final JRadioButton animateLayoutTransition = new JRadioButton("Animate Layout Transition");
 
-    final JComboBox jcb = new JComboBox(layoutFunction.getNames().toArray());
-    jcb.setSelectedItem(LayoutHelper.Layouts.CIRCLE);
+    final JComboBox<LayoutHelper.Layouts> jcb =
+        new JComboBox<>(
+            new LayoutHelper.Layouts[] {
+              LayoutHelper.Layouts.CIRCLE, LayoutHelper.Layouts.REDUCE_XING_CIRCLE
+            });
 
     jcb.addActionListener(
         e ->
             SwingUtilities.invokeLater(
                 () -> {
-                  LayoutAlgorithm.Builder<Integer, ?, ?> builder =
-                      layoutFunction.apply((String) jcb.getSelectedItem());
-                  LayoutAlgorithm layoutAlgorithm = builder.build();
+                  LayoutHelper.Layouts selected = (LayoutHelper.Layouts) jcb.getSelectedItem();
+                  LayoutAlgorithm<Integer> layoutAlgorithm = selected.getLayoutAlgorithm();
                   if (animateLayoutTransition.isSelected()) {
                     LayoutAlgorithmTransition.animate(vv, layoutAlgorithm);
                   } else {
                     LayoutAlgorithmTransition.apply(vv, layoutAlgorithm);
                   }
                 }));
+
+    // set layout algorithm via above action
+    jcb.setSelectedItem(LayoutHelper.Layouts.CIRCLE);
 
     Box controls = Box.createHorizontalBox();
     controls.add(jcb);

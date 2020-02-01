@@ -14,12 +14,16 @@ public class TitlePaintable implements VisualizationViewer.Paintable {
   FontMetrics metrics;
   int swidth;
   int sheight;
-  String str;
+  String title;
   Dimension overallSize;
 
   public TitlePaintable(String title, Dimension overallSize) {
-    this.str = title;
+    this.title = title;
     this.overallSize = overallSize;
+  }
+
+  public void setTitle(String title) {
+    this.title = title;
   }
 
   public void paint(Graphics g) {
@@ -27,7 +31,7 @@ public class TitlePaintable implements VisualizationViewer.Paintable {
     if (font == null) {
       font = new Font(g.getFont().getName(), Font.BOLD, 30);
       metrics = g.getFontMetrics(font);
-      swidth = metrics.stringWidth(str);
+      swidth = metrics.stringWidth(title);
       sheight = metrics.getMaxAscent() + metrics.getMaxDescent();
       x = (d.width - swidth) / 2;
       y = (int) (d.height - sheight * 1.5);
@@ -38,7 +42,7 @@ public class TitlePaintable implements VisualizationViewer.Paintable {
 
     x = overallSize.width / 4;
     y = 2 * overallSize.height / 3;
-    drawString(g, str, x, y);
+    drawString(g, title, x, y);
     g.setColor(oldColor);
   }
 
