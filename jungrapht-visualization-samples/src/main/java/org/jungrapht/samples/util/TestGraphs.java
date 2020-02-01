@@ -137,7 +137,7 @@ public class TestGraphs {
         // for each previous vertex...
         for (String v2 : previousLayers) {
           if (random.nextDouble() < linkprob) {
-            graph.addEdge(v, v2);
+            graph.addEdge(v2, v);
           }
         }
       }

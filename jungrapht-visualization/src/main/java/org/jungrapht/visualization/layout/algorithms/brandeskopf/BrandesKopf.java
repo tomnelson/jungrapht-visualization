@@ -13,6 +13,12 @@ import org.jungrapht.visualization.layout.algorithms.sugiyama.Synthetics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @see "Fast and Simple Horizontal Coordinate Assignment, Ulrik Brandes and Boris Köpf, Department
+ *     of Computer & Information Science, University of Konstanz"
+ * @param <V>
+ * @param <E>
+ */
 public class BrandesKopf<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(BrandesKopf.class);

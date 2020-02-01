@@ -7,8 +7,11 @@ import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 /**
  * Counts edge crossing on all levels
  *
- * @see "W. Barth, M. Jünger, and P. Mutzel. Simple and efficient bilayer cross counting"
- * @see "V. Waddle and A. Malhotra, An E log E line crossing algorithm for levelled graphs"
+ * @see "An E log E Line Crossing Algorithm for Levelled Graphs. Vance Waddle and Ashok Malhotra IBM
+ *     Thomas J. Watson Research Center"
+ * @see "Simple and Efficient Bilayer Cross Counting. Wilhelm Barth, Petra Mutzel, Institut für
+ *     Computergraphik und Algorithmen Technische Universität Wien, Michael Jünger, Institut für
+ *     Informatik Universität zu Köln"
  */
 public class AllLevelCross<V, E> {
 

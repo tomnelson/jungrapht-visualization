@@ -13,6 +13,12 @@ import org.jgrapht.Graphs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @see "Fast and Simple Horizontal Coordinate Assignment, Ulrik Brandes and Boris Köpf, Department
+ *     of Computer & Information Science, University of Konstanz"
+ * @param <V>
+ * @param <E>
+ */
 abstract class VerticalAlignment<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(VerticalAlignment.class);

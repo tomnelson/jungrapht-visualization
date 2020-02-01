@@ -26,16 +26,19 @@ import org.slf4j.LoggerFactory;
 /**
  * A Hierarchical Minimum-Cross layout algorithm based on Sugiyama. Uses the Eiglsperger optimations
  * for large graphs. A threshold property may be used to control the decision to switch from the
- * standard Sugiyama layout to the faster Eiglsperger layout.
+ * standard Sugiyama algorithm to the faster Eiglsperger algorithm.
  *
- * <p>Using level crossing algorithm from Waddle and Malhotra
- *
- * @see "An Efficient Implementation of Sugiyama's Algorithm for Layered Graph Drawing. Markus
- *     Eiglsperger, Martin Siebenhaller, Michael Kaufman"
  * @see "Methods for Visual Understanding Hierarchical System Structures. KOZO SUGIYAMA, MEMBER,
  *     IEEE, SHOJIRO TAGAWA, AND MITSUHIKO TODA, MEMBER, IEEE"
  * @see "An E log E Line Crossing Algorithm for Levelled Graphs. Vance Waddle and Ashok Malhotra IBM
  *     Thomas J. Watson Research Center"
+ * @see "Simple and Efficient Bilayer Cross Counting. Wilhelm Barth, Petra Mutzel, Institut für
+ *     Computergraphik und Algorithmen Technische Universität Wien, Michael Jünger, Institut für
+ *     Informatik Universität zu Köln"
+ * @see "Fast and Simple Horizontal Coordinate Assignment, Ulrik Brandes and Boris Köpf, Department
+ *     of Computer & Information Science, University of Konstanz"
+ * @see "An Efficient Implementation of Sugiyama's Algorithm for Layered Graph Drawing. Markus
+ *     Eiglsperger, Martin Siebenhaller, Michael Kaufman"
  * @param <V> vertex type
  * @param <E> edge type
  */

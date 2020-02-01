@@ -13,6 +13,10 @@ import org.jungrapht.visualization.layout.model.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @see "Fast and Simple Horizontal Coordinate Assignment, Ulrik Brandes and Boris Köpf, Department
+ *     of Computer & Information Science, University of Konstanz"
+ */
 public class HorizontalCoordinateAssignment {
   private static Logger log = LoggerFactory.getLogger(HorizontalCoordinateAssignment.class);
 

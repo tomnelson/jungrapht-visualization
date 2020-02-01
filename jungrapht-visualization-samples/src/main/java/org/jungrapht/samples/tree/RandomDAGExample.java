@@ -150,7 +150,7 @@ public class RandomDAGExample extends JFrame {
     setTitle("Prioritized Edges are " + prioritySet);
     add(container);
 
-    JRadioButton showSpatialEffects = new JRadioButton("Spatial Structure");
+    JRadioButton showSpatialEffects = new JRadioButton("Show Structure");
     showSpatialEffects.addItemListener(
         e -> {
           if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -179,20 +179,21 @@ public class RandomDAGExample extends JFrame {
           }
         });
 
-    JTextField layersText = new JTextField("10", 10);
-    layersText.setBorder(new TitledBorder("Layers"));
-    JTextField maxVerticesPerLayerText = new JTextField("4", 10);
-    maxVerticesPerLayerText.setBorder(new TitledBorder("Max per Layer"));
-    JTextField linkProbabilityText = new JTextField("0.2", 10);
-    linkProbabilityText.setBorder(new TitledBorder("Link Prob"));
-    JTextField randomSeedText = new JTextField("7", 10);
-    randomSeedText.setBorder(new TitledBorder("Seed"));
+    JTextField layersText = new JTextField("10", 15);
+    layersText.setBorder(new TitledBorder("Graph Layers"));
+    JTextField maxVerticesPerLayerText = new JTextField("4", 15);
+    maxVerticesPerLayerText.setBorder(new TitledBorder("Max V per Layer"));
+    JTextField linkProbabilityText = new JTextField("0.2", 15);
+    linkProbabilityText.setBorder(new TitledBorder("Link Probabilty"));
+    JTextField randomSeedText = new JTextField("7", 15);
+    randomSeedText.setBorder(new TitledBorder("Random Seed"));
     JPanel graphPropertyPanel = new JPanel(new GridLayout(2, 2));
     graphPropertyPanel.add(layersText);
     graphPropertyPanel.add(maxVerticesPerLayerText);
     graphPropertyPanel.add(linkProbabilityText);
     graphPropertyPanel.add(randomSeedText);
     JPanel floater = new JPanel();
+    floater.setBorder(new TitledBorder("Graph Generator"));
     floater.add(graphPropertyPanel);
     ActionListener action =
         e -> {
@@ -233,9 +234,13 @@ public class RandomDAGExample extends JFrame {
 
     Box controls = Box.createHorizontalBox();
     controls.add(ControlHelpers.getCenteredContainer("Layout Controls", treeLayoutSelector));
-    controls.add(floater);
-    controls.add(ControlHelpers.getZoomControls(vv));
-    controls.add(showSpatialEffects);
+    Box rightControls = Box.createVerticalBox();
+    rightControls.add(floater);
+    JPanel spatialPanel = new JPanel();
+    spatialPanel.setBorder(new TitledBorder("Spatial Structure"));
+    spatialPanel.add(showSpatialEffects);
+    rightControls.add(spatialPanel);
+    controls.add(rightControls);
     add(controls, BorderLayout.SOUTH);
     pack();
     setVisible(true);

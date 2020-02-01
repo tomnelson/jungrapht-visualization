@@ -41,9 +41,11 @@ import org.slf4j.LoggerFactory;
  *     IEEE, SHOJIRO TAGAWA, AND MITSUHIKO TODA, MEMBER, IEEE"
  * @see "An E log E Line Crossing Algorithm for Levelled Graphs. Vance Waddle and Ashok Malhotra IBM
  *     Thomas J. Watson Research Center"
+ * @see "Simple and Efficient Bilayer Cross Counting. Wilhelm Barth, Petra Mutzel, Institut für
+ *     Computergraphik und Algorithmen Technische Universität Wien, Michael Jünger, Institut für
+ *     Informatik Universität zu Köln"
  * @see "Fast and Simple Horizontal Coordinate Assignment, Ulrik Brandes and Boris Köpf, Department
- *     of Computer & Information Science, University of Konstanz, Box D 188, 78457 Konstanz,
- *     Germany"
+ *     of Computer & Information Science, University of Konstanz"
  * @param <V> vertex type
  * @param <E> edge type
  */

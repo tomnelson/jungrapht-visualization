@@ -2,18 +2,9 @@ package org.jungrapht.visualization.layout.algorithms.brandeskopf;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.jungrapht.visualization.layout.model.Point;
 
 public class AverageMedian<V> {
-
-  List<List<LV<V>>> ur;
-  List<List<LV<V>>> lr;
-  List<List<LV<V>>> ul;
-  List<List<LV<V>>> ll;
-
-  List<List<LV<V>>> balanced;
 
   private static int comparePoints(Point p1, Point p2) {
     return Double.compare(p1.x, p2.x);
