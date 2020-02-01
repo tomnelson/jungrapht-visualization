@@ -1,4 +1,4 @@
-package org.jungrapht.visualization.layout.algorithms.brandeskopf;
+package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
 import java.util.Arrays;
 import java.util.Comparator;

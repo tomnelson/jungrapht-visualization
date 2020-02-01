@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.AccumulatorTree;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Comparators;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;

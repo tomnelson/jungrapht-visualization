@@ -1,9 +1,8 @@
-package org.jungrapht.visualization.layout.algorithms.brandeskopf;
+package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.jungrapht.visualization.layout.model.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

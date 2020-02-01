@@ -1,13 +1,10 @@
-package org.jungrapht.visualization.layout.algorithms.brandeskopf;
+package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
 import java.util.HashSet;
 import java.util.stream.IntStream;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaTransformedGraphSupplier;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

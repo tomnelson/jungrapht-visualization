@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
-import org.jungrapht.visualization.layout.algorithms.brandeskopf.AverageMedian;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.AverageMedian;
 import org.jungrapht.visualization.layout.model.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

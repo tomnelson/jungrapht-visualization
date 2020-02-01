@@ -1,15 +1,9 @@
-package org.jungrapht.visualization.layout.algorithms.brandeskopf;
+package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import org.jgrapht.Graph;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.GraphLayers;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.GreedyCycleRemoval;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaTransformedGraphSupplier;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.Synthetics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

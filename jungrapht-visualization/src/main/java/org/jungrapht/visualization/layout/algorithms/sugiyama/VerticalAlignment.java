@@ -1,4 +1,4 @@
-package org.jungrapht.visualization.layout.algorithms.brandeskopf;
+package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -10,8 +10,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

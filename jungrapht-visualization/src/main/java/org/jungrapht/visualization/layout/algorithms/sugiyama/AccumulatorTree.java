@@ -1,12 +1,10 @@
-package org.jungrapht.visualization.layout.algorithms.barthmutzel;
+package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.Comparators;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

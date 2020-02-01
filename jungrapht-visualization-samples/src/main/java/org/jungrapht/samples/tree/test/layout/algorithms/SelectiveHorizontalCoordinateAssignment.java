@@ -6,13 +6,13 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
-import org.jungrapht.visualization.layout.algorithms.brandeskopf.AverageMedian;
-import org.jungrapht.visualization.layout.algorithms.brandeskopf.HorizontalCompaction;
-import org.jungrapht.visualization.layout.algorithms.brandeskopf.HorizontalCoordinateAssignment;
-import org.jungrapht.visualization.layout.algorithms.brandeskopf.VerticalAlignment;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.AverageMedian;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.HorizontalCompaction;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.HorizontalCoordinateAssignment;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.SyntheticLV;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.VerticalAlignment;
 import org.jungrapht.visualization.layout.model.Point;
 
 /**

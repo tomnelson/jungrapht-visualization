@@ -1,8 +1,6 @@
-package org.jungrapht.visualization.layout.algorithms.barthmutzel;
+package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
 import org.jgrapht.Graph;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 
 /**
  * Counts edge crossing on all levels
