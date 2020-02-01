@@ -82,7 +82,7 @@ public class BrandesKopfTest {
   }
 
   void createDelegateGraph() {
-    svGraph = new SugiyamaTransformedGraphSupplier<>(graph).get();
+    svGraph = new TransformedGraphSupplier<>(graph).get();
   }
 
   @Before

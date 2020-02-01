@@ -3,6 +3,7 @@ package org.jungrapht.visualization.layout.algorithms.eiglsperger;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.jungrapht.visualization.layout.model.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,12 +66,8 @@ class HorizontalCompaction<V> {
         x(v, x(root(v)));
         y(v, i * deltaY); // 'i' is the rank
         // if shift[sink[root[v]]] < infinity
-        LV<V> rootav = root(v);
-        LV<V> sinkarootav = sink(rootav);
-        int shiftasinkarootav = shift(sinkarootav);
         if (shift(sink(root(v))) < Integer.MAX_VALUE) {
           // x[v] <- x[v] + shift[sink[root[v]]]
-          int xav = x(v);
           x(v, x(v) + shift(sink(root(v))));
         }
         p(v, Point.of(x(v), y(v)));

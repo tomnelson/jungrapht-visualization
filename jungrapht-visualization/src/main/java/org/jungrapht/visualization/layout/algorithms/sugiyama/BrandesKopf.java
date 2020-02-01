@@ -22,7 +22,7 @@ public class BrandesKopf<V, E> {
 
   public BrandesKopf(Graph<V, E> originalGraph) {
     this.originalGraph = originalGraph;
-    this.svGraph = new SugiyamaTransformedGraphSupplier<>(originalGraph).get();
+    this.svGraph = new TransformedGraphSupplier<>(originalGraph).get();
     GreedyCycleRemoval<LV<V>, LE<V, E>> greedyCycleRemoval = new GreedyCycleRemoval(svGraph);
     Collection<LE<V, E>> feedbackArcs = greedyCycleRemoval.getFeedbackArcs();
 

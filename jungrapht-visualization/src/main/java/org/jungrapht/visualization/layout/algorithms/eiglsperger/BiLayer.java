@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import org.jgrapht.Graph;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 
 /**
  * Represents 2 adjacent layers of a layered graph. If the processing direction is from top to

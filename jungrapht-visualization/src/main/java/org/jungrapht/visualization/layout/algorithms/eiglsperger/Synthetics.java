@@ -7,6 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.jgrapht.Graph;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.ArticulatedEdge;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.SyntheticLE;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.SyntheticLV;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.util.synthetics.Synthetic;
 import org.slf4j.Logger;
@@ -235,13 +240,15 @@ class Synthetics<V, E> {
         }
         boolean overlap = false;
         for (SyntheticLV<V> v : innerPoints.keySet()) {
-          Point newPoint = Point.of(avgx, v.p.y);
+          Point newPoint = Point.of(avgx, v.getPoint().y);
           overlap |= allInnerPoints.contains(newPoint);
           allInnerPoints.add(newPoint);
           v.setPoint(newPoint);
         }
         if (overlap) {
-          innerPoints.keySet().forEach(v -> v.setPoint(Point.of(v.p.x + 20, v.p.y)));
+          innerPoints
+              .keySet()
+              .forEach(v -> v.setPoint(Point.of(v.getPoint().x + 20, v.getPoint().y)));
         }
       }
     }

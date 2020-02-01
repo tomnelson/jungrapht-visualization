@@ -13,7 +13,9 @@ import org.jungrapht.visualization.layout.util.synthetics.SVI;
  */
 class LVI<V> extends SVI<V> implements LV<V> {
   protected int rank; // the layer number for this vertex
-  protected int index; // the position within the layer for this vertex
+  protected int index; // the index within the layer array for this vertex
+  protected int pos = -1;
+  protected double measure = -1; // the median of the positions of the neighbors of this LV
 
   protected Point p; // the cartesian coordinates for this articulation point
 
@@ -70,6 +72,22 @@ class LVI<V> extends SVI<V> implements LV<V> {
     this.p = p;
   }
 
+  public int getPos() {
+    return pos;
+  }
+
+  public void setPos(int pos) {
+    this.pos = pos;
+  }
+
+  public double getMeasure() {
+    return measure;
+  }
+
+  public void setMeasure(double measure) {
+    this.measure = measure;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -95,6 +113,10 @@ class LVI<V> extends SVI<V> implements LV<V> {
         + rank
         + ", index="
         + index
+        + ", pos="
+        + pos
+        + ", measure="
+        + measure
         + ", p="
         + p
         + '}';

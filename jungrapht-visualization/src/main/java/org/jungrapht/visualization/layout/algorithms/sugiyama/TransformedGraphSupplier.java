@@ -1,4 +1,4 @@
-package org.jungrapht.visualization.layout.algorithms.eiglsperger;
+package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -6,11 +6,11 @@ import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.util.synthetics.SingletonTransformer;
 import org.jungrapht.visualization.layout.util.synthetics.TransformingGraphView;
 
-class EiglspergerTransformedGraphSupplier<V, E> implements Supplier<Graph<LV<V>, LE<V, E>>> {
+public class TransformedGraphSupplier<V, E> implements Supplier<Graph<LV<V>, LE<V, E>>> {
 
   protected Graph<V, E> graph;
 
-  public EiglspergerTransformedGraphSupplier(Graph<V, E> graph) {
+  public TransformedGraphSupplier(Graph<V, E> graph) {
     this.graph = graph;
   }
 

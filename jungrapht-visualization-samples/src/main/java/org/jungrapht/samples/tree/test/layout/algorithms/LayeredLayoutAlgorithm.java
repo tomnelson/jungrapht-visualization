@@ -29,9 +29,9 @@ import org.jungrapht.visualization.layout.algorithms.sugiyama.GraphLayers;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.GreedyCycleRemoval;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaTransformedGraphSupplier;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.SyntheticLV;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Synthetics;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.TransformedGraphSupplier;
 import org.jungrapht.visualization.layout.algorithms.util.RenderContextAware;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
@@ -150,7 +150,7 @@ public class LayeredLayoutAlgorithm<V, E>
   @Override
   public void visit(LayoutModel<V> layoutModel) {
     this.originalGraph = layoutModel.getGraph();
-    this.svGraph = new SugiyamaTransformedGraphSupplier<>(originalGraph).get();
+    this.svGraph = new TransformedGraphSupplier<>(originalGraph).get();
     GreedyCycleRemoval<LV<V>, LE<V, E>> greedyCycleRemoval = new GreedyCycleRemoval(svGraph);
     Collection<LE<V, E>> feedbackArcs = greedyCycleRemoval.getFeedbackArcs();
 

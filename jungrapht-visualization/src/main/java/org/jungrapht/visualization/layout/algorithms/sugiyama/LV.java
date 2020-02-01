@@ -33,4 +33,12 @@ public interface LV<V> extends SV<V> {
   Point getPoint();
 
   void setPoint(Point p);
+
+  int getPos();
+
+  void setPos(int pos);
+
+  double getMeasure();
+
+  void setMeasure(double measure);
 }

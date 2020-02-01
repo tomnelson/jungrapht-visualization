@@ -127,8 +127,8 @@ public class TestGreedyCycleRemoval {
     Assert.assertEquals(graph.getEdgeSource(3), "D");
     Assert.assertEquals(graph.getEdgeTarget(3), "B");
 
-    SugiyamaTransformedGraphSupplier<String, Integer> transformedGraphSupplier =
-        new SugiyamaTransformedGraphSupplier(graph);
+    TransformedGraphSupplier<String, Integer> transformedGraphSupplier =
+        new TransformedGraphSupplier(graph);
     Graph<LV<String>, LE<String, Integer>> svGraph = transformedGraphSupplier.get();
 
     GreedyCycleRemoval<LV<String>, LE<String, Integer>> gcr = new GreedyCycleRemoval<>(svGraph);

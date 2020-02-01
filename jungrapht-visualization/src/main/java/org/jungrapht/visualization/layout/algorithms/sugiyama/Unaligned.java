@@ -93,49 +93,20 @@ public class Unaligned {
       int verticalOffset,
       Map<LV<V>, Point> vertexPointMap) {
 
-    //    Map<Integer, Integer> rowWidthMap = new HashMap<>();
-    //    Map<Integer, Integer> rowMaxHeightMap = new HashMap<>();
     int layerIndex = 0;
-    //    for (LV<V>[] layer : layers) {
-    //      int width = horizontalOffset;
-    //      int maxHeight = 0;
-    //      for (LV<V> sugiyamaVertex : layer) {
-    //        if (!(sugiyamaVertex instanceof SyntheticLV)) {
-    //          Rectangle bounds = vertexShapeFunction.apply(sugiyamaVertex.vertex).getBounds();
-    //          width += bounds.width + horizontalOffset;
-    //          maxHeight = Math.max(maxHeight, bounds.height);
-    //        } else {
-    //          width += horizontalOffset;
-    //        }
-    //      }
-    //      rowWidthMap.put(layerIndex, width);
-    //      rowMaxHeightMap.put(layerIndex, maxHeight);
-    //      layerIndex++;
-    //    }
-    //    int widestRowWidth = rowWidthMap.values().stream().mapToInt(v -> v).max().getAsInt();
     int x = horizontalOffset;
     int y = verticalOffset;
     layerIndex = 0;
 
     for (LV<V>[] layer : layers) {
-      //      int previousVertexWidth = 0;
-      // offset against widest row
-      //      x += (widestRowWidth - rowWidthMap.get(layerIndex)) / 2;
-      //
-      //      y += rowMaxHeightMap.get(layerIndex) / 2;
-      //      if (layerIndex > 0) {
-      //        y += rowMaxHeightMap.get(layerIndex - 1) / 2;
-      //      }
 
       for (LV<V> sugiyamaVertex : layer) {
-        int vertexWidth = 0;
-        if (!(sugiyamaVertex instanceof SyntheticLV)) {
-          vertexWidth = vertexShapeFunction.apply(sugiyamaVertex.getVertex()).getBounds().width;
-        }
+        //        int vertexWidth = 0;
+        //        if (!(sugiyamaVertex instanceof SyntheticLV)) {
+        //          vertexWidth = vertexShapeFunction.apply(sugiyamaVertex.getVertex()).getBounds().width;
+        //        }
 
-        x +=
-            //                previousVertexWidth / 2 + vertexWidth / 2 +
-            horizontalOffset;
+        x += horizontalOffset;
 
         log.trace("layerIndex {} y is {}", layerIndex, y);
         sugiyamaVertex.setPoint(Point.of(x, y));
@@ -143,7 +114,6 @@ public class Unaligned {
         if (vertexPointMap.containsKey(sugiyamaVertex)) {
           vertexPointMap.put(sugiyamaVertex, sugiyamaVertex.getPoint());
         }
-        //        previousVertexWidth = vertexWidth;
       }
       x = horizontalOffset;
       y += verticalOffset;

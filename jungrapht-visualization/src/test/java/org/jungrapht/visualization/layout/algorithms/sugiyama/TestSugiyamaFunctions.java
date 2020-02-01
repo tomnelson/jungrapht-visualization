@@ -82,8 +82,8 @@ public class TestSugiyamaFunctions {
   @Test
   public void testAssignLayers() {
 
-    SugiyamaTransformedGraphSupplier<String, Integer> svTransformedGraphSupplier =
-        new SugiyamaTransformedGraphSupplier(graph);
+    TransformedGraphSupplier<String, Integer> svTransformedGraphSupplier =
+        new TransformedGraphSupplier(graph);
     Graph<LV<String>, LE<String, Integer>> sgraph = svTransformedGraphSupplier.get();
 
     List<List<LV<String>>> layers = GraphLayers.assign(sgraph);
@@ -118,8 +118,8 @@ public class TestSugiyamaFunctions {
     graph.addEdge("20", "30");
     graph.addEdge("00", "30"); // connect from rank 0 to rank 3. should add 3, subtract 1
 
-    SugiyamaTransformedGraphSupplier<String, Integer> svTransformedGraphSupplier =
-        new SugiyamaTransformedGraphSupplier(graph);
+    TransformedGraphSupplier<String, Integer> svTransformedGraphSupplier =
+        new TransformedGraphSupplier(graph);
     Graph<LV<String>, LE<String, Integer>> sgraph = svTransformedGraphSupplier.get();
 
     log.info("incoming dag: {}", sgraph);

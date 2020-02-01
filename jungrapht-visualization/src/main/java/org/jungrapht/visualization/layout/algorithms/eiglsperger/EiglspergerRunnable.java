@@ -21,7 +21,14 @@ import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.decorators.EdgeShape;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.ArticulatedEdge;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.GraphLayers;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.GreedyCycleRemoval;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.SyntheticLV;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.TransformedGraphSupplier;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.Unaligned;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.slf4j.Logger;
@@ -158,8 +165,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     this.graph = layoutModel.getGraph();
 
     long startTime = System.currentTimeMillis();
-    EiglspergerTransformedGraphSupplier<V, E> transformedGraphSupplier =
-        new EiglspergerTransformedGraphSupplier(graph);
+    TransformedGraphSupplier<V, E> transformedGraphSupplier = new TransformedGraphSupplier(graph);
     this.svGraph = transformedGraphSupplier.get();
     long transformTime = System.currentTimeMillis();
     log.trace("transform Graph took {}", (transformTime - startTime));

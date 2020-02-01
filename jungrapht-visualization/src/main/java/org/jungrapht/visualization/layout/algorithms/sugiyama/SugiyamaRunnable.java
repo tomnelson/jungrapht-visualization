@@ -234,8 +234,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     this.graph = layoutModel.getGraph();
 
     long startTime = System.currentTimeMillis();
-    SugiyamaTransformedGraphSupplier<V, E> transformedGraphSupplier =
-        new SugiyamaTransformedGraphSupplier(graph);
+    TransformedGraphSupplier<V, E> transformedGraphSupplier = new TransformedGraphSupplier(graph);
     this.svGraph = transformedGraphSupplier.get();
     long transformTime = System.currentTimeMillis();
     log.trace("transform Graph took {}", (transformTime - startTime));

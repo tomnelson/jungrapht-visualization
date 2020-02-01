@@ -9,7 +9,11 @@ import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.GraphLayers;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.GreedyCycleRemoval;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.TransformedGraphSupplier;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -152,8 +156,8 @@ public class EiglspergerTests {
   //
   /** transform the graph, remove cycles, and perform layering and virtual vertex/edge creation */
   private void createLayers() {
-    EiglspergerTransformedGraphSupplier<String, Integer> transformedGraphSupplier =
-        new EiglspergerTransformedGraphSupplier(graph);
+    TransformedGraphSupplier<String, Integer> transformedGraphSupplier =
+        new TransformedGraphSupplier(graph);
     this.svGraph = transformedGraphSupplier.get();
     GreedyCycleRemoval<LV<String>, LE<String, Integer>> greedyCycleRemoval =
         new GreedyCycleRemoval(svGraph);

@@ -1,5 +1,7 @@
 package org.jungrapht.visualization.layout.algorithms.eiglsperger;
 
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.SyntheticLE;
 import org.jungrapht.visualization.layout.util.synthetics.Synthetic;
 
 /**

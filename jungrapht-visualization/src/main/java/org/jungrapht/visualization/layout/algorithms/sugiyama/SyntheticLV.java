@@ -52,10 +52,10 @@ public class SyntheticLV<V> extends LVI<V> implements Synthetic {
         + rank
         + ", index="
         + index
-        //        + ", pos="
-        //        + pos
-        //        + ", measure="
-        //        + measure
+        + ", pos="
+        + pos
+        + ", measure="
+        + measure
         + ", p="
         + p
         + '}';

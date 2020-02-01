@@ -1,5 +1,6 @@
 package org.jungrapht.visualization.layout.algorithms.eiglsperger;
 
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.jungrapht.visualization.layout.algorithms.util.Pair;
 import org.jungrapht.visualization.layout.model.Point;
 

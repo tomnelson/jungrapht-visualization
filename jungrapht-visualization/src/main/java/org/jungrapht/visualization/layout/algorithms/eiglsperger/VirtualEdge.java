@@ -1,5 +1,8 @@
 package org.jungrapht.visualization.layout.algorithms.eiglsperger;
 
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LEI;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
+
 /**
  * an edge that is not in the original graph, but is synthesized to replace one or more original
  * graph edges.
