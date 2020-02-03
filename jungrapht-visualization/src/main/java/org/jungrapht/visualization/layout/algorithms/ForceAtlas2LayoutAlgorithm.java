@@ -378,7 +378,7 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
 
       if (Double.isNaN(force1) || Double.isNaN(force2))
         throw new IllegalArgumentException(
-                "Unexpected mathematical result in FRLayout:calcPositions");
+            "Unexpected mathematical result in FRLayout:calcPositions");
 
       force1 /= dist;
       force2 /= dist;

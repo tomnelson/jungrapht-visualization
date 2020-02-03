@@ -122,6 +122,17 @@ public class BarnesHutQuadTree<T> {
     }
   }
 
+  public void rebuild(Map<T, Double> masses, Map<T, Point> locations) {
+    clear();
+    synchronized (lock) {
+      for (Map.Entry<T, Point> entry : locations.entrySet()) {
+        T key = entry.getKey();
+        ForceObject<T> forceObject = new ForceObject<>(key, entry.getValue(), masses.get(key));
+        insert(forceObject);
+      }
+    }
+  }
+
   @Override
   public String toString() {
     return "Tree:" + root;
