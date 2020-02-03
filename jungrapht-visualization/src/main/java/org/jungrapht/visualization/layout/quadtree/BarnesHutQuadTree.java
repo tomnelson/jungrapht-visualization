@@ -1,6 +1,7 @@
 package org.jungrapht.visualization.layout.quadtree;
 
-import java.util.Map;
+import java.util.Collection;
+import java.util.function.Function;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
 import org.slf4j.Logger;
@@ -112,24 +113,20 @@ public class BarnesHutQuadTree<T> {
    *
    * @param locations - mapping of elements to locations
    */
-  public void rebuild(Map<T, Point> locations) {
+  public void rebuild(Collection<T> elements, Function<T, Point> locations) {
     clear();
     synchronized (lock) {
-      for (Map.Entry<T, Point> entry : locations.entrySet()) {
-        ForceObject<T> forceObject = new ForceObject<>(entry.getKey(), entry.getValue());
-        insert(forceObject);
-      }
+      elements.forEach(element -> insert(new ForceObject(element, locations.apply(element))));
     }
   }
 
-  public void rebuild(Map<T, Double> masses, Map<T, Point> locations) {
+  public void rebuild(
+      Collection<T> elements, Function<T, Double> masses, Function<T, Point> locations) {
     clear();
     synchronized (lock) {
-      for (Map.Entry<T, Point> entry : locations.entrySet()) {
-        T key = entry.getKey();
-        ForceObject<T> forceObject = new ForceObject<>(key, entry.getValue(), masses.get(key));
-        insert(forceObject);
-      }
+      elements.forEach(
+          element ->
+              insert(new ForceObject(element, locations.apply(element), masses.apply(element))));
     }
   }
 

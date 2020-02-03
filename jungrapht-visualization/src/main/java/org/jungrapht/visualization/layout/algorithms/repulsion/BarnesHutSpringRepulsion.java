@@ -79,7 +79,7 @@ public class BarnesHutSpringRepulsion<V>
   }
 
   public void step() {
-    tree.rebuild(layoutModel.getLocations());
+    tree.rebuild(layoutModel.getGraph().vertexSet(), layoutModel);
   }
 
   public void calculateRepulsion() {

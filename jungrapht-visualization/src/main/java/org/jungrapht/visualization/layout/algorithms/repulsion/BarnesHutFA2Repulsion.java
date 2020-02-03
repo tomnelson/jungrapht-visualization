@@ -61,7 +61,7 @@ public class BarnesHutFA2Repulsion<V>
 
   @Override
   public void step() {
-    tree.rebuild(nodeMasses, layoutModel.getLocations());
+    tree.rebuild(layoutModel.getGraph().vertexSet(), nodeMasses::get, layoutModel);
   }
 
   @Override

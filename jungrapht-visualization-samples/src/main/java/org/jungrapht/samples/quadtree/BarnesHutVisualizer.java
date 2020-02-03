@@ -45,7 +45,7 @@ public class BarnesHutVisualizer extends JPanel {
     elements.put("D", Point.of(500, 100));
 
     tree = BarnesHutQuadTree.builder().bounds(600, 600).build();
-    tree.rebuild(elements);
+    tree.rebuild(elements.keySet(), elements::get);
 
     JPanel drawingPanel =
         new JPanel() {
@@ -121,14 +121,14 @@ public class BarnesHutVisualizer extends JPanel {
     elements.clear();
     stuffToDraw.clear();
     tree = BarnesHutQuadTree.builder().bounds(getWidth(), getHeight()).build();
-    tree.rebuild(elements);
+    tree.rebuild(elements.keySet(), elements::get);
     repaint();
   }
 
   private void addShapeAt(Point2D p) {
     String n = "N" + elements.size();
     elements.put(n, Point.of(p.getX(), p.getY()));
-    tree.rebuild(elements);
+    tree.rebuild(elements.keySet(), elements::get);
     repaint();
   }
 
