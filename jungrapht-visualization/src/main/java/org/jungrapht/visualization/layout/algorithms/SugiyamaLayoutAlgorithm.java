@@ -51,6 +51,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
   protected static final String MINCROSS_THREADED = PREFIX + "mincross.threaded";
   protected static final String TRANSPOSE_LIMIT = PREFIX + "mincross.transposeLimit";
   protected static final String MAX_LEVEL_CROSS = PREFIX + "mincross.maxLevelCross";
+  protected static final String MINCROSS_USE_LONGEST_PATH = PREFIX + "mincross.useLongestPath";
 
   /**
    * a Builder to create a configured instance
@@ -75,6 +76,8 @@ public class SugiyamaLayoutAlgorithm<V, E>
     protected int transposeLimit = Integer.getInteger(TRANSPOSE_LIMIT, 6);
     protected int maxLevelCross = Integer.getInteger(MAX_LEVEL_CROSS, 23);
     protected boolean expandLayout = true;
+    protected boolean useLongestPathLayering =
+        Boolean.parseBoolean(System.getProperty(MINCROSS_USE_LONGEST_PATH, "false"));;
     protected Runnable after = () -> {};
     protected boolean threaded =
         Boolean.parseBoolean(System.getProperty(MINCROSS_THREADED, "true"));
@@ -120,6 +123,11 @@ public class SugiyamaLayoutAlgorithm<V, E>
       return self();
     }
 
+    public B useLongestPathLayering(boolean useLongestPathLayering) {
+      this.useLongestPathLayering = useLongestPathLayering;
+      return self();
+    }
+
     public B threaded(boolean threaded) {
       this.threaded = threaded;
       return self();
@@ -157,8 +165,9 @@ public class SugiyamaLayoutAlgorithm<V, E>
   protected boolean expandLayout;
   protected RenderContext<V, E> renderContext;
   boolean threaded;
-  CompletableFuture theFuture;
-  Runnable after;
+  protected boolean useLongestPathLayering;
+  protected CompletableFuture theFuture;
+  protected Runnable after;
 
   public SugiyamaLayoutAlgorithm() {
     this(SugiyamaLayoutAlgorithm.edgeAwareBuilder());
@@ -173,6 +182,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
         builder.transposeLimit,
         builder.maxLevelCross,
         builder.expandLayout,
+        builder.useLongestPathLayering,
         builder.threaded,
         builder.after);
   }
@@ -185,6 +195,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
       int transposeLimit,
       int maxLevelCross,
       boolean expandLayout,
+      boolean useLongestPathLayering,
       boolean threaded,
       Runnable after) {
     this.vertexShapeFunction = vertexShapeFunction;
@@ -194,6 +205,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
     this.transposeLimit = transposeLimit;
     this.maxLevelCross = maxLevelCross;
     this.expandLayout = expandLayout;
+    this.useLongestPathLayering = useLongestPathLayering;
     this.threaded = threaded;
     this.after = after;
   }
@@ -220,6 +232,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
             .transpose(transpose)
             .transposeLimit(transposeLimit)
             .maxLevelCross(maxLevelCross)
+            .useLongestPathLayering(useLongestPathLayering)
             .build();
     if (threaded) {
 

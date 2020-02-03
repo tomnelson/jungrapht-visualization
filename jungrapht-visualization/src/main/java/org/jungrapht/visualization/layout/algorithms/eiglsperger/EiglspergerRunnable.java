@@ -29,6 +29,7 @@ import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.SyntheticLV;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.TransformedGraphSupplier;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Unaligned;
+import org.jungrapht.visualization.layout.algorithms.util.Attributed;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.slf4j.Logger;
@@ -68,6 +69,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     protected boolean straightenEdges;
     protected boolean postStraighten;
     protected int maxLevelCross;
+    boolean useLongestPathLayering;
 
     /** {@inheritDoc} */
     protected B self() {
@@ -99,6 +101,11 @@ public class EiglspergerRunnable<V, E> implements Runnable {
       return self();
     }
 
+    public B useLongestPathLayering(boolean useLongestPathLayering) {
+      this.useLongestPathLayering = useLongestPathLayering;
+      return self();
+    }
+
     /** {@inheritDoc} */
     public T build() {
       return (T) new EiglspergerRunnable<>(this);
@@ -126,6 +133,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
   protected boolean straightenEdges;
   protected boolean postStraighten;
   protected int maxLevelCross;
+  protected boolean useLongestPathLayering;
 
   private EiglspergerRunnable(Builder<V, E, ?, ?> builder) {
     this(
@@ -133,7 +141,8 @@ public class EiglspergerRunnable<V, E> implements Runnable {
         builder.renderContext,
         builder.straightenEdges,
         builder.postStraighten,
-        builder.maxLevelCross);
+        builder.maxLevelCross,
+        builder.useLongestPathLayering);
   }
 
   private EiglspergerRunnable(
@@ -141,12 +150,14 @@ public class EiglspergerRunnable<V, E> implements Runnable {
       RenderContext<V, E> renderContext,
       boolean straightenEdges,
       boolean postStraighten,
-      int maxLevelCross) {
+      int maxLevelCross,
+      boolean useLongestPathLayering) {
     this.layoutModel = layoutModel;
     this.renderContext = renderContext;
     this.straightenEdges = straightenEdges;
     this.postStraighten = postStraighten;
     this.maxLevelCross = maxLevelCross;
+    this.useLongestPathLayering = useLongestPathLayering;
   }
 
   private boolean checkStopped() {
@@ -186,7 +197,12 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     long cycles = System.currentTimeMillis();
     log.trace("remove cycles took {}", (cycles - transformTime));
 
-    List<List<LV<V>>> layers = GraphLayers.assign(svGraph);
+    List<List<LV<V>>> layers;
+    if (useLongestPathLayering) {
+      layers = GraphLayers.longestPath(svGraph);
+    } else {
+      layers = GraphLayers.assign(svGraph);
+    }
     long assignLayersTime = System.currentTimeMillis();
     log.trace("assign layers took {} ", (assignLayersTime - cycles));
     if (log.isTraceEnabled()) {
@@ -462,6 +478,14 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     log.trace("articulated edges took {}", (articulatedEdgeTime - pointsSetTime));
 
     svGraph.vertexSet().forEach(v -> layoutModel.set(v.getVertex(), v.getPoint()));
+    for (LV<V> v : svGraph.vertexSet()) {
+      if (v.getVertex() instanceof Attributed) {
+        Attributed<V> va = (Attributed<V>) v.getVertex();
+        va.set("pos", "" + v.getPos());
+        va.set("idx", "" + v.getIndex());
+        va.set("rank", "" + v.getRank());
+      }
+    }
   }
 
   public static <V, E> int sweepForward(

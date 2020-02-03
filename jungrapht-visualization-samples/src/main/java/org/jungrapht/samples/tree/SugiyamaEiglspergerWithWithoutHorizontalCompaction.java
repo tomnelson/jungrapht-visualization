@@ -68,7 +68,7 @@ public class SugiyamaEiglspergerWithWithoutHorizontalCompaction extends JFrame {
     SugiyamaLayoutAlgorithm<Integer, Integer> layoutAlgorithm2 =
         SugiyamaLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .straightenEdges(true)
-            .postStraighten(false)
+            .postStraighten(true)
             .transpose(true)
             .after(vv2::scaleToLayout)
             .build();
@@ -89,6 +89,7 @@ public class SugiyamaEiglspergerWithWithoutHorizontalCompaction extends JFrame {
     EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm4 =
         EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .straightenEdges(true)
+            //                .postStraighten(true)
             .after(vv3::scaleToLayout)
             .build();
     layoutAlgorithm4.setRenderContext(vv4.getRenderContext());

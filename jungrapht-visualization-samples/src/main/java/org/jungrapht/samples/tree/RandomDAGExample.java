@@ -187,6 +187,10 @@ public class RandomDAGExample extends JFrame {
     linkProbabilityText.setBorder(new TitledBorder("Link Probabilty"));
     JTextField randomSeedText = new JTextField("7", 15);
     randomSeedText.setBorder(new TitledBorder("Random Seed"));
+
+    JTextField maxLevelCrossText = new JTextField("23", 15);
+    maxLevelCrossText.setBorder(new TitledBorder("Max Level Cross"));
+
     JPanel graphPropertyPanel = new JPanel(new GridLayout(2, 2));
     graphPropertyPanel.add(layersText);
     graphPropertyPanel.add(maxVerticesPerLayerText);

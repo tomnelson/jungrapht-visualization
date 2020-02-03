@@ -51,7 +51,7 @@ public class MultiViewDemo extends JPanel {
   VisualizationViewer<String, Integer> vv2;
   VisualizationViewer<String, Integer> vv3;
 
-  Dimension preferredSize = new Dimension(300, 300);
+  Dimension preferredSize = new Dimension(400, 400);
 
   final String messageOne =
       "The mouse wheel will scale the model's layout when activated"

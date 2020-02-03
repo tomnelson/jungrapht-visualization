@@ -97,8 +97,7 @@ class EiglspergerSteps {
   }
 
   /**
-   * @param biLayer unsorted List of LV (including non-empty? containers) // * @param pos //
-   *     * @param measure
+   * @param biLayer unsorted List of LV (including non-empty? containers)
    * @param <V>
    * @return layerEyePlus1 reordered
    */

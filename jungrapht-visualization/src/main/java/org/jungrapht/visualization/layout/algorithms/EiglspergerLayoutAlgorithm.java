@@ -52,6 +52,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
   protected static final String MINCROSS_POST_STRAIGHTEN = PREFIX + "mincross.postStraighten";
   protected static final String MINCROSS_THREADED = PREFIX + "mincross.threaded";
   protected static final String MAX_LEVEL_CROSS = PREFIX + "mincross.maxLevelCross";
+  protected static final String MINCROSS_USE_LONGEST_PATH = PREFIX + "mincross.useLongestPath";
 
   /**
    * a Builder to create a configured instance
@@ -74,6 +75,8 @@ public class EiglspergerLayoutAlgorithm<V, E>
         Boolean.parseBoolean(System.getProperty(MINCROSS_POST_STRAIGHTEN, "true"));
     protected int maxLevelCross = Integer.getInteger(MAX_LEVEL_CROSS, 23);
     protected boolean expandLayout = true;
+    boolean useLongestPathLayering =
+        Boolean.parseBoolean(System.getProperty(MINCROSS_USE_LONGEST_PATH, "false"));;
     protected Runnable after = () -> {};
     protected boolean threaded =
         Boolean.parseBoolean(System.getProperty(MINCROSS_THREADED, "true"));
@@ -106,6 +109,11 @@ public class EiglspergerLayoutAlgorithm<V, E>
     /** {@inheritDoc} */
     public B expandLayout(boolean expandLayout) {
       this.expandLayout = expandLayout;
+      return self();
+    }
+
+    public B useLongestPathLayering(boolean useLongestPathLayering) {
+      this.useLongestPathLayering = useLongestPathLayering;
       return self();
     }
 
@@ -144,6 +152,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
   protected boolean expandLayout;
   protected RenderContext<V, E> renderContext;
   boolean threaded;
+  protected boolean useLongestPathLayering;
   CompletableFuture theFuture;
   Runnable after;
 
@@ -158,6 +167,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
         builder.postStraighten,
         builder.maxLevelCross,
         builder.expandLayout,
+        builder.useLongestPathLayering,
         builder.threaded,
         builder.after);
   }
@@ -168,6 +178,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
       boolean postStraighten,
       int maxLevelCross,
       boolean expandLayout,
+      boolean useLongestPathLayering,
       boolean threaded,
       Runnable after) {
     this.vertexShapeFunction = vertexShapeFunction;
@@ -175,6 +186,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
     this.postStraighten = postStraighten;
     this.maxLevelCross = maxLevelCross;
     this.expandLayout = expandLayout;
+    this.useLongestPathLayering = useLongestPathLayering;
     this.after = after;
     this.threaded = threaded;
   }
@@ -199,6 +211,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
             .straightenEdges(straightenEdges)
             .postStraighten(postStraighten)
             .maxLevelCross(maxLevelCross)
+            .useLongestPathLayering(useLongestPathLayering)
             .build();
     if (threaded) {
 

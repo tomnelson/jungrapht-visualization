@@ -9,15 +9,11 @@ import org.jungrapht.visualization.layout.util.synthetics.Synthetic;
  *
  * @param <V> vertex type
  */
-class SegmentVertex<V> extends SyntheticLV<V> implements Synthetic {
+abstract class SegmentVertex<V> extends SyntheticLV<V> implements Synthetic {
 
   final int hash;
 
   protected Segment<V> segment;
-
-  public static <V> SegmentVertex<V> of() {
-    return new SegmentVertex();
-  }
 
   protected SegmentVertex() {
     super();
@@ -36,6 +32,13 @@ class SegmentVertex<V> extends SyntheticLV<V> implements Synthetic {
   public void setSegment(Segment<V> segment) {
     this.segment = segment;
   }
+
+  @Override
+  public void setPos(int pos) {
+    super.setPos(pos);
+  }
+
+  public abstract void setSegmentVertexPos(int pos);
 
   @Override
   public boolean equals(Object o) {
@@ -59,10 +62,10 @@ class SegmentVertex<V> extends SyntheticLV<V> implements Synthetic {
         + rank
         + ", index="
         + index
-        //        + ", pos="
-        //        + pos
-        //        + ", measure="
-        //        + measure
+        + ", pos="
+        + pos
+        + ", measure="
+        + measure
         + ", p="
         + p
         + '}';

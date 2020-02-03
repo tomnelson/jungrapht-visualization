@@ -2,7 +2,8 @@ package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
 import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 
-import java.awt.*;
+import java.awt.Rectangle;
+import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -71,6 +72,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     protected boolean transpose;
     protected int transposeLimit;
     protected int maxLevelCross;
+    boolean useLongestPathLayering;
 
     /** {@inheritDoc} */
     protected B self() {
@@ -148,6 +150,11 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       return self();
     }
 
+    public B useLongestPathLayering(boolean useLongestPathLayering) {
+      this.useLongestPathLayering = useLongestPathLayering;
+      return self();
+    }
+
     /** {@inheritDoc} */
     public T build() {
       return (T) new SugiyamaRunnable<>(this);
@@ -177,6 +184,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
   protected boolean transpose;
   protected int transposeLimit;
   protected int maxLevelCross;
+  protected boolean useLongestPathLayering;
 
   private SugiyamaRunnable(Builder<V, E, ?, ?> builder) {
     this(
@@ -190,7 +198,8 @@ public class SugiyamaRunnable<V, E> implements Runnable {
         builder.postStraighten,
         builder.transpose,
         builder.transposeLimit,
-        builder.maxLevelCross);
+        builder.maxLevelCross,
+        builder.useLongestPathLayering);
   }
 
   private SugiyamaRunnable(
@@ -204,7 +213,8 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       boolean postStraighten,
       boolean transpose,
       int transposeLimit,
-      int maxLevelCross) {
+      int maxLevelCross,
+      boolean useLongestPathLayering) {
     this.layoutModel = layoutModel;
     this.renderContext = renderContext;
     this.vertexComparator = vertexComparator;
@@ -216,6 +226,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     this.transpose = transpose;
     this.transposeLimit = transposeLimit;
     this.maxLevelCross = maxLevelCross;
+    this.useLongestPathLayering = useLongestPathLayering;
   }
 
   private boolean checkStopped() {
@@ -255,7 +266,12 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     long cycles = System.currentTimeMillis();
     log.trace("remove cycles took {}", (cycles - transformTime));
 
-    List<List<LV<V>>> layers = GraphLayers.assign(svGraph);
+    List<List<LV<V>>> layers;
+    if (useLongestPathLayering) {
+      layers = GraphLayers.longestPath(svGraph);
+    } else {
+      layers = GraphLayers.assign(svGraph);
+    }
     long assignLayersTime = System.currentTimeMillis();
     log.trace("assign layers took {} ", (assignLayersTime - cycles));
 
@@ -619,22 +635,20 @@ public class SugiyamaRunnable<V, E> implements Runnable {
 
     if (i % 2 == 0) {
       for (int r = 0; r < layers.length; r++) {
-        Map<LV<V>, Double> medianMap = new HashMap<>();
         for (LV<V> v : layers[r]) {
           double median = medianValue(v, this::upperNeighborIndices, svGraph);
-          medianMap.put(v, median);
+          v.setMeasure(median);
         }
-        medianSortAndFixMetadata(layers[r], medianMap);
+        medianSortAndFixMetadata(layers[r]);
         GraphLayers.checkLayers(layers);
       }
     } else {
       for (int r = layers.length - 1; r >= 0; r--) {
-        Map<LV<V>, Double> medianMap = new HashMap<>();
         for (LV<V> v : layers[r]) {
           double median = medianValue(v, this::lowerNeighborIndices, svGraph);
-          medianMap.put(v, median);
+          v.setMeasure(median);
         }
-        medianSortAndFixMetadata(layers[r], medianMap);
+        medianSortAndFixMetadata(layers[r]);
         GraphLayers.checkLayers(layers);
       }
     }
@@ -643,12 +657,11 @@ public class SugiyamaRunnable<V, E> implements Runnable {
   void medianDownwards(LV<V>[][] layers, Graph<LV<V>, LE<V, E>> svGraph) {
 
     for (int r = 0; r < layers.length; r++) {
-      Map<LV<V>, Double> medianMap = new HashMap<>();
       for (LV<V> v : layers[r]) {
         double median = medianValue(v, this::upperNeighborIndices, svGraph);
-        medianMap.put(v, median);
+        v.setMeasure(median);
       }
-      medianSortAndFixMetadata(layers[r], medianMap);
+      medianSortAndFixMetadata(layers[r]);
       GraphLayers.checkLayers(layers);
     }
   }
@@ -656,18 +669,17 @@ public class SugiyamaRunnable<V, E> implements Runnable {
   void medianUpwards(LV<V>[][] layers, Graph<LV<V>, LE<V, E>> svGraph) {
 
     for (int r = layers.length - 1; r >= 0; r--) {
-      Map<LV<V>, Double> medianMap = new HashMap<>();
       for (LV<V> v : layers[r]) {
         double median = medianValue(v, this::lowerNeighborIndices, svGraph);
-        medianMap.put(v, median);
+        v.setMeasure(median);
       }
-      medianSortAndFixMetadata(layers[r], medianMap);
+      medianSortAndFixMetadata(layers[r]);
       GraphLayers.checkLayers(layers);
     }
   }
 
-  void medianSortAndFixMetadata(LV<V>[] layer, Map<LV<V>, Double> medianMap) {
-    Arrays.sort(layer, Comparator.comparing(medianMap::get));
+  void medianSortAndFixMetadata(LV<V>[] layer) {
+    Arrays.sort(layer, Comparator.comparing(LV::getMeasure));
     // fix up the metadata!
     fixMetadata(layer);
   }

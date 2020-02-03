@@ -91,14 +91,8 @@ class HorizontalCoordinateAssignment {
 
         Point balancedPoint =
             AverageMedian.averageMedianPoint(
-                upLeftPoint
-                //                    ,
-                //                    upRightPoint
-                ,
-                downLeftPoint
-                //                    ,
-                //                    downRightPoint
-                );
+                upLeftPoint, upRightPoint,
+                downLeftPoint, downRightPoint);
         v.setPoint(balancedPoint);
       }
     }

@@ -3,6 +3,7 @@ package org.jungrapht.visualization.layout.algorithms.sugiyama;
 import java.util.*;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
+import org.jgrapht.Graphs;
 import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +63,45 @@ public class GraphLayers {
       groupedRow.addAll(list.stream().filter(set::contains).collect(Collectors.toList()));
     }
     return groupedRow;
+  }
+
+  public static <V, E> List<List<LV<V>>> longestPath(Graph<LV<V>, LE<V, E>> dag) {
+    List<List<LV<V>>> list = new ArrayList<>();
+
+    Set<LV<V>> U = new HashSet<>();
+    Set<LV<V>> Z = new HashSet<>();
+    Set<LV<V>> V = new HashSet<>(dag.vertexSet());
+    int currentLayer = 0;
+    list.add(new ArrayList<>());
+    while (U.size() != dag.vertexSet().size()) {
+      Optional<LV<V>> optional =
+          V.stream()
+              .filter(v -> !U.contains(v))
+              .filter(v -> Z.containsAll(Graphs.successorListOf(dag, v)))
+              .findFirst();
+      if (optional.isPresent()) {
+        LV<V> got = optional.get();
+        //        got.setRank(currentLayer);
+        list.get(currentLayer).add(got);
+        U.add(got);
+      } else {
+        currentLayer++;
+        list.add(new ArrayList<>());
+        Z.addAll(U);
+      }
+    }
+
+    Collections.reverse(list);
+    for (int i = 0; i < list.size(); i++) {
+      List<LV<V>> layer = list.get(i);
+      for (int j = 0; j < layer.size(); j++) {
+        LV<V> v = layer.get(j);
+        v.setRank(i);
+        v.setIndex(j);
+      }
+    }
+
+    return list;
   }
 
   /**

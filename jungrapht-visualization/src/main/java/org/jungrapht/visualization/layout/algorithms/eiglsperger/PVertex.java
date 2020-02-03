@@ -20,6 +20,10 @@ class PVertex<V> extends SegmentVertex<V> {
     super(other);
   }
 
+  public void setSegmentVertexPos(int pos) {
+    segment.qVertex.setPos(pos);
+  }
+
   @Override
   public String toString() {
     return "PVertex{"

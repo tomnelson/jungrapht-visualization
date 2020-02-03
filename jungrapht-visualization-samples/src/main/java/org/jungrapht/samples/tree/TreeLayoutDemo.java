@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Demonsrates TreeLayout and RadialTreeLayout.
+ * Demonstrates TreeLayout and RadialTreeLayout.
  *
  * @author Tom Nelson
  */

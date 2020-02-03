@@ -59,6 +59,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
   protected static final String TRANSPOSE_LIMIT = PREFIX + "mincross.transposeLimit";
   protected static final String MAX_LEVEL_CROSS = PREFIX + "mincross.maxLevelCross";
   protected static final String EIGLSPERGER_THRESHOLD = PREFIX + "mincross.eiglspergerThreshold";
+  protected static final String MINCROSS_USE_LONGEST_PATH = PREFIX + "mincross.useLongestPath";
 
   /**
    * a Builder to create a configured instance
@@ -87,6 +88,8 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
     protected boolean threaded =
         Boolean.parseBoolean(System.getProperty(MINCROSS_THREADED, "true"));
     protected int eiglspergerThreshold = Integer.getInteger(EIGLSPERGER_THRESHOLD, 500);
+    protected boolean useLongestPathLayering =
+        Boolean.parseBoolean(System.getProperty(MINCROSS_USE_LONGEST_PATH, "false"));;
 
     /** {@inheritDoc} */
     protected B self() {
@@ -144,6 +147,11 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
       return self();
     }
 
+    public B useLongestPathLayering(boolean useLongestPathLayering) {
+      this.useLongestPathLayering = useLongestPathLayering;
+      return self();
+    }
+
     /** {@inheritDoc} */
     public T build() {
       return (T) new HierarchicalMinCrossLayoutAlgorithm<>(this);
@@ -171,9 +179,10 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
   protected int maxLevelCross;
   protected boolean expandLayout;
   protected RenderContext<V, E> renderContext;
-  boolean threaded;
-  CompletableFuture theFuture;
-  Runnable after;
+  protected boolean threaded;
+  protected boolean useLongestPathLayering;
+  protected CompletableFuture theFuture;
+  protected Runnable after;
 
   public HierarchicalMinCrossLayoutAlgorithm() {
     this(HierarchicalMinCrossLayoutAlgorithm.edgeAwareBuilder());
@@ -189,6 +198,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
         builder.transposeLimit,
         builder.maxLevelCross,
         builder.expandLayout,
+        builder.useLongestPathLayering,
         builder.threaded,
         builder.after);
   }
@@ -202,6 +212,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
       int transposeLimit,
       int maxLevelCross,
       boolean expandLayout,
+      boolean useLongestPathLayering,
       boolean threaded,
       Runnable after) {
     this.vertexShapeFunction = vertexShapeFunction;
@@ -212,6 +223,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
     this.transposeLimit = transposeLimit;
     this.maxLevelCross = maxLevelCross;
     this.expandLayout = expandLayout;
+    this.useLongestPathLayering = useLongestPathLayering;
     this.threaded = threaded;
     this.after = after;
   }
@@ -241,6 +253,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
               .transpose(transpose)
               .transposeLimit(transposeLimit)
               .maxLevelCross(maxLevelCross)
+              .useLongestPathLayering(useLongestPathLayering)
               .build();
     } else {
       runnable =
@@ -249,6 +262,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
               .renderContext(renderContext)
               .straightenEdges(straightenEdges)
               .postStraighten(postStraighten)
+              .useLongestPathLayering(useLongestPathLayering)
               .build();
     }
     if (threaded) {

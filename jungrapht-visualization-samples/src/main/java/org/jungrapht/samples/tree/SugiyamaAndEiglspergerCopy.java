@@ -26,11 +26,11 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-public class SugiyamaOnly extends JFrame {
+public class SugiyamaAndEiglspergerCopy extends JFrame {
 
-  private static final Logger log = LoggerFactory.getLogger(SugiyamaOnly.class);
+  private static final Logger log = LoggerFactory.getLogger(SugiyamaAndEiglspergerCopy.class);
 
-  public SugiyamaOnly() {
+  public SugiyamaAndEiglspergerCopy() {
 
     JPanel container = new JPanel(new GridLayout(2, 1));
 
@@ -47,7 +47,7 @@ public class SugiyamaOnly extends JFrame {
         SugiyamaLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .straightenEdges(true)
             .postStraighten(false)
-            .transpose(false)
+            .transpose(true)
             .after(vv1::scaleToLayout)
             .build();
     layoutAlgorithm1.setRenderContext(vv1.getRenderContext());
@@ -225,6 +225,6 @@ public class SugiyamaOnly extends JFrame {
   }
 
   public static void main(String[] args) {
-    new SugiyamaOnly();
+    new SugiyamaAndEiglspergerCopy();
   }
 }
