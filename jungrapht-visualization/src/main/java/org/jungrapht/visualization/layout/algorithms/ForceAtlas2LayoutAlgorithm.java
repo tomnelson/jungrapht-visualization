@@ -47,7 +47,7 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
   private int currentIteration;
 
   // Gravity
-  private double kg = 2.0; // Default value in Gephi
+  private double kg = 5.0;
 
   // Sizes and masses
   private Map<V, Double> nodeSizes;
@@ -76,8 +76,8 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
     private boolean attractionByWeights = false;
     private double weightsDelta = 1.0;
     private boolean dissuadeHubs = false;
-    private int maxIterations = 700;
-    private double kg = 2.0;
+    private int maxIterations = 400;
+    private double kg = 5.0;
     private double tolerance = 1.0;
     private Map<V, Double> nodeSizes = null;
     private Map<V, Double> nodeMasses = null;
@@ -167,7 +167,7 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
     /**
      * Set number of iterations.
      *
-     * <p>Default: 100
+     * <p>Default: 400
      *
      * @param maxIterations
      * @return
@@ -182,7 +182,7 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
      * disconnected components (islands) from drifting away. It attracts nodes to the center of the
      * spatialization space. Recommended values 1.0-5.0
      *
-     * <p>Default: 2.0
+     * <p>Default: 5.0
      *
      * @see "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0098679"
      * @param kg
@@ -361,12 +361,10 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
     double dist = Math.max(epsilon, Math.sqrt(xDelta * xDelta + yDelta * yDelta));
     dist -= nodeSizes.get(vertex1) + nodeSizes.get(vertex2);
 
-    double force1;
-    double force2;
+    if (dist > 0) {
+      double force1;
+      double force2;
 
-    if (dist <= 0) {
-      force1 = force2 = 0.0;
-    } else {
       if (useLinLog) {
         force1 = force2 = Math.log(1 + dist);
       } else if (dissuadeHubs) {
@@ -377,19 +375,22 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
       } else {
         force1 = force2 = dist;
       }
-    }
 
-    if (Double.isNaN(force1) || Double.isNaN(force2))
-      throw new IllegalArgumentException(
-          "Unexpected mathematical result in FRLayout:calcPositions");
+      if (Double.isNaN(force1) || Double.isNaN(force2))
+        throw new IllegalArgumentException(
+                "Unexpected mathematical result in FRLayout:calcPositions");
 
-    if (!v1_locked) {
-      Point fvd1 = getFRData(vertex1);
-      frVertexData.put(vertex1, fvd1.add(-force1 * xDelta, -force1 * yDelta));
-    }
-    if (!v2_locked) {
-      Point fvd2 = getFRData(vertex2);
-      frVertexData.put(vertex2, fvd2.add(force2 * xDelta, force2 * yDelta));
+      force1 /= dist;
+      force2 /= dist;
+
+      if (!v1_locked) {
+        Point fvd1 = getFRData(vertex1);
+        frVertexData.put(vertex1, fvd1.add(-force1 * xDelta, -force1 * yDelta));
+      }
+      if (!v2_locked) {
+        Point fvd2 = getFRData(vertex2);
+        frVertexData.put(vertex2, fvd2.add(force2 * xDelta, force2 * yDelta));
+      }
     }
   }
 
@@ -515,5 +516,14 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
       } catch (ConcurrentModificationException ignored) {
       }
     }
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder("ForceAtlas2 layout algorithm.\n");
+    builder.append(String.format("Gravity constant: %.2f\n", kg));
+    builder.append(String.format("Swinging tolerance: %.2f\n", tolerance));
+
+    return builder.toString();
   }
 }
