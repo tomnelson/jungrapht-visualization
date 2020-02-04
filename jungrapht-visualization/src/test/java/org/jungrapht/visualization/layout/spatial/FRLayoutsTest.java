@@ -138,6 +138,8 @@ public class FRLayoutsTest {
     for (String key : mapOne.keySet()) {
       Point p2 = mapOne.get(key);
       Point p3 = mapFour.get(key);
+      log.info("p2.x:{} p3.x:{}", p2.x, p3.x);
+      log.info("p2.y:{} p3.y:{}", p2.y, p3.y);
       Assert.assertTrue(Math.abs(p2.x - p3.x) < 1.0E-3);
       Assert.assertTrue(Math.abs(p2.y - p3.y) < 1.0E-3);
     }

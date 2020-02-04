@@ -74,19 +74,12 @@ public class BarnesHutFRRepulsion<V>
   }
 
   public void step() {
-
     tree.rebuild(layoutModel.getGraph().vertexSet(), layoutModel);
   }
 
   @Override
   public void calculateRepulsion() {
     for (V vertex : layoutModel.getGraph().vertexSet()) {
-      Point fvd = frVertexData.computeIfAbsent(vertex, initializer);
-      if (fvd == null) {
-        return;
-      }
-      frVertexData.put(vertex, Point.ORIGIN);
-
       Point forcePoint = layoutModel.apply(vertex);
       ForceObject<V> nodeForceObject =
           new ForceObject(vertex, forcePoint.x, forcePoint.y) {

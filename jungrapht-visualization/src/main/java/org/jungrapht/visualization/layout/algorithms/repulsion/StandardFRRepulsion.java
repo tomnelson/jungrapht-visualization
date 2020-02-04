@@ -86,17 +86,12 @@ public class StandardFRRepulsion<
   @Override
   public void calculateRepulsion() {
     for (V vertex1 : layoutModel.getGraph().vertexSet()) {
-      Point fvd1 = frVertexData.computeIfAbsent(vertex1, initializer);
-      if (fvd1 == null) {
-        return;
-      }
-      frVertexData.put(vertex1, Point.ORIGIN);
+      Point fvd1 = Point.ORIGIN;
 
       try {
         for (V vertex2 : layoutModel.getGraph().vertexSet()) {
 
           if (vertex1 != vertex2) {
-            fvd1 = frVertexData.computeIfAbsent(vertex1, initializer);
             Point p1 = layoutModel.apply(vertex1);
             Point p2 = layoutModel.apply(vertex2);
             if (p1 == null || p2 == null) {
@@ -114,9 +109,9 @@ public class StandardFRRepulsion<
                   "Unexpected mathematical result in FRLayout:calcPositions [repulsion]");
             }
             fvd1 = fvd1.add((dx / dist) * force, (dy / dist) * force);
-            frVertexData.put(vertex1, fvd1);
           }
         }
+        frVertexData.put(vertex1, fvd1);
       } catch (ConcurrentModificationException cme) {
         calculateRepulsion();
       }

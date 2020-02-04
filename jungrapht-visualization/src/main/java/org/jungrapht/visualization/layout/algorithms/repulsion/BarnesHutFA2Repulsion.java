@@ -67,12 +67,6 @@ public class BarnesHutFA2Repulsion<V>
   @Override
   public void calculateRepulsion() {
     for (V vertex : layoutModel.getGraph().vertexSet()) {
-      Point fvd = frVertexData.computeIfAbsent(vertex, initializer);
-      if (fvd == null) {
-        return;
-      }
-      frVertexData.put(vertex, Point.ORIGIN);
-
       Point forcePoint = layoutModel.apply(vertex);
       ForceObject<V> forceObject =
           new ForceObject<V>(vertex, forcePoint, nodeMasses.apply(vertex)) {
@@ -103,7 +97,6 @@ public class BarnesHutFA2Repulsion<V>
               f = f.add(force * dx, force * dy);
             }
           };
-
       tree.applyForcesTo(forceObject);
       frVertexData.put(vertex, Point.of(forceObject.f.x, forceObject.f.y));
     }

@@ -59,15 +59,15 @@ public class BalloonLayoutDemo extends JPanel {
     // create a simple graph for the demo
     graph = DemoTreeSupplier.createTreeTwo();
 
-    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
-
     vv =
         VisualizationViewer.builder(graph)
             .layoutAlgorithm(new StaticLayoutAlgorithm<>())
             .layoutSize(new Dimension(900, 900))
             .viewSize(new Dimension(600, 600))
-            .graphMouse(graphMouse)
             .build();
+
+    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
+    vv.setGraphMouse(graphMouse);
 
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     // add a listener for ToolTips

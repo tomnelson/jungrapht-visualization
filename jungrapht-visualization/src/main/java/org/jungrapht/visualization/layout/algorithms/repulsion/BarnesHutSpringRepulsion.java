@@ -93,9 +93,9 @@ public class BarnesHutSpringRepulsion<V>
         }
 
         SpringVertexData svd = springVertexData.getOrDefault(vertex, new SpringVertexData());
-        if (svd == null) {
-          continue;
-        }
+        //        if (svd == null) {
+        //          continue;
+        //        }
         Point forcePoint = layoutModel.apply(vertex);
         ForceObject<V> nodeForceObject =
             new ForceObject(vertex, forcePoint.x, forcePoint.y) {

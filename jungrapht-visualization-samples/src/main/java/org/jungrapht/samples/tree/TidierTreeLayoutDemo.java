@@ -47,13 +47,10 @@ public class TidierTreeLayoutDemo extends JPanel {
     setLayout(new BorderLayout());
     // create a simple graph for the demo
     graph = DemoTreeSupplier.createForest();
-    final DefaultGraphMouse<String, Integer> graphMouse = new DefaultGraphMouse<>();
 
-    vv =
-        VisualizationViewer.builder(graph)
-            .graphMouse(graphMouse)
-            .viewSize(new Dimension(600, 600))
-            .build();
+    vv = VisualizationViewer.builder(graph).viewSize(new Dimension(600, 600)).build();
+    vv.setGraphMouse(
+        new DefaultGraphMouse()); // after VisualizationViewer is loaded so that properties are loaded
     Function<String, Shape> vertexShapeFunction = vv.getRenderContext().getVertexShapeFunction();
     TidierTreeLayoutAlgorithm<String, Integer> layoutAlgorithm =
         TidierTreeLayoutAlgorithm.<String, Integer>edgeAwareBuilder()

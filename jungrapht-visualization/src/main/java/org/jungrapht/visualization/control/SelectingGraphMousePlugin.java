@@ -49,6 +49,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   private static final Logger log = LoggerFactory.getLogger(SelectingGraphMousePlugin.class);
 
   private static final String PICK_AREA_SIZE = PREFIX + "pickAreaSize";
+  private static final String ARBITRARY_SHAPE_SELECTION = PREFIX + "arbitraryShapeSelection";
 
   protected int pickSize = Integer.getInteger(PICK_AREA_SIZE, 4);
 
@@ -86,7 +87,10 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   /** on mouse press, record the current state of the edgeSpatial.isActive() */
   protected boolean edgeSpatialActiveInitialState;
 
-  protected MultiSelectionStrategy multiSelectionStrategy = MultiSelectionStrategy.rectangular();
+  protected MultiSelectionStrategy multiSelectionStrategy =
+      Boolean.parseBoolean(System.getProperty(ARBITRARY_SHAPE_SELECTION, "false"))
+          ? MultiSelectionStrategy.arbitrary()
+          : MultiSelectionStrategy.rectangular();
 
   /** create an instance with default settings */
   public SelectingGraphMousePlugin() {
