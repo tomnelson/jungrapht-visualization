@@ -69,7 +69,7 @@ public class CircleLayoutAlgorithm<V> implements LayoutAlgorithm<V>, AfterRunnab
     protected boolean reduceEdgeCrossing =
         Boolean.parseBoolean(System.getProperty(CIRCLE_REDUCE_EDGE_CROSSING, "true"));
     protected int reduceEdgeCrossingMaxEdges =
-        Integer.getInteger(CIRCLE_REDUCE_EDGE_CROSSING_MAX_EDGES, 100);
+        Integer.getInteger(CIRCLE_REDUCE_EDGE_CROSSING_MAX_EDGES, 200);
     protected Runnable after = () -> {};
     protected boolean threaded = Boolean.parseBoolean(System.getProperty(CIRCLE_THREADED, "true"));
 

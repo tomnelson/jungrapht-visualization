@@ -136,20 +136,7 @@ public class KKLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
       ShortestPathAlgorithm.SingleSourcePaths<V, ?> distances = dijkstra.getPaths(vertex);
       for (V n : graph.vertexSet()) {
         GraphPath<V, ?> graphPath = distances.getPath(n);
-        if (graphPath == null) {
-          continue;
-        }
-        Pair<V> pair = Pair.of(vertex, n);
-        if (distanceMap.containsKey(pair)) {
-          log.trace(
-              "about to replace {},{} with {},{},{}",
-              pair,
-              distanceMap.get(pair),
-              vertex,
-              n,
-              graphPath.getWeight());
-        }
-        if (graphPath.getWeight() != 0) {
+        if (graphPath != null && graphPath.getWeight() != 0) {
           distanceMap.put(Pair.of(vertex, n), (int) graphPath.getWeight());
         }
       }
