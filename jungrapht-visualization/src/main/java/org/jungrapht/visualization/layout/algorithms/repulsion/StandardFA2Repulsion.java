@@ -140,12 +140,12 @@ public class StandardFA2Repulsion<
   public void calculateRepulsion() {
     for (V vertex1 : layoutModel.getGraph().vertexSet()) {
       Point fvd1 = Point.ORIGIN;
+      Point p1 = layoutModel.apply(vertex1);
 
       try {
         for (V vertex2 : layoutModel.getGraph().vertexSet()) {
 
           if (vertex1 != vertex2) {
-            Point p1 = layoutModel.apply(vertex1);
             Point p2 = layoutModel.apply(vertex2);
             if (p1 == null || p2 == null) {
               continue;
