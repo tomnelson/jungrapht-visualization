@@ -11,6 +11,7 @@ import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jungrapht.visualization.layout.algorithms.util.DimensionSummaryStatistics;
 import org.jungrapht.visualization.layout.algorithms.util.TreeView;
+import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
@@ -28,6 +29,7 @@ import org.slf4j.LoggerFactory;
 public class TidierTreeLayoutAlgorithm<V, E>
     implements LayoutAlgorithm<V>,
         TreeLayout<V>,
+        VertexShapeAware<V>,
         EdgeAwareLayoutAlgorithm<V, E>,
         EdgeSorting<E>,
         EdgePredicated<E>,
@@ -284,6 +286,7 @@ public class TidierTreeLayoutAlgorithm<V, E>
     this.rootComparator = rootComparator;
   }
 
+  @Override
   public void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
     this.vertexShapeFunction = vertexShapeFunction;
   }

@@ -18,7 +18,6 @@ import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.EdgeAwareLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.ShapeFunctionAware;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.ArticulatedEdge;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.GraphLayers;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.GreedyCycleRemoval;
@@ -28,6 +27,7 @@ import org.jungrapht.visualization.layout.algorithms.sugiyama.SyntheticLV;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Synthetics;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.TransformedGraphSupplier;
 import org.jungrapht.visualization.layout.algorithms.util.RenderContextAware;
+import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  * @param <E>
  */
 public class BrandesKopfLayoutAlgorithm<V, E>
-    implements LayoutAlgorithm<V>, RenderContextAware<V, E>, ShapeFunctionAware<V> {
+    implements LayoutAlgorithm<V>, RenderContextAware<V, E>, VertexShapeAware<V> {
 
   private static final Logger log = LoggerFactory.getLogger(BrandesKopfLayoutAlgorithm.class);
 

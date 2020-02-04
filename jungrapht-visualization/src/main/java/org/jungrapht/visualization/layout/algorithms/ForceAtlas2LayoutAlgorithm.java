@@ -1,5 +1,6 @@
 package org.jungrapht.visualization.layout.algorithms;
 
+import java.awt.*;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Map;
@@ -7,6 +8,7 @@ import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.repulsion.StandardFA2Repulsion;
 import org.jungrapht.visualization.layout.algorithms.util.IterativeContext;
+import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.slf4j.Logger;
@@ -21,7 +23,7 @@ import org.slf4j.LoggerFactory;
  * @param <V>
  */
 public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
-    implements IterativeContext {
+    implements VertexShapeAware<V>, IterativeContext {
   private static final Logger log = LoggerFactory.getLogger(ForceAtlas2LayoutAlgorithm.class);
 
   // Initializer
@@ -50,8 +52,8 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
   private double kg = 5.0;
 
   // Sizes and masses
-  private Map<V, Double> nodeSizes;
-  private Map<V, Double> nodeMasses;
+  private Function<V, Double> nodeSizes;
+  private Function<V, Double> nodeMasses;
 
   // Swinging
   private double globalSwg; // Global swinging
@@ -270,17 +272,24 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
     this.repulsionContractBuilder = builder.repulsionContractBuilder;
   }
 
+  public void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
+    nodeSizes =
+        v -> {
+          Rectangle r = vertexShapeFunction.apply(v).getBounds();
+          return Math.max(r.getWidth(), r.getHeight());
+        };
+  }
+
   @Override
   public void visit(LayoutModel<V> layoutModel) {
     super.visit(layoutModel);
-    this.nodeSizes = new HashMap<>(layoutModel.getGraph().vertexSet().size());
-    layoutModel.getGraph().vertexSet().forEach((V v) -> nodeSizes.put(v, 1.0));
+    if (nodeSizes == null) {
+      this.nodeSizes = v -> 1.0;
+    }
 
-    this.nodeMasses = new HashMap<>(layoutModel.getGraph().vertexSet().size());
-    layoutModel
-        .getGraph()
-        .vertexSet()
-        .forEach((V v) -> nodeMasses.put(v, layoutModel.getGraph().degreeOf(v) + 1.0));
+    if (nodeMasses == null) {
+      this.nodeMasses = v -> layoutModel.getGraph().degreeOf(v) + 1.0;
+    }
 
     if (log.isTraceEnabled()) {
       log.trace("visiting " + layoutModel);
@@ -324,7 +333,7 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
     Point xy = layoutModel.apply(vertex);
     Point center = layoutModel.getCenter();
     double r = xy.distanceSquared(center);
-    double gravity = -kg * nodeMasses.get(vertex) / r;
+    double gravity = -kg * nodeMasses.apply(vertex) / r;
 
     boolean locked = layoutModel.isLocked(vertex);
 
@@ -359,7 +368,7 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
     double yDelta = p1.y - p2.y;
 
     double dist = Math.max(epsilon, Math.sqrt(xDelta * xDelta + yDelta * yDelta));
-    dist -= nodeSizes.get(vertex1) + nodeSizes.get(vertex2);
+    dist -= nodeSizes.apply(vertex1) + nodeSizes.apply(vertex2);
 
     if (dist > 0) {
       double force1;
@@ -368,8 +377,8 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
       if (useLinLog) {
         force1 = force2 = Math.log(1 + dist);
       } else if (dissuadeHubs) {
-        force1 = dist / nodeMasses.get(vertex1);
-        force2 = dist / nodeMasses.get(vertex2);
+        force1 = dist / nodeMasses.apply(vertex1);
+        force2 = dist / nodeMasses.apply(vertex2);
       } else if (attractionByWeights) {
         force1 = force2 = Math.pow(graph.getEdgeWeight(edge), weightsDelta) * dist;
       } else {
@@ -411,8 +420,8 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
 
       double deg = layoutModel.getGraph().degreeOf(vertex);
 
-      globalSwg += nodeMasses.get(vertex) * swg.get(vertex);
-      globalTra += nodeMasses.get(vertex) * trace.get(vertex);
+      globalSwg += nodeMasses.apply(vertex) * swg.get(vertex);
+      globalTra += nodeMasses.apply(vertex) * trace.get(vertex);
     }
   }
 

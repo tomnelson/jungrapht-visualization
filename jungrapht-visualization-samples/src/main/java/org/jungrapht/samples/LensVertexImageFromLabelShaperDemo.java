@@ -125,12 +125,6 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
 
                   Shape shape = vertexShapeFunction.apply(vertex);
                   Rectangle shapeBounds = shape.getBounds();
-                  //                  // scale the Shape so it will contain the label
-                  //                  shape = AffineTransform.getScaleInstance(labelBounds.getWidth() / shapeBounds.getWidth(),
-                  //                          labelBounds.getHeight() / shapeBounds.getHeight()).createTransformedShape(shape);
-                  ////                  shapeBounds = shape.getBounds();
-                  //
-                  //                  shapeBounds = shape.getBounds();
 
                   AffineTransform scale =
                       AffineTransform.getScaleInstance(

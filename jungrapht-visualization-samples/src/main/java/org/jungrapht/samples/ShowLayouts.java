@@ -8,6 +8,7 @@
 package org.jungrapht.samples;
 
 import java.awt.*;
+import java.awt.geom.Ellipse2D;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
@@ -18,6 +19,7 @@ import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.layout.algorithms.*;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
+import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.util.helpers.ControlHelpers;
 import org.jungrapht.visualization.util.helpers.LayoutFunction;
@@ -88,6 +90,13 @@ public class ShowLayouts extends JPanel {
                 + ". with neighbors:"
                 + Graphs.neighborListOf(vv.getVisualizationModel().getGraph(), vertex));
 
+    vv.getRenderContext()
+        .setVertexShapeFunction(
+            v -> {
+              int size = Math.max(5, 2 * initialGraph.degreeOf(v));
+              return new Ellipse2D.Float(-size / 2.f, -size / 2.f, size, size);
+            });
+
     setLayout(new BorderLayout());
     add(vv.getComponent(), BorderLayout.CENTER);
 
@@ -107,6 +116,10 @@ public class ShowLayouts extends JPanel {
                   LayoutAlgorithm layoutAlgorithm = builder.build();
                   vv.removePreRenderPaintable(balloonLayoutRings);
                   vv.removePreRenderPaintable(radialLayoutRings);
+                  if (layoutAlgorithm instanceof VertexShapeAware) {
+                    ((VertexShapeAware<String>) layoutAlgorithm)
+                        .setVertexShapeFunction(vv.getRenderContext().getVertexShapeFunction());
+                  }
                   if ((layoutAlgorithm instanceof TreeLayout)
                       && vv.getVisualizationModel().getGraph().getType().isUndirected()) {
                     Graph tree =
@@ -151,6 +164,12 @@ public class ShowLayouts extends JPanel {
                   vv.getVertexSpatial().clear();
                   vv.getEdgeSpatial().clear();
                   vv.getVisualizationModel().setGraph(graphArray[graphIndex]);
+                  vv.getRenderContext()
+                      .setVertexShapeFunction(
+                          v -> {
+                            int size = Math.max(5, 2 * graphArray[graphIndex].degreeOf(v));
+                            return new Ellipse2D.Float(-size / 2.f, -size / 2.f, size, size);
+                          });
                 }));
 
     JButton showRTree = new JButton("Show RTree");

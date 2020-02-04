@@ -61,7 +61,7 @@ public class BarnesHutFA2Repulsion<V>
 
   @Override
   public void step() {
-    tree.rebuild(layoutModel.getGraph().vertexSet(), nodeMasses::get, layoutModel);
+    tree.rebuild(layoutModel.getGraph().vertexSet(), nodeMasses::apply, layoutModel);
   }
 
   @Override
@@ -75,7 +75,7 @@ public class BarnesHutFA2Repulsion<V>
 
       Point forcePoint = layoutModel.apply(vertex);
       ForceObject<V> forceObject =
-          new ForceObject<V>(vertex, forcePoint, nodeMasses.get(vertex)) {
+          new ForceObject<V>(vertex, forcePoint, nodeMasses.apply(vertex)) {
             @Override
             protected void addForceFrom(ForceObject other) {
               double dx = this.p.x - other.p.x;
@@ -84,7 +84,7 @@ public class BarnesHutFA2Repulsion<V>
               double otherMass = other.getMass();
 
               double dist = Math.max(epsilon, Math.sqrt((dx * dx) + (dy * dy)));
-              dist -= nodeSizes.get(vertex);
+              dist -= nodeSizes.apply(vertex);
               double force;
 
               if (Double.compare(dist, 0) == 0) {
