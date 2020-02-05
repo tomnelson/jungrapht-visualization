@@ -23,7 +23,7 @@ public class BarnesHutFRRepulsion<V>
           V, BarnesHutFRRepulsion<V>, BarnesHutFRRepulsion.Builder<V>> {
 
     private double theta = Node.DEFAULT_THETA;
-    private BarnesHutQuadTree<V> tree = new BarnesHutQuadTree();
+    private BarnesHutQuadTree<V> tree;
 
     public Builder<V> layoutModel(LayoutModel<V> layoutModel) {
       this.layoutModel = layoutModel;
@@ -74,12 +74,12 @@ public class BarnesHutFRRepulsion<V>
   }
 
   public void step() {
-    tree.rebuild(layoutModel.getGraph().vertexSet(), layoutModel);
+    tree.rebuild(vertexSet, layoutModel);
   }
 
   @Override
   public void calculateRepulsion() {
-    for (V vertex : layoutModel.getGraph().vertexSet()) {
+    for (V vertex : vertexSet) {
       Point forcePoint = layoutModel.apply(vertex);
       ForceObject<V> nodeForceObject =
           new ForceObject(vertex, forcePoint.x, forcePoint.y) {
@@ -89,7 +89,7 @@ public class BarnesHutFRRepulsion<V>
               double dy = this.p.y - other.p.y;
               double dist = Math.sqrt(dx * dx + dy * dy);
               dist = Math.max(EPSILON, dist);
-              double force = (repulsionConstant * repulsionConstant) / dist;
+              double force = repulsionSquared / dist;
               f = f.add(force * (dx / dist), force * (dy / dist));
             }
           };

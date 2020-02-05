@@ -3,6 +3,7 @@ package org.jungrapht.visualization.layout.algorithms.repulsion;
 import java.util.ConcurrentModificationException;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.function.Function;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
@@ -64,6 +65,8 @@ public class StandardFRRepulsion<
   protected double EPSILON = 0.000001D;
   protected Random random = new Random();
   protected LayoutModel<V> layoutModel;
+  protected Set<V> vertexSet;
+  double repulsionSquared;
 
   public static Builder standardBuilder() {
     return new Builder();
@@ -71,10 +74,12 @@ public class StandardFRRepulsion<
 
   protected StandardFRRepulsion(Builder<V, R, B> builder) {
     this.layoutModel = builder.layoutModel;
+    this.vertexSet = layoutModel.getGraph().vertexSet();
     this.random = builder.random;
     this.frVertexData = builder.frVertexData;
     this.initializer = builder.initializer;
     this.repulsionConstant = builder.repulsionConstant;
+    this.repulsionSquared = repulsionConstant * repulsionConstant;
   }
 
   public void step() {}
@@ -85,11 +90,11 @@ public class StandardFRRepulsion<
 
   @Override
   public void calculateRepulsion() {
-    for (V vertex1 : layoutModel.getGraph().vertexSet()) {
+    for (V vertex1 : vertexSet) {
       Point fvd1 = Point.ORIGIN;
       Point p1 = layoutModel.apply(vertex1);
       try {
-        for (V vertex2 : layoutModel.getGraph().vertexSet()) {
+        for (V vertex2 : vertexSet) {
 
           if (vertex1 != vertex2) {
             Point p2 = layoutModel.apply(vertex2);
@@ -101,7 +106,7 @@ public class StandardFRRepulsion<
 
             double dist = Math.max(EPSILON, Math.sqrt((dx * dx) + (dy * dy)));
 
-            double force = (repulsionConstant * repulsionConstant) / dist;
+            double force = repulsionSquared / dist;
 
             if (Double.isNaN(force)) {
               throw new RuntimeException(

@@ -3,6 +3,7 @@ package org.jungrapht.visualization.layout.algorithms.repulsion;
 import java.util.ConcurrentModificationException;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.function.Function;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
@@ -100,6 +101,7 @@ public class StandardFA2Repulsion<
   protected Map<V, Point> frVertexData;
   protected Function<V, Point> initializer = v -> Point.ORIGIN;
   protected LayoutModel<V> layoutModel;
+  protected Set<V> vertexSet;
   protected Random random = new Random();
   protected double kr = 100.0; // 100.0 is default value in Gephi
   protected Function<V, Double> nodeSizes; // Sizes for prevent overlapping
@@ -114,6 +116,7 @@ public class StandardFA2Repulsion<
     this.frVertexData = builder.frVertexData;
     this.initializer = builder.initializer;
     this.layoutModel = builder.layoutModel;
+    this.vertexSet = layoutModel.getGraph().vertexSet();
     this.random = builder.random;
     this.kr = builder.kr;
 
@@ -138,12 +141,14 @@ public class StandardFA2Repulsion<
 
   @Override
   public void calculateRepulsion() {
-    for (V vertex1 : layoutModel.getGraph().vertexSet()) {
+    for (V vertex1 : vertexSet) {
       Point fvd1 = Point.ORIGIN;
       Point p1 = layoutModel.apply(vertex1);
+      double vertexOneMass = nodeMasses.apply(vertex1);
+      double vertexOneSize = nodeSizes.apply(vertex1);
 
       try {
-        for (V vertex2 : layoutModel.getGraph().vertexSet()) {
+        for (V vertex2 : vertexSet) {
 
           if (vertex1 != vertex2) {
             Point p2 = layoutModel.apply(vertex2);
@@ -153,14 +158,16 @@ public class StandardFA2Repulsion<
             double dx = p1.x - p2.x;
             double dy = p1.y - p2.y;
 
+            double vertex2Mass = nodeMasses.apply(vertex2);
+
             double dist = Math.max(epsilon, Math.sqrt((dx * dx) + (dy * dy)));
-            dist -= nodeSizes.apply(vertex1) + nodeSizes.apply(vertex2);
+            dist -= vertexOneSize + nodeSizes.apply(vertex2);
             double force;
 
             if (dist > 0) {
-              force = kr * nodeMasses.apply(vertex1) * nodeMasses.apply(vertex2) / dist / dist;
+              force = kr * vertexOneMass * vertex2Mass / dist / dist;
             } else if (dist < 0) {
-              force = kr * nodeMasses.apply(vertex1) * nodeMasses.apply(vertex2) / dist;
+              force = kr * vertexOneMass * vertex2Mass / dist;
             } else {
               force = 0.0;
             }

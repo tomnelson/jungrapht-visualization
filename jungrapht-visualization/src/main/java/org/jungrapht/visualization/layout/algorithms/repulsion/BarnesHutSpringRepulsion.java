@@ -5,7 +5,6 @@ import static org.jungrapht.visualization.layout.algorithms.SpringLayoutAlgorith
 import java.util.ConcurrentModificationException;
 import java.util.Map;
 import java.util.Random;
-import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.quadtree.BarnesHutQuadTree;
@@ -83,19 +82,14 @@ public class BarnesHutSpringRepulsion<V>
   }
 
   public void calculateRepulsion() {
-    Graph<V, ?> graph = layoutModel.getGraph();
-
     try {
-      for (V vertex : graph.vertexSet()) {
+      for (V vertex : vertexSet) {
 
         if (layoutModel.isLocked(vertex)) {
           continue;
         }
 
         SpringVertexData svd = springVertexData.getOrDefault(vertex, new SpringVertexData());
-        //        if (svd == null) {
-        //          continue;
-        //        }
         Point forcePoint = layoutModel.apply(vertex);
         ForceObject<V> nodeForceObject =
             new ForceObject(vertex, forcePoint.x, forcePoint.y) {

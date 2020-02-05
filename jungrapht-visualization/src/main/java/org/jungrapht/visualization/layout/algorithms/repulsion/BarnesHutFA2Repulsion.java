@@ -25,7 +25,7 @@ public class BarnesHutFA2Repulsion<V>
       implements BarnesHutRepulsion.Builder<
           V, BarnesHutFA2Repulsion<V>, BarnesHutFA2Repulsion.Builder<V>> {
     private double theta = Node.DEFAULT_THETA;
-    private BarnesHutQuadTree<V> tree = new BarnesHutQuadTree();
+    private BarnesHutQuadTree<V> tree;
 
     public Builder<V> layoutModel(LayoutModel<V> layoutModel) {
       this.layoutModel = layoutModel;
@@ -66,8 +66,10 @@ public class BarnesHutFA2Repulsion<V>
 
   @Override
   public void calculateRepulsion() {
-    for (V vertex : layoutModel.getGraph().vertexSet()) {
+    for (V vertex : vertexSet) {
       Point forcePoint = layoutModel.apply(vertex);
+      double vertexOneSize = nodeSizes.apply(vertex);
+
       ForceObject<V> forceObject =
           new ForceObject<V>(vertex, forcePoint, nodeMasses.apply(vertex)) {
             @Override
@@ -78,7 +80,7 @@ public class BarnesHutFA2Repulsion<V>
               double otherMass = other.getMass();
 
               double dist = Math.max(epsilon, Math.sqrt((dx * dx) + (dy * dy)));
-              dist -= nodeSizes.apply(vertex);
+              dist -= vertexOneSize + nodeSizes.apply(vertex);
               double force;
 
               if (Double.compare(dist, 0) == 0) {

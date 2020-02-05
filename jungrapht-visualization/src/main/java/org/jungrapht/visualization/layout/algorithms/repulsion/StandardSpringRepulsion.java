@@ -3,7 +3,7 @@ package org.jungrapht.visualization.layout.algorithms.repulsion;
 import java.util.ConcurrentModificationException;
 import java.util.Map;
 import java.util.Random;
-import org.jgrapht.Graph;
+import java.util.Set;
 import org.jungrapht.visualization.layout.algorithms.SpringLayoutAlgorithm.SpringVertexData;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
@@ -55,9 +55,10 @@ public class StandardSpringRepulsion<
   }
 
   protected Map<V, SpringVertexData> springVertexData;
-  protected int repulsionRangeSquared = 100 * 100;
-  protected Random random = new Random();
+  protected int repulsionRangeSquared;
+  protected Random random;
   protected LayoutModel<V> layoutModel;
+  protected Set<V> vertexSet;
 
   public static Builder standardBuilder() {
     return new Builder();
@@ -65,6 +66,7 @@ public class StandardSpringRepulsion<
 
   protected StandardSpringRepulsion(Builder<V, R, B> builder) {
     this.layoutModel = builder.layoutModel;
+    this.vertexSet = layoutModel.getGraph().vertexSet();
     this.random = builder.random;
     this.springVertexData = builder.springVertexData;
     this.repulsionRangeSquared = builder.repulsionRangeSquared;
@@ -73,21 +75,16 @@ public class StandardSpringRepulsion<
   public void step() {}
 
   public void calculateRepulsion() {
-    Graph<V, ?> graph = layoutModel.getGraph();
-
     try {
-      for (V vertex : graph.vertexSet()) {
+      for (V vertex : vertexSet) {
         if (layoutModel.isLocked(vertex)) {
           continue;
         }
 
         SpringVertexData svd = springVertexData.getOrDefault(vertex, new SpringVertexData());
-        if (svd == null) {
-          continue;
-        }
         double dx = 0, dy = 0;
 
-        for (V vertex2 : graph.vertexSet()) {
+        for (V vertex2 : vertexSet) {
           if (vertex == vertex2) {
             continue;
           }
