@@ -47,24 +47,24 @@ public interface EdgeShape {
     return graph.getEdgeSource(edge).equals(graph.getEdgeTarget(edge));
   }
 
-  static Line line() {
-    return new Line();
+  static <V, E> Line<V, E> line() {
+    return new Line<>();
   }
 
-  static QuadCurve quadCurve() {
-    return new QuadCurve();
+  static <V, E> QuadCurve<V, E> quadCurve() {
+    return new QuadCurve<>();
   }
 
-  static CubicCurve cubicCurve() {
-    return new CubicCurve();
+  static <V, E> CubicCurve<V, E> cubicCurve() {
+    return new CubicCurve<>();
   }
 
-  static Orthogonal orthogonal() {
+  static <V, E> Orthogonal<V, E> orthogonal() {
     return new Orthogonal();
   }
 
-  static ArticulatedLine articulatedLine() {
-    return new ArticulatedLine();
+  static <V, E> ArticulatedLine<V, E> articulatedLine() {
+    return new ArticulatedLine<>();
   }
 
   /** An edge shape that renders as a straight line between the vertex endpoints. */

@@ -24,19 +24,20 @@ import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFRRepuls
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutSpringRepulsion;
 import org.jungrapht.visualization.layout.algorithms.repulsion.StandardFA2Repulsion;
 
-public class LayoutFunction<V> implements Function<String, LayoutAlgorithm.Builder<V, ?, ?>> {
+public class LayoutFunction<V>
+    implements Function<String, LayoutAlgorithm.Builder<V, LayoutAlgorithm<V>, ?>> {
 
-  Map<String, LayoutAlgorithm.Builder<V, ?, ?>> map = new LinkedHashMap<>();
+  Map<String, LayoutAlgorithm.Builder<V, LayoutAlgorithm<V>, ?>> map = new LinkedHashMap<>();
 
   public static class Layout<V> {
     public final String name;
-    public final LayoutAlgorithm.Builder<V, ?, ?> builder;
+    public final LayoutAlgorithm.Builder<V, LayoutAlgorithm<V>, ?> builder;
 
     public static <V> Layout of(String name, LayoutAlgorithm.Builder<V, ?, ?> builder) {
       return new Layout(name, builder);
     }
 
-    private Layout(String name, LayoutAlgorithm.Builder<V, ?, ?> builder) {
+    private Layout(String name, LayoutAlgorithm.Builder<V, LayoutAlgorithm<V>, ?> builder) {
       this.name = name;
       this.builder = builder;
     }
@@ -51,7 +52,7 @@ public class LayoutFunction<V> implements Function<String, LayoutAlgorithm.Build
   }
 
   @Override
-  public LayoutAlgorithm.Builder<V, ?, ?> apply(String s) {
+  public LayoutAlgorithm.Builder<V, LayoutAlgorithm<V>, ?> apply(String s) {
     return map.get(s);
   }
 

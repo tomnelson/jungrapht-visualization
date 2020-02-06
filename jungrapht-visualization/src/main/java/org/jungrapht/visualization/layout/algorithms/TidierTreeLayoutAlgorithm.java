@@ -9,6 +9,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
+import org.jungrapht.visualization.layout.algorithms.util.ComponentGrouping;
 import org.jungrapht.visualization.layout.algorithms.util.DimensionSummaryStatistics;
 import org.jungrapht.visualization.layout.algorithms.util.TreeView;
 import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
@@ -619,6 +620,8 @@ public class TidierTreeLayoutAlgorithm<V, E>
             .filter(rootPredicate)
             .sorted(Comparator.comparingInt(v -> TreeLayout.vertexIsolationScore(graph, v)))
             .collect(Collectors.toList());
+
+    this.roots = ComponentGrouping.groupByComponents(graph, roots);
 
     TreeView<V, E> treeView =
         builder

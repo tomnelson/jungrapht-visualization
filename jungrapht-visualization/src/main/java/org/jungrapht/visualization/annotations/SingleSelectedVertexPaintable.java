@@ -49,7 +49,7 @@ public class SingleSelectedVertexPaintable<V, E> implements VisualizationServer.
    *
    * @param <V> the vertex type
    */
-  public static class Builder<V, E> {
+  public static class Builder<V, E, B extends Builder<V, E, B>> {
 
     private final VisualizationServer<V, E> visualizationServer;
     private Shape selectionShape =
@@ -60,32 +60,36 @@ public class SingleSelectedVertexPaintable<V, E> implements VisualizationServer.
     private float selectionStrokeMin =
         Float.parseFloat(System.getProperty(PREFIX + "selectionStrokeMin", "2.f"));
 
+    protected B self() {
+      return (B) this;
+    }
+
     /**
      * @param selectionShape the shape to draw as an indicator for selected vertices
      * @return this builder
      */
-    public Builder selectionShape(Shape selectionShape) {
+    public B selectionShape(Shape selectionShape) {
       this.selectionShape = selectionShape;
-      return this;
+      return self();
     }
 
     /**
      * @param selectionPaint the color to draw the selected vertex indicator
      * @return this builder
      */
-    public Builder selectionPaint(Paint selectionPaint) {
+    public B selectionPaint(Paint selectionPaint) {
       this.selectionPaint = selectionPaint;
-      return this;
+      return self();
     }
 
-    public Builder selectionIcon(Icon selectionIcon) {
+    public B selectionIcon(Icon selectionIcon) {
       this.selectionIcon = selectionIcon;
-      return this;
+      return self();
     }
 
-    public Builder selectionStrokeMin(float selectionStrokeMin) {
+    public B selectionStrokeMin(float selectionStrokeMin) {
       this.selectionStrokeMin = selectionStrokeMin;
-      return this;
+      return self();
     }
 
     /** @return a new instance of a {@code SelectedVertexPaintable} */
@@ -104,7 +108,7 @@ public class SingleSelectedVertexPaintable<V, E> implements VisualizationServer.
    * @param <V> the vertex type
    * @return the {@code Builder} used to create the instance of a {@code SelectedVertexPaintable}
    */
-  public static <V, E> Builder<V, E> builder(VisualizationServer<V, E> visualizationServer) {
+  public static <V, E> Builder<V, E, ?> builder(VisualizationServer<V, E> visualizationServer) {
     return new Builder<>(visualizationServer);
   }
 
@@ -128,7 +132,7 @@ public class SingleSelectedVertexPaintable<V, E> implements VisualizationServer.
    *
    * @param builder the {@code Builder} to provide parameters to the {@code SelectedVertexPaintable}
    */
-  private SingleSelectedVertexPaintable(Builder<V, E> builder) {
+  private SingleSelectedVertexPaintable(Builder<V, E, ?> builder) {
     this(
         builder.visualizationServer,
         builder.selectionShape,

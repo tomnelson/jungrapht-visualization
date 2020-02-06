@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jungrapht.visualization.DefaultRenderContext;
+import org.jungrapht.visualization.layout.algorithms.util.ComponentGrouping;
 import org.jungrapht.visualization.layout.algorithms.util.DimensionSummaryStatistics;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
@@ -272,14 +273,16 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
     } else {
       this.rootPredicate = this.rootPredicate.or(this.defaultRootPredicate);
     }
-    Set<V> roots =
+    List<V> roots =
         graph
             .vertexSet()
             .stream()
             .filter(this.rootPredicate)
             .sorted(rootComparator)
             .sorted(Comparator.comparingInt(v -> TreeLayout.vertexIsolationScore(graph, v)))
-            .collect(Collectors.toCollection(LinkedHashSet::new));
+            .collect(Collectors.toList());
+
+    roots = ComponentGrouping.groupByComponents(graph, roots);
 
     assert roots.size() > 0;
     // the width of the tree under 'roots'. Includes one 'horizontalVertexSpacing' per child vertex
@@ -313,7 +316,7 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
       x += w / 2 + horizontalVertexSpacing;
     }
     this.rootPredicate = null;
-    return roots;
+    return new LinkedHashSet<>(roots);
   }
 
   /**

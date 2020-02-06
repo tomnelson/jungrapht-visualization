@@ -209,7 +209,8 @@ public class HeayweightEdgeLabelRenderer<V, E> implements Renderer.EdgeLabel<V, 
               .getEdgeShapeFunction()
               .apply(Context.getInstance(visualizationModel.getGraph(), e));
     } else {
-      edgeShape = EdgeShape.line().apply(Context.getInstance(visualizationModel.getGraph(), e));
+      edgeShape =
+          EdgeShape.<V, E>line().apply(Context.getInstance(visualizationModel.getGraph(), e));
     }
 
     AffineTransform xform = AffineTransform.getTranslateInstance(x1, y1);
