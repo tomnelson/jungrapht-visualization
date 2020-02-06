@@ -101,22 +101,16 @@ public abstract class VerticalAlignment<V, E> {
 
     @Override
     public void align() {
-      //    for (int i=1; i< layers.size(); i++) {
       for (int i = 0; i <= layers.length - 1; i++) { // zero based
         int r = -1;
         LV<V>[] currentLayer = layers[i];
-        //      for (int k=1; k <= currentLayer.size(); k++) {
         for (int k = 0; k <= currentLayer.length - 1; k++) { // zero based
-          // if the vertex at k has source nodes
           LV<V> vkofi = currentLayer[k];
           List<LV<V>> neighbors =
               Graphs.predecessorListOf(svGraph, vkofi)
                   .stream()
                   .sorted(Comparator.comparingInt(LV::getIndex))
                   .collect(Collectors.toList());
-          if (log.isTraceEnabled()) {
-            log.trace("predecessors of {} are {}", vkofi, neighbors);
-          }
           int d = neighbors.size();
           if (d > 0) {
             int floor = (int) Math.floor((d - 1) / 2.0); // zero based
@@ -125,7 +119,6 @@ public abstract class VerticalAlignment<V, E> {
             for (int m : new LinkedHashSet<>(Arrays.asList(floor, ceil))) {
               if (align(vkofi) == vkofi) {
                 LV<V> um = neighbors.get(m);
-                // if edge um->vkofi is not marked
                 LE<V, E> edge = svGraph.getEdge(um, vkofi);
                 if (notMarked(edge) && r < pos(um)) {
                   r = alignMoveCursor(um, vkofi);
@@ -146,7 +139,6 @@ public abstract class VerticalAlignment<V, E> {
 
     @Override
     public void align() {
-      //    for (int i=1; i< layers.size(); i++) {
       for (int i = 1; i <= layers.length - 1; i++) { // zero based
         LV<V>[] currentLayer = layers[i];
         LV<V>[] previousLayer = layers[i - 1];
@@ -201,9 +193,6 @@ public abstract class VerticalAlignment<V, E> {
                   .stream()
                   .sorted(Comparator.comparingInt(LV::getIndex))
                   .collect(Collectors.toList());
-          if (log.isTraceEnabled()) {
-            log.trace("successors of {} are {}", vkofi, neighbors);
-          }
           int d = neighbors.size();
           if (d > 0) {
             int floor = (int) Math.floor((d - 1) / 2.0); // zero based
@@ -211,7 +200,6 @@ public abstract class VerticalAlignment<V, E> {
             for (int m : new LinkedHashSet<>(Arrays.asList(floor, ceil))) {
               if (align(vkofi) == vkofi) {
                 LV<V> um = neighbors.get(m);
-                // if edge um->vkofi is not marked
                 LE<V, E> edge = svGraph.getEdge(vkofi, um);
                 if (notMarked(edge) && r < pos(um)) {
                   r = alignMoveCursor(um, vkofi);
@@ -232,16 +220,11 @@ public abstract class VerticalAlignment<V, E> {
 
     @Override
     public void align() {
-      //    for (int i=1; i< layers.size(); i++) {
       for (int i = layers.length - 2; i >= 0; i--) { // zero based
-        //                for (int i = 0; i < layers.size() - 1; i++) { // zero based
         LV<V>[] currentLayer = layers[i];
         LV<V>[] nextLayer = layers[i + 1];
         int r = nextLayer.length + 1;
-        //      for (int k=1; k <= currentLayer.size(); k++) {
         for (int k = currentLayer.length - 1; k >= 0; k--) {
-          //                    for (int k = 0; k <= currentLayer.size() - 1; k++) { // zero based
-          // if the vertex at k has target nodes
           LV<V> vkofi = currentLayer[k];
           List<LV<V>> neighbors =
               Graphs.successorListOf(svGraph, vkofi)
@@ -255,7 +238,6 @@ public abstract class VerticalAlignment<V, E> {
             for (int m : new LinkedHashSet<>(Arrays.asList(ceil, floor))) {
               if (align(vkofi) == vkofi) {
                 LV<V> um = neighbors.get(m);
-                // if edge vm->v is not marked
                 LE<V, E> edge = svGraph.getEdge(vkofi, um);
                 if (notMarked(edge) && r > pos(um)) {
                   r = alignMoveCursor(um, vkofi);

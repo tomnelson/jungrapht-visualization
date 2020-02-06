@@ -48,6 +48,7 @@ public class SugiyamaAndEiglspergerCopy extends JFrame {
             .straightenEdges(true)
             .postStraighten(false)
             .transpose(true)
+            //                .useLongestPathLayering(true)
             .after(vv1::scaleToLayout)
             .build();
     layoutAlgorithm1.setRenderContext(vv1.getRenderContext());
@@ -57,6 +58,7 @@ public class SugiyamaAndEiglspergerCopy extends JFrame {
     EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm4 =
         EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .straightenEdges(true)
+            //                .useLongestPathLayering(true)
             .after(vv2::scaleToLayout)
             .build();
     layoutAlgorithm4.setRenderContext(vv2.getRenderContext());

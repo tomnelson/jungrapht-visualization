@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jungrapht.visualization.layout.model.Point;
+import org.jungrapht.visualization.layout.util.synthetics.Synthetic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,8 +110,7 @@ public class HorizontalCoordinateAssignment {
             for (LV<V> upperNeighbor : getUpperNeighbors(svGraph, velNextLayer)) {
               int k = upperNeighbor.getIndex();
               if (k < k0 || k > k1) {
-                if (!(upperNeighbor instanceof SyntheticLV
-                    && velNextLayer instanceof SyntheticLV)) {
+                if (!(upperNeighbor instanceof Synthetic && velNextLayer instanceof Synthetic)) {
                   // only marking segments that are not inner segments
                   markedSegments.add(svGraph.getEdge(upperNeighbor, velNextLayer));
                 }

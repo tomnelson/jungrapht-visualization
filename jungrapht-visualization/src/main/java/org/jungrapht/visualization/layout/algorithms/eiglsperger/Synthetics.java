@@ -11,7 +11,6 @@ import org.jungrapht.visualization.layout.algorithms.sugiyama.ArticulatedEdge;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.SyntheticLE;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SyntheticLV;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.util.synthetics.Synthetic;
 import org.slf4j.Logger;
@@ -62,7 +61,7 @@ class Synthetics<V, E> {
           if (edge.getTarget().getRank() - edge.getSource().getRank() == 2) {
             int syntheticVertexRank = edge.getSource().getRank() + 1;
 
-            SyntheticLV<V> syntheticLV = SyntheticLV.of();
+            SyntheticLV<V> syntheticLV = SyntheticLV.of(edge.getSource(), edge.getTarget());
             syntheticLV.setRank(syntheticVertexRank);
             replaceEdgeWithSyntheticVertex(edges, edge, syntheticLV);
             layers.get(syntheticVertexRank).add(syntheticLV);

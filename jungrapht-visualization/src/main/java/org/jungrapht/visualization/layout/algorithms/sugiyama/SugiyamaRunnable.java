@@ -363,11 +363,10 @@ public class SugiyamaRunnable<V, E> implements Runnable {
 
     int horizontalOffset =
         Math.max(
-            avgVertexBounds.width / 2,
-            Integer.getInteger(PREFIX + "mincross.horizontalOffset", 50));
+            avgVertexBounds.width, Integer.getInteger(PREFIX + "mincross.horizontalOffset", 50));
     int verticalOffset =
         Math.max(
-            avgVertexBounds.height / 2, Integer.getInteger(PREFIX + "mincross.verticalOffset", 50));
+            avgVertexBounds.height, Integer.getInteger(PREFIX + "mincross.verticalOffset", 50));
     GraphLayers.checkLayers(best);
     Map<LV<V>, Point> vertexPointMap = new HashMap<>();
 
@@ -554,6 +553,9 @@ public class SugiyamaRunnable<V, E> implements Runnable {
           List<LE<V, E>> biLayerEdges = reducedEdgeMap.getOrDefault(i, Collections.emptyList());
 
           int vw = crossingCount(biLayerEdges);
+          if (vw == 0) {
+            continue;
+          }
           // count with j and j+1 swapped
           int wv = crossingCountSwapped(j, j + 1, rank, biLayerEdges);
           if (vw > wv) {
@@ -584,6 +586,9 @@ public class SugiyamaRunnable<V, E> implements Runnable {
           List<LE<V, E>> biLayerEdges = reducedEdgeMap.getOrDefault(i, Collections.emptyList());
 
           int vw = crossingCount(biLayerEdges);
+          if (vw == 0) {
+            continue;
+          }
           // count with j and j+1 swapped
           int wv = crossingCountSwapped(j, j + 1, rank, biLayerEdges);
           if (vw > wv) {

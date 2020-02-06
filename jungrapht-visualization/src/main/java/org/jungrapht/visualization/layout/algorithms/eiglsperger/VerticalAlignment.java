@@ -12,6 +12,7 @@ import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
+import org.jungrapht.visualization.layout.util.synthetics.Synthetic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,16 +109,15 @@ abstract class VerticalAlignment<V, E> {
 
     @Override
     public void align() { // TB LR
-      for (int i = 1; i <= layers.length - 1; i++) { // TB
-        LV<V>[] currentLayer = layers[i];
-        LV<V>[] neighborLayer = layers[i - 1];
+      for (int i = 0; i < layers.length; i++) { // TB
         int r = -1;
+        LV<V>[] currentLayer = layers[i];
         for (int k = 0; k <= currentLayer.length - 1; k++) { // LR
           LV<V> vkofi = currentLayer[k];
           List<LV<V>> neighbors =
               Graphs.predecessorListOf(svGraph, vkofi)
                   .stream()
-                  .sorted(Comparator.comparingInt(LV::getPos))
+                  .sorted(Comparator.comparingInt(LV::getIndex))
                   .collect(Collectors.toList());
           int d = neighbors.size();
           if (d > 0) {
@@ -127,10 +127,7 @@ abstract class VerticalAlignment<V, E> {
               if (align(vkofi) == vkofi) {
                 LV<V> um = neighbors.get(m);
                 LE<V, E> edge = svGraph.getEdge(um, vkofi);
-                if (markedSegments.contains(edge)) {
-                  log.trace("{} is marked", edge);
-                }
-                if (um instanceof SegmentVertex) {
+                if (um instanceof Synthetic) {
                   r = alignMoveCursor(um, vkofi);
                 } else if (notMarked(edge) && (r < pos(um))) {
                   r = alignMoveCursor(um, vkofi);
@@ -154,7 +151,7 @@ abstract class VerticalAlignment<V, E> {
 
     @Override
     public void align() { // TB RL
-      for (int i = 1; i <= layers.length - 1; i++) { // TB
+      for (int i = 1; i < layers.length; i++) { // TB
         LV<V>[] currentLayer = layers[i];
         LV<V>[] neighborLayer = layers[i - 1];
         int r = neighborLayer.length + 1;
@@ -163,7 +160,7 @@ abstract class VerticalAlignment<V, E> {
           List<LV<V>> neighbors =
               Graphs.predecessorListOf(svGraph, vkofi)
                   .stream()
-                  .sorted(Comparator.comparingInt(LV::getPos))
+                  .sorted(Comparator.comparingInt(LV::getIndex))
                   .collect(Collectors.toList());
           int d = neighbors.size();
           if (d > 0) {
@@ -173,10 +170,7 @@ abstract class VerticalAlignment<V, E> {
               if (align(vkofi) == vkofi) {
                 LV<V> um = neighbors.get(m);
                 LE<V, E> edge = svGraph.getEdge(um, vkofi);
-                if (markedSegments.contains(edge)) {
-                  log.trace("{} is marked", edge);
-                }
-                if (um instanceof SegmentVertex) {
+                if (um instanceof Synthetic) {
                   r = alignMoveCursor(um, vkofi);
                 } else if (notMarked(edge) && (r > pos(um))) {
                   r = alignMoveCursor(um, vkofi);
@@ -206,15 +200,15 @@ abstract class VerticalAlignment<V, E> {
 
     @Override
     public void align() { // BT LR
-      for (int i = layers.length - 2; i >= 0; i--) { // BT
+      for (int i = layers.length - 1; i >= 0; i--) { // BT
         int r = -1;
         LV<V>[] currentLayer = layers[i];
-        for (int k = 0; k <= currentLayer.length - 1; k++) { // LR
+        for (int k = 0; k < currentLayer.length; k++) { // LR
           LV<V> vkofi = currentLayer[k];
           List<LV<V>> neighbors =
               Graphs.successorListOf(svGraph, vkofi)
                   .stream()
-                  .sorted(Comparator.comparingInt(LV::getPos))
+                  .sorted(Comparator.comparingInt(LV::getIndex))
                   .collect(Collectors.toList());
           int d = neighbors.size();
           if (d > 0) {
@@ -224,10 +218,7 @@ abstract class VerticalAlignment<V, E> {
               if (align(vkofi) == vkofi) {
                 LV<V> um = neighbors.get(m);
                 LE<V, E> edge = svGraph.getEdge(vkofi, um);
-                if (markedSegments.contains(edge)) {
-                  log.trace("{} is marked", edge);
-                }
-                if (um instanceof SegmentVertex) {
+                if (um instanceof Synthetic) {
                   r = alignMoveCursor(um, vkofi);
                 } else if (notMarked(edge) && (r < pos(um))) {
                   r = alignMoveCursor(um, vkofi);
@@ -266,7 +257,7 @@ abstract class VerticalAlignment<V, E> {
           List<LV<V>> neighbors =
               Graphs.successorListOf(svGraph, vkofi)
                   .stream()
-                  .sorted(Comparator.comparingInt(LV::getPos))
+                  .sorted(Comparator.comparingInt(LV::getIndex))
                   .collect(Collectors.toList());
           int d = neighbors.size();
           if (d > 0) {
@@ -276,10 +267,7 @@ abstract class VerticalAlignment<V, E> {
               if (align(vkofi) == vkofi) {
                 LV<V> um = neighbors.get(m);
                 LE<V, E> edge = svGraph.getEdge(vkofi, um);
-                if (markedSegments.contains(edge)) {
-                  log.trace("{} is marked", edge);
-                }
-                if (um instanceof SegmentVertex) {
+                if (um instanceof Synthetic) {
                   r = alignMoveCursor(um, vkofi);
                 } else if (notMarked(edge) && (r > pos(um))) {
                   r = alignMoveCursor(um, vkofi);

@@ -263,6 +263,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
               .renderContext(renderContext)
               .straightenEdges(straightenEdges)
               .postStraighten(postStraighten)
+              .maxLevelCross(maxLevelCross)
               .useLongestPathLayering(useLongestPathLayering)
               .build();
     }

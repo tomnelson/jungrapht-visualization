@@ -1,7 +1,6 @@
 package org.jungrapht.visualization.layout.algorithms.eiglsperger;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -12,8 +11,8 @@ import org.jgrapht.Graphs;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.AverageMedian;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SyntheticLV;
 import org.jungrapht.visualization.layout.model.Point;
+import org.jungrapht.visualization.layout.util.synthetics.Synthetic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,26 +30,17 @@ class HorizontalCoordinateAssignment {
       int horizontalOffset,
       int verticalOffset) {
     preprocessing(layers, svGraph, markedSegments);
-
     VerticalAlignment.LeftmostUpper<V, E> upLeft =
         new VerticalAlignment.LeftmostUpper<>(layers, svGraph, markedSegments);
     HorizontalCompaction<V> upLeftCompaction =
         new HorizontalCompaction<>(
             layers, upLeft.getRootMap(), upLeft.getAlignMap(), horizontalOffset, verticalOffset);
-    List<LV<V>> misAligned = misAligned(upLeftCompaction.p);
-    if (misAligned.size() > 0 && log.isTraceEnabled()) {
-      log.trace("misAligned from upLeft: {}", misAligned.size());
-    }
 
     VerticalAlignment.RightmostUpper<V, E> upRight =
         new VerticalAlignment.RightmostUpper<>(layers, svGraph, markedSegments);
     HorizontalCompaction<V> upRightCompaction =
         new HorizontalCompaction<>(
             layers, upRight.getRootMap(), upRight.getAlignMap(), horizontalOffset, verticalOffset);
-    misAligned = misAligned(upRightCompaction.p);
-    if (misAligned.size() > 0 && log.isTraceEnabled()) {
-      log.trace("misAligned from upRight: {}", misAligned.size());
-    }
 
     VerticalAlignment.LeftmostLower<V, E> downLeft =
         new VerticalAlignment.LeftmostLower<>(layers, svGraph, markedSegments);
@@ -61,10 +51,6 @@ class HorizontalCoordinateAssignment {
             downLeft.getAlignMap(),
             horizontalOffset,
             verticalOffset);
-    misAligned = misAligned(downLeftCompaction.p);
-    if (misAligned.size() > 0 && log.isTraceEnabled()) {
-      log.trace("misAligned from downLeft: {}", misAligned.size());
-    }
 
     VerticalAlignment.RightmostLower<V, E> downRight =
         new VerticalAlignment.RightmostLower<>(layers, svGraph, markedSegments);
@@ -75,10 +61,6 @@ class HorizontalCoordinateAssignment {
             downRight.getAlignMap(),
             horizontalOffset,
             verticalOffset);
-    misAligned = misAligned(downRightCompaction.p);
-    if (misAligned.size() > 0 && log.isTraceEnabled()) {
-      log.trace("misAligned from downRight: {}", misAligned.size());
-    }
 
     for (int i = 0; i < layers.length; i++) {
       for (int j = 0; j < layers[i].length; j++) {
@@ -91,15 +73,21 @@ class HorizontalCoordinateAssignment {
 
         Point balancedPoint =
             AverageMedian.averageMedianPoint(
-                upLeftPoint, upRightPoint,
-                downLeftPoint, downRightPoint);
+                upLeftPoint //
+                //                    , //
+                //                    upRightPoint //
+                , //
+                downLeftPoint //
+                //                    , //
+                //                    downRightPoint //
+                );
         v.setPoint(balancedPoint);
       }
     }
-    misAligned = misAligned(layers);
-    if (misAligned.size() > 0 && log.isTraceEnabled()) {
-      log.trace("misAligned: {} {}", misAligned, misAligned.size());
-    }
+    //    misAligned = misAligned(layers);
+    //    if (misAligned.size() > 0 && log.isTraceEnabled()) {
+    //      log.trace("misAligned: {} {}", misAligned, misAligned.size());
+    //    }
   }
 
   private static <V> List<LV<V>> misAligned(Map<LV<V>, Point> pointMap) {
@@ -157,32 +145,30 @@ class HorizontalCoordinateAssignment {
     return false;
   }
 
-  static <V, E> int upperNeighborIndexFor(SegmentVertex<V> v, Graph<LV<V>, LE<V, E>> svGraph) {
-    // any Synthetic vertex must have one upper and one lower neighbor
-    if (Graphs.predecessorListOf(svGraph, v).size() > 1) {
-      log.error("error");
-    }
-    return Graphs.predecessorListOf(svGraph, v).get(0).getIndex();
-  }
+  //  static <V, E> int upperNeighborIndexFor(SegmentVertex<V> v, Graph<LV<V>, LE<V, E>> svGraph) {
+  //    // any Synthetic vertex must have one upper and one lower neighbor
+  ////    if (Graphs.predecessorListOf(svGraph, v).size() > 1) {
+  ////      log.error("error");
+  ////    }
+  //    return Graphs.predecessorListOf(svGraph, v).get(0).getIndex();
+  //  }
 
   static <V, E> int upperNeighborIndexFor(SyntheticLV<V> v, Graph<LV<V>, LE<V, E>> svGraph) {
     // any Synthetic vertex must have one upper and one lower neighbor
-    if (Graphs.predecessorListOf(svGraph, v).size() > 1) {
-      log.error("error");
-    }
     return Graphs.predecessorListOf(svGraph, v).get(0).getIndex();
   }
 
+  //  static <V, E> int upperNeighborPosFor(SyntheticLV<V> v, Graph<LV<V>, LE<V, E>> svGraph) {
+  //    // any Synthetic vertex must have one upper and one lower neighbor
+  //    return Graphs.predecessorListOf(svGraph, v).get(0).getPos();
+  //  }
+
   private static <V> boolean incidentToInnerSegment(LV<V> v) {
-    return v instanceof SegmentVertex; // || v instanceof SyntheticLV;
+    return v instanceof Synthetic;
   }
 
   public static <V, E> void preprocessing(
       LV<V>[][] layers, Graph<LV<V>, LE<V, E>> svGraph, Set<LE<V, E>> markedSegments) {
-
-    if (log.isTraceEnabled()) {
-      Arrays.stream(layers).forEach(a -> log.trace("-" + Arrays.toString(a)));
-    }
     int h = layers.length;
     // compares current row 'i' with 'i+1' row
     // i starts at row 1 and goes to row h-2-1
@@ -208,8 +194,7 @@ class HorizontalCoordinateAssignment {
             for (LV<V> upperNeighbor : getUpperNeighbors(svGraph, velNextLayer)) {
               int k = upperNeighbor.getIndex();
               if (k < k0 || k > k1) {
-                if (!(upperNeighbor instanceof SegmentVertex
-                    && velNextLayer instanceof SegmentVertex)) {
+                if (!(upperNeighbor instanceof Synthetic && velNextLayer instanceof Synthetic)) {
                   // only marking segments that are not inner segments
                   markedSegments.add(svGraph.getEdge(upperNeighbor, velNextLayer));
                 }
@@ -221,7 +206,6 @@ class HorizontalCoordinateAssignment {
         }
       }
     }
-    log.trace("markedSegments are {}", markedSegments);
   }
 
   /**

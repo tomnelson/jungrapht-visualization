@@ -1,7 +1,8 @@
 package org.jungrapht.visualization.layout.algorithms.eiglsperger;
 
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SyntheticLV;
 import org.jungrapht.visualization.layout.util.synthetics.Synthetic;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * a vertex that is not in the original graph, but is synthesized in order to position bends in the
@@ -10,6 +11,8 @@ import org.jungrapht.visualization.layout.util.synthetics.Synthetic;
  * @param <V> vertex type
  */
 abstract class SegmentVertex<V> extends SyntheticLV<V> implements Synthetic {
+
+  private static final Logger log = LoggerFactory.getLogger(SegmentVertex.class);
 
   final int hash;
 
@@ -35,6 +38,7 @@ abstract class SegmentVertex<V> extends SyntheticLV<V> implements Synthetic {
 
   @Override
   public void setPos(int pos) {
+    log.info("pos for {} changing from {} to {}", segment, this.pos, pos);
     super.setPos(pos);
   }
 

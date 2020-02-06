@@ -3,6 +3,8 @@ package org.jungrapht.visualization.layout.algorithms.sugiyama;
 import java.util.Objects;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.util.synthetics.SVI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of a vertex type for a layered layout algorithm.<br>
@@ -12,6 +14,9 @@ import org.jungrapht.visualization.layout.util.synthetics.SVI;
  * @param <V>
  */
 public class LVI<V> extends SVI<V> implements LV<V> {
+
+  Logger log = LoggerFactory.getLogger(LVI.class);
+
   protected int rank; // the layer number for this vertex
   protected int index; // the index within the layer array for this vertex
   protected int pos = -1;

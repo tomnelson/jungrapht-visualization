@@ -207,9 +207,9 @@ class EiglspergerUtil {
         } else {
           int pos = previousVertex.getPos() + previousContainer.size() + 1;
           v.setPos(pos);
-          if (biLayer.splitVertexPredicate.test(v)) {
-            ((SegmentVertex<V>) v).setSegmentVertexPos(pos);
-          }
+          //          if (biLayer.splitVertexPredicate.test(v)) {
+          //            ((SegmentVertex<V>) v).setSegmentVertexPos(pos);
+          //          }
         }
         previousVertex = v;
       }

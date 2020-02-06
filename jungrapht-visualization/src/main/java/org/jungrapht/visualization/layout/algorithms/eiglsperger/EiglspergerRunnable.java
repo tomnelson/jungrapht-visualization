@@ -26,7 +26,6 @@ import org.jungrapht.visualization.layout.algorithms.sugiyama.GraphLayers;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.GreedyCycleRemoval;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SyntheticLV;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.TransformedGraphSupplier;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Unaligned;
 import org.jungrapht.visualization.layout.algorithms.util.Attributed;
@@ -289,15 +288,14 @@ public class EiglspergerRunnable<V, E> implements Runnable {
 
     // figure out the avg size of rendered vertex
     java.awt.Rectangle avgVertexBounds =
-        avgVertexBounds(best, renderContext.getVertexShapeFunction());
+        maxVertexBounds(best, renderContext.getVertexShapeFunction());
 
     int horizontalOffset =
         Math.max(
-            avgVertexBounds.width / 2,
-            Integer.getInteger(PREFIX + "mincross.horizontalOffset", 50));
+            avgVertexBounds.width, Integer.getInteger(PREFIX + "mincross.horizontalOffset", 50));
     int verticalOffset =
         Math.max(
-            avgVertexBounds.height / 2, Integer.getInteger(PREFIX + "mincross.verticalOffset", 50));
+            avgVertexBounds.height, Integer.getInteger(PREFIX + "mincross.verticalOffset", 50));
     GraphLayers.checkLayers(best);
     Map<LV<V>, Point> vertexPointMap = new HashMap<>();
 
@@ -641,14 +639,14 @@ public class EiglspergerRunnable<V, E> implements Runnable {
   }
 
   private static <V> Rectangle maxVertexBounds(
-      List<List<LV<V>>> layers, Function<V, Shape> vertexShapeFunction) {
+      LV<V>[][] layers, Function<V, Shape> vertexShapeFunction) {
     // figure out the largest rendered vertex
     Rectangle maxVertexBounds = new Rectangle();
 
-    for (List<LV<V>> list : layers) {
-      for (LV<V> v : list) {
-        if (!(v instanceof SyntheticLV)) {
-          Rectangle bounds = vertexShapeFunction.apply(v.getVertex()).getBounds();
+    for (int i = 0; i < layers.length; i++) {
+      for (int j = 0; j < layers[i].length; j++) {
+        if (!(layers[i][j] instanceof SyntheticLV)) {
+          Rectangle bounds = vertexShapeFunction.apply(layers[i][j].getVertex()).getBounds();
           int width = Math.max(bounds.width, maxVertexBounds.width);
           int height = Math.max(bounds.height, maxVertexBounds.height);
           maxVertexBounds = new Rectangle(width, height);

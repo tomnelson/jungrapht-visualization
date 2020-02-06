@@ -154,8 +154,8 @@ public class EiglspergerLayoutAlgorithm<V, E>
   protected RenderContext<V, E> renderContext;
   boolean threaded;
   protected boolean useLongestPathLayering;
-  CompletableFuture theFuture;
-  Runnable after;
+  protected CompletableFuture theFuture;
+  protected Runnable after;
 
   public EiglspergerLayoutAlgorithm() {
     this(EiglspergerLayoutAlgorithm.edgeAwareBuilder());

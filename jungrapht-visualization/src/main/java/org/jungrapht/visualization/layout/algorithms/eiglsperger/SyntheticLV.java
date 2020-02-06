@@ -1,5 +1,7 @@
-package org.jungrapht.visualization.layout.algorithms.sugiyama;
+package org.jungrapht.visualization.layout.algorithms.eiglsperger;
 
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LVI;
 import org.jungrapht.visualization.layout.util.synthetics.Synthetic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,13 +17,29 @@ public class SyntheticLV<V> extends LVI<V> implements Synthetic {
   private static final Logger log = LoggerFactory.getLogger(SyntheticLV.class);
 
   final int hash;
+  LV<V> source;
+  LV<V> target;
+  String srcDest;
 
   public static <V> SyntheticLV<V> of() {
     return new SyntheticLV();
   }
 
+  public static <V> SyntheticLV<V> of(LV<V> source, LV<V> target) {
+
+    return new SyntheticLV(source, target);
+  }
+
   protected SyntheticLV() {
     super();
+    this.hash = System.identityHashCode(this);
+  }
+
+  protected SyntheticLV(LV<V> source, LV<V> target) {
+    super();
+    this.source = source;
+    this.target = target;
+    this.srcDest = "{" + source.getRank() + "-" + target.getRank() + "}";
     this.hash = System.identityHashCode(this);
   }
 
@@ -32,6 +50,12 @@ public class SyntheticLV<V> extends LVI<V> implements Synthetic {
 
   public <T extends LV<V>> T copy() {
     return (T) new SyntheticLV<>(this);
+  }
+
+  @Override
+  public void setPos(int pos) {
+    log.info("pos for {} changing from {} to {}", srcDest, this.pos, pos);
+    super.setPos(pos);
   }
 
   @Override
