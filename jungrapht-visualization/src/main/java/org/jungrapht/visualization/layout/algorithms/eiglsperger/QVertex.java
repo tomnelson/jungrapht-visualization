@@ -27,7 +27,6 @@ class QVertex<V> extends SegmentVertex<V> {
 
   @Override
   public void setPos(int pos) {
-    log.info("pos for QV {} changing from {} to {}", segment, this.pos, pos);
     super.setPos(pos);
   }
 

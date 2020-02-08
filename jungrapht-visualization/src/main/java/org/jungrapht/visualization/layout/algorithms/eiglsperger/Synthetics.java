@@ -218,7 +218,6 @@ public class Synthetics<V, E> {
     Set<Point> allInnerPoints = new HashSet<>();
     for (LE<V, E> edge : dag.edgeSet()) {
       if (edge instanceof SyntheticLE) {
-        log.info("candidate {}", edge);
         SyntheticLE<V, E> syntheticEdge = (SyntheticLE<V, E>) edge;
         LV<V> source = dag.getEdgeSource(edge);
         if (source instanceof SyntheticLV) {
@@ -233,7 +232,6 @@ public class Synthetics<V, E> {
           LE<V, E> outgoingEdge = dag.outgoingEdgesOf(target).stream().findFirst().get();
           target = dag.getEdgeTarget(outgoingEdge);
         }
-        log.info("");
 
         // look at the x coords of all the points in the innerPoints list
         double avgx = innerPoints.values().stream().mapToDouble(p -> p.x).average().getAsDouble();
@@ -244,7 +242,6 @@ public class Synthetics<V, E> {
         for (SyntheticLV<V> v : innerPoints.keySet()) {
           Point newPoint = Point.of(avgx, v.getPoint().y);
           overlap |= overlap(allInnerPoints, newPoint);
-          //                  allInnerPoints.contains(newPoint);
           allInnerPoints.add(newPoint);
           v.setPoint(newPoint);
         }

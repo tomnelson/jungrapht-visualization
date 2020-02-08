@@ -54,7 +54,6 @@ public class SyntheticLV<V> extends LVI<V> implements Synthetic {
 
   @Override
   public void setPos(int pos) {
-    log.info("pos for {} changing from {} to {}", srcDest, this.pos, pos);
     super.setPos(pos);
   }
 

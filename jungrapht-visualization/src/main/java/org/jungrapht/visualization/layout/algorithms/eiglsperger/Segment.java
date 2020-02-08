@@ -51,64 +51,7 @@ class Segment<V> extends SyntheticLV<V> implements Synthetic {
     this.index = index;
   }
 
-  public void initialize() {
-    //    this.left = null;
-    //    this.right = null;
-    //    this.parent = null;
-    //    this.size = -1;
-  }
-
-  //  public int size() {
-  //    if (this.size == -1) {
-  //      count();
-  //    }
-  //    return this.size;
-  //  }
-
-  //  int count() {
-  //    if (this == left) {
-  //      System.err.println("Error");
-  //    }
-  //    if (left != null && left == right) {
-  //      System.err.println("Error");
-  //    }
-  //    int leftCount = left != null ? left.count() : 0;
-  //    int rightCount = right != null ? right.count() : 0;
-  //    this.size = 1 + leftCount + rightCount;
-  //    return this.size;
-  //  }
-  //
-  //  public int height() {
-  //    int leftHeight = left != null ? left.height() : 0;
-  //    int rightHeight = right != null ? right.height() : 0;
-  //    return 1 + Math.max(leftHeight, rightHeight);
-  //  }
-
-  //  private boolean isRightChild(Segment<V> segment) {
-  //    return segment.parent.right == segment;
-  //  }
-  //
-  //  private boolean isLeftChild(Segment<V> segment) {
-  //    return segment.parent.left == segment;
-  //  }
-  //
-  //  private boolean isRoot(Segment<V> segment) {
-  //    return segment.parent == null;
-  //  }
-  //
-  //  private int size(Segment<V> segment) {
-  //    return segment == null ? 0 : segment.size();
-  //  }
-  //
-  //  public int pos(Segment<V> segment) {
-  //    if (isRoot(segment)) {
-  //      return size(segment.left) + 1;
-  //    } else if (isRightChild(segment)) {
-  //      return pos(segment.parent) + size(segment.left) + 1;
-  //    } else { //if (isLeftChild(segment)) {
-  //      return pos(segment.parent) - size(segment.right) - 1;
-  //    }
-  //  }
+  public void initialize() {}
 
   @Override
   public boolean equals(Object o) {
@@ -123,6 +66,5 @@ class Segment<V> extends SyntheticLV<V> implements Synthetic {
   @Override
   public String toString() {
     return "Segment{" + rangeString + "}";
-    //            + "pVertex=" + pVertex + ", qVertex" + qVertex + '}';
   }
 }

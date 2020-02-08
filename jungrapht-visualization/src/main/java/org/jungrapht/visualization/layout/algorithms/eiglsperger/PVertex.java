@@ -31,7 +31,6 @@ class PVertex<V> extends SegmentVertex<V> {
 
   @Override
   public void setPos(int pos) {
-    log.info("pos for PV {} changing from {} to {}", segment, this.pos, pos);
     super.setPos(pos);
   }
 

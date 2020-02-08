@@ -32,19 +32,19 @@ public class HorizontalCoordinateAssignment<V, E>
   }
 
   public void horizontalCoordinateAssignment() {
-    //    preprocessing();
-    //    log.info("************ marked segments:{}", markedSegments);
     VerticalAlignment.LeftmostUpper<V, E> upLeft =
         new VerticalAlignment.LeftmostUpper<>(layers, svGraph, markedSegments);
     upLeft.align();
     HorizontalCompaction<V> upLeftCompaction =
         new HorizontalCompaction<>(
             layers, upLeft.getRootMap(), upLeft.getAlignMap(), horizontalOffset, verticalOffset);
-    log.info("upLeft");
-    log.info("alignMap:{}", upLeft.getAlignMap());
-    log.info("rootMap:{}", upLeft.getRootMap());
-    log.info("shift:{}", upLeftCompaction.getShift());
-    log.info("sink:{}", upLeftCompaction.getSink());
+    if (log.isTraceEnabled()) {
+      log.trace("upLeft");
+      log.trace("alignMap:{}", upLeft.getAlignMap());
+      log.trace("rootMap:{}", upLeft.getRootMap());
+      log.trace("shift:{}", upLeftCompaction.getShift());
+      log.trace("sink:{}", upLeftCompaction.getSink());
+    }
 
     VerticalAlignment.RightmostUpper<V, E> upRight =
         new VerticalAlignment.RightmostUpper<>(layers, svGraph, markedSegments);
@@ -52,11 +52,13 @@ public class HorizontalCoordinateAssignment<V, E>
     HorizontalCompaction<V> upRightCompaction =
         new HorizontalCompaction<>(
             layers, upRight.getRootMap(), upRight.getAlignMap(), horizontalOffset, verticalOffset);
-    log.info("upRight");
-    log.info("alignMap:{}", upRight.getAlignMap());
-    log.info("rootMap:{}", upRight.getRootMap());
-    log.info("shift:{}", upRightCompaction.getShift());
-    log.info("sink:{}", upRightCompaction.getSink());
+    if (log.isTraceEnabled()) {
+      log.trace("upRight");
+      log.trace("alignMap:{}", upRight.getAlignMap());
+      log.trace("rootMap:{}", upRight.getRootMap());
+      log.trace("shift:{}", upRightCompaction.getShift());
+      log.trace("sink:{}", upRightCompaction.getSink());
+    }
 
     VerticalAlignment.LeftmostLower<V, E> downLeft =
         new VerticalAlignment.LeftmostLower<>(layers, svGraph, markedSegments);
@@ -68,11 +70,13 @@ public class HorizontalCoordinateAssignment<V, E>
             downLeft.getAlignMap(),
             horizontalOffset,
             verticalOffset);
-    log.info("downLeft");
-    log.info("alignMap:{}", downLeft.getAlignMap());
-    log.info("rootMap:{}", downLeft.getRootMap());
-    log.info("shift:{}", downLeftCompaction.getShift());
-    log.info("sink:{}", downLeftCompaction.getSink());
+    if (log.isTraceEnabled()) {
+      log.trace("downLeft");
+      log.trace("alignMap:{}", downLeft.getAlignMap());
+      log.trace("rootMap:{}", downLeft.getRootMap());
+      log.trace("shift:{}", downLeftCompaction.getShift());
+      log.trace("sink:{}", downLeftCompaction.getSink());
+    }
 
     VerticalAlignment.RightmostLower<V, E> downRight =
         new VerticalAlignment.RightmostLower<>(layers, svGraph, markedSegments);
@@ -84,11 +88,13 @@ public class HorizontalCoordinateAssignment<V, E>
             downRight.getAlignMap(),
             horizontalOffset,
             verticalOffset);
-    log.info("downRight");
-    log.info("alignMap:{}", downRight.getAlignMap());
-    log.info("rootMap:{}", downRight.getRootMap());
-    log.info("shift:{}", downRightCompaction.getShift());
-    log.info("sink:{}", downRightCompaction.getSink());
+    if (log.isTraceEnabled()) {
+      log.trace("downRight");
+      log.trace("alignMap:{}", downRight.getAlignMap());
+      log.trace("rootMap:{}", downRight.getRootMap());
+      log.trace("shift:{}", downRightCompaction.getShift());
+      log.trace("sink:{}", downRightCompaction.getSink());
+    }
 
     for (int i = 0; i < layers.length; i++) {
       for (int j = 0; j < layers[i].length; j++) {
@@ -105,53 +111,6 @@ public class HorizontalCoordinateAssignment<V, E>
         v.setPoint(balancedPoint);
       }
     }
-  }
-
-  @Override
-  public void preprocessing() {
-    int h = layers.length;
-    // compares current row 'i' with 'i+1' row
-    // i starts at row 1 and goes to row h-2-1
-    //    for (int i = 2; i <= h - 2; i++) {
-    for (int i = 1; i <= h - 2 - 1; i++) { // zero based
-
-      int k0 = 0;
-      int el = 0;
-      LV<V>[] Li = layers[i]; // Li
-      LV<V>[] Liplus1 = layers[i + 1]; // Li+1
-      //      for (int el1 = 1; el1 <= nextLayer.size(); el1++) {
-      for (int el1 = 0; el1 <= Liplus1.length - 1; el1++) { // zero based
-        // get the vertex at next layer index el1
-        LV<V> velOneOfIplusOne = Liplus1[el1];
-        // incident to inner segment if velOneOfIplusOne is Synthetic AND its unique predecessor
-        // in layer i is also a Synthetic
-        boolean incidentToInnerSegment = incidentToInnerSegment(velOneOfIplusOne);
-        if (el1 == Liplus1.length - 1 || incidentToInnerSegment) {
-          int k1 = Li.length - 1;
-          if (incidentToInnerSegment) {
-            // vel1iplus1 is a SyntheticSugiyamaVertex and must have one upper neighbor
-            k1 = pos(upperNeighborFor(velOneOfIplusOne));
-          }
-          while (el <= el1) {
-            LV<V> velOfIplusOne = Liplus1[el];
-            for (LV<V> vkOfI : getUpperNeighbors(velOfIplusOne)) {
-              int k = pos(vkOfI);
-              if (k < k0 || k > k1) {
-                if (!incidentToInnerSegment(velOfIplusOne)) {
-                  // only marking segments that are not inner segments
-                  //                  markedSegments.add(svGraph.getEdge(vkOfI, velOfIplusOne));
-                }
-              }
-            }
-            el++;
-          }
-          k0 = k1;
-        }
-      }
-    }
-
-    log.info("markedSegments:", markedSegments);
-    markedSegments.forEach(s -> log.info(s.toString()));
   }
 
   /**

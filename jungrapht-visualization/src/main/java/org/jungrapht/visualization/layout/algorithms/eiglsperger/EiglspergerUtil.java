@@ -2,16 +2,12 @@ package org.jungrapht.visualization.layout.algorithms.eiglsperger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.jgrapht.Graph;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.Comparators;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
-import org.jungrapht.visualization.layout.algorithms.util.InsertionSortCounter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -207,9 +203,6 @@ public class EiglspergerUtil {
         } else {
           int pos = previousVertex.getPos() + previousContainer.size() + 1;
           v.setPos(pos);
-          //          if (biLayer.splitVertexPredicate.test(v)) {
-          //            ((SegmentVertex<V>) v).setSegmentVertexPos(pos);
-          //          }
         }
         previousVertex = v;
       }
@@ -220,47 +213,6 @@ public class EiglspergerUtil {
           "S2 currentLayer with pos values:\n{}",
           EiglspergerSteps.elementStringer(biLayer, currentLayer));
     }
-  }
-
-  static <V, E> int crossingCount(List<LE<V, E>> edges) {
-    Comparator<LE<V, E>> biLevelEdgeComparator = Comparators.biLevelEdgeComparator();
-    edges.sort(biLevelEdgeComparator);
-    List<Integer> targetIndices = new ArrayList<>();
-    int weight = 1;
-    for (LE<V, E> edge : edges) {
-      if (edge.getSource() instanceof Container && edge.getTarget() instanceof Container) {
-        continue;
-      }
-      if (edge.getSource() instanceof Container) { // && !(edge.getTarget() instanceof Container)) {
-        //        weight += ((Container<V, Segment<V>>) edge.getSource()).size();
-      } else if (edge.getTarget()
-          instanceof Container) { // && !(edge.getSource() instanceof Container)) {
-        //        weight += ((Container<V, Segment<V>>) edge.getTarget()).size();
-      }
-      targetIndices.add(edge.getTarget().getIndex());
-    }
-    return weight * InsertionSortCounter.insertionSortCounter(targetIndices);
-  }
-
-  static <V, E> int crossingCountSwapped(int i, int j, List<LV<V>> layer, List<LE<V, E>> edges) {
-    swap(layer, i, j);
-    int count = crossingCount(edges);
-    swap(layer, i, j);
-    return count;
-  }
-
-  private static <V> void swap(LV<V>[] array, int i, int j) {
-    LV<V> temp = array[i];
-    array[i] = array[j];
-    array[j] = temp;
-    array[i].setIndex(i);
-    array[j].setIndex(j);
-  }
-
-  static <V> void swap(List<LV<V>> list, int i, int j) {
-    Collections.swap(list, i, j);
-    list.get(i).setIndex(i);
-    list.get(j).setIndex(j);
   }
 
   static <V> List<LV<V>> fixIndices(List<LV<V>> layer) {

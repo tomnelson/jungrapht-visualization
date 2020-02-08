@@ -147,15 +147,13 @@ public class HorizontalCoordinateAssignment<V, E> {
     int h = layers.length;
     // compares current row 'i' with 'i+1' row
     // i starts at row 1 and goes to row h-2-1
-    //    for (int i = 2; i <= h - 2; i++) {
-    for (int i = 1; i <= h - 2 - 1; i++) { // zero based
+    for (int i = 1; i <= h - 2 - 1; i++) {
 
       int k0 = 0;
       int el = 0;
       LV<V>[] Li = layers[i]; // Li
       LV<V>[] Liplus1 = layers[i + 1]; // Li+1
-      //      for (int el1 = 1; el1 <= nextLayer.size(); el1++) {
-      for (int el1 = 0; el1 <= Liplus1.length - 1; el1++) { // zero based
+      for (int el1 = 0; el1 <= Liplus1.length - 1; el1++) {
         // get the vertex at next layer index el1
         LV<V> velOneOfIplusOne = Liplus1[el1];
         // incident to inner segment if velOneOfIplusOne is Synthetic AND its unique predecessor
@@ -164,7 +162,7 @@ public class HorizontalCoordinateAssignment<V, E> {
         if (el1 == Liplus1.length - 1 || incidentToInnerSegment) {
           int k1 = Li.length - 1;
           if (incidentToInnerSegment) {
-            // vel1iplus1 is a SyntheticSugiyamaVertex and must have one upper neighbor
+            // velOneOfIplusOne is a SyntheticSugiyamaVertex and must have one upper neighbor
             k1 = pos(upperNeighborFor(velOneOfIplusOne));
           }
           while (el <= el1) {
@@ -172,10 +170,7 @@ public class HorizontalCoordinateAssignment<V, E> {
             for (LV<V> vkOfI : getUpperNeighbors(velOfIplusOne)) {
               int k = pos(vkOfI);
               if (k < k0 || k > k1) {
-                //                if (!(vkOfI instanceof Synthetic) && !(velOfIplusOne instanceof Synthetic)) {
-                // only marking segments that are not inner segments
                 markedSegments.add(svGraph.getEdge(vkOfI, velOfIplusOne));
-                //                }
               }
             }
             el++;

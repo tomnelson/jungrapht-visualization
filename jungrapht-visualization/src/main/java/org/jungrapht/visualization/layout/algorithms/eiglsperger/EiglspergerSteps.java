@@ -102,7 +102,7 @@ class EiglspergerSteps {
    * @return layerEyePlus1 reordered
    */
   public static <V, E> void stepThree(BiLayer<V, E> biLayer) {
-    List<LV<V>> currentLayer = biLayer.currentLayer;
+
     List<LV<V>> downstreamLayer = biLayer.downstreamLayer;
 
     List<LV<V>> listV = new LinkedList<>();
@@ -174,8 +174,6 @@ class EiglspergerSteps {
       mergedList.sort(Comparator.comparingDouble(LV::getMeasure));
     } else {
       while (!listV.isEmpty() && !listS.isEmpty()) {
-        LV<V> headV = listV.get(0);
-        Container<V, Segment<V>> headS = listS.get(0);
         if (listV.get(0).getMeasure() <= listS.get(0).getPos()) {
           LV<V> v = listV.remove(0);
           mergedList.add(v);
@@ -411,7 +409,6 @@ class EiglspergerSteps {
       }
       targetIndices.add(target.getIndex());
     }
-    //    int[] presorted = targetIndices.stream().mapToInt(i -> i).toArray();
     int cnt = weight * InsertionSortCounter.insertionSortCounter(targetIndices);
     return cnt;
   }
@@ -433,7 +430,6 @@ class EiglspergerSteps {
       targetIndices.add(target.getIndex());
     }
     swap(layer, i, j);
-    //    int[] presorted = targetIndices.stream().mapToInt(ii -> ii).toArray();
     int cnt = weight * InsertionSortCounter.insertionSortCounter(targetIndices);
     return cnt;
   }
