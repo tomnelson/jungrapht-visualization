@@ -1,4 +1,4 @@
-package org.jungrapht.samples.tree;
+package org.jungrapht.samples.sugiyama;
 
 import java.awt.*;
 import java.util.stream.IntStream;

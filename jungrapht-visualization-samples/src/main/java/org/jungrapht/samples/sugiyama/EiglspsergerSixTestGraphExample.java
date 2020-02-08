@@ -1,12 +1,19 @@
-package org.jungrapht.samples.tree;
+package org.jungrapht.samples.sugiyama;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.util.stream.IntStream;
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
-import org.jungrapht.samples.tree.test.layout.algorithms.BrandesKopfLayoutAlgorithm;
+import org.jungrapht.samples.sugiyama.test.algorithms.TestEiglspergerLayoutAlgorithm;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.renderers.Renderer;
@@ -20,61 +27,72 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-public class BrandesKopfTestGraphExample extends JFrame {
+public class EiglspsergerSixTestGraphExample extends JFrame {
 
-  private static final Logger log = LoggerFactory.getLogger(BrandesKopfTestGraphExample.class);
+  private static final Logger log = LoggerFactory.getLogger(EiglspsergerSixTestGraphExample.class);
 
-  public BrandesKopfTestGraphExample() {
+  public EiglspsergerSixTestGraphExample() {
 
     JPanel container = new JPanel(new GridLayout(2, 3));
 
-    Graph<Integer, Integer> graph = createInitialGraph();
+    Graph<Integer, Integer> graph1 = createInitialGraph();
+    Graph<Integer, Integer> graph2 = createInitialGraph();
+    Graph<Integer, Integer> graph3 = createInitialGraph();
+    Graph<Integer, Integer> graph4 = createInitialGraph();
+    Graph<Integer, Integer> graph5 = createInitialGraph();
+    Graph<Integer, Integer> graph6 = createInitialGraph();
 
-    VisualizationViewer<Integer, Integer> vv1 = configureVisualizationViewer(graph);
+    VisualizationViewer<Integer, Integer> vv1 = configureVisualizationViewer(graph1);
     vv1.addPreRenderPaintable(new TitlePaintable("Upper Left", vv1.getPreferredSize()));
-    VisualizationViewer<Integer, Integer> vv2 = configureVisualizationViewer(graph);
+    VisualizationViewer<Integer, Integer> vv2 = configureVisualizationViewer(graph2);
     vv2.addPreRenderPaintable(new TitlePaintable("Upper Right", vv2.getPreferredSize()));
-    VisualizationViewer<Integer, Integer> vv3 = configureVisualizationViewer(graph);
+    VisualizationViewer<Integer, Integer> vv3 = configureVisualizationViewer(graph3);
     vv3.addPreRenderPaintable(new TitlePaintable("Lower Left", vv3.getPreferredSize()));
-    VisualizationViewer<Integer, Integer> vv4 = configureVisualizationViewer(graph);
+    VisualizationViewer<Integer, Integer> vv4 = configureVisualizationViewer(graph4);
     vv4.addPreRenderPaintable(new TitlePaintable("Lower Right", vv4.getPreferredSize()));
-    VisualizationViewer<Integer, Integer> vv5 = configureVisualizationViewer(graph);
+    VisualizationViewer<Integer, Integer> vv5 = configureVisualizationViewer(graph5);
     vv5.addPreRenderPaintable(new TitlePaintable("Average Median", vv5.getPreferredSize()));
+    VisualizationViewer<Integer, Integer> vv6 = configureVisualizationViewer(graph6);
+    vv6.addPreRenderPaintable(new TitlePaintable("Upper & Lower Left", vv6.getPreferredSize()));
 
-    BrandesKopfLayoutAlgorithm<Integer, Integer> layoutAlgorithm1 =
-        BrandesKopfLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+    TestEiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm1 =
+        TestEiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .doUpLeft(true)
+            .threaded(false)
             .after(vv1::scaleToLayout)
             .build();
     layoutAlgorithm1.setRenderContext(vv1.getRenderContext());
     vv1.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm1);
 
-    BrandesKopfLayoutAlgorithm<Integer, Integer> layoutAlgorithm2 =
-        BrandesKopfLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+    TestEiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm2 =
+        TestEiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .doUpRight(true)
+            .threaded(false)
             .after(vv2::scaleToLayout)
             .build();
     layoutAlgorithm2.setRenderContext(vv2.getRenderContext());
     vv2.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm2);
 
-    BrandesKopfLayoutAlgorithm<Integer, Integer> layoutAlgorithm3 =
-        BrandesKopfLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+    TestEiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm3 =
+        TestEiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .doDownLeft(true)
+            .threaded(false)
             .after(vv3::scaleToLayout)
             .build();
     layoutAlgorithm3.setRenderContext(vv3.getRenderContext());
     vv3.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm3);
 
-    BrandesKopfLayoutAlgorithm<Integer, Integer> layoutAlgorithm4 =
-        BrandesKopfLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+    TestEiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm4 =
+        TestEiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .doDownRight(true)
+            .threaded(false)
             .after(vv4::scaleToLayout)
             .build();
     layoutAlgorithm4.setRenderContext(vv4.getRenderContext());
     vv4.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm4);
 
-    BrandesKopfLayoutAlgorithm<Integer, Integer> layoutAlgorithm5 =
-        BrandesKopfLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+    TestEiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm5 =
+        TestEiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .doUpLeft(true)
             .doUpRight(true)
             .doDownLeft(true)
@@ -84,11 +102,23 @@ public class BrandesKopfTestGraphExample extends JFrame {
     layoutAlgorithm5.setRenderContext(vv5.getRenderContext());
     vv5.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm5);
 
+    TestEiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm6 =
+        TestEiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+            .doUpLeft(true)
+            .doUpRight(false)
+            .doDownLeft(true)
+            .doDownRight(false)
+            .after(vv6::scaleToLayout)
+            .build();
+    layoutAlgorithm6.setRenderContext(vv6.getRenderContext());
+    vv6.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm6);
+
     container.add(vv1.getComponent());
     container.add(vv2.getComponent());
     container.add(vv3.getComponent());
     container.add(vv4.getComponent());
     container.add(vv5.getComponent());
+    container.add(vv6.getComponent());
 
     setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -224,6 +254,6 @@ public class BrandesKopfTestGraphExample extends JFrame {
   }
 
   public static void main(String[] args) {
-    new BrandesKopfTestGraphExample();
+    new EiglspsergerSixTestGraphExample();
   }
 }

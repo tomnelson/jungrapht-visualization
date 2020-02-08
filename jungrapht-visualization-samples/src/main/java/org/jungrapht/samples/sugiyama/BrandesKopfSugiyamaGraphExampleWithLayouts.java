@@ -1,8 +1,6 @@
-package org.jungrapht.samples.tree;
+package org.jungrapht.samples.sugiyama;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
+import java.awt.*;
 import java.util.stream.IntStream;
 import javax.swing.*;
 import org.jgrapht.Graph;
@@ -12,6 +10,8 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.SugiyamaLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.Renderer;
+import org.jungrapht.visualization.util.helpers.ControlHelpers;
+import org.jungrapht.visualization.util.helpers.TreeLayoutSelector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,17 +22,27 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-public class BrandesKopfSugiyamaGraphExample extends JFrame {
+public class BrandesKopfSugiyamaGraphExampleWithLayouts extends JFrame {
 
-  private static final Logger log = LoggerFactory.getLogger(BrandesKopfSugiyamaGraphExample.class);
+  private static final Logger log =
+      LoggerFactory.getLogger(BrandesKopfSugiyamaGraphExampleWithLayouts.class);
 
-  public BrandesKopfSugiyamaGraphExample() {
+  public BrandesKopfSugiyamaGraphExampleWithLayouts() {
 
     JPanel container = new JPanel(new BorderLayout());
 
     Graph<Integer, Integer> graph = createInitialGraph();
 
     VisualizationViewer<Integer, Integer> vv = configureVisualizationViewer(graph);
+    vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
+
+    TreeLayoutSelector<String, Integer> treeLayoutSelector =
+        TreeLayoutSelector.<String, Integer>builder(vv)
+            .initialSelection(2)
+            .vertexShapeFunction(vv.getRenderContext().getVertexShapeFunction())
+            .alignFavoredEdges(false)
+            .after(vv::scaleToLayout)
+            .build();
 
     SugiyamaLayoutAlgorithm<Integer, Integer> layoutAlgorithm =
         SugiyamaLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
@@ -48,6 +58,11 @@ public class BrandesKopfSugiyamaGraphExample extends JFrame {
     setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
     add(container);
+
+    Box controls = Box.createHorizontalBox();
+    controls.add(ControlHelpers.getCenteredContainer("Layout Controls", treeLayoutSelector));
+    add(controls, BorderLayout.SOUTH);
+
     pack();
     setVisible(true);
   }
@@ -142,6 +157,6 @@ public class BrandesKopfSugiyamaGraphExample extends JFrame {
   }
 
   public static void main(String[] args) {
-    new BrandesKopfSugiyamaGraphExample();
+    new BrandesKopfSugiyamaGraphExampleWithLayouts();
   }
 }

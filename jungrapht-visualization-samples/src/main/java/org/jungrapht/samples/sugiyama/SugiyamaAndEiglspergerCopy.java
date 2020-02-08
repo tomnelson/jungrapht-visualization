@@ -1,6 +1,11 @@
-package org.jungrapht.samples.tree;
+package org.jungrapht.samples.sugiyama;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.util.stream.IntStream;
 import javax.swing.*;
 import org.jgrapht.Graph;
@@ -9,6 +14,7 @@ import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.SugiyamaLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,69 +26,44 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-public class EiglspergerThrowaway extends JFrame {
+public class SugiyamaAndEiglspergerCopy extends JFrame {
 
-  private static final Logger log = LoggerFactory.getLogger(EiglspergerThrowaway.class);
+  private static final Logger log = LoggerFactory.getLogger(SugiyamaAndEiglspergerCopy.class);
 
-  public EiglspergerThrowaway() {
+  public SugiyamaAndEiglspergerCopy() {
 
-    JPanel container = new JPanel(new BorderLayout());
+    JPanel container = new JPanel(new GridLayout(2, 1));
 
     Graph<Integer, Integer> graph = createInitialGraph();
 
-    //    VisualizationViewer<Integer, Integer> vv1 = configureVisualizationViewer(graph);
-    //    vv1.addPreRenderPaintable(new TitlePaintable("Sugiyama No Edge Straightening", vv1.getPreferredSize()));
-    //    vv1.getRenderContext().setEdgeLabelFunction(Object::toString);
-    //    VisualizationViewer<Integer, Integer> vv2 = configureVisualizationViewer(graph);
-    //    vv2.addPreRenderPaintable(
-    //        new TitlePaintable("BrandesKopf Edge Alignment", vv1.getPreferredSize()));
-    //    vv2.getRenderContext().setEdgeLabelFunction(Object::toString);
-    VisualizationViewer<Integer, Integer> vv3 = configureVisualizationViewer(graph);
-    vv3.addPreRenderPaintable(
-        new TitlePaintable("Eiglsperger No Edge Straightening", vv3.getPreferredSize()));
-    vv3.getRenderContext().setEdgeLabelFunction(Object::toString);
-    //    VisualizationViewer<Integer, Integer> vv4 = configureVisualizationViewer(graph);
-    //    vv4.addPreRenderPaintable(
-    //            new TitlePaintable("Eiglsperger Edge Alignment", vv1.getPreferredSize()));
-    //    vv4.getRenderContext().setEdgeLabelFunction(Object::toString);
+    VisualizationViewer<Integer, Integer> vv1 = configureVisualizationViewer(graph);
+    vv1.addPreRenderPaintable(new TitlePaintable("Sugiyama ", vv1.getPreferredSize()));
+    vv1.getRenderContext().setEdgeLabelFunction(Object::toString);
+    VisualizationViewer<Integer, Integer> vv2 = configureVisualizationViewer(graph);
+    vv2.addPreRenderPaintable(new TitlePaintable("Eiglsperger", vv1.getPreferredSize()));
+    vv2.getRenderContext().setEdgeLabelFunction(Object::toString);
 
-    //    SugiyamaLayoutAlgorithm<Integer, Integer> layoutAlgorithm1 =
-    //        SugiyamaLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
-    //            .straightenEdges(false)
-    //            .postStraighten(false)
-    //            .after(vv1::scaleToLayout)
-    //            .build();
-    //    layoutAlgorithm1.setRenderContext(vv1.getRenderContext());
-    //    vv1.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm1);
-    //    container.add(vv1.getComponent());
-    //
-    //    SugiyamaLayoutAlgorithm<Integer, Integer> layoutAlgorithm2 =
-    //        SugiyamaLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
-    //            .straightenEdges(true)
-    //            .postStraighten(false)
-    //            .after(vv2::scaleToLayout)
-    //            .build();
-    //    layoutAlgorithm2.setRenderContext(vv2.getRenderContext());
-    //    vv2.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm2);
-    //    container.add(vv2.getComponent());
-
-    EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm3 =
-        EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
-            //            .straightenEdges(false)
-            .after(vv3::scaleToLayout)
+    SugiyamaLayoutAlgorithm<Integer, Integer> layoutAlgorithm1 =
+        SugiyamaLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+            .straightenEdges(true)
+            .postStraighten(false)
+            .transpose(true)
+            //                .useLongestPathLayering(true)
+            .after(vv1::scaleToLayout)
             .build();
-    layoutAlgorithm3.setRenderContext(vv3.getRenderContext());
-    vv3.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm3);
-    container.add(vv3.getComponent());
+    layoutAlgorithm1.setRenderContext(vv1.getRenderContext());
+    vv1.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm1);
+    container.add(vv1.getComponent());
 
-    //    EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm4 =
-    //            EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
-    //                    .straightenEdges(true)
-    //                    .after(vv3::scaleToLayout)
-    //                    .build();
-    //    layoutAlgorithm4.setRenderContext(vv4.getRenderContext());
-    //    vv4.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm4);
-    //    container.add(vv4.getComponent());
+    EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm4 =
+        EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+            .straightenEdges(true)
+            //                .useLongestPathLayering(true)
+            .after(vv2::scaleToLayout)
+            .build();
+    layoutAlgorithm4.setRenderContext(vv2.getRenderContext());
+    vv2.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm4);
+    container.add(vv2.getComponent());
 
     setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -145,6 +126,34 @@ public class EiglspergerThrowaway extends JFrame {
     public boolean useTransform() {
       return false;
     }
+  }
+
+  Graph<Integer, Integer> createSmallGraph() {
+
+    Graph<Integer, Integer> graph =
+        GraphTypeBuilder.<Integer, Integer>directed()
+            .edgeSupplier(SupplierUtil.createIntegerSupplier())
+            .vertexSupplier(SupplierUtil.createIntegerSupplier())
+            .buildGraph();
+
+    IntStream.rangeClosed(1, 7).forEach(graph::addVertex);
+
+    graph.addEdge(1, 2);
+    graph.addEdge(2, 3);
+    graph.addEdge(3, 4);
+    graph.addEdge(1, 3);
+
+    graph.addEdge(1, 4);
+
+    graph.addEdge(1, 5);
+    graph.addEdge(5, 6);
+    graph.addEdge(6, 4);
+
+    graph.addEdge(2, 5);
+
+    graph.addEdge(6, 7);
+
+    return graph;
   }
 
   /**
@@ -218,6 +227,6 @@ public class EiglspergerThrowaway extends JFrame {
   }
 
   public static void main(String[] args) {
-    new EiglspergerThrowaway();
+    new SugiyamaAndEiglspergerCopy();
   }
 }

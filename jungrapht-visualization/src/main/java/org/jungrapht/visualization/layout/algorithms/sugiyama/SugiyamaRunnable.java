@@ -170,10 +170,10 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     return new Builder<>();
   }
 
-  final LayoutModel<V> layoutModel;
-  final RenderContext<V, E> renderContext;
-  Graph<V, E> graph;
-  Graph<LV<V>, LE<V, E>> svGraph;
+  protected final LayoutModel<V> layoutModel;
+  protected final RenderContext<V, E> renderContext;
+  protected Graph<V, E> graph;
+  protected Graph<LV<V>, LE<V, E>> svGraph;
   boolean stopit = false;
   protected Predicate<V> vertexPredicate;
   protected Predicate<E> edgePredicate;
@@ -186,7 +186,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
   protected int maxLevelCross;
   protected boolean useLongestPathLayering;
 
-  private SugiyamaRunnable(Builder<V, E, ?, ?> builder) {
+  protected SugiyamaRunnable(Builder<V, E, ?, ?> builder) {
     this(
         builder.layoutModel,
         builder.renderContext,
@@ -229,7 +229,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     this.useLongestPathLayering = useLongestPathLayering;
   }
 
-  private boolean checkStopped() {
+  protected boolean checkStopped() {
     try {
       Thread.sleep(1);
       if (stopit) {
@@ -371,15 +371,17 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     Map<LV<V>, Point> vertexPointMap = new HashMap<>();
 
     if (straightenEdges) {
-      HorizontalCoordinateAssignment.horizontalCoordinateAssignment(
-          best, svGraph, new HashSet<>(), horizontalOffset, verticalOffset);
+      HorizontalCoordinateAssignment<V, E> horizontalCoordinateAssignment =
+          new HorizontalCoordinateAssignment<>(
+              best, svGraph, new HashSet<>(), horizontalOffset, verticalOffset);
+      horizontalCoordinateAssignment.horizontalCoordinateAssignment();
 
       GraphLayers.checkLayers(best);
 
       for (int i = 0; i < best.length; i++) {
         for (int j = 0; j < best[i].length; j++) {
-          LV<V> LV = best[i][j];
-          vertexPointMap.put(LV, LV.getPoint());
+          LV<V> v = best[i][j];
+          vertexPointMap.put(v, v.getPoint());
         }
       }
 
@@ -540,7 +542,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     svGraph.vertexSet().forEach(v -> layoutModel.set(v.getVertex(), v.getPoint()));
   }
 
-  private void transposeDownwards(LV<V>[][] ranks, Map<Integer, List<LE<V, E>>> reducedEdgeMap) {
+  protected void transposeDownwards(LV<V>[][] ranks, Map<Integer, List<LE<V, E>>> reducedEdgeMap) {
     GraphLayers.checkLayers(ranks);
 
     boolean improved = true;
@@ -572,7 +574,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     GraphLayers.checkLayers(ranks);
   }
 
-  private void transposeUpwards(LV<V>[][] ranks, Map<Integer, List<LE<V, E>>> reducedEdgeMap) {
+  protected void transposeUpwards(LV<V>[][] ranks, Map<Integer, List<LE<V, E>>> reducedEdgeMap) {
     GraphLayers.checkLayers(ranks);
 
     boolean improved = true;
@@ -659,7 +661,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     }
   }
 
-  void medianDownwards(LV<V>[][] layers, Graph<LV<V>, LE<V, E>> svGraph) {
+  protected void medianDownwards(LV<V>[][] layers, Graph<LV<V>, LE<V, E>> svGraph) {
 
     for (int r = 0; r < layers.length; r++) {
       for (LV<V> v : layers[r]) {
@@ -671,7 +673,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     }
   }
 
-  void medianUpwards(LV<V>[][] layers, Graph<LV<V>, LE<V, E>> svGraph) {
+  protected void medianUpwards(LV<V>[][] layers, Graph<LV<V>, LE<V, E>> svGraph) {
 
     for (int r = layers.length - 1; r >= 0; r--) {
       for (LV<V> v : layers[r]) {
@@ -750,7 +752,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     }
   }
 
-  LV<V>[][] copy(LV<V>[][] in) {
+  protected LV<V>[][] copy(LV<V>[][] in) {
     LV[][] copy = new LV[in.length][];
     for (int i = 0; i < in.length; i++) {
       copy[i] = new LV[in[i].length];

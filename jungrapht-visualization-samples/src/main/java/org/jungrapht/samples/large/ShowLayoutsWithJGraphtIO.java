@@ -126,6 +126,8 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
                   } catch (Exception ex) {
                     ex.printStackTrace();
                   }
+                  int size = (int) (50 * Math.sqrt(graph.vertexSet().size()));
+                  vv.getVisualizationModel().getLayoutModel().setSize(size, size);
                   vv.getVisualizationModel().setGraph(graph);
                   setTitle(
                       "Graph With "

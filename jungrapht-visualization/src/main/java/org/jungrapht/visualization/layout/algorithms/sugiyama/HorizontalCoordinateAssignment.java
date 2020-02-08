@@ -15,30 +15,69 @@ import org.slf4j.LoggerFactory;
  * @see "Fast and Simple Horizontal Coordinate Assignment, Ulrik Brandes and Boris Köpf, Department
  *     of Computer & Information Science, University of Konstanz"
  */
-public class HorizontalCoordinateAssignment {
+public class HorizontalCoordinateAssignment<V, E> {
+
   private static Logger log = LoggerFactory.getLogger(HorizontalCoordinateAssignment.class);
 
-  public static <V, E> void horizontalCoordinateAssignment(
+  protected Graph<LV<V>, LE<V, E>> svGraph;
+  protected Set<LE<V, E>> markedSegments;
+  protected LV<V>[][] layers;
+  protected int horizontalOffset;
+  protected int verticalOffset;
+
+  public HorizontalCoordinateAssignment(
       LV<V>[][] layers,
       Graph<LV<V>, LE<V, E>> svGraph,
       Set<LE<V, E>> markedSegments,
       int horizontalOffset,
       int verticalOffset) {
-    preprocessing(layers, svGraph, markedSegments);
+    this.svGraph = svGraph;
+    this.markedSegments = markedSegments;
+    this.layers = layers;
+    this.horizontalOffset = horizontalOffset;
+    this.verticalOffset = verticalOffset;
+  }
+
+  protected LV<V> pred(LV<V> v) {
+    int layerOfV = v.getRank();
+    int indexOfV = v.getIndex();
+    if (indexOfV < 1) {
+      return null;
+    }
+    LV<V>[] list = layers[layerOfV];
+    return list[indexOfV - 1];
+  }
+
+  protected LV<V> succ(LV<V> v) {
+    int layerOfV = v.getRank();
+    int indexOfV = v.getIndex();
+    if (indexOfV > layers[layerOfV].length - 2) {
+      return null;
+    }
+    LV<V>[] list = layers[layerOfV];
+    return list[indexOfV + 1];
+  }
+
+  public void horizontalCoordinateAssignment() {
+    preprocessing();
+    log.info("marked segments:{}", markedSegments);
     VerticalAlignment.LeftmostUpper<V, E> upLeft =
         new VerticalAlignment.LeftmostUpper<>(layers, svGraph, markedSegments);
+    upLeft.align();
     HorizontalCompaction<V> upLeftCompaction =
         new HorizontalCompaction<>(
             layers, upLeft.getRootMap(), upLeft.getAlignMap(), horizontalOffset, verticalOffset);
 
     VerticalAlignment.RightmostUpper<V, E> upRight =
         new VerticalAlignment.RightmostUpper<>(layers, svGraph, markedSegments);
+    upRight.align();
     HorizontalCompaction<V> upRightCompaction =
         new HorizontalCompaction<>(
             layers, upRight.getRootMap(), upRight.getAlignMap(), horizontalOffset, verticalOffset);
 
     VerticalAlignment.LeftmostLower<V, E> downLeft =
         new VerticalAlignment.LeftmostLower<>(layers, svGraph, markedSegments);
+    downLeft.align();
     HorizontalCompaction<V> downLeftCompaction =
         new HorizontalCompaction<>(
             layers,
@@ -49,6 +88,7 @@ public class HorizontalCoordinateAssignment {
 
     VerticalAlignment.RightmostLower<V, E> downRight =
         new VerticalAlignment.RightmostLower<>(layers, svGraph, markedSegments);
+    downRight.align();
     HorizontalCompaction<V> downRightCompaction =
         new HorizontalCompaction<>(
             layers,
@@ -74,17 +114,36 @@ public class HorizontalCoordinateAssignment {
     }
   }
 
-  static <V, E> int upperNeighborIndexFor(SyntheticLV<V> v, Graph<LV<V>, LE<V, E>> svGraph) {
+  protected int pos(LV<V> v) {
+    return v.getIndex();
+  }
+
+  protected int upperNeighborIndexFor(SyntheticLV<V> v) {
     // any Synthetic vertex must have one upper and one lower neighbor
     return Graphs.predecessorListOf(svGraph, v).get(0).getIndex();
   }
 
-  private static <V> boolean incidentToInnerSegment(LV<V> v) {
-    return v instanceof SyntheticLV;
+  protected LV<V> upperNeighborFor(LV<V> v) {
+    // any Synthetic vertex must have one upper and one lower neighbor
+    return Graphs.predecessorListOf(svGraph, v).get(0);
   }
 
-  public static <V, E> void preprocessing(
-      LV<V>[][] layers, Graph<LV<V>, LE<V, E>> svGraph, Set<LE<V, E>> markedSegments) {
+  /**
+   * @param v vertex to check
+   * @return true iv v is incident to an inner segment between v's rank and the preceding rank
+   */
+  protected boolean incidentToInnerSegment(LV<V> v) {
+    if (v instanceof Synthetic) { // then there is one and only one predecessor
+      List<LV<V>> predecessors = Graphs.predecessorListOf(svGraph, v);
+      if (predecessors.size() > 0) {
+        LV<V> pv = predecessors.get(0);
+        return pv instanceof Synthetic; // both are synthetic so edge between them is an inner edge
+      }
+    }
+    return false;
+  }
+
+  protected void preprocessing() {
     int h = layers.length;
     // compares current row 'i' with 'i+1' row
     // i starts at row 1 and goes to row h-2-1
@@ -98,22 +157,25 @@ public class HorizontalCoordinateAssignment {
       //      for (int el1 = 1; el1 <= nextLayer.size(); el1++) {
       for (int el1 = 0; el1 <= Liplus1.length - 1; el1++) { // zero based
         // get the vertex at next layer index el1
-        LV<V> vel1iplus1 = Liplus1[el1];
-        if (el1 == Liplus1.length - 1 || incidentToInnerSegment(vel1iplus1)) {
+        LV<V> velOneOfIplusOne = Liplus1[el1];
+        // incident to inner segment if velOneOfIplusOne is Synthetic AND its unique predecessor
+        // in layer i is also a Synthetic
+        boolean incidentToInnerSegment = incidentToInnerSegment(velOneOfIplusOne);
+        if (el1 == Liplus1.length - 1 || incidentToInnerSegment) {
           int k1 = Li.length - 1;
-          if (incidentToInnerSegment(vel1iplus1)) {
+          if (incidentToInnerSegment) {
             // vel1iplus1 is a SyntheticSugiyamaVertex and must have one upper neighbor
-            k1 = upperNeighborIndexFor((SyntheticLV) vel1iplus1, svGraph);
+            k1 = pos(upperNeighborFor(velOneOfIplusOne));
           }
           while (el <= el1) {
-            LV<V> velNextLayer = Liplus1[el];
-            for (LV<V> upperNeighbor : getUpperNeighbors(svGraph, velNextLayer)) {
-              int k = upperNeighbor.getIndex();
+            LV<V> velOfIplusOne = Liplus1[el];
+            for (LV<V> vkOfI : getUpperNeighbors(velOfIplusOne)) {
+              int k = pos(vkOfI);
               if (k < k0 || k > k1) {
-                if (!(upperNeighbor instanceof Synthetic && velNextLayer instanceof Synthetic)) {
-                  // only marking segments that are not inner segments
-                  markedSegments.add(svGraph.getEdge(upperNeighbor, velNextLayer));
-                }
+                //                if (!(vkOfI instanceof Synthetic) && !(velOfIplusOne instanceof Synthetic)) {
+                // only marking segments that are not inner segments
+                markedSegments.add(svGraph.getEdge(vkOfI, velOfIplusOne));
+                //                }
               }
             }
             el++;
@@ -127,14 +189,11 @@ public class HorizontalCoordinateAssignment {
   /**
    * return a list of the upper neighbors for the supplied vertex, sorted in index order
    *
-   * @param graph graph with vertex/edge relationships
    * @param v the vertex of interest
-   * @param <V> vertex type
-   * @param <E> edge type
    * @return a list of the upper neighbors for the supplied vertex, sorted in index order
    */
-  static <V, E> List<LV<V>> getUpperNeighbors(Graph<LV<V>, LE<V, E>> graph, LV<V> v) {
-    return Graphs.predecessorListOf(graph, v)
+  protected List<LV<V>> getUpperNeighbors(LV<V> v) {
+    return Graphs.predecessorListOf(svGraph, v)
         .stream()
         .sorted(Comparator.comparingInt(LV::getIndex))
         .collect(Collectors.toList());

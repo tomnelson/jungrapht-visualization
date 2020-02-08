@@ -165,7 +165,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
   protected int maxLevelCross;
   protected boolean expandLayout;
   protected RenderContext<V, E> renderContext;
-  boolean threaded;
+  protected boolean threaded;
   protected boolean useLongestPathLayering;
   protected CompletableFuture theFuture;
   protected Runnable after;
@@ -174,7 +174,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
     this(SugiyamaLayoutAlgorithm.edgeAwareBuilder());
   }
 
-  private SugiyamaLayoutAlgorithm(Builder builder) {
+  protected SugiyamaLayoutAlgorithm(Builder builder) {
     this(
         builder.vertexShapeFunction,
         builder.straightenEdges,

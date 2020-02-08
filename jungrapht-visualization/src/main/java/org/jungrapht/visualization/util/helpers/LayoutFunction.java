@@ -71,7 +71,9 @@ public class LayoutFunction<V>
           Layout.of(
               "Force Atlas2 (BH Optimized)",
               ForceAtlas2LayoutAlgorithm.builder()
-                  .repulsionContractBuilder(BarnesHutFA2Repulsion.builder())),
+                  //                      .gravityK(.0100)
+                  .repulsionContractBuilder(BarnesHutFA2Repulsion.builder())
+                  .attractionByWeights(true)),
           Layout.of("Fruchterman Reingold", FRLayoutAlgorithm.<V>builder()),
           Layout.of(
               "Fruchterman Reingold (BH Optimized)",

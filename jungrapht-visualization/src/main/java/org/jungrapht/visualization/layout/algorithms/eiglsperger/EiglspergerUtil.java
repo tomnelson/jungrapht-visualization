@@ -15,7 +15,7 @@ import org.jungrapht.visualization.layout.algorithms.util.InsertionSortCounter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class EiglspergerUtil {
+public class EiglspergerUtil {
 
   private static final Logger log = LoggerFactory.getLogger(EiglspergerUtil.class);
 
@@ -273,7 +273,7 @@ class EiglspergerUtil {
     return layer;
   }
 
-  static <V> void check(LV<V>[][] layers) {
+  public static <V> void check(LV<V>[][] layers) {
     for (int i = 0; i < layers.length; i++) {
       for (int j = 0; j < layers[i].length; j++) {
         LV<V> v = layers[i][j];

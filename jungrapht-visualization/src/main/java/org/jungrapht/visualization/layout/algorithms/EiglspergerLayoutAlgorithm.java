@@ -152,7 +152,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
   protected int maxLevelCross;
   protected boolean expandLayout;
   protected RenderContext<V, E> renderContext;
-  boolean threaded;
+  protected boolean threaded;
   protected boolean useLongestPathLayering;
   protected CompletableFuture theFuture;
   protected Runnable after;
@@ -161,7 +161,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
     this(EiglspergerLayoutAlgorithm.edgeAwareBuilder());
   }
 
-  private EiglspergerLayoutAlgorithm(Builder builder) {
+  protected EiglspergerLayoutAlgorithm(Builder builder) {
     this(
         builder.vertexShapeFunction,
         builder.straightenEdges,
@@ -173,7 +173,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
         builder.after);
   }
 
-  private EiglspergerLayoutAlgorithm(
+  protected EiglspergerLayoutAlgorithm(
       Function<V, Shape> vertexShapeFunction,
       boolean straightenEdges,
       boolean postStraighten,

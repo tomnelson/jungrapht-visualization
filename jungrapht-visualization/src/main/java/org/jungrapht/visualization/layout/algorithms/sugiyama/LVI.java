@@ -111,7 +111,7 @@ public class LVI<V> extends SVI<V> implements LV<V> {
 
   @Override
   public String toString() {
-    return "SugiyamaVertex{"
+    return "LVI{"
         + "vertex="
         + vertex
         + ", rank="

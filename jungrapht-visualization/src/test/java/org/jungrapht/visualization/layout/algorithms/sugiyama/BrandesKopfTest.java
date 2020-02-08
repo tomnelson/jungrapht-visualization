@@ -88,12 +88,12 @@ public class BrandesKopfTest {
   @Before
   public void setup() {
     createInitialGraph();
-    //        createDelegateGraph();
   }
 
   @Test
   public void makeBrandesKopf() {
     BrandesKopf brandesKopf = new BrandesKopf(graph);
+    svGraph = brandesKopf.svGraph;
     LV<Integer>[][] layers = brandesKopf.layersArray;
     Assert.assertEquals(10, layers.length);
     Assert.assertEquals(2, layers[0].length);
@@ -107,9 +107,9 @@ public class BrandesKopfTest {
     Assert.assertEquals(4, layers[8].length);
     Assert.assertEquals(1, layers[9].length);
 
-    //    brandesKopf.horizontalCoordinateAssignment();
-    HorizontalCoordinateAssignment.horizontalCoordinateAssignment(
-        layers, brandesKopf.svGraph, new HashSet<>(), 20, 20);
+    HorizontalCoordinateAssignment<Integer, Integer> horizontalCoordinateAssignment =
+        new HorizontalCoordinateAssignment<>(layers, svGraph, new HashSet<>(), 20, 20);
+    horizontalCoordinateAssignment.horizontalCoordinateAssignment();
 
     for (int i = 0; i < layers.length; i++) {
       for (int j = 0; j < layers[i].length; j++) {
@@ -117,15 +117,5 @@ public class BrandesKopfTest {
         log.info("{} - {}", v.getClass(), v.getPoint());
       }
     }
-    //    brandesKopf.preprocessing();
-    //
-    //    brandesKopf.verticalAlignmentUpperLeft();
-    //    log.info("look around");
-    //    brandesKopf.horizontalCompaction();
-    //    log.info("look around");
-    //    List<List<SugiyamaVertex<Integer>>> listList = brandesKopf.sortX();
-    //    for (List<SugiyamaVertex<Integer>> list : listList) {
-    //      log.info("{}", list);
-    //    }
   }
 }

@@ -49,7 +49,7 @@ public class SyntheticLV<V> extends LVI<V> implements Synthetic {
 
   @Override
   public String toString() {
-    return "SyntheticSugiyamaVertex{"
+    return "SyntheticLV{"
         + "vertex="
         + hashCode()
         + ", rank="

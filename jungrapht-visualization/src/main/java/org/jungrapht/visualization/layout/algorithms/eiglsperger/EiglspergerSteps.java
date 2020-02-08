@@ -407,11 +407,11 @@ class EiglspergerSteps {
     for (LE<V, E> edge : edges) {
       LV<V> target = edge.getTarget();
       if (target instanceof Container) {
-        //        weight += ((Container<V,Segment<V>>)edge.getTarget()).size();
+        weight += ((Container<V, Segment<V>>) edge.getTarget()).size();
       }
       targetIndices.add(target.getIndex());
     }
-    int[] presorted = targetIndices.stream().mapToInt(i -> i).toArray();
+    //    int[] presorted = targetIndices.stream().mapToInt(i -> i).toArray();
     int cnt = weight * InsertionSortCounter.insertionSortCounter(targetIndices);
     return cnt;
   }
@@ -428,12 +428,12 @@ class EiglspergerSteps {
     for (LE<V, E> edge : edges) {
       LV<V> target = edge.getTarget();
       if (target instanceof Container) {
-        //        weight += ((Container<V,Segment<V>>)edge.getTarget()).size();
+        weight += ((Container<V, Segment<V>>) edge.getTarget()).size();
       }
       targetIndices.add(target.getIndex());
     }
     swap(layer, i, j);
-    int[] presorted = targetIndices.stream().mapToInt(ii -> ii).toArray();
+    //    int[] presorted = targetIndices.stream().mapToInt(ii -> ii).toArray();
     int cnt = weight * InsertionSortCounter.insertionSortCounter(targetIndices);
     return cnt;
   }

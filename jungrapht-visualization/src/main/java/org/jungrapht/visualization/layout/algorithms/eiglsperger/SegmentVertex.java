@@ -38,7 +38,6 @@ abstract class SegmentVertex<V> extends SyntheticLV<V> implements Synthetic {
 
   @Override
   public void setPos(int pos) {
-    log.info("pos for {} changing from {} to {}", segment, this.pos, pos);
     super.setPos(pos);
   }
 
@@ -48,6 +47,8 @@ abstract class SegmentVertex<V> extends SyntheticLV<V> implements Synthetic {
   public boolean equals(Object o) {
     if (o instanceof SegmentVertex) {
       return hash == ((SegmentVertex) o).hash;
+    } else if (o instanceof SyntheticLV) {
+      return hash == ((SyntheticLV) o).hash;
     }
     return false;
   }

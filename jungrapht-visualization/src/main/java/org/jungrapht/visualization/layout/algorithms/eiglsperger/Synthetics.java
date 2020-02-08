@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.ArticulatedEdge;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
@@ -16,7 +17,7 @@ import org.jungrapht.visualization.layout.util.synthetics.Synthetic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class Synthetics<V, E> {
+public class Synthetics<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(Synthetics.class);
 
@@ -217,6 +218,7 @@ class Synthetics<V, E> {
     Set<Point> allInnerPoints = new HashSet<>();
     for (LE<V, E> edge : dag.edgeSet()) {
       if (edge instanceof SyntheticLE) {
+        log.info("candidate {}", edge);
         SyntheticLE<V, E> syntheticEdge = (SyntheticLE<V, E>) edge;
         LV<V> source = dag.getEdgeSource(edge);
         if (source instanceof SyntheticLV) {
@@ -231,6 +233,7 @@ class Synthetics<V, E> {
           LE<V, E> outgoingEdge = dag.outgoingEdgesOf(target).stream().findFirst().get();
           target = dag.getEdgeTarget(outgoingEdge);
         }
+        log.info("");
 
         // look at the x coords of all the points in the innerPoints list
         double avgx = innerPoints.values().stream().mapToDouble(p -> p.x).average().getAsDouble();
@@ -240,7 +243,8 @@ class Synthetics<V, E> {
         boolean overlap = false;
         for (SyntheticLV<V> v : innerPoints.keySet()) {
           Point newPoint = Point.of(avgx, v.getPoint().y);
-          overlap |= allInnerPoints.contains(newPoint);
+          overlap |= overlap(allInnerPoints, newPoint);
+          //                  allInnerPoints.contains(newPoint);
           allInnerPoints.add(newPoint);
           v.setPoint(newPoint);
         }
@@ -252,5 +256,20 @@ class Synthetics<V, E> {
       }
     }
     // check for any duplicate points
+  }
+
+  private boolean overlap(Set<Point> allInnerPoints, Point newPoint) {
+    Set<Point> xMatch =
+        allInnerPoints.stream().filter(p -> p.x == newPoint.x).collect(Collectors.toSet());
+    double yMin = Integer.MAX_VALUE;
+    double yMax = 0;
+    for (Point mp : xMatch) {
+      yMin = Math.min(yMin, mp.y);
+      yMax = Math.max(yMax, mp.y);
+    }
+    if (yMin < newPoint.y && newPoint.y < yMax) {
+      return true;
+    }
+    return false;
   }
 }

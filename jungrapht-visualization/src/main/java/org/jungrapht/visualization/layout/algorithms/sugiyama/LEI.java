@@ -33,7 +33,7 @@ public class LEI<V, E> extends SEI<E> implements LE<V, E> {
 
   @Override
   public String toString() {
-    return "SugiyamaEdge{" + "edge=" + edge + ", source=" + source + ", target=" + target + '}';
+    return "LEI{" + "edge=" + edge + ", source=" + source + ", target=" + target + '}';
   }
 
   @Override

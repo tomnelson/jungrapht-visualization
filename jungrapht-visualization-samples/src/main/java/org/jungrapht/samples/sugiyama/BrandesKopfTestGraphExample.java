@@ -1,20 +1,14 @@
-package org.jungrapht.samples.tree;
+package org.jungrapht.samples.sugiyama;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.util.stream.IntStream;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
+import org.jungrapht.samples.sugiyama.test.algorithms.BrandesKopfLayoutAlgorithm;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
-import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.SugiyamaLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,75 +20,75 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-public class SugiyamaEiglspergerWithWithoutHorizontalCompaction extends JFrame {
+public class BrandesKopfTestGraphExample extends JFrame {
 
-  private static final Logger log =
-      LoggerFactory.getLogger(SugiyamaEiglspergerWithWithoutHorizontalCompaction.class);
+  private static final Logger log = LoggerFactory.getLogger(BrandesKopfTestGraphExample.class);
 
-  public SugiyamaEiglspergerWithWithoutHorizontalCompaction() {
+  public BrandesKopfTestGraphExample() {
 
-    JPanel container = new JPanel(new GridLayout(2, 2));
+    JPanel container = new JPanel(new GridLayout(2, 3));
 
     Graph<Integer, Integer> graph = createInitialGraph();
 
     VisualizationViewer<Integer, Integer> vv1 = configureVisualizationViewer(graph);
-    vv1.addPreRenderPaintable(
-        new TitlePaintable("Sugiyama No Edge Straightening", vv1.getPreferredSize()));
-    vv1.getRenderContext().setEdgeLabelFunction(Object::toString);
+    vv1.addPreRenderPaintable(new TitlePaintable("Upper Left", vv1.getPreferredSize()));
     VisualizationViewer<Integer, Integer> vv2 = configureVisualizationViewer(graph);
-    vv2.addPreRenderPaintable(
-        new TitlePaintable("BrandesKopf Edge Alignment", vv1.getPreferredSize()));
-    vv2.getRenderContext().setEdgeLabelFunction(Object::toString);
+    vv2.addPreRenderPaintable(new TitlePaintable("Upper Right", vv2.getPreferredSize()));
     VisualizationViewer<Integer, Integer> vv3 = configureVisualizationViewer(graph);
-    vv3.addPreRenderPaintable(
-        new TitlePaintable("Eiglsperger No Edge Straightening", vv1.getPreferredSize()));
-    vv3.getRenderContext().setEdgeLabelFunction(Object::toString);
+    vv3.addPreRenderPaintable(new TitlePaintable("Lower Left", vv3.getPreferredSize()));
     VisualizationViewer<Integer, Integer> vv4 = configureVisualizationViewer(graph);
-    vv4.addPreRenderPaintable(
-        new TitlePaintable("Eiglsperger Edge Alignment", vv1.getPreferredSize()));
-    vv4.getRenderContext().setEdgeLabelFunction(Object::toString);
+    vv4.addPreRenderPaintable(new TitlePaintable("Lower Right", vv4.getPreferredSize()));
+    VisualizationViewer<Integer, Integer> vv5 = configureVisualizationViewer(graph);
+    vv5.addPreRenderPaintable(new TitlePaintable("Average Median", vv5.getPreferredSize()));
 
-    SugiyamaLayoutAlgorithm<Integer, Integer> layoutAlgorithm1 =
-        SugiyamaLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
-            .straightenEdges(false)
-            .postStraighten(false)
-            .transpose(true)
+    BrandesKopfLayoutAlgorithm<Integer, Integer> layoutAlgorithm1 =
+        BrandesKopfLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+            .doUpLeft(true)
             .after(vv1::scaleToLayout)
             .build();
     layoutAlgorithm1.setRenderContext(vv1.getRenderContext());
     vv1.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm1);
-    container.add(vv1.getComponent());
 
-    SugiyamaLayoutAlgorithm<Integer, Integer> layoutAlgorithm2 =
-        SugiyamaLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
-            .straightenEdges(true)
-            .postStraighten(true)
-            .transpose(true)
+    BrandesKopfLayoutAlgorithm<Integer, Integer> layoutAlgorithm2 =
+        BrandesKopfLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+            .doUpRight(true)
             .after(vv2::scaleToLayout)
             .build();
     layoutAlgorithm2.setRenderContext(vv2.getRenderContext());
     vv2.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm2);
-    container.add(vv2.getComponent());
 
-    EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm3 =
-        EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
-            .straightenEdges(false)
-            .postStraighten(false)
+    BrandesKopfLayoutAlgorithm<Integer, Integer> layoutAlgorithm3 =
+        BrandesKopfLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+            .doDownLeft(true)
             .after(vv3::scaleToLayout)
             .build();
     layoutAlgorithm3.setRenderContext(vv3.getRenderContext());
     vv3.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm3);
-    container.add(vv3.getComponent());
 
-    EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm4 =
-        EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
-            .straightenEdges(true)
-            //                .postStraighten(true)
-            .after(vv3::scaleToLayout)
+    BrandesKopfLayoutAlgorithm<Integer, Integer> layoutAlgorithm4 =
+        BrandesKopfLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+            .doDownRight(true)
+            .after(vv4::scaleToLayout)
             .build();
     layoutAlgorithm4.setRenderContext(vv4.getRenderContext());
     vv4.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm4);
+
+    BrandesKopfLayoutAlgorithm<Integer, Integer> layoutAlgorithm5 =
+        BrandesKopfLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+            .doUpLeft(true)
+            .doUpRight(true)
+            .doDownLeft(true)
+            .doDownRight(true)
+            .after(vv5::scaleToLayout)
+            .build();
+    layoutAlgorithm5.setRenderContext(vv5.getRenderContext());
+    vv5.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm5);
+
+    container.add(vv1.getComponent());
+    container.add(vv2.getComponent());
+    container.add(vv3.getComponent());
     container.add(vv4.getComponent());
+    container.add(vv5.getComponent());
 
     setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -107,8 +101,8 @@ public class SugiyamaEiglspergerWithWithoutHorizontalCompaction extends JFrame {
       Graph<Integer, Integer> graph) {
     VisualizationViewer<Integer, Integer> vv =
         VisualizationViewer.builder(graph)
-            .layoutSize(new Dimension(600, 600))
-            .viewSize(new Dimension(700, 500))
+            .layoutSize(new Dimension(900, 900))
+            .viewSize(new Dimension(300, 300))
             .build();
 
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
@@ -120,43 +114,6 @@ public class SugiyamaEiglspergerWithWithoutHorizontalCompaction extends JFrame {
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
     return vv;
-  }
-
-  static class TitlePaintable implements VisualizationViewer.Paintable {
-    int x;
-    int y;
-    Font font;
-    FontMetrics metrics;
-    int swidth;
-    int sheight;
-    String str;
-    Dimension overallSize;
-
-    TitlePaintable(String title, Dimension overallSize) {
-      this.str = title;
-      this.overallSize = overallSize;
-    }
-
-    public void paint(Graphics g) {
-      Dimension d = overallSize;
-      if (font == null) {
-        font = new Font(g.getFont().getName(), Font.BOLD, 30);
-        metrics = g.getFontMetrics(font);
-        swidth = metrics.stringWidth(str);
-        sheight = metrics.getMaxAscent() + metrics.getMaxDescent();
-        x = (d.width - swidth) / 2;
-        y = (int) (d.height - sheight * 1.5);
-      }
-      g.setFont(font);
-      Color oldColor = g.getColor();
-      g.setColor(Color.lightGray);
-      g.drawString(str, x, y);
-      g.setColor(oldColor);
-    }
-
-    public boolean useTransform() {
-      return false;
-    }
   }
 
   /**
@@ -229,7 +186,44 @@ public class SugiyamaEiglspergerWithWithoutHorizontalCompaction extends JFrame {
     return graph;
   }
 
+  static class TitlePaintable implements VisualizationViewer.Paintable {
+    int x;
+    int y;
+    Font font;
+    FontMetrics metrics;
+    int swidth;
+    int sheight;
+    String str;
+    Dimension overallSize;
+
+    TitlePaintable(String title, Dimension overallSize) {
+      this.str = title;
+      this.overallSize = overallSize;
+    }
+
+    public void paint(Graphics g) {
+      Dimension d = overallSize;
+      if (font == null) {
+        font = new Font(g.getFont().getName(), Font.BOLD, 30);
+        metrics = g.getFontMetrics(font);
+        swidth = metrics.stringWidth(str);
+        sheight = metrics.getMaxAscent() + metrics.getMaxDescent();
+        x = (d.width - swidth) / 2;
+        y = (int) (d.height - sheight * 1.5);
+      }
+      g.setFont(font);
+      Color oldColor = g.getColor();
+      g.setColor(Color.lightGray);
+      g.drawString(str, x, y);
+      g.setColor(oldColor);
+    }
+
+    public boolean useTransform() {
+      return false;
+    }
+  }
+
   public static void main(String[] args) {
-    new SugiyamaEiglspergerWithWithoutHorizontalCompaction();
+    new BrandesKopfTestGraphExample();
   }
 }

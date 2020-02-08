@@ -1,4 +1,4 @@
-package org.jungrapht.samples.tree;
+package org.jungrapht.samples.sugiyama;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -26,11 +26,11 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-public class SugiyamaAndEiglspergerCopy extends JFrame {
+public class SugiyamaAndEiglsperger extends JFrame {
 
-  private static final Logger log = LoggerFactory.getLogger(SugiyamaAndEiglspergerCopy.class);
+  private static final Logger log = LoggerFactory.getLogger(SugiyamaAndEiglsperger.class);
 
-  public SugiyamaAndEiglspergerCopy() {
+  public SugiyamaAndEiglsperger() {
 
     JPanel container = new JPanel(new GridLayout(2, 1));
 
@@ -48,7 +48,6 @@ public class SugiyamaAndEiglspergerCopy extends JFrame {
             .straightenEdges(true)
             .postStraighten(false)
             .transpose(true)
-            //                .useLongestPathLayering(true)
             .after(vv1::scaleToLayout)
             .build();
     layoutAlgorithm1.setRenderContext(vv1.getRenderContext());
@@ -58,7 +57,6 @@ public class SugiyamaAndEiglspergerCopy extends JFrame {
     EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm4 =
         EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .straightenEdges(true)
-            //                .useLongestPathLayering(true)
             .after(vv2::scaleToLayout)
             .build();
     layoutAlgorithm4.setRenderContext(vv2.getRenderContext());
@@ -227,6 +225,6 @@ public class SugiyamaAndEiglspergerCopy extends JFrame {
   }
 
   public static void main(String[] args) {
-    new SugiyamaAndEiglspergerCopy();
+    new SugiyamaAndEiglsperger();
   }
 }

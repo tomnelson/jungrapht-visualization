@@ -1,4 +1,4 @@
-package org.jungrapht.samples.tree;
+package org.jungrapht.samples.sugiyama;
 
 import java.awt.*;
 import java.util.stream.IntStream;
@@ -6,7 +6,7 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
-import org.jungrapht.samples.tree.test.layout.algorithms.LayeredLayoutAlgorithm;
+import org.jungrapht.samples.sugiyama.test.algorithms.LayeredLayoutAlgorithm;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;

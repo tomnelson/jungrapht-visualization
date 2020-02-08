@@ -78,7 +78,7 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
     private boolean attractionByWeights = false;
     private double weightsDelta = 1.0;
     private boolean dissuadeHubs = false;
-    private int maxIterations = 400;
+    private int maxIterations = 1000;
     private double kg = 5.0;
     private double tolerance = 1.0;
     private Map<V, Double> nodeSizes = null;
@@ -418,7 +418,7 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
       swg.put(vertex, Math.sqrt(dFx * dFx + dFy * dFy));
       trace.put(vertex, Math.sqrt(dFxPlus * dFxPlus + dFyPlus * dFyPlus) / 2.0);
 
-      double deg = layoutModel.getGraph().degreeOf(vertex);
+      //      double deg = layoutModel.getGraph().degreeOf(vertex);
 
       globalSwg += nodeMasses.apply(vertex) * swg.get(vertex);
       globalTra += nodeMasses.apply(vertex) * trace.get(vertex);

@@ -41,13 +41,6 @@ public class SyntheticLE<V, E> extends LEI<V, E> implements Synthetic {
 
   @Override
   public String toString() {
-    return "SyntheticSugiyamaEdge{"
-        + "edge="
-        + edge
-        + ", source="
-        + source
-        + ", target="
-        + target
-        + '}';
+    return "SyntheticLE{" + "edge=" + edge + ", source=" + source + ", target=" + target + '}';
   }
 }
