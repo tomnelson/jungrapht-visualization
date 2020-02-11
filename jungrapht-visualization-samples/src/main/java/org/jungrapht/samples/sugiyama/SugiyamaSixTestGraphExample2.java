@@ -18,11 +18,11 @@ import org.jungrapht.visualization.renderers.Renderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SugiyamaSixTestGraphExample extends JFrame {
+public class SugiyamaSixTestGraphExample2 extends JFrame {
 
-  private static final Logger log = LoggerFactory.getLogger(SugiyamaSixTestGraphExample.class);
+  private static final Logger log = LoggerFactory.getLogger(SugiyamaSixTestGraphExample2.class);
 
-  public SugiyamaSixTestGraphExample() {
+  public SugiyamaSixTestGraphExample2() {
 
     JPanel container = new JPanel(new GridLayout(2, 3));
 
@@ -245,6 +245,6 @@ public class SugiyamaSixTestGraphExample extends JFrame {
   }
 
   public static void main(String[] args) {
-    new SugiyamaSixTestGraphExample();
+    new SugiyamaSixTestGraphExample2();
   }
 }

@@ -108,6 +108,7 @@ public class TestSugiyamaLayoutAlgorithm<V, E> extends SugiyamaLayoutAlgorithm<V
             .straightenEdges(straightenEdges)
             .postStraighten(postStraighten)
             .maxLevelCross(maxLevelCross)
+            .transpose(transpose)
             .useLongestPathLayering(useLongestPathLayering)
             .doUpLeft(doUpLeft)
             .doUpRight(doUpRight)

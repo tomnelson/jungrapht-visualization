@@ -1,6 +1,11 @@
 package org.jungrapht.samples.sugiyama;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
 import java.util.stream.IntStream;
 import javax.swing.*;
 import org.jgrapht.Graph;
@@ -13,13 +18,6 @@ import org.jungrapht.visualization.renderers.Renderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Builds a test graph from the BrandesKopf paper, layers the graph, then manually sets all the
- * synthetic vertices and edges to make a good starting point for the BrandesKopf Horizontal
- * Coordinate Assignment algorithm
- *
- * @author Tom Nelson
- */
 public class EiglspergerThrowaway extends JFrame {
 
   private static final Logger log = LoggerFactory.getLogger(EiglspergerThrowaway.class);

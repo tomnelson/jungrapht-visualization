@@ -14,46 +14,48 @@ import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.SugiyamaLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SugiyamaAndEiglsperger extends JFrame {
+public class EiglspergerLongestPathComparison extends JFrame {
 
-  private static final Logger log = LoggerFactory.getLogger(SugiyamaAndEiglsperger.class);
+  private static final Logger log = LoggerFactory.getLogger(EiglspergerLongestPathComparison.class);
 
-  public SugiyamaAndEiglsperger() {
+  public EiglspergerLongestPathComparison() {
 
-    JPanel container = new JPanel(new GridLayout(2, 1));
+    JPanel container = new JPanel(new GridLayout(0, 2));
 
     Graph<Integer, Integer> graph = createInitialGraph();
 
     VisualizationViewer<Integer, Integer> vv1 = configureVisualizationViewer(graph);
-    vv1.addPreRenderPaintable(new TitlePaintable("Sugiyama ", vv1.getPreferredSize()));
     vv1.getRenderContext().setEdgeLabelFunction(Object::toString);
-    VisualizationViewer<Integer, Integer> vv2 = configureVisualizationViewer(graph);
-    vv2.addPreRenderPaintable(new TitlePaintable("Eiglsperger", vv1.getPreferredSize()));
-    vv2.getRenderContext().setEdgeLabelFunction(Object::toString);
 
-    SugiyamaLayoutAlgorithm<Integer, Integer> layoutAlgorithm1 =
-        SugiyamaLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
-            .straightenEdges(true)
-            .postStraighten(false)
-            .transpose(true)
+    EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm1 =
+        EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+            //                        .straightenEdges(false)
+            .postStraighten(true)
+            .threaded(false)
+            .useLongestPathLayering(false)
             .after(vv1::scaleToLayout)
             .build();
     layoutAlgorithm1.setRenderContext(vv1.getRenderContext());
     vv1.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm1);
     container.add(vv1.getComponent());
 
-    EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm4 =
+    VisualizationViewer<Integer, Integer> vv2 = configureVisualizationViewer(graph);
+    vv2.getRenderContext().setEdgeLabelFunction(Object::toString);
+
+    EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm2 =
         EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
-            .straightenEdges(true)
+            //                        .straightenEdges(false)
+            .postStraighten(true)
+            .threaded(false)
+            .useLongestPathLayering(true)
             .after(vv2::scaleToLayout)
             .build();
-    layoutAlgorithm4.setRenderContext(vv2.getRenderContext());
-    vv2.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm4);
+    layoutAlgorithm2.setRenderContext(vv2.getRenderContext());
+    vv2.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm2);
     container.add(vv2.getComponent());
 
     setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -117,34 +119,6 @@ public class SugiyamaAndEiglsperger extends JFrame {
     public boolean useTransform() {
       return false;
     }
-  }
-
-  Graph<Integer, Integer> createSmallGraph() {
-
-    Graph<Integer, Integer> graph =
-        GraphTypeBuilder.<Integer, Integer>directed()
-            .edgeSupplier(SupplierUtil.createIntegerSupplier())
-            .vertexSupplier(SupplierUtil.createIntegerSupplier())
-            .buildGraph();
-
-    IntStream.rangeClosed(1, 7).forEach(graph::addVertex);
-
-    graph.addEdge(1, 2);
-    graph.addEdge(2, 3);
-    graph.addEdge(3, 4);
-    graph.addEdge(1, 3);
-
-    graph.addEdge(1, 4);
-
-    graph.addEdge(1, 5);
-    graph.addEdge(5, 6);
-    graph.addEdge(6, 4);
-
-    graph.addEdge(2, 5);
-
-    graph.addEdge(6, 7);
-
-    return graph;
   }
 
   /**
@@ -218,6 +192,6 @@ public class SugiyamaAndEiglsperger extends JFrame {
   }
 
   public static void main(String[] args) {
-    new SugiyamaAndEiglsperger();
+    new EiglspergerLongestPathComparison();
   }
 }

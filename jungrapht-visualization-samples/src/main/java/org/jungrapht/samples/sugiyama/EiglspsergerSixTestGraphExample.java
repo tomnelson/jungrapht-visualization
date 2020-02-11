@@ -7,9 +7,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.util.stream.IntStream;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
@@ -20,13 +18,6 @@ import org.jungrapht.visualization.renderers.Renderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Builds a test graph from the BrandesKopf paper, layers the graph, then manually sets all the
- * synthetic vertices and edges to make a good starting point for the BrandesKopf Horizontal
- * Coordinate Assignment algorithm
- *
- * @author Tom Nelson
- */
 public class EiglspsergerSixTestGraphExample extends JFrame {
 
   private static final Logger log = LoggerFactory.getLogger(EiglspsergerSixTestGraphExample.class);

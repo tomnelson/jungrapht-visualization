@@ -554,12 +554,27 @@ public class SugiyamaRunnable<V, E> implements Runnable {
         for (int j = 0; j < rank.length - 1; j++) {
           List<LE<V, E>> biLayerEdges = reducedEdgeMap.getOrDefault(i, Collections.emptyList());
 
-          int vw = crossingCount(biLayerEdges);
+          int vw = AccumulatorTreeUtil.crossingCount(biLayerEdges);
+          if (log.isTraceEnabled()) {
+            // make sure the accumulator tree count matches the insertion sort count
+            int vw2 = crossingCount(biLayerEdges);
+            if (vw != vw2) {
+              log.error("{} != {}", vw, vw2);
+            }
+          }
           if (vw == 0) {
-            continue;
+            break; // perfect!
           }
           // count with j and j+1 swapped
-          int wv = crossingCountSwapped(j, j + 1, rank, biLayerEdges);
+          swap(rank, j, j + 1);
+          int wv = AccumulatorTreeUtil.crossingCount(biLayerEdges);
+          if (log.isTraceEnabled()) {
+            int wv2 = crossingCount(biLayerEdges);
+            if (wv != wv2) {
+              log.error("{} != {}", wv, wv2);
+            }
+          }
+          swap(rank, j, j + 1);
           if (vw > wv) {
             improved = true;
             swap(rank, j, j + 1);
@@ -587,15 +602,30 @@ public class SugiyamaRunnable<V, E> implements Runnable {
         for (int j = 0; j < rank.length - 1; j++) {
           List<LE<V, E>> biLayerEdges = reducedEdgeMap.getOrDefault(i, Collections.emptyList());
 
-          int vw = crossingCount(biLayerEdges);
+          int vw = AccumulatorTreeUtil.crossingCount(biLayerEdges);
+          if (log.isTraceEnabled()) {
+            // make sure the accumulator tree count matches the insertion sort count
+            int vw2 = crossingCount(biLayerEdges);
+            if (vw != vw2) {
+              log.error("{} != {}", vw, vw2);
+            }
+          }
           if (vw == 0) {
-            continue;
+            break; // no crossings. done with these two ranks!
           }
           // count with j and j+1 swapped
-          int wv = crossingCountSwapped(j, j + 1, rank, biLayerEdges);
+          swap(rank, j, j + 1); // swap for comparison
+          int wv = AccumulatorTreeUtil.crossingCount(biLayerEdges);
+          if (log.isTraceEnabled()) {
+            int wv2 = crossingCount(biLayerEdges);
+            if (wv != wv2) {
+              log.error("{} != {}", wv, wv2);
+            }
+          }
+          swap(rank, j, j + 1); // swap back
           if (vw > wv) {
             improved = true;
-            swap(rank, j, j + 1);
+            swap(rank, j, j + 1); // sawp to improved order
           }
         }
       }

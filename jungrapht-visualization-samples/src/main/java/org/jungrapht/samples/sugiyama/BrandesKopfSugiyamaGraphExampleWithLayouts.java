@@ -15,13 +15,6 @@ import org.jungrapht.visualization.util.helpers.TreeLayoutSelector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Builds a test graph from the BrandesKopf paper, layers the graph, then manually sets all the
- * synthetic vertices and edges to make a good starting point for the BrandesKopf Horizontal
- * Coordinate Assignment algorithm
- *
- * @author Tom Nelson
- */
 public class BrandesKopfSugiyamaGraphExampleWithLayouts extends JFrame {
 
   private static final Logger log =

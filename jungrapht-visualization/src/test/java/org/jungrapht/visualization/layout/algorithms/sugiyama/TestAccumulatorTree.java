@@ -5,11 +5,20 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import org.jungrapht.visualization.layout.algorithms.util.InsertionSortCounter;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Creates the bilayer drawing (Figure 1) on the Barth Mutzel Junger paper:
+ *
+ * <p>"Simple and Efficient Bilayer Cross Counting"
+ *
+ * <p>Counts the edge crossings with the Accumulator Tree and with insertion sort and compares
+ * results
+ */
 public class TestAccumulatorTree {
 
   private static Logger log = LoggerFactory.getLogger(TestAccumulatorTree.class);
@@ -61,33 +70,57 @@ public class TestAccumulatorTree {
   }
 
   @Test
-  public void testZeroBased() {
+  public void testCount() {
 
     int[] targetIndices = new int[edges.size()];
     for (int i = 0; i < targetIndices.length; i++) {
       LE<String, String> edge = edges.get(i);
       targetIndices[i] = edge.getTarget().getIndex();
     }
-    int count = tree.crossCount(targetIndices, targetIndices.length);
+    int count = tree.crossCount(targetIndices);
     log.info("count is :{}", count);
 
     int countIS = InsertionSortCounter.insertionSortCounter(targetIndices);
     log.info("countIS is :{}", countIS);
+
+    Assert.assertEquals(countIS, count);
   }
 
   @Test
-  public void testSwapping() {
-    //    for (int j = 0; j <= layerN.length - 2; j++) {
-    //      int vw = crossingCount(edges);//reducedEdgeMap.getOrDefault(i, Collections.emptyList()));
-    //      // swap v and w and count again
-    //      swap(layerN, j, j+1);
-    //      int wv = crossingCount(edges);//reducedEdgeMap.getOrDefault(i, Collections.emptyList()));
-    //      if (vw <= wv) {
-    //        // put them back
-    //        swap(layerN, j, j + 1);
-    //      }
-    //    }
-    //    log.info("layerN: {}", layerN);
+  public void testWeighted() {
 
+    // testing with weight == 1. Should match insertion sort
+    int[] targetIndices = new int[edges.size()];
+    for (int i = 0; i < targetIndices.length; i++) {
+      LE<String, String> edge = edges.get(i);
+      targetIndices[i] = edge.getTarget().getIndex();
+    }
+
+    int countWeight = tree.crossWeight(targetIndices, targetIndices.length, i -> 1);
+    log.info("countWeight is :{}", countWeight);
+
+    int countIS = InsertionSortCounter.insertionSortCounter(targetIndices);
+    log.info("countIS is :{}", countIS);
+
+    Assert.assertEquals(countIS, countWeight);
+  }
+
+  @Test
+  public void testWeighted2() {
+
+    // testing with weight == 2. Should match insertion sort
+    int[] targetIndices = new int[edges.size()];
+    for (int i = 0; i < targetIndices.length; i++) {
+      LE<String, String> edge = edges.get(i);
+      targetIndices[i] = edge.getTarget().getIndex();
+    }
+
+    int countWeight = tree.crossWeight(targetIndices, targetIndices.length, i -> 2);
+    log.info("countWeight is :{}", countWeight);
+
+    Assert.assertEquals(48, countWeight);
+
+    int countIS = InsertionSortCounter.insertionSortCounter(targetIndices);
+    log.info("countIS is :{}", countIS);
   }
 }

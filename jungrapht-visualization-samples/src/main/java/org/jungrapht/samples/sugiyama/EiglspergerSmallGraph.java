@@ -1,64 +1,44 @@
 package org.jungrapht.samples.sugiyama;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.GridLayout;
-import javax.swing.*;
+import java.util.stream.IntStream;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 import org.jgrapht.Graph;
-import org.jungrapht.samples.util.TestGraphs;
+import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
-import org.jungrapht.visualization.layout.algorithms.SugiyamaLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SugiyamaWithWithoutStraighteningGraphExample extends JFrame {
+public class EiglspergerSmallGraph extends JFrame {
 
-  private static final Logger log =
-      LoggerFactory.getLogger(SugiyamaWithWithoutStraighteningGraphExample.class);
+  private static final Logger log = LoggerFactory.getLogger(EiglspergerSmallGraph.class);
 
-  public SugiyamaWithWithoutStraighteningGraphExample() {
+  public EiglspergerSmallGraph() {
 
-    JPanel container = new JPanel(new GridLayout(2, 2));
+    JPanel container = new JPanel(new BorderLayout());
 
-    Graph<String, Integer> graph = TestGraphs.createDirectedAcyclicGraph(9, 3, .3); //, 123);
+    Graph<Integer, Integer> graph = createInitialGraph();
 
-    VisualizationViewer<String, Integer> vv1 = configureVisualizationViewer(graph);
-    vv1.addPreRenderPaintable(new TitlePaintable("No Edge Straightening", vv1.getPreferredSize()));
-    VisualizationViewer<String, Integer> vv2 = configureVisualizationViewer(graph);
-    vv2.addPreRenderPaintable(
-        new TitlePaintable("BrandesKopf Edge Alignment", vv1.getPreferredSize()));
-    VisualizationViewer<String, Integer> vv3 = configureVisualizationViewer(graph);
-    vv3.addPreRenderPaintable(
-        new TitlePaintable("Brandes Kopf plus post-processing", vv1.getPreferredSize()));
+    VisualizationViewer<Integer, Integer> vv3 = configureVisualizationViewer(graph);
+    vv3.getRenderContext().setEdgeLabelFunction(Object::toString);
 
-    SugiyamaLayoutAlgorithm<String, Integer> layoutAlgorithm1 =
-        SugiyamaLayoutAlgorithm.<String, Integer>edgeAwareBuilder()
-            .straightenEdges(false)
-            .postStraighten(false)
-            .after(vv1::scaleToLayout)
-            .build();
-    layoutAlgorithm1.setRenderContext(vv1.getRenderContext());
-    vv1.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm1);
-    container.add(vv1.getComponent());
-
-    SugiyamaLayoutAlgorithm<String, Integer> layoutAlgorithm2 =
-        SugiyamaLayoutAlgorithm.<String, Integer>edgeAwareBuilder()
-            .straightenEdges(true)
-            .postStraighten(false)
-            .after(vv2::scaleToLayout)
-            .build();
-    layoutAlgorithm2.setRenderContext(vv2.getRenderContext());
-    vv2.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm2);
-    container.add(vv2.getComponent());
-
-    SugiyamaLayoutAlgorithm<String, Integer> layoutAlgorithm3 =
-        SugiyamaLayoutAlgorithm.<String, Integer>edgeAwareBuilder()
-            .straightenEdges(true)
+    EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm3 =
+        EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+            //                        .straightenEdges(false)
+            .postStraighten(true)
+            .threaded(false)
+            .useLongestPathLayering(false)
             .after(vv3::scaleToLayout)
             .build();
     layoutAlgorithm3.setRenderContext(vv3.getRenderContext());
@@ -72,9 +52,9 @@ public class SugiyamaWithWithoutStraighteningGraphExample extends JFrame {
     setVisible(true);
   }
 
-  private VisualizationViewer<String, Integer> configureVisualizationViewer(
-      Graph<String, Integer> graph) {
-    VisualizationViewer<String, Integer> vv =
+  private VisualizationViewer<Integer, Integer> configureVisualizationViewer(
+      Graph<Integer, Integer> graph) {
+    VisualizationViewer<Integer, Integer> vv =
         VisualizationViewer.builder(graph)
             .layoutSize(new Dimension(600, 600))
             .viewSize(new Dimension(700, 500))
@@ -128,7 +108,33 @@ public class SugiyamaWithWithoutStraighteningGraphExample extends JFrame {
     }
   }
 
+  /**
+   * creates a graph to look like the one in the paper
+   *
+   * @return
+   */
+  Graph<Integer, Integer> createInitialGraph() {
+
+    Graph<Integer, Integer> graph =
+        GraphTypeBuilder.<Integer, Integer>directed()
+            .edgeSupplier(SupplierUtil.createIntegerSupplier())
+            .vertexSupplier(SupplierUtil.createIntegerSupplier())
+            .buildGraph();
+
+    IntStream.rangeClosed(0, 4).forEach(graph::addVertex);
+    graph.addEdge(0, 1);
+    graph.addEdge(1, 2);
+    graph.addEdge(2, 3);
+    graph.addEdge(3, 4);
+    graph.addEdge(0, 4);
+    graph.addEdge(2, 4);
+    graph.addEdge(1, 3);
+    graph.addEdge(1, 4);
+
+    return graph;
+  }
+
   public static void main(String[] args) {
-    new SugiyamaWithWithoutStraighteningGraphExample();
+    new EiglspergerSmallGraph();
   }
 }
