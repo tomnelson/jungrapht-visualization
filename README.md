@@ -2,6 +2,9 @@
 
 [![Build Status](https://travis-ci.org/tomnelson/jungrapht-visualization.svg?branch=master)](https://travis-ci.org/tomnelson/jungrapht-visualization)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.tomnelson/jungrapht-visualization/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.tomnelson/jungrapht-visualization)
+[![Snapshot](https://img.shields.io/nexus/s/https/oss.sonatype.org/com.github.tomnelson/jungrapht-visualization.svg)](https://oss.sonatype.org/content/repositories/snapshots/com/github/tomnelson/jungrapht-visualization/)
+[![License](https://img.shields.io/badge/license-BSD3%202.1-blue.svg)](http://www.opensource.org/licenses/BSD-3-Clause)
+[![Language](http://img.shields.io/badge/language-java-brightgreen.svg)](https://www.java.com/)
 
 
 [**JUNGRAPHT-VISUALIZATION Website**](http://tomnelson.github.io/jungrapht-visualization/)
@@ -12,7 +15,7 @@ JUNGRAPHT-VISUALIZATION can be used to render any of the following:
 * com.google.common.graph.Graph
 
 JUNGRAPHT-VISUALIZATION includes performance enhancements for visualization of large networks, including R*Tree for visualization, Barnes-Hut Quad Tree for force-directed layouts, and a lightweight rendering layer that can swap in while graphs are being animated or when they are zoomed out to a point where details are very small.
-In the ShowLayoutsWithJGraptIO demonstration program, the lightweight rendering layer allows fast enough rendering that the performance impact of the Barnes Hut Quad Tree for the force directed layout becomes obvious.
+In the **ShowLayoutsWithJGraptIO** demonstration program, the lightweight rendering layer allows fast enough rendering that the performance impact of the Barnes Hut Quad Tree for the force directed layout becomes obvious.
 
 Many rendering features may be set via java properties (see [sample.jungrapht.properties](https://github.com/tomnelson/jungrapht-visualization/blob/master/jungrapht-visualization/src/main/resources/sample.jungrapht.properties) for keys and default values). 
 

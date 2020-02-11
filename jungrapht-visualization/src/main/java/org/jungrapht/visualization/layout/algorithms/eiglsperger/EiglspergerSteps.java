@@ -352,6 +352,9 @@ public class EiglspergerSteps<V, E> {
         continue;
       }
       int vw = crossingCount(biLayerEdges);
+      if (vw == 0) {
+        break;
+      }
       // count with j and j+1 swapped
       swap(downstreamLayer, j, j + 1);
       int wv = crossingCount(biLayerEdges);
@@ -360,6 +363,9 @@ public class EiglspergerSteps<V, E> {
       if (vw > wv) {
         swap(downstreamLayer, j, j + 1);
         crossCount += wv;
+        if (wv == 0) {
+          break;
+        }
       } else {
         crossCount += vw;
       }
@@ -379,7 +385,7 @@ public class EiglspergerSteps<V, E> {
                     svGraph.getEdgeSource(e).getRank() == currentRank
                         && svGraph.getEdgeTarget(e).getRank() == downstreamRank)
             .collect(Collectors.toList());
-    List<LE<V, E>> swapped = swapEdgeEndpoints(biLayerEdges);
+    List<LE<V, E>> swappedEndpointEdges = swapEdgeEndpoints(biLayerEdges);
     for (int j = 0; j < downstreamLayer.size() - 1; j++) {
       LV<V> vj = downstreamLayer.get(j);
       LV<V> vnext = downstreamLayer.get(j + 1);
@@ -387,15 +393,21 @@ public class EiglspergerSteps<V, E> {
         continue;
       }
 
-      int vw = crossingCount(swapped);
+      int vw = crossingCount(swappedEndpointEdges);
+      if (vw == 0) {
+        break;
+      }
       // count with j and j+1 swapped
       swap(downstreamLayer, j, j + 1);
-      int wv = crossingCount(biLayerEdges);
+      int wv = crossingCount(swappedEndpointEdges);
       swap(downstreamLayer, j, j + 1);
 
       if (vw > wv) {
         swap(downstreamLayer, j, j + 1);
         crossCount += wv;
+        if (wv == 0) {
+          break;
+        }
       } else {
         crossCount += vw;
       }
