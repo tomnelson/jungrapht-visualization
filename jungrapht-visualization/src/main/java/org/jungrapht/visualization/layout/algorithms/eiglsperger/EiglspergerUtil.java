@@ -5,8 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import org.jgrapht.Graph;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -167,54 +165,6 @@ public class EiglspergerUtil {
     return i + 1;
   }
 
-  /**
-   * used in stepTwo to assign position values for
-   *
-   * @param biLayer an alternating layer // * @param pos
-   * @param <V>
-   */
-  static <V, E> void assignPositions(BiLayer<V, E> biLayer) {
-    List<LV<V>> currentLayer = biLayer.currentLayer;
-    LV<V> previousVertex = null;
-    Container<V, Segment<V>> previousContainer = null;
-    for (int i = 0; i < currentLayer.size(); i++) {
-      LV<V> v = currentLayer.get(i);
-
-      if (i % 2 == 0) {
-        // this is a container
-        Container<V, Segment<V>> container = (Container<V, Segment<V>>) v;
-        if (container.size() > 0) {
-          if (previousContainer == null) {
-            // first container non empty
-            container.setPos(0);
-          } else {
-            // there has to be a previousVertex
-            int pos = previousVertex.getPos() + 1;
-            container.setPos(pos);
-          }
-        }
-        previousContainer = container;
-      } else {
-        // this is a vertex
-        if (previousVertex == null) {
-          // first vertex (position 1)
-          int pos = previousContainer.size();
-          v.setPos(pos);
-        } else {
-          int pos = previousVertex.getPos() + previousContainer.size() + 1;
-          v.setPos(pos);
-        }
-        previousVertex = v;
-      }
-    }
-
-    if (log.isTraceEnabled()) {
-      log.trace(
-          "S2 currentLayer with pos values:\n{}",
-          EiglspergerSteps.elementStringer(biLayer, currentLayer));
-    }
-  }
-
   static <V> List<LV<V>> fixIndices(List<LV<V>> layer) {
     IntStream.range(0, layer.size()).forEach(i -> layer.get(i).setIndex(i));
     return layer;
@@ -233,62 +183,6 @@ public class EiglspergerUtil {
           log.error("{} needs fix", v);
         }
       }
-    }
-  }
-
-  static <V, E> void assignMeasures(BiLayer<V, E> biLayer, Graph<LV<V>, LE<V, E>> graph) {
-
-    List<LV<V>> currentLayer = biLayer.currentLayer;
-    List<LV<V>> downstreamLayer = biLayer.downstreamLayer;
-
-    downstreamLayer
-        .stream()
-        .filter(v -> v instanceof Container)
-        .map(v -> (Container<V, Segment<V>>) v)
-        .filter(c -> c.size() > 0)
-        .forEach(
-            c -> {
-              double measure = c.getPos();
-              c.setMeasure(measure);
-            });
-
-    for (int i = 0; i < downstreamLayer.size(); i++) {
-      LV<V> v = downstreamLayer.get(i);
-      if (biLayer.splitVertexPredicate.test(v)) { // QVertex for top to bottom
-        continue;
-      }
-      if (v instanceof Container) {
-        Container<V, Segment<V>> container = (Container<V, Segment<V>>) v;
-        double measure = container.getPos();
-        container.setMeasure(measure);
-      } else {
-        // not a container (nor QVertex for top to bottom)
-        // measure will be related to the median of the pos of predecessor vert
-        List<LV<V>> neighbors = biLayer.neighborFunction.apply(graph, v);
-        int[] poses = new int[neighbors.size()];
-        IntStream.range(0, poses.length).forEach(idx -> poses[idx] = neighbors.get(idx).getPos());
-        //        neighbors.sort(Comparator.comparingInt(LV::getIndex));
-        //        int[] neighborIndices = biLayer.neighborIndexFunction.apply(graph, v);
-        Arrays.sort(poses);
-        if (poses.length > 0) {
-          double measure = medianValue(poses);
-          //poses[(poses.length - 1) / 2];
-          v.setMeasure(measure);
-        } else {
-          // leave the measure as as the current pos
-          if (v.getPos() < 0) {
-            log.error("no pos for {}", v);
-          }
-          double measure = v.getPos();
-          v.setMeasure(measure);
-        }
-      }
-    }
-
-    if (log.isTraceEnabled()) {
-      log.trace(
-          "S2 downstreamLayer with measure values:\n{}",
-          EiglspergerSteps.elementStringer(biLayer, downstreamLayer));
     }
   }
 

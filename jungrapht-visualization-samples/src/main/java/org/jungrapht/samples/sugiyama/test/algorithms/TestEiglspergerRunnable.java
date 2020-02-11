@@ -250,11 +250,11 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
       int forwardCrossCount = 0;
       int reverseCrossCount = 0;
       if (i % 2 == 0) {
-        int count = sweepForward(svGraph, layersArray, edgesKeyedOnSource);
+        int count = sweepForward(layersArray);
         forwardCrossCount = count;
         EiglspergerUtil.check(layersArray);
       } else {
-        int count = sweepBackwards(svGraph, layersArray, edgesKeyedOnTarget);
+        int count = sweepBackwards(layersArray);
         reverseCrossCount = count;
         EiglspergerUtil.check(layersArray);
       }

@@ -26,11 +26,13 @@ public class EiglspergerTests {
   Graph<String, Integer> graph;
   Graph<LV<String>, LE<String, Integer>> svGraph;
   LV<String>[][] layersArray;
+  EiglspergerRunnable<String, Integer> runnable;
 
   @Before
   public void setup() {
     buildGraph();
     createLayers();
+    runnable = EiglspergerRunnable.<String, Integer>builder().build();
   }
 
   @Test
@@ -67,21 +69,26 @@ public class EiglspergerTests {
                 edgesKeyedOnTarget.put(targetRank, list);
               }
             });
-
+    //    EiglspergerRunnable<String, Integer> runnable =
+    //            EiglspergerRunnable.<String, Integer>builder().build();
     //    Map<LV<String>, Integer> pos = new HashMap<>();
     //    Map<LV<String>, Integer> measure = new HashMap<>();
+    //    EiglspergerStepsForward<String, Integer> stepsForward =
+    //            new EiglspergerStepsForward<>(svGraph, layersArray);
+    //    EiglspergerStepsBackward<String, Integer> stepsBackward =
+    //            new EiglspergerStepsBackward<>(svGraph, layersArray);
 
-    EiglspergerRunnable.sweepForward(svGraph, layersArray, edgesKeyedOnSource);
+    runnable.sweepForward(layersArray);
 
-    EiglspergerRunnable.sweepBackwards(svGraph, layersArray, edgesKeyedOnTarget);
+    runnable.sweepBackwards(layersArray);
 
-    EiglspergerRunnable.sweepForward(svGraph, layersArray, edgesKeyedOnSource);
+    runnable.sweepForward(layersArray);
 
-    EiglspergerRunnable.sweepBackwards(svGraph, layersArray, edgesKeyedOnTarget);
+    runnable.sweepBackwards(layersArray);
 
-    EiglspergerRunnable.sweepForward(svGraph, layersArray, edgesKeyedOnSource);
+    runnable.sweepForward(layersArray);
 
-    EiglspergerRunnable.sweepBackwards(svGraph, layersArray, edgesKeyedOnTarget);
+    runnable.sweepBackwards(layersArray);
   }
 
   @Test
@@ -105,7 +112,7 @@ public class EiglspergerTests {
 
     //    Map<LV<String>, Integer> pos = new HashMap<>();
     //    Map<LV<String>, Integer> measure = new HashMap<>();
-    EiglspergerRunnable.sweepForward(svGraph, layersArray, edgesKeyedOnSource);
+    runnable.sweepForward(layersArray);
   }
 
   @Test
@@ -128,7 +135,7 @@ public class EiglspergerTests {
 
     //    Map<LV<String>, Integer> pos = new HashMap<>();
     //    Map<LV<String>, Integer> measure = new HashMap<>();
-    EiglspergerRunnable.sweepBackwards(svGraph, layersArray, edgesKeyedOnTarget);
+    runnable.sweepBackwards(layersArray);
   }
 
   @Test
@@ -149,7 +156,13 @@ public class EiglspergerTests {
             PVertex.class::isInstance,
             QVertex.class::isInstance,
             Graphs::predecessorListOf);
-    EiglspergerSteps.stepOne(biLayer);
+
+    EiglspergerStepsForward<String, Integer> stepsForward =
+        new EiglspergerStepsForward<>(svGraph, layersArray);
+    //    EiglspergerStepsBackward<String, Integer> stepsBackward =
+    //            new EiglspergerStepsBackward<>(svGraph, layersArray);
+
+    stepsForward.stepOne(list);
     log.info("biLayer");
   }
 
