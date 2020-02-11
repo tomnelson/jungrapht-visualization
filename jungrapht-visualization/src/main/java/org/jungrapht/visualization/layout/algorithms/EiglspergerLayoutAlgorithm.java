@@ -74,6 +74,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
         Boolean.parseBoolean(System.getProperty(MINCROSS_STRAIGHTEN_EDGES, "true"));
     protected boolean postStraighten =
         Boolean.parseBoolean(System.getProperty(MINCROSS_POST_STRAIGHTEN, "true"));
+    protected boolean transpose = true;
     protected int maxLevelCross = Integer.getInteger(MAX_LEVEL_CROSS, 23);
     protected boolean expandLayout = true;
     boolean useLongestPathLayering =
@@ -99,6 +100,11 @@ public class EiglspergerLayoutAlgorithm<V, E>
 
     public B postStraighten(boolean postStraighten) {
       this.postStraighten = postStraighten;
+      return self();
+    }
+
+    public B transpose(boolean transpose) {
+      this.transpose = transpose;
       return self();
     }
 
@@ -149,6 +155,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
   protected Function<V, Shape> vertexShapeFunction;
   protected boolean straightenEdges;
   protected boolean postStraighten;
+  protected boolean transpose;
   protected int maxLevelCross;
   protected boolean expandLayout;
   protected RenderContext<V, E> renderContext;
@@ -166,6 +173,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
         builder.vertexShapeFunction,
         builder.straightenEdges,
         builder.postStraighten,
+        builder.transpose,
         builder.maxLevelCross,
         builder.expandLayout,
         builder.useLongestPathLayering,
@@ -177,6 +185,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
       Function<V, Shape> vertexShapeFunction,
       boolean straightenEdges,
       boolean postStraighten,
+      boolean transpose,
       int maxLevelCross,
       boolean expandLayout,
       boolean useLongestPathLayering,
@@ -185,6 +194,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
     this.vertexShapeFunction = vertexShapeFunction;
     this.straightenEdges = straightenEdges;
     this.postStraighten = postStraighten;
+    this.transpose = transpose;
     this.maxLevelCross = maxLevelCross;
     this.expandLayout = expandLayout;
     this.useLongestPathLayering = useLongestPathLayering;
@@ -210,6 +220,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
             .layoutModel(layoutModel)
             .renderContext(renderContext)
             .straightenEdges(straightenEdges)
+            .transpose(transpose)
             .postStraighten(postStraighten)
             .maxLevelCross(maxLevelCross)
             .useLongestPathLayering(useLongestPathLayering)

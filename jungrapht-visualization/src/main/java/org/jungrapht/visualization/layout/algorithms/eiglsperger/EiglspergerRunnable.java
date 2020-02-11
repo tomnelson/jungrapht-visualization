@@ -65,6 +65,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     protected RenderContext<V, E> renderContext;
     protected boolean straightenEdges;
     protected boolean postStraighten;
+    protected boolean transpose;
     protected int maxLevelCross;
     boolean useLongestPathLayering;
 
@@ -90,6 +91,11 @@ public class EiglspergerRunnable<V, E> implements Runnable {
 
     public B postStraighten(boolean postStraighten) {
       this.postStraighten = postStraighten;
+      return self();
+    }
+
+    public B transpose(boolean transpose) {
+      this.transpose = transpose;
       return self();
     }
 
@@ -129,6 +135,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
   protected Comparator<E> edgeComparator;
   protected boolean straightenEdges;
   protected boolean postStraighten;
+  protected boolean transpose;
   protected int maxLevelCross;
   protected boolean useLongestPathLayering;
 
@@ -138,6 +145,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
         builder.renderContext,
         builder.straightenEdges,
         builder.postStraighten,
+        builder.transpose,
         builder.maxLevelCross,
         builder.useLongestPathLayering);
   }
@@ -147,12 +155,14 @@ public class EiglspergerRunnable<V, E> implements Runnable {
       RenderContext<V, E> renderContext,
       boolean straightenEdges,
       boolean postStraighten,
+      boolean transpose,
       int maxLevelCross,
       boolean useLongestPathLayering) {
     this.layoutModel = layoutModel;
     this.renderContext = renderContext;
     this.straightenEdges = straightenEdges;
     this.postStraighten = postStraighten;
+    this.transpose = transpose;
     this.maxLevelCross = maxLevelCross;
     this.useLongestPathLayering = useLongestPathLayering;
   }
@@ -501,8 +511,9 @@ public class EiglspergerRunnable<V, E> implements Runnable {
         log.trace("stepFourOut:{}", downstreamLayer);
       }
 
-      crossCount += stepsForward.stepFive(true, currentLayer, downstreamLayer, i, i + 1);
-
+      if (transpose) {
+        crossCount += stepsForward.stepFive(true, currentLayer, downstreamLayer, i, i + 1);
+      }
       stepsForward.stepSix(downstreamLayer);
       if (log.isTraceEnabled()) {
         log.trace("stepSixOut:{}", downstreamLayer);
@@ -559,8 +570,9 @@ public class EiglspergerRunnable<V, E> implements Runnable {
         log.trace("stepFourOut:{}", downstreamLayer);
       }
 
-      crossCount += stepsBackward.stepFive(false, currentLayer, downstreamLayer, i, i - 1);
-
+      if (transpose) {
+        crossCount += stepsBackward.stepFive(false, currentLayer, downstreamLayer, i, i - 1);
+      }
       stepsBackward.stepSix(downstreamLayer);
       if (log.isTraceEnabled()) {
         log.trace("stepSixOut:{}", downstreamLayer);
