@@ -343,7 +343,10 @@ class EiglspergerSteps {
       }
       int vw = crossingCount(biLayerEdges);
       // count with j and j+1 swapped
-      int wv = crossingCountSwapped(j, j + 1, biLayer.downstreamLayer, biLayerEdges);
+      swap(biLayer.downstreamLayer, j, j + 1);
+      int wv = crossingCount(biLayerEdges);
+      swap(biLayer.downstreamLayer, j, j + 1);
+
       if (vw > wv) {
         swap(biLayer.downstreamLayer, j, j + 1);
         crossCount += wv;
@@ -378,7 +381,10 @@ class EiglspergerSteps {
 
       int vw = crossingCount(swapped);
       // count with j and j+1 swapped
-      int wv = crossingCountSwapped(j, j + 1, biLayer.downstreamLayer, swapped);
+      swap(biLayer.downstreamLayer, j, j + 1);
+      int wv = crossingCount(biLayerEdges);
+      swap(biLayer.downstreamLayer, j, j + 1);
+
       if (vw > wv) {
         swap(biLayer.downstreamLayer, j, j + 1);
         crossCount += wv;
@@ -409,27 +415,6 @@ class EiglspergerSteps {
       }
       targetIndices.add(target.getIndex());
     }
-    int cnt = weight * InsertionSortCounter.insertionSortCounter(targetIndices);
-    return cnt;
-  }
-
-  private static <V, E> int crossingCountSwapped(
-      int i, int j, List<LV<V>> layer, List<LE<V, E>> edges) {
-
-    Comparator<LE<V, E>> biLevelEdgeComparator = Comparators.biLevelEdgeComparator();
-
-    swap(layer, i, j);
-    edges.sort(biLevelEdgeComparator);
-    List<Integer> targetIndices = new ArrayList<>();
-    int weight = 1;
-    for (LE<V, E> edge : edges) {
-      LV<V> target = edge.getTarget();
-      if (target instanceof Container) {
-        weight += ((Container<V, Segment<V>>) edge.getTarget()).size();
-      }
-      targetIndices.add(target.getIndex());
-    }
-    swap(layer, i, j);
     int cnt = weight * InsertionSortCounter.insertionSortCounter(targetIndices);
     return cnt;
   }
