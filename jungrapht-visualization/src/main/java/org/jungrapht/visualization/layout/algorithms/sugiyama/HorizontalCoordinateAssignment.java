@@ -60,7 +60,9 @@ public class HorizontalCoordinateAssignment<V, E> {
 
   public void horizontalCoordinateAssignment() {
     preprocessing();
-    log.info("marked segments:{}", markedSegments);
+    if (log.isTraceEnabled()) {
+      log.info("marked segments:{}", markedSegments);
+    }
     VerticalAlignment.LeftmostUpper<V, E> upLeft =
         new VerticalAlignment.LeftmostUpper<>(layers, svGraph, markedSegments);
     upLeft.align();

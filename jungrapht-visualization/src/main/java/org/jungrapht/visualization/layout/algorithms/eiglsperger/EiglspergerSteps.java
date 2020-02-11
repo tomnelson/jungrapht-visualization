@@ -8,10 +8,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.jgrapht.Graph;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.AccumulatorTreeUtil;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Comparators;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
@@ -292,15 +294,6 @@ public class EiglspergerSteps<V, E> {
             containerPair.first.printTree("\n"),
             containerPair.second.printTree("\n"));
 
-        //        if (containerPair.first.size() > 0) {
-        //          virtualEdges.add(VirtualEdge.of(container, containerPair.first));
-        //        }
-        //        if (containerPair.second.size() > 0) {
-        //          virtualEdges.add(VirtualEdge.of(container, containerPair.second));
-        //        }
-        //
-        //        virtualEdges.add(VirtualEdge.of(container, q));
-        //        virtualEdges.removeIf(e -> e.getSource() == container && e.getTarget() == container);
         downstreamLayer.remove(q);
         if (log.isTraceEnabled()) {
           log.trace("removed container {}", container.printTree("\n"));
@@ -325,15 +318,20 @@ public class EiglspergerSteps<V, E> {
   }
 
   public int stepFive(
-      boolean forwards, List<LV<V>> downstreamLayer, int currentRank, int downstreamRank) {
+      boolean forwards,
+      List<LV<V>> currentLayer,
+      List<LV<V>> downstreamLayer,
+      int currentRank,
+      int downstreamRank) {
     if (forwards) {
-      return transposeDownwards(downstreamLayer, currentRank, downstreamRank);
+      return transposeDownwards(currentLayer, downstreamLayer, currentRank, downstreamRank);
     } else {
-      return transposeUpwards(downstreamLayer, currentRank, downstreamRank);
+      return transposeUpwards(currentLayer, downstreamLayer, currentRank, downstreamRank);
     }
   }
 
-  private int transposeDownwards(List<LV<V>> downstreamLayer, int currentRank, int downstreamRank) {
+  private int transposeDownwards(
+      List<LV<V>> currentLayer, List<LV<V>> downstreamLayer, int currentRank, int downstreamRank) {
     int crossCount = 0;
 
     List<LE<V, E>> biLayerEdges =
@@ -346,18 +344,54 @@ public class EiglspergerSteps<V, E> {
                         && svGraph.getEdgeTarget(e).getRank() == downstreamRank)
             .collect(Collectors.toList());
     for (int j = 0; j < downstreamLayer.size() - 1; j++) {
-      LV<V> vj = downstreamLayer.get(j);
-      LV<V> vnext = downstreamLayer.get(j + 1);
-      if (vj instanceof Container || vnext instanceof Container) {
-        continue;
+      Function<Integer, Integer> f =
+          i -> {
+            LE<V, E> edge = biLayerEdges.get(i);
+            LV<V> target = edge.getTarget();
+            if (target instanceof Container) {
+              return ((Container<V, Segment<V>>) target).size();
+            }
+            return 1;
+          };
+
+      for (LV<V> v : currentLayer) {
+        if (v instanceof Container) {
+          Container<V, Segment<V>> container = (Container<V, Segment<V>>) v;
+          if (container.size() > 0) {
+            biLayerEdges.add(VirtualEdge.of(container, container));
+          }
+        } else if (v instanceof QVertex) {
+          QVertex<V> qv = (QVertex<V>) v;
+          SyntheticLV<V> qvSource = SyntheticLV.of();
+          qvSource.setIndex(qv.getIndex());
+          qvSource.setPos(qv.getPos());
+          biLayerEdges.add(VirtualEdge.of(qvSource, qv));
+        }
       }
-      int vw = crossingCount(biLayerEdges);
+
+      if (log.isTraceEnabled()) {
+        int vw2 = crossingCount(biLayerEdges);
+        int vw3 = AccumulatorTreeUtil.crossingCount(biLayerEdges);
+        log.trace("IS count:{}, AC count:{}", vw2, vw3);
+      }
+      int vw = AccumulatorTreeUtil.crossingWeight(biLayerEdges, f);
+      if (log.isTraceEnabled()) {
+        log.trace("CW count:{}", vw);
+      }
       if (vw == 0) {
         break;
       }
       // count with j and j+1 swapped
       swap(downstreamLayer, j, j + 1);
-      int wv = crossingCount(biLayerEdges);
+      if (log.isTraceEnabled()) {
+        int wv2 = crossingCount(biLayerEdges);
+        int wv3 = AccumulatorTreeUtil.crossingCount(biLayerEdges);
+        log.trace("IS count:{}, AC count:{}", wv2, wv3);
+      }
+      int wv = AccumulatorTreeUtil.crossingWeight(biLayerEdges, f);
+      if (log.isTraceEnabled()) {
+        log.trace("CW count:{}", wv);
+      }
       swap(downstreamLayer, j, j + 1);
 
       if (vw > wv) {
@@ -373,7 +407,8 @@ public class EiglspergerSteps<V, E> {
     return crossCount;
   }
 
-  private int transposeUpwards(List<LV<V>> downstreamLayer, int currentRank, int downstreamRank) {
+  private int transposeUpwards(
+      List<LV<V>> currentLayer, List<LV<V>> downstreamLayer, int currentRank, int downstreamRank) {
 
     int crossCount = 0;
     List<LE<V, E>> biLayerEdges =
@@ -385,21 +420,59 @@ public class EiglspergerSteps<V, E> {
                     svGraph.getEdgeSource(e).getRank() == currentRank
                         && svGraph.getEdgeTarget(e).getRank() == downstreamRank)
             .collect(Collectors.toList());
+    // if there are containers that are in both layers, add a virtual edge connecting them
+    for (LV<V> v : currentLayer) {
+      if (v instanceof Container) {
+        Container<V, Segment<V>> container = (Container<V, Segment<V>>) v;
+        if (container.size() > 0) {
+          biLayerEdges.add(VirtualEdge.of(container, container));
+        }
+      } else if (v instanceof PVertex) {
+        PVertex<V> pv = (PVertex<V>) v;
+        SyntheticLV<V> pvSource = SyntheticLV.of();
+        pvSource.setIndex(pv.getIndex());
+        pvSource.setPos(pv.getPos());
+        biLayerEdges.add(VirtualEdge.of(pvSource, pv));
+      }
+    }
     List<LE<V, E>> swappedEndpointEdges = swapEdgeEndpoints(biLayerEdges);
     for (int j = 0; j < downstreamLayer.size() - 1; j++) {
-      LV<V> vj = downstreamLayer.get(j);
-      LV<V> vnext = downstreamLayer.get(j + 1);
-      if (vj instanceof Container || vnext instanceof Container) {
-        continue;
-      }
+      Function<Integer, Integer> f =
+          i -> {
+            LE<V, E> edge = biLayerEdges.get(i);
+            LV<V> target = edge.getTarget();
+            if (target instanceof Container) {
+              return ((Container<V, Segment<V>>) target).size();
+            }
+            return 1;
+          };
 
-      int vw = crossingCount(swappedEndpointEdges);
+      if (log.isTraceEnabled()) {
+        int vw2 = crossingCount(biLayerEdges);
+        int vw3 = AccumulatorTreeUtil.crossingCount(biLayerEdges);
+        log.trace("IS count:{}, AC count:{}", vw2, vw3);
+      }
+      int vw = AccumulatorTreeUtil.crossingWeight(biLayerEdges, f);
+      if (log.isTraceEnabled()) {
+        log.trace("CW count:{}", vw);
+      }
       if (vw == 0) {
         break;
       }
       // count with j and j+1 swapped
       swap(downstreamLayer, j, j + 1);
-      int wv = crossingCount(swappedEndpointEdges);
+      if (log.isTraceEnabled()) {
+        int wv2 = crossingCount(biLayerEdges);
+        int wv3 = AccumulatorTreeUtil.crossingCount(biLayerEdges);
+        log.trace("IS count:{}, AC count:{}", wv2, wv3);
+      }
+      int wv = AccumulatorTreeUtil.crossingWeight(biLayerEdges, f);
+      if (log.isTraceEnabled()) {
+        log.trace("CW count:{}", wv);
+      }
+      if (log.isTraceEnabled()) {
+        log.trace("CW count:{}", wv);
+      }
       swap(downstreamLayer, j, j + 1);
 
       if (vw > wv) {
@@ -421,22 +494,13 @@ public class EiglspergerSteps<V, E> {
         .collect(Collectors.toList());
   }
 
-  private static <V, E> int crossingCount(List<LE<V, E>> edges) {
-
-    Comparator<LE<V, E>> biLevelEdgeComparator = Comparators.biLevelEdgeComparator();
-
-    edges.sort(biLevelEdgeComparator);
+  private int crossingCount(List<LE<V, E>> edges) {
+    edges.sort(Comparators.biLevelEdgeComparator());
     List<Integer> targetIndices = new ArrayList<>();
-    int weight = 1;
     for (LE<V, E> edge : edges) {
-      LV<V> target = edge.getTarget();
-      if (target instanceof Container) {
-        weight += ((Container<V, Segment<V>>) edge.getTarget()).size();
-      }
-      targetIndices.add(target.getIndex());
+      targetIndices.add(edge.getTarget().getIndex());
     }
-    int cnt = weight * InsertionSortCounter.insertionSortCounter(targetIndices);
-    return cnt;
+    return InsertionSortCounter.insertionSortCounter(targetIndices);
   }
 
   private static <V> void swap(LV<V>[] array, int i, int j) {

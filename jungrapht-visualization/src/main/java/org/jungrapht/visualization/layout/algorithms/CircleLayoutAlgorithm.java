@@ -167,7 +167,7 @@ public class CircleLayoutAlgorithm<V> implements LayoutAlgorithm<V>, AfterRunnab
             CompletableFuture.runAsync(reduceCrossingRunnable)
                 .thenRun(
                     () -> {
-                      log.info("ReduceEdgeCrossing done");
+                      log.trace("ReduceEdgeCrossing done");
                       layoutVertices(layoutModel);
                       this.run(); // run the after function
                       layoutModel.getViewChangeSupport().fireViewChanged();

@@ -96,7 +96,7 @@ public class TestAccumulatorTree {
       targetIndices[i] = edge.getTarget().getIndex();
     }
 
-    int countWeight = tree.crossWeight(targetIndices, targetIndices.length, i -> 1);
+    int countWeight = tree.crossWeight(targetIndices, i -> 1);
     log.info("countWeight is :{}", countWeight);
 
     int countIS = InsertionSortCounter.insertionSortCounter(targetIndices);
@@ -115,7 +115,7 @@ public class TestAccumulatorTree {
       targetIndices[i] = edge.getTarget().getIndex();
     }
 
-    int countWeight = tree.crossWeight(targetIndices, targetIndices.length, i -> 2);
+    int countWeight = tree.crossWeight(targetIndices, i -> 2);
     log.info("countWeight is :{}", countWeight);
 
     Assert.assertEquals(48, countWeight);

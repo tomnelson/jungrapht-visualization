@@ -53,7 +53,9 @@ public class SelectiveSugiyamaHorizontalCoordinateAssignment<V, E>
 
   public void horizontalCoordinateAssignment() {
     preprocessing();
-    log.info("inner segments: {}", markedSegments);
+    if (log.isTraceEnabled()) {
+      log.trace("inner segments: {}", markedSegments);
+    }
     HorizontalCompaction<V> upLeftCompaction = null;
     HorizontalCompaction<V> upRightCompaction = null;
     HorizontalCompaction<V> downLeftCompaction = null;

@@ -561,6 +561,10 @@ public class SugiyamaRunnable<V, E> implements Runnable {
             if (vw != vw2) {
               log.error("{} != {}", vw, vw2);
             }
+            int vw3 = AccumulatorTreeUtil.crossingWeight(biLayerEdges, idx -> 1);
+            if (vw != vw3) {
+              log.error("{} != {}", vw, vw3);
+            }
           }
           if (vw == 0) {
             break; // perfect!
@@ -572,6 +576,10 @@ public class SugiyamaRunnable<V, E> implements Runnable {
             int wv2 = crossingCount(biLayerEdges);
             if (wv != wv2) {
               log.error("{} != {}", wv, wv2);
+            }
+            int wv3 = AccumulatorTreeUtil.crossingWeight(biLayerEdges, idx -> 1);
+            if (wv != wv3) {
+              log.error("{} != {}", wv, wv3);
             }
           }
           swap(rank, j, j + 1);
@@ -609,6 +617,10 @@ public class SugiyamaRunnable<V, E> implements Runnable {
             if (vw != vw2) {
               log.error("{} != {}", vw, vw2);
             }
+            int vw3 = AccumulatorTreeUtil.crossingWeight(biLayerEdges, idx -> 1);
+            if (vw != vw3) {
+              log.error("{} != {}", vw, vw3);
+            }
           }
           if (vw == 0) {
             break; // no crossings. done with these two ranks!
@@ -620,6 +632,10 @@ public class SugiyamaRunnable<V, E> implements Runnable {
             int wv2 = crossingCount(biLayerEdges);
             if (wv != wv2) {
               log.error("{} != {}", wv, wv2);
+            }
+            int wv3 = AccumulatorTreeUtil.crossingWeight(biLayerEdges, idx -> 1);
+            if (wv != wv3) {
+              log.error("{} != {}", wv, wv3);
             }
           }
           swap(rank, j, j + 1); // swap back

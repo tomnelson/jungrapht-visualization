@@ -63,25 +63,6 @@ public class AccumulatorTree<V, E> {
     return tree[0] - sum;
   }
 
-  //  public int crossingCount(List<LE<V, E>> edges) {
-  //    Comparator<LE<V, E>> biLevelEdgeComparator = Comparators.biLevelEdgeComparator();
-  //    edges.sort(biLevelEdgeComparator);
-  //    List<Integer> targetIndices = new ArrayList<>();
-  //    int weight = 1;
-  //    for (LE<V, E> edge : edges) {
-  //      targetIndices.add(edge.getTarget().getIndex());
-  //    }
-  //    int[] southSequence = new int[targetIndices.size()];
-  //    targetIndices.forEach(i -> southSequence[i] = i);
-  //    return crossCount(southSequence, southSequence.length);
-  //    //    return weight * InsertionSortCounter.insertionSortCounter(targetIndices);
-  //  }
-
-  public static int crossCount(int size, int[] sequence) {
-    AccumulatorTree tree = new AccumulatorTree(size);
-    return tree.crossCount(sequence);
-  }
-
   public int crossCount(int[] southSequence) {
     int r = southSequence.length;
     int crossCount = 0;
@@ -94,28 +75,32 @@ public class AccumulatorTree<V, E> {
         }
         index = (index - 1) / 2;
         tree[index]++;
+        if (log.isTraceEnabled()) {
+          log.info("incremented {} in  tree:{}", index, this.toString());
+        }
       }
     }
-    Arrays.stream(tree).forEach(i -> tree[i] = 0);
+    //    Arrays.stream(tree).forEach(i -> tree[i] = 0);
     return crossCount;
   }
 
   public static int crossWeight(
-      int size, int[] sequence, int last, Function<Integer, Integer> weightFunction) {
+      int size, int[] sequence, Function<Integer, Integer> weightFunction) {
     AccumulatorTree tree = new AccumulatorTree(size);
-    return tree.crossWeight(sequence, last, weightFunction);
+    return tree.crossWeight(sequence, weightFunction);
   }
 
   /**
    * @param southSequence
-   * @param r
    * @param weight
    * @return
    */
-  public int crossWeight(int[] southSequence, int r, Function<Integer, Integer> weight) {
+  public int crossWeight(int[] southSequence, Function<Integer, Integer> weight) {
+    int r = southSequence.length;
     int crossWeight = 0;
     for (int k = 0; k < r; k++) {
       int index = southSequence[k] + firstIndex;
+      int inc = weight.apply(k);
       tree[index] += weight.apply(k);
       int weightSum = 0;
       while (index > 0) {
@@ -125,7 +110,7 @@ public class AccumulatorTree<V, E> {
         index = (index - 1) / 2;
         tree[index] += weight.apply(k);
       }
-      crossWeight += weight.apply(k) * weightSum;
+      crossWeight += (weight.apply(k) * weightSum);
     }
     return crossWeight;
   }

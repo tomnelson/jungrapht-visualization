@@ -501,7 +501,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
         log.trace("stepFourOut:{}", downstreamLayer);
       }
 
-      crossCount += stepsForward.stepFive(true, downstreamLayer, i, i + 1);
+      crossCount += stepsForward.stepFive(true, currentLayer, downstreamLayer, i, i + 1);
 
       stepsForward.stepSix(downstreamLayer);
       if (log.isTraceEnabled()) {
@@ -559,7 +559,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
         log.trace("stepFourOut:{}", downstreamLayer);
       }
 
-      crossCount += stepsBackward.stepFive(false, downstreamLayer, i, i - 1);
+      crossCount += stepsBackward.stepFive(false, currentLayer, downstreamLayer, i, i - 1);
 
       stepsBackward.stepSix(downstreamLayer);
       if (log.isTraceEnabled()) {
