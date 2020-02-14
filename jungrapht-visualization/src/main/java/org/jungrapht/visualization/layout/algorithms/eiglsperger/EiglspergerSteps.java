@@ -55,11 +55,16 @@ public class EiglspergerSteps<V, E> {
   /** when sweeping top to bottom, this is a QVertex, bottom to top this is a PVertex */
   protected Predicate<LV<V>> splitVertexPredicate;
 
+  protected Function<List<LE<V, E>>, List<LE<V, E>>> edgeEndpointSwapOrNot;
+
   /**
    * When sweeping top to bottom, this function returns predecessors When sweeping bottom to top,
    * this function returns sucessors
    */
   protected BiFunction<Graph<LV<V>, LE<V, E>>, LV<V>, List<LV<V>>> neighborFunction;
+
+  protected Function<LE<V, E>, LV<V>> edgeSourceFunction;
+  protected Function<LE<V, E>, LV<V>> edgeTargetFunction;
 
   /**
    * @param svGraph the delegate graph
@@ -73,12 +78,18 @@ public class EiglspergerSteps<V, E> {
       LV<V>[][] layersArray,
       Predicate<LV<V>> joinVertexPredicate,
       Predicate<LV<V>> splitVertexPredicate,
-      BiFunction<Graph<LV<V>, LE<V, E>>, LV<V>, List<LV<V>>> neighborFunction) {
+      Function<LE<V, E>, LV<V>> edgeSourceFunction,
+      Function<LE<V, E>, LV<V>> edgeTargetFunction,
+      BiFunction<Graph<LV<V>, LE<V, E>>, LV<V>, List<LV<V>>> neighborFunction,
+      Function<List<LE<V, E>>, List<LE<V, E>>> edgeEndpointSwapOrNot) {
     this.svGraph = svGraph;
     this.layersArray = layersArray;
     this.joinVertexPredicate = joinVertexPredicate;
     this.splitVertexPredicate = splitVertexPredicate;
+    this.edgeSourceFunction = edgeSourceFunction;
+    this.edgeTargetFunction = edgeTargetFunction;
     this.neighborFunction = neighborFunction;
+    this.edgeEndpointSwapOrNot = edgeEndpointSwapOrNot;
   }
 
   /**
@@ -414,7 +425,6 @@ public class EiglspergerSteps<V, E> {
    * The weight of the other edges is one. So a crossing between two edges e 1 and e 2 counts as
    * weight(e 1 )·weight(e 2 ) crossings.
    *
-   * @param forwards true if we are sweeping in the forward (top to bottom) direction
    * @param currentLayer the Li layer
    * @param downstreamLayer the Li+1 (or Li-1 for backwards) layer
    * @param currentRank the value of i for Li
@@ -422,47 +432,74 @@ public class EiglspergerSteps<V, E> {
    * @return count of edge crossing weight
    */
   public int stepFive(
-      boolean forwards,
-      List<LV<V>> currentLayer,
-      List<LV<V>> downstreamLayer,
-      int currentRank,
-      int downstreamRank) {
-    if (forwards) {
-      return transposeDownwards(currentLayer, downstreamLayer, currentRank, downstreamRank);
-    } else {
-      return transposeUpwards(currentLayer, downstreamLayer, currentRank, downstreamRank);
-    }
+      List<LV<V>> currentLayer, List<LV<V>> downstreamLayer, int currentRank, int downstreamRank) {
+    return transpose(currentLayer, downstreamLayer, currentRank, downstreamRank);
   }
 
-  private int transposeDownwards(
+  private int transpose(
       List<LV<V>> currentLayer, List<LV<V>> downstreamLayer, int currentRank, int downstreamRank) {
-    int crossCount = 0;
 
+    // gather all the graph edges between the currentRank and the downstreamRank
     List<LE<V, E>> biLayerEdges =
         svGraph
             .edgeSet()
             .stream()
             .filter(
                 e ->
-                    svGraph.getEdgeSource(e).getRank() == currentRank
-                        && svGraph.getEdgeTarget(e).getRank() == downstreamRank)
+                    edgeSourceFunction.apply(e).getRank() == currentRank
+                        && edgeTargetFunction.apply(e).getRank() == downstreamRank)
             .collect(Collectors.toList());
 
+    // create virtual edges between non-empty containers in both ranks
+    // if the downstreamLayer has a QVertex/PVertex, create a virtual edge between a new synthetic vertex
+    // in currentLayer and the QVertex/PVertex in the downstreamLayer
     for (LV<V> v : downstreamLayer) {
-      log.info("V is {}", v);
+
       if (v instanceof Container) {
         Container<V> container = (Container<V>) v;
         if (container.size() > 0) {
           biLayerEdges.add(VirtualEdge.of(container, container));
         }
-      } else if (v instanceof QVertex) {
-        QVertex<V> qv = (QVertex<V>) v;
+      } else if (splitVertexPredicate.test(v)) {
+        // downwards, this is a QVertex, upwards its a PVertex
+        SegmentVertex<V> qv = (SegmentVertex<V>) v;
         SyntheticLV<V> qvSource = SyntheticLV.of();
         qvSource.setIndex(qv.getIndex());
         qvSource.setPos(qv.getPos());
         biLayerEdges.add(VirtualEdge.of(qvSource, qv));
       }
     }
+
+    // remove any empty containers from the currentLayer and reset the index metadata
+    // for the currentLayer vertices
+    for (int i = 0; i < currentLayer.size(); i++) {
+      LV<V> v = currentLayer.get(i);
+      if (isEmptyContainer(v)) {
+        currentLayer.remove(i);
+      }
+    }
+    IntStream.range(0, currentLayer.size()).forEach(i -> currentLayer.get(i).setIndex(i));
+
+    // remove any empty containers from the downstreamLayer and reset the index metadata
+    // for the currentLayer vertices
+    for (int i = 0; i < downstreamLayer.size(); i++) {
+      LV<V> v = downstreamLayer.get(i);
+      if (isEmptyContainer(v)) {
+        downstreamLayer.remove(i);
+      }
+    }
+    IntStream.range(0, downstreamLayer.size()).forEach(i -> downstreamLayer.get(i).setIndex(i));
+
+    // downwards, the function is a no-op, upwards the biLayerEdges endpoints are swapped
+    log.trace("for ranks {} and {} ....", currentRank, downstreamRank);
+    return processRanks(downstreamLayer, edgeEndpointSwapOrNot.apply(biLayerEdges));
+  }
+
+  private int processRanks(List<LV<V>> downstreamLayer, List<LE<V, E>> biLayerEdges) {
+    int crossCount = Integer.MAX_VALUE;
+    // define a function that will get the edge weight from its target vertex
+    // in the downstream layer. If the target is a container, it's weight is
+    // the size of the container
     Function<Integer, Integer> f =
         i -> {
           LE<V, E> edge = biLayerEdges.get(i);
@@ -472,65 +509,61 @@ public class EiglspergerSteps<V, E> {
           }
           return 1;
         };
-
-    for (int i = 0; i < currentLayer.size(); i++) {
-      LV<V> v = currentLayer.get(i);
-      if (isEmptyContainer(v)) {
-        currentLayer.remove(i);
-      }
+    if (downstreamLayer.size() < 2) {
+      crossCount = 0;
     }
-    for (int i = 0; i < downstreamLayer.size(); i++) {
-      LV<V> v = downstreamLayer.get(i);
-      if (isEmptyContainer(v)) {
-        downstreamLayer.remove(i);
-      }
-    }
-    IntStream.range(0, currentLayer.size()).forEach(i -> currentLayer.get(i).setIndex(i));
-    IntStream.range(0, downstreamLayer.size()).forEach(i -> downstreamLayer.get(i).setIndex(i));
-
     for (int j = 0; j < downstreamLayer.size() - 1; j++) {
-      LV<V> v1 = downstreamLayer.get(j);
-      LV<V> v2 = downstreamLayer.get(j + 1);
-      if (v1 instanceof Container || v2 instanceof Container) {
+
+      // if either of the adjacent vertices is a container, skip them
+      if (downstreamLayer.get(j) instanceof Container
+          || downstreamLayer.get(j + 1) instanceof Container) {
         continue;
       }
       if (log.isTraceEnabled()) {
+        // runs the crossingCount (no weights) with the insertionSort method and the AccumulatorTree method
+        // these values should match and should both be <= to the crossingWeight
         int vw2 = crossingCount(biLayerEdges);
         int vw3 = AccumulatorTreeUtil.crossingCount(biLayerEdges);
         log.trace("IS count:{}, AC count:{}", vw2, vw3);
       }
       int vw = AccumulatorTreeUtil.crossingWeight(biLayerEdges, f);
+      crossCount = Math.min(vw, crossCount);
       if (log.isTraceEnabled()) {
-        log.trace("CW count:{}", vw);
+        log.trace("crossingWeight:{}", vw);
       }
       if (vw == 0) {
+        // can't do better than zero
         break;
       }
       // count with j and j+1 swapped
+      // first swap them
       swap(downstreamLayer, j, j + 1);
       if (log.isTraceEnabled()) {
+        // runs the crossingCount (no weights) with the insertionSort method and the AccumulatorTree method
+        // these values should match and should both be <= to the crossingWeight
         int wv2 = crossingCount(biLayerEdges);
         int wv3 = AccumulatorTreeUtil.crossingCount(biLayerEdges);
         log.trace("IS count:{}, AC count:{}", wv2, wv3);
       }
       int wv = AccumulatorTreeUtil.crossingWeight(biLayerEdges, f);
+      crossCount = Math.min(wv, crossCount);
       if (log.isTraceEnabled()) {
-        log.trace("CW count:{}", wv);
+        log.trace("swapped crossingWeight:{}", wv);
       }
+      // put them back unswapped
       swap(downstreamLayer, j, j + 1);
 
       if (vw > wv) {
-        LV<V> vvw = downstreamLayer.get(j);
-        LV<V> vwv = downstreamLayer.get(j + 1);
+        // if the swapped weight is lower, swap them and save off the better
         swap(downstreamLayer, j, j + 1);
-        crossCount += wv;
         if (wv == 0) {
           break;
         }
-      } else {
-        crossCount += vw;
+        //      } else {
+        //        crossCount = Math.min(crossCount, vw);
       }
     }
+    log.trace("crossCount  {}", crossCount);
     return crossCount;
   }
 
@@ -538,107 +571,7 @@ public class EiglspergerSteps<V, E> {
     return v instanceof Container && ((Container<V>) v).size() == 0;
   }
 
-  private int transposeUpwards(
-      List<LV<V>> currentLayer, List<LV<V>> downstreamLayer, int currentRank, int downstreamRank) {
-
-    int crossCount = 0;
-    List<LE<V, E>> biLayerEdges =
-        svGraph
-            .edgeSet()
-            .stream()
-            .filter(
-                e ->
-                    svGraph.getEdgeTarget(e).getRank() == currentRank
-                        && svGraph.getEdgeSource(e).getRank() == downstreamRank)
-            .collect(Collectors.toList());
-    // if there are containers that are in both layers, add a virtual edge connecting them
-    for (LV<V> v : downstreamLayer) {
-      if (v instanceof Container) {
-        Container<V> container = (Container<V>) v;
-        if (container.size() > 0) {
-          biLayerEdges.add(VirtualEdge.of(container, container));
-        }
-      } else if (v instanceof PVertex) {
-        PVertex<V> pv = (PVertex<V>) v;
-        SyntheticLV<V> pvSource = SyntheticLV.of();
-        pvSource.setIndex(pv.getIndex());
-        pvSource.setPos(pv.getPos());
-        biLayerEdges.add(VirtualEdge.of(pvSource, pv));
-      }
-    }
-    for (int i = 0; i < currentLayer.size(); i++) {
-      LV<V> v = currentLayer.get(i);
-      if (isEmptyContainer(v)) {
-        currentLayer.remove(i);
-      }
-    }
-    for (int i = 0; i < downstreamLayer.size(); i++) {
-      LV<V> v = downstreamLayer.get(i);
-      if (isEmptyContainer(v)) {
-        downstreamLayer.remove(i);
-      }
-    }
-    IntStream.range(0, currentLayer.size()).forEach(i -> currentLayer.get(i).setIndex(i));
-    IntStream.range(0, downstreamLayer.size()).forEach(i -> downstreamLayer.get(i).setIndex(i));
-
-    List<LE<V, E>> swappedEndpointEdges = swapEdgeEndpoints(biLayerEdges);
-    Function<Integer, Integer> f =
-        i -> {
-          LE<V, E> edge = swappedEndpointEdges.get(i);
-          LV<V> target = edge.getTarget();
-          if (target instanceof Container) {
-            return ((Container<V>) target).size();
-          }
-          return 1;
-        };
-    for (int j = 0; j < downstreamLayer.size() - 1; j++) {
-      LV<V> v1 = downstreamLayer.get(j);
-      LV<V> v2 = downstreamLayer.get(j + 1);
-      if (v1 instanceof Container || v2 instanceof Container) {
-        continue;
-      }
-      if (log.isTraceEnabled()) {
-        int vw2 = crossingCount(swappedEndpointEdges);
-        int vw3 = AccumulatorTreeUtil.crossingCount(swappedEndpointEdges);
-        log.trace("IS count:{}, AC count:{}", vw2, vw3);
-      }
-      int vw = AccumulatorTreeUtil.crossingWeight(swappedEndpointEdges, f);
-      if (log.isTraceEnabled()) {
-        log.trace("CW count:{}", vw);
-      }
-      if (vw == 0) {
-        break;
-      }
-      // count with j and j+1 swapped
-      swap(downstreamLayer, j, j + 1);
-      //      if (log.isTraceEnabled()) {
-      int wv2 = crossingCount(swappedEndpointEdges);
-      int wv3 = AccumulatorTreeUtil.crossingCount(swappedEndpointEdges);
-      log.trace("IS count:{}, AC count:{}", wv2, wv3);
-      //      }
-      int wv = AccumulatorTreeUtil.crossingWeight(swappedEndpointEdges, f);
-      if (log.isTraceEnabled()) {
-        log.trace("CW count:{}", wv);
-      }
-      if (log.isTraceEnabled()) {
-        log.trace("CW count:{}", wv);
-      }
-      swap(downstreamLayer, j, j + 1);
-
-      if (vw > wv) {
-        swap(downstreamLayer, j, j + 1);
-        crossCount += wv;
-        if (wv == 0) {
-          break;
-        }
-      } else {
-        crossCount += vw;
-      }
-    }
-    return crossCount;
-  }
-
-  private static <V, E> List<LE<V, E>> swapEdgeEndpoints(List<LE<V, E>> list) {
+  protected static <V, E> List<LE<V, E>> swapEdgeEndpoints(List<LE<V, E>> list) {
     return list.stream()
         .map(e -> LE.of(e.getEdge(), e.getTarget(), e.getSource()))
         .collect(Collectors.toList());

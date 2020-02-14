@@ -23,6 +23,9 @@ class EiglspergerStepsForward<V, E> extends EiglspergerSteps<V, E> {
         layersArray,
         PVertex.class::isInstance,
         QVertex.class::isInstance,
-        Graphs::predecessorListOf);
+        svGraph::getEdgeSource,
+        svGraph::getEdgeTarget,
+        Graphs::predecessorListOf,
+        e -> e);
   }
 }

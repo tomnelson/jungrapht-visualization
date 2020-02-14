@@ -87,8 +87,9 @@ public class AccumulatorTree<V, E> {
     int crossWeight = 0;
     for (int k = 0; k < r; k++) {
       int index = southSequence[k] + firstIndex;
-      int inc = weight.apply(k);
-      log.info("got a weight value of {}", inc);
+      if (log.isTraceEnabled()) {
+        log.trace("got a weight value of {}", weight.apply(k));
+      }
       tree[index] += weight.apply(k);
       int weightSum = 0;
       while (index > 0) {

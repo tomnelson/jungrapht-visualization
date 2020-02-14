@@ -241,24 +241,27 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     if (edgeCount > 200) {
       maxLevelCross = 1;
     }
+    maxLevelCross = 23;
+    int bestForwardCrossCount = Integer.MAX_VALUE;
+    int bestBackwardCrossCount = Integer.MAX_VALUE;
+
     for (int i = 0; i < maxLevelCross; i++) {
       int forwardCrossCount = 0;
       int reverseCrossCount = 0;
-      if (i % 2 == 0) {
-        int count = sweepForward(layersArray);
-        forwardCrossCount = count;
-        EiglspergerUtil.check(layersArray);
-      } else {
-        int count = sweepBackwards(layersArray);
-        reverseCrossCount = count;
-        EiglspergerUtil.check(layersArray);
-      }
-      int twoWayCrossCount = forwardCrossCount + reverseCrossCount;
-      if (twoWayCrossCount < bestCrossCount) {
-        bestCrossCount = twoWayCrossCount;
-      } else {
-        log.trace("the bext cross count was {}", bestCrossCount);
-        break;
+      //      if (i % 2 == 0) {
+      forwardCrossCount = sweepForward(layersArray);
+      bestForwardCrossCount = Math.min(bestForwardCrossCount, forwardCrossCount);
+      EiglspergerUtil.check(layersArray);
+      //      } else {
+      reverseCrossCount = sweepBackwards(layersArray);
+      bestBackwardCrossCount = Math.min(bestBackwardCrossCount, reverseCrossCount);
+      EiglspergerUtil.check(layersArray);
+      //      }
+      int totalCrossCount = bestForwardCrossCount + bestBackwardCrossCount;
+      if (totalCrossCount < bestCrossCount) {
+        bestCrossCount = totalCrossCount;
+        //      } else {
+        //        break;
       }
     }
 
@@ -470,7 +473,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
   public int sweepForward(LV<V>[][] layersArray) {
 
     if (log.isTraceEnabled())
-      log.info(">>>>>>>>>>>>>>>>>>>>>>>>> Forward!>>>>>>>>>>>>>>>>>>>>>>>>>");
+      log.trace(">>>>>>>>>>>>>>>>>>>>>>>>> Forward!>>>>>>>>>>>>>>>>>>>>>>>>>");
     int crossCount = 0;
 
     List<LV<V>> layerEye = null;
@@ -509,7 +512,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
       }
 
       if (transpose) {
-        crossCount += stepsForward.stepFive(true, currentLayer, downstreamLayer, i, i + 1);
+        crossCount += stepsForward.stepFive(currentLayer, downstreamLayer, i, i + 1);
       }
       stepsForward.stepSix(downstreamLayer);
       if (log.isTraceEnabled()) {
@@ -522,12 +525,13 @@ public class EiglspergerRunnable<V, E> implements Runnable {
       EiglspergerUtil.fixIndices(layersArray[i + 1]);
       layerEye = downstreamLayer;
     }
+    log.trace("sweepForward crossCount:{}", crossCount);
     return crossCount;
   }
 
   public int sweepBackwards(LV<V>[][] layersArray) {
     if (log.isTraceEnabled())
-      log.info("<<<<<<<<<<<<<<<<<<<<<<<<<< Backward! <<<<<<<<<<<<<<<<<<<<<<<<<<");
+      log.trace("<<<<<<<<<<<<<<<<<<<<<<<<<< Backward! <<<<<<<<<<<<<<<<<<<<<<<<<<");
 
     int crossCount = 0;
     if (log.isTraceEnabled()) log.trace("sweepBackwards");
@@ -567,7 +571,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
       }
 
       if (transpose) {
-        crossCount += stepsBackward.stepFive(false, currentLayer, downstreamLayer, i, i - 1);
+        crossCount += stepsBackward.stepFive(currentLayer, downstreamLayer, i, i - 1);
       }
       stepsBackward.stepSix(downstreamLayer);
       if (log.isTraceEnabled()) {
@@ -580,6 +584,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
       EiglspergerUtil.fixIndices(layersArray[i - 1]);
       layerEye = downstreamLayer;
     }
+    log.trace("sweepBackward crossCount:{}", crossCount);
     return crossCount;
   }
 
