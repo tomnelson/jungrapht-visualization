@@ -11,7 +11,7 @@ import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
  * @param <V> vertex type
  * @param <E> edge type
  */
-class VirtualEdge<V, E> extends LEI<V, E> implements LE<V, E> {
+public class VirtualEdge<V, E> extends LEI<V, E> implements LE<V, E> {
 
   protected int weight;
 

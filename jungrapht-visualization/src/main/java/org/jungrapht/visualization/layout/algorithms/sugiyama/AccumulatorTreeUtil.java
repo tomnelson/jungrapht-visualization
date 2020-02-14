@@ -74,6 +74,23 @@ public class AccumulatorTreeUtil {
   }
 
   /**
+   * get an int array holding the indices of the target vertices for the passed edges
+   *
+   * @param edges edges to get target vertex indices for
+   * @param <V> vertex type
+   * @param <E> edge type
+   * @return an array holding the edges
+   */
+  protected static <V, E> LE<V, E>[] getEdgeArray(List<LE<V, E>> edges) {
+    LE<V, E>[] edgeArray = new LE[edges.size()];
+    for (int i = 0; i < edges.size(); i++) {
+      LE<V, E> edge = edges.get(i);
+      edgeArray[i] = edge;
+    }
+    return edgeArray;
+  }
+
+  /**
    * count edge crossings in the passed List of edges
    *
    * @param edges edges to count crossings for
@@ -117,6 +134,7 @@ public class AccumulatorTreeUtil {
   protected static <V, E> int accumulatorTreeWeight(
       List<LE<V, E>> edges, Function<Integer, Integer> weightFunction) {
     int[] targetIndices = getTargetIndices(edges);
+    LE<V, E>[] edgeArray = getEdgeArray(edges);
     if (targetIndices.length == 0) {
       return 0;
     }

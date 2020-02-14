@@ -3,6 +3,7 @@ package org.jungrapht.visualization.layout.algorithms.sugiyama;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
+import org.jungrapht.visualization.layout.algorithms.eiglsperger.VirtualEdge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,6 +88,32 @@ public class AccumulatorTree<V, E> {
     int crossWeight = 0;
     for (int k = 0; k < r; k++) {
       int index = southSequence[k] + firstIndex;
+      if (log.isTraceEnabled()) {
+        log.trace("got a weight value of {}", weight.apply(k));
+      }
+      tree[index] += weight.apply(k);
+      int weightSum = 0;
+      while (index > 0) {
+        if (index % 2 != 0) {
+          weightSum += tree[index + 1];
+        }
+        index = (index - 1) / 2;
+        tree[index] += weight.apply(k);
+      }
+      crossWeight += (weight.apply(k) * weightSum);
+    }
+    return crossWeight;
+  }
+
+  public int crossWeight(LE<V, E>[] edgeArray, Function<Integer, Integer> weight) {
+    int r = edgeArray.length;
+    int crossWeight = 0;
+    for (int k = 0; k < r; k++) {
+      LE<V, E> edge = edgeArray[k];
+      if (edge instanceof VirtualEdge) {
+        continue;
+      }
+      int index = edge.getTarget().getIndex() + firstIndex;
       if (log.isTraceEnabled()) {
         log.trace("got a weight value of {}", weight.apply(k));
       }

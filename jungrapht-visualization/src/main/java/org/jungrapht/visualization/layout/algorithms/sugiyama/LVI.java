@@ -38,15 +38,17 @@ public class LVI<V> extends SVI<V> implements LV<V> {
     this.index = index;
   }
 
-  protected LVI(V vertex, int rank, int index, Point p) {
+  protected LVI(V vertex, int rank, int index, int pos, double measure, Point p) {
     super(vertex);
     this.rank = rank;
     this.index = index;
+    this.pos = pos;
+    this.measure = measure;
     this.p = p;
   }
 
   public LVI(LVI<V> other) {
-    this(other.vertex, other.rank, other.index, other.p);
+    this(other.vertex, other.rank, other.index, other.pos, other.measure, other.p);
   }
 
   public <T extends LV<V>> T copy() {

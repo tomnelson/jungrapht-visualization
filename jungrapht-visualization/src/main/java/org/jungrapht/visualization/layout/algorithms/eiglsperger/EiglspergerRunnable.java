@@ -236,7 +236,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     long syntheticsTime = System.currentTimeMillis();
     log.trace("synthetics took {}", (syntheticsTime - assignLayersTime));
 
-    int bestCrossCount = Integer.MAX_VALUE;
+    int bestEvahCrossCount = Integer.MAX_VALUE;
     int edgeCount = svGraph.edgeSet().size();
     if (edgeCount > 200) {
       maxLevelCross = 1;
@@ -244,29 +244,42 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     maxLevelCross = 23;
     int bestForwardCrossCount = Integer.MAX_VALUE;
     int bestBackwardCrossCount = Integer.MAX_VALUE;
-
+    int bestCrossCount = 0;
+    LV<V>[][] best = null;
     for (int i = 0; i < maxLevelCross; i++) {
       int forwardCrossCount = 0;
       int reverseCrossCount = 0;
-      //      if (i % 2 == 0) {
-      forwardCrossCount = sweepForward(layersArray);
-      bestForwardCrossCount = Math.min(bestForwardCrossCount, forwardCrossCount);
-      EiglspergerUtil.check(layersArray);
-      //      } else {
-      reverseCrossCount = sweepBackwards(layersArray);
-      bestBackwardCrossCount = Math.min(bestBackwardCrossCount, reverseCrossCount);
-      EiglspergerUtil.check(layersArray);
-      //      }
-      int totalCrossCount = bestForwardCrossCount + bestBackwardCrossCount;
-      if (totalCrossCount < bestCrossCount) {
-        bestCrossCount = totalCrossCount;
-        //      } else {
-        //        break;
+      if (i % 2 == 0) {
+        forwardCrossCount = sweepForward(layersArray);
+        bestCrossCount = Math.min(bestForwardCrossCount, forwardCrossCount);
+        if (bestCrossCount < bestEvahCrossCount) {
+          bestEvahCrossCount = bestCrossCount;
+          best = copy(layersArray);
+        } else {
+          if (log.isTraceEnabled()) {
+            log.trace("best:{}", best);
+          }
+          break;
+        }
+      } else {
+        reverseCrossCount = sweepBackwards(layersArray);
+        bestCrossCount = Math.min(bestBackwardCrossCount, reverseCrossCount);
+        if (bestCrossCount < bestEvahCrossCount) {
+          bestEvahCrossCount = bestCrossCount;
+          best = copy(layersArray);
+        } else {
+          if (log.isTraceEnabled()) {
+            log.trace("best:{}", best);
+          }
+          break;
+        }
       }
     }
 
     // done optimizing for edge crossing
-    LV<V>[][] best = layersArray;
+    if (best == null) {
+      best = layersArray;
+    }
 
     // figure out the avg size of rendered vertex
     java.awt.Rectangle avgVertexBounds =
@@ -468,6 +481,17 @@ public class EiglspergerRunnable<V, E> implements Runnable {
         va.set("rank", "" + v.getRank());
       }
     }
+  }
+
+  protected LV<V>[][] copy(LV<V>[][] in) {
+    LV[][] copy = new LV[in.length][];
+    for (int i = 0; i < in.length; i++) {
+      copy[i] = new LV[in[i].length];
+      for (int j = 0; j < in[i].length; j++) {
+        copy[i][j] = in[i][j].copy();
+      }
+    }
+    return copy;
   }
 
   public int sweepForward(LV<V>[][] layersArray) {

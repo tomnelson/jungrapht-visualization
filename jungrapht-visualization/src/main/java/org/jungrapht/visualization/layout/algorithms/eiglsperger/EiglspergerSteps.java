@@ -515,10 +515,6 @@ public class EiglspergerSteps<V, E> {
     for (int j = 0; j < downstreamLayer.size() - 1; j++) {
 
       // if either of the adjacent vertices is a container, skip them
-      if (downstreamLayer.get(j) instanceof Container
-          || downstreamLayer.get(j + 1) instanceof Container) {
-        continue;
-      }
       if (log.isTraceEnabled()) {
         // runs the crossingCount (no weights) with the insertionSort method and the AccumulatorTree method
         // these values should match and should both be <= to the crossingWeight
@@ -528,6 +524,10 @@ public class EiglspergerSteps<V, E> {
       }
       int vw = AccumulatorTreeUtil.crossingWeight(biLayerEdges, f);
       crossCount = Math.min(vw, crossCount);
+      //      if (downstreamLayer.get(j) instanceof Container
+      //              || downstreamLayer.get(j + 1) instanceof Container) {
+      //        continue;
+      //      }
       if (log.isTraceEnabled()) {
         log.trace("crossingWeight:{}", vw);
       }
