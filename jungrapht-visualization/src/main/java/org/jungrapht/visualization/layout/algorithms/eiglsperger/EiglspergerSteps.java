@@ -22,17 +22,52 @@ import org.jungrapht.visualization.layout.algorithms.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The five steps of the Eiglsperger optimization of the Sugiyama Layout Algorithm
+ *
+ * <p>Javadoc text includes descriptions from the Eiglsperger paper
+ *
+ * @see "Methods for Visual Understanding Hierarchical System Structures. KOZO SUGIYAMA, MEMBER,
+ *     IEEE, SHOJIRO TAGAWA, AND MITSUHIKO TODA, MEMBER, IEEE"
+ * @see "An E log E Line Crossing Algorithm for Levelled Graphs. Vance Waddle and Ashok Malhotra IBM
+ *     Thomas J. Watson Research Center"
+ * @see "Simple and Efficient Bilayer Cross Counting. Wilhelm Barth, Petra Mutzel, Institut für
+ *     Computergraphik und Algorithmen Technische Universität Wien, Michael Jünger, Institut für
+ *     Informatik Universität zu Köln"
+ * @see "Fast and Simple Horizontal Coordinate Assignment, Ulrik Brandes and Boris Köpf, Department
+ *     of Computer & Information Science, University of Konstanz"
+ * @see "An Efficient Implementation of Sugiyama's Algorithm for Layered Graph Drawing. Markus
+ *     Eiglsperger, Martin Siebenhaller, Michael Kaufman"
+ * @param <V> vertex type
+ * @param <E> edge type
+ */
 public class EiglspergerSteps<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(EiglspergerSteps.class);
 
+  /** The delegate Graph to layout */
   protected Graph<LV<V>, LE<V, E>> svGraph;
+
+  /** the result of layering the graph vertices and introducint synthetic vertices and edges */
   protected LV<V>[][] layersArray;
-  protected List<LV<V>> layer;
+  /** when sweeping top to bottom, this is a PVertex, bottom to top, this is a QVertex */
   protected Predicate<LV<V>> joinVertexPredicate;
+  /** when sweeping top to bottom, this is a QVertex, bottom to top this is a PVertex */
   protected Predicate<LV<V>> splitVertexPredicate;
+
+  /**
+   * When sweeping top to bottom, this function returns predecessors When sweeping bottom to top,
+   * this function returns sucessors
+   */
   protected BiFunction<Graph<LV<V>, LE<V, E>>, LV<V>, List<LV<V>>> neighborFunction;
 
+  /**
+   * @param svGraph the delegate graph
+   * @param layersArray layered vertices
+   * @param joinVertexPredicate vertices to join with Containers
+   * @param splitVertexPredicate vertices to split from Containers
+   * @param neighborFunction predecessors or successors in the Graph
+   */
   protected EiglspergerSteps(
       Graph<LV<V>, LE<V, E>> svGraph,
       LV<V>[][] layersArray,
@@ -40,31 +75,44 @@ public class EiglspergerSteps<V, E> {
       Predicate<LV<V>> splitVertexPredicate,
       BiFunction<Graph<LV<V>, LE<V, E>>, LV<V>, List<LV<V>>> neighborFunction) {
     this.svGraph = svGraph;
-    //    this.layer = layer;
     this.layersArray = layersArray;
     this.joinVertexPredicate = joinVertexPredicate;
     this.splitVertexPredicate = splitVertexPredicate;
     this.neighborFunction = neighborFunction;
   }
 
+  /**
+   * formatted output
+   *
+   * @param label identifier
+   * @param list vertices to log
+   */
   private void log(String label, List<LV<V>> list) {
     log.info(label);
     list.forEach(v -> log.info(" - {}", v.toString()));
   }
 
+  /**
+   * formatted output
+   *
+   * @param label identifier
+   * @param array vertices to log
+   */
   private void log(String label, LV<V>[] array) {
     log.info(label);
     Arrays.stream(array).forEach(v -> log.info(" - {}", v.toString()));
   }
 
   /**
-   * for any pVertex that is in the list, take that pVertex's segment and append it to the any prior
-   * Container in the list (creating the Container as needed), and do not append the PVertex in the
-   * list to be returned. Finally, scan the list to join any sequential Containers into one and to
-   * insert empty Containers between sequential vertices.
+   * "In the first step we append the segment s(v) for each p-vertex v in layer L i to the container
+   * preceding v. Then we join this container with the succeeding container. The result is again an
+   * alternating layer (p-vertices are omitted). for any PVertex (QVertex) that is in the list, take
+   * that vertex's segment and append it to the any prior Container in the list (creating the
+   * Container as needed), and do not append the PVertex (QVertex) in the list to be returned.
+   * Finally, scan the list to join any sequential Containers into one and to insert empty
+   * Containers between sequential vertices.
    *
-   * <p>// * @param biLayer // * @param <V>
-   *
+   * @param currentLayer the rank of vertices to operate over
    * @return layerI modified so that PVertices are gone (added to previous containers)
    */
   public void stepOne(List<LV<V>> currentLayer) {
@@ -90,10 +138,28 @@ public class EiglspergerSteps<V, E> {
     List<LV<V>> scannedList = EiglspergerUtil.scan(outList);
     currentLayer.clear();
     currentLayer.addAll(scannedList);
+
+    IntStream.range(0, currentLayer.size()).forEach(i -> currentLayer.get(i).setIndex(i));
+
     if (log.isTraceEnabled())
       log("stepOne currentLayer out (merged pvertices into containers)", currentLayer);
   }
 
+  /**
+   * "In the second step we compute the measure values for the elements in L i+1 . First we assign a
+   * position value pos(v i j ) to all vertices v i j in L i . pos(v i 0 ) = size(S i 0 ) and pos(v
+   * i j ) = pos(v i j−1 ) + size(S i j ) + 1. Note that the pos values are the same as they would
+   * be in the median or barycenter heuristic if each segment was represented as dummy vertex. Each
+   * non- empty container S i j has pos value pos(v i j −1 ) + 1. If container S i 0 is non- empty
+   * it has pos value 0. Now we assign the measure to all non-q-vertices and containers in L i+1 .
+   * The initial containers in L i+1 are the resulting containers of the first step. Recall that the
+   * measure of a container in L i+1 is its position in L i ." Assign positions to the
+   * currentLayerVertices and use those posisions to calculate the measure for vertices in the
+   * downstreamLayer. The measure here is the median of the positions of neghbor vertices
+   *
+   * @param currentLayer
+   * @param downstreamLayer
+   */
   public void stepTwo(List<LV<V>> currentLayer, List<LV<V>> downstreamLayer) {
 
     if (log.isTraceEnabled()) log("stepTwo currentLayer in", currentLayer);
@@ -101,11 +167,11 @@ public class EiglspergerSteps<V, E> {
 
     assignPositions(currentLayer);
 
-    List<Container<V, Segment<V>>> containersFromCurrentLayer =
+    List<Container<V>> containersFromCurrentLayer =
         currentLayer
             .stream()
             .filter(v -> v instanceof Container)
-            .map(v -> (Container<V, Segment<V>>) v)
+            .map(v -> (Container<V>) v)
             .filter(c -> c.size() > 0)
             .collect(Collectors.toList());
 
@@ -122,12 +188,34 @@ public class EiglspergerSteps<V, E> {
       log("stepTwo downstreamLayer out (computed measures for downstreamLayer)", downstreamLayer);
   }
 
+  /**
+   * "In the third step we calculate an initial ordering of L i+1 . We sort all non-q-vertices in L
+   * i+1 according to their measure in a list L V . We do the same for the containers and store them
+   * in a list L S . We use the following operations on these sorted lists:"
+   *
+   * <ul>
+   *   <li>◦ l = pop(L) : Removes the first element l from list L and returns it.
+   *   <li>◦ push(L, l) : Inserts element l at the head of list L.
+   * </ul>
+   *
+   * We merge both lists in the following way: <code>
+   * if m(head(L V )) ≤ pos(head(L S ))
+   *    then v = pop(L V ), append(L i+1 , v)
+   * if m(head(L V )) ≥ (pos(head(L S )) + size(head(L S )) − 1)
+   *    then S = pop(L S ), append(L i+1 , S)
+   * else S = pop(L S ), v = pop(L V ), k = ⌈m(v) − pos(S)⌉,
+   *    (S 1 ,S 2 ) = split(S, k), append(L i+1 ,S 1 ), append(L i+1 , v),
+   *    pos(S 2 ) = pos(S) + k, push(L S ,S 2 ).
+   * </code>
+   *
+   * @param downstreamLayer
+   */
   public void stepThree(List<LV<V>> downstreamLayer) {
 
     if (log.isTraceEnabled()) log("stepThree downstreamLayer in", downstreamLayer);
 
     List<LV<V>> listV = new LinkedList<>();
-    List<Container<V, Segment<V>>> listS = new LinkedList<>();
+    List<Container<V>> listS = new LinkedList<>();
 
     List<SegmentVertex<V>> segmentVertexList = new ArrayList<>();
     for (LV<V> v : downstreamLayer) {
@@ -135,7 +223,7 @@ public class EiglspergerSteps<V, E> {
         segmentVertexList.add((SegmentVertex<V>) v);
         continue;
       } else if (v instanceof Container) {
-        Container<V, Segment<V>> container = (Container<V, Segment<V>>) v;
+        Container<V> container = (Container<V>) v;
         if (container.size() > 0) {
           listS.add(container);
         }
@@ -148,14 +236,13 @@ public class EiglspergerSteps<V, E> {
       log.trace("listS measures: {}", listS);
     }
     if (listS.size() > 0
-        && listS.stream().mapToDouble(s -> s.getMeasure()).min().getAsDouble() < 0) {
+        && listS.stream().mapToDouble(Container::getMeasure).min().getAsDouble() < 0) {
       log.error("something missing");
     }
     if (log.isTraceEnabled()) {
       log.trace("listV measures: {}", listV);
     }
-    if (listV.size() > 0
-        && listV.stream().mapToDouble(s -> s.getMeasure()).min().getAsDouble() < 0) {
+    if (listV.size() > 0 && listV.stream().mapToDouble(LV::getMeasure).min().getAsDouble() < 0) {
       log.error("something missing");
     }
     try {
@@ -199,14 +286,14 @@ public class EiglspergerSteps<V, E> {
           LV<V> v = listV.remove(0);
           mergedList.add(v);
         } else if (listV.get(0).getMeasure() >= (listS.get(0).getPos() + listS.get(0).size() - 1)) {
-          Container<V, Segment<V>> container = listS.remove(0);
+          Container<V> container = listS.remove(0);
           mergedList.add(container);
         } else {
-          Container<V, Segment<V>> container = listS.remove(0);
+          Container<V> container = listS.remove(0);
           LV<V> v = listV.remove(0);
           int k = (int) Math.ceil(v.getMeasure() - container.getPos());
           if (log.isTraceEnabled()) log.trace("will split {} at {}", container, k);
-          Pair<Container<V, Segment<V>>> containerPair = Container.split(container, k);
+          Pair<Container<V>> containerPair = Container.split(container, k);
           if (log.isTraceEnabled())
             log.trace("got {} and {}", containerPair.first, containerPair.second);
           mergedList.add(containerPair.first);
@@ -233,18 +320,15 @@ public class EiglspergerSteps<V, E> {
       log("stepThree downstreamLayer out (initial ordering for downstreamLayer)", downstreamLayer);
   }
 
-  static <V, E> String elementStringer(BiLayer biLayer, List<LV<V>> layer) {
-    StringBuilder builder = new StringBuilder();
-    layer.forEach(s -> builder.append(elementStringer(biLayer, s)));
-    return builder.toString();
-  }
-
-  static <V> String elementStringer(BiLayer biLayer, LV<V> v) {
-    StringBuilder builder = new StringBuilder();
-    builder.append(v.toString()).append("\n");
-    return builder.toString();
-  }
-
+  /**
+   * In the fourth step we place each q-vertex v of L i+1 according to the position of its
+   * corresponding segment s(v). We do this by calling split(S, s(v)) for each q-vertex v in layer L
+   * i+1 and placing v between the resulting containers (S denotes the container that includes
+   * s(v)).
+   *
+   * @param downstreamLayer
+   * @param downstreamRank
+   */
   public void stepFour(List<LV<V>> downstreamLayer, int downstreamRank) {
     if (log.isTraceEnabled()) log("stepFour downstreamLayer in", downstreamLayer);
 
@@ -258,19 +342,19 @@ public class EiglspergerSteps<V, E> {
             .map(v -> (SegmentVertex<V>) v)
             .collect(Collectors.toList());
 
-    for (SegmentVertex q : qVertices) {
-      List<Container<V, Segment<V>>> containerList =
+    for (SegmentVertex<V> q : qVertices) {
+      List<Container<V>> containerList =
           downstreamLayer
               .stream()
               .filter(v -> v instanceof Container)
-              .map(v -> (Container<V, Segment<V>>) v)
+              .map(v -> (Container<V>) v)
               .collect(Collectors.toList());
       // find its container
       Segment<V> segment = q.getSegment();
-      Optional<Container<V, Segment<V>>> containerOpt =
+      Optional<Container<V>> containerOpt =
           containerList.stream().filter(c -> c.contains(segment)).findFirst();
       if (containerOpt.isPresent()) {
-        Container<V, Segment<V>> container = containerOpt.get();
+        Container<V> container = containerOpt.get();
         int loserIdx = downstreamLayer.indexOf(container);
         if (log.isTraceEnabled()) {
           log.trace(
@@ -284,7 +368,7 @@ public class EiglspergerSteps<V, E> {
           log.trace("splitting on {} because of {}", segment, q);
         }
 
-        Pair<Container<V, Segment<V>>> containerPair = Container.split(container, segment);
+        Pair<Container<V>> containerPair = Container.split(container, segment);
 
         if (log.isTraceEnabled())
           log.trace(
@@ -317,6 +401,26 @@ public class EiglspergerSteps<V, E> {
       log("layersArray[" + downstreamRank + "] out", layersArray[downstreamRank]);
   }
 
+  /**
+   * In the fifth step we perform cross counting according to the scheme pro- posed by Barth et al
+   * (see Section 1.2). During the cross counting step between layer L i and L i+1 we therefore
+   * consider all layer elements as ver- tices. Beside the common edges between both layers, we also
+   * have to handle virtual edges, which are imaginary edges between a container ele- ment in L i
+   * and the resulting container elements or q-vertices in L i+1 (see Figure 5). In terms of the
+   * common approach each virtual edge represents at least one edge between two dummy vertices. The
+   * number of represented edges is equal to the size of the container element in L i+1 . We have to
+   * consider this fact to get the right number of edge crossings. We therefore introduce edge
+   * weights. The weight of a virtual edge ending with a con- tainer element S is equal to size(S).
+   * The weight of the other edges is one. So a crossing between two edges e 1 and e 2 counts as
+   * weight(e 1 )·weight(e 2 ) crossings.
+   *
+   * @param forwards true if we are sweeping in the forward (top to bottom) direction
+   * @param currentLayer the Li layer
+   * @param downstreamLayer the Li+1 (or Li-1 for backwards) layer
+   * @param currentRank the value of i for Li
+   * @param downstreamRank the value of i+1 (or i-1 for backwards)
+   * @return count of edge crossing weight
+   */
   public int stepFive(
       boolean forwards,
       List<LV<V>> currentLayer,
@@ -343,32 +447,53 @@ public class EiglspergerSteps<V, E> {
                     svGraph.getEdgeSource(e).getRank() == currentRank
                         && svGraph.getEdgeTarget(e).getRank() == downstreamRank)
             .collect(Collectors.toList());
-    for (int j = 0; j < downstreamLayer.size() - 1; j++) {
-      Function<Integer, Integer> f =
-          i -> {
-            LE<V, E> edge = biLayerEdges.get(i);
-            LV<V> target = edge.getTarget();
-            if (target instanceof Container) {
-              return ((Container<V, Segment<V>>) target).size();
-            }
-            return 1;
-          };
 
-      for (LV<V> v : currentLayer) {
-        if (v instanceof Container) {
-          Container<V, Segment<V>> container = (Container<V, Segment<V>>) v;
-          if (container.size() > 0) {
-            biLayerEdges.add(VirtualEdge.of(container, container));
-          }
-        } else if (v instanceof QVertex) {
-          QVertex<V> qv = (QVertex<V>) v;
-          SyntheticLV<V> qvSource = SyntheticLV.of();
-          qvSource.setIndex(qv.getIndex());
-          qvSource.setPos(qv.getPos());
-          biLayerEdges.add(VirtualEdge.of(qvSource, qv));
+    for (LV<V> v : downstreamLayer) {
+      log.info("V is {}", v);
+      if (v instanceof Container) {
+        Container<V> container = (Container<V>) v;
+        if (container.size() > 0) {
+          biLayerEdges.add(VirtualEdge.of(container, container));
         }
+      } else if (v instanceof QVertex) {
+        QVertex<V> qv = (QVertex<V>) v;
+        SyntheticLV<V> qvSource = SyntheticLV.of();
+        qvSource.setIndex(qv.getIndex());
+        qvSource.setPos(qv.getPos());
+        biLayerEdges.add(VirtualEdge.of(qvSource, qv));
       }
+    }
+    Function<Integer, Integer> f =
+        i -> {
+          LE<V, E> edge = biLayerEdges.get(i);
+          LV<V> target = edge.getTarget();
+          if (target instanceof Container) {
+            return ((Container<V>) target).size();
+          }
+          return 1;
+        };
 
+    for (int i = 0; i < currentLayer.size(); i++) {
+      LV<V> v = currentLayer.get(i);
+      if (isEmptyContainer(v)) {
+        currentLayer.remove(i);
+      }
+    }
+    for (int i = 0; i < downstreamLayer.size(); i++) {
+      LV<V> v = downstreamLayer.get(i);
+      if (isEmptyContainer(v)) {
+        downstreamLayer.remove(i);
+      }
+    }
+    IntStream.range(0, currentLayer.size()).forEach(i -> currentLayer.get(i).setIndex(i));
+    IntStream.range(0, downstreamLayer.size()).forEach(i -> downstreamLayer.get(i).setIndex(i));
+
+    for (int j = 0; j < downstreamLayer.size() - 1; j++) {
+      LV<V> v1 = downstreamLayer.get(j);
+      LV<V> v2 = downstreamLayer.get(j + 1);
+      if (v1 instanceof Container || v2 instanceof Container) {
+        continue;
+      }
       if (log.isTraceEnabled()) {
         int vw2 = crossingCount(biLayerEdges);
         int vw3 = AccumulatorTreeUtil.crossingCount(biLayerEdges);
@@ -395,6 +520,8 @@ public class EiglspergerSteps<V, E> {
       swap(downstreamLayer, j, j + 1);
 
       if (vw > wv) {
+        LV<V> vvw = downstreamLayer.get(j);
+        LV<V> vwv = downstreamLayer.get(j + 1);
         swap(downstreamLayer, j, j + 1);
         crossCount += wv;
         if (wv == 0) {
@@ -407,6 +534,10 @@ public class EiglspergerSteps<V, E> {
     return crossCount;
   }
 
+  private boolean isEmptyContainer(LV<V> v) {
+    return v instanceof Container && ((Container<V>) v).size() == 0;
+  }
+
   private int transposeUpwards(
       List<LV<V>> currentLayer, List<LV<V>> downstreamLayer, int currentRank, int downstreamRank) {
 
@@ -417,13 +548,13 @@ public class EiglspergerSteps<V, E> {
             .stream()
             .filter(
                 e ->
-                    svGraph.getEdgeSource(e).getRank() == currentRank
-                        && svGraph.getEdgeTarget(e).getRank() == downstreamRank)
+                    svGraph.getEdgeTarget(e).getRank() == currentRank
+                        && svGraph.getEdgeSource(e).getRank() == downstreamRank)
             .collect(Collectors.toList());
     // if there are containers that are in both layers, add a virtual edge connecting them
-    for (LV<V> v : currentLayer) {
+    for (LV<V> v : downstreamLayer) {
       if (v instanceof Container) {
-        Container<V, Segment<V>> container = (Container<V, Segment<V>>) v;
+        Container<V> container = (Container<V>) v;
         if (container.size() > 0) {
           biLayerEdges.add(VirtualEdge.of(container, container));
         }
@@ -435,24 +566,43 @@ public class EiglspergerSteps<V, E> {
         biLayerEdges.add(VirtualEdge.of(pvSource, pv));
       }
     }
-    List<LE<V, E>> swappedEndpointEdges = swapEdgeEndpoints(biLayerEdges);
-    for (int j = 0; j < downstreamLayer.size() - 1; j++) {
-      Function<Integer, Integer> f =
-          i -> {
-            LE<V, E> edge = biLayerEdges.get(i);
-            LV<V> target = edge.getTarget();
-            if (target instanceof Container) {
-              return ((Container<V, Segment<V>>) target).size();
-            }
-            return 1;
-          };
+    for (int i = 0; i < currentLayer.size(); i++) {
+      LV<V> v = currentLayer.get(i);
+      if (isEmptyContainer(v)) {
+        currentLayer.remove(i);
+      }
+    }
+    for (int i = 0; i < downstreamLayer.size(); i++) {
+      LV<V> v = downstreamLayer.get(i);
+      if (isEmptyContainer(v)) {
+        downstreamLayer.remove(i);
+      }
+    }
+    IntStream.range(0, currentLayer.size()).forEach(i -> currentLayer.get(i).setIndex(i));
+    IntStream.range(0, downstreamLayer.size()).forEach(i -> downstreamLayer.get(i).setIndex(i));
 
+    List<LE<V, E>> swappedEndpointEdges = swapEdgeEndpoints(biLayerEdges);
+    Function<Integer, Integer> f =
+        i -> {
+          LE<V, E> edge = swappedEndpointEdges.get(i);
+          LV<V> target = edge.getTarget();
+          if (target instanceof Container) {
+            return ((Container<V>) target).size();
+          }
+          return 1;
+        };
+    for (int j = 0; j < downstreamLayer.size() - 1; j++) {
+      LV<V> v1 = downstreamLayer.get(j);
+      LV<V> v2 = downstreamLayer.get(j + 1);
+      if (v1 instanceof Container || v2 instanceof Container) {
+        continue;
+      }
       if (log.isTraceEnabled()) {
-        int vw2 = crossingCount(biLayerEdges);
-        int vw3 = AccumulatorTreeUtil.crossingCount(biLayerEdges);
+        int vw2 = crossingCount(swappedEndpointEdges);
+        int vw3 = AccumulatorTreeUtil.crossingCount(swappedEndpointEdges);
         log.trace("IS count:{}, AC count:{}", vw2, vw3);
       }
-      int vw = AccumulatorTreeUtil.crossingWeight(biLayerEdges, f);
+      int vw = AccumulatorTreeUtil.crossingWeight(swappedEndpointEdges, f);
       if (log.isTraceEnabled()) {
         log.trace("CW count:{}", vw);
       }
@@ -461,12 +611,12 @@ public class EiglspergerSteps<V, E> {
       }
       // count with j and j+1 swapped
       swap(downstreamLayer, j, j + 1);
-      if (log.isTraceEnabled()) {
-        int wv2 = crossingCount(biLayerEdges);
-        int wv3 = AccumulatorTreeUtil.crossingCount(biLayerEdges);
-        log.trace("IS count:{}, AC count:{}", wv2, wv3);
-      }
-      int wv = AccumulatorTreeUtil.crossingWeight(biLayerEdges, f);
+      //      if (log.isTraceEnabled()) {
+      int wv2 = crossingCount(swappedEndpointEdges);
+      int wv3 = AccumulatorTreeUtil.crossingCount(swappedEndpointEdges);
+      log.trace("IS count:{}, AC count:{}", wv2, wv3);
+      //      }
+      int wv = AccumulatorTreeUtil.crossingWeight(swappedEndpointEdges, f);
       if (log.isTraceEnabled()) {
         log.trace("CW count:{}", wv);
       }
@@ -517,6 +667,13 @@ public class EiglspergerSteps<V, E> {
     array.get(j).setIndex(j);
   }
 
+  /**
+   * In the sixth step we perform a scan on L i+1 and insert empty containers between two
+   * consecutive vertices, and call join(S 1 , S 2 ) on two consecutive containers in the list. This
+   * ensures that L i+1 is an alternating layer.
+   *
+   * @param downstreamLayer
+   */
   public void stepSix(List<LV<V>> downstreamLayer) {
 
     if (log.isTraceEnabled()) log("stepSix downstreamLayer in", downstreamLayer);
@@ -530,9 +687,9 @@ public class EiglspergerSteps<V, E> {
   /**
    * return the segment to which v is incident, if v is a PVertex or a QVertex. Otherwise, return v
    *
-   * @param v
-   * @param <V>
-   * @return
+   * @param v the vertex to get a segment for
+   * @param <V> vertex type
+   * @return the segment for v or else v
    */
   static <V> LV<V> s(LV<V> v) {
     if (v instanceof SegmentVertex) {
@@ -545,13 +702,13 @@ public class EiglspergerSteps<V, E> {
 
   void assignPositions(List<LV<V>> currentLayer) {
     LV<V> previousVertex = null;
-    Container<V, Segment<V>> previousContainer = null;
+    Container<V> previousContainer = null;
     for (int i = 0; i < currentLayer.size(); i++) {
       LV<V> v = currentLayer.get(i);
 
       if (i % 2 == 0) {
         // this is a container
-        Container<V, Segment<V>> container = (Container<V, Segment<V>>) v;
+        Container<V> container = (Container<V>) v;
         if (container.size() > 0) {
           if (previousContainer == null) {
             // first container non empty
@@ -582,7 +739,7 @@ public class EiglspergerSteps<V, E> {
     downstreamLayer
         .stream()
         .filter(v -> v instanceof Container)
-        .map(v -> (Container<V, Segment<V>>) v)
+        .map(v -> (Container<V>) v)
         .filter(c -> c.size() > 0)
         .forEach(
             c -> {
@@ -590,13 +747,12 @@ public class EiglspergerSteps<V, E> {
               c.setMeasure(measure);
             });
 
-    for (int i = 0; i < downstreamLayer.size(); i++) {
-      LV<V> v = downstreamLayer.get(i);
+    for (LV<V> v : downstreamLayer) {
       if (splitVertexPredicate.test(v)) { // QVertex for top to bottom
         continue;
       }
       if (v instanceof Container) {
-        Container<V, Segment<V>> container = (Container<V, Segment<V>>) v;
+        Container<V> container = (Container<V>) v;
         double measure = container.getPos();
         container.setMeasure(measure);
       } else {
@@ -607,8 +763,7 @@ public class EiglspergerSteps<V, E> {
         IntStream.range(0, poses.length).forEach(idx -> poses[idx] = neighbors.get(idx).getPos());
         Arrays.sort(poses);
         if (poses.length > 0) {
-          double measure = medianValue(poses);
-          //poses[(poses.length - 1) / 2];
+          int measure = medianValue(poses);
           v.setMeasure(measure);
         } else {
           // leave the measure as as the current pos
@@ -622,7 +777,7 @@ public class EiglspergerSteps<V, E> {
     }
   }
 
-  static double medianValue(int[] P) {
+  static int medianValue(int[] P) {
     int m = P.length / 2;
     if (P.length == 0) {
       return -1;
@@ -631,8 +786,8 @@ public class EiglspergerSteps<V, E> {
     } else if (P.length == 2) {
       return (P[0] + P[1]) / 2;
     } else {
-      double left = P[m - 1] - P[0];
-      double right = P[P.length - 1] - P[m];
+      int left = P[m - 1] - P[0];
+      int right = P[P.length - 1] - P[m];
       return (P[m - 1] * right + P[m] * left) / (left + right);
     }
   }

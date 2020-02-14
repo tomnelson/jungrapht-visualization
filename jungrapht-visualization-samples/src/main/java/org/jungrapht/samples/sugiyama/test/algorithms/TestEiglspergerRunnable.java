@@ -9,7 +9,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.LongSummaryStatistics;
 import java.util.Map;
@@ -102,19 +101,6 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
     return new Builder<>();
   }
 
-  //  final LayoutModel<V> layoutModel;
-  //  final RenderContext<V, E> renderContext;
-  //  Graph<V, E> graph;
-  //  Graph<LV<V>, LE<V, E>> svGraph;
-  //  boolean stopit = false;
-  //  protected Predicate<V> vertexPredicate;
-  //  protected Predicate<E> edgePredicate;
-  //  protected Comparator<V> vertexComparator;
-  //  protected Comparator<E> edgeComparator;
-  //  protected boolean straightenEdges;
-  //  protected boolean postStraighten;
-  //  protected int maxLevelCross;
-  //  protected boolean useLongestPathLayering;
   boolean doUpLeft;
   boolean doDownLeft;
   boolean doUpRight;
@@ -128,38 +114,12 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
     this.doDownRight = builder.doDownRight;
   }
 
-  //  private TestEiglspergerRunnable(
-  //      LayoutModel<V> layoutModel,
-  //      RenderContext<V, E> renderContext,
-  //      boolean straightenEdges,
-  //      boolean postStraighten,
-  //      int maxLevelCross,
-  //      boolean useLongestPathLayering) {
-  //    this.layoutModel = layoutModel;
-  //    this.renderContext = renderContext;
-  //    this.straightenEdges = straightenEdges;
-  //    this.postStraighten = postStraighten;
-  //    this.maxLevelCross = maxLevelCross;
-  //    this.useLongestPathLayering = useLongestPathLayering;
-  //  }
-  //
-  //  protected boolean checkStopped() {
-  //    try {
-  //      Thread.sleep(1);
-  //      if (stopit) {
-  //        return true;
-  //      }
-  //    } catch (InterruptedException ex) {
-  //    }
-  //    return false;
-  //  }
-
   @Override
   public void run() {
     this.graph = layoutModel.getGraph();
 
     long startTime = System.currentTimeMillis();
-    TransformedGraphSupplier<V, E> transformedGraphSupplier = new TransformedGraphSupplier(graph);
+    TransformedGraphSupplier<V, E> transformedGraphSupplier = new TransformedGraphSupplier<>(graph);
     this.svGraph = transformedGraphSupplier.get();
     long transformTime = System.currentTimeMillis();
     log.trace("transform Graph took {}", (transformTime - startTime));
@@ -167,7 +127,7 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
     if (checkStopped()) {
       return;
     }
-    GreedyCycleRemoval<LV<V>, LE<V, E>> greedyCycleRemoval = new GreedyCycleRemoval(svGraph);
+    GreedyCycleRemoval<LV<V>, LE<V, E>> greedyCycleRemoval = new GreedyCycleRemoval<>(svGraph);
     Collection<LE<V, E>> feedbackArcs = greedyCycleRemoval.getFeedbackArcs();
 
     // reverse the direction of feedback arcs so that they no longer introduce cycles in the graph
@@ -208,36 +168,6 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
       return;
     }
 
-    // save off a map of edge lists keyed on the source vertex
-    Map<Integer, List<LE<V, E>>> edgesKeyedOnSource = new LinkedHashMap<>();
-    edges.forEach(
-        e -> {
-          int sourceRank = e.getSource().getRank();
-          if (edgesKeyedOnSource.containsKey(sourceRank)) {
-            edgesKeyedOnSource.get(sourceRank).add(e);
-          } else {
-            ArrayList<LE<V, E>> list = new ArrayList<>();
-            list.add(e);
-            edgesKeyedOnSource.put(sourceRank, list);
-          }
-        });
-
-    // save off a map of edge lists keyed on the target vertex
-    Map<Integer, List<LE<V, E>>> edgesKeyedOnTarget = new LinkedHashMap<>();
-    svGraph
-        .edgeSet()
-        .forEach(
-            e -> {
-              int targetRank = e.getTarget().getRank();
-              if (edgesKeyedOnTarget.containsKey(targetRank)) {
-                edgesKeyedOnTarget.get(targetRank).add(e);
-              } else {
-                ArrayList<LE<V, E>> list = new ArrayList<>();
-                list.add(e);
-                edgesKeyedOnTarget.put(targetRank, list);
-              }
-            });
-
     long syntheticsTime = System.currentTimeMillis();
     log.trace("synthetics took {}", (syntheticsTime - assignLayersTime));
 
@@ -271,7 +201,8 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
     LV<V>[][] best = layersArray;
 
     // figure out the avg size of rendered vertex
-    Rectangle avgVertexBounds = maxVertexBounds(best, renderContext.getVertexShapeFunction());
+    java.awt.Rectangle avgVertexBounds =
+        maxVertexBounds(best, renderContext.getVertexShapeFunction());
 
     int horizontalOffset =
         Math.max(
@@ -283,9 +214,9 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
     Map<LV<V>, Point> vertexPointMap = new HashMap<>();
 
     // update the indices of the all layers
-    for (int i = 0; i < best.length; i++) {
-      for (int j = 0; j < best[i].length; j++) {
-        best[i][j].setIndex(j);
+    for (LV<V>[] value : best) {
+      for (int j = 0; j < value.length; j++) {
+        value[j].setIndex(j);
       }
     }
     if (straightenEdges) {
@@ -302,16 +233,10 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
               doDownRight);
       horizontalCoordinateAssignment.horizontalCoordinateAssignment();
 
-      //      HorizontalCoordinateAssignment<V, E> horizontalCoordinateAssignment =
-      //      new HorizontalCoordinateAssignment<>(
-      //          best, svGraph, new HashSet<>(), horizontalOffset, verticalOffset);
-      //      horizontalCoordinateAssignment.horizontalCoordinateAssignment();
-
       GraphLayers.checkLayers(best);
 
-      for (int i = 0; i < best.length; i++) {
-        for (int j = 0; j < best[i].length; j++) {
-          LV<V> EiglspergerVertex = best[i][j];
+      for (LV<V>[] lvs : best) {
+        for (LV<V> EiglspergerVertex : lvs) {
           vertexPointMap.put(EiglspergerVertex, EiglspergerVertex.getPoint());
         }
       }
@@ -332,12 +257,11 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
     int totalHeight = 0;
     int totalWidth = 0;
 
-    for (int i = 0; i < best.length; i++) {
+    for (LV<V>[] lvs : best) {
 
       int width = horizontalOffset;
       int maxHeight = 0;
-      for (int j = 0; j < best[i].length; j++) {
-        LV<V> v = best[i][j];
+      for (LV<V> v : lvs) {
         if (!(v instanceof SyntheticLV)) {
           Rectangle bounds = vertexShapeFunction.apply(v.getVertex()).getBounds();
           width += bounds.width + horizontalOffset;
@@ -351,14 +275,14 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
       layerIndex++;
     }
 
-    int widestRowWidth = rowWidthMap.values().stream().mapToInt(v -> v).max().getAsInt();
+    int widestRowWidth = rowWidthMap.values().stream().mapToInt(v -> v).max().orElse(0);
     int x = horizontalOffset;
     int y = verticalOffset;
     layerIndex = 0;
     if (log.isTraceEnabled()) {
       log.trace("layerMaxHeights {}", rowMaxHeightMap);
     }
-    for (int i = 0; i < best.length; i++) {
+    for (LV<V>[] lvs : best) {
       int previousVertexWidth = 0;
       // offset against widest row
       x += (widestRowWidth - rowWidthMap.get(layerIndex)) / 2;
@@ -369,8 +293,7 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
       }
 
       int rowWidth = 0;
-      for (int j = 0; j < best[i].length; j++) {
-        LV<V> EiglspergerVertex = best[i][j];
+      for (LV<V> EiglspergerVertex : lvs) {
         int vertexWidth = 0;
         if (!(EiglspergerVertex instanceof SyntheticLV)) {
           vertexWidth = vertexShapeFunction.apply(EiglspergerVertex.getVertex()).getBounds().width;
@@ -478,6 +401,7 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
     svGraph.vertexSet().forEach(v -> layoutModel.set(v.getVertex(), v.getPoint()));
     for (LV<V> v : svGraph.vertexSet()) {
       if (v.getVertex() instanceof Attributed) {
+        @SuppressWarnings("unchecked")
         Attributed<V> va = (Attributed<V>) v.getVertex();
         va.set("pos", "" + v.getPos());
         va.set("idx", "" + v.getIndex());
@@ -486,167 +410,15 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
     }
   }
 
-  //  public static <V, E> int sweepForward(
-  //      Graph<LV<V>, LE<V, E>> svGraph,
-  //      LV<V>[][] layersArray,
-  //      Map<Integer, List<LE<V, E>>> edgesKeyedOnSource) {
-  //
-  //    int crossCount = 0;
-  //    if (log.isTraceEnabled()) log.trace("sweepForward");
-  //
-  //    List<LV<V>> layerEye = null;
-  //
-  //    for (int i = 0; i < layersArray.length - 1; i++) {
-  //      List<LE<V, E>> edges = new ArrayList<>(svGraph.edgeSet());
-  //      if (layerEye == null) {
-  //        layerEye =
-  //            EiglspergerUtil.scan(
-  //                EiglspergerUtil.createListOfVertices(layersArray[i])); // first rank
-  //      }
-  //
-  //      BiLayer<V, E> biLayer =
-  //          BiLayer.of(
-  //              i,
-  //              i + 1,
-  //              layerEye,
-  //              EiglspergerUtil.createListOfVertices(layersArray[i + 1]),
-  //              layersArray[i + 1],
-  //              PVertex.class::isInstance,
-  //              QVertex.class::isInstance,
-  //              Graphs::predecessorListOf);
-  //
-  //      EiglspergerSteps.stepOne(biLayer);
-  //      // handled PVertices by merging them into containers
-  //      if (log.isTraceEnabled()) {
-  //        log.trace("stepOneOut:{}", biLayer.currentLayer);
-  //      }
-  //
-  //      List<VirtualEdge<V, E>> virtualEdges = new ArrayList<>();
-  //
-  //      EiglspergerSteps.stepTwo(biLayer, virtualEdges, svGraph);
-  //      if (log.isTraceEnabled()) {
-  //        log.trace("stepTwoOut:{}", biLayer.downstreamLayer);
-  //      }
-  //
-  //      EiglspergerSteps.stepThree(biLayer);
-  //      if (log.isTraceEnabled()) {
-  //        log.trace("stepThreeOut:{}", biLayer.downstreamLayer);
-  //      }
-  //      EiglspergerUtil.fixIndices(biLayer.downstreamLayer);
-  //
-  //      EiglspergerSteps.stepFour(biLayer, virtualEdges);
-  //      if (log.isTraceEnabled()) {
-  //        log.trace("stepFourOut:{}", biLayer.downstreamLayer);
-  //      }
-  //
-  //      // i want the edges keyed on this rank, plus any virtual edges
-  //      List<LE<V, E>> reducedEdges = new ArrayList<>();
-  //      reducedEdges.addAll(edgesKeyedOnSource.getOrDefault(i + 1, Collections.emptyList()));
-  //      reducedEdges.addAll(virtualEdges);
-  //
-  //      crossCount += EiglspergerSteps.stepFive(svGraph, true, biLayer, virtualEdges);
-  //      log.trace("forward stepFive crossCount:{}", crossCount);
-  //
-  //      EiglspergerSteps.stepSix(biLayer);
-  //      if (log.isTraceEnabled()) {
-  //        log.trace("stepSixOut:{}", biLayer.downstreamLayer);
-  //      }
-  //
-  //      Arrays.sort(layersArray[i], Comparator.comparingInt(LV::getIndex));
-  //      EiglspergerUtil.fixIndices(layersArray[i]);
-  //      Arrays.sort(layersArray[i + 1], Comparator.comparingInt(LV::getIndex));
-  //      EiglspergerUtil.fixIndices(layersArray[i + 1]);
-  //      layerEye = biLayer.downstreamLayer;
-  //    }
-  //    return crossCount;
-  //  }
-  //
-  //  public static <V, E> int sweepBackwards(
-  //      Graph<LV<V>, LE<V, E>> svGraph,
-  //      LV<V>[][] layersArray,
-  //      Map<Integer, List<LE<V, E>>> edgesKeyedOnSource) {
-  //
-  //    int crossCount = 0;
-  //    if (log.isTraceEnabled()) log.trace("sweepBackwards");
-  //    List<LV<V>> layerEye = null;
-  //    //    EiglspergerUtil.check(layersArray);
-  //
-  //    for (int i = layersArray.length - 1; i > 0; i--) {
-  //      List<LE<V, E>> edges = new ArrayList<>(svGraph.edgeSet());
-  //      if (layerEye == null) {
-  //        layerEye =
-  //            EiglspergerUtil.scan(EiglspergerUtil.createListOfVertices(layersArray[i])); // last rank
-  //      }
-  //
-  //      BiLayer<V, E> biLayer =
-  //          BiLayer.of(
-  //              i,
-  //              i - 1,
-  //              layerEye,
-  //              EiglspergerUtil.createListOfVertices(layersArray[i - 1]),
-  //              layersArray[i - 1],
-  //              QVertex.class::isInstance,
-  //              PVertex.class::isInstance,
-  //              Graphs::successorListOf);
-  //      //      EiglspergerUtil.check(layersArray);
-  //
-  //      EiglspergerSteps.stepOne(biLayer);
-  //      // handled PVertices by merging them into containers
-  //      if (log.isTraceEnabled()) {
-  //        log.trace("stepOneOut:{}", biLayer.currentLayer);
-  //      }
-  //
-  //      List<VirtualEdge<V, E>> virtualEdges = new ArrayList<>();
-  //
-  //      EiglspergerSteps.stepTwo(biLayer, virtualEdges, svGraph);
-  //      if (log.isTraceEnabled()) {
-  //        log.trace("stepTwoOut:{}", biLayer.downstreamLayer);
-  //      }
-  //
-  //      EiglspergerSteps.stepThree(biLayer);
-  //      if (log.isTraceEnabled()) {
-  //        log.trace("stepThreeOut:{}", biLayer.downstreamLayer);
-  //      }
-  //      EiglspergerUtil.fixIndices(biLayer.downstreamLayer);
-  //
-  //      EiglspergerSteps.stepFour(biLayer, virtualEdges);
-  //      if (log.isTraceEnabled()) {
-  //        log.trace("stepFourOut:{}", biLayer.downstreamLayer);
-  //      }
-  //
-  //      // i want the edges keyed on this rank, plus any virtual edges
-  //      List<LE<V, E>> reducedEdges = new ArrayList<>();
-  //      reducedEdges.addAll(edgesKeyedOnSource.getOrDefault(i + 1, Collections.emptyList()));
-  //      reducedEdges.addAll(virtualEdges);
-  //
-  //      crossCount += EiglspergerSteps.stepFive(svGraph, false, biLayer, virtualEdges);
-  //      if (log.isTraceEnabled()) {
-  //        log.trace("stepFiveOut:{}", biLayer.downstreamLayer);
-  //        log.trace("backwards stepFive crossCount:{}", crossCount);
-  //      }
-  //      EiglspergerSteps.stepSix(biLayer);
-  //      if (log.isTraceEnabled()) {
-  //        log.trace("stepSixOut:{}", biLayer.downstreamLayer);
-  //      }
-  //
-  //      Arrays.sort(layersArray[i], Comparator.comparingInt(LV::getIndex));
-  //      EiglspergerUtil.fixIndices(layersArray[i]);
-  //      Arrays.sort(layersArray[i - 1], Comparator.comparingInt(LV::getIndex));
-  //      EiglspergerUtil.fixIndices(layersArray[i - 1]);
-  //      layerEye = biLayer.downstreamLayer;
-  //    }
-  //    return crossCount;
-  //  }
-
   private static <V> Rectangle maxVertexBounds(
       LV<V>[][] layers, Function<V, Shape> vertexShapeFunction) {
     // figure out the largest rendered vertex
     Rectangle maxVertexBounds = new Rectangle();
 
-    for (int i = 0; i < layers.length; i++) {
-      for (int j = 0; j < layers[i].length; j++) {
-        if (!(layers[i][j] instanceof SyntheticLV)) {
-          Rectangle bounds = vertexShapeFunction.apply(layers[i][j].getVertex()).getBounds();
+    for (LV<V>[] layer : layers) {
+      for (LV<V> vlv : layer) {
+        if (!(vlv instanceof SyntheticLV)) {
+          Rectangle bounds = vertexShapeFunction.apply(vlv.getVertex()).getBounds();
           int width = Math.max(bounds.width, maxVertexBounds.width);
           int height = Math.max(bounds.height, maxVertexBounds.height);
           maxVertexBounds = new Rectangle(width, height);
@@ -661,10 +433,10 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
 
     LongSummaryStatistics w = new LongSummaryStatistics();
     LongSummaryStatistics h = new LongSummaryStatistics();
-    for (int i = 0; i < layers.length; i++) {
-      for (int j = 0; j < layers[i].length; j++) {
-        if (!(layers[i][j] instanceof SyntheticLV)) {
-          Rectangle bounds = vertexShapeFunction.apply(layers[i][j].getVertex()).getBounds();
+    for (LV<V>[] layer : layers) {
+      for (LV<V> vlv : layer) {
+        if (!(vlv instanceof SyntheticLV)) {
+          Rectangle bounds = vertexShapeFunction.apply(vlv.getVertex()).getBounds();
           w.accept(bounds.width);
           h.accept(bounds.height);
         }

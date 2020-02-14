@@ -14,9 +14,9 @@ import org.slf4j.LoggerFactory;
  *
  * @param <T> key type that is stored in the tree
  */
-class InsertionOrderSplayTreeWithSize<T> {
+class InsertionOrderSplayTree<T> {
 
-  private static final Logger log = LoggerFactory.getLogger(InsertionOrderSplayTreeWithSize.class);
+  private static final Logger log = LoggerFactory.getLogger(InsertionOrderSplayTree.class);
 
   static <T> int nodeSize(Node<T> node) {
     return node == null ? 0 : node.size;
@@ -59,19 +59,19 @@ class InsertionOrderSplayTreeWithSize<T> {
 
   Node<T> root;
 
-  public static <T> InsertionOrderSplayTreeWithSize<T> create() {
-    return new InsertionOrderSplayTreeWithSize<>();
+  public static <T> InsertionOrderSplayTree<T> create() {
+    return new InsertionOrderSplayTree<>();
   }
 
-  public static <T> InsertionOrderSplayTreeWithSize<T> create(Node<T> root) {
-    InsertionOrderSplayTreeWithSize<T> tree = new InsertionOrderSplayTreeWithSize<>(root);
+  public static <T> InsertionOrderSplayTree<T> create(Node<T> root) {
+    InsertionOrderSplayTree<T> tree = new InsertionOrderSplayTree<>(root);
     tree.validate();
     return tree;
   }
 
-  protected InsertionOrderSplayTreeWithSize() {}
+  protected InsertionOrderSplayTree() {}
 
-  protected InsertionOrderSplayTreeWithSize(Node<T> root) {
+  protected InsertionOrderSplayTree(Node<T> root) {
     this.root = root;
   }
 
@@ -225,13 +225,12 @@ class InsertionOrderSplayTreeWithSize<T> {
     z.parent = max;
   }
 
-  public static <T> InsertionOrderSplayTreeWithSize<T> join(
-      Pair<InsertionOrderSplayTreeWithSize<T>> trees) {
+  public static <T> InsertionOrderSplayTree<T> join(Pair<InsertionOrderSplayTree<T>> trees) {
     trees.first.join(trees.second);
     return trees.first;
   }
 
-  public void join(InsertionOrderSplayTreeWithSize<T> joiner) {
+  public void join(InsertionOrderSplayTree<T> joiner) {
     Node<T> largest = max();
     splay(largest);
     if (root != null) {
@@ -272,13 +271,12 @@ class InsertionOrderSplayTreeWithSize<T> {
    * @param <T>
    * @return
    */
-  public static <T> Pair<InsertionOrderSplayTreeWithSize<T>> split(
-      InsertionOrderSplayTreeWithSize<T> tree, T key) {
-    InsertionOrderSplayTreeWithSize<T> right = tree.split(key);
+  public static <T> Pair<InsertionOrderSplayTree<T>> split(InsertionOrderSplayTree<T> tree, T key) {
+    InsertionOrderSplayTree<T> right = tree.split(key);
     return Pair.of(tree, right);
   }
 
-  public InsertionOrderSplayTreeWithSize<T> split(T key) {
+  public InsertionOrderSplayTree<T> split(T key) {
     // split off the right side of key
     Node<T> node = find(key);
     if (node != null) {
@@ -293,8 +291,7 @@ class InsertionOrderSplayTreeWithSize<T> {
       }
       root = node.left;
 
-      InsertionOrderSplayTreeWithSize<T> splitter =
-          InsertionOrderSplayTreeWithSize.create(node.right);
+      InsertionOrderSplayTree<T> splitter = InsertionOrderSplayTree.create(node.right);
 
       // found should not be in either tree
       splitter.validate();
@@ -313,15 +310,15 @@ class InsertionOrderSplayTreeWithSize<T> {
    * @param <T>
    * @return
    */
-  public static <T> Pair<InsertionOrderSplayTreeWithSize<T>> split(
-      InsertionOrderSplayTreeWithSize<T> tree, int position) {
+  public static <T> Pair<InsertionOrderSplayTree<T>> split(
+      InsertionOrderSplayTree<T> tree, int position) {
 
-    InsertionOrderSplayTreeWithSize<T> right = tree.split(position);
+    InsertionOrderSplayTree<T> right = tree.split(position);
 
     return Pair.of(tree, right);
   }
 
-  public InsertionOrderSplayTreeWithSize<T> split(int position) {
+  public InsertionOrderSplayTree<T> split(int position) {
     Node<T> found = find(position);
     if (found != null) {
       splay(found);
@@ -330,8 +327,7 @@ class InsertionOrderSplayTreeWithSize<T> {
         found.right.parent = null;
         found.size -= found.right.size;
       }
-      InsertionOrderSplayTreeWithSize<T> splitter =
-          InsertionOrderSplayTreeWithSize.create(found.right);
+      InsertionOrderSplayTree<T> splitter = InsertionOrderSplayTree.create(found.right);
       found.right = null;
       splitter.validate();
       validate();
@@ -342,8 +338,7 @@ class InsertionOrderSplayTreeWithSize<T> {
       }
       return splitter;
     }
-    return InsertionOrderSplayTreeWithSize
-        .create(); // return empty 'right' tree and leave tree alone
+    return InsertionOrderSplayTree.create(); // return empty 'right' tree and leave tree alone
   }
 
   public Node<T> find(Node<T> node) {

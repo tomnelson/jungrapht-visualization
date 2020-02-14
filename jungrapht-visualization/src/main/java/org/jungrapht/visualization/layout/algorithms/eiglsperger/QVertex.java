@@ -5,7 +5,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * a vertex that is not in the original graph, but is synthesized in order to position bends in the
- * articulated edges of the SugiyamaLayoutAlgorithm
+ * articulated edges of the SugiyamaLayoutAlgorithm A QVertex is the bottom vertex of a vertical
+ * segment edge
  *
  * @param <V> vertex type
  */

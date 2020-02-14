@@ -10,19 +10,18 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TestInsertionOrderSplayTreeWithSize {
+public class TestInsertionOrderSplayTree {
 
-  private static final Logger log =
-      LoggerFactory.getLogger(TestInsertionOrderSplayTreeWithSize.class);
+  private static final Logger log = LoggerFactory.getLogger(TestInsertionOrderSplayTree.class);
 
-  InsertionOrderSplayTreeWithSize<String> tree;
+  InsertionOrderSplayTree<String> tree;
 
   String[] values = new String[] {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
 
   @Test
   public void testSmallContainer() {
     // make a Container and add all the nodes
-    tree = InsertionOrderSplayTreeWithSize.create();
+    tree = InsertionOrderSplayTree.create();
     tree.append("A");
     System.err.println(tree.printTree("Appended A"));
 
@@ -62,7 +61,7 @@ public class TestInsertionOrderSplayTreeWithSize {
     tree.append("G");
     System.err.println(tree.printTree("Appended G"));
 
-    InsertionOrderSplayTreeWithSize.Node<String> found = tree.find(3);
+    InsertionOrderSplayTree.Node<String> found = tree.find(3);
     System.err.println(tree.printTree("found " + found.key + " at " + 3));
 
     found = tree.find(5);
@@ -85,14 +84,13 @@ public class TestInsertionOrderSplayTreeWithSize {
 
   @Test
   public void testSplitToPair() {
-    tree = InsertionOrderSplayTreeWithSize.create();
+    tree = InsertionOrderSplayTree.create();
     for (char c = 'A'; c <= 'Z'; c++) {
       tree.append("" + c);
     }
     System.err.println(tree.printTree());
 
-    Pair<InsertionOrderSplayTreeWithSize<String>> pair =
-        InsertionOrderSplayTreeWithSize.split(tree, "M");
+    Pair<InsertionOrderSplayTree<String>> pair = InsertionOrderSplayTree.split(tree, "M");
     System.err.println(pair.first.printTree());
 
     pair.first.validate();
@@ -104,13 +102,13 @@ public class TestInsertionOrderSplayTreeWithSize {
 
   @Test
   public void testSplit() {
-    tree = InsertionOrderSplayTreeWithSize.create();
+    tree = InsertionOrderSplayTree.create();
     for (char c = 'A'; c <= 'Z'; c++) {
       tree.append("" + c);
     }
     System.err.println(tree.printTree("starting tree"));
 
-    InsertionOrderSplayTreeWithSize<String> newTree = tree.split("M");
+    InsertionOrderSplayTree<String> newTree = tree.split("M");
     System.err.println(newTree.printTree("split off tree"));
 
     newTree.validate();
@@ -130,14 +128,14 @@ public class TestInsertionOrderSplayTreeWithSize {
   @Test
   public void testSplits() {
 
-    tree = InsertionOrderSplayTreeWithSize.create();
+    tree = InsertionOrderSplayTree.create();
     for (char c = 'A'; c <= 'Z'; c++) {
       tree.append("" + c);
     }
     System.err.println(tree.printTree());
 
     for (int splitPoint : shuffledInts(0, tree.size())) {
-      InsertionOrderSplayTreeWithSize<String> splitter = tree.split(splitPoint);
+      InsertionOrderSplayTree<String> splitter = tree.split(splitPoint);
       System.err.println("split at " + splitPoint);
       System.err.println("newTree size: " + splitter.size());
       System.err.println(splitter.printTree("split off tree"));
@@ -159,7 +157,7 @@ public class TestInsertionOrderSplayTreeWithSize {
   @Test
   public void testStaticSplits() {
 
-    tree = InsertionOrderSplayTreeWithSize.create();
+    tree = InsertionOrderSplayTree.create();
     for (char c = 'A'; c <= 'Z'; c++) {
       tree.append("" + c);
     }
@@ -168,12 +166,11 @@ public class TestInsertionOrderSplayTreeWithSize {
 
     for (int splitPoint : shuffledInts(0, tree.size())) {
       tree.validate();
-      Pair<InsertionOrderSplayTreeWithSize<String>> pair =
-          InsertionOrderSplayTreeWithSize.split(tree, splitPoint);
+      Pair<InsertionOrderSplayTree<String>> pair = InsertionOrderSplayTree.split(tree, splitPoint);
       System.err.println("split at " + splitPoint);
 
-      InsertionOrderSplayTreeWithSize<String> left = pair.first;
-      InsertionOrderSplayTreeWithSize<String> right = pair.second;
+      InsertionOrderSplayTree<String> left = pair.first;
+      InsertionOrderSplayTree<String> right = pair.second;
       System.err.println("left size: " + left.size());
       System.err.println("right size: " + right.size());
       System.err.println(left.printTree("split off tree"));
@@ -184,7 +181,7 @@ public class TestInsertionOrderSplayTreeWithSize {
       System.err.println(
           "__________________________________________________________________________");
 
-      InsertionOrderSplayTreeWithSize<String> joined = InsertionOrderSplayTreeWithSize.join(pair);
+      InsertionOrderSplayTree<String> joined = InsertionOrderSplayTree.join(pair);
       System.err.println(joined.printTree("Joined Tree"));
       joined.validate();
       tree = joined;
@@ -194,18 +191,17 @@ public class TestInsertionOrderSplayTreeWithSize {
   @Test
   public void testStaticSplitAtZero() {
 
-    tree = InsertionOrderSplayTreeWithSize.create();
+    tree = InsertionOrderSplayTree.create();
     for (char c = 'A'; c <= 'Z'; c++) {
       tree.append("" + c);
     }
     System.err.println(tree.printTree());
 
-    Pair<InsertionOrderSplayTreeWithSize<String>> pair =
-        InsertionOrderSplayTreeWithSize.split(tree, 0);
+    Pair<InsertionOrderSplayTree<String>> pair = InsertionOrderSplayTree.split(tree, 0);
     System.err.println("split at " + 0);
 
-    InsertionOrderSplayTreeWithSize<String> left = pair.first;
-    InsertionOrderSplayTreeWithSize<String> right = pair.second;
+    InsertionOrderSplayTree<String> left = pair.first;
+    InsertionOrderSplayTree<String> right = pair.second;
     System.err.println("left size: " + left.size());
     System.err.println("right size: " + right.size());
     System.err.println(left.printTree("split off tree"));
@@ -216,7 +212,7 @@ public class TestInsertionOrderSplayTreeWithSize {
     System.err.println(
         "__________________________________________________________________________");
 
-    InsertionOrderSplayTreeWithSize<String> joined = InsertionOrderSplayTreeWithSize.join(pair);
+    InsertionOrderSplayTree<String> joined = InsertionOrderSplayTree.join(pair);
     System.err.println(joined.printTree("Joined Tree"));
     joined.validate();
   }
@@ -224,18 +220,17 @@ public class TestInsertionOrderSplayTreeWithSize {
   @Test
   public void testStaticSplitAtTop() {
 
-    tree = InsertionOrderSplayTreeWithSize.create();
+    tree = InsertionOrderSplayTree.create();
     for (char c = 'A'; c <= 'Z'; c++) {
       tree.append("" + c);
     }
     System.err.println(tree.printTree());
 
-    Pair<InsertionOrderSplayTreeWithSize<String>> pair =
-        InsertionOrderSplayTreeWithSize.split(tree, tree.size());
+    Pair<InsertionOrderSplayTree<String>> pair = InsertionOrderSplayTree.split(tree, tree.size());
     System.err.println("split at " + tree.size());
 
-    InsertionOrderSplayTreeWithSize<String> left = pair.first;
-    InsertionOrderSplayTreeWithSize<String> right = pair.second;
+    InsertionOrderSplayTree<String> left = pair.first;
+    InsertionOrderSplayTree<String> right = pair.second;
     System.err.println("left size: " + left.size());
     System.err.println("right size: " + right.size());
     System.err.println(left.printTree("split off tree"));
@@ -246,7 +241,7 @@ public class TestInsertionOrderSplayTreeWithSize {
     System.err.println(
         "__________________________________________________________________________");
 
-    InsertionOrderSplayTreeWithSize<String> joined = InsertionOrderSplayTreeWithSize.join(pair);
+    InsertionOrderSplayTree<String> joined = InsertionOrderSplayTree.join(pair);
     System.err.println(joined.printTree("Joined Tree"));
     joined.validate();
   }
@@ -254,18 +249,18 @@ public class TestInsertionOrderSplayTreeWithSize {
   @Test
   public void testStaticSplitAtOverTop() {
 
-    tree = InsertionOrderSplayTreeWithSize.create();
+    tree = InsertionOrderSplayTree.create();
     for (char c = 'A'; c <= 'Z'; c++) {
       tree.append("" + c);
     }
     System.err.println(tree.printTree());
 
-    Pair<InsertionOrderSplayTreeWithSize<String>> pair =
-        InsertionOrderSplayTreeWithSize.split(tree, tree.size() + 10);
+    Pair<InsertionOrderSplayTree<String>> pair =
+        InsertionOrderSplayTree.split(tree, tree.size() + 10);
     System.err.println("split at " + tree.size() + 10);
 
-    InsertionOrderSplayTreeWithSize<String> left = pair.first;
-    InsertionOrderSplayTreeWithSize<String> right = pair.second;
+    InsertionOrderSplayTree<String> left = pair.first;
+    InsertionOrderSplayTree<String> right = pair.second;
     System.err.println("left size: " + left.size());
     System.err.println("right size: " + right.size());
     System.err.println(left.printTree("split off tree"));
@@ -276,7 +271,7 @@ public class TestInsertionOrderSplayTreeWithSize {
     System.err.println(
         "__________________________________________________________________________");
 
-    InsertionOrderSplayTreeWithSize<String> joined = InsertionOrderSplayTreeWithSize.join(pair);
+    InsertionOrderSplayTree<String> joined = InsertionOrderSplayTree.join(pair);
     System.err.println(joined.printTree("Joined Tree"));
     joined.validate();
   }
@@ -284,18 +279,17 @@ public class TestInsertionOrderSplayTreeWithSize {
   @Test
   public void testStaticSplitAtNegative() {
 
-    tree = InsertionOrderSplayTreeWithSize.create();
+    tree = InsertionOrderSplayTree.create();
     for (char c = 'A'; c <= 'Z'; c++) {
       tree.append("" + c);
     }
     System.err.println(tree.printTree());
 
-    Pair<InsertionOrderSplayTreeWithSize<String>> pair =
-        InsertionOrderSplayTreeWithSize.split(tree, -10);
+    Pair<InsertionOrderSplayTree<String>> pair = InsertionOrderSplayTree.split(tree, -10);
     System.err.println("split at " + -10);
 
-    InsertionOrderSplayTreeWithSize<String> left = pair.first;
-    InsertionOrderSplayTreeWithSize<String> right = pair.second;
+    InsertionOrderSplayTree<String> left = pair.first;
+    InsertionOrderSplayTree<String> right = pair.second;
     System.err.println("left size: " + left.size());
     System.err.println("right size: " + right.size());
     System.err.println(left.printTree("split off tree"));
@@ -306,7 +300,7 @@ public class TestInsertionOrderSplayTreeWithSize {
     System.err.println(
         "__________________________________________________________________________");
 
-    InsertionOrderSplayTreeWithSize<String> joined = InsertionOrderSplayTreeWithSize.join(pair);
+    InsertionOrderSplayTree<String> joined = InsertionOrderSplayTree.join(pair);
     System.err.println(joined.printTree("Joined Tree"));
     joined.validate();
   }
@@ -320,12 +314,11 @@ public class TestInsertionOrderSplayTreeWithSize {
     }
     for (String key : new String[] {"V", "A", "G", "Z"}) {
 
-      tree = InsertionOrderSplayTreeWithSize.create();
+      tree = InsertionOrderSplayTree.create();
       chars.forEach(tree::append);
       System.err.println(tree.printTree("starting tree"));
 
-      Pair<InsertionOrderSplayTreeWithSize<String>> pair =
-          InsertionOrderSplayTreeWithSize.split(tree, key);
+      Pair<InsertionOrderSplayTree<String>> pair = InsertionOrderSplayTree.split(tree, key);
 
       System.err.println(pair.first.printTree("first split off tree"));
       System.err.println(pair.second.printTree("second split off tree"));
@@ -336,18 +329,18 @@ public class TestInsertionOrderSplayTreeWithSize {
 
   @Test
   public void joinWithEmptyTree() {
-    tree = InsertionOrderSplayTreeWithSize.create();
+    tree = InsertionOrderSplayTree.create();
 
-    InsertionOrderSplayTreeWithSize<String> joiner =
-        InsertionOrderSplayTreeWithSize.create(new InsertionOrderSplayTreeWithSize.Node("Z"));
+    InsertionOrderSplayTree<String> joiner =
+        InsertionOrderSplayTree.create(new InsertionOrderSplayTree.Node("Z"));
 
     tree.join(joiner);
 
     System.err.println(joiner.printTree());
 
-    InsertionOrderSplayTreeWithSize<String> next =
-        InsertionOrderSplayTreeWithSize.create(new InsertionOrderSplayTreeWithSize.Node<>("A"));
-    InsertionOrderSplayTreeWithSize.join(Pair.of(tree, next));
+    InsertionOrderSplayTree<String> next =
+        InsertionOrderSplayTree.create(new InsertionOrderSplayTree.Node<>("A"));
+    InsertionOrderSplayTree.join(Pair.of(tree, next));
     System.err.println(tree.printTree());
     tree.splay("A");
     System.err.println(tree.printTree());

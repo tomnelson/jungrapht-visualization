@@ -7,6 +7,12 @@ import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Initialize for backward sweep (bottom to top)
+ *
+ * @param <V> vertex type
+ * @param <E> edge type
+ */
 class EiglspergerStepsBackward<V, E> extends EiglspergerSteps<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(EiglspergerStepsBackward.class);

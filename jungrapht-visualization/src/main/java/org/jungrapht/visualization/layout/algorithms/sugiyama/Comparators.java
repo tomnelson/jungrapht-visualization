@@ -16,4 +16,9 @@ public class Comparators {
     return Comparator.<LE<V, E>>comparingInt(e -> e.getSource().getIndex())
         .thenComparingInt(e -> e.getTarget().getIndex());
   }
+
+  public static <V, E> Comparator<LE<V, E>> biLevelEdgeComparatorReverse() {
+    return Comparator.<LE<V, E>>comparingInt(e -> e.getTarget().getIndex())
+        .thenComparingInt(e -> e.getSource().getIndex());
+  }
 }

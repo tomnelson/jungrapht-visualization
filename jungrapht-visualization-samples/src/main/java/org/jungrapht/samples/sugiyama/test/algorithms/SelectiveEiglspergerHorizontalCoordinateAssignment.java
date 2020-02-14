@@ -48,8 +48,6 @@ public class SelectiveEiglspergerHorizontalCoordinateAssignment<V, E>
   }
 
   public void horizontalCoordinateAssignment() {
-    //    preprocessing();
-
     HorizontalCompaction<V> upLeftCompaction = null;
     HorizontalCompaction<V> upRightCompaction = null;
     HorizontalCompaction<V> downLeftCompaction = null;

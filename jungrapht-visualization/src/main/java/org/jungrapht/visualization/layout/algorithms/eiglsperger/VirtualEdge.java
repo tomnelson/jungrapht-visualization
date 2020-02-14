@@ -1,5 +1,6 @@
 package org.jungrapht.visualization.layout.algorithms.eiglsperger;
 
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LEI;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 
@@ -10,18 +11,18 @@ import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
  * @param <V> vertex type
  * @param <E> edge type
  */
-class VirtualEdge<V, E> extends LEI<V, E> {
+class VirtualEdge<V, E> extends LEI<V, E> implements LE<V, E> {
 
   protected int weight;
 
-  public static <V, E> VirtualEdge of(LV<V> source, LV<V> target) {
+  public static <V, E> VirtualEdge<V, E> of(LV<V> source, LV<V> target) {
     return new VirtualEdge(source, target);
   }
 
   protected VirtualEdge(LV<V> source, LV<V> target) {
     super(null, source, target);
     if (target instanceof Container) {
-      this.weight = ((Container<V, Segment<V>>) target).size();
+      this.weight = ((Container<V>) target).size();
     }
   }
 

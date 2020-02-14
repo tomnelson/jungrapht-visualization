@@ -5,41 +5,42 @@ import org.jungrapht.visualization.layout.algorithms.util.Pair;
 import org.jungrapht.visualization.layout.model.Point;
 
 /**
+ * Extension of the {@link InsertionOrderSplayTree} to hold Nodes of {@link Segment<V>}
+ *
  * @param <V> the vertex type
- * @param <NT> the type for the Container node keys
  */
-class Container<V, NT extends LV<V>> extends InsertionOrderSplayTreeWithSize<NT> implements LV<V> {
+class Container<V> extends InsertionOrderSplayTree<Segment<V>> implements LV<V> {
 
   double measure = -1;
   int pos = -1;
+  int index;
 
-  public static <V, NT extends LV<V>> Container<V, NT> createSubContainer() {
+  public static <V> Container<V> createSubContainer() {
     return new Container<>();
   }
 
-  public static <V, NT extends LV<V>> Container<V, NT> createSubContainer(Node<NT> root) {
-    Container<V, NT> tree = new Container<>(root);
+  public static <V> Container<V> createSubContainer(Node<Segment<V>> root) {
+    Container<V> tree = new Container<>(root);
     tree.validate();
     return tree;
   }
 
   protected Container() {}
 
-  protected Container(Node<NT> root) {
+  protected Container(Node<Segment<V>> root) {
     this.root = root;
   }
 
-  public static <V, NT extends LV<V>> Pair<Container<V, NT>> split(Container<V, NT> tree, NT key) {
-    Container<V, NT> right = tree.split(key);
+  public static <V> Pair<Container<V>> split(Container<V> tree, Segment<V> key) {
+    Container<V> right = tree.split(key);
     return Pair.of(tree, right);
   }
 
-  public Container<V, NT> split(NT key) {
+  public Container<V> split(Segment<V> key) {
     // split off the right side of key
-    Node<NT> node = find(key);
+    Node<Segment<V>> node = find(key);
     if (node != null) {
       splay(node); // so node will be root
-      //      System.err.println(printTree());
       node.size -= size(node.right);
       // root should be the found node
       if (node.right != null) node.right.parent = null;
@@ -49,7 +50,7 @@ class Container<V, NT extends LV<V>> extends InsertionOrderSplayTreeWithSize<NT>
       }
       root = node.left;
 
-      Container<V, NT> splitter = Container.createSubContainer(node.right);
+      Container<V> splitter = Container.createSubContainer(node.right);
 
       // found should not be in either tree
       splitter.validate();
@@ -60,16 +61,15 @@ class Container<V, NT extends LV<V>> extends InsertionOrderSplayTreeWithSize<NT>
     }
   }
 
-  public static <V, NT extends LV<V>> Pair<Container<V, NT>> split(
-      Container<V, NT> tree, int position) {
+  public static <V> Pair<Container<V>> split(Container<V> tree, int position) {
 
-    Container<V, NT> right = tree.split(position);
+    Container<V> right = tree.split(position);
 
     return Pair.of(tree, right);
   }
 
-  public Container<V, NT> split(int position) {
-    Node<NT> found = find(position);
+  public Container<V> split(int position) {
+    Node<Segment<V>> found = find(position);
     if (found != null) {
       splay(found);
       // split off the right side of key
@@ -77,7 +77,7 @@ class Container<V, NT extends LV<V>> extends InsertionOrderSplayTreeWithSize<NT>
         found.right.parent = null;
         found.size -= found.right.size;
       }
-      Container<V, NT> splitter = Container.createSubContainer(found.right);
+      Container<V> splitter = Container.createSubContainer(found.right);
       found.right = null;
       splitter.validate();
       validate();
@@ -92,8 +92,8 @@ class Container<V, NT extends LV<V>> extends InsertionOrderSplayTreeWithSize<NT>
   }
 
   @Override
-  public LV copy() {
-    return null;
+  public <T extends LV<V>> T copy() {
+    throw new RuntimeException("Copy of Container not implemented");
   }
 
   @Override
@@ -105,11 +105,13 @@ class Container<V, NT extends LV<V>> extends InsertionOrderSplayTreeWithSize<NT>
   }
 
   @Override
-  public void setIndex(int index) {}
+  public void setIndex(int index) {
+    this.index = index;
+  }
 
   @Override
   public int getIndex() {
-    return 0;
+    return index;
   }
 
   @Override
@@ -147,14 +149,14 @@ class Container<V, NT extends LV<V>> extends InsertionOrderSplayTreeWithSize<NT>
 
   public String toString() {
     StringBuilder buf = new StringBuilder("Container");
-    buf.append(" size:" + this.size());
-    buf.append(" index:" + this.getIndex());
-    buf.append(" pos:" + this.getPos());
-    buf.append(" measure:" + this.getMeasure());
+    buf.append(" size:").append(this.size());
+    buf.append(" index:").append(this.getIndex());
+    buf.append(" pos:").append(this.getPos());
+    buf.append(" measure:").append(this.getMeasure());
     buf.append(" {");
     boolean first = true;
-    for (Iterator<V> iterator = new Iterator(root); iterator.hasNext(); ) {
-      Node<V> node = iterator.next();
+    for (Iterator<Segment<V>> iterator = new Iterator<>(root); iterator.hasNext(); ) {
+      Node<Segment<V>> node = iterator.next();
       if (!first) {
         buf.append(", ");
       }

@@ -86,15 +86,14 @@ public class AccumulatorTreeUtil {
     if (targetIndices.length == 0) {
       return 0;
     }
-    int maxIndex = Arrays.stream(targetIndices).max().getAsInt() + 1;
-    int size = Math.max(maxIndex, edges.size());
-    AccumulatorTree<V, E> accumulatorTree = new AccumulatorTree<>(size);
+    int maxIndex = Arrays.stream(targetIndices).max().getAsInt();
+    AccumulatorTree<V, E> accumulatorTree = new AccumulatorTree<>(maxIndex + 1);
     int atcount = accumulatorTree.crossCount(targetIndices);
     return atcount;
   }
 
   /**
-   * count edge crossings in the passed List of edges
+   * count edge crossing weight in the passed List of edges
    *
    * @param edges edges to count crossings for
    * @param <V> vertex type
@@ -108,7 +107,7 @@ public class AccumulatorTreeUtil {
   }
 
   /**
-   * count edge crossings in the passed List of edges
+   * count edge crossing weight in the passed List of edges
    *
    * @param edges edges to count crossings for
    * @param <V> vertex type
@@ -121,9 +120,8 @@ public class AccumulatorTreeUtil {
     if (targetIndices.length == 0) {
       return 0;
     }
-    int maxIndex = Arrays.stream(targetIndices).max().getAsInt() + 1;
-    int size = Math.max(maxIndex, edges.size());
-    AccumulatorTree<V, E> accumulatorTree = new AccumulatorTree<>(size);
+    int maxIndex = Arrays.stream(targetIndices).max().getAsInt();
+    AccumulatorTree<V, E> accumulatorTree = new AccumulatorTree<>(maxIndex + 1);
     int atcount = accumulatorTree.crossWeight(targetIndices, weightFunction);
     return atcount;
   }

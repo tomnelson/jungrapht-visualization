@@ -34,7 +34,7 @@ public class EiglspergerUtil {
     // return the wasEmptyList
     Segment<V> segment = segmentVertex.getSegment();
 
-    Container<V, Segment<V>> firstContainer = Container.createSubContainer();
+    Container<V> firstContainer = Container.createSubContainer();
     firstContainer.append(segment);
     if (log.isTraceEnabled()) log.trace("added segment {} for {}", segment, segmentVertex);
     // the firstContainer is the first item in the outList
@@ -45,24 +45,13 @@ public class EiglspergerUtil {
     return wasEmptyList; // which is no longer empty
   }
 
-  static <V> List<LV<V>> addRegularVertexToEmptyList(List<LV<V>> wasEmptyList, LV<V> vertex) {
-    wasEmptyList.add(vertex);
-    return wasEmptyList; // which is no longer empty
-  }
-
-  static <V> List<LV<V>> addContainerToEmptyList(
-      List<LV<V>> wasEmptyList, Container<V, Segment<V>> container) {
-    wasEmptyList.add(container);
-    return wasEmptyList; // which is no longer empty
-  }
-
   // non-empty list
   static <V> List<LV<V>> addSegmentVertexToNonEmptyList(
       List<LV<V>> notEmptyList, SegmentVertex<V> segmentVertex) {
     LV<V> lastItem = notEmptyList.get(notEmptyList.size() - 1);
     // if the lastItem is a container, append the PVertex's Segment to the container
     if (lastItem instanceof Container) {
-      Container<V, Segment<V>> lastContainer = (Container<V, Segment<V>>) lastItem;
+      Container<V> lastContainer = (Container<V>) lastItem;
       Segment<V> segment = segmentVertex.getSegment();
       if (log.isTraceEnabled()) log.trace("added segment {} for {}", segment, segmentVertex);
       lastContainer.append(segment);
@@ -71,31 +60,10 @@ public class EiglspergerUtil {
     return notEmptyList;
   }
 
-  static <V> List<LV<V>> addRegularVertexToNonEmptyList(List<LV<V>> notEmptyList, LV<V> vertex) {
-    notEmptyList.add(vertex);
-    return notEmptyList;
-  }
-
-  static <V> List<LV<V>> addContainerToNonEmptyList(
-      List<LV<V>> notEmptyList, Container<V, Segment<V>> container) {
-    LV<V> lastItem = notEmptyList.get(notEmptyList.size() - 1);
-    // if the lastItem is a container, join the incoming container with it
-    if (lastItem instanceof Container) {
-      Container<V, Segment<V>> lastContainer = (Container<V, Segment<V>>) lastItem;
-      if (log.isTraceEnabled()) log.trace("join {} with {}", lastContainer, container);
-      lastContainer.join(container);
-      if (log.isTraceEnabled()) log.trace("lastContainer now {}", lastContainer);
-    } else {
-      // the last item is some kind of vertex, just add the container to the list
-      notEmptyList.add(container);
-    }
-    return notEmptyList;
-  }
-
   static <V> List<LV<V>> assignIndices(List<LV<V>> inList) {
     int i = 0;
     for (LV<V> v : inList) {
-      if (v instanceof Container && ((Container<V, Segment<V>>) v).size() == 0) {
+      if (v instanceof Container && ((Container<V>) v).size() == 0) {
         continue;
       }
       v.setIndex(i++);
@@ -105,12 +73,7 @@ public class EiglspergerUtil {
   }
 
   /**
-   * Iterate over the supplied list, considering each Duo in the list.<br>
-   * If any Duo has a null container, give it an empty container.<br>
-   * If there is a previous Duo from the iteration, and if that previous Duo's vertex is null, then
-   * join this Duo's container to the previous Duo's container and set the previous Duo's vertex to
-   * this Duo's vertex, then remove this Duo from the list: i.e. collapse this Duo into the previous
-   * one by joining the containers.
+   * Iterate over the supplied list, creating an alternating list of vertices and Containers
    *
    * @param list
    * @param <V>
@@ -133,8 +96,8 @@ public class EiglspergerUtil {
         if (previous instanceof Container && v instanceof Container) {
           // join them
           if (log.isTraceEnabled()) log.trace("joining {} and {}", previous, v);
-          Container<V, Segment<V>> previousContainer = (Container<V, Segment<V>>) previous;
-          Container<V, Segment<V>> thisContainer = (Container<V, Segment<V>>) v;
+          Container<V> previousContainer = (Container<V>) previous;
+          Container<V> thisContainer = (Container<V>) v;
           previousContainer.join(thisContainer);
           if (log.isTraceEnabled()) log.trace("previous now joined as {}", previous);
 
@@ -155,14 +118,6 @@ public class EiglspergerUtil {
       if (log.isTraceEnabled()) log.trace("appended empty container");
     }
     return assignIndices(outList);
-  }
-
-  public static int decrement(int i) {
-    return i - 1;
-  }
-
-  public static int increment(int i) {
-    return i + 1;
   }
 
   static <V> List<LV<V>> fixIndices(List<LV<V>> layer) {
@@ -201,18 +156,6 @@ public class EiglspergerUtil {
     }
   }
 
-  static <V> String stringify(LV<V>[][] layers) {
-    StringBuilder builder = new StringBuilder("\n");
-    for (int i = 0; i < layers.length; i++) {
-      builder.append(i + ",");
-      for (int j = 0; j < layers[i].length; j++) {
-        LV<V> v = layers[i][j];
-        builder.append(v.getClass().getSimpleName() + ":" + v.getVertex() + ", ");
-      }
-      builder.append("\n");
-    }
-    return builder.toString();
-  }
   /**
    * return the segment to which v is incident, if v is a PVertex or a QVertex. Otherwise, return v
    *

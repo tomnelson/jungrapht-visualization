@@ -39,12 +39,6 @@ public class AccumulatorTree<V, E> {
     tree = new int[treeSize];
   }
 
-  public AccumulatorTree(List<LE<V, E>> edges) {
-    this(edges.size());
-    this.edges = edges;
-    this.edges.sort(Comparators.biLevelEdgeComparator());
-  }
-
   public int countEdges(int n, int last) {
     if (n > last) {
       log.error("position exceeds array size");
@@ -80,14 +74,7 @@ public class AccumulatorTree<V, E> {
         }
       }
     }
-    //    Arrays.stream(tree).forEach(i -> tree[i] = 0);
     return crossCount;
-  }
-
-  public static int crossWeight(
-      int size, int[] sequence, Function<Integer, Integer> weightFunction) {
-    AccumulatorTree tree = new AccumulatorTree(size);
-    return tree.crossWeight(sequence, weightFunction);
   }
 
   /**
@@ -101,6 +88,7 @@ public class AccumulatorTree<V, E> {
     for (int k = 0; k < r; k++) {
       int index = southSequence[k] + firstIndex;
       int inc = weight.apply(k);
+      log.info("got a weight value of {}", inc);
       tree[index] += weight.apply(k);
       int weightSum = 0;
       while (index > 0) {

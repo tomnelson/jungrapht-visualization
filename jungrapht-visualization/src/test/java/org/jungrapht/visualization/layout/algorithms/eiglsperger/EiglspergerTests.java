@@ -6,7 +6,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.jgrapht.Graph;
-import org.jgrapht.Graphs;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.GraphLayers;
@@ -143,24 +142,8 @@ public class EiglspergerTests {
     List<LV<String>> list = EiglspergerUtil.createListOfVertices(layersArray[2]);
     list = EiglspergerUtil.scan(list);
 
-    //    Map<LV<String>, Integer> pos = new HashMap<>();
-    //    Map<LV<String>, Integer> measure = new HashMap<>();
-
-    BiLayer<String, Integer> biLayer =
-        BiLayer.of(
-            0,
-            1,
-            list,
-            null,
-            null,
-            PVertex.class::isInstance,
-            QVertex.class::isInstance,
-            Graphs::predecessorListOf);
-
     EiglspergerStepsForward<String, Integer> stepsForward =
         new EiglspergerStepsForward<>(svGraph, layersArray);
-    //    EiglspergerStepsBackward<String, Integer> stepsBackward =
-    //            new EiglspergerStepsBackward<>(svGraph, layersArray);
 
     stepsForward.stepOne(list);
     log.info("biLayer");

@@ -7,6 +7,12 @@ import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * initialize for forward sweep (top to bottom)
+ *
+ * @param <V> vertex type
+ * @param <E> edge type
+ */
 class EiglspergerStepsForward<V, E> extends EiglspergerSteps<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(EiglspergerStepsForward.class);

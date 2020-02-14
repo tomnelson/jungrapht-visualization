@@ -70,6 +70,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     boolean useLongestPathLayering;
 
     /** {@inheritDoc} */
+    @SuppressWarnings("unchecked")
     protected B self() {
       return (B) this;
     }
@@ -183,7 +184,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     this.graph = layoutModel.getGraph();
 
     long startTime = System.currentTimeMillis();
-    TransformedGraphSupplier<V, E> transformedGraphSupplier = new TransformedGraphSupplier(graph);
+    TransformedGraphSupplier<V, E> transformedGraphSupplier = new TransformedGraphSupplier<>(graph);
     this.svGraph = transformedGraphSupplier.get();
     long transformTime = System.currentTimeMillis();
     log.trace("transform Graph took {}", (transformTime - startTime));
@@ -191,7 +192,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     if (checkStopped()) {
       return;
     }
-    GreedyCycleRemoval<LV<V>, LE<V, E>> greedyCycleRemoval = new GreedyCycleRemoval(svGraph);
+    GreedyCycleRemoval<LV<V>, LE<V, E>> greedyCycleRemoval = new GreedyCycleRemoval<>(svGraph);
     Collection<LE<V, E>> feedbackArcs = greedyCycleRemoval.getFeedbackArcs();
 
     // reverse the direction of feedback arcs so that they no longer introduce cycles in the graph
@@ -278,9 +279,9 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     Map<LV<V>, Point> vertexPointMap = new HashMap<>();
 
     // update the indices of the all layers
-    for (int i = 0; i < best.length; i++) {
-      for (int j = 0; j < best[i].length; j++) {
-        best[i][j].setIndex(j);
+    for (LV<V>[] value : best) {
+      for (int j = 0; j < value.length; j++) {
+        value[j].setIndex(j);
       }
     }
     if (straightenEdges) {
@@ -291,9 +292,8 @@ public class EiglspergerRunnable<V, E> implements Runnable {
 
       GraphLayers.checkLayers(best);
 
-      for (int i = 0; i < best.length; i++) {
-        for (int j = 0; j < best[i].length; j++) {
-          LV<V> EiglspergerVertex = best[i][j];
+      for (LV<V>[] lvs : best) {
+        for (LV<V> EiglspergerVertex : lvs) {
           vertexPointMap.put(EiglspergerVertex, EiglspergerVertex.getPoint());
         }
       }
@@ -314,12 +314,11 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     int totalHeight = 0;
     int totalWidth = 0;
 
-    for (int i = 0; i < best.length; i++) {
+    for (LV<V>[] lvs : best) {
 
       int width = horizontalOffset;
       int maxHeight = 0;
-      for (int j = 0; j < best[i].length; j++) {
-        LV<V> v = best[i][j];
+      for (LV<V> v : lvs) {
         if (!(v instanceof SyntheticLV)) {
           Rectangle bounds = vertexShapeFunction.apply(v.getVertex()).getBounds();
           width += bounds.width + horizontalOffset;
@@ -333,14 +332,14 @@ public class EiglspergerRunnable<V, E> implements Runnable {
       layerIndex++;
     }
 
-    int widestRowWidth = rowWidthMap.values().stream().mapToInt(v -> v).max().getAsInt();
+    int widestRowWidth = rowWidthMap.values().stream().mapToInt(v -> v).max().orElse(0);
     int x = horizontalOffset;
     int y = verticalOffset;
     layerIndex = 0;
     if (log.isTraceEnabled()) {
       log.trace("layerMaxHeights {}", rowMaxHeightMap);
     }
-    for (int i = 0; i < best.length; i++) {
+    for (LV<V>[] lvs : best) {
       int previousVertexWidth = 0;
       // offset against widest row
       x += (widestRowWidth - rowWidthMap.get(layerIndex)) / 2;
@@ -351,8 +350,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
       }
 
       int rowWidth = 0;
-      for (int j = 0; j < best[i].length; j++) {
-        LV<V> EiglspergerVertex = best[i][j];
+      for (LV<V> EiglspergerVertex : lvs) {
         int vertexWidth = 0;
         if (!(EiglspergerVertex instanceof SyntheticLV)) {
           vertexWidth = vertexShapeFunction.apply(EiglspergerVertex.getVertex()).getBounds().width;
@@ -460,6 +458,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     svGraph.vertexSet().forEach(v -> layoutModel.set(v.getVertex(), v.getPoint()));
     for (LV<V> v : svGraph.vertexSet()) {
       if (v.getVertex() instanceof Attributed) {
+        @SuppressWarnings("unchecked")
         Attributed<V> va = (Attributed<V>) v.getVertex();
         va.set("pos", "" + v.getPos());
         va.set("idx", "" + v.getIndex());
@@ -473,14 +472,12 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     if (log.isTraceEnabled())
       log.info(">>>>>>>>>>>>>>>>>>>>>>>>> Forward!>>>>>>>>>>>>>>>>>>>>>>>>>");
     int crossCount = 0;
-    if (log.isTraceEnabled()) log.trace("sweepForward");
 
     List<LV<V>> layerEye = null;
     EiglspergerStepsForward<V, E> stepsForward =
         new EiglspergerStepsForward<>(svGraph, layersArray);
 
     for (int i = 0; i < layersArray.length - 1; i++) {
-      List<LE<V, E>> edges = new ArrayList<>(svGraph.edgeSet());
       if (layerEye == null) {
         layerEye =
             EiglspergerUtil.scan(
@@ -539,7 +536,6 @@ public class EiglspergerRunnable<V, E> implements Runnable {
         new EiglspergerStepsBackward<>(svGraph, layersArray);
 
     for (int i = layersArray.length - 1; i > 0; i--) {
-      List<LE<V, E>> edges = new ArrayList<>(svGraph.edgeSet());
       if (layerEye == null) {
         layerEye =
             EiglspergerUtil.scan(EiglspergerUtil.createListOfVertices(layersArray[i])); // last rank
@@ -592,10 +588,10 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     // figure out the largest rendered vertex
     Rectangle maxVertexBounds = new Rectangle();
 
-    for (int i = 0; i < layers.length; i++) {
-      for (int j = 0; j < layers[i].length; j++) {
-        if (!(layers[i][j] instanceof SyntheticLV)) {
-          Rectangle bounds = vertexShapeFunction.apply(layers[i][j].getVertex()).getBounds();
+    for (LV<V>[] layer : layers) {
+      for (LV<V> vlv : layer) {
+        if (!(vlv instanceof SyntheticLV)) {
+          Rectangle bounds = vertexShapeFunction.apply(vlv.getVertex()).getBounds();
           int width = Math.max(bounds.width, maxVertexBounds.width);
           int height = Math.max(bounds.height, maxVertexBounds.height);
           maxVertexBounds = new Rectangle(width, height);
@@ -610,10 +606,10 @@ public class EiglspergerRunnable<V, E> implements Runnable {
 
     LongSummaryStatistics w = new LongSummaryStatistics();
     LongSummaryStatistics h = new LongSummaryStatistics();
-    for (int i = 0; i < layers.length; i++) {
-      for (int j = 0; j < layers[i].length; j++) {
-        if (!(layers[i][j] instanceof SyntheticLV)) {
-          Rectangle bounds = vertexShapeFunction.apply(layers[i][j].getVertex()).getBounds();
+    for (LV<V>[] layer : layers) {
+      for (LV<V> vlv : layer) {
+        if (!(vlv instanceof SyntheticLV)) {
+          Rectangle bounds = vertexShapeFunction.apply(vlv.getVertex()).getBounds();
           w.accept(bounds.width);
           h.accept(bounds.height);
         }
