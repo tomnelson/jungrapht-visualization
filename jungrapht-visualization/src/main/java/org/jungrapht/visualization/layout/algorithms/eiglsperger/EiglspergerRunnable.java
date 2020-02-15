@@ -236,24 +236,17 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     long syntheticsTime = System.currentTimeMillis();
     log.trace("synthetics took {}", (syntheticsTime - assignLayersTime));
 
-    int bestEvahCrossCount = Integer.MAX_VALUE;
-    int edgeCount = svGraph.edgeSet().size();
-    if (edgeCount > 200) {
-      maxLevelCross = 1;
+    if (svGraph.edgeSet().size() > 200) {
+      maxLevelCross = 2;
     }
-    maxLevelCross = 23;
-    int bestForwardCrossCount = Integer.MAX_VALUE;
-    int bestBackwardCrossCount = Integer.MAX_VALUE;
-    int bestCrossCount = 0;
+
+    int bestCrossCount = Integer.MAX_VALUE;
     LV<V>[][] best = null;
     for (int i = 0; i < maxLevelCross; i++) {
-      int forwardCrossCount = 0;
-      int reverseCrossCount = 0;
       if (i % 2 == 0) {
-        forwardCrossCount = sweepForward(layersArray);
-        bestCrossCount = Math.min(bestForwardCrossCount, forwardCrossCount);
-        if (bestCrossCount < bestEvahCrossCount) {
-          bestEvahCrossCount = bestCrossCount;
+        int sweepCrossCount = sweepForward(layersArray);
+        if (sweepCrossCount < bestCrossCount) {
+          bestCrossCount = sweepCrossCount;
           best = copy(layersArray);
         } else {
           if (log.isTraceEnabled()) {
@@ -262,10 +255,9 @@ public class EiglspergerRunnable<V, E> implements Runnable {
           break;
         }
       } else {
-        reverseCrossCount = sweepBackwards(layersArray);
-        bestCrossCount = Math.min(bestBackwardCrossCount, reverseCrossCount);
-        if (bestCrossCount < bestEvahCrossCount) {
-          bestEvahCrossCount = bestCrossCount;
+        int sweepCrossCount = sweepBackwards(layersArray);
+        if (sweepCrossCount < bestCrossCount) {
+          bestCrossCount = sweepCrossCount;
           best = copy(layersArray);
         } else {
           if (log.isTraceEnabled()) {
@@ -275,6 +267,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
         }
       }
     }
+    log.trace("bestCrossCount: {}", bestCrossCount);
 
     // done optimizing for edge crossing
     if (best == null) {
