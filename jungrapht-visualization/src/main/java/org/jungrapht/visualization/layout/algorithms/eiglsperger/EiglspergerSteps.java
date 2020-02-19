@@ -156,6 +156,10 @@ public class EiglspergerSteps<V, E> {
       log("stepOne currentLayer out (merged pvertices into containers)", currentLayer);
   }
 
+  private static <V> void updateIndices(List<LV<V>> layer) {
+    IntStream.range(0, layer.size()).forEach(i -> layer.get(i).setIndex(i));
+  }
+
   /**
    * "In the second step we compute the measure values for the elements in L i+1 . First we assign a
    * position value pos(v i j ) to all vertices v i j in L i . pos(v i 0 ) = size(S i 0 ) and pos(v
@@ -177,6 +181,10 @@ public class EiglspergerSteps<V, E> {
     if (log.isTraceEnabled()) log("stepTwo downstreamLayer in", downstreamLayer);
 
     assignPositions(currentLayer);
+
+    if (updatePositions(currentLayer)) {
+      log.error("positions were off for {}", currentLayer);
+    }
 
     List<Container<V>> containersFromCurrentLayer =
         currentLayer
@@ -327,6 +335,13 @@ public class EiglspergerSteps<V, E> {
 
     downstreamLayer.clear();
     downstreamLayer.addAll(mergedList);
+
+    // fix the indices
+    updateIndices(downstreamLayer);
+
+    if (updatePositions(downstreamLayer)) {
+      log.trace("positions were updated for {}", downstreamLayer);
+    }
     if (log.isTraceEnabled())
       log("stepThree downstreamLayer out (initial ordering for downstreamLayer)", downstreamLayer);
   }
@@ -404,7 +419,9 @@ public class EiglspergerSteps<V, E> {
       }
     }
 
-    IntStream.range(0, downstreamLayer.size()).forEach(i -> downstreamLayer.get(i).setIndex(i));
+    updateIndices(downstreamLayer);
+    updatePositions(downstreamLayer);
+//    IntStream.range(0, downstreamLayer.size()).forEach(i -> downstreamLayer.get(i).setIndex(i));
     Arrays.sort(layersArray[downstreamRank], Comparator.comparingInt(LV::getIndex));
     if (log.isTraceEnabled())
       log("stepFour downstreamLayer out (split containers for Q/PVertices)", downstreamLayer);
@@ -478,7 +495,8 @@ public class EiglspergerSteps<V, E> {
         currentLayer.remove(i);
       }
     }
-    IntStream.range(0, currentLayer.size()).forEach(i -> currentLayer.get(i).setIndex(i));
+    updateIndices(currentLayer);
+    updatePositions(currentLayer);
 
     // remove any empty containers from the downstreamLayer and reset the index metadata
     // for the currentLayer vertices
@@ -488,7 +506,8 @@ public class EiglspergerSteps<V, E> {
         downstreamLayer.remove(i);
       }
     }
-    IntStream.range(0, downstreamLayer.size()).forEach(i -> downstreamLayer.get(i).setIndex(i));
+    updateIndices(downstreamLayer);
+    updatePositions(downstreamLayer);
 
     // downwards, the function is a no-op, upwards the biLayerEdges endpoints are swapped
     log.trace("for ranks {} and {} ....", currentRank, downstreamRank);
@@ -564,6 +583,8 @@ public class EiglspergerSteps<V, E> {
       }
     }
     log.trace("crossCount  {}", crossCount);
+    updatePositions(downstreamLayer);
+
     return crossCount;
   }
 
@@ -598,6 +619,7 @@ public class EiglspergerSteps<V, E> {
     Collections.swap(array, i, j);
     array.get(i).setIndex(i);
     array.get(j).setIndex(j);
+    updatePositions(array);
   }
 
   /**
@@ -631,6 +653,30 @@ public class EiglspergerSteps<V, E> {
     } else {
       return v;
     }
+  }
+
+  /**
+   * update the positions so that the preceding container size is used
+   * @param layer
+   */
+  static <V> boolean updatePositions(List<LV<V>> layer) {
+    boolean changed = false;
+    int currentPos = 0;
+    for (LV<V> v : layer) {
+      if (v instanceof Container && ((Container<V>)v).size() == 0) {
+        continue;
+      }
+      if (v.getPos() != currentPos) {
+        changed = true;
+      }
+      v.setPos(currentPos);
+      if (v instanceof Container) {
+        currentPos += ((Container<V>)v).size();
+      } else {
+        currentPos++;
+      }
+    }
+    return changed;
   }
 
   void assignPositions(List<LV<V>> currentLayer) {

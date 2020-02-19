@@ -106,9 +106,9 @@ public class SugiyamaSixTestGraphExample extends JFrame {
 
     container.add(vv1.getComponent());
     container.add(vv2.getComponent());
+    container.add(vv5.getComponent());
     container.add(vv3.getComponent());
     container.add(vv4.getComponent());
-    container.add(vv5.getComponent());
     container.add(vv6.getComponent());
 
     setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

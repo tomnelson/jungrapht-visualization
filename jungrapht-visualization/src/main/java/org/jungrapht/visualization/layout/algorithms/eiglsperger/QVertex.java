@@ -26,6 +26,10 @@ class QVertex<V> extends SegmentVertex<V> {
     super(other);
   }
 
+  public QVertex<V> copy() {
+    return new QVertex<>(this);
+  }
+
   @Override
   public void setPos(int pos) {
     super.setPos(pos);

@@ -93,7 +93,8 @@ public class HorizontalCompaction<V> {
             shift(sink(u), Math.min(shift(sink(u)), x(v) - x(u) - deltaX));
           } else {
             // x[v] <- max{x[v], x[u] + delta}
-            x(v, Math.max(x(v), x(u) + deltaX));
+            int plus = deltaX * (pos(v) - idx(v));
+            x(v, Math.max(x(v), x(u) + Math.max(deltaX, plus)));
           }
         }
         w = align(w);
@@ -106,6 +107,10 @@ public class HorizontalCompaction<V> {
   }
 
   protected int pos(LV<V> v) {
+    return v.getIndex();
+  }
+
+  protected int idx(LV<V> v) {
     return v.getIndex();
   }
 

@@ -38,33 +38,6 @@ public abstract class VerticalAlignment<V, E>
     return pos(um);
   }
 
-  //  @Override
-  protected int alignMoveCursorMax(LV<V> um, LV<V> vkofi) {
-    align(um, vkofi);
-    root(vkofi, root(um));
-    align(vkofi, root(vkofi));
-    if (um instanceof SegmentVertex) {
-      Segment<V> segment = ((SegmentVertex<V>) um).getSegment();
-      int maxPos = Math.max(segment.pVertex.getPos(), segment.qVertex.getPos());
-      return maxPos;
-    } else {
-      return pos(um);
-    }
-  }
-  //  @Override
-  protected int alignMoveCursorMin(LV<V> um, LV<V> vkofi) {
-    align(um, vkofi);
-    root(vkofi, root(um));
-    align(vkofi, root(vkofi));
-    if (um instanceof SegmentVertex) {
-      Segment<V> segment = ((SegmentVertex<V>) um).getSegment();
-      int maxPos = Math.min(segment.pVertex.getPos(), segment.qVertex.getPos());
-      return maxPos;
-    } else {
-      return pos(um);
-    }
-  }
-
   /**
    * start at first layer, work down, looking at predecessors
    *
@@ -98,7 +71,10 @@ public abstract class VerticalAlignment<V, E>
               if (align(vkofi) == vkofi) {
                 LV<V> um = neighbors.get(m);
                 LE<V, E> edge = svGraph.getEdge(um, vkofi);
-                if ((notMarked(edge) && r < pos(um)) || um instanceof Synthetic) {
+//                if (um instanceof PVertex) {
+//                  log.info("vkofi is {}", vkofi);
+//                }
+                if ((notMarked(edge) && r < pos(um)) || um instanceof PVertex) {
                   r = alignMoveCursor(um, vkofi);
                 }
               }
@@ -139,7 +115,7 @@ public abstract class VerticalAlignment<V, E>
               if (align(vkofi) == vkofi) {
                 LV<V> um = neighbors.get(m);
                 LE<V, E> edge = svGraph.getEdge(um, vkofi);
-                if ((notMarked(edge) && r > pos(um)) || um instanceof Synthetic) {
+                if ((notMarked(edge) && r > pos(um)) || um instanceof PVertex) {
                   r = alignMoveCursor(um, vkofi);
                 }
               }
@@ -184,7 +160,7 @@ public abstract class VerticalAlignment<V, E>
               if (align(vkofi) == vkofi) {
                 LV<V> um = neighbors.get(m);
                 LE<V, E> edge = svGraph.getEdge(vkofi, um);
-                if ((notMarked(edge) && r < pos(um)) || um instanceof Synthetic) {
+                if ((notMarked(edge) && r < pos(um)) || um instanceof QVertex) {
                   r = alignMoveCursor(um, vkofi);
                 }
               }
@@ -232,7 +208,7 @@ public abstract class VerticalAlignment<V, E>
               if (align(vkofi) == vkofi) {
                 LV<V> um = neighbors.get(m);
                 LE<V, E> edge = svGraph.getEdge(vkofi, um);
-                if ((notMarked(edge) && r > pos(um)) || um instanceof Synthetic) {
+                if ((notMarked(edge) && r > pos(um)) || um instanceof QVertex) {
                   r = alignMoveCursor(um, vkofi);
                 }
               }

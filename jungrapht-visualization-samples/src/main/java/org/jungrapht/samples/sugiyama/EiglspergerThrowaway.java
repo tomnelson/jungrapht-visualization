@@ -28,61 +28,21 @@ public class EiglspergerThrowaway extends JFrame {
 
     Graph<Integer, Integer> graph = createInitialGraph();
 
-    //    VisualizationViewer<Integer, Integer> vv1 = configureVisualizationViewer(graph);
-    //    vv1.addPreRenderPaintable(new TitlePaintable("Sugiyama No Edge Straightening", vv1.getPreferredSize()));
-    //    vv1.getRenderContext().setEdgeLabelFunction(Object::toString);
-    //    VisualizationViewer<Integer, Integer> vv2 = configureVisualizationViewer(graph);
-    //    vv2.addPreRenderPaintable(
-    //        new TitlePaintable("BrandesKopf Edge Alignment", vv1.getPreferredSize()));
-    //    vv2.getRenderContext().setEdgeLabelFunction(Object::toString);
     VisualizationViewer<Integer, Integer> vv3 = configureVisualizationViewer(graph);
-    //    vv3.addPreRenderPaintable(
-    //        new TitlePaintable("Eiglsperger No Edge Straightening", vv3.getPreferredSize()));
-    vv3.getRenderContext().setEdgeLabelFunction(Object::toString);
-    //    VisualizationViewer<Integer, Integer> vv4 = configureVisualizationViewer(graph);
-    //    vv4.addPreRenderPaintable(
-    //            new TitlePaintable("Eiglsperger Edge Alignment", vv1.getPreferredSize()));
-    //    vv4.getRenderContext().setEdgeLabelFunction(Object::toString);
 
-    //    SugiyamaLayoutAlgorithm<Integer, Integer> layoutAlgorithm1 =
-    //        SugiyamaLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
-    //            .straightenEdges(false)
-    //            .postStraighten(false)
-    //            .after(vv1::scaleToLayout)
-    //            .build();
-    //    layoutAlgorithm1.setRenderContext(vv1.getRenderContext());
-    //    vv1.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm1);
-    //    container.add(vv1.getComponent());
-    //
-    //    SugiyamaLayoutAlgorithm<Integer, Integer> layoutAlgorithm2 =
-    //        SugiyamaLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
-    //            .straightenEdges(true)
-    //            .postStraighten(false)
-    //            .after(vv2::scaleToLayout)
-    //            .build();
-    //    layoutAlgorithm2.setRenderContext(vv2.getRenderContext());
-    //    vv2.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm2);
-    //    container.add(vv2.getComponent());
+    vv3.getRenderContext().setEdgeLabelFunction(Object::toString);
 
     EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm3 =
         EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             //                        .straightenEdges(false)
             .postStraighten(true)
             .threaded(false)
+            .postStraighten(false)
             .after(vv3::scaleToLayout)
             .build();
     layoutAlgorithm3.setRenderContext(vv3.getRenderContext());
     vv3.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm3);
     container.add(vv3.getComponent());
-
-    //    EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm4 =
-    //            EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
-    //                    .straightenEdges(true)
-    //                    .after(vv3::scaleToLayout)
-    //                    .build();
-    //    layoutAlgorithm4.setRenderContext(vv4.getRenderContext());
-    //    vv4.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm4);
-    //    container.add(vv4.getComponent());
 
     setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 

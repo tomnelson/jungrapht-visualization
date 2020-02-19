@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  * @param <V> vertex type
  * @param <E> edge type
  */
-class EiglspergerStepsBackward<V, E> extends EiglspergerSteps<V, E> {
+public class EiglspergerStepsBackward<V, E> extends EiglspergerSteps<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(EiglspergerStepsBackward.class);
 

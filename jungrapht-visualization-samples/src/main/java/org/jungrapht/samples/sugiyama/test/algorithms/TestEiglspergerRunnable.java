@@ -16,7 +16,8 @@ import java.util.Set;
 import java.util.function.Function;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnable;
-import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerUtil;
+import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerStepsBackward;
+import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerStepsForward;
 import org.jungrapht.visualization.layout.algorithms.eiglsperger.SyntheticLV;
 import org.jungrapht.visualization.layout.algorithms.eiglsperger.Synthetics;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.ArticulatedEdge;
@@ -171,34 +172,45 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
     long syntheticsTime = System.currentTimeMillis();
     log.trace("synthetics took {}", (syntheticsTime - assignLayersTime));
 
+    if (svGraph.edgeSet().size() > 200) {
+      maxLevelCross = 2;
+    }
+    stepsForward = new EiglspergerStepsForward<>(svGraph, layersArray);
+    stepsBackward = new EiglspergerStepsBackward<>(svGraph, layersArray);
+
     int bestCrossCount = Integer.MAX_VALUE;
-    int edgeCount = svGraph.edgeSet().size();
-    if (edgeCount > 200) {
-      maxLevelCross = 1;
-    }
+    LV<V>[][] best = null;
     for (int i = 0; i < maxLevelCross; i++) {
-      int forwardCrossCount = 0;
-      int reverseCrossCount = 0;
       if (i % 2 == 0) {
-        int count = sweepForward(layersArray);
-        forwardCrossCount = count;
-        EiglspergerUtil.check(layersArray);
+        int sweepCrossCount = sweepForward(layersArray);
+        if (sweepCrossCount < bestCrossCount) {
+          bestCrossCount = sweepCrossCount;
+          best = copy(layersArray);
+        } else {
+          if (log.isTraceEnabled()) {
+            log.trace("best:{}", best);
+          }
+          break;
+        }
       } else {
-        int count = sweepBackwards(layersArray);
-        reverseCrossCount = count;
-        EiglspergerUtil.check(layersArray);
-      }
-      int twoWayCrossCount = forwardCrossCount + reverseCrossCount;
-      if (twoWayCrossCount < bestCrossCount) {
-        bestCrossCount = twoWayCrossCount;
-      } else {
-        log.trace("the bext cross count was {}", bestCrossCount);
-        break;
+        int sweepCrossCount = sweepBackwards(layersArray);
+        if (sweepCrossCount < bestCrossCount) {
+          bestCrossCount = sweepCrossCount;
+          best = copy(layersArray);
+        } else {
+          if (log.isTraceEnabled()) {
+            log.trace("best:{}", best);
+          }
+          break;
+        }
       }
     }
+    log.trace("bestCrossCount: {}", bestCrossCount);
 
     // done optimizing for edge crossing
-    LV<V>[][] best = layersArray;
+    if (best == null) {
+      best = layersArray;
+    }
 
     // figure out the avg size of rendered vertex
     java.awt.Rectangle avgVertexBounds =
@@ -222,15 +234,7 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
     if (straightenEdges) {
       SelectiveEiglspergerHorizontalCoordinateAssignment<V, E> horizontalCoordinateAssignment =
           new SelectiveEiglspergerHorizontalCoordinateAssignment(
-              layersArray,
-              svGraph,
-              new HashSet<>(),
-              50,
-              50,
-              doUpLeft,
-              doUpRight,
-              doDownLeft,
-              doDownRight);
+              best, svGraph, new HashSet<>(), 50, 50, doUpLeft, doUpRight, doDownLeft, doDownRight);
       horizontalCoordinateAssignment.horizontalCoordinateAssignment();
 
       GraphLayers.checkLayers(best);

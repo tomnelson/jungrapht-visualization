@@ -22,6 +22,10 @@ class PVertex<V> extends SegmentVertex<V> {
     super();
   }
 
+  public PVertex<V> copy() {
+    return new PVertex<>(this);
+  }
+
   public PVertex(PVertex<V> other) {
     super(other);
   }

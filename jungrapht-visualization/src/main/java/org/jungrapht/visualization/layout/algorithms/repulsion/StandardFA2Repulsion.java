@@ -31,7 +31,7 @@ public class StandardFA2Repulsion<
     protected Function<V, Point> initializer = v -> Point.ORIGIN;
     protected LayoutModel<V> layoutModel;
     protected Random random = new Random();
-    protected double kr = 100.0;
+    protected double kr = 1.0;
     protected Function<V, Double> nodeSizes = null; // Sizes for prevent overlapping
     protected Function<V, Double> nodeMasses = null; // Masses for "Repulsion by Degree"
 

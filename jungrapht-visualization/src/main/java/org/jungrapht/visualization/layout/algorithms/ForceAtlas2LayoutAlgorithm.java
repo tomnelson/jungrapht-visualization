@@ -67,6 +67,8 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
   private Map<V, Point> frVertexData;
   private Map<V, Point> prevStepFrVertexData;
 
+  private boolean tuneToGraphSize;
+
   public static class Builder<
           V, T extends ForceAtlas2LayoutAlgorithm<V>, B extends Builder<V, T, B>>
       extends AbstractIterativeLayoutAlgorithm.Builder<V, T, B>
@@ -85,6 +87,8 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
     private Map<V, Double> nodeMasses = null;
     private Function<V, Point> initializer =
         v -> Point.of(random.nextDouble(), random.nextDouble());
+//    private boolean tuneToGraphSize = true;
+
 
     public B repulsionContractBuilder(StandardFA2Repulsion.Builder repulsionContractBuilder) {
       this.repulsionContractBuilder = repulsionContractBuilder;
@@ -239,6 +243,11 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
       return (B) this;
     }
 
+//    public B tuneToGraphSize(boolean tuneToGraphSize) {
+//      this.tuneToGraphSize = tuneToGraphSize;
+//      return (B)this;
+//    }
+
     @Override
     public T build() {
       return (T) new ForceAtlas2LayoutAlgorithm<V>(this);
@@ -270,6 +279,7 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
     this.tolerance = builder.tolerance;
     this.initializer = builder.initializer;
     this.repulsionContractBuilder = builder.repulsionContractBuilder;
+//    this.tuneToGraphSize = builder.tuneToGraphSize;
   }
 
   public void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
@@ -301,6 +311,19 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
     }
     swg = new HashMap<>(layoutModel.getGraph().vertexSet().size());
     trace = new HashMap<>(layoutModel.getGraph().vertexSet().size());
+
+//    if (tuneToGraphSize) {
+//      Graph<V,?> graph = layoutModel.getGraph();
+//      int vertexCount = graph.vertexSet().size();
+//      kg = 10000.0 / vertexCount;
+////      if (graph.vertexSet().size() < 100) {
+////        kg = 100.0;
+////      } else if (graph.vertexSet().size() < 1000) {
+////        kg = 1.0;
+////      } else {
+////        kg = 0.1;
+////      }
+//    }
 
     repulsionContract =
         repulsionContractBuilder

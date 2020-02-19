@@ -33,6 +33,10 @@ Graph using SugiyamaLayoutAlgorithm
 
 ![Image SugiyamaLayout](images/sugiyama2.jpg)
 
+Graph using Eiglsperger Optimization of SugiyamaLayoutAlgorithm
+
+![Image SugiyamaLayout](images/eiglspergersugiyama.jpg)
+
 Graph using CircleLayoutAlgorithm
 
 ![Image CircleLayout](images/CircleLayout.jpg)

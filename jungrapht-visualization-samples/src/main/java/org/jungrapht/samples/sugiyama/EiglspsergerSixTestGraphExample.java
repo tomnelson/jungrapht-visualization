@@ -50,6 +50,7 @@ public class EiglspsergerSixTestGraphExample extends JFrame {
         TestEiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .doUpLeft(true)
             .threaded(false)
+            .postStraighten(false)
             .after(vv1::scaleToLayout)
             .build();
     layoutAlgorithm1.setRenderContext(vv1.getRenderContext());
@@ -59,6 +60,7 @@ public class EiglspsergerSixTestGraphExample extends JFrame {
         TestEiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .doUpRight(true)
             .threaded(false)
+            .postStraighten(false)
             .after(vv2::scaleToLayout)
             .build();
     layoutAlgorithm2.setRenderContext(vv2.getRenderContext());
@@ -68,6 +70,7 @@ public class EiglspsergerSixTestGraphExample extends JFrame {
         TestEiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .doDownLeft(true)
             .threaded(false)
+            .postStraighten(false)
             .after(vv3::scaleToLayout)
             .build();
     layoutAlgorithm3.setRenderContext(vv3.getRenderContext());
@@ -77,6 +80,7 @@ public class EiglspsergerSixTestGraphExample extends JFrame {
         TestEiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .doDownRight(true)
             .threaded(false)
+            .postStraighten(false)
             .after(vv4::scaleToLayout)
             .build();
     layoutAlgorithm4.setRenderContext(vv4.getRenderContext());
@@ -88,6 +92,8 @@ public class EiglspsergerSixTestGraphExample extends JFrame {
             .doUpRight(true)
             .doDownLeft(true)
             .doDownRight(true)
+            .threaded(false)
+            .postStraighten(false)
             .after(vv5::scaleToLayout)
             .build();
     layoutAlgorithm5.setRenderContext(vv5.getRenderContext());
@@ -99,6 +105,8 @@ public class EiglspsergerSixTestGraphExample extends JFrame {
             .doUpRight(false)
             .doDownLeft(true)
             .doDownRight(false)
+            .threaded(false)
+            .postStraighten(false)
             .after(vv6::scaleToLayout)
             .build();
     layoutAlgorithm6.setRenderContext(vv6.getRenderContext());
@@ -106,9 +114,9 @@ public class EiglspsergerSixTestGraphExample extends JFrame {
 
     container.add(vv1.getComponent());
     container.add(vv2.getComponent());
+    container.add(vv5.getComponent());
     container.add(vv3.getComponent());
     container.add(vv4.getComponent());
-    container.add(vv5.getComponent());
     container.add(vv6.getComponent());
 
     setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

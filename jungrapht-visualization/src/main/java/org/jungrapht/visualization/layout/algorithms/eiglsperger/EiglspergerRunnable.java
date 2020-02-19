@@ -140,6 +140,10 @@ public class EiglspergerRunnable<V, E> implements Runnable {
   protected int maxLevelCross;
   protected boolean useLongestPathLayering;
 
+  protected EiglspergerStepsForward<V, E> stepsForward;
+  protected EiglspergerStepsBackward<V, E> stepsBackward;
+  EiglspergerSteps<V, E> steps = null;
+
   protected EiglspergerRunnable(Builder<V, E, ?, ?> builder) {
     this(
         builder.layoutModel,
@@ -239,6 +243,9 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     if (svGraph.edgeSet().size() > 200) {
       maxLevelCross = 2;
     }
+    stepsForward = new EiglspergerStepsForward<>(svGraph, layersArray);
+    stepsBackward = new EiglspergerStepsBackward<>(svGraph, layersArray);
+    //    EiglspergerSteps<V, E> steps = null;
 
     int bestCrossCount = Integer.MAX_VALUE;
     LV<V>[][] best = null;
@@ -494,8 +501,6 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     int crossCount = 0;
 
     List<LV<V>> layerEye = null;
-    EiglspergerStepsForward<V, E> stepsForward =
-        new EiglspergerStepsForward<>(svGraph, layersArray);
 
     for (int i = 0; i < layersArray.length - 1; i++) {
       if (layerEye == null) {
@@ -542,7 +547,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
       EiglspergerUtil.fixIndices(layersArray[i + 1]);
       layerEye = downstreamLayer;
     }
-    log.trace("sweepForward crossCount:{}", crossCount);
+    log.info("sweepForward crossCount:{}", crossCount);
     return crossCount;
   }
 
@@ -553,8 +558,6 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     int crossCount = 0;
     if (log.isTraceEnabled()) log.trace("sweepBackwards");
     List<LV<V>> layerEye = null;
-    EiglspergerStepsBackward<V, E> stepsBackward =
-        new EiglspergerStepsBackward<>(svGraph, layersArray);
 
     for (int i = layersArray.length - 1; i > 0; i--) {
       if (layerEye == null) {
@@ -601,7 +604,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
       EiglspergerUtil.fixIndices(layersArray[i - 1]);
       layerEye = downstreamLayer;
     }
-    log.trace("sweepBackward crossCount:{}", crossCount);
+    log.info("sweepBackward crossCount:{}", crossCount);
     return crossCount;
   }
 
