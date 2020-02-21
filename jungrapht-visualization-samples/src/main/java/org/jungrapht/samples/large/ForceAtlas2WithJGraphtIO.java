@@ -24,6 +24,7 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.layout.algorithms.ForceAtlas2LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFA2Repulsion;
+import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.util.helpers.ControlHelpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,8 +78,6 @@ public class ForceAtlas2WithJGraphtIO extends JFrame {
             .graphMouse(graphMouse)
             .build();
 
-    //    vv.getRenderContext().setVertexLabelFunction(Object::toString);
-
     ForceAtlas2LayoutAlgorithm layoutAlgorithm =
         builder.repulsionContractBuilder(repulsion).build();
 
@@ -88,27 +87,30 @@ public class ForceAtlas2WithJGraphtIO extends JFrame {
 
     final JComboBox graphComboBox = new JComboBox(getCombos());
     graphComboBox.addActionListener(
-        e ->
-            SwingUtilities.invokeLater(
-                () -> {
-                  clear(graph);
-                  String urlString = ((GraphLinks) graphComboBox.getSelectedItem()).url;
-                  try (InputStreamReader inputStreamReader = get(urlString)) {
-                    GmlImporter gmlImporter = new GmlImporter(vp, ep);
-                    gmlImporter.importGraph(graph, inputStreamReader);
-                  } catch (Exception ex) {
-                    ex.printStackTrace();
-                  }
-                  int size = (int) (50 * Math.sqrt(graph.vertexSet().size()));
-                  vv.getVisualizationModel().getLayoutModel().setSize(size, size);
-                  vv.getVisualizationModel().setGraph(graph);
-                  setTitle(
-                      "Graph With "
-                          + graph.vertexSet().size()
-                          + " vertices and "
-                          + graph.edgeSet().size()
-                          + " edges");
-                }));
+        e -> {
+          LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
+          layoutModel.stopRelaxer();
+          SwingUtilities.invokeLater(
+              () -> {
+                clear(graph);
+                String urlString = ((GraphLinks) graphComboBox.getSelectedItem()).url;
+                try (InputStreamReader inputStreamReader = get(urlString)) {
+                  GmlImporter gmlImporter = new GmlImporter(vp, ep);
+                  gmlImporter.importGraph(graph, inputStreamReader);
+                } catch (Exception ex) {
+                  ex.printStackTrace();
+                }
+                int size = (int) (50 * Math.sqrt(graph.vertexSet().size()));
+                vv.getVisualizationModel().getLayoutModel().setSize(size, size);
+                vv.getVisualizationModel().setGraph(graph);
+                setTitle(
+                    "Graph With "
+                        + graph.vertexSet().size()
+                        + " vertices and "
+                        + graph.edgeSet().size()
+                        + " edges");
+              });
+        });
 
     graphComboBox.setSelectedItem(GraphLinks.NETSCIENCE);
 
@@ -188,6 +190,20 @@ public class ForceAtlas2WithJGraphtIO extends JFrame {
     layoutControls.add(toleranceText);
     layoutControls.add(dissuadeHubs);
     layoutControls.add(maxIterationsText);
+
+    JButton resetDefaultsButton = new JButton("Reset Defaults");
+    resetDefaultsButton.addActionListener(
+        e -> {
+          repulsionText.setText("100.0");
+          useLinLogButton.setSelected(false);
+          attractionByWeights.setSelected(false);
+          dissuadeHubs.setSelected(false);
+          weightsDeltaText.setText("1.0");
+          gravityKText.setText("5.0");
+          maxIterationsText.setText("1000");
+          toleranceText.setText("1.0");
+        });
+    layoutControls.add(resetDefaultsButton);
 
     JPanel controlPanel = new JPanel(new GridLayout(2, 1));
     JComponent top =

@@ -1,6 +1,5 @@
 package org.jungrapht.samples.util;
 
-
 import javax.swing.*;
 
 public class ForceAtlas2ConfigurationPanel extends JPanel {
