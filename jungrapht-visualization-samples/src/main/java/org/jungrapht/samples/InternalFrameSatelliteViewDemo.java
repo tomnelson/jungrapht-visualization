@@ -11,6 +11,7 @@ package org.jungrapht.samples;
 import java.awt.*;
 import javax.swing.*;
 import org.jgrapht.Graph;
+import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.SatelliteVisualizationViewer;
 import org.jungrapht.visualization.VisualizationViewer;
@@ -22,7 +23,6 @@ import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.ISOMLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
-import org.jungrapht.visualization.util.helpers.ControlHelpers;
 
 /**
  * Similar to the SatelliteViewDemo, but using JInternalFrame.

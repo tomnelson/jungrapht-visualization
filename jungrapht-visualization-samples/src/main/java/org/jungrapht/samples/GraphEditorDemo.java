@@ -22,6 +22,7 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.annotations.AnnotationControls;
@@ -32,7 +33,6 @@ import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.spatial.Spatial;
 import org.jungrapht.visualization.util.ParallelEdgeIndexFunction;
-import org.jungrapht.visualization.util.helpers.ControlHelpers;
 
 /**
  * Shows how to create a graph editor with JUNG. Mouse modes and actions are explained in the help

@@ -11,6 +11,7 @@ package org.jungrapht.samples;
 import java.awt.*;
 import javax.swing.*;
 import org.jgrapht.Graph;
+import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationModel;
@@ -23,7 +24,6 @@ import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.control.ModalGraphMouse.Mode;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.Renderer;
-import org.jungrapht.visualization.util.helpers.ControlHelpers;
 
 /**
  * Demonstrates annotation of graph elements.

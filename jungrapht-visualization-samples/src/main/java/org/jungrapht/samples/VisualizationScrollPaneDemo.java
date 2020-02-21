@@ -15,6 +15,7 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.AbstractModalGraphMouse;
@@ -24,7 +25,6 @@ import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.GradientVertexRenderer;
 import org.jungrapht.visualization.renderers.HeavyweightVertexLabelRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
-import org.jungrapht.visualization.util.helpers.ControlHelpers;
 
 /**
  * Demonstrates the use of <code>VisualizationScrollPane</code>. This class shows the <code>

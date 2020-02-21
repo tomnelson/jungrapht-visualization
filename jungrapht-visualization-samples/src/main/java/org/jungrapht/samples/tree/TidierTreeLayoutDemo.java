@@ -17,7 +17,9 @@ import java.awt.Shape;
 import java.util.function.Function;
 import javax.swing.*;
 import org.jgrapht.Graph;
+import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.DemoTreeSupplier;
+import org.jungrapht.samples.util.TreeLayoutSelector;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultGraphMouse;
@@ -25,8 +27,6 @@ import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.TidierTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.renderers.Renderer;
-import org.jungrapht.visualization.util.helpers.ControlHelpers;
-import org.jungrapht.visualization.util.helpers.TreeLayoutSelector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

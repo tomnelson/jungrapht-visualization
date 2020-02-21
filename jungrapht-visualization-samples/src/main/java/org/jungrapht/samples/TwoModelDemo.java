@@ -11,6 +11,7 @@ package org.jungrapht.samples;
 import java.awt.*;
 import javax.swing.*;
 import org.jgrapht.Graph;
+import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -22,7 +23,6 @@ import org.jungrapht.visualization.layout.algorithms.ISOMLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.selection.MultiMutableSelectedState;
 import org.jungrapht.visualization.selection.MutableSelectedState;
-import org.jungrapht.visualization.util.helpers.ControlHelpers;
 
 /**
  * Demonstrates a single graph with 2 layouts in 2 views. They share picking, transforms, and a

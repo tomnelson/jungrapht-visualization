@@ -19,7 +19,9 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.DemoTreeSupplier;
+import org.jungrapht.samples.util.TreeLayoutSelector;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
@@ -29,8 +31,6 @@ import org.jungrapht.visualization.layout.algorithms.TreeLayout;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.subLayout.Collapsable;
 import org.jungrapht.visualization.subLayout.TreeCollapser;
-import org.jungrapht.visualization.util.helpers.ControlHelpers;
-import org.jungrapht.visualization.util.helpers.TreeLayoutSelector;
 
 /**
  * Demonstrates "collapsing"/"expanding" of a tree's subtrees.

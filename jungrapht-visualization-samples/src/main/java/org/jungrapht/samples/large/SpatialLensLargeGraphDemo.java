@@ -24,6 +24,8 @@ import org.jgrapht.graph.builder.GraphBuilder;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.samples.spatial.RTreeVisualization;
+import org.jungrapht.samples.util.ControlHelpers;
+import org.jungrapht.samples.util.LensControlHelper;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -43,8 +45,6 @@ import org.jungrapht.visualization.transform.MagnifyTransformer;
 import org.jungrapht.visualization.transform.shape.HyperbolicShapeTransformer;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
 import org.jungrapht.visualization.transform.shape.ViewLensSupport;
-import org.jungrapht.visualization.util.helpers.ControlHelpers;
-import org.jungrapht.visualization.util.helpers.LensControlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

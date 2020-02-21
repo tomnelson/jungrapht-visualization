@@ -10,7 +10,6 @@ import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphBuilder;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
-import org.jungrapht.visualization.util.helpers.SpanningTreeAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

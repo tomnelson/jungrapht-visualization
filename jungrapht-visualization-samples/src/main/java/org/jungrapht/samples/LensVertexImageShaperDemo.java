@@ -20,6 +20,8 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jungrapht.samples.util.ControlHelpers;
+import org.jungrapht.samples.util.LensControlHelper;
 import org.jungrapht.visualization.LayeredIcon;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -43,8 +45,6 @@ import org.jungrapht.visualization.transform.LensSupport;
 import org.jungrapht.visualization.transform.MagnifyTransformer;
 import org.jungrapht.visualization.transform.shape.MagnifyImageLensSupport;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
-import org.jungrapht.visualization.util.helpers.ControlHelpers;
-import org.jungrapht.visualization.util.helpers.LensControlHelper;
 
 /**
  * Demonstrates the use of images to represent graph vertices. The images are added to the

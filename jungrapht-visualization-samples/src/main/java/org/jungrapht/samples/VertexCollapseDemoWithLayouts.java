@@ -21,6 +21,7 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.samples.util.LayoutHelper;
+import org.jungrapht.samples.util.SpanningTreeAdapter;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -34,7 +35,6 @@ import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.subLayout.Collapsable;
 import org.jungrapht.visualization.subLayout.GraphCollapser;
 import org.jungrapht.visualization.util.PredicatedParallelEdgeIndexFunction;
-import org.jungrapht.visualization.util.helpers.SpanningTreeAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

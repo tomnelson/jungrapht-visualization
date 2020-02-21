@@ -15,7 +15,10 @@ import java.awt.GridLayout;
 import java.util.Map;
 import javax.swing.*;
 import org.jgrapht.Graph;
+import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.DemoTreeSupplier;
+import org.jungrapht.samples.util.LensControlHelper;
+import org.jungrapht.samples.util.TreeLayoutSelector;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -33,9 +36,6 @@ import org.jungrapht.visualization.transform.LayoutLensSupport;
 import org.jungrapht.visualization.transform.LensSupport;
 import org.jungrapht.visualization.transform.shape.HyperbolicShapeTransformer;
 import org.jungrapht.visualization.transform.shape.ViewLensSupport;
-import org.jungrapht.visualization.util.helpers.ControlHelpers;
-import org.jungrapht.visualization.util.helpers.LensControlHelper;
-import org.jungrapht.visualization.util.helpers.TreeLayoutSelector;
 
 /**
  * Shows a RadialTreeLayout view of a Forest. A hyperbolic projection lens may also be applied to

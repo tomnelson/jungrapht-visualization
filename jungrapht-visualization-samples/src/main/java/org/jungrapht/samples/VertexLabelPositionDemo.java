@@ -11,6 +11,7 @@ package org.jungrapht.samples;
 import java.awt.*;
 import javax.swing.*;
 import org.jgrapht.Graph;
+import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -22,7 +23,6 @@ import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.renderers.Renderer.VertexLabel.Position;
 import org.jungrapht.visualization.selection.MutableSelectedState;
-import org.jungrapht.visualization.util.helpers.ControlHelpers;
 
 /**
  * Demonstrates vertex label positioning controlled by the user. In the AUTO setting, labels are

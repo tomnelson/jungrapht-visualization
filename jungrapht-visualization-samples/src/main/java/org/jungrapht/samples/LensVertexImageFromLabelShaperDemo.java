@@ -19,6 +19,8 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import org.jgrapht.Graph;
+import org.jungrapht.samples.util.ControlHelpers;
+import org.jungrapht.samples.util.LensControlHelper;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -43,8 +45,6 @@ import org.jungrapht.visualization.transform.MagnifyTransformer;
 import org.jungrapht.visualization.transform.shape.MagnifyImageLensSupport;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
 import org.jungrapht.visualization.util.IconCache;
-import org.jungrapht.visualization.util.helpers.ControlHelpers;
-import org.jungrapht.visualization.util.helpers.LensControlHelper;
 
 /** @author Tom Nelson */
 public class LensVertexImageFromLabelShaperDemo extends JPanel {

@@ -1,4 +1,4 @@
-package org.jungrapht.visualization.util.helpers;
+package org.jungrapht.samples.util;
 
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.SpanningTreeAlgorithm;

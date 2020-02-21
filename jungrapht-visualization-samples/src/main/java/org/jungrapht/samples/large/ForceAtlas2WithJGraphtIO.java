@@ -20,12 +20,12 @@ import org.jgrapht.graph.SimpleGraph;
 import org.jgrapht.io.EdgeProvider;
 import org.jgrapht.io.GmlImporter;
 import org.jgrapht.io.VertexProvider;
+import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.layout.algorithms.ForceAtlas2LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFA2Repulsion;
 import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.jungrapht.visualization.util.helpers.ControlHelpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

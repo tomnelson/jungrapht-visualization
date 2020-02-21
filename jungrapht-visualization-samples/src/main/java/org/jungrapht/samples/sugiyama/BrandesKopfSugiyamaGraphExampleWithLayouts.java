@@ -6,12 +6,12 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
+import org.jungrapht.samples.util.ControlHelpers;
+import org.jungrapht.samples.util.TreeLayoutSelector;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.SugiyamaLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.Renderer;
-import org.jungrapht.visualization.util.helpers.ControlHelpers;
-import org.jungrapht.visualization.util.helpers.TreeLayoutSelector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

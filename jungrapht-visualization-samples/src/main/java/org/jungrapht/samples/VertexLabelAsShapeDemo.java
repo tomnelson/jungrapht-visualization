@@ -14,6 +14,7 @@ import java.awt.*;
 import java.util.function.Function;
 import javax.swing.*;
 import org.jgrapht.Graph;
+import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -23,7 +24,6 @@ import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.renderers.GradientVertexRenderer;
 import org.jungrapht.visualization.renderers.VertexLabelAsShapeRenderer;
-import org.jungrapht.visualization.util.helpers.ControlHelpers;
 
 /**
  * This demo shows how to use the vertex labels themselves as the vertex shapes. Additionally, it

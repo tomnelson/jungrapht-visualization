@@ -22,6 +22,7 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
+import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -32,7 +33,6 @@ import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.renderers.GradientVertexRenderer;
 import org.jungrapht.visualization.renderers.HeavyweightVertexLabelRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
-import org.jungrapht.visualization.util.helpers.ControlHelpers;
 
 /**
  * Shows a graph overlaid on a world map image. Scaling of the graph also scales the image

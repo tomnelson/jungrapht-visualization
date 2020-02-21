@@ -1,4 +1,4 @@
-package org.jungrapht.visualization.util.helpers;
+package org.jungrapht.samples.util;
 
 import java.awt.*;
 import java.util.Collection;
