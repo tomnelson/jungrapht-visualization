@@ -1,11 +1,10 @@
-package org.jungrapht.visualization.util.helpers;
+package org.jungrapht.samples.util;
 
 import java.util.HashMap;
 import java.util.Map;
 import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.CircleLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.ForceAtlas2LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.ISOMLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -13,10 +12,8 @@ import org.jungrapht.visualization.layout.algorithms.MultiRowTreeLayoutAlgorithm
 import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.SpringLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFA2Repulsion;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFRRepulsion;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutSpringRepulsion;
-import org.jungrapht.visualization.layout.algorithms.repulsion.StandardFA2Repulsion;
 
 public class LayoutHelper {
 
@@ -34,16 +31,6 @@ public class LayoutHelper {
         "Fruchterman Reingold (BH Optimized)",
         FRLayoutAlgorithm.builder()
             .repulsionContractBuilder(BarnesHutFRRepulsion.barnesHutBuilder())
-            .build()),
-    FORCE_ATLAS2(
-        "Force Atlas2",
-        ForceAtlas2LayoutAlgorithm.builder()
-            .repulsionContractBuilder(StandardFA2Repulsion.builder())
-            .build()),
-    FORCE_ATLAS2_BH_VISITOR(
-        "Force Atlas2 (BH Optimized)",
-        ForceAtlas2LayoutAlgorithm.builder()
-            .repulsionContractBuilder(BarnesHutFA2Repulsion.builder())
             .build()),
     SPRING("Spring", new SpringLayoutAlgorithm<>()),
     SPRING_BH_VISITOR(

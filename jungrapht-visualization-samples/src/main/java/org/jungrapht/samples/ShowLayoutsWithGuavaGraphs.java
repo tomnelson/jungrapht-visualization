@@ -16,6 +16,7 @@ import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.guava.MutableGraphAdapter;
 import org.jungrapht.samples.spatial.RTreeVisualization;
+import org.jungrapht.samples.util.LayoutHelper;
 import org.jungrapht.samples.util.TestGuavaGraphs;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
@@ -29,7 +30,6 @@ import org.jungrapht.visualization.layout.algorithms.TreeLayout;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.util.helpers.ControlHelpers;
-import org.jungrapht.visualization.util.helpers.LayoutHelper;
 import org.jungrapht.visualization.util.helpers.SpanningTreeAdapter;
 
 /**

@@ -1,4 +1,4 @@
-package org.jungrapht.visualization.util.helpers;
+package org.jungrapht.samples.util;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -9,7 +9,6 @@ import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.CircleLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.EdgeAwareTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.ForceAtlas2LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.ISOMLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -19,10 +18,8 @@ import org.jungrapht.visualization.layout.algorithms.RadialEdgeAwareTreeLayoutAl
 import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.SpringLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFA2Repulsion;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFRRepulsion;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutSpringRepulsion;
-import org.jungrapht.visualization.layout.algorithms.repulsion.StandardFA2Repulsion;
 
 public class LayoutFunction<V>
     implements Function<String, LayoutAlgorithm.Builder<V, LayoutAlgorithm<V>, ?>> {
@@ -64,16 +61,6 @@ public class LayoutFunction<V>
           Layout.of(
               "Reduced Xing Circle", CircleLayoutAlgorithm.<V>builder().reduceEdgeCrossing(true)),
           Layout.of("Self Organizing Map", ISOMLayoutAlgorithm.<V>builder()),
-          Layout.of(
-              "Force Atlas2",
-              ForceAtlas2LayoutAlgorithm.builder()
-                  .repulsionContractBuilder(StandardFA2Repulsion.builder())),
-          Layout.of(
-              "Force Atlas2 (BH Optimized)",
-              ForceAtlas2LayoutAlgorithm.builder()
-                  //                      .gravityK(.0100)
-                  .repulsionContractBuilder(BarnesHutFA2Repulsion.builder())
-                  .attractionByWeights(true)),
           Layout.of("Fruchterman Reingold", FRLayoutAlgorithm.<V>builder()),
           Layout.of(
               "Fruchterman Reingold (BH Optimized)",

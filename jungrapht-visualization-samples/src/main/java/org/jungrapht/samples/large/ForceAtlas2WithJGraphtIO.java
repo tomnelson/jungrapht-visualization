@@ -1,6 +1,19 @@
 package org.jungrapht.samples.large;
 
 import com.google.common.base.Strings;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.ActionListener;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipInputStream;
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
@@ -14,20 +27,6 @@ import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFA2Repul
 import org.jungrapht.visualization.util.helpers.ControlHelpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.swing.*;
-import javax.swing.border.TitledBorder;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.event.ActionListener;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.ZipInputStream;
 
 /**
  * Demonstrates several of the graph layout algorithms. Allows the user to interactively select one
@@ -53,10 +52,8 @@ public class ForceAtlas2WithJGraphtIO extends JFrame {
     }
   }
 
-    BarnesHutFA2Repulsion.Builder<String> repulsion =
-            BarnesHutFA2Repulsion.builder();
-  ForceAtlas2LayoutAlgorithm.Builder<String, ?, ?> builder =
-          ForceAtlas2LayoutAlgorithm.builder();
+  BarnesHutFA2Repulsion.Builder<String> repulsion = BarnesHutFA2Repulsion.builder();
+  ForceAtlas2LayoutAlgorithm.Builder<String, ?, ?> builder = ForceAtlas2LayoutAlgorithm.builder();
 
   public static GraphLinks[] getCombos() {
     return GraphLinks.values();
@@ -80,10 +77,10 @@ public class ForceAtlas2WithJGraphtIO extends JFrame {
             .graphMouse(graphMouse)
             .build();
 
-//    vv.getRenderContext().setVertexLabelFunction(Object::toString);
+    //    vv.getRenderContext().setVertexLabelFunction(Object::toString);
 
     ForceAtlas2LayoutAlgorithm layoutAlgorithm =
-            builder.repulsionContractBuilder(repulsion).build();
+        builder.repulsionContractBuilder(repulsion).build();
 
     vv.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm);
 
@@ -120,61 +117,60 @@ public class ForceAtlas2WithJGraphtIO extends JFrame {
     JPanel layoutControls = new JPanel(new GridLayout(0, 3));
 
     JTextField repulsionText = new JTextField("100.0", 15);
-        repulsionText.setBorder(new TitledBorder("Repulsion"));
+    repulsionText.setBorder(new TitledBorder("Repulsion"));
 
-        JRadioButton useLinLogButton = new JRadioButton("Use LinLog");
-      layoutControls.add(useLinLogButton);
+    JRadioButton useLinLogButton = new JRadioButton("Use LinLog");
+    layoutControls.add(useLinLogButton);
 
-        JRadioButton attractionByWeights = new JRadioButton("Attraction By Weights");
+    JRadioButton attractionByWeights = new JRadioButton("Attraction By Weights");
 
-        JRadioButton dissuadeHubs = new JRadioButton("Dissuade Hubs");
+    JRadioButton dissuadeHubs = new JRadioButton("Dissuade Hubs");
 
-        JTextField weightsDeltaText = new JTextField("1.0", 15);
-        weightsDeltaText.setBorder(new TitledBorder("Weights Delta"));
+    JTextField weightsDeltaText = new JTextField("1.0", 15);
+    weightsDeltaText.setBorder(new TitledBorder("Weights Delta"));
 
     JTextField gravityKText = new JTextField("5.0", 15);
     gravityKText.setBorder(new TitledBorder("GravityK"));
 
-        JTextField maxIterationsText = new JTextField("1000", 15);
-      maxIterationsText.setBorder(new TitledBorder("Max Iterations"));
+    JTextField maxIterationsText = new JTextField("1000", 15);
+    maxIterationsText.setBorder(new TitledBorder("Max Iterations"));
 
-        JTextField toleranceText = new JTextField("1.0", 15);
-        toleranceText.setBorder(new TitledBorder("Tolerance"));
-        ActionListener action =
-                e -> {
-                    if (!Strings.isNullOrEmpty(repulsionText.getText())) {
-                        try {
-                          repulsion.repulsionK(Double.parseDouble(repulsionText.getText()));
-                        } catch (Exception ex) {
-                        }
-                    }
+    JTextField toleranceText = new JTextField("1.0", 15);
+    toleranceText.setBorder(new TitledBorder("Tolerance"));
+    ActionListener action =
+        e -> {
+          if (!Strings.isNullOrEmpty(repulsionText.getText())) {
+            try {
+              repulsion.repulsionK(Double.parseDouble(repulsionText.getText()));
+            } catch (Exception ex) {
+            }
+          }
 
-                    if (!Strings.isNullOrEmpty(weightsDeltaText.getText())) {
-                        try {
-                          builder.delta(Double.parseDouble(weightsDeltaText.getText()));
-                        } catch (Exception ex) {
-                        }
-                    }
-                    if (!Strings.isNullOrEmpty(maxIterationsText.getText())) {
-                        try {
-                            builder.maxIterations(Integer.parseInt(maxIterationsText.getText()));
-                        } catch (Exception ex) {
-                        }
-                    }
-                    if (!Strings.isNullOrEmpty(gravityKText.getText())) {
-                        try {
-                            builder.gravityK(Double.parseDouble(gravityKText.getText()));
-                        } catch (Exception ex) {
-                        }
-                    }
+          if (!Strings.isNullOrEmpty(weightsDeltaText.getText())) {
+            try {
+              builder.delta(Double.parseDouble(weightsDeltaText.getText()));
+            } catch (Exception ex) {
+            }
+          }
+          if (!Strings.isNullOrEmpty(maxIterationsText.getText())) {
+            try {
+              builder.maxIterations(Integer.parseInt(maxIterationsText.getText()));
+            } catch (Exception ex) {
+            }
+          }
+          if (!Strings.isNullOrEmpty(gravityKText.getText())) {
+            try {
+              builder.gravityK(Double.parseDouble(gravityKText.getText()));
+            } catch (Exception ex) {
+            }
+          }
 
-
-                    builder.linLog(useLinLogButton.isSelected());
-                    builder.attractionByWeights(attractionByWeights.isSelected());
-                    builder.dissuadeHubs(dissuadeHubs.isSelected());
-                    builder.repulsionContractBuilder(repulsion);
-                    vv.getVisualizationModel().setLayoutAlgorithm(builder.build());
-                };
+          builder.linLog(useLinLogButton.isSelected());
+          builder.attractionByWeights(attractionByWeights.isSelected());
+          builder.dissuadeHubs(dissuadeHubs.isSelected());
+          builder.repulsionContractBuilder(repulsion);
+          vv.getVisualizationModel().setLayoutAlgorithm(builder.build());
+        };
     repulsionText.addActionListener(action);
     useLinLogButton.addActionListener(action);
     attractionByWeights.addActionListener(action);
@@ -184,22 +180,21 @@ public class ForceAtlas2WithJGraphtIO extends JFrame {
     maxIterationsText.addActionListener(action);
     toleranceText.addActionListener(action);
 
-      layoutControls.add(attractionByWeights);
+    layoutControls.add(attractionByWeights);
     layoutControls.add(repulsionText);
-      layoutControls.add(weightsDeltaText);
-      layoutControls.add(useLinLogButton);
-      layoutControls.add(gravityKText);
-      layoutControls.add(toleranceText);
-      layoutControls.add(dissuadeHubs);
-      layoutControls.add(maxIterationsText);
-
+    layoutControls.add(weightsDeltaText);
+    layoutControls.add(useLinLogButton);
+    layoutControls.add(gravityKText);
+    layoutControls.add(toleranceText);
+    layoutControls.add(dissuadeHubs);
+    layoutControls.add(maxIterationsText);
 
     JPanel controlPanel = new JPanel(new GridLayout(2, 1));
     JComponent top =
         ControlHelpers.getContainer(
             Box.createHorizontalBox(),
             ControlHelpers.getCenteredContainer("Graphs", graphComboBox),
-                layoutControls);
+            layoutControls);
     controlPanel.add(top);
     container.add(controlPanel, BorderLayout.NORTH);
 

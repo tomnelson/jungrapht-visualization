@@ -10,7 +10,6 @@ import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
-import org.jungrapht.visualization.layout.util.synthetics.Synthetic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,9 +70,9 @@ public abstract class VerticalAlignment<V, E>
               if (align(vkofi) == vkofi) {
                 LV<V> um = neighbors.get(m);
                 LE<V, E> edge = svGraph.getEdge(um, vkofi);
-//                if (um instanceof PVertex) {
-//                  log.info("vkofi is {}", vkofi);
-//                }
+                //                if (um instanceof PVertex) {
+                //                  log.info("vkofi is {}", vkofi);
+                //                }
                 if ((notMarked(edge) && r < pos(um)) || um instanceof PVertex) {
                   r = alignMoveCursor(um, vkofi);
                 }

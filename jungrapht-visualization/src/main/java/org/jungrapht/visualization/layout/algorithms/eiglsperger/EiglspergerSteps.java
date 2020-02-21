@@ -421,7 +421,7 @@ public class EiglspergerSteps<V, E> {
 
     updateIndices(downstreamLayer);
     updatePositions(downstreamLayer);
-//    IntStream.range(0, downstreamLayer.size()).forEach(i -> downstreamLayer.get(i).setIndex(i));
+    //    IntStream.range(0, downstreamLayer.size()).forEach(i -> downstreamLayer.get(i).setIndex(i));
     Arrays.sort(layersArray[downstreamRank], Comparator.comparingInt(LV::getIndex));
     if (log.isTraceEnabled())
       log("stepFour downstreamLayer out (split containers for Q/PVertices)", downstreamLayer);
@@ -657,13 +657,14 @@ public class EiglspergerSteps<V, E> {
 
   /**
    * update the positions so that the preceding container size is used
+   *
    * @param layer
    */
   static <V> boolean updatePositions(List<LV<V>> layer) {
     boolean changed = false;
     int currentPos = 0;
     for (LV<V> v : layer) {
-      if (v instanceof Container && ((Container<V>)v).size() == 0) {
+      if (v instanceof Container && ((Container<V>) v).size() == 0) {
         continue;
       }
       if (v.getPos() != currentPos) {
@@ -671,7 +672,7 @@ public class EiglspergerSteps<V, E> {
       }
       v.setPos(currentPos);
       if (v instanceof Container) {
-        currentPos += ((Container<V>)v).size();
+        currentPos += ((Container<V>) v).size();
       } else {
         currentPos++;
       }
