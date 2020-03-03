@@ -106,7 +106,7 @@ public class SatelliteViewDemo extends JPanel {
     final SatelliteVisualizationViewer<String, Integer> satelliteVisualizationViewer =
         SatelliteVisualizationViewer.builder(mainVisualizationViewer)
             .viewSize(preferredSize2)
-            .transparent(true)
+            .transparent(false)
             .build();
     mainVisualizationViewer
         .getRenderContext()

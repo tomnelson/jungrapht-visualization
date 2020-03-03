@@ -37,7 +37,7 @@ public class EiglspergerThrowaway extends JFrame {
             //                        .straightenEdges(false)
             .postStraighten(true)
             .threaded(false)
-            .postStraighten(false)
+            //            .postStraighten(false)
             .after(vv3::scaleToLayout)
             .build();
     layoutAlgorithm3.setRenderContext(vv3.getRenderContext());

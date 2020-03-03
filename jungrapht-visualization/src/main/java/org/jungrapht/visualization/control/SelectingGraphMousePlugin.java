@@ -62,6 +62,8 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   /** controls whether the Vertices may be moved with the mouse */
   protected boolean locked;
 
+  protected int selectionModifiers;
+
   /** additional modifiers for the action of adding to an existing selection */
   protected int addToSelectionModifiers;
 
@@ -95,8 +97,8 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   /** create an instance with default settings */
   public SelectingGraphMousePlugin() {
     this(
-        InputEvent.BUTTON1_DOWN_MASK
-            | InputEvent.CTRL_DOWN_MASK, // select or drag select in rectangle
+        InputEvent.BUTTON1_DOWN_MASK,
+        InputEvent.CTRL_DOWN_MASK, // select or drag select in rectangle
         InputEvent.SHIFT_DOWN_MASK // drag select in non-rectangular shape
         );
   }
@@ -107,8 +109,10 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    * @param selectionModifiers for primary selection
    * @param addToSelectionModifiers for additional selection
    */
-  public SelectingGraphMousePlugin(int selectionModifiers, int addToSelectionModifiers) {
-    super(selectionModifiers);
+  public SelectingGraphMousePlugin(
+      int modifiers, int selectionModifiers, int addToSelectionModifiers) {
+    super(modifiers);
+    this.selectionModifiers = selectionModifiers;
     this.addToSelectionModifiers = addToSelectionModifiers;
     this.lensPaintable = new LensPaintable();
     this.pickFootprintPaintable = new FootprintPaintable();
@@ -205,7 +209,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     // layoutPoint is the mouse event point projected on the layout coordinate system
     Point2D layoutPoint = transformSupport.inverseTransform(vv, down);
     log.trace("layout coords of mouse click {}", layoutPoint);
-    if (e.getModifiersEx() == modifiers) {
+    if (e.getModifiersEx() == (modifiers | selectionModifiers)) { // default button1 down and ctrl
 
       this.vertex = pickSupport.getVertex(layoutModel, layoutPoint.getX(), layoutPoint.getY());
 
@@ -240,7 +244,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
       e.consume();
       return;
 
-    } else if (e.getModifiersEx() == (modifiers | addToSelectionModifiers)) {
+    } else if (e.getModifiersEx() == (modifiers | selectionModifiers | addToSelectionModifiers)) {
 
       vv.addPostRenderPaintable(lensPaintable);
 
@@ -269,6 +273,8 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
         e.consume();
         return;
       }
+    } else {
+      down = null;
     }
     e.consume();
   }
@@ -294,13 +300,13 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
 
     // mouse is not down, check only for the addToSelectionModifiers (defaults to SHIFT_DOWN_MASK)
-    if (e.getModifiersEx() == addToSelectionModifiers) {
+    if (e.getModifiersEx() == (selectionModifiers | addToSelectionModifiers)) {
       if (down != null) {
         if (vertex == null && !heyThatsTooClose(down, out, 5)) {
           pickContainedVertices(vv, layoutTargetShape, false);
         }
       }
-    } else {
+    } else if (e.getModifiersEx() == selectionModifiers) {
       if (down != null) {
         if (vertex == null && !heyThatsTooClose(down, out, 5)) {
           pickContainedVertices(vv, layoutTargetShape, true);

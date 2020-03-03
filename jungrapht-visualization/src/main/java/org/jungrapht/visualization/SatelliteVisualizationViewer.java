@@ -28,13 +28,16 @@ import org.jungrapht.visualization.transform.shape.ShapeTransformer;
  */
 public interface SatelliteVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 
+  String SATELLITE_BACKGROUND_TRANSPARENT = PREFIX + "satelliteBackgroundTransparent";
+
   class Builder<
           V, E, T extends DefaultSatelliteVisualizationViewer<V, E>, B extends Builder<V, E, T, B>>
       extends VisualizationViewer.Builder<V, E, T, B> {
 
     protected VisualizationViewer<V, E> master;
 
-    protected boolean transparent;
+    protected boolean transparent =
+        Boolean.parseBoolean(System.getProperty(SATELLITE_BACKGROUND_TRANSPARENT, "false"));;
 
     protected Color lensColor =
         Color.getColor(PREFIX + "satelliteLensColor", Color.decode("0xFFFAE0"));
