@@ -70,9 +70,6 @@ public abstract class VerticalAlignment<V, E>
               if (align(vkofi) == vkofi) {
                 LV<V> um = neighbors.get(m);
                 LE<V, E> edge = svGraph.getEdge(um, vkofi);
-                //                if (um instanceof PVertex) {
-                //                  log.info("vkofi is {}", vkofi);
-                //                }
                 if ((notMarked(edge) && r < pos(um)) || um instanceof PVertex) {
                   r = alignMoveCursor(um, vkofi);
                 }
