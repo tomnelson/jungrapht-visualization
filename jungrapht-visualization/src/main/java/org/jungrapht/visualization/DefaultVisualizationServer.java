@@ -74,6 +74,8 @@ class DefaultVisualizationServer<V, E> extends JPanel
       PREFIX + "lightweightVertexCountThreshold";
   private static final String LIGHTWEIGHT_SCALE_THRESHOLD = PREFIX + "lightweightScaleThreshold";
 
+  private static final String DOUBLE_BUFFERED = PREFIX + "doubleBuffered";
+
   private static boolean loadFromAppName() {
     try {
       String launchProgram = System.getProperty("sun.java.command");
@@ -193,6 +195,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
               .layoutSize(layoutSize)
               .build();
     }
+    this.doubleBuffered = Boolean.parseBoolean(System.getProperty(DOUBLE_BUFFERED, "true"));
     setBackground(Color.white);
     setVisualizationModel(visualizationModel);
     renderContext = RenderContext.builder(this.visualizationModel.getGraph()).build();
@@ -206,7 +209,6 @@ class DefaultVisualizationServer<V, E> extends JPanel
                 .getTransformer(MultiLayerTransformer.Layer.VIEW)
             ::scale);
     createSpatialStuctures(this.visualizationModel, renderContext);
-    setDoubleBuffered(false);
     this.addComponentListener(new VisualizationListener(this));
 
     setPickSupport(new ShapePickSupport<>(this));
