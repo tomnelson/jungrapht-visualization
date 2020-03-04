@@ -140,7 +140,7 @@ public class AccumulatorTreeUtil {
     }
     int maxIndex = Arrays.stream(targetIndices).max().getAsInt();
     AccumulatorTree<V, E> accumulatorTree = new AccumulatorTree<>(maxIndex + 1);
-    int atcount = accumulatorTree.crossWeight(targetIndices, weightFunction);
+    int atcount = accumulatorTree.crossWeight(edgeArray, weightFunction);
     return atcount;
   }
 }
