@@ -28,7 +28,7 @@ public class SpanningTreeAdapter {
 
     for (E edge : tree.getEdges()) {
       newGraph.addVertex(graph.getEdgeSource(edge));
-      if (!newGraph.addVertex(graph.getEdgeTarget(edge))) continue;
+      newGraph.addVertex(graph.getEdgeTarget(edge));
       newGraph.addEdge(graph.getEdgeSource(edge), graph.getEdgeTarget(edge), edge);
     }
     return newGraph;
