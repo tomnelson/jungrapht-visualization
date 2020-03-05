@@ -36,7 +36,6 @@ import org.jungrapht.visualization.layout.event.LayoutStateChange;
 import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
 import org.jungrapht.visualization.layout.event.RenderContextStateChange;
 import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.jungrapht.visualization.layout.util.Caching;
 import org.jungrapht.visualization.renderers.DefaultModalRenderer;
 import org.jungrapht.visualization.renderers.ModalRenderer;
 import org.jungrapht.visualization.selection.MultiMutableSelectedState;
@@ -545,10 +544,6 @@ class DefaultVisualizationServer<V, E> extends JPanel
         paintable.paint(g2d);
         g2d.setTransform(newXform);
       }
-    }
-
-    if (visualizationModel instanceof Caching) {
-      ((Caching) visualizationModel).clear();
     }
 
     renderer.render(renderContext, visualizationModel, vertexSpatial, edgeSpatial);

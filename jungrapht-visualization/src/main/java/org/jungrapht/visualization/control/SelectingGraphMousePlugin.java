@@ -83,12 +83,6 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
 
   protected Point2D deltaDown; // what's that flower you have on...
 
-  /** on mouse press, record the current state of the vertexSpatial.isActive() */
-  protected boolean vertexSpatialActiveInitialState;
-
-  /** on mouse press, record the current state of the edgeSpatial.isActive() */
-  protected boolean edgeSpatialActiveInitialState;
-
   protected MultiSelectionStrategy multiSelectionStrategy =
       Boolean.parseBoolean(System.getProperty(ARBITRARY_SHAPE_SELECTION, "false"))
           ? MultiSelectionStrategy.arbitrary()
@@ -182,8 +176,6 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     log.trace("mouse pick at screen coords {}", e.getPoint());
     deltaDown = down;
     VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
-    vertexSpatialActiveInitialState = vv.getVertexSpatial().isActive();
-    edgeSpatialActiveInitialState = vv.getEdgeSpatial().isActive();
     TransformSupport<V, E> transformSupport = vv.getTransformSupport();
     LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
     GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
@@ -289,14 +281,6 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     Point2D out = e.getPoint();
 
     VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
-    // if the vertexSpatial was active at mousePress (and deactivated during drag) reactivate it now
-    if (vertexSpatialActiveInitialState) {
-      vv.getVertexSpatial().setActive(vertexSpatialActiveInitialState);
-    }
-    // if the edgeSpatial was active at mousePress (and deactivated during drag) reactivate it now
-    if (edgeSpatialActiveInitialState) {
-      vv.getEdgeSpatial().setActive(vertexSpatialActiveInitialState);
-    }
     MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
 
     // mouse is not down, check only for the addToSelectionModifiers (defaults to SHIFT_DOWN_MASK)
@@ -353,14 +337,6 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   public void mouseDragged(MouseEvent e) {
     log.trace("mouseDragged");
     VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
-    // if the vertexSpatial was initially active at mousePress, deactivate it during the drag
-    if (vertexSpatialActiveInitialState) {
-      vv.getVertexSpatial().setActive(false);
-    }
-    // if the edgeSpatial was initially active at mousePress, deactivate it during the drag
-    if (edgeSpatialActiveInitialState) {
-      vv.getEdgeSpatial().setActive(false);
-    }
     if (!locked) {
 
       MultiLayerTransformer multiLayerTransformer =
