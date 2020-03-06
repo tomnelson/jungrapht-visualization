@@ -175,14 +175,14 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
     if (svGraph.edgeSet().size() > 200) {
       maxLevelCross = 2;
     }
-    stepsForward = new EiglspergerStepsForward<>(svGraph, layersArray);
-    stepsBackward = new EiglspergerStepsBackward<>(svGraph, layersArray);
+    stepsForward = new EiglspergerStepsForward<>(svGraph, layersArray, true);
+    stepsBackward = new EiglspergerStepsBackward<>(svGraph, layersArray, true);
 
     int bestCrossCount = Integer.MAX_VALUE;
     LV<V>[][] best = null;
     for (int i = 0; i < maxLevelCross; i++) {
       if (i % 2 == 0) {
-        int sweepCrossCount = sweepForward(layersArray);
+        int sweepCrossCount = stepsForward.sweep(layersArray);
         if (sweepCrossCount < bestCrossCount) {
           bestCrossCount = sweepCrossCount;
           best = copy(layersArray);
@@ -193,7 +193,7 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
           break;
         }
       } else {
-        int sweepCrossCount = sweepBackwards(layersArray);
+        int sweepCrossCount = stepsBackward.sweep(layersArray);
         if (sweepCrossCount < bestCrossCount) {
           bestCrossCount = sweepCrossCount;
           best = copy(layersArray);

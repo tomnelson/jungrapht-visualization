@@ -4,7 +4,6 @@ import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -243,15 +242,15 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     if (svGraph.edgeSet().size() > 200) {
       maxLevelCross = 2;
     }
-    stepsForward = new EiglspergerStepsForward<>(svGraph, layersArray);
-    stepsBackward = new EiglspergerStepsBackward<>(svGraph, layersArray);
+    stepsForward = new EiglspergerStepsForward<>(svGraph, layersArray, transpose);
+    stepsBackward = new EiglspergerStepsBackward<>(svGraph, layersArray, transpose);
     //    EiglspergerSteps<V, E> steps = null;
 
     int bestCrossCount = Integer.MAX_VALUE;
     LV<V>[][] best = null;
     for (int i = 0; i < maxLevelCross; i++) {
       if (i % 2 == 0) {
-        int sweepCrossCount = sweepForward(layersArray);
+        int sweepCrossCount = stepsForward.sweep(layersArray);
         if (sweepCrossCount < bestCrossCount) {
           bestCrossCount = sweepCrossCount;
           best = copy(layersArray);
@@ -262,7 +261,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
           break;
         }
       } else {
-        int sweepCrossCount = sweepBackwards(layersArray);
+        int sweepCrossCount = stepsBackward.sweep(layersArray);
         if (sweepCrossCount < bestCrossCount) {
           bestCrossCount = sweepCrossCount;
           best = copy(layersArray);
@@ -494,119 +493,119 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     return copy;
   }
 
-  public int sweepForward(LV<V>[][] layersArray) {
+  //  public int sweepForward(LV<V>[][] layersArray) {
+  //
+  //    if (log.isTraceEnabled())
+  //      log.trace(">>>>>>>>>>>>>>>>>>>>>>>>> Forward!>>>>>>>>>>>>>>>>>>>>>>>>>");
+  //    int crossCount = 0;
+  //
+  //    List<LV<V>> layerEye = null;
+  //
+  //    for (int i = 0; i < layersArray.length - 1; i++) {
+  //      if (layerEye == null) {
+  //        layerEye =
+  //            EiglspergerUtil.scan(
+  //                EiglspergerUtil.createListOfVertices(layersArray[i])); // first rank
+  //      }
+  //
+  //      stepsForward.stepOne(layerEye);
+  //      // handled PVertices by merging them into containers
+  //      if (log.isTraceEnabled()) {
+  //        log.trace("stepOneOut:{}", layerEye);
+  //      }
+  //
+  //      List<LV<V>> currentLayer = layerEye;
+  //      List<LV<V>> downstreamLayer = EiglspergerUtil.createListOfVertices(layersArray[i + 1]);
+  //      stepsForward.stepTwo(currentLayer, downstreamLayer);
+  //      if (log.isTraceEnabled()) {
+  //        log.trace("stepTwoOut:{}", downstreamLayer);
+  //      }
+  //
+  //      stepsForward.stepThree(downstreamLayer);
+  //      if (log.isTraceEnabled()) {
+  //        log.trace("stepThreeOut:{}", downstreamLayer);
+  //      }
+  //      EiglspergerUtil.fixIndices(downstreamLayer);
+  //
+  //      stepsForward.stepFour(downstreamLayer, i + 1);
+  //      if (log.isTraceEnabled()) {
+  //        log.trace("stepFourOut:{}", downstreamLayer);
+  //      }
+  //
+  //      if (transpose) {
+  //        crossCount += stepsForward.stepFive(currentLayer, downstreamLayer, i, i + 1);
+  //      }
+  //      stepsForward.stepSix(downstreamLayer);
+  //      if (log.isTraceEnabled()) {
+  //        log.trace("stepSixOut:{}", downstreamLayer);
+  //      }
+  //
+  //      Arrays.sort(layersArray[i], Comparator.comparingInt(LV::getIndex));
+  //      EiglspergerUtil.fixIndices(layersArray[i]);
+  //      Arrays.sort(layersArray[i + 1], Comparator.comparingInt(LV::getIndex));
+  //      EiglspergerUtil.fixIndices(layersArray[i + 1]);
+  //      layerEye = downstreamLayer;
+  //    }
+  //    log.info("sweepForward crossCount:{}", crossCount);
+  //    return crossCount;
+  //  }
 
-    if (log.isTraceEnabled())
-      log.trace(">>>>>>>>>>>>>>>>>>>>>>>>> Forward!>>>>>>>>>>>>>>>>>>>>>>>>>");
-    int crossCount = 0;
-
-    List<LV<V>> layerEye = null;
-
-    for (int i = 0; i < layersArray.length - 1; i++) {
-      if (layerEye == null) {
-        layerEye =
-            EiglspergerUtil.scan(
-                EiglspergerUtil.createListOfVertices(layersArray[i])); // first rank
-      }
-
-      stepsForward.stepOne(layerEye);
-      // handled PVertices by merging them into containers
-      if (log.isTraceEnabled()) {
-        log.trace("stepOneOut:{}", layerEye);
-      }
-
-      List<LV<V>> currentLayer = layerEye;
-      List<LV<V>> downstreamLayer = EiglspergerUtil.createListOfVertices(layersArray[i + 1]);
-      stepsForward.stepTwo(currentLayer, downstreamLayer);
-      if (log.isTraceEnabled()) {
-        log.trace("stepTwoOut:{}", downstreamLayer);
-      }
-
-      stepsForward.stepThree(downstreamLayer);
-      if (log.isTraceEnabled()) {
-        log.trace("stepThreeOut:{}", downstreamLayer);
-      }
-      EiglspergerUtil.fixIndices(downstreamLayer);
-
-      stepsForward.stepFour(downstreamLayer, i + 1);
-      if (log.isTraceEnabled()) {
-        log.trace("stepFourOut:{}", downstreamLayer);
-      }
-
-      if (transpose) {
-        crossCount += stepsForward.stepFive(currentLayer, downstreamLayer, i, i + 1);
-      }
-      stepsForward.stepSix(downstreamLayer);
-      if (log.isTraceEnabled()) {
-        log.trace("stepSixOut:{}", downstreamLayer);
-      }
-
-      Arrays.sort(layersArray[i], Comparator.comparingInt(LV::getIndex));
-      EiglspergerUtil.fixIndices(layersArray[i]);
-      Arrays.sort(layersArray[i + 1], Comparator.comparingInt(LV::getIndex));
-      EiglspergerUtil.fixIndices(layersArray[i + 1]);
-      layerEye = downstreamLayer;
-    }
-    log.info("sweepForward crossCount:{}", crossCount);
-    return crossCount;
-  }
-
-  public int sweepBackwards(LV<V>[][] layersArray) {
-    if (log.isTraceEnabled())
-      log.trace("<<<<<<<<<<<<<<<<<<<<<<<<<< Backward! <<<<<<<<<<<<<<<<<<<<<<<<<<");
-
-    int crossCount = 0;
-    if (log.isTraceEnabled()) log.trace("sweepBackwards");
-    List<LV<V>> layerEye = null;
-
-    for (int i = layersArray.length - 1; i > 0; i--) {
-      if (layerEye == null) {
-        layerEye =
-            EiglspergerUtil.scan(EiglspergerUtil.createListOfVertices(layersArray[i])); // last rank
-      }
-
-      stepsBackward.stepOne(layerEye);
-      // handled PVertices by merging them into containers
-      if (log.isTraceEnabled()) {
-        log.trace("stepOneOut:{}", layerEye);
-      }
-
-      List<LV<V>> currentLayer = layerEye;
-      List<LV<V>> downstreamLayer = EiglspergerUtil.createListOfVertices(layersArray[i - 1]);
-
-      stepsBackward.stepTwo(currentLayer, downstreamLayer);
-      if (log.isTraceEnabled()) {
-        log.trace("stepTwoOut:{}", downstreamLayer);
-      }
-
-      stepsBackward.stepThree(downstreamLayer);
-      if (log.isTraceEnabled()) {
-        log.trace("stepThreeOut:{}", downstreamLayer);
-      }
-      EiglspergerUtil.fixIndices(downstreamLayer);
-
-      stepsBackward.stepFour(downstreamLayer, i - 1);
-      if (log.isTraceEnabled()) {
-        log.trace("stepFourOut:{}", downstreamLayer);
-      }
-
-      if (transpose) {
-        crossCount += stepsBackward.stepFive(currentLayer, downstreamLayer, i, i - 1);
-      }
-      stepsBackward.stepSix(downstreamLayer);
-      if (log.isTraceEnabled()) {
-        log.trace("stepSixOut:{}", downstreamLayer);
-      }
-
-      Arrays.sort(layersArray[i], Comparator.comparingInt(LV::getIndex));
-      EiglspergerUtil.fixIndices(layersArray[i]);
-      Arrays.sort(layersArray[i - 1], Comparator.comparingInt(LV::getIndex));
-      EiglspergerUtil.fixIndices(layersArray[i - 1]);
-      layerEye = downstreamLayer;
-    }
-    log.info("sweepBackward crossCount:{}", crossCount);
-    return crossCount;
-  }
+  //  public int sweepBackwards(LV<V>[][] layersArray) {
+  //    if (log.isTraceEnabled())
+  //      log.trace("<<<<<<<<<<<<<<<<<<<<<<<<<< Backward! <<<<<<<<<<<<<<<<<<<<<<<<<<");
+  //
+  //    int crossCount = 0;
+  //    if (log.isTraceEnabled()) log.trace("sweepBackwards");
+  //    List<LV<V>> layerEye = null;
+  //
+  //    for (int i = layersArray.length - 1; i > 0; i--) {
+  //      if (layerEye == null) {
+  //        layerEye =
+  //            EiglspergerUtil.scan(EiglspergerUtil.createListOfVertices(layersArray[i])); // last rank
+  //      }
+  //
+  //      stepsBackward.stepOne(layerEye);
+  //      // handled PVertices by merging them into containers
+  //      if (log.isTraceEnabled()) {
+  //        log.trace("stepOneOut:{}", layerEye);
+  //      }
+  //
+  //      List<LV<V>> currentLayer = layerEye;
+  //      List<LV<V>> downstreamLayer = EiglspergerUtil.createListOfVertices(layersArray[i - 1]);
+  //
+  //      stepsBackward.stepTwo(currentLayer, downstreamLayer);
+  //      if (log.isTraceEnabled()) {
+  //        log.trace("stepTwoOut:{}", downstreamLayer);
+  //      }
+  //
+  //      stepsBackward.stepThree(downstreamLayer);
+  //      if (log.isTraceEnabled()) {
+  //        log.trace("stepThreeOut:{}", downstreamLayer);
+  //      }
+  //      EiglspergerUtil.fixIndices(downstreamLayer);
+  //
+  //      stepsBackward.stepFour(downstreamLayer, i - 1);
+  //      if (log.isTraceEnabled()) {
+  //        log.trace("stepFourOut:{}", downstreamLayer);
+  //      }
+  //
+  //      if (transpose) {
+  //        crossCount += stepsBackward.stepFive(currentLayer, downstreamLayer, i, i - 1);
+  //      }
+  //      stepsBackward.stepSix(downstreamLayer);
+  //      if (log.isTraceEnabled()) {
+  //        log.trace("stepSixOut:{}", downstreamLayer);
+  //      }
+  //
+  //      Arrays.sort(layersArray[i], Comparator.comparingInt(LV::getIndex));
+  //      EiglspergerUtil.fixIndices(layersArray[i]);
+  //      Arrays.sort(layersArray[i - 1], Comparator.comparingInt(LV::getIndex));
+  //      EiglspergerUtil.fixIndices(layersArray[i - 1]);
+  //      layerEye = downstreamLayer;
+  //    }
+  //    log.info("sweepBackward crossCount:{}", crossCount);
+  //    return crossCount;
+  //  }
 
   private static <V> Rectangle maxVertexBounds(
       LV<V>[][] layers, Function<V, Shape> vertexShapeFunction) {

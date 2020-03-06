@@ -26,12 +26,16 @@ public class EiglspergerTests {
   Graph<LV<String>, LE<String, Integer>> svGraph;
   LV<String>[][] layersArray;
   EiglspergerRunnable<String, Integer> runnable;
+  EiglspergerStepsForward<String, Integer> stepsForward;
+  EiglspergerStepsBackward<String, Integer> stepsBackward;
 
   @Before
   public void setup() {
     buildGraph();
     createLayers();
     runnable = EiglspergerRunnable.<String, Integer>builder().build();
+    stepsForward = new EiglspergerStepsForward<>(svGraph, layersArray, true);
+    stepsBackward = new EiglspergerStepsBackward<>(svGraph, layersArray, true);
   }
 
   @Test
@@ -77,17 +81,17 @@ public class EiglspergerTests {
     //    EiglspergerStepsBackward<String, Integer> stepsBackward =
     //            new EiglspergerStepsBackward<>(svGraph, layersArray);
 
-    runnable.sweepForward(layersArray);
+    stepsForward.sweep(layersArray);
 
-    runnable.sweepBackwards(layersArray);
+    stepsBackward.sweep(layersArray);
 
-    runnable.sweepForward(layersArray);
+    stepsForward.sweep(layersArray);
 
-    runnable.sweepBackwards(layersArray);
+    stepsBackward.sweep(layersArray);
 
-    runnable.sweepForward(layersArray);
+    stepsForward.sweep(layersArray);
 
-    runnable.sweepBackwards(layersArray);
+    stepsBackward.sweep(layersArray);
   }
 
   @Test
@@ -111,7 +115,7 @@ public class EiglspergerTests {
 
     //    Map<LV<String>, Integer> pos = new HashMap<>();
     //    Map<LV<String>, Integer> measure = new HashMap<>();
-    runnable.sweepForward(layersArray);
+    stepsForward.sweep(layersArray);
   }
 
   @Test
@@ -134,7 +138,7 @@ public class EiglspergerTests {
 
     //    Map<LV<String>, Integer> pos = new HashMap<>();
     //    Map<LV<String>, Integer> measure = new HashMap<>();
-    runnable.sweepBackwards(layersArray);
+    stepsBackward.sweep(layersArray);
   }
 
   @Test
@@ -143,7 +147,7 @@ public class EiglspergerTests {
     list = EiglspergerUtil.scan(list);
 
     EiglspergerStepsForward<String, Integer> stepsForward =
-        new EiglspergerStepsForward<>(svGraph, layersArray);
+        new EiglspergerStepsForward<>(svGraph, layersArray, true);
 
     stepsForward.stepOne(list);
     log.info("biLayer");

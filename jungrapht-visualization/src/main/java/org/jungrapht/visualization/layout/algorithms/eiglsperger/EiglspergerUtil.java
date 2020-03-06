@@ -26,39 +26,39 @@ public class EiglspergerUtil {
     return Arrays.stream(rank).collect(Collectors.toList());
   }
 
-  // empty list
-  static <V> List<LV<V>> addSegmentVertexToEmptyList(
-      List<LV<V>> wasEmptyList, SegmentVertex<V> segmentVertex) {
-    // cast the vertex, get its segment, append it to a newly
-    // created Container, add the Container to the wasEmptyList and
-    // return the wasEmptyList
-    Segment<V> segment = segmentVertex.getSegment();
-
-    Container<V> firstContainer = Container.createSubContainer();
-    firstContainer.append(segment);
-    if (log.isTraceEnabled()) log.trace("added segment {} for {}", segment, segmentVertex);
-    // the firstContainer is the first item in the outList
-    // the PVertex is not added to the outList
-    wasEmptyList.add(firstContainer);
-    if (log.isTraceEnabled()) log.trace("wasEmptyContainer now {}", firstContainer);
-
-    return wasEmptyList; // which is no longer empty
-  }
-
-  // non-empty list
-  static <V> List<LV<V>> addSegmentVertexToNonEmptyList(
-      List<LV<V>> notEmptyList, SegmentVertex<V> segmentVertex) {
-    LV<V> lastItem = notEmptyList.get(notEmptyList.size() - 1);
-    // if the lastItem is a container, append the PVertex's Segment to the container
-    if (lastItem instanceof Container) {
-      Container<V> lastContainer = (Container<V>) lastItem;
-      Segment<V> segment = segmentVertex.getSegment();
-      if (log.isTraceEnabled()) log.trace("added segment {} for {}", segment, segmentVertex);
-      lastContainer.append(segment);
-      if (log.isTraceEnabled()) log.trace("lastContainer now {}", lastContainer);
-    }
-    return notEmptyList;
-  }
+  //  // empty list
+  //  static <V> List<LV<V>> addSegmentVertexToEmptyList(
+  //      List<LV<V>> wasEmptyList, SegmentVertex<V> segmentVertex) {
+  //    // cast the vertex, get its segment, append it to a newly
+  //    // created Container, add the Container to the wasEmptyList and
+  //    // return the wasEmptyList
+  //    Segment<V> segment = segmentVertex.getSegment();
+  //
+  //    Container<V> firstContainer = Container.createSubContainer();
+  //    firstContainer.append(segment);
+  //    if (log.isTraceEnabled()) log.trace("added segment {} for {}", segment, segmentVertex);
+  //    // the firstContainer is the first item in the outList
+  //    // the PVertex is not added to the outList
+  //    wasEmptyList.add(firstContainer);
+  //    if (log.isTraceEnabled()) log.trace("wasEmptyContainer now {}", firstContainer);
+  //
+  //    return wasEmptyList; // which is no longer empty
+  //  }
+  //
+  //  // non-empty list
+  //  static <V> List<LV<V>> addSegmentVertexToNonEmptyList(
+  //      List<LV<V>> notEmptyList, SegmentVertex<V> segmentVertex) {
+  //    LV<V> lastItem = notEmptyList.get(notEmptyList.size() - 1);
+  //    // if the lastItem is a container, append the PVertex's Segment to the container
+  //    if (lastItem instanceof Container) {
+  //      Container<V> lastContainer = (Container<V>) lastItem;
+  //      Segment<V> segment = segmentVertex.getSegment();
+  //      if (log.isTraceEnabled()) log.trace("added segment {} for {}", segment, segmentVertex);
+  //      lastContainer.append(segment);
+  //      if (log.isTraceEnabled()) log.trace("lastContainer now {}", lastContainer);
+  //    }
+  //    return notEmptyList;
+  //  }
 
   static <V> List<LV<V>> assignIndices(List<LV<V>> inList) {
     int i = 0;

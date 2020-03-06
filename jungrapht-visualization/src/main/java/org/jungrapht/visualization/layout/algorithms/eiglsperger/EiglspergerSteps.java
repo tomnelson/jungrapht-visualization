@@ -22,6 +22,7 @@ import org.jungrapht.visualization.layout.algorithms.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  * The five steps of the Eiglsperger optimization of the Sugiyama Layout Algorithm
  *
@@ -65,6 +66,7 @@ public class EiglspergerSteps<V, E> {
 
   protected Function<LE<V, E>, LV<V>> edgeSourceFunction;
   protected Function<LE<V, E>, LV<V>> edgeTargetFunction;
+  protected boolean transpose;
 
   /**
    * @param svGraph the delegate graph
@@ -81,7 +83,8 @@ public class EiglspergerSteps<V, E> {
       Function<LE<V, E>, LV<V>> edgeSourceFunction,
       Function<LE<V, E>, LV<V>> edgeTargetFunction,
       BiFunction<Graph<LV<V>, LE<V, E>>, LV<V>, List<LV<V>>> neighborFunction,
-      Function<List<LE<V, E>>, List<LE<V, E>>> edgeEndpointSwapOrNot) {
+      Function<List<LE<V, E>>, List<LE<V, E>>> edgeEndpointSwapOrNot,
+      boolean transpose) {
     this.svGraph = svGraph;
     this.layersArray = layersArray;
     this.joinVertexPredicate = joinVertexPredicate;
@@ -90,6 +93,7 @@ public class EiglspergerSteps<V, E> {
     this.edgeTargetFunction = edgeTargetFunction;
     this.neighborFunction = neighborFunction;
     this.edgeEndpointSwapOrNot = edgeEndpointSwapOrNot;
+    this.transpose = transpose;
   }
 
   /**
@@ -133,15 +137,15 @@ public class EiglspergerSteps<V, E> {
     List<LV<V>> outList = new ArrayList<>();
 
     for (LV<V> v : currentLayer) {
-      // for each PVertex, add it to the empty or not empty list
+      // for each PVertex/QVertex, add it to the list's adjacent container
       if (joinVertexPredicate.test(v)) {
-        SegmentVertex<V> segmentVertex = (SegmentVertex<V>) v;
-        if (log.isTraceEnabled()) log.trace("will add segment for {}", segmentVertex);
         if (outList.isEmpty()) {
-          EiglspergerUtil.addSegmentVertexToEmptyList(outList, segmentVertex);
-        } else {
-          EiglspergerUtil.addSegmentVertexToNonEmptyList(outList, segmentVertex);
+          outList.add(Container.createSubContainer());
         }
+        Container<V> lastContainer = (Container<V>) outList.get(outList.size() - 1);
+        SegmentVertex<V> segmentVertex = (SegmentVertex<V>) v;
+        Segment<V> segment = segmentVertex.getSegment();
+        lastContainer.append(segment);
       } else {
         outList.add(v);
       }
