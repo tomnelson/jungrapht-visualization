@@ -22,7 +22,6 @@ import org.jungrapht.visualization.layout.algorithms.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * The five steps of the Eiglsperger optimization of the Sugiyama Layout Algorithm
  *

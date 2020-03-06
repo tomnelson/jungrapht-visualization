@@ -196,6 +196,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
     }
     this.doubleBuffered = Boolean.parseBoolean(System.getProperty(DOUBLE_BUFFERED, "true"));
     setBackground(Color.white);
+    setLayout(null); // don't want a default FlowLayout
     setVisualizationModel(visualizationModel);
     renderContext = RenderContext.builder(this.visualizationModel.getGraph()).build();
     renderContext.getRenderContextStateChangeSupport().addRenderContextStateChangeListener(this);
