@@ -15,6 +15,8 @@ public interface LE<V, E> extends SE<E> {
     return new LEI(edge, source, target);
   }
 
+  LE<V, E> swapped();
+
   LV<V> getSource();
 
   LV<V> getTarget();

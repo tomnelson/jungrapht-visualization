@@ -1,6 +1,8 @@
 package org.jungrapht.visualization.layout.algorithms.eiglsperger;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import org.jungrapht.visualization.layout.algorithms.util.Pair;
@@ -14,7 +16,7 @@ import org.slf4j.LoggerFactory;
  *
  * @param <T> key type that is stored in the tree
  */
-class InsertionOrderSplayTree<T> {
+public class InsertionOrderSplayTree<T> {
 
   private static final Logger log = LoggerFactory.getLogger(InsertionOrderSplayTree.class);
 
@@ -57,7 +59,7 @@ class InsertionOrderSplayTree<T> {
     }
   }
 
-  Node<T> root;
+  protected Node<T> root;
 
   public static <T> InsertionOrderSplayTree<T> create() {
     return new InsertionOrderSplayTree<>();
@@ -529,6 +531,15 @@ class InsertionOrderSplayTree<T> {
         next = next.parent;
       }
     }
+  }
+
+  protected List<Node<T>> nodes() {
+    List<Node<T>> list = new ArrayList<>();
+    Iterator<T> iterator = new Iterator<>(root);
+    while (iterator.hasNext()) {
+      list.add(iterator.next());
+    }
+    return list;
   }
 
   public String toString() {

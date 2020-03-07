@@ -1,5 +1,7 @@
 package org.jungrapht.visualization.layout.algorithms.eiglsperger;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.jungrapht.visualization.layout.algorithms.util.Pair;
 import org.jungrapht.visualization.layout.model.Point;
@@ -145,6 +147,10 @@ class Container<V> extends InsertionOrderSplayTree<Segment<V>> implements LV<V> 
   @Override
   public V getVertex() {
     return null;
+  }
+
+  public List<Segment<V>> segments() {
+    return super.nodes().stream().map(n -> n.key).collect(Collectors.toList());
   }
 
   public String toString() {

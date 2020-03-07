@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -66,6 +68,7 @@ public class EiglspergerSteps<V, E> {
   protected Function<LE<V, E>, LV<V>> edgeSourceFunction;
   protected Function<LE<V, E>, LV<V>> edgeTargetFunction;
   protected boolean transpose;
+  protected Graph<LV<V>, Integer> compactionGraph;
 
   /**
    * @param svGraph the delegate graph
@@ -104,6 +107,13 @@ public class EiglspergerSteps<V, E> {
   private void log(String label, List<LV<V>> list) {
     log.info(label);
     list.forEach(v -> log.info(" - {}", v.toString()));
+  }
+
+  protected static <V, E> void clearGraph(Graph<V, E> graph) {
+    Set<E> edges = new HashSet<>(graph.edgeSet());
+    Set<V> vertices = new HashSet<>(graph.vertexSet());
+    graph.removeAllEdges(edges);
+    graph.removeAllVertices(vertices);
   }
 
   /**
@@ -599,6 +609,7 @@ public class EiglspergerSteps<V, E> {
     return list.stream()
         .map(e -> LE.of(e.getEdge(), e.getTarget(), e.getSource()))
         .collect(Collectors.toList());
+    //    return list.stream().map(LE::swapped).collect(Collectors.toList());
   }
 
   private int crossingCount(List<LE<V, E>> edges) {

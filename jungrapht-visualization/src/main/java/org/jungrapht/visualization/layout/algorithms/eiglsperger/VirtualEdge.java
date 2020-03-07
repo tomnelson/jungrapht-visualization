@@ -19,6 +19,12 @@ public class VirtualEdge<V, E> extends LEI<V, E> implements LE<V, E> {
     return new VirtualEdge(source, target);
   }
 
+  @Override
+  public VirtualEdge<V, E> swapped() {
+    return VirtualEdge.of(source, target); // we're not swapping endpoints on virtual edges
+    // because they were created in the correct order
+  }
+
   protected VirtualEdge(LV<V> source, LV<V> target) {
     super(null, source, target);
     if (target instanceof Container) {

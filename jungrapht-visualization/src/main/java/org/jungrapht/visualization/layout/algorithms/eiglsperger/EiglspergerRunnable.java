@@ -16,6 +16,9 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import org.jgrapht.Graph;
+import org.jgrapht.Graphs;
+import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.ArticulatedEdge;
@@ -248,12 +251,15 @@ public class EiglspergerRunnable<V, E> implements Runnable {
 
     int bestCrossCount = Integer.MAX_VALUE;
     LV<V>[][] best = null;
+    Graph<LV<V>, Integer> bestCompactionGraph = null;
     for (int i = 0; i < maxLevelCross; i++) {
       if (i % 2 == 0) {
         int sweepCrossCount = stepsForward.sweep(layersArray);
+        Graph<LV<V>, Integer> compactionGraph = stepsForward.compactionGraph;
         if (sweepCrossCount < bestCrossCount) {
           bestCrossCount = sweepCrossCount;
           best = copy(layersArray);
+          bestCompactionGraph = copy(compactionGraph);
         } else {
           if (log.isTraceEnabled()) {
             log.trace("best:{}", best);
@@ -262,9 +268,11 @@ public class EiglspergerRunnable<V, E> implements Runnable {
         }
       } else {
         int sweepCrossCount = stepsBackward.sweep(layersArray);
+        Graph<LV<V>, Integer> compactionGraph = stepsForward.compactionGraph;
         if (sweepCrossCount < bestCrossCount) {
           bestCrossCount = sweepCrossCount;
           best = copy(layersArray);
+          bestCompactionGraph = copy(compactionGraph);
         } else {
           if (log.isTraceEnabled()) {
             log.trace("best:{}", best);
@@ -526,5 +534,38 @@ public class EiglspergerRunnable<V, E> implements Runnable {
       }
     }
     return new Rectangle((int) w.getAverage(), (int) h.getAverage());
+  }
+
+  private Graph<LV<V>, Integer> copy(Graph<LV<V>, Integer> graph) {
+    Graph<LV<V>, Integer> out =
+        GraphTypeBuilder.forGraph(graph)
+            .edgeSupplier(SupplierUtil.createIntegerSupplier())
+            .buildGraph();
+    graph.vertexSet().forEach(out::addVertex);
+    graph.edgeSet().forEach(e -> out.addEdge(graph.getEdgeSource(e), graph.getEdgeTarget(e)));
+    return out;
+  }
+
+  private void updatePositions(LV<V>[][] layersArray, Graph<LV<V>, Integer> compactionGraph) {
+    log.info("vertices of compactionGraph:{}", compactionGraph.vertexSet());
+    log.info("edges of compactionGraph:{}", compactionGraph.edgeSet());
+    for (LV<V>[] layer : layersArray) {
+      for (LV<V> v : layer) {
+        // set the pos of v to the distance to the root in this layer
+        v.setPos(distanceToRoot(compactionGraph, v));
+      }
+    }
+  }
+
+  int distanceToRoot(Graph<LV<V>, Integer> compactionGraph, LV<V> v) {
+    int distance = 0;
+    List<LV<V>> preds = Graphs.predecessorListOf(compactionGraph, v);
+    while (!preds.isEmpty()) {
+      distance++;
+      // pick one
+      LV<V> pred = preds.get(0);
+      preds = Graphs.predecessorListOf(compactionGraph, pred);
+    }
+    return distance;
   }
 }

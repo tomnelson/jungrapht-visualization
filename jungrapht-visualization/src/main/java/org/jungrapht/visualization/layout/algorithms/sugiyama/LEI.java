@@ -22,6 +22,11 @@ public class LEI<V, E> extends SEI<E> implements LE<V, E> {
   }
 
   @Override
+  public LEI<V, E> swapped() {
+    return new LEI<>(edge, target, source);
+  }
+
+  @Override
   public LV<V> getSource() {
     return source;
   }
@@ -49,16 +54,4 @@ public class LEI<V, E> extends SEI<E> implements LE<V, E> {
   public int hashCode() {
     return Objects.hash(super.hashCode(), source, target);
   }
-  //  @Override
-  //  public boolean equals(Object o) {
-  //    if (this == o) return true;
-  //    if (o == null || getClass() != o.getClass()) return false;
-  //    SugiyamaEdge<?, ?> se = (SugiyamaEdge<?, ?>) o;
-  //    return Objects.equals(edge, se.edge);
-  //  }
-  //
-  //  @Override
-  //  public int hashCode() {
-  //    return Objects.hash(edge);
-  //  }
 }

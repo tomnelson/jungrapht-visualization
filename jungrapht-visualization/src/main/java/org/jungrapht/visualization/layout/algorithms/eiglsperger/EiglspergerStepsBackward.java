@@ -5,6 +5,8 @@ import java.util.Comparator;
 import java.util.List;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
+import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.slf4j.Logger;
@@ -35,6 +37,11 @@ public class EiglspergerStepsBackward<V, E> extends EiglspergerSteps<V, E> {
   }
 
   public int sweep(LV<V>[][] layersArray) {
+    compactionGraph =
+        GraphTypeBuilder.<LV<V>, Integer>directed()
+            .edgeSupplier(SupplierUtil.createIntegerSupplier())
+            .buildGraph();
+
     if (log.isTraceEnabled())
       log.trace("<<<<<<<<<<<<<<<<<<<<<<<<<< Backward! <<<<<<<<<<<<<<<<<<<<<<<<<<");
 
@@ -46,6 +53,32 @@ public class EiglspergerStepsBackward<V, E> extends EiglspergerSteps<V, E> {
       if (layerEye == null) {
         layerEye =
             EiglspergerUtil.scan(EiglspergerUtil.createListOfVertices(layersArray[i])); // last rank
+        LV<V> pred = null;
+        for (LV<V> v : layerEye) {
+          if (v instanceof Container) {
+            Container<V> container = (Container<V>) v;
+            for (Segment<V> segment : container.segments()) {
+              compactionGraph.addVertex(segment);
+              if (pred != null) {
+                compactionGraph.addEdge(pred, segment);
+              }
+              pred = segment;
+            }
+          } else if (v instanceof SegmentVertex) {
+            SegmentVertex<V> segmentVertex = (SegmentVertex<V>) v;
+            Segment<V> segment = segmentVertex.getSegment();
+            compactionGraph.addVertex(segment);
+            if (pred != null) {
+              compactionGraph.addEdge(pred, segment);
+            }
+          } else {
+            compactionGraph.addVertex(v);
+            if (pred != null) {
+              compactionGraph.addEdge(pred, v);
+            }
+            pred = v;
+          }
+        }
       }
 
       stepOne(layerEye);
@@ -77,6 +110,32 @@ public class EiglspergerStepsBackward<V, E> extends EiglspergerSteps<V, E> {
         crossCount += stepFive(currentLayer, downstreamLayer, i, i - 1);
       }
       stepSix(downstreamLayer);
+      LV<V> pred = null;
+      for (LV<V> v : downstreamLayer) {
+        if (v instanceof Container) {
+          Container<V> container = (Container<V>) v;
+          List<Segment<V>> segments = container.segments();
+          for (Segment<V> segment : segments) {
+            compactionGraph.addVertex(segment);
+            if (pred != null) {
+              compactionGraph.addEdge(pred, segment);
+            }
+            pred = segment;
+          }
+        } else if (v instanceof SegmentVertex) {
+          SegmentVertex<V> segmentVertex = (SegmentVertex<V>) v;
+          Segment<V> segment = segmentVertex.getSegment();
+          compactionGraph.addVertex(segment);
+          if (pred != null) {
+            compactionGraph.addEdge(pred, segment);
+          }
+        } else {
+          compactionGraph.addVertex(v);
+          if (pred != null) {
+            compactionGraph.addEdge(pred, v);
+          }
+        }
+      }
       if (log.isTraceEnabled()) {
         log.trace("stepSixOut:{}", downstreamLayer);
       }
