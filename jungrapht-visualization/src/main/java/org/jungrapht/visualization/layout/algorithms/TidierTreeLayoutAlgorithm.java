@@ -162,6 +162,7 @@ public class TidierTreeLayoutAlgorithm<V, E>
 
   protected Predicate<V> rootPredicate;
   protected Predicate<V> defaultRootPredicate;
+  protected Predicate<V> builderRootPredicate;
   protected Comparator<V> rootComparator;
   protected Function<V, Shape> vertexShapeFunction;
   protected int horizontalVertexSpacing;
@@ -213,7 +214,7 @@ public class TidierTreeLayoutAlgorithm<V, E>
       int horizontalVertexSpacing,
       int verticalVertexSpacing,
       boolean expandLayout) {
-    this.rootPredicate = rootPredicate;
+    this.builderRootPredicate = rootPredicate;
     this.rootComparator = rootComparator;
     this.vertexShapeFunction = vertexShapeFunction;
     this.vertexPredicate = vertexPredicate;
@@ -588,10 +589,13 @@ public class TidierTreeLayoutAlgorithm<V, E>
 
   @Override
   public void visit(LayoutModel<V> layoutModel) {
+    this.rootPredicate = this.builderRootPredicate;
     this.layoutModel = layoutModel;
     Graph<V, E> graph = layoutModel.getGraph();
     this.defaultRootPredicate =
-        v -> graph.incomingEdgesOf(v).isEmpty() || TreeLayout.isIsolatedVertex(graph, v);
+        v ->
+            layoutModel.getGraph().incomingEdgesOf(v).isEmpty()
+                || TreeLayout.isIsolatedVertex(layoutModel.getGraph(), v);
     this.vertexData.clear();
     this.heights.clear();
     if (this.rootPredicate == null) {
