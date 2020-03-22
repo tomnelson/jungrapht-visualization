@@ -4,6 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * Transform the key of type S to a value of type T. If the transform has been accessed before,
+ * return that cached result.
+ *
+ * @param <S> the key type
+ * @param <T> the value type
+ */
 public class SingletonTransformer<S, T> implements Function<S, T> {
 
   Map<S, T> transformedMap = new HashMap<>();
@@ -15,10 +22,7 @@ public class SingletonTransformer<S, T> implements Function<S, T> {
 
   @Override
   public T apply(S s) {
-    if (!transformedMap.containsKey(s)) {
-      transformedMap.put(s, transformFunction.apply(s));
-    }
-    return transformedMap.get(s);
+    return transformedMap.computeIfAbsent(s, transformFunction);
   }
 
   public Map<S, T> getTransformedMap() {

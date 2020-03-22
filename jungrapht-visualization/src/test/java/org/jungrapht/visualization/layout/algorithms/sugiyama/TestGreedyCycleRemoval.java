@@ -1,6 +1,7 @@
 package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
 import java.util.Collection;
+import java.util.Set;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphBuilder;
@@ -48,6 +49,8 @@ public class TestGreedyCycleRemoval {
   public void testCycleRemoval() {
 
     GreedyCycleRemoval<String, Integer> gcr = new GreedyCycleRemoval<>(graph);
+
+    Assert.assertTrue(gcr.getFeedbackArcs().containsAll(Set.of(8)));
   }
 
   @Test
@@ -57,6 +60,7 @@ public class TestGreedyCycleRemoval {
     GreedyCycleRemoval<String, Integer> gcr = new GreedyCycleRemoval<>(graph);
 
     log.info("reverseArcs: {}", gcr.getFeedbackArcs());
+    Assert.assertTrue(gcr.getFeedbackArcs().containsAll(Set.of(122, 109)));
   }
 
   public static Graph<String, Integer> generateProgramGraph2() {

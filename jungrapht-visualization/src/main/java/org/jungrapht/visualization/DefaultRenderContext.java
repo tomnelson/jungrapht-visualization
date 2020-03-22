@@ -77,8 +77,9 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
 
   // edge label visual property symbols
   private static final String EDGE_LABEL_FONT = PREFIX + "edgeLabelFont";
-  private static final String DIRECTED_EDGE_LABEL_CLOSENESS = PREFIX + "edgeLabelFont";
-  private static final String UNDIRECTED_EDGE_LABEL_CLOSENESS = PREFIX + "edgeLabelFont";
+  private static final String DIRECTED_EDGE_LABEL_CLOSENESS = PREFIX + "directedEdgeLabelCloseness";
+  private static final String UNDIRECTED_EDGE_LABEL_CLOSENESS =
+      PREFIX + "undirectedEdgeLabelCloseness";
 
   // edge arrow visual property symbols
   private static final String ARROW_STYLE = PREFIX + "arrowStyle";
@@ -173,7 +174,7 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
       Float.parseFloat(System.getProperty(DIRECTED_EDGE_LABEL_CLOSENESS, "0.65f"));
   private static final float undirectedEdgeLabelCloseness =
       Float.parseFloat(System.getProperty(UNDIRECTED_EDGE_LABEL_CLOSENESS, "0.65f"));
-  protected float edgeLabelCloseness;
+  protected float edgeLabelCloseness; // will be set depending on graph type
 
   protected Function<Context<Graph<V, E>, E>, Shape> edgeShapeFunction;
 

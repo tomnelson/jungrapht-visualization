@@ -4,6 +4,13 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import org.jgrapht.Graph;
 
+/**
+ * Serves as a {@code Supplier} for a Graph&lt;V, E&gt; transformed to a Graph&lt;SV&lt;V&gt;,
+ * SE&lt;E&gt;&gt;
+ *
+ * @param <V>
+ * @param <E>
+ */
 public class SVTransformedGraphSupplier<V, E> implements Supplier<Graph<SV<V>, SE<E>>> {
 
   protected Graph<V, E> graph;
@@ -18,6 +25,11 @@ public class SVTransformedGraphSupplier<V, E> implements Supplier<Graph<SV<V>, S
     return vertexTransformer;
   }
 
+  /**
+   * Transform and return the graph
+   *
+   * @return a Graph&lt;SV&lt;V&gt;, SE&lt;E&gt;&gt;
+   */
   @Override
   public Graph<SV<V>, SE<E>> get() {
     Function<V, SV<V>> vertexTransformFunction = SV::of;
