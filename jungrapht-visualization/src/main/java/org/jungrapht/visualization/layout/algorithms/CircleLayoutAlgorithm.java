@@ -17,7 +17,6 @@ import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -344,7 +343,7 @@ public class CircleLayoutAlgorithm<V> implements LayoutAlgorithm<V>, AfterRunnab
     IntStream.range(0, vertices.length).forEach(i -> vertexListPositions.put(vertices[i], i));
     int numberOfCrossings = 0;
     Set<E> openEdgeList = new LinkedHashSet<>();
-    List<V> verticesSeen = new LinkedList<>();
+    List<V> verticesSeen = new ArrayList<>();
     for (V v : vertices) {
       log.trace("for vertex {}", v);
       verticesSeen.add(v);

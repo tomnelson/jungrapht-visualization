@@ -45,9 +45,9 @@ public class CircleLayoutReduceEdgeCrossing<V, E> {
 
   public List<V> getVertexOrderedList() {
     buildTable();
-    List<V> vertexList = new LinkedList<>();
-    List<SV<V>> waveFrontNodes = new LinkedList<>(); // ordered by degree of vertices.
-    List<SV<V>> waveCenterNodes = new LinkedList<>(); // ordered by degree of vertices.
+    List<V> vertexList = new ArrayList<>();
+    List<SV<V>> waveFrontNodes = new ArrayList<>(); // ordered by degree of vertices.
+    List<SV<V>> waveCenterNodes = new ArrayList<>(); // ordered by degree of vertices.
     List<SE<E>> removalList = new ArrayList<>();
     int n = svGraph.vertexSet().size();
     for (int counter = 0; counter < n - 3; counter++) {
