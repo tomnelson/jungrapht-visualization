@@ -3,7 +3,6 @@ package org.jungrapht.visualization.layout.algorithms.sugiyama;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -118,13 +117,16 @@ public abstract class VerticalAlignment<V, E> {
           if (d > 0) {
             int floor = (int) Math.floor((d - 1) / 2.0);
             int ceil = (int) Math.ceil((d - 1) / 2.0);
-            for (int m : new LinkedHashSet<>(Arrays.asList(floor, ceil))) {
+            for (int m : new int[] {floor, ceil}) {
               if (align(vkofi) == vkofi) {
                 LV<V> um = neighbors.get(m);
                 LE<V, E> edge = svGraph.getEdge(um, vkofi);
                 if (notMarked(edge) && r < pos(um)) {
                   r = alignMoveCursor(um, vkofi);
                 }
+              }
+              if (floor == ceil) {
+                break;
               }
             }
           }
@@ -160,13 +162,16 @@ public abstract class VerticalAlignment<V, E> {
           if (d > 0) {
             int floor = (int) Math.floor((d - 1) / 2.0);
             int ceil = (int) Math.ceil((d - 1) / 2.0);
-            for (int m : new LinkedHashSet<>(Arrays.asList(ceil, floor))) {
+            for (int m : new int[] {ceil, floor}) {
               if (align(vkofi) == vkofi) {
                 LV<V> um = neighbors.get(m);
                 LE<V, E> edge = svGraph.getEdge(um, vkofi);
                 if (notMarked(edge) && r > pos(um)) {
                   r = alignMoveCursor(um, vkofi);
                 }
+              }
+              if (floor == ceil) {
+                break;
               }
             }
           }
@@ -205,13 +210,16 @@ public abstract class VerticalAlignment<V, E> {
           if (d > 0) {
             int floor = (int) Math.floor((d - 1) / 2.0);
             int ceil = (int) Math.ceil((d - 1) / 2.0);
-            for (int m : new LinkedHashSet<>(Arrays.asList(floor, ceil))) {
+            for (int m : new int[] {floor, ceil}) {
               if (align(vkofi) == vkofi) {
                 LV<V> um = neighbors.get(m);
                 LE<V, E> edge = svGraph.getEdge(vkofi, um);
                 if (notMarked(edge) && r < pos(um)) {
                   r = alignMoveCursor(um, vkofi);
                 }
+              }
+              if (floor == ceil) {
+                break;
               }
             }
           }
@@ -253,13 +261,16 @@ public abstract class VerticalAlignment<V, E> {
           if (d > 0) {
             int floor = (int) Math.floor((d - 1) / 2.0);
             int ceil = (int) Math.ceil((d - 1) / 2.0);
-            for (int m : new LinkedHashSet<>(Arrays.asList(ceil, floor))) {
+            for (int m : new int[] {ceil, floor}) {
               if (align(vkofi) == vkofi) {
                 LV<V> um = neighbors.get(m);
                 LE<V, E> edge = svGraph.getEdge(vkofi, um);
                 if (notMarked(edge) && r > pos(um)) {
                   r = alignMoveCursor(um, vkofi);
                 }
+              }
+              if (floor == ceil) {
+                break;
               }
             }
           }

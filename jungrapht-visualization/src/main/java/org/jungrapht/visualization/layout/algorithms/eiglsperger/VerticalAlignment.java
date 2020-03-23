@@ -1,8 +1,6 @@
 package org.jungrapht.visualization.layout.algorithms.eiglsperger;
 
-import java.util.Arrays;
 import java.util.Comparator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -66,13 +64,16 @@ public abstract class VerticalAlignment<V, E>
           if (d > 0) {
             int floor = (int) Math.floor((d - 1) / 2.0);
             int ceil = (int) Math.ceil((d - 1) / 2.0);
-            for (int m : new LinkedHashSet<>(Arrays.asList(floor, ceil))) {
+            for (int m : new int[] {floor, ceil}) {
               if (align(vkofi) == vkofi) {
                 LV<V> um = neighbors.get(m);
                 LE<V, E> edge = svGraph.getEdge(um, vkofi);
                 if ((notMarked(edge) && r < pos(um)) || um instanceof PVertex) {
                   r = alignMoveCursor(um, vkofi);
                 }
+              }
+              if (floor == ceil) {
+                break;
               }
             }
           }
@@ -95,7 +96,7 @@ public abstract class VerticalAlignment<V, E>
         LV<V>[] currentLayer = layers[i];
         LV<V>[] previousLayerInSweep = layers[i - 1];
         int r = pos(previousLayerInSweep[previousLayerInSweep.length - 1]) + 1;
-        //                .length; // one past the last pos in the previous layer of this sweep
+        // one past the last pos in the previous layer of this sweep
         for (int k = currentLayer.length - 1; k >= 0; k--) {
           LV<V> vkofi = currentLayer[k];
           List<LV<V>> neighbors =
@@ -107,13 +108,16 @@ public abstract class VerticalAlignment<V, E>
           if (d > 0) {
             int floor = (int) Math.floor((d - 1) / 2.0);
             int ceil = (int) Math.ceil((d - 1) / 2.0);
-            for (int m : new LinkedHashSet<>(Arrays.asList(ceil, floor))) {
+            for (int m : new int[] {ceil, floor}) {
               if (align(vkofi) == vkofi) {
                 LV<V> um = neighbors.get(m);
                 LE<V, E> edge = svGraph.getEdge(um, vkofi);
                 if ((notMarked(edge) && r > pos(um)) || um instanceof PVertex) {
                   r = alignMoveCursor(um, vkofi);
                 }
+              }
+              if (floor == ceil) {
+                break;
               }
             }
           }
@@ -152,13 +156,16 @@ public abstract class VerticalAlignment<V, E>
           if (d > 0) {
             int floor = (int) Math.floor((d - 1) / 2.0);
             int ceil = (int) Math.ceil((d - 1) / 2.0);
-            for (int m : new LinkedHashSet<>(Arrays.asList(floor, ceil))) {
+            for (int m : new int[] {floor, ceil}) {
               if (align(vkofi) == vkofi) {
                 LV<V> um = neighbors.get(m);
                 LE<V, E> edge = svGraph.getEdge(vkofi, um);
                 if ((notMarked(edge) && r < pos(um)) || um instanceof QVertex) {
                   r = alignMoveCursor(um, vkofi);
                 }
+              }
+              if (floor == ceil) {
+                break;
               }
             }
           }
@@ -200,13 +207,16 @@ public abstract class VerticalAlignment<V, E>
           if (d > 0) {
             int floor = (int) Math.floor((d - 1) / 2.0);
             int ceil = (int) Math.ceil((d - 1) / 2.0);
-            for (int m : new LinkedHashSet<>(Arrays.asList(ceil, floor))) {
+            for (int m : new int[] {ceil, floor}) {
               if (align(vkofi) == vkofi) {
                 LV<V> um = neighbors.get(m);
                 LE<V, E> edge = svGraph.getEdge(vkofi, um);
                 if ((notMarked(edge) && r > pos(um)) || um instanceof QVertex) {
                   r = alignMoveCursor(um, vkofi);
                 }
+              }
+              if (floor == ceil) {
+                break;
               }
             }
           }
