@@ -132,6 +132,9 @@ class Container<V> extends InsertionOrderSplayTree<Segment<V>> implements LV<V> 
   @Override
   public void setPos(int pos) {
     this.pos = pos;
+    if (measure == -1) {
+      measure = pos;
+    }
   }
 
   @Override
@@ -142,6 +145,7 @@ class Container<V> extends InsertionOrderSplayTree<Segment<V>> implements LV<V> 
   @Override
   public void setMeasure(double measure) {
     this.measure = measure;
+    this.pos = (int) measure;
   }
 
   @Override
