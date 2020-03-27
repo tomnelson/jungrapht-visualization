@@ -20,6 +20,7 @@ import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerStep
 import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerStepsForward;
 import org.jungrapht.visualization.layout.algorithms.eiglsperger.SyntheticLV;
 import org.jungrapht.visualization.layout.algorithms.eiglsperger.Synthetics;
+import org.jungrapht.visualization.layout.algorithms.eiglsperger.VertexMetadata;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.ArticulatedEdge;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.GraphLayers;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.GreedyCycleRemoval;
@@ -179,16 +180,16 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
     stepsBackward = new EiglspergerStepsBackward<>(svGraph, layersArray, true);
 
     int bestCrossCount = Integer.MAX_VALUE;
-    LV<V>[][] best = null;
+    VertexMetadata<V>[][] vertexMetadata = null;
     for (int i = 0; i < maxLevelCross; i++) {
       if (i % 2 == 0) {
         int sweepCrossCount = stepsForward.sweep(layersArray);
         if (sweepCrossCount < bestCrossCount) {
           bestCrossCount = sweepCrossCount;
-          best = copy(layersArray);
+          vertexMetadata = save(layersArray);
         } else {
           if (log.isTraceEnabled()) {
-            log.trace("best:{}", best);
+            log.trace("best:{}", layersArray);
           }
           break;
         }
@@ -196,10 +197,10 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
         int sweepCrossCount = stepsBackward.sweep(layersArray);
         if (sweepCrossCount < bestCrossCount) {
           bestCrossCount = sweepCrossCount;
-          best = copy(layersArray);
+          vertexMetadata = save(layersArray);
         } else {
           if (log.isTraceEnabled()) {
-            log.trace("best:{}", best);
+            log.trace("best:{}", layersArray);
           }
           break;
         }
@@ -207,14 +208,11 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
     }
     log.trace("bestCrossCount: {}", bestCrossCount);
 
-    // done optimizing for edge crossing
-    if (best == null) {
-      best = layersArray;
-    }
+    restore(layersArray, vertexMetadata);
 
     // figure out the avg size of rendered vertex
     java.awt.Rectangle avgVertexBounds =
-        maxVertexBounds(best, renderContext.getVertexShapeFunction());
+        maxVertexBounds(layersArray, renderContext.getVertexShapeFunction());
 
     int horizontalOffset =
         Math.max(
@@ -222,11 +220,11 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
     int verticalOffset =
         Math.max(
             avgVertexBounds.height, Integer.getInteger(PREFIX + "mincross.verticalOffset", 50));
-    GraphLayers.checkLayers(best);
+    GraphLayers.checkLayers(layersArray);
     Map<LV<V>, Point> vertexPointMap = new HashMap<>();
 
     // update the indices of the all layers
-    for (LV<V>[] value : best) {
+    for (LV<V>[] value : layersArray) {
       for (int j = 0; j < value.length; j++) {
         value[j].setIndex(j);
       }
@@ -234,12 +232,20 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
     if (straightenEdges) {
       SelectiveEiglspergerHorizontalCoordinateAssignment<V, E> horizontalCoordinateAssignment =
           new SelectiveEiglspergerHorizontalCoordinateAssignment(
-              best, svGraph, new HashSet<>(), 50, 50, doUpLeft, doUpRight, doDownLeft, doDownRight);
+              layersArray,
+              svGraph,
+              new HashSet<>(),
+              50,
+              50,
+              doUpLeft,
+              doUpRight,
+              doDownLeft,
+              doDownRight);
       horizontalCoordinateAssignment.horizontalCoordinateAssignment();
 
-      GraphLayers.checkLayers(best);
+      GraphLayers.checkLayers(layersArray);
 
-      for (LV<V>[] lvs : best) {
+      for (LV<V>[] lvs : layersArray) {
         for (LV<V> EiglspergerVertex : lvs) {
           vertexPointMap.put(EiglspergerVertex, EiglspergerVertex.getPoint());
         }
@@ -247,7 +253,7 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
 
     } else {
       Unaligned.centerPoints(
-          best,
+          layersArray,
           renderContext.getVertexShapeFunction(),
           horizontalOffset,
           verticalOffset,
@@ -261,7 +267,7 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
     int totalHeight = 0;
     int totalWidth = 0;
 
-    for (LV<V>[] lvs : best) {
+    for (LV<V>[] lvs : layersArray) {
 
       int width = horizontalOffset;
       int maxHeight = 0;
@@ -286,7 +292,7 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
     if (log.isTraceEnabled()) {
       log.trace("layerMaxHeights {}", rowMaxHeightMap);
     }
-    for (LV<V>[] lvs : best) {
+    for (LV<V>[] lvs : layersArray) {
       int previousVertexWidth = 0;
       // offset against widest row
       x += (widestRowWidth - rowWidthMap.get(layerIndex)) / 2;
