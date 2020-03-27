@@ -185,6 +185,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
   protected int transposeLimit;
   protected int maxLevelCross;
   protected boolean useLongestPathLayering;
+  protected Map<LV<V>, VertexMetadata<V>> vertexMetadataMap = new HashMap<>();
 
   protected SugiyamaRunnable(Builder<V, E, ?, ?> builder) {
     this(
@@ -320,7 +321,9 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     long syntheticsTime = System.currentTimeMillis();
     log.trace("synthetics took {}", (syntheticsTime - assignLayersTime));
 
+    VertexMetadata<V>[][] vertexMetadata = null;
     LV<V>[][] best = null;
+
     int lowestCrossCount = Integer.MAX_VALUE;
     // order the ranks
     for (int i = 0; i < maxLevelCross; i++) {
@@ -338,7 +341,8 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       if (allLevelCrossCount < lowestCrossCount) {
         GraphLayers.checkLayers(layersArray);
         best = copy(layersArray);
-        GraphLayers.checkLayers(best);
+        vertexMetadataMap = save(layersArray);
+        GraphLayers.checkLayers(layersArray);
         lowestCrossCount = allLevelCrossCount;
       }
       if (checkStopped()) {
@@ -347,19 +351,34 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     }
     log.trace("lowest cross count: {}", lowestCrossCount);
 
-    // in case zero iterations of cross counting were requested:
-    if (best == null) {
-      best = layersArray;
+    restore(layersArray, vertexMetadataMap);
+
+    Arrays.stream(layersArray)
+        .forEach(layer -> Arrays.sort(layer, Comparator.comparingInt(LV::getIndex)));
+    // compare best and layersArray
+    log.info("best:{}", best);
+    log.info("layersArray:{}", layersArray);
+
+    for (int i=0; i<best.length; i++) {
+      LV<V>[] layer = best[i];
+      for (int j=0; j<layer.length; j++) {
+        LV<V> v = layer[j];
+        if (v.getVertex() != layersArray[i][j].getVertex()) {
+          log.error("not equal");
+        }
+      }
     }
 
+    // in case zero iterations of cross counting were requested:
     long crossCountTests = System.currentTimeMillis();
     log.trace("cross counts took {}", (crossCountTests - syntheticsTime));
-    GraphLayers.checkLayers(best);
+    GraphLayers.checkLayers(layersArray);
 
     // done optimizing for edge crossing
 
     // figure out the avg size of rendered vertex
-    Rectangle avgVertexBounds = avgVertexBounds(best, renderContext.getVertexShapeFunction());
+    Rectangle avgVertexBounds =
+        avgVertexBounds(layersArray, renderContext.getVertexShapeFunction());
 
     int horizontalOffset =
         Math.max(
@@ -367,27 +386,27 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     int verticalOffset =
         Math.max(
             avgVertexBounds.height, Integer.getInteger(PREFIX + "mincross.verticalOffset", 50));
-    GraphLayers.checkLayers(best);
+    GraphLayers.checkLayers(layersArray);
     Map<LV<V>, Point> vertexPointMap = new HashMap<>();
 
     if (straightenEdges) {
       HorizontalCoordinateAssignment<V, E> horizontalCoordinateAssignment =
           new HorizontalCoordinateAssignment<>(
-              best, svGraph, new HashSet<>(), horizontalOffset, verticalOffset);
+              layersArray, svGraph, new HashSet<>(), horizontalOffset, verticalOffset);
       horizontalCoordinateAssignment.horizontalCoordinateAssignment();
 
-      GraphLayers.checkLayers(best);
+      GraphLayers.checkLayers(layersArray);
 
-      for (int i = 0; i < best.length; i++) {
-        for (int j = 0; j < best[i].length; j++) {
-          LV<V> v = best[i][j];
+      for (int i = 0; i < layersArray.length; i++) {
+        for (int j = 0; j < layersArray[i].length; j++) {
+          LV<V> v = layersArray[i][j];
           vertexPointMap.put(v, v.getPoint());
         }
       }
 
     } else {
       Unaligned.centerPoints(
-          best,
+          layersArray,
           renderContext.getVertexShapeFunction(),
           horizontalOffset,
           verticalOffset,
@@ -400,12 +419,12 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     Function<V, Shape> vertexShapeFunction = renderContext.getVertexShapeFunction();
     int totalHeight = 0;
     int totalWidth = 0;
-    for (int i = 0; i < best.length; i++) {
+    for (int i = 0; i < layersArray.length; i++) {
 
       int width = horizontalOffset;
       int maxHeight = 0;
-      for (int j = 0; j < best[i].length; j++) {
-        LV<V> v = best[i][j];
+      for (int j = 0; j < layersArray[i].length; j++) {
+        LV<V> v = layersArray[i][j];
         if (!(v instanceof Synthetic)) {
           Rectangle bounds = vertexShapeFunction.apply(v.getVertex()).getBounds();
           width += bounds.width + horizontalOffset;
@@ -424,7 +443,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     int y = verticalOffset;
     layerIndex = 0;
     log.trace("layerMaxHeights {}", rowMaxHeightMap);
-    for (int i = 0; i < best.length; i++) {
+    for (int i = 0; i < layersArray.length; i++) {
       int previousVertexWidth = 0;
       // offset against widest row
       x += (widestRowWidth - rowWidthMap.get(layerIndex)) / 2;
@@ -435,8 +454,8 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       }
 
       int rowWidth = 0;
-      for (int j = 0; j < best[i].length; j++) {
-        LV<V> LV = best[i][j];
+      for (int j = 0; j < layersArray[i].length; j++) {
+        LV<V> LV = layersArray[i][j];
         int vertexWidth = 0;
         if (!(LV instanceof Synthetic)) {
           vertexWidth = vertexShapeFunction.apply(LV.getVertex()).getBounds().width;
@@ -807,6 +826,30 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       }
     }
     return copy;
+  }
+
+  protected Map<LV<V>, VertexMetadata<V>> save(LV<V>[][] in) {
+    Map<LV<V>, VertexMetadata<V>> vertexMetadataMap = new HashMap<>();
+    VertexMetadata[][] saved = new VertexMetadata[in.length][];
+    for (int i = 0; i < in.length; i++) {
+      saved[i] = new VertexMetadata[in[i].length];
+      for (int j = 0; j < in[i].length; j++) {
+        saved[i][j] = VertexMetadata.of(in[i][j]);
+        vertexMetadataMap.put(in[i][j], saved[i][j]);
+      }
+    }
+    return vertexMetadataMap;
+  }
+
+  protected LV<V>[][] restore(LV<V>[][] layers, Map<LV<V>, VertexMetadata<V>> vertexMetadataMap) {
+    for (int i = 0; i < layers.length; i++) {
+      for (int j = 0; j < layers[i].length; j++) {
+        VertexMetadata<V> vertexMetadata = vertexMetadataMap.get(layers[i][j]);
+        vertexMetadata.applyTo(layers[i][j]);
+        //        saved[i][j].applyTo(layers[i][j]);
+      }
+    }
+    return layers;
   }
 
   private static <V> Rectangle maxVertexBounds(

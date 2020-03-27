@@ -5,8 +5,10 @@ import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -20,7 +22,6 @@ import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerStep
 import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerStepsForward;
 import org.jungrapht.visualization.layout.algorithms.eiglsperger.SyntheticLV;
 import org.jungrapht.visualization.layout.algorithms.eiglsperger.Synthetics;
-import org.jungrapht.visualization.layout.algorithms.eiglsperger.VertexMetadata;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.ArticulatedEdge;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.GraphLayers;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.GreedyCycleRemoval;
@@ -28,6 +29,7 @@ import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.TransformedGraphSupplier;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Unaligned;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.VertexMetadata;
 import org.jungrapht.visualization.layout.algorithms.util.Attributed;
 import org.jungrapht.visualization.layout.model.Point;
 import org.slf4j.Logger;
@@ -186,7 +188,7 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
         int sweepCrossCount = stepsForward.sweep(layersArray);
         if (sweepCrossCount < bestCrossCount) {
           bestCrossCount = sweepCrossCount;
-          vertexMetadata = save(layersArray);
+          vertexMetadataMap = save(layersArray);
         } else {
           if (log.isTraceEnabled()) {
             log.trace("best:{}", layersArray);
@@ -197,7 +199,7 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
         int sweepCrossCount = stepsBackward.sweep(layersArray);
         if (sweepCrossCount < bestCrossCount) {
           bestCrossCount = sweepCrossCount;
-          vertexMetadata = save(layersArray);
+          vertexMetadataMap = save(layersArray);
         } else {
           if (log.isTraceEnabled()) {
             log.trace("best:{}", layersArray);
@@ -208,7 +210,9 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
     }
     log.trace("bestCrossCount: {}", bestCrossCount);
 
-    restore(layersArray, vertexMetadata);
+    restore(layersArray, vertexMetadataMap);
+    Arrays.stream(layersArray)
+        .forEach(layer -> Arrays.sort(layer, Comparator.comparingInt(LV::getIndex)));
 
     // figure out the avg size of rendered vertex
     java.awt.Rectangle avgVertexBounds =

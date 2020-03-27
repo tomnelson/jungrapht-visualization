@@ -1,6 +1,5 @@
-package org.jungrapht.visualization.layout.algorithms.eiglsperger;
+package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
-import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

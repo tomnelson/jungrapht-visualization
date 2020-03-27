@@ -4,6 +4,7 @@ import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -28,6 +29,7 @@ import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.TransformedGraphSupplier;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Unaligned;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.VertexMetadata;
 import org.jungrapht.visualization.layout.algorithms.util.Attributed;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
@@ -141,6 +143,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
   protected boolean transpose;
   protected int maxLevelCross;
   protected boolean useLongestPathLayering;
+  protected Map<LV<V>, VertexMetadata<V>> vertexMetadataMap = new HashMap<>();
 
   protected EiglspergerStepsForward<V, E> stepsForward;
   protected EiglspergerStepsBackward<V, E> stepsBackward;
@@ -249,6 +252,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     stepsBackward = new EiglspergerStepsBackward<>(svGraph, layersArray, transpose);
 
     int bestCrossCount = Integer.MAX_VALUE;
+    LV<V>[][] best = null;
     VertexMetadata<V>[][] vertexMetadata = null;
     Graph<LV<V>, Integer> bestCompactionGraph = null;
     for (int i = 0; i < maxLevelCross; i++) {
@@ -257,7 +261,8 @@ public class EiglspergerRunnable<V, E> implements Runnable {
         Graph<LV<V>, Integer> compactionGraph = stepsForward.compactionGraph;
         if (sweepCrossCount < bestCrossCount) {
           bestCrossCount = sweepCrossCount;
-          vertexMetadata = save(layersArray);
+          vertexMetadataMap = save(layersArray);
+          best = copy(layersArray);
           bestCompactionGraph = copy(compactionGraph);
         } else {
           if (log.isTraceEnabled()) {
@@ -270,7 +275,8 @@ public class EiglspergerRunnable<V, E> implements Runnable {
         Graph<LV<V>, Integer> compactionGraph = stepsForward.compactionGraph;
         if (sweepCrossCount < bestCrossCount) {
           bestCrossCount = sweepCrossCount;
-          vertexMetadata = save(layersArray);
+          vertexMetadataMap = save(layersArray);
+          best = copy(layersArray);
           bestCompactionGraph = copy(compactionGraph);
         } else {
           if (log.isTraceEnabled()) {
@@ -282,7 +288,9 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     }
     log.trace("bestCrossCount: {}", bestCrossCount);
 
-    restore(layersArray, vertexMetadata);
+    restore(layersArray, vertexMetadataMap);
+    Arrays.stream(layersArray)
+        .forEach(layer -> Arrays.sort(layer, Comparator.comparingInt(LV::getIndex)));
 
     // figure out the avg size of rendered vertex
     java.awt.Rectangle avgVertexBounds =
@@ -486,21 +494,36 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     }
   }
 
-  protected VertexMetadata<V>[][] save(LV<V>[][] in) {
+  protected LV<V>[][] copy(LV<V>[][] in) {
+    LV[][] copy = new LV[in.length][];
+    for (int i = 0; i < in.length; i++) {
+      copy[i] = new LV[in[i].length];
+      for (int j = 0; j < in[i].length; j++) {
+        copy[i][j] = in[i][j].copy();
+      }
+    }
+    return copy;
+  }
+
+  protected Map<LV<V>, VertexMetadata<V>> save(LV<V>[][] in) {
+    Map<LV<V>, VertexMetadata<V>> vertexMetadataMap = new HashMap<>();
     VertexMetadata[][] saved = new VertexMetadata[in.length][];
     for (int i = 0; i < in.length; i++) {
       saved[i] = new VertexMetadata[in[i].length];
       for (int j = 0; j < in[i].length; j++) {
         saved[i][j] = VertexMetadata.of(in[i][j]);
+        vertexMetadataMap.put(in[i][j], saved[i][j]);
       }
     }
-    return saved;
+    return vertexMetadataMap;
   }
 
-  protected LV<V>[][] restore(LV<V>[][] layers, VertexMetadata<V>[][] saved) {
-    for (int i = 0; i < saved.length; i++) {
-      for (int j = 0; j < saved[i].length; j++) {
-        saved[i][j].applyTo(layers[i][j]);
+  protected LV<V>[][] restore(LV<V>[][] layers, Map<LV<V>, VertexMetadata<V>> vertexMetadataMap) {
+    for (int i = 0; i < layers.length; i++) {
+      for (int j = 0; j < layers[i].length; j++) {
+        VertexMetadata<V> vertexMetadata = vertexMetadataMap.get(layers[i][j]);
+        vertexMetadata.applyTo(layers[i][j]);
+        //        saved[i][j].applyTo(layers[i][j]);
       }
     }
     return layers;

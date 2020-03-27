@@ -5,8 +5,10 @@ import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -26,6 +28,7 @@ import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaRunnable;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Synthetics;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.TransformedGraphSupplier;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Unaligned;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.VertexMetadata;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.util.synthetics.Synthetic;
 import org.slf4j.Logger;
@@ -194,7 +197,7 @@ public class TestSugiyamaRunnable<V, E> extends SugiyamaRunnable<V, E> implement
     long syntheticsTime = System.currentTimeMillis();
     log.trace("synthetics took {}", (syntheticsTime - assignLayersTime));
 
-    LV<V>[][] best = null;
+    VertexMetadata<V>[][] vertexMetadata = null;
     int lowestCrossCount = Integer.MAX_VALUE;
     // order the ranks
     for (int i = 0; i < maxLevelCross; i++) {
@@ -211,8 +214,8 @@ public class TestSugiyamaRunnable<V, E> extends SugiyamaRunnable<V, E> implement
       GraphLayers.checkLayers(layersArray);
       if (allLevelCrossCount < lowestCrossCount) {
         GraphLayers.checkLayers(layersArray);
-        best = copy(layersArray);
-        GraphLayers.checkLayers(best);
+        vertexMetadataMap = save(layersArray);
+        GraphLayers.checkLayers(layersArray);
         lowestCrossCount = allLevelCrossCount;
       }
       if (checkStopped()) {
@@ -221,19 +224,19 @@ public class TestSugiyamaRunnable<V, E> extends SugiyamaRunnable<V, E> implement
     }
     log.trace("lowest cross count: {}", lowestCrossCount);
 
-    // in case zero iterations of cross counting were requested:
-    if (best == null) {
-      best = layersArray;
-    }
+    restore(layersArray, vertexMetadataMap);
+    Arrays.stream(layersArray)
+        .forEach(layer -> Arrays.sort(layer, Comparator.comparingInt(LV::getIndex)));
 
     long crossCountTests = System.currentTimeMillis();
     log.trace("cross counts took {}", (crossCountTests - syntheticsTime));
-    GraphLayers.checkLayers(best);
+    GraphLayers.checkLayers(layersArray);
 
     // done optimizing for edge crossing
 
     // figure out the avg size of rendered vertex
-    Rectangle avgVertexBounds = avgVertexBounds(best, renderContext.getVertexShapeFunction());
+    Rectangle avgVertexBounds =
+        avgVertexBounds(layersArray, renderContext.getVertexShapeFunction());
 
     int horizontalOffset =
         Math.max(
@@ -241,31 +244,39 @@ public class TestSugiyamaRunnable<V, E> extends SugiyamaRunnable<V, E> implement
     int verticalOffset =
         Math.max(
             avgVertexBounds.height, Integer.getInteger(PREFIX + "mincross.verticalOffset", 50));
-    GraphLayers.checkLayers(best);
+    GraphLayers.checkLayers(layersArray);
     Map<LV<V>, Point> vertexPointMap = new HashMap<>();
 
     if (straightenEdges) {
       SelectiveSugiyamaHorizontalCoordinateAssignment<V, E> horizontalCoordinateAssignment =
           new SelectiveSugiyamaHorizontalCoordinateAssignment(
-              best, svGraph, new HashSet<>(), 50, 50, doUpLeft, doUpRight, doDownLeft, doDownRight);
+              layersArray,
+              svGraph,
+              new HashSet<>(),
+              50,
+              50,
+              doUpLeft,
+              doUpRight,
+              doDownLeft,
+              doDownRight);
       horizontalCoordinateAssignment.horizontalCoordinateAssignment();
 
       //      HorizontalCoordinateAssignment<V, E> horizontalCoordinateAssignment = new HorizontalCoordinateAssignment<>(
-      //              best, svGraph, new HashSet<>(), horizontalOffset, verticalOffset);
+      //              layersArray, svGraph, new HashSet<>(), horizontalOffset, verticalOffset);
       //      horizontalCoordinateAssignment.horizontalCoordinateAssignment();
 
-      GraphLayers.checkLayers(best);
+      GraphLayers.checkLayers(layersArray);
 
-      for (int i = 0; i < best.length; i++) {
-        for (int j = 0; j < best[i].length; j++) {
-          LV<V> v = best[i][j];
+      for (int i = 0; i < layersArray.length; i++) {
+        for (int j = 0; j < layersArray[i].length; j++) {
+          LV<V> v = layersArray[i][j];
           vertexPointMap.put(v, v.getPoint());
         }
       }
 
     } else {
       Unaligned.centerPoints(
-          best,
+          layersArray,
           renderContext.getVertexShapeFunction(),
           horizontalOffset,
           verticalOffset,
@@ -278,12 +289,12 @@ public class TestSugiyamaRunnable<V, E> extends SugiyamaRunnable<V, E> implement
     Function<V, Shape> vertexShapeFunction = renderContext.getVertexShapeFunction();
     int totalHeight = 0;
     int totalWidth = 0;
-    for (int i = 0; i < best.length; i++) {
+    for (int i = 0; i < layersArray.length; i++) {
 
       int width = horizontalOffset;
       int maxHeight = 0;
-      for (int j = 0; j < best[i].length; j++) {
-        LV<V> v = best[i][j];
+      for (int j = 0; j < layersArray[i].length; j++) {
+        LV<V> v = layersArray[i][j];
         if (!(v instanceof Synthetic)) {
           Rectangle bounds = vertexShapeFunction.apply(v.getVertex()).getBounds();
           width += bounds.width + horizontalOffset;
@@ -302,7 +313,7 @@ public class TestSugiyamaRunnable<V, E> extends SugiyamaRunnable<V, E> implement
     int y = verticalOffset;
     layerIndex = 0;
     log.trace("layerMaxHeights {}", rowMaxHeightMap);
-    for (int i = 0; i < best.length; i++) {
+    for (int i = 0; i < layersArray.length; i++) {
       int previousVertexWidth = 0;
       // offset against widest row
       x += (widestRowWidth - rowWidthMap.get(layerIndex)) / 2;
@@ -313,8 +324,8 @@ public class TestSugiyamaRunnable<V, E> extends SugiyamaRunnable<V, E> implement
       }
 
       int rowWidth = 0;
-      for (int j = 0; j < best[i].length; j++) {
-        LV<V> LV = best[i][j];
+      for (int j = 0; j < layersArray[i].length; j++) {
+        LV<V> LV = layersArray[i][j];
         int vertexWidth = 0;
         if (!(LV instanceof Synthetic)) {
           vertexWidth = vertexShapeFunction.apply(LV.getVertex()).getBounds().width;
@@ -373,7 +384,7 @@ public class TestSugiyamaRunnable<V, E> extends SugiyamaRunnable<V, E> implement
       entry.setValue(q);
     }
 
-    // now all the vertices in layers (best) have points associated with them
+    // now all the vertices in layers (layersArray) have points associated with them
     // every vertex in vertexMap has a point value
 
     svGraph.vertexSet().forEach(v -> v.setPoint(vertexPointMap.get(v)));
