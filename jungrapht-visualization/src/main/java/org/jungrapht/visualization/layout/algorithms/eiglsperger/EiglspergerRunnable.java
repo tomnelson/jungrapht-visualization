@@ -292,6 +292,16 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     Arrays.stream(layersArray)
         .forEach(layer -> Arrays.sort(layer, Comparator.comparingInt(LV::getIndex)));
 
+    for (int i = 0; i < best.length; i++) {
+      LV<V>[] layer = best[i];
+      for (int j = 0; j < layer.length; j++) {
+        LV<V> v = layer[j];
+        if (v.getVertex() != layersArray[i][j].getVertex()) {
+          log.error("not equal");
+        }
+      }
+    }
+
     // figure out the avg size of rendered vertex
     java.awt.Rectangle avgVertexBounds =
         maxVertexBounds(layersArray, renderContext.getVertexShapeFunction());

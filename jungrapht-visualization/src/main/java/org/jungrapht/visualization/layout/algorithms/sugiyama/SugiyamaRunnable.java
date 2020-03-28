@@ -359,9 +359,9 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     log.info("best:{}", best);
     log.info("layersArray:{}", layersArray);
 
-    for (int i=0; i<best.length; i++) {
+    for (int i = 0; i < best.length; i++) {
       LV<V>[] layer = best[i];
-      for (int j=0; j<layer.length; j++) {
+      for (int j = 0; j < layer.length; j++) {
         LV<V> v = layer[j];
         if (v.getVertex() != layersArray[i][j].getVertex()) {
           log.error("not equal");
