@@ -98,8 +98,8 @@ public class HorizontalCompaction<V> {
             shift(sink(u), Math.min(shift(sink(u)), x(v) - x(u) - deltaX));
           } else {
             // x[v] <- max{x[v], x[u] + delta}
-            //            int localDeltaX = deltaX + deltaX * (pos(v) - idx(v));
-            x(v, Math.max(x(v), x(u) + deltaX));
+                        int localDeltaX = deltaX + deltaX * (pos(v) - idx(v));
+            x(v, Math.max(x(v), x(u) + localDeltaX));
           }
         }
         w = align(w);
