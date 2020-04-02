@@ -54,10 +54,19 @@ public class HorizontalCompaction<V> {
 
   public void horizontalCompaction() {
     //    EiglspergerUtil.layerSanityCheck(layers);
+    //    log.info("placeBlock for all v where root(v) is v");
+    Arrays.stream(layers)
+        .flatMap(Arrays::stream)
+        .forEach(
+            v -> log.info("v == {} root(v) == {} they're equal = {}", v, root(v), (root(v) == v)));
     Arrays.stream(layers)
         .flatMap(Arrays::stream)
         .filter(v -> root(v) == v)
-        .forEach(this::placeBlock);
+        .forEach(
+            v -> {
+              log.info("(v) will placeBlock({})", v);
+              placeBlock(v);
+            });
 
     for (int i = 0; i < layers.length; i++) {
       LV<V>[] list = layers[i];
@@ -75,7 +84,7 @@ public class HorizontalCompaction<V> {
   }
 
   protected void placeBlock(LV<V> v) {
-    //    log.info("placeBlock: {}", v);
+    //    log.info("placeBlock: {} and x.containsKey(v) is {}", v, x.containsKey(v));
     // if x[v] undefined
     if (!x.containsKey(v)) {
       // x[v] <- 0, w <- v
@@ -83,11 +92,13 @@ public class HorizontalCompaction<V> {
       LV<V> w = v;
       do {
         // if pos[w] > 0
+        log.info("looking for predecessor of {}", w);
         if (hasPredecessor(w)) {
           // u gets root[pred[w]]
           LV<V> pred = pred(w);
           LV<V> u = root(pred);
           int diff = pos(w) - pos(pred);
+          log.info("(u) will placeBlock({})", u);
           placeBlock(u);
           if (sink(v) == v) {
             sink(v, sink(u));
@@ -98,7 +109,7 @@ public class HorizontalCompaction<V> {
             shift(sink(u), Math.min(shift(sink(u)), x(v) - x(u) - deltaX));
           } else {
             // x[v] <- max{x[v], x[u] + delta}
-                        int localDeltaX = deltaX + deltaX * (pos(v) - idx(v));
+            int localDeltaX = deltaX + deltaX * (pos(v) - idx(v));
             x(v, Math.max(x(v), x(u) + localDeltaX));
           }
         }
@@ -140,6 +151,7 @@ public class HorizontalCompaction<V> {
   }
 
   protected void x(LV<V> v, int d) {
+    log.info("put {} at x: {}", v, d);
     x.put(v, d);
   }
 

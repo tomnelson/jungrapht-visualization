@@ -47,6 +47,40 @@ public class GraphLayers {
     return sorted;
   }
 
+  public static <V, E> void minimizeEdgeLength(
+      Graph<LV<V>, LE<V, E>> dag, List<List<LV<V>>> layers) {
+    for (int i = layers.size() - 1; i >= 0; i--) {
+      List<LV<V>> layer = layers.get(i);
+      Map<LV<V>, Integer> verticesToMove = new HashMap<>();
+
+      for (LV<V> v : layer) {
+        if (dag.outDegreeOf(v) == 0) {
+          continue;
+        }
+        int minRank =
+            dag.outgoingEdgesOf(v)
+                .stream()
+                .mapToInt(e -> dag.getEdgeTarget(e).getRank() - 1)
+                .min()
+                .getAsInt();
+
+        if (minRank != v.getRank()) {
+          // change the rank of v and move it (below)
+          verticesToMove.put(v, minRank);
+          log.info("moving {} to rank {}", v, minRank);
+        }
+      }
+      for (Map.Entry<LV<V>, Integer> entry : verticesToMove.entrySet()) {
+        LV<V> v = entry.getKey();
+        int oldRank = entry.getKey().getRank();
+        int newRank = entry.getValue();
+        layers.get(oldRank).remove(v);
+        layers.get(newRank).add(v);
+        v.setRank(newRank);
+      }
+    }
+  }
+
   private static <V> List<LV<V>> groupByComponentMembership(
       List<Set<LV<V>>> componentVertices, List<LV<V>> list) {
     List<LV<V>> groupedRow = new ArrayList<>();

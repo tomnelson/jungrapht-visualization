@@ -130,6 +130,7 @@ public class EiglspergerStepsForward<V, E> extends EiglspergerSteps<V, E> {
           if (pred != null) {
             compactionGraph.addEdge(pred, segment);
           }
+          pred = segment;
         } else {
           compactionGraph.addVertex(v);
           if (pred != null) {

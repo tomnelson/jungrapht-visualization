@@ -7,24 +7,22 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.util.stream.IntStream;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
-import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithmWithGraph;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EiglspergerSmallGraph extends JFrame {
+public class EiglspergerSmallGraphWithGraph extends JFrame {
 
-  private static final Logger log = LoggerFactory.getLogger(EiglspergerSmallGraph.class);
+  private static final Logger log = LoggerFactory.getLogger(EiglspergerSmallGraphWithGraph.class);
 
-  public EiglspergerSmallGraph() {
+  public EiglspergerSmallGraphWithGraph() {
 
     JPanel container = new JPanel(new BorderLayout());
 
@@ -33,8 +31,8 @@ public class EiglspergerSmallGraph extends JFrame {
     VisualizationViewer<Integer, Integer> vv3 = configureVisualizationViewer(graph);
     vv3.getRenderContext().setEdgeLabelFunction(Object::toString);
 
-    EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm3 =
-        EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+    EiglspergerLayoutAlgorithmWithGraph<Integer, Integer> layoutAlgorithm3 =
+        EiglspergerLayoutAlgorithmWithGraph.<Integer, Integer>edgeAwareBuilder()
             //                        .straightenEdges(false)
             .postStraighten(true)
             .threaded(false)
@@ -130,6 +128,6 @@ public class EiglspergerSmallGraph extends JFrame {
   }
 
   public static void main(String[] args) {
-    new EiglspergerSmallGraph();
+    new EiglspergerSmallGraphWithGraph();
   }
 }

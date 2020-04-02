@@ -1,9 +1,19 @@
 package org.jungrapht.visualization.layout.algorithms.eiglsperger;
 
+import static org.jungrapht.visualization.layout.algorithms.eiglsperger.VerticalAlignmentWithCompactionGraph.HDirection.LtoR;
+import static org.jungrapht.visualization.layout.algorithms.eiglsperger.VerticalAlignmentWithCompactionGraph.HDirection.RtoL;
+import static org.jungrapht.visualization.layout.algorithms.eiglsperger.VerticalAlignmentWithCompactionGraph.LeftmostLower;
+import static org.jungrapht.visualization.layout.algorithms.eiglsperger.VerticalAlignmentWithCompactionGraph.LeftmostUpper;
+import static org.jungrapht.visualization.layout.algorithms.eiglsperger.VerticalAlignmentWithCompactionGraph.RightmostLower;
+import static org.jungrapht.visualization.layout.algorithms.eiglsperger.VerticalAlignmentWithCompactionGraph.RightmostUpper;
+import static org.jungrapht.visualization.layout.algorithms.eiglsperger.VerticalAlignmentWithCompactionGraph.VDirection.BtoT;
+import static org.jungrapht.visualization.layout.algorithms.eiglsperger.VerticalAlignmentWithCompactionGraph.VDirection.TtoB;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.AverageMedian;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
@@ -16,29 +26,51 @@ import org.slf4j.LoggerFactory;
  * @see "Fast and Simple Horizontal Coordinate Assignment, Ulrik Brandes and Boris Köpf, Department
  *     of Computer & Information Science, University of Konstanz"
  */
-public class HorizontalCoordinateAssignment<V, E>
+public class HorizontalCoordinateAssignmentWithGraph<V, E>
     extends org.jungrapht.visualization.layout.algorithms.sugiyama.HorizontalCoordinateAssignment<
         V, E> {
 
-  private static Logger log = LoggerFactory.getLogger(HorizontalCoordinateAssignment.class);
+  private static Logger log =
+      LoggerFactory.getLogger(HorizontalCoordinateAssignmentWithGraph.class);
+  protected Graph<LV<V>, Integer> compactionGraph;
+  //  protected Set<LV<V>> verticesNotInCompactionGraph;
+  protected Set<LV<V>> isolatedCompactionGraphVertices;
 
-  public HorizontalCoordinateAssignment(
+  public HorizontalCoordinateAssignmentWithGraph(
       LV<V>[][] layers,
       Graph<LV<V>, LE<V, E>> svGraph,
+      Graph<LV<V>, Integer> compactionGraph,
       Set<LE<V, E>> markedSegments,
       int horizontalOffset,
       int verticalOffset) {
     super(layers, svGraph, markedSegments, horizontalOffset, verticalOffset);
+    this.compactionGraph = compactionGraph;
+    Set<Integer> compactionGraphEdges = compactionGraph.edgeSet();
+    isolatedCompactionGraphVertices =
+        compactionGraph
+            .vertexSet()
+            .stream()
+            .filter(v -> compactionGraph.degreeOf(v) == 0)
+            .collect(Collectors.toSet());
   }
 
   public void horizontalCoordinateAssignment() {
-    VerticalAlignment.LeftmostUpper<V, E> upLeft =
-        new VerticalAlignment.LeftmostUpper<>(layers, svGraph, markedSegments);
-    upLeft.align();
 
-    HorizontalCompaction<V> upLeftCompaction =
-        new HorizontalCompaction<>(
-            layers, upLeft.getRootMap(), upLeft.getAlignMap(), horizontalOffset, verticalOffset);
+    LeftmostUpper<V, E> upLeft =
+        new LeftmostUpper(LtoR, TtoB, layers, compactionGraph, svGraph, markedSegments);
+    upLeft.align();
+    HorizontalCompactionWithGraph<V, E> upLeftCompaction =
+        new HorizontalCompactionWithGraph<>(
+            LtoR,
+            TtoB,
+            svGraph,
+            compactionGraph,
+            layers,
+            upLeft.getRootMap(),
+            upLeft.getAlignMap(),
+            horizontalOffset,
+            verticalOffset);
+
     if (log.isInfoEnabled()) {
       log.info("upLeft");
       log.info("alignMap:{}", upLeft.getAlignMap());
@@ -47,12 +79,20 @@ public class HorizontalCoordinateAssignment<V, E>
       log.info("sink:{}", upLeftCompaction.getSink());
     }
 
-    VerticalAlignment.RightmostUpper<V, E> upRight =
-        new VerticalAlignment.RightmostUpper<>(layers, svGraph, markedSegments);
+    RightmostUpper<V, E> upRight =
+        new RightmostUpper<>(RtoL, TtoB, layers, compactionGraph, svGraph, markedSegments);
     upRight.align();
-    HorizontalCompaction<V> upRightCompaction =
-        new HorizontalCompaction<>(
-            layers, upRight.getRootMap(), upRight.getAlignMap(), horizontalOffset, verticalOffset);
+    HorizontalCompactionWithGraph<V, E> upRightCompaction =
+        new HorizontalCompactionWithGraph<>(
+            RtoL,
+            TtoB,
+            svGraph,
+            compactionGraph,
+            layers,
+            upRight.getRootMap(),
+            upRight.getAlignMap(),
+            horizontalOffset,
+            verticalOffset);
     if (log.isInfoEnabled()) {
       log.info("upRight");
       log.info("alignMap:{}", upRight.getAlignMap());
@@ -61,11 +101,15 @@ public class HorizontalCoordinateAssignment<V, E>
       log.info("sink:{}", upRightCompaction.getSink());
     }
 
-    VerticalAlignment.LeftmostLower<V, E> downLeft =
-        new VerticalAlignment.LeftmostLower<>(layers, svGraph, markedSegments);
+    LeftmostLower<V, E> downLeft =
+        new LeftmostLower<>(LtoR, BtoT, layers, compactionGraph, svGraph, markedSegments);
     downLeft.align();
-    HorizontalCompaction<V> downLeftCompaction =
-        new HorizontalCompaction<>(
+    HorizontalCompactionWithGraph<V, E> downLeftCompaction =
+        new HorizontalCompactionWithGraph<>(
+            LtoR,
+            BtoT,
+            svGraph,
+            compactionGraph,
             layers,
             downLeft.getRootMap(),
             downLeft.getAlignMap(),
@@ -79,11 +123,15 @@ public class HorizontalCoordinateAssignment<V, E>
       log.info("sink:{}", downLeftCompaction.getSink());
     }
 
-    VerticalAlignment.RightmostLower<V, E> downRight =
-        new VerticalAlignment.RightmostLower<>(layers, svGraph, markedSegments);
+    RightmostLower<V, E> downRight =
+        new RightmostLower<>(RtoL, BtoT, layers, compactionGraph, svGraph, markedSegments);
     downRight.align();
-    HorizontalCompaction<V> downRightCompaction =
-        new HorizontalCompaction<>(
+    HorizontalCompactionWithGraph<V, E> downRightCompaction =
+        new HorizontalCompactionWithGraph<>(
+            RtoL,
+            BtoT,
+            svGraph,
+            compactionGraph,
             layers,
             downRight.getRootMap(),
             downRight.getAlignMap(),

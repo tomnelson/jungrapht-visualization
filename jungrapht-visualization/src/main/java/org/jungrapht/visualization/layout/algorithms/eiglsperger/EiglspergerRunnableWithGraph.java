@@ -2,7 +2,8 @@ package org.jungrapht.visualization.layout.algorithms.eiglsperger;
 
 import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 
-import java.awt.*;
+import java.awt.Rectangle;
+import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -51,9 +52,9 @@ import org.slf4j.LoggerFactory;
  * @param <V> vertex type
  * @param <E> edge type
  */
-public class EiglspergerRunnable<V, E> implements Runnable {
+public class EiglspergerRunnableWithGraph<V, E> implements Runnable {
 
-  private static final Logger log = LoggerFactory.getLogger(EiglspergerRunnable.class);
+  private static final Logger log = LoggerFactory.getLogger(EiglspergerRunnableWithGraph.class);
 
   /**
    * a Builder to create a configured instance
@@ -64,7 +65,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
    * @param <B> the builder type
    */
   public static class Builder<
-      V, E, T extends EiglspergerRunnable<V, E>, B extends Builder<V, E, T, B>> {
+      V, E, T extends EiglspergerRunnableWithGraph<V, E>, B extends Builder<V, E, T, B>> {
     protected LayoutModel<V> layoutModel;
     protected RenderContext<V, E> renderContext;
     protected boolean straightenEdges;
@@ -116,7 +117,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
 
     /** {@inheritDoc} */
     public T build() {
-      return (T) new EiglspergerRunnable<>(this);
+      return (T) new EiglspergerRunnableWithGraph<>(this);
     }
   }
 
@@ -149,7 +150,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
   protected EiglspergerStepsBackward<V, E> stepsBackward;
   EiglspergerSteps<V, E> steps = null;
 
-  protected EiglspergerRunnable(Builder<V, E, ?, ?> builder) {
+  protected EiglspergerRunnableWithGraph(Builder<V, E, ?, ?> builder) {
     this(
         builder.layoutModel,
         builder.renderContext,
@@ -160,7 +161,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
         builder.useLongestPathLayering);
   }
 
-  protected EiglspergerRunnable(
+  protected EiglspergerRunnableWithGraph(
       LayoutModel<V> layoutModel,
       RenderContext<V, E> renderContext,
       boolean straightenEdges,
@@ -220,7 +221,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     } else {
       layers = GraphLayers.assign(svGraph);
     }
-    //    GraphLayers.minimizeEdgeLength(svGraph, layers);
+    GraphLayers.minimizeEdgeLength(svGraph, layers);
     long assignLayersTime = System.currentTimeMillis();
     log.trace("assign layers took {} ", (assignLayersTime - cycles));
     if (log.isTraceEnabled()) {
@@ -304,7 +305,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     }
 
     // figure out the avg size of rendered vertex
-    java.awt.Rectangle avgVertexBounds =
+    Rectangle avgVertexBounds =
         maxVertexBounds(layersArray, renderContext.getVertexShapeFunction());
 
     int horizontalOffset =
@@ -323,9 +324,14 @@ public class EiglspergerRunnable<V, E> implements Runnable {
       }
     }
     if (straightenEdges) {
-      HorizontalCoordinateAssignment<V, E> horizontalCoordinateAssignment =
-          new HorizontalCoordinateAssignment<>(
-              layersArray, svGraph, new HashSet<>(), horizontalOffset, verticalOffset);
+      HorizontalCoordinateAssignmentWithGraph<V, E> horizontalCoordinateAssignment =
+          new HorizontalCoordinateAssignmentWithGraph<>(
+              layersArray,
+              svGraph,
+              bestCompactionGraph,
+              new HashSet<>(),
+              horizontalOffset,
+              verticalOffset);
       horizontalCoordinateAssignment.horizontalCoordinateAssignment();
 
       GraphLayers.checkLayers(layersArray);

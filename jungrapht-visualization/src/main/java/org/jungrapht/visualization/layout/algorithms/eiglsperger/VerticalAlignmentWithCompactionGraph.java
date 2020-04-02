@@ -17,14 +17,44 @@ import org.slf4j.LoggerFactory;
  * @param <V>
  * @param <E>
  */
-public abstract class VerticalAlignment<V, E>
+public abstract class VerticalAlignmentWithCompactionGraph<V, E>
     extends org.jungrapht.visualization.layout.algorithms.sugiyama.VerticalAlignment<V, E> {
 
-  private static final Logger log = LoggerFactory.getLogger(VerticalAlignment.class);
+  private static final Logger log =
+      LoggerFactory.getLogger(VerticalAlignmentWithCompactionGraph.class);
 
-  protected VerticalAlignment(
-      LV<V>[][] layers, Graph<LV<V>, LE<V, E>> svGraph, Set<LE<V, E>> markedSegments) {
+  public enum HDirection {
+    LtoR,
+    RtoL
+  }
+
+  public enum VDirection {
+    TtoB,
+    BtoT
+  }
+
+  protected Graph<LV<V>, Integer> compactionGraph;
+  protected final HDirection hDirection;
+  protected final VDirection vDirection;
+
+  protected VerticalAlignmentWithCompactionGraph(
+      HDirection hDirection,
+      VDirection vDirection,
+      LV<V>[][] layers,
+      Graph<LV<V>, Integer> compactionGraph,
+      Graph<LV<V>, LE<V, E>> svGraph,
+      Set<LE<V, E>> markedSegments) {
     super(layers, svGraph, markedSegments);
+    this.hDirection = hDirection;
+    this.vDirection = vDirection;
+    this.compactionGraph = compactionGraph;
+    compactionGraph
+        .vertexSet()
+        .forEach(
+            v -> {
+              rootMap.put(v, v);
+              alignMap.put(v, v);
+            });
   }
 
   @Override
@@ -35,7 +65,7 @@ public abstract class VerticalAlignment<V, E>
     return pos(neighbor);
   }
 
-  protected int alignSegmentVertexMoveCursor(SegmentVertex<V> segmentVertex, LV<V> vertex) {
+  protected int alignSegmentVertexMoveCursor(SegmentVertex<V> segmentVertex) {
     SegmentVertex<V> neighborSegmentVertex;
     if (segmentVertex instanceof PVertex) {
       neighborSegmentVertex = ((PVertex<V>) segmentVertex).segment.qVertex;
@@ -43,8 +73,8 @@ public abstract class VerticalAlignment<V, E>
       neighborSegmentVertex = ((QVertex<V>) segmentVertex).segment.pVertex;
     }
     //    align(neighbor, vertex);
-    root(vertex, root(neighborSegmentVertex));
-    align(vertex, root(neighborSegmentVertex));
+    root(segmentVertex, root(neighborSegmentVertex));
+    align(segmentVertex, root(segmentVertex));
     return pos(neighborSegmentVertex);
   }
 
@@ -54,11 +84,16 @@ public abstract class VerticalAlignment<V, E>
    * @param <V>
    * @param <E>
    */
-  public static class LeftmostUpper<V, E> extends VerticalAlignment<V, E> {
+  public static class LeftmostUpper<V, E> extends VerticalAlignmentWithCompactionGraph<V, E> {
 
     public LeftmostUpper(
-        LV<V>[][] layers, Graph<LV<V>, LE<V, E>> svGraph, Set<LE<V, E>> markedSegments) {
-      super(layers, svGraph, markedSegments);
+        HDirection hDirection,
+        VDirection vDirection,
+        LV<V>[][] layers,
+        Graph<LV<V>, Integer> compactionGraph,
+        Graph<LV<V>, LE<V, E>> svGraph,
+        Set<LE<V, E>> markedSegments) {
+      super(hDirection, vDirection, layers, compactionGraph, svGraph, markedSegments);
     }
 
     @Override
@@ -75,18 +110,23 @@ public abstract class VerticalAlignment<V, E>
                   .collect(Collectors.toList());
           int d = neighbors.size();
           if (d > 0) {
-            int floor = (int) Math.floor((d - 1) / 2.0);
-            int ceil = (int) Math.ceil((d - 1) / 2.0);
-            for (int m : new int[] {floor, ceil}) {
+            int[] measures;
+            if (d % 2 == 0) {
+              int floor = (int) Math.floor((d - 1) / 2.0);
+              int ceil = (int) Math.ceil((d - 1) / 2.0);
+              measures = new int[] {floor, ceil};
+            } else {
+              measures = new int[] {(d - 1) / 2};
+            }
+            for (int m : measures) {
               if (align(vkofi) == vkofi) {
                 LV<V> um = neighbors.get(m);
                 LE<V, E> edge = svGraph.getEdge(um, vkofi);
-                if ((notMarked(edge) && r < pos(um)) || vkofi instanceof QVertex) {
+                if (vkofi instanceof QVertex) {
+                  r = alignSegmentVertexMoveCursor((SegmentVertex<V>) vkofi);
+                } else if ((notMarked(edge) && r < pos(um))) {
                   r = alignMoveCursor(um, vkofi);
                 }
-              }
-              if (floor == ceil) {
-                break;
               }
             }
           }
@@ -95,12 +135,17 @@ public abstract class VerticalAlignment<V, E>
     }
   }
 
-  public static class RightmostUpper<V, E> extends VerticalAlignment<V, E> {
+  public static class RightmostUpper<V, E> extends VerticalAlignmentWithCompactionGraph<V, E> {
 
     // up right from top to bottom of layers, from left to right of rows
     public RightmostUpper(
-        LV<V>[][] layers, Graph<LV<V>, LE<V, E>> svGraph, Set<LE<V, E>> markedSegments) {
-      super(layers, svGraph, markedSegments);
+        HDirection hDirection,
+        VDirection vDirection,
+        LV<V>[][] layers,
+        Graph<LV<V>, Integer> compactionGraph,
+        Graph<LV<V>, LE<V, E>> svGraph,
+        Set<LE<V, E>> markedSegments) {
+      super(hDirection, vDirection, layers, compactionGraph, svGraph, markedSegments);
     }
 
     @Override
@@ -119,18 +164,23 @@ public abstract class VerticalAlignment<V, E>
                   .collect(Collectors.toList());
           int d = neighbors.size();
           if (d > 0) {
-            int floor = (int) Math.floor((d - 1) / 2.0);
-            int ceil = (int) Math.ceil((d - 1) / 2.0);
-            for (int m : new int[] {ceil, floor}) {
+            int[] measures;
+            if (d % 2 == 0) {
+              int floor = (int) Math.floor((d - 1) / 2.0);
+              int ceil = (int) Math.ceil((d - 1) / 2.0);
+              measures = new int[] {ceil, floor};
+            } else {
+              measures = new int[] {(d - 1) / 2};
+            }
+            for (int m : measures) {
               if (align(vkofi) == vkofi) {
                 LV<V> um = neighbors.get(m);
                 LE<V, E> edge = svGraph.getEdge(um, vkofi);
-                if ((notMarked(edge) && r > pos(um)) || vkofi instanceof QVertex) {
+                if (vkofi instanceof QVertex) {
+                  r = alignSegmentVertexMoveCursor((SegmentVertex<V>) vkofi);
+                } else if ((notMarked(edge) && r > pos(um))) {
                   r = alignMoveCursor(um, vkofi);
                 }
-              }
-              if (floor == ceil) {
-                break;
               }
             }
           }
@@ -145,12 +195,17 @@ public abstract class VerticalAlignment<V, E>
    * @param <V>
    * @param <E>
    */
-  public static class LeftmostLower<V, E> extends VerticalAlignment<V, E> {
+  public static class LeftmostLower<V, E> extends VerticalAlignmentWithCompactionGraph<V, E> {
 
     // down left from bottom to top of layers from left to right of rows
     public LeftmostLower(
-        LV<V>[][] layers, Graph<LV<V>, LE<V, E>> svGraph, Set<LE<V, E>> markedSegments) {
-      super(layers, svGraph, markedSegments);
+        HDirection hDirection,
+        VDirection vDirection,
+        LV<V>[][] layers,
+        Graph<LV<V>, Integer> compactionGraph,
+        Graph<LV<V>, LE<V, E>> svGraph,
+        Set<LE<V, E>> markedSegments) {
+      super(hDirection, vDirection, layers, compactionGraph, svGraph, markedSegments);
     }
 
     @Override
@@ -167,18 +222,23 @@ public abstract class VerticalAlignment<V, E>
                   .collect(Collectors.toList());
           int d = neighbors.size();
           if (d > 0) {
-            int floor = (int) Math.floor((d - 1) / 2.0);
-            int ceil = (int) Math.ceil((d - 1) / 2.0);
-            for (int m : new int[] {floor, ceil}) {
+            int[] measures;
+            if (d % 2 == 0) {
+              int floor = (int) Math.floor((d - 1) / 2.0);
+              int ceil = (int) Math.ceil((d - 1) / 2.0);
+              measures = new int[] {floor, ceil};
+            } else {
+              measures = new int[] {(d - 1) / 2};
+            }
+            for (int m : measures) {
               if (align(vkofi) == vkofi) {
                 LV<V> um = neighbors.get(m);
                 LE<V, E> edge = svGraph.getEdge(vkofi, um);
-                if ((notMarked(edge) && r < pos(um)) || vkofi instanceof PVertex) {
+                if (vkofi instanceof PVertex) {
+                  r = alignSegmentVertexMoveCursor((SegmentVertex<V>) vkofi);
+                } else if ((notMarked(edge) && r < pos(um))) {
                   r = alignMoveCursor(um, vkofi);
                 }
-              }
-              if (floor == ceil) {
-                break;
               }
             }
           }
@@ -193,12 +253,17 @@ public abstract class VerticalAlignment<V, E>
    * @param <V>
    * @param <E>
    */
-  public static class RightmostLower<V, E> extends VerticalAlignment<V, E> {
+  public static class RightmostLower<V, E> extends VerticalAlignmentWithCompactionGraph<V, E> {
 
     // down right from bottom to top of layers from right to left
     public RightmostLower(
-        LV<V>[][] layers, Graph<LV<V>, LE<V, E>> svGraph, Set<LE<V, E>> markedSegments) {
-      super(layers, svGraph, markedSegments);
+        HDirection hDirection,
+        VDirection vDirection,
+        LV<V>[][] layers,
+        Graph<LV<V>, Integer> compactionGraph,
+        Graph<LV<V>, LE<V, E>> svGraph,
+        Set<LE<V, E>> markedSegments) {
+      super(hDirection, vDirection, layers, compactionGraph, svGraph, markedSegments);
     }
 
     @Override
@@ -218,18 +283,23 @@ public abstract class VerticalAlignment<V, E>
                   .collect(Collectors.toList());
           int d = neighbors.size();
           if (d > 0) {
-            int floor = (int) Math.floor((d - 1) / 2.0);
-            int ceil = (int) Math.ceil((d - 1) / 2.0);
-            for (int m : new int[] {ceil, floor}) {
+            int[] measures;
+            if (d % 2 == 0) {
+              int floor = (int) Math.floor((d - 1) / 2.0);
+              int ceil = (int) Math.ceil((d - 1) / 2.0);
+              measures = new int[] {ceil, floor};
+            } else {
+              measures = new int[] {(d - 1) / 2};
+            }
+            for (int m : measures) {
               if (align(vkofi) == vkofi) {
                 LV<V> um = neighbors.get(m);
                 LE<V, E> edge = svGraph.getEdge(vkofi, um);
-                if ((notMarked(edge) && r > pos(um)) || vkofi instanceof PVertex) {
+                if (vkofi instanceof PVertex) {
+                  r = alignSegmentVertexMoveCursor((SegmentVertex<V>) vkofi);
+                } else if ((notMarked(edge) && r > pos(um))) {
                   r = alignMoveCursor(um, vkofi);
                 }
-              }
-              if (floor == ceil) {
-                break;
               }
             }
           }

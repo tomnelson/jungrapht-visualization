@@ -33,6 +33,10 @@ class QVertex<V> extends SegmentVertex<V> {
   @Override
   public void setPos(int pos) {
     super.setPos(pos);
+    //    segment.setPos(pos);
+    //    if (segment.pVertex.getPos() != pos) {
+    //      segment.pVertex.setPos(pos);
+    //    }
   }
 
   public void setSegmentVertexPos(int pos) {
