@@ -39,12 +39,12 @@ public class HorizontalCoordinateAssignment<V, E>
     HorizontalCompaction<V> upLeftCompaction =
         new HorizontalCompaction<>(
             layers, upLeft.getRootMap(), upLeft.getAlignMap(), horizontalOffset, verticalOffset);
-    if (log.isInfoEnabled()) {
-      log.info("upLeft");
-      log.info("alignMap:{}", upLeft.getAlignMap());
-      log.info("rootMap:{}", upLeft.getRootMap());
-      log.info("shift:{}", upLeftCompaction.getShift());
-      log.info("sink:{}", upLeftCompaction.getSink());
+    if (log.isTraceEnabled()) {
+      log.trace("upLeft");
+      log.trace("alignMap:{}", upLeft.getAlignMap());
+      log.trace("rootMap:{}", upLeft.getRootMap());
+      log.trace("shift:{}", upLeftCompaction.getShift());
+      log.trace("sink:{}", upLeftCompaction.getSink());
     }
 
     VerticalAlignment.RightmostUpper<V, E> upRight =
@@ -53,12 +53,12 @@ public class HorizontalCoordinateAssignment<V, E>
     HorizontalCompaction<V> upRightCompaction =
         new HorizontalCompaction<>(
             layers, upRight.getRootMap(), upRight.getAlignMap(), horizontalOffset, verticalOffset);
-    if (log.isInfoEnabled()) {
-      log.info("upRight");
-      log.info("alignMap:{}", upRight.getAlignMap());
-      log.info("rootMap:{}", upRight.getRootMap());
-      log.info("shift:{}", upRightCompaction.getShift());
-      log.info("sink:{}", upRightCompaction.getSink());
+    if (log.isTraceEnabled()) {
+      log.trace("upRight");
+      log.trace("alignMap:{}", upRight.getAlignMap());
+      log.trace("rootMap:{}", upRight.getRootMap());
+      log.trace("shift:{}", upRightCompaction.getShift());
+      log.trace("sink:{}", upRightCompaction.getSink());
     }
 
     VerticalAlignment.LeftmostLower<V, E> downLeft =
@@ -71,12 +71,12 @@ public class HorizontalCoordinateAssignment<V, E>
             downLeft.getAlignMap(),
             horizontalOffset,
             verticalOffset);
-    if (log.isInfoEnabled()) {
-      log.info("downLeft");
-      log.info("alignMap:{}", downLeft.getAlignMap());
-      log.info("rootMap:{}", downLeft.getRootMap());
-      log.info("shift:{}", downLeftCompaction.getShift());
-      log.info("sink:{}", downLeftCompaction.getSink());
+    if (log.isTraceEnabled()) {
+      log.trace("downLeft");
+      log.trace("alignMap:{}", downLeft.getAlignMap());
+      log.trace("rootMap:{}", downLeft.getRootMap());
+      log.trace("shift:{}", downLeftCompaction.getShift());
+      log.trace("sink:{}", downLeftCompaction.getSink());
     }
 
     VerticalAlignment.RightmostLower<V, E> downRight =
@@ -89,12 +89,12 @@ public class HorizontalCoordinateAssignment<V, E>
             downRight.getAlignMap(),
             horizontalOffset,
             verticalOffset);
-    if (log.isInfoEnabled()) {
-      log.info("downRight");
-      log.info("alignMap:{}", downRight.getAlignMap());
-      log.info("rootMap:{}", downRight.getRootMap());
-      log.info("shift:{}", downRightCompaction.getShift());
-      log.info("sink:{}", downRightCompaction.getSink());
+    if (log.isTraceEnabled()) {
+      log.trace("downRight");
+      log.trace("alignMap:{}", downRight.getAlignMap());
+      log.trace("rootMap:{}", downRight.getRootMap());
+      log.trace("shift:{}", downRightCompaction.getShift());
+      log.trace("sink:{}", downRightCompaction.getSink());
     }
 
     for (int i = 0; i < layers.length; i++) {

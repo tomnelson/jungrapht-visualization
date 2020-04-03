@@ -76,13 +76,14 @@ public class HorizontalCompactionWithGraph<V, E> {
   }
 
   public void horizontalCompaction() {
-    //    EiglspergerUtil.layerSanityCheck(layers);
 
-    Arrays.stream(layers)
-        .flatMap(Arrays::stream)
-        .forEach(v -> log.info("v:{}, root(v):{} equal: {}", v, root(v), (v == root(v))));
+    if (log.isTraceEnabled()) {
+      Arrays.stream(layers)
+          .flatMap(Arrays::stream)
+          .forEach(v -> log.trace("v:{}, root(v):{} equal: {}", v, root(v), (v == root(v))));
+    }
 
-    log.info("compactionGraph vertices: {}", compactionGraph.vertexSet());
+    log.trace("compactionGraph vertices: {}", compactionGraph.vertexSet());
 
     Set<LV<V>> verticesInCompactionGraphAndSegmentEnds = new HashSet<>();
     for (LV<V> v : compactionGraph.vertexSet()) {
@@ -104,7 +105,7 @@ public class HorizontalCompactionWithGraph<V, E> {
         }
       }
     }
-    log.info(
+    log.trace(
         "verticesInCompactionGraphAndSegmentEnds = {}", verticesInCompactionGraphAndSegmentEnds);
     //
     //    for (LV<V>[] layer : layers) {
@@ -123,19 +124,19 @@ public class HorizontalCompactionWithGraph<V, E> {
         Segment<V> segment = (Segment<V>) v;
         PVertex<V> pVertex = segment.pVertex;
         if (root(pVertex) == pVertex) {
-          log.info("(p) will placeBlock({})", pVertex);
+          log.trace("(p) will placeBlock({})", pVertex);
           placeBlock(pVertex);
         }
         QVertex<V> qVertex = segment.qVertex;
         if (root(qVertex) == qVertex) {
-          log.info("(q) will placeBlock({})", qVertex);
+          log.trace("(q) will placeBlock({})", qVertex);
           placeBlock(qVertex);
         }
 
       } else {
         LV<V> root = root(v);
         if (root == v) {
-          log.info("(v) will placeBlock({})", v);
+          log.trace("(v) will placeBlock({})", v);
           placeBlock(v);
         }
       }
@@ -157,7 +158,7 @@ public class HorizontalCompactionWithGraph<V, E> {
   }
 
   protected void placeBlock(LV<V> v) {
-    //        log.info("placeBlock: {} and x.containsKey(v) is {}", v, x.containsKey(v));
+    //        log.trace("placeBlock: {} and x.containsKey(v) is {}", v, x.containsKey(v));
     // if x[v] undefined
     if (!x.containsKey(v)) {
       // x[v] <- 0, w <- v
@@ -165,7 +166,7 @@ public class HorizontalCompactionWithGraph<V, E> {
       LV<V> w = v;
       do {
 
-        log.info("look for predecessor of {}", w);
+        log.trace("look for predecessor of {}", w);
         LV<V> cw;
         if (w instanceof SegmentVertex) {
           SegmentVertex<V> sv = (SegmentVertex<V>) w;
@@ -174,8 +175,8 @@ public class HorizontalCompactionWithGraph<V, E> {
           cw = w;
         }
         if (compactionGraph.containsVertex(cw)) {
-          log.info("inDegree of {} is {}", cw, compactionGraph.inDegreeOf(cw));
-          log.info("outDegree of {} is {}", cw, compactionGraph.outDegreeOf(cw));
+          log.trace("inDegree of {} is {}", cw, compactionGraph.inDegreeOf(cw));
+          log.trace("outDegree of {} is {}", cw, compactionGraph.outDegreeOf(cw));
 
           if ((hDirection == LtoR && compactionGraph.inDegreeOf(cw) > 0)
               || (hDirection == RtoL && compactionGraph.outDegreeOf(cw) > 0)) {
@@ -197,7 +198,7 @@ public class HorizontalCompactionWithGraph<V, E> {
               } else {
                 u = root(pred);
               }
-              log.info("(u) will placeBlock({})", u);
+              log.trace("(u) will placeBlock({})", u);
               placeBlock(u);
               if (sink(v) == v) {
                 sink(v, sink(u));
@@ -285,7 +286,7 @@ public class HorizontalCompactionWithGraph<V, E> {
   }
 
   protected void x(LV<V> v, int d) {
-    log.info("put {} at x: {}", v, d);
+    log.trace("put {} at x: {}", v, d);
     x.put(v, d);
   }
 

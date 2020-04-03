@@ -55,16 +55,20 @@ public class HorizontalCompaction<V> {
   public void horizontalCompaction() {
     //    EiglspergerUtil.layerSanityCheck(layers);
     //    log.info("placeBlock for all v where root(v) is v");
-    Arrays.stream(layers)
-        .flatMap(Arrays::stream)
-        .forEach(
-            v -> log.info("v == {} root(v) == {} they're equal = {}", v, root(v), (root(v) == v)));
+    if (log.isTraceEnabled()) {
+      Arrays.stream(layers)
+          .flatMap(Arrays::stream)
+          .forEach(
+              v ->
+                  log.trace(
+                      "v == {} root(v) == {} they're equal = {}", v, root(v), (root(v) == v)));
+    }
     Arrays.stream(layers)
         .flatMap(Arrays::stream)
         .filter(v -> root(v) == v)
         .forEach(
             v -> {
-              log.info("(v) will placeBlock({})", v);
+              log.trace("(v) will placeBlock({})", v);
               placeBlock(v);
             });
 
@@ -92,13 +96,13 @@ public class HorizontalCompaction<V> {
       LV<V> w = v;
       do {
         // if pos[w] > 0
-        log.info("looking for predecessor of {}", w);
+        log.trace("looking for predecessor of {}", w);
         if (hasPredecessor(w)) {
           // u gets root[pred[w]]
           LV<V> pred = pred(w);
           LV<V> u = root(pred);
           int diff = pos(w) - pos(pred);
-          log.info("(u) will placeBlock({})", u);
+          log.trace("(u) will placeBlock({})", u);
           placeBlock(u);
           if (sink(v) == v) {
             sink(v, sink(u));
@@ -151,7 +155,7 @@ public class HorizontalCompaction<V> {
   }
 
   protected void x(LV<V> v, int d) {
-    log.info("put {} at x: {}", v, d);
+    log.trace("put {} at x: {}", v, d);
     x.put(v, d);
   }
 

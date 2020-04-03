@@ -269,7 +269,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
           if (log.isTraceEnabled()) {
             log.trace("best:{}", layersArray);
           }
-          //          break;
+          break;
         }
       } else {
         int sweepCrossCount = stepsBackward.sweep(layersArray);
@@ -283,7 +283,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
           if (log.isTraceEnabled()) {
             log.trace("best:{}", layersArray);
           }
-          //          break;
+          break;
         }
       }
     }
@@ -586,8 +586,10 @@ public class EiglspergerRunnable<V, E> implements Runnable {
   }
 
   private void updatePositions(LV<V>[][] layersArray, Graph<LV<V>, Integer> compactionGraph) {
-    log.info("vertices of compactionGraph:{}", compactionGraph.vertexSet());
-    log.info("edges of compactionGraph:{}", compactionGraph.edgeSet());
+    if (log.isTraceEnabled()) {
+      log.trace("vertices of compactionGraph:{}", compactionGraph.vertexSet());
+      log.trace("edges of compactionGraph:{}", compactionGraph.edgeSet());
+    }
     for (LV<V>[] layer : layersArray) {
       for (LV<V> v : layer) {
         // set the pos of v to the distance to the root in this layer

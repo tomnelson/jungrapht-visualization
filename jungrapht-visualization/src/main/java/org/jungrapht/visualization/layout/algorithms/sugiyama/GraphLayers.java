@@ -67,7 +67,7 @@ public class GraphLayers {
         if (minRank != v.getRank()) {
           // change the rank of v and move it (below)
           verticesToMove.put(v, minRank);
-          log.info("moving {} to rank {}", v, minRank);
+          log.debug("moving {} to rank {}", v, minRank);
         }
       }
       for (Map.Entry<LV<V>, Integer> entry : verticesToMove.entrySet()) {

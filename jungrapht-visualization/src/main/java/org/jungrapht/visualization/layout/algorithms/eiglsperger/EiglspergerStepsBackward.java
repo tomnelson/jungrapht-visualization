@@ -148,7 +148,7 @@ public class EiglspergerStepsBackward<V, E> extends EiglspergerSteps<V, E> {
       EiglspergerUtil.fixIndices(layersArray[i - 1]);
       layerEye = downstreamLayer;
     }
-    log.info("sweepBackward crossCount:{}", crossCount);
+    log.debug("sweepBackward crossCount:{}", crossCount);
     return crossCount;
   }
 }

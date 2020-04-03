@@ -567,9 +567,9 @@ public class EiglspergerSteps<V, E> {
         // can't do better than zero
         break;
       }
-      if (downstreamLayer.get(j).getMeasure() != downstreamLayer.get(j + 1).getMeasure()) {
-        continue;
-      }
+      //      if (downstreamLayer.get(j).getMeasure() != downstreamLayer.get(j + 1).getMeasure()) {
+      //        continue;
+      //      }
       // count with j and j+1 swapped
       // first swap them
       swap(downstreamLayer, j, j + 1);
