@@ -41,6 +41,7 @@ public class EiglspergerStepsForward<V, E> extends EiglspergerSteps<V, E> {
     //    clearGraph(compactionGraph);
     compactionGraph =
         GraphTypeBuilder.<LV<V>, Integer>directed()
+            .allowingMultipleEdges(true)
             .edgeSupplier(SupplierUtil.createIntegerSupplier())
             .buildGraph();
 
@@ -68,11 +69,13 @@ public class EiglspergerStepsForward<V, E> extends EiglspergerSteps<V, E> {
             }
           } else if (v instanceof SegmentVertex) {
             SegmentVertex<V> segmentVertex = (SegmentVertex<V>) v;
-            Segment<V> segment = segmentVertex.getSegment();
-            compactionGraph.addVertex(segment);
+            //            Segment<V> segment = segmentVertex.getSegment();
+            compactionGraph.addVertex(v);
+            //            compactionGraph.addVertex(segment);
             if (pred != null) {
-              compactionGraph.addEdge(pred, segment);
+              compactionGraph.addEdge(pred, v);
             }
+            pred = v;
           } else {
             compactionGraph.addVertex(v);
             if (pred != null) {

@@ -186,7 +186,7 @@ public class HorizontalCompactionWithGraph<V, E> {
                     : compactionGraph.outgoingEdgesOf(cw);
 
             for (var edge : edges) {
-              LV<V> u = null;
+              LV<V> u;
               LV<V> pred =
                   hDirection == LtoR
                       ? compactionGraph.getEdgeSource(edge)
@@ -344,5 +344,19 @@ public class HorizontalCompactionWithGraph<V, E> {
 
   public Map<LV<V>, Integer> getY() {
     return y;
+  }
+
+  void checkValuesInLayersForSameX(LV<V>[][] layers) {
+    for (LV<V>[] layer : layers) {
+      Map<Integer, LV<V>> xValuesThisLayer = new HashMap<>();
+      for (LV<V> v : layer) {
+        int x = x(v);
+        if (xValuesThisLayer.containsKey(x)) {
+          log.info("already seen {} in this layer {}", x, layer);
+        } else {
+          xValuesThisLayer.put(x, v);
+        }
+      }
+    }
   }
 }

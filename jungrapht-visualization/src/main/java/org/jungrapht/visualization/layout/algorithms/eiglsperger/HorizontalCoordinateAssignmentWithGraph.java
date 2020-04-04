@@ -70,6 +70,7 @@ public class HorizontalCoordinateAssignmentWithGraph<V, E>
             upLeft.getAlignMap(),
             horizontalOffset,
             verticalOffset);
+    upLeftCompaction.checkValuesInLayersForSameX(layers);
 
     if (log.isTraceEnabled()) {
       log.trace("upLeft");
@@ -93,6 +94,8 @@ public class HorizontalCoordinateAssignmentWithGraph<V, E>
             upRight.getAlignMap(),
             horizontalOffset,
             verticalOffset);
+
+    upRightCompaction.checkValuesInLayersForSameX(layers);
     if (log.isTraceEnabled()) {
       log.trace("upRight");
       log.trace("alignMap:{}", upRight.getAlignMap());
@@ -115,6 +118,7 @@ public class HorizontalCoordinateAssignmentWithGraph<V, E>
             downLeft.getAlignMap(),
             horizontalOffset,
             verticalOffset);
+    downLeftCompaction.checkValuesInLayersForSameX(layers);
     if (log.isTraceEnabled()) {
       log.trace("downLeft");
       log.trace("alignMap:{}", downLeft.getAlignMap());
@@ -137,6 +141,7 @@ public class HorizontalCoordinateAssignmentWithGraph<V, E>
             downRight.getAlignMap(),
             horizontalOffset,
             verticalOffset);
+    downRightCompaction.checkValuesInLayersForSameX(layers);
     if (log.isTraceEnabled()) {
       log.trace("downRight");
       log.trace("alignMap:{}", downRight.getAlignMap());

@@ -269,7 +269,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
           if (log.isTraceEnabled()) {
             log.trace("best:{}", layersArray);
           }
-          break;
+          //          break;
         }
       } else {
         int sweepCrossCount = stepsBackward.sweep(layersArray);
@@ -283,7 +283,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
           if (log.isTraceEnabled()) {
             log.trace("best:{}", layersArray);
           }
-          break;
+          //          break;
         }
       }
     }

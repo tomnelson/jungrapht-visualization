@@ -69,6 +69,7 @@ public class EiglspergerSteps<V, E> {
   protected Function<LE<V, E>, LV<V>> edgeTargetFunction;
   protected boolean transpose;
   protected Graph<LV<V>, Integer> compactionGraph;
+  protected Set<LE<V, E>> typeOneConflicts = new HashSet<>();
 
   /**
    * @param svGraph the delegate graph
@@ -114,6 +115,10 @@ public class EiglspergerSteps<V, E> {
     Set<V> vertices = new HashSet<>(graph.vertexSet());
     graph.removeAllEdges(edges);
     graph.removeAllVertices(vertices);
+  }
+
+  public Set<LE<V, E>> getTypeOneConflicts() {
+    return typeOneConflicts;
   }
 
   /**
@@ -483,12 +488,14 @@ public class EiglspergerSteps<V, E> {
     // create virtual edges between non-empty containers in both ranks
     // if the downstreamLayer has a QVertex/PVertex, create a virtual edge between a new synthetic vertex
     // in currentLayer and the QVertex/PVertex in the downstreamLayer
+    Set<LE<V, E>> virtualEdges = new HashSet<>();
     for (LV<V> v : downstreamLayer) {
 
       if (v instanceof Container) {
         Container<V> container = (Container<V>) v;
         if (container.size() > 0) {
-          biLayerEdges.add(VirtualEdge.of(container, container));
+          virtualEdges.add(VirtualEdge.of(container, container));
+          //          biLayerEdges.add(VirtualEdge.of(container, container));
         }
       } else if (splitVertexPredicate.test(v)) {
         // downwards, this is a QVertex, upwards its a PVertex
@@ -496,7 +503,8 @@ public class EiglspergerSteps<V, E> {
         SyntheticLV<V> qvSource = SyntheticLV.of();
         qvSource.setIndex(qv.getIndex());
         qvSource.setPos(qv.getPos());
-        biLayerEdges.add(VirtualEdge.of(qvSource, qv));
+        virtualEdges.add(VirtualEdge.of(qvSource, qv));
+        //        biLayerEdges.add(VirtualEdge.of(qvSource, qv));
       }
     }
 
@@ -521,6 +529,9 @@ public class EiglspergerSteps<V, E> {
     }
     updateIndices(downstreamLayer);
     updatePositions(downstreamLayer);
+
+    typeOneConflicts.addAll(this.getEdgesThatCrossVirtualEdge(virtualEdges, biLayerEdges));
+    biLayerEdges.addAll(virtualEdges);
 
     // downwards, the function is a no-op, upwards the biLayerEdges endpoints are swapped
     log.trace("for ranks {} and {} ....", currentRank, downstreamRank);
@@ -602,6 +613,31 @@ public class EiglspergerSteps<V, E> {
     updatePositions(downstreamLayer);
 
     return crossCount;
+  }
+
+  Set<LE<V, E>> getEdgesThatCrossVirtualEdge(
+      Set<LE<V, E>> virtualEdges, List<LE<V, E>> biLayerEdges) {
+    Set<Integer> virtualEdgeIndices = new HashSet<>();
+    for (LE<V, E> edge : virtualEdges) {
+      virtualEdgeIndices.add(edge.getSource().getIndex());
+      virtualEdgeIndices.add(edge.getTarget().getIndex());
+    }
+    Set<LE<V, E>> typeOneConflictEdges = new HashSet<>();
+    for (LE<V, E> edge : biLayerEdges) {
+      if (edge instanceof VirtualEdge) continue;
+      List<Integer> sortedIndices = new ArrayList<>();
+      sortedIndices.add(edge.getSource().getIndex());
+      sortedIndices.add(edge.getTarget().getIndex());
+      Collections.sort(sortedIndices);
+      for (int virtualIndex : virtualEdgeIndices) {
+        int idxZero = sortedIndices.get(0);
+        int idxOne = sortedIndices.get(1);
+        if (idxZero <= virtualIndex && virtualIndex < idxOne) {
+          typeOneConflictEdges.add(edge);
+        }
+      }
+    }
+    return typeOneConflictEdges;
   }
 
   private boolean isEmptyContainer(LV<V> v) {
