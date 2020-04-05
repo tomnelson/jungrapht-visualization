@@ -794,9 +794,8 @@ public class EiglspergerSteps<V, E> {
         List<LV<V>> neighbors = neighborFunction.apply(svGraph, v);
         int[] poses = new int[neighbors.size()];
         IntStream.range(0, poses.length).forEach(idx -> poses[idx] = neighbors.get(idx).getPos());
-        Arrays.sort(poses);
         if (poses.length > 0) {
-          int measure = medianValue(poses);
+          int measure = medianValue(poses); // poses will be sorted in medianValue method
           v.setMeasure(measure);
         } else {
           // leave the measure as as the current pos
@@ -810,11 +809,21 @@ public class EiglspergerSteps<V, E> {
     }
   }
 
+  /**
+   * return the median value in the array P (which is Sorted!)
+   *
+   * @param P a sorted array
+   * @return the median value
+   */
   static int medianValue(int[] P) {
-    int m = P.length / 2;
     if (P.length == 0) {
       return -1;
-    } else if (P.length % 2 == 1) {
+    } else if (P.length == 1) {
+      return P[0];
+    }
+    Arrays.sort(P);
+    int m = P.length / 2;
+    if (P.length % 2 == 1) {
       return P[m];
     } else if (P.length == 2) {
       return (P[0] + P[1]) / 2;
