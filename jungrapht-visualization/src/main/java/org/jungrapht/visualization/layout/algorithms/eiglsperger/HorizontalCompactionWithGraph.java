@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.jgrapht.Graph;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.HorizontalCompaction;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.jungrapht.visualization.layout.model.Point;
@@ -22,7 +23,7 @@ import org.slf4j.LoggerFactory;
  * @see "Fast and Simple Horizontal Coordinate Assignment, Ulrik Brandes and Boris Köpf, Department
  *     of Computer & Information Science, University of Konstanz"
  */
-public class HorizontalCompactionWithGraph<V, E> {
+public class HorizontalCompactionWithGraph<V, E> extends HorizontalCompaction<V> {
 
   private static final Logger log = LoggerFactory.getLogger(HorizontalCompactionWithGraph.class);
 
@@ -30,16 +31,16 @@ public class HorizontalCompactionWithGraph<V, E> {
   protected Graph<LV<V>, Integer> compactionGraph;
   protected final HDirection hDirection;
   protected final VDirection vDirection;
-  protected LV<V>[][] layers;
-  protected Map<LV<V>, LV<V>> rootMap;
-  protected Map<LV<V>, LV<V>> alignMap;
-  protected int deltaX;
-  protected int deltaY;
-
-  protected Map<LV<V>, LV<V>> sink = new HashMap<>();
-  protected Map<LV<V>, Integer> shift = new HashMap<>();
-  protected Map<LV<V>, Integer> x = new HashMap<>();
-  protected Map<LV<V>, Integer> y = new HashMap<>();
+//  protected LV<V>[][] layers;
+//  protected Map<LV<V>, LV<V>> rootMap;
+//  protected Map<LV<V>, LV<V>> alignMap;
+//  protected int deltaX;
+//  protected int deltaY;
+//
+//  protected Map<LV<V>, LV<V>> sink = new HashMap<>();
+//  protected Map<LV<V>, Integer> shift = new HashMap<>();
+//  protected Map<LV<V>, Integer> x = new HashMap<>();
+//  protected Map<LV<V>, Integer> y = new HashMap<>();
 
   public HorizontalCompactionWithGraph(
       HDirection hDirection,
@@ -51,15 +52,16 @@ public class HorizontalCompactionWithGraph<V, E> {
       Map<LV<V>, LV<V>> alignMap,
       int deltaX,
       int deltaY) {
+    super(layers, rootMap, alignMap, deltaX, deltaY);
     this.hDirection = hDirection;
     this.vDirection = vDirection;
     this.svGraph = svGraph;
     this.compactionGraph = compactionGraph;
-    this.layers = layers;
-    this.rootMap = rootMap;
-    this.alignMap = alignMap;
-    this.deltaX = deltaX;
-    this.deltaY = deltaY;
+//    this.layers = layers;
+//    this.rootMap = rootMap;
+//    this.alignMap = alignMap;
+//    this.deltaX = deltaX;
+//    this.deltaY = deltaY;
     Arrays.stream(layers)
         .flatMap(Arrays::stream)
         .forEach(
@@ -71,9 +73,9 @@ public class HorizontalCompactionWithGraph<V, E> {
     horizontalCompaction();
   }
 
-  public Point getPoint(LV<V> v) {
-    return Point.of(x.get(v), y.get(v));
-  }
+//  public Point getPoint(LV<V> v) {
+//    return Point.of(x.get(v), y.get(v));
+//  }
 
   public void horizontalCompaction() {
 
@@ -107,18 +109,6 @@ public class HorizontalCompactionWithGraph<V, E> {
     }
     log.trace(
         "verticesInCompactionGraphAndSegmentEnds = {}", verticesInCompactionGraphAndSegmentEnds);
-    //
-    //    for (LV<V>[] layer : layers) {
-    //      for (LV<V> v : layer) {
-    //        if (v == root(v)) {
-    //          placeBlock(v);
-    //        }
-    //      }
-    //    }
-    //    Arrays.stream(layers)
-    //        .flatMap(Arrays::stream)
-    //        .filter(v -> root(v) == v)
-    //        .forEach(this::placeBlock);
     for (LV<V> v : compactionGraph.vertexSet()) {
       if (v instanceof Segment) {
         Segment<V> segment = (Segment<V>) v;
@@ -228,34 +218,13 @@ public class HorizontalCompactionWithGraph<V, E> {
         } else {
           w = align(w);
         }
-        //        // if pos[w] > 0
-        //        if (hasPredecessor(w)) {
-        //          // u gets root[pred[w]]
-        //          LV<V> pred = pred(w);
-        //          LV<V> u = root(pred);
-        //          int diff = pos(w) - pos(pred);
-        //          placeBlock(u);
-        //          if (sink(v) == v) {
-        //            sink(v, sink(u));
-        //          }
-        //          // if (sink[v] != sink[u]
-        //          if (sink(v) != sink(u)) {
-        //            // shift[sink[u]] <- min({shift[sink[u]], x[v]-x[u]-delta}
-        //            shift(sink(u), Math.min(shift(sink(u)), x(v) - x(u) - deltaX));
-        //          } else {
-        //            // x[v] <- max{x[v], x[u] + delta}
-        //                        int localDeltaX = deltaX + deltaX * (pos(v) - idx(v));
-        //            x(v, Math.max(x(v), x(u) + localDeltaX));
-        //          }
-        //        }
-        //        w = align(w);
       } while (w != v);
     }
   }
 
-  protected boolean hasPredecessor(LV<V> v) {
-    return v.getIndex() > 0;
-  }
+//  protected boolean hasPredecessor(LV<V> v) {
+//    return v.getIndex() > 0;
+//  }
 
   protected int pos(LV<V> v) {
     return v.getPos();
@@ -265,86 +234,86 @@ public class HorizontalCompactionWithGraph<V, E> {
     return v.getIndex();
   }
 
-  protected LV<V> sink(LV<V> v) {
-    return sink.get(v);
-  }
+//  protected LV<V> sink(LV<V> v) {
+//    return sink.get(v);
+//  }
+//
+//  protected void sink(LV<V> k, LV<V> v) {
+//    sink.put(k, v);
+//  }
+//
+//  protected int shift(LV<V> v) {
+//    return shift.get(v);
+//  }
+//
+//  protected void shift(LV<V> k, int v) {
+//    shift.put(k, v);
+//  }
+//
+//  protected int x(LV<V> v) {
+//    return x.get(v);
+//  }
+//
+//  protected void x(LV<V> v, int d) {
+//    log.trace("put {} at x: {}", v, d);
+//    x.put(v, d);
+//  }
 
-  protected void sink(LV<V> k, LV<V> v) {
-    sink.put(k, v);
-  }
+//  protected int y(LV<V> v) {
+//    return y.get(v);
+//  }
+//
+//  protected void y(LV<V> v, int d) {
+//    y.put(v, d);
+//  }
+//
+//  protected LV<V> root(LV<V> v) {
+//    return rootMap.get(v);
+//  }
+//
+//  protected void root(LV<V> k, LV<V> v) {
+//    rootMap.put(k, v);
+//  }
+//
+//  protected LV<V> align(LV<V> v) {
+//    return alignMap.get(v);
+//  }
+//
+//  protected void align(LV<V> k, LV<V> v) {
+//    alignMap.put(k, v);
+//  }
 
-  protected int shift(LV<V> v) {
-    return shift.get(v);
-  }
+//  /**
+//   * return the predecessor of v in the same rank
+//   *
+//   * @param v
+//   * @return the predecessor of v in the same rank or null if v's index is 0
+//   */
+//  protected LV<V> pred(LV<V> v) {
+//    int layerOfV = v.getRank();
+//    int indexOfV = v.getIndex();
+//    if (indexOfV < 1) {
+//      return null;
+//    }
+//    LV<V>[] list = layers[layerOfV];
+//    return list[indexOfV - 1];
+//  }
 
-  protected void shift(LV<V> k, int v) {
-    shift.put(k, v);
-  }
-
-  protected int x(LV<V> v) {
-    return x.get(v);
-  }
-
-  protected void x(LV<V> v, int d) {
-    log.trace("put {} at x: {}", v, d);
-    x.put(v, d);
-  }
-
-  protected int y(LV<V> v) {
-    return y.get(v);
-  }
-
-  protected void y(LV<V> v, int d) {
-    y.put(v, d);
-  }
-
-  protected LV<V> root(LV<V> v) {
-    return rootMap.get(v);
-  }
-
-  protected void root(LV<V> k, LV<V> v) {
-    rootMap.put(k, v);
-  }
-
-  protected LV<V> align(LV<V> v) {
-    return alignMap.get(v);
-  }
-
-  protected void align(LV<V> k, LV<V> v) {
-    alignMap.put(k, v);
-  }
-
-  /**
-   * return the predecessor of v in the same rank
-   *
-   * @param v
-   * @return the predecessor of v in the same rank or null if v's index is 0
-   */
-  protected LV<V> pred(LV<V> v) {
-    int layerOfV = v.getRank();
-    int indexOfV = v.getIndex();
-    if (indexOfV < 1) {
-      return null;
-    }
-    LV<V>[] list = layers[layerOfV];
-    return list[indexOfV - 1];
-  }
-
-  public Map<LV<V>, LV<V>> getSink() {
-    return sink;
-  }
-
-  public Map<LV<V>, Integer> getShift() {
-    return shift;
-  }
-
-  public Map<LV<V>, Integer> getX() {
-    return x;
-  }
-
-  public Map<LV<V>, Integer> getY() {
-    return y;
-  }
+//  public Map<LV<V>, LV<V>> getSink() {
+//    return sink;
+//  }
+//
+//  public Map<LV<V>, Integer> getShift() {
+//    return shift;
+//  }
+//
+//  public Map<LV<V>, Integer> getX() {
+//    return x;
+//  }
+//
+//  public Map<LV<V>, Integer> getY() {
+//    return y;
+//  }
 
   void checkValuesInLayersForSameX(LV<V>[][] layers) {
     for (LV<V>[] layer : layers) {

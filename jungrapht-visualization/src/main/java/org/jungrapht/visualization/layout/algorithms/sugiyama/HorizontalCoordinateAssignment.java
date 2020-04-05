@@ -1,5 +1,6 @@
 package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -99,6 +100,10 @@ public class HorizontalCoordinateAssignment<V, E> {
             horizontalOffset,
             verticalOffset);
 
+    horizontalBalancing(
+            upLeftCompaction, upRightCompaction, downLeftCompaction, downRightCompaction);
+
+
     for (int i = 0; i < layers.length; i++) {
       for (int j = 0; j < layers[i].length; j++) {
         LV<V> v = layers[i][j];
@@ -115,6 +120,51 @@ public class HorizontalCoordinateAssignment<V, E> {
       }
     }
   }
+
+  protected void horizontalBalancing(HorizontalCompaction<V>... compactions) {
+    int leastWidthIndex = -1;
+    int[] a = new int[4];
+    int[] b = new int[4];
+
+    int leastWidth = Integer.MAX_VALUE;
+    for (int i = 0; i < 4; i++) {
+      int[] bounds = bounds(compactions[i].x.values());
+      a[i] = bounds[0];
+      b[i] = bounds[1];
+      int w = b[i] - a[i];
+      if (w < leastWidth) {
+        leastWidthIndex = i;
+        leastWidth = w;
+      }
+    }
+
+    for (int i = 0; i < 4; i++) {
+      int delta;
+      // 0 is upLeft, 2 is downLeft
+      if (i == 0 || i == 2) delta = a[leastWidthIndex] - a[i];
+      else delta = b[leastWidthIndex] - b[i];
+      if (delta != 0) {
+        compactions[i].x.entrySet().forEach(entry -> entry.setValue(entry.getValue() + delta));
+      }
+    }
+  }
+
+  protected int[] bounds(Collection<Integer> xValues) {
+    if (xValues.size() == 0) {
+      return new int[] {0, 0};
+    }
+    int min = xValues.stream().findFirst().get();
+    int max = min;
+    for (Integer i : xValues) {
+      if (i < min) {
+        min = i;
+      } else if (i > max) {
+        max = i;
+      }
+    }
+    return new int[] {min, max};
+  }
+
 
   protected int pos(LV<V> v) {
     return v.getIndex();

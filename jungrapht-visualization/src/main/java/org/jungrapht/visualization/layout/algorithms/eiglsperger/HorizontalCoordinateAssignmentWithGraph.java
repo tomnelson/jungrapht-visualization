@@ -171,63 +171,63 @@ public class HorizontalCoordinateAssignmentWithGraph<V, E>
     }
   }
 
-  protected void horizontalBalancing(HorizontalCompactionWithGraph<V, E>... compactions) {
-    int leastWidthIndex = -1;
-    int[] a = new int[4];
-    int[] b = new int[4];
+//  protected void horizontalBalancing(HorizontalCompactionWithGraph<V, E>... compactions) {
+//    int leastWidthIndex = -1;
+//    int[] a = new int[4];
+//    int[] b = new int[4];
+//
+//    int leastWidth = Integer.MAX_VALUE;
+//    for (int i = 0; i < 4; i++) {
+//      int[] bounds = bounds(compactions[i].x.values());
+//      a[i] = bounds[0];
+//      b[i] = bounds[1];
+//      int w = b[i] - a[i];
+//      if (w < leastWidth) {
+//        leastWidthIndex = i;
+//        leastWidth = w;
+//      }
+//    }
+//
+//    for (int i = 0; i < 4; i++) {
+//      int delta;
+//      // 0 is upLeft, 2 is downLeft
+//      if (i == 0 || i == 2) delta = a[leastWidthIndex] - a[i];
+//      else delta = b[leastWidthIndex] - b[i];
+//      if (delta != 0) {
+//        compactions[i].x.entrySet().forEach(entry -> entry.setValue(entry.getValue() + delta));
+//      }
+//    }
+//  }
 
-    int leastWidth = Integer.MAX_VALUE;
-    for (int i = 0; i < 4; i++) {
-      int[] bounds = bounds(compactions[i].x.values());
-      a[i] = bounds[0];
-      b[i] = bounds[1];
-      int w = b[i] - a[i];
-      if (w < leastWidth) {
-        leastWidthIndex = i;
-        leastWidth = w;
-      }
-    }
+//  protected HorizontalCompactionWithGraph<V, E> leastWidthCompaction(
+//      HorizontalCompactionWithGraph<V, E>... compactions) {
+//    int least = Integer.MAX_VALUE;
+//    HorizontalCompactionWithGraph<V, E> narrowest = null;
+//    for (HorizontalCompactionWithGraph<V, E> compaction : compactions) {
+//      int width = boundsWidth(compaction.x.values());
+//      if (width < least) {
+//        least = width;
+//        narrowest = compaction;
+//      }
+//    }
+//    return narrowest;
+//  }
 
-    for (int i = 0; i < 4; i++) {
-      int delta;
-      // 0 is upLeft, 2 is downLeft
-      if (i == 0 || i == 2) delta = a[leastWidthIndex] - a[i];
-      else delta = b[leastWidthIndex] - b[i];
-      if (delta != 0) {
-        compactions[i].x.entrySet().forEach(entry -> entry.setValue(entry.getValue() + delta));
-      }
-    }
-  }
-
-  protected HorizontalCompactionWithGraph<V, E> leastWidthCompaction(
-      HorizontalCompactionWithGraph<V, E>... compactions) {
-    int least = Integer.MAX_VALUE;
-    HorizontalCompactionWithGraph<V, E> narrowest = null;
-    for (HorizontalCompactionWithGraph<V, E> compaction : compactions) {
-      int width = boundsWidth(compaction.x.values());
-      if (width < least) {
-        least = width;
-        narrowest = compaction;
-      }
-    }
-    return narrowest;
-  }
-
-  protected int[] bounds(Collection<Integer> xValues) {
-    if (xValues.size() == 0) {
-      return new int[] {0, 0};
-    }
-    int min = xValues.stream().findFirst().get();
-    int max = min;
-    for (Integer i : xValues) {
-      if (i < min) {
-        min = i;
-      } else if (i > max) {
-        max = i;
-      }
-    }
-    return new int[] {min, max};
-  }
+//  protected int[] bounds(Collection<Integer> xValues) {
+//    if (xValues.size() == 0) {
+//      return new int[] {0, 0};
+//    }
+//    int min = xValues.stream().findFirst().get();
+//    int max = min;
+//    for (Integer i : xValues) {
+//      if (i < min) {
+//        min = i;
+//      } else if (i > max) {
+//        max = i;
+//      }
+//    }
+//    return new int[] {min, max};
+//  }
 
   protected int boundsWidth(Collection<Integer> xValues) {
     int[] bounds = bounds(xValues);
