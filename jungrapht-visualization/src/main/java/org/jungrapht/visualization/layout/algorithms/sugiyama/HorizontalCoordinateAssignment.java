@@ -25,6 +25,7 @@ public class HorizontalCoordinateAssignment<V, E> {
   protected LV<V>[][] layers;
   protected int horizontalOffset;
   protected int verticalOffset;
+  protected boolean horizontalBalancing;
 
   public HorizontalCoordinateAssignment(
       LV<V>[][] layers,
@@ -70,6 +71,7 @@ public class HorizontalCoordinateAssignment<V, E> {
     HorizontalCompaction<V> upLeftCompaction =
         new HorizontalCompaction<>(
             layers, upLeft.getRootMap(), upLeft.getAlignMap(), horizontalOffset, verticalOffset);
+    upLeftCompaction.horizontalCompaction();
 
     VerticalAlignment.RightmostUpper<V, E> upRight =
         new VerticalAlignment.RightmostUpper<>(layers, svGraph, markedSegments);
@@ -77,6 +79,7 @@ public class HorizontalCoordinateAssignment<V, E> {
     HorizontalCompaction<V> upRightCompaction =
         new HorizontalCompaction<>(
             layers, upRight.getRootMap(), upRight.getAlignMap(), horizontalOffset, verticalOffset);
+    upRightCompaction.horizontalCompaction();
 
     VerticalAlignment.LeftmostLower<V, E> downLeft =
         new VerticalAlignment.LeftmostLower<>(layers, svGraph, markedSegments);
@@ -88,6 +91,7 @@ public class HorizontalCoordinateAssignment<V, E> {
             downLeft.getAlignMap(),
             horizontalOffset,
             verticalOffset);
+    downLeftCompaction.horizontalCompaction();
 
     VerticalAlignment.RightmostLower<V, E> downRight =
         new VerticalAlignment.RightmostLower<>(layers, svGraph, markedSegments);
@@ -99,10 +103,10 @@ public class HorizontalCoordinateAssignment<V, E> {
             downRight.getAlignMap(),
             horizontalOffset,
             verticalOffset);
+    downRightCompaction.horizontalCompaction();
 
     horizontalBalancing(
-            upLeftCompaction, upRightCompaction, downLeftCompaction, downRightCompaction);
-
+        upLeftCompaction, upRightCompaction, downLeftCompaction, downRightCompaction);
 
     for (int i = 0; i < layers.length; i++) {
       for (int j = 0; j < layers[i].length; j++) {
@@ -164,7 +168,6 @@ public class HorizontalCoordinateAssignment<V, E> {
     }
     return new int[] {min, max};
   }
-
 
   protected int pos(LV<V> v) {
     return v.getIndex();

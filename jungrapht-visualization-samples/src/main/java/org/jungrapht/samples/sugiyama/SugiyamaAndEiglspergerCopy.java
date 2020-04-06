@@ -13,7 +13,7 @@ import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
-import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithmWithGraph;
 import org.jungrapht.visualization.layout.algorithms.SugiyamaLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.slf4j.Logger;
@@ -48,8 +48,8 @@ public class SugiyamaAndEiglspergerCopy extends JFrame {
     vv1.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm1);
     container.add(vv1.getComponent());
 
-    EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm4 =
-        EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+    EiglspergerLayoutAlgorithmWithGraph<Integer, Integer> layoutAlgorithm4 =
+        EiglspergerLayoutAlgorithmWithGraph.<Integer, Integer>edgeAwareBuilder()
             .straightenEdges(true)
             //                .useLongestPathLayering(true)
             .after(vv2::scaleToLayout)

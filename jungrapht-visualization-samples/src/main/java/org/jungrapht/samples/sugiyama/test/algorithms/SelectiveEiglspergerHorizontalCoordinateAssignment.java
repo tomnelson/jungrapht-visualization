@@ -60,6 +60,7 @@ public class SelectiveEiglspergerHorizontalCoordinateAssignment<V, E>
       upLeftCompaction =
           new HorizontalCompaction<>(
               layers, upLeft.getRootMap(), upLeft.getAlignMap(), horizontalOffset, verticalOffset);
+      upLeftCompaction.horizontalCompaction();
     }
     if (doUpRight) {
       VerticalAlignment.RightmostUpper<V, E> upRight =
@@ -72,6 +73,7 @@ public class SelectiveEiglspergerHorizontalCoordinateAssignment<V, E>
               upRight.getAlignMap(),
               horizontalOffset,
               verticalOffset);
+      upRightCompaction.horizontalCompaction();
     }
 
     if (doDownLeft) {
@@ -85,6 +87,7 @@ public class SelectiveEiglspergerHorizontalCoordinateAssignment<V, E>
               downLeft.getAlignMap(),
               horizontalOffset,
               verticalOffset);
+      downLeftCompaction.horizontalCompaction();
     }
 
     if (doDownRight) {
@@ -98,6 +101,7 @@ public class SelectiveEiglspergerHorizontalCoordinateAssignment<V, E>
               downRight.getAlignMap(),
               horizontalOffset,
               verticalOffset);
+      downRightCompaction.horizontalCompaction();
     }
 
     for (int i = 0; i < layers.length; i++) {

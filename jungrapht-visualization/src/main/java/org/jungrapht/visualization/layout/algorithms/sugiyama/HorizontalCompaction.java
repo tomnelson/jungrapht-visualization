@@ -44,7 +44,6 @@ public class HorizontalCompaction<V> {
               sink.put(v, v);
               shift.put(v, Integer.MAX_VALUE);
             });
-    horizontalCompaction();
   }
 
   public Point getPoint(LV<V> v) {

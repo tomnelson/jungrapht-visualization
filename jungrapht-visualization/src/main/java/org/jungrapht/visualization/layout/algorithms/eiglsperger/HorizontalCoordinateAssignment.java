@@ -39,6 +39,7 @@ public class HorizontalCoordinateAssignment<V, E>
     HorizontalCompaction<V> upLeftCompaction =
         new HorizontalCompaction<>(
             layers, upLeft.getRootMap(), upLeft.getAlignMap(), horizontalOffset, verticalOffset);
+    upLeftCompaction.horizontalCompaction();
     if (log.isTraceEnabled()) {
       log.trace("upLeft");
       log.trace("alignMap:{}", upLeft.getAlignMap());
@@ -53,6 +54,7 @@ public class HorizontalCoordinateAssignment<V, E>
     HorizontalCompaction<V> upRightCompaction =
         new HorizontalCompaction<>(
             layers, upRight.getRootMap(), upRight.getAlignMap(), horizontalOffset, verticalOffset);
+    upRightCompaction.horizontalCompaction();
     if (log.isTraceEnabled()) {
       log.trace("upRight");
       log.trace("alignMap:{}", upRight.getAlignMap());
@@ -71,6 +73,7 @@ public class HorizontalCoordinateAssignment<V, E>
             downLeft.getAlignMap(),
             horizontalOffset,
             verticalOffset);
+    downLeftCompaction.horizontalCompaction();
     if (log.isTraceEnabled()) {
       log.trace("downLeft");
       log.trace("alignMap:{}", downLeft.getAlignMap());
@@ -89,12 +92,18 @@ public class HorizontalCoordinateAssignment<V, E>
             downRight.getAlignMap(),
             horizontalOffset,
             verticalOffset);
+    downRightCompaction.horizontalCompaction();
     if (log.isTraceEnabled()) {
       log.trace("downRight");
       log.trace("alignMap:{}", downRight.getAlignMap());
       log.trace("rootMap:{}", downRight.getRootMap());
       log.trace("shift:{}", downRightCompaction.getShift());
       log.trace("sink:{}", downRightCompaction.getSink());
+    }
+
+    if (horizontalBalancing) {
+      horizontalBalancing(
+          upLeftCompaction, upRightCompaction, downLeftCompaction, downRightCompaction);
     }
 
     for (int i = 0; i < layers.length; i++) {
