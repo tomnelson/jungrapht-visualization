@@ -27,12 +27,12 @@ import org.slf4j.LoggerFactory;
  * @author Joshua O'Madadhain
  * @author Tom Nelson
  */
-public class SpringLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
+public class SpringLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorithm<V>
     implements IterativeContext {
 
   private static final Logger log = LoggerFactory.getLogger(SpringLayoutAlgorithm.class);
   protected double stretch = 0.70;
-  protected Function<Object, Integer> lengthFunction;
+  protected Function<E, Integer> lengthFunction;
   protected int repulsion_range_sq = 100 * 100;
   protected double force_multiplier = 1.0 / 3.0;
   boolean done = false;
@@ -42,20 +42,21 @@ public class SpringLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V
   protected StandardSpringRepulsion.Builder repulsionContractBuilder;
   protected StandardSpringRepulsion repulsionContract;
 
-  public static class Builder<V, T extends SpringLayoutAlgorithm<V>, B extends Builder<V, T, B>>
+  public static class Builder<
+          V, E, T extends SpringLayoutAlgorithm<V, E>, B extends Builder<V, E, T, B>>
       extends AbstractIterativeLayoutAlgorithm.Builder<V, T, B>
       implements LayoutAlgorithm.Builder<V, T, B> {
 
     private StandardSpringRepulsion.Builder repulsionContractBuilder =
         StandardSpringRepulsion.standardBuilder();
-    private Function<Object, Integer> lengthFunction = n -> 30;
+    private Function<E, Integer> lengthFunction = n -> 30;
 
     public B repulsionContractBuilder(StandardSpringRepulsion.Builder repulsionContractBuilder) {
       this.repulsionContractBuilder = repulsionContractBuilder;
       return self();
     }
 
-    public B withLengthFunction(Function<Object, Integer> lengthFunction) {
+    public B withLengthFunction(Function<E, Integer> lengthFunction) {
       this.lengthFunction = lengthFunction;
       return self();
     }
@@ -65,7 +66,7 @@ public class SpringLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V
     }
   }
 
-  public static <V> Builder<V, ?, ?> builder() {
+  public static <V, E> Builder<V, E, ?, ?> builder() {
     return new Builder<>();
   }
 
@@ -73,7 +74,7 @@ public class SpringLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V
     this(SpringLayoutAlgorithm.builder());
   }
 
-  protected SpringLayoutAlgorithm(Builder<V, ?, ?> builder) {
+  protected SpringLayoutAlgorithm(Builder<V, E, ?, ?> builder) {
     super(builder);
     this.lengthFunction = builder.lengthFunction;
     this.repulsionContractBuilder = builder.repulsionContractBuilder;
@@ -150,9 +151,9 @@ public class SpringLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V
   }
 
   protected void relaxEdges() {
-    Graph<V, Object> graph = layoutModel.getGraph();
+    Graph<V, E> graph = layoutModel.getGraph();
     try {
-      for (Object edge : layoutModel.getGraph().edgeSet()) {
+      for (E edge : graph.edgeSet()) {
         V vertex1 = graph.getEdgeSource(edge);
         V vertex2 = graph.getEdgeTarget(edge);
 

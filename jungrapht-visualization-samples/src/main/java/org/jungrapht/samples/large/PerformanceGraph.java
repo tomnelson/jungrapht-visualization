@@ -32,7 +32,7 @@ public class PerformanceGraph {
     VisualizationViewer<String, Integer> vv =
         VisualizationViewer.builder(graph)
             .layoutAlgorithm(
-                SpringLayoutAlgorithm.<String>builder()
+                SpringLayoutAlgorithm.<String, Integer>builder()
                     .repulsionContractBuilder(BarnesHutSpringRepulsion.barnesHutBuilder())
                     .build())
             .layoutSize(layoutSize)

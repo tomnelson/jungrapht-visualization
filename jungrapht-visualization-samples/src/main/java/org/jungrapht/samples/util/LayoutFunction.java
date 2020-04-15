@@ -66,10 +66,10 @@ public class LayoutFunction<V>
               "Fruchterman Reingold (BH Optimized)",
               FRLayoutAlgorithm.builder()
                   .repulsionContractBuilder(BarnesHutFRRepulsion.barnesHutBuilder())),
-          Layout.of("Spring", SpringLayoutAlgorithm.<V>builder()),
+          Layout.of("Spring", SpringLayoutAlgorithm.<V, E>builder()),
           Layout.of(
               "Spring (BH Optimized)",
-              SpringLayoutAlgorithm.<V>builder()
+              SpringLayoutAlgorithm.<V, E>builder()
                   .repulsionContractBuilder(BarnesHutSpringRepulsion.barnesHutBuilder())),
           Layout.of("Tree", TreeLayoutAlgorithm.<V>builder()),
           Layout.of("EdgeAwareTree", EdgeAwareTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()),

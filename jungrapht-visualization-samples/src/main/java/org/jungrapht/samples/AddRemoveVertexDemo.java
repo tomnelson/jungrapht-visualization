@@ -102,7 +102,7 @@ public class AddRemoveVertexDemo extends JPanel {
             LayoutFunction.Layout.of("Circle", CircleLayoutAlgorithm.<Number>builder()),
             LayoutFunction.Layout.of("Self Organizing Map", ISOMLayoutAlgorithm.<Number>builder()),
             LayoutFunction.Layout.of("Fruchterman Reingold", FRLayoutAlgorithm.<Number>builder()),
-            LayoutFunction.Layout.of("Spring", SpringLayoutAlgorithm.<Number>builder()));
+            LayoutFunction.Layout.of("Spring", SpringLayoutAlgorithm.<Number, Number>builder()));
 
     final JComboBox graphChooser = new JComboBox(layoutFunction.getNames().toArray());
     graphChooser.addActionListener(
