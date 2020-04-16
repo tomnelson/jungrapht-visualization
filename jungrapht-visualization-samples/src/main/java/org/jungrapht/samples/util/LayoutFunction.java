@@ -9,6 +9,7 @@ import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.CircleLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.EdgeAwareTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.GEMLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.ISOMLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -66,6 +67,7 @@ public class LayoutFunction<V>
               "Fruchterman Reingold (BH Optimized)",
               FRLayoutAlgorithm.builder()
                   .repulsionContractBuilder(BarnesHutFRRepulsion.barnesHutBuilder())),
+          Layout.of("GEM", GEMLayoutAlgorithm.<V, E>edgeAwareBuilder()),
           Layout.of("Spring", SpringLayoutAlgorithm.<V, E>builder()),
           Layout.of(
               "Spring (BH Optimized)",

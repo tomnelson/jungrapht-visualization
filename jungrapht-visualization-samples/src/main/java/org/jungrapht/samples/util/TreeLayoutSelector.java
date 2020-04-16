@@ -19,6 +19,7 @@ import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.CircleLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.EdgeAwareTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithmWithGraph;
+import org.jungrapht.visualization.layout.algorithms.GEMLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.HierarchicalMinCrossLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
@@ -248,6 +249,8 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     MultiRowTreeLayoutAlgorithm<V> multiRowTreeLayoutAlgorithm =
         MultiRowTreeLayoutAlgorithm.<V>builder().vertexShapeFunction(vertexShapeFunction).build();
 
+    GEMLayoutAlgorithm<V, E> gemLayoutAlgorithm = new GEMLayoutAlgorithm<>();
+
     int layoutNumber = 0;
 
     BalloonLayoutAlgorithm<V> balloonLayoutAlgorithm = new BalloonLayoutAlgorithm<>();
@@ -325,6 +328,10 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     multiRowTreeButton.addItemListener(new LayoutItemListener(multiRowTreeLayoutAlgorithm, vv));
     multiRowTreeButton.setSelected(initialSelection == layoutNumber++);
 
+    JRadioButton gemButton = new JRadioButton("GEM");
+    gemButton.addItemListener(new LayoutItemListener(gemLayoutAlgorithm, vv));
+    gemButton.setSelected(initialSelection == layoutNumber++);
+
     JRadioButton balloonButton = new JRadioButton("Balloon");
     balloonButton.addItemListener(new LayoutItemListener(balloonLayoutAlgorithm, vv));
     balloonButton.setSelected(initialSelection == layoutNumber++);
@@ -368,6 +375,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     layoutRadio.add(sugiyamaButton);
     layoutRadio.add(eiglspergerButton);
     layoutRadio.add(multiRowTreeButton);
+    layoutRadio.add(gemButton);
     layoutRadio.add(balloonButton);
     layoutRadio.add(radialButton);
     layoutRadio.add(radialEdgeAwareButton);
@@ -389,6 +397,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     this.add(sugiyamaButton);
     this.add(eiglspergerButton);
     this.add(tidierRadialEdgeAwareButton);
+    this.add(gemButton);
     this.add(circleButton);
     this.add(betterCircleButton);
     this.add(animateTransition);

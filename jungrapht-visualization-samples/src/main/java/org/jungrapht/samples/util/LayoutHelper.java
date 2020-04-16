@@ -5,6 +5,7 @@ import java.util.Map;
 import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.CircleLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.GEMLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.ISOMLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -33,6 +34,7 @@ public class LayoutHelper {
             .repulsionContractBuilder(BarnesHutFRRepulsion.barnesHutBuilder())
             .build()),
     SPRING("Spring", new SpringLayoutAlgorithm<>()),
+    GEM("GEM", GEMLayoutAlgorithm.edgeAwareBuilder().build()),
     SPRING_BH_VISITOR(
         "Spring (BH Optimized)",
         SpringLayoutAlgorithm.builder()
