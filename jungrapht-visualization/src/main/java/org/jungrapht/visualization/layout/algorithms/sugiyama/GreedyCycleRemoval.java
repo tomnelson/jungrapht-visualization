@@ -131,4 +131,15 @@ public class GreedyCycleRemoval<V, E> {
     log.trace("copy graph is {}", copy);
     log.trace("feedbackArcs {}", feedbackArcs);
   }
+
+  public void reverseFeedbackArcs() {
+    // reverse the direction of feedback arcs so that they no longer introduce cycles in the graph
+    // the feedback arcs will be processed later to draw with the correct direction and correct articulation points
+    for (E edge : feedbackArcs) {
+      V source = graph.getEdgeSource(edge);
+      V target = graph.getEdgeTarget(edge);
+      graph.removeEdge(edge);
+      graph.addEdge(target, source, edge);
+    }
+  }
 }

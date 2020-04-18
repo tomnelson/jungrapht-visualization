@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.function.Function;
 import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.CircleLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.DAGLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.EdgeAwareTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.GEMLayoutAlgorithm;
@@ -73,6 +74,7 @@ public class LayoutFunction<V>
               "Spring (BH Optimized)",
               SpringLayoutAlgorithm.<V, E>builder()
                   .repulsionContractBuilder(BarnesHutSpringRepulsion.barnesHutBuilder())),
+          Layout.of("DAG", DAGLayoutAlgorithm.<V, E>builder()),
           Layout.of("Tree", TreeLayoutAlgorithm.<V>builder()),
           Layout.of("EdgeAwareTree", EdgeAwareTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()),
           Layout.of("Multirow Tree", MultiRowTreeLayoutAlgorithm.<V>builder()),

@@ -42,7 +42,7 @@ public class ParallelEdgeIndexFunction<V, E> implements EdgeIndexFunction<V, E> 
       for (E connectingEdge : graph.getAllEdges(u, v)) {
         edgeIndex.put(connectingEdge, count++);
       }
-      return edgeIndex.get(edge);
+      return edgeIndex.getOrDefault(edge, 0);
     }
     return index;
   }
