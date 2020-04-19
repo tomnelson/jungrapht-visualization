@@ -66,8 +66,9 @@ public interface VisualizationViewer<V, E> extends VisualizationServer<V, E> {
    * @param <E> edge type
    * @return the builder
    */
-  static <V, E> Builder<V, E, ?, ?> builder() {
-    return new Builder();
+  static <V, E, T extends DefaultVisualizationViewer<V, E>, B extends Builder<V, E, T, B>>
+      Builder<V, E, T, B> builder() {
+    return new Builder<>();
   }
   /**
    * @param graph the graph to be visualized
@@ -75,8 +76,9 @@ public interface VisualizationViewer<V, E> extends VisualizationServer<V, E> {
    * @param <E> the edge type
    * @return the builder
    */
-  static <V, E> Builder<V, E, ?, ?> builder(Graph<V, E> graph) {
-    return new Builder(graph);
+  static <V, E, T extends DefaultVisualizationViewer<V, E>, B extends Builder<V, E, T, B>>
+      Builder<V, E, T, B> builder(Graph<V, E> graph) {
+    return new Builder<>(graph);
   }
 
   /**
@@ -85,8 +87,9 @@ public interface VisualizationViewer<V, E> extends VisualizationServer<V, E> {
    * @param <E> the edge type
    * @return the builder
    */
-  static <V, E> Builder<V, E, ?, ?> builder(VisualizationModel<V, E> visualizationModel) {
-    return new Builder(visualizationModel);
+  static <V, E, T extends DefaultVisualizationViewer<V, E>, B extends Builder<V, E, T, B>>
+      Builder<V, E, T, B> builder(VisualizationModel<V, E> visualizationModel) {
+    return new Builder<>(visualizationModel);
   }
 
   /**

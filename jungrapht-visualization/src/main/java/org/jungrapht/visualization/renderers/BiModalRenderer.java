@@ -175,6 +175,10 @@ public class BiModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeListene
     }
   }
 
+  public void setRenderer(Mode mode, Renderer<V, E> renderer) {
+    rendererMap.put(mode, renderer);
+  }
+
   public Supplier<Double> getScaleSupplier() {
     return scaleSupplier;
   }

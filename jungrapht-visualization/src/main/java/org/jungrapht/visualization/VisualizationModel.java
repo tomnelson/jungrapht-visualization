@@ -36,7 +36,7 @@ public interface VisualizationModel<V, E>
    * @param <T> the type that is built
    * @param <B> the builder type
    */
-  class Builder<V, E, T extends VisualizationModel, B extends Builder<V, E, T, B>> {
+  class Builder<V, E, T extends DefaultVisualizationModel, B extends Builder<V, E, T, B>> {
     /** a {@code Graph} to visualize */
     protected Graph<V, E> graph =
         GraphTypeBuilder.<V, E>directed().buildGraph(); // default non-null empty graph
@@ -121,7 +121,8 @@ public interface VisualizationModel<V, E>
    * @param <E> edge type
    * @return a Builder to create a VisualizationModel instance
    */
-  static <V, E> Builder<V, E, ?, ?> builder() {
+  static <V, E, T extends DefaultVisualizationModel<V, E>, B extends Builder<V, E, T, B>>
+      Builder<V, E, T, B> builder() {
     return new Builder();
   }
   /**
@@ -130,7 +131,8 @@ public interface VisualizationModel<V, E>
    * @param <E> the edge type
    * @return a Builder to create a VisualizationModel instance
    */
-  static <V, E> Builder<V, E, ?, ?> builder(Graph<V, E> graph) {
+  static <V, E, T extends DefaultVisualizationModel<V, E>, B extends Builder<V, E, T, B>>
+      Builder<V, E, T, B> builder(Graph<V, E> graph) {
     return new Builder(graph);
   }
 
@@ -140,7 +142,8 @@ public interface VisualizationModel<V, E>
    * @param <E> the edge type
    * @return a Builder to create a VisualizationModel instance
    */
-  static <V, E> Builder<V, E, ?, ?> builder(LayoutModel<V> layoutModel) {
+  static <V, E, T extends DefaultVisualizationModel<V, E>, B extends Builder<V, E, T, B>>
+      Builder<V, E, T, B> builder(LayoutModel<V> layoutModel) {
     return new Builder(layoutModel);
   }
 

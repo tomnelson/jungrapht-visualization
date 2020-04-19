@@ -123,7 +123,7 @@ public interface VisualizationServer<V, E>
 
     /** @return a new instance of a {@link DefaultVisualizationServer} */
     public T build() {
-      return (T) new DefaultVisualizationServer(this);
+      return (T) new DefaultVisualizationServer<>(this);
     }
   }
 
@@ -133,7 +133,7 @@ public interface VisualizationServer<V, E>
    * @return a Builder to create a VisualizationServer instance
    */
   static <V, E> Builder<V, E, ?, ?> builder() {
-    return new Builder();
+    return new Builder<>();
   }
 
   /**
