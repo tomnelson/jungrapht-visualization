@@ -87,8 +87,7 @@ public interface VisualizationViewer<V, E> extends VisualizationServer<V, E> {
    * @param <E> the edge type
    * @return the builder
    */
-  static <V, E, T extends DefaultVisualizationViewer<V, E>, B extends Builder<V, E, T, B>>
-      Builder<V, E, T, B> builder(VisualizationModel<V, E> visualizationModel) {
+  static <V, E> Builder<V, E, ?, ?> builder(VisualizationModel<V, E> visualizationModel) {
     return new Builder<>(visualizationModel);
   }
 

@@ -84,7 +84,7 @@ public class VertexLabelAsShapeRenderer<V, E>
     Point2D p2d =
         renderContext
             .getMultiLayerTransformer()
-            .transform(MultiLayerTransformer.Layer.LAYOUT, new Point2D.Double(p.x, p.y));
+            .transform(MultiLayerTransformer.Layer.LAYOUT, p.x, p.y);
 
     int x = (int) p2d.getX();
     int y = (int) p2d.getY();

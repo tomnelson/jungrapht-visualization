@@ -107,11 +107,11 @@ public class HeayweightEdgeLabelRenderer<V, E> implements Renderer.EdgeLabel<V, 
     Point2D p2d1 =
         renderContext
             .getMultiLayerTransformer()
-            .transform(MultiLayerTransformer.Layer.LAYOUT, new Point2D.Double(p1.x, p1.y));
+            .transform(MultiLayerTransformer.Layer.LAYOUT, p1.x, p1.y);
     Point2D p2d2 =
         renderContext
             .getMultiLayerTransformer()
-            .transform(MultiLayerTransformer.Layer.LAYOUT, new Point2D.Double(p2.x, p2.y));
+            .transform(MultiLayerTransformer.Layer.LAYOUT, p2.x, p2.y);
 
     float x1 = (float) p2d1.getX();
     float y1 = (float) p2d1.getY();

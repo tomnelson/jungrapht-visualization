@@ -62,7 +62,7 @@ public class HeavyweightVertexLabelRenderer<V, E> implements Renderer.VertexLabe
     Point2D pt2d =
         renderContext
             .getMultiLayerTransformer()
-            .transform(MultiLayerTransformer.Layer.LAYOUT, new Point2D.Double(pt.x, pt.y));
+            .transform(MultiLayerTransformer.Layer.LAYOUT, pt.x, pt.y);
 
     float x = (float) pt2d.getX();
     float y = (float) pt2d.getY();

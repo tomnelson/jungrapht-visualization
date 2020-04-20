@@ -441,10 +441,7 @@ public class VertexImageShaperDemo extends JPanel {
         RenderContext<V, E> renderContext, VisualizationModel<V, E> model, V v) {
 
       Point p = model.getLayoutModel().apply(v);
-      Point2D p2d =
-          renderContext
-              .getMultiLayerTransformer()
-              .transform(Layer.LAYOUT, new Point2D.Double(p.x, p.y));
+      Point2D p2d = renderContext.getMultiLayerTransformer().transform(Layer.LAYOUT, p.x, p.y);
       float x = (float) p2d.getX();
       float y = (float) p2d.getY();
 

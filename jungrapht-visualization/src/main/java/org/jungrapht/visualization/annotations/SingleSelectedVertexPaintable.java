@@ -296,7 +296,7 @@ public class SingleSelectedVertexPaintable<V, E> implements VisualizationServer.
     Point2D p2d =
         renderContext
             .getMultiLayerTransformer()
-            .transform(MultiLayerTransformer.Layer.LAYOUT, new Point2D.Double(p.x, p.y));
+            .transform(MultiLayerTransformer.Layer.LAYOUT, p.x, p.y);
     // now p is in view coordinates, ready to be further transformed by any transform in the
     // graphics context
     float x = (float) p2d.getX();

@@ -55,11 +55,11 @@ public class ReshapingEdgeRenderer<V, E> extends HeavyweightEdgeRenderer<V, E>
     Point2D p12d =
         renderContext
             .getMultiLayerTransformer()
-            .transform(MultiLayerTransformer.Layer.LAYOUT, new Point2D.Double(p1.x, p1.y));
+            .transform(MultiLayerTransformer.Layer.LAYOUT, p1.x, p1.y);
     Point2D p22d =
         renderContext
             .getMultiLayerTransformer()
-            .transform(MultiLayerTransformer.Layer.LAYOUT, new Point2D.Double(p2.x, p2.y));
+            .transform(MultiLayerTransformer.Layer.LAYOUT, p2.x, p2.y);
     float x1 = (float) p12d.getX();
     float y1 = (float) p12d.getY();
     float x2 = (float) p22d.getX();

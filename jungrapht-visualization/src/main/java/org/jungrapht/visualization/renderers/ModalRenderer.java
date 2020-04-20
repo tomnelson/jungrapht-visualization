@@ -31,4 +31,6 @@ public interface ModalRenderer<V, E> extends Renderer<V, E> {
   EdgeLabel<V, E> getEdgeLabelRenderer(Mode mode);
 
   void setRenderer(Mode mode, Renderer<V, E> renderer);
+
+  Renderer<V, E> getRenderer(Mode mode);
 }
