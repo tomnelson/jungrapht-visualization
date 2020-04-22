@@ -65,11 +65,13 @@ public class MagnifyIconGraphics extends TransformingFlatnessGraphics {
           // clip out the lens so the small icon doesn't get drawn
           // inside of it
           Shape oldClip = delegate.getClip();
-          Area viewBounds = new Area(oldClip);
-          viewBounds.subtract(new Area(lens));
-          delegate.setClip(viewBounds);
-          icon.paintIcon(c, delegate, (int) r.getMinX(), (int) r.getMinY());
-          delegate.setClip(oldClip);
+          if (oldClip != null) {
+            Area viewBounds = new Area(oldClip);
+            viewBounds.subtract(new Area(lens));
+            delegate.setClip(viewBounds);
+            icon.paintIcon(c, delegate, (int) r.getMinX(), (int) r.getMinY());
+            delegate.setClip(oldClip);
+          }
         }
 
       } else {
