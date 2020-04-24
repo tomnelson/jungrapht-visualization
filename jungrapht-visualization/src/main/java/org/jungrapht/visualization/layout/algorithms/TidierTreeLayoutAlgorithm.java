@@ -16,6 +16,7 @@ import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
+import org.jungrapht.visualization.layout.util.Caching;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -589,6 +590,9 @@ public class TidierTreeLayoutAlgorithm<V, E>
 
   @Override
   public void visit(LayoutModel<V> layoutModel) {
+    if (layoutModel instanceof Caching) {
+      ((Caching) layoutModel).clear();
+    }
     this.rootPredicate = this.builderRootPredicate;
     this.layoutModel = layoutModel;
     Graph<V, E> graph = layoutModel.getGraph();
@@ -626,6 +630,14 @@ public class TidierTreeLayoutAlgorithm<V, E>
             .collect(Collectors.toList());
 
     this.roots = ComponentGrouping.groupByComponents(graph, roots);
+
+    if (roots.size() == 0) {
+      Graph<V, ?> tree = TreeLayoutAlgorithm.getSpanningTree(graph);
+      layoutModel.setGraph(tree);
+      visit(layoutModel);
+      layoutModel.setGraph(graph);
+      return;
+    }
 
     TreeView<V, E> treeView =
         builder

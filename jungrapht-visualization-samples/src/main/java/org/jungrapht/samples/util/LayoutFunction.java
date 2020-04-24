@@ -19,6 +19,7 @@ import org.jungrapht.visualization.layout.algorithms.MultiRowTreeLayoutAlgorithm
 import org.jungrapht.visualization.layout.algorithms.RadialEdgeAwareTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.SpringLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.TidierTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFRRepulsion;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutSpringRepulsion;
@@ -76,6 +77,7 @@ public class LayoutFunction<V>
                   .repulsionContractBuilder(BarnesHutSpringRepulsion.barnesHutBuilder())),
           Layout.of("DAG", DAGLayoutAlgorithm.<V, E>builder()),
           Layout.of("Tree", TreeLayoutAlgorithm.<V>builder()),
+          Layout.of("TidierTree", TidierTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()),
           Layout.of("EdgeAwareTree", EdgeAwareTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()),
           Layout.of("Multirow Tree", MultiRowTreeLayoutAlgorithm.<V>builder()),
           Layout.of(

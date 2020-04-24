@@ -220,12 +220,12 @@ class DefaultVisualizationServer<V, E> extends JPanel
 
     renderContext.getMultiLayerTransformer().addChangeListener(this);
 
-    Spatial<V> vertexSpatial = createVertexSpatial(this);
+    Spatial<V> vertexSpatial = createVertexSpatial(visualizationModel, renderContext);
     if (vertexSpatial != null) {
       setVertexSpatial(vertexSpatial);
     }
 
-    Spatial<E> edgeSpatial = createEdgeSpatial(this);
+    Spatial<E> edgeSpatial = createEdgeSpatial(visualizationModel, renderContext);
     if (edgeSpatial != null) {
       setEdgeSpatial(edgeSpatial);
     }
@@ -242,37 +242,10 @@ class DefaultVisualizationServer<V, E> extends JPanel
     return this;
   }
 
-  //  @Override
-  //  public void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
-  //    this.renderContext.setVertexShapeFunction(vertexShapeFunction);
-  //    createSpatialStuctures(this.visualizationModel, this.renderContext);
-  //  }
-  //
-  //  @Override
-  //  public void setEdgeShapeFunction(Function<Context<Graph<V, E>, E>, Shape> edgeShapeFunction) {
-  //    this.renderContext.setEdgeShapeFunction(edgeShapeFunction);
-  //    createSpatialStuctures(this.visualizationModel, this.renderContext);
-  //  }
-
-  private void createSpatialStuctures(VisualizationModel model, RenderContext renderContext) {
-    setVertexSpatial(
-        SpatialRTree.Vertices.builder()
-            .visualizationModel(model)
-            .boundingRectangleCollector(
-                new BoundingRectangleCollector.Vertices<>(renderContext, model))
-            .splitterContext(SplitterContext.of(new RStarLeafSplitter<>(), new RStarSplitter<>()))
-            .reinsert(true)
-            .build());
-
-    setEdgeSpatial(
-        SpatialRTree.Edges.builder()
-            .visualizationModel(model)
-            .boundingRectangleCollector(
-                new BoundingRectangleCollector.Edges<>(renderContext, model))
-            .splitterContext(
-                SplitterContext.of(new QuadraticLeafSplitter(), new QuadraticSplitter()))
-            .reinsert(false)
-            .build());
+  private void createSpatialStuctures(
+      VisualizationModel<V, E> visualizationModel, RenderContext<V, E> renderContext) {
+    setVertexSpatial(createVertexSpatial(visualizationModel, renderContext));
+    setEdgeSpatial(createEdgeSpatial(visualizationModel, renderContext));
   }
 
   @Override
@@ -588,7 +561,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
 
   @Override
   public void renderContextStateChanged(RenderContextStateChange.Event evt) {
-    this.createSpatialStuctures(this.visualizationModel, evt.renderContext);
+    this.createSpatialStuctures(visualizationModel, renderContext);
   }
 
   /**
@@ -832,45 +805,42 @@ class DefaultVisualizationServer<V, E> extends JPanel
     return VisualizationModel.SpatialSupport.NONE;
   }
 
-  private Spatial<V> createVertexSpatial(VisualizationServer<V, E> visualizationServer) {
+  private Spatial<V> createVertexSpatial(
+      VisualizationModel<V, E> visualizationModel, RenderContext<V, E> renderContext) {
     switch (getVertexSpatialSupportPreference()) {
       case RTREE:
         return SpatialRTree.Vertices.builder()
-            .visualizationModel(visualizationServer.getVisualizationModel())
+            .visualizationModel(visualizationModel)
             .boundingRectangleCollector(
-                new BoundingRectangleCollector.Vertices<>(
-                    visualizationServer.getRenderContext(),
-                    visualizationServer.getVisualizationModel()))
+                new BoundingRectangleCollector.Vertices<>(renderContext, visualizationModel))
             .splitterContext(SplitterContext.of(new RStarLeafSplitter<>(), new RStarSplitter<>()))
             .reinsert(true)
             .build();
       case GRID:
-        return new SpatialGrid<>(visualizationServer.getVisualizationModel().getLayoutModel());
+        return new SpatialGrid<>(visualizationModel.getLayoutModel());
       case QUADTREE:
-        return new SpatialQuadTree<>(visualizationServer.getVisualizationModel().getLayoutModel());
+        return new SpatialQuadTree<>(visualizationModel.getLayoutModel());
       case NONE:
       default:
-        return new Spatial.NoOp.Vertex<>(
-            visualizationServer.getVisualizationModel().getLayoutModel());
+        return new Spatial.NoOp.Vertex<>(visualizationModel.getLayoutModel());
     }
   }
 
-  private Spatial<E> createEdgeSpatial(VisualizationServer<V, E> visualizationServer) {
+  private Spatial<E> createEdgeSpatial(
+      VisualizationModel<V, E> visualizationModel, RenderContext<V, E> renderContext) {
     switch (getEdgeSpatialSupportPreference()) {
       case RTREE:
         return SpatialRTree.Edges.builder()
-            .visualizationModel(visualizationServer.getVisualizationModel())
+            .visualizationModel(visualizationModel)
             .boundingRectangleCollector(
-                new BoundingRectangleCollector.Edges<>(
-                    visualizationServer.getRenderContext(),
-                    visualizationServer.getVisualizationModel()))
+                new BoundingRectangleCollector.Edges<>(renderContext, visualizationModel))
             .splitterContext(
                 SplitterContext.of(new QuadraticLeafSplitter(), new QuadraticSplitter()))
             .reinsert(false)
             .build();
       case NONE:
       default:
-        return new Spatial.NoOp.Edge<>(visualizationServer.getVisualizationModel());
+        return new Spatial.NoOp.Edge<>(visualizationModel);
     }
   }
 }

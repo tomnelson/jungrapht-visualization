@@ -18,12 +18,18 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
+import org.jgrapht.alg.interfaces.SpanningTreeAlgorithm;
+import org.jgrapht.alg.spanning.PrimMinimumSpanningTree;
+import org.jgrapht.graph.AsUndirectedGraph;
+import org.jgrapht.graph.DefaultGraphType;
+import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.visualization.DefaultRenderContext;
 import org.jungrapht.visualization.layout.algorithms.util.ComponentGrouping;
 import org.jungrapht.visualization.layout.algorithms.util.DimensionSummaryStatistics;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
+import org.jungrapht.visualization.layout.util.Caching;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -258,6 +264,9 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
    */
   protected Set<V> buildTree(LayoutModel<V> layoutModel) {
     Graph<V, ?> graph = layoutModel.getGraph();
+    if (layoutModel instanceof Caching) {
+      ((Caching) layoutModel).clear();
+    }
 
     this.defaultRootPredicate =
         v -> graph.incomingEdgesOf(v).isEmpty() || TreeLayout.isIsolatedVertex(graph, v);
@@ -284,7 +293,13 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
 
     roots = ComponentGrouping.groupByComponents(graph, roots);
 
-    assert roots.size() > 0;
+    if (roots.size() == 0) {
+      Graph<V, ?> tree = TreeLayoutAlgorithm.getSpanningTree(graph);
+      layoutModel.setGraph(tree);
+      Set<V> treeRoots = buildTree(layoutModel);
+      layoutModel.setGraph(graph);
+      return treeRoots;
+    }
     // the width of the tree under 'roots'. Includes one 'horizontalVertexSpacing' per child vertex
     int overallWidth = calculateWidth(layoutModel, roots, new HashSet<>());
     // add one additional 'horizontalVertexSpacing' for each tree (each root) + 1
@@ -487,5 +502,23 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
   /** @return the center of this layout's area. */
   public Point getCenter(LayoutModel<V> layoutModel) {
     return Point.of(layoutModel.getWidth() / 2, layoutModel.getHeight() / 2);
+  }
+
+  public static <V, E> Graph<V, E> getSpanningTree(Graph<V, E> graph) {
+
+    if (graph.getType().isDirected()) {
+      // make a non-directed version
+      graph = new AsUndirectedGraph(graph);
+    }
+    SpanningTreeAlgorithm<E> prim = new PrimMinimumSpanningTree<>(graph);
+    SpanningTreeAlgorithm.SpanningTree<E> tree = prim.getSpanningTree();
+    Graph<V, E> newGraph = GraphTypeBuilder.<V, E>forGraphType(DefaultGraphType.dag()).buildGraph();
+
+    for (E edge : tree.getEdges()) {
+      newGraph.addVertex(graph.getEdgeSource(edge));
+      newGraph.addVertex(graph.getEdgeTarget(edge));
+      newGraph.addEdge(graph.getEdgeSource(edge), graph.getEdgeTarget(edge), edge);
+    }
+    return newGraph;
   }
 }

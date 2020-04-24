@@ -93,7 +93,7 @@ public class ShowLayouts extends JPanel {
     vv.getRenderContext()
         .setVertexShapeFunction(
             v -> {
-              int size = Math.max(5, 2 * initialGraph.degreeOf(v));
+              int size = Math.max(5, 2 * vv.getVisualizationModel().getGraph().degreeOf(v));
               return new Ellipse2D.Float(-size / 2.f, -size / 2.f, size, size);
             });
 
@@ -111,6 +111,8 @@ public class ShowLayouts extends JPanel {
         e ->
             SwingUtilities.invokeLater(
                 () -> {
+                  vv.getVisualizationModel().getLayoutModel().setPreferredSize(600, 600);
+                  vv.reset();
                   LayoutAlgorithm.Builder<String, ?, ?> builder =
                       layoutFunction.apply((String) jcb.getSelectedItem());
                   LayoutAlgorithm layoutAlgorithm = builder.build();
@@ -163,6 +165,8 @@ public class ShowLayouts extends JPanel {
                   graphIndex = graphChooser.getSelectedIndex();
                   vv.getVertexSpatial().clear();
                   vv.getEdgeSpatial().clear();
+                  vv.getVisualizationModel().getLayoutModel().setSize(600, 600);
+                  vv.reset();
                   vv.getVisualizationModel().setGraph(graphArray[graphIndex]);
                   vv.getRenderContext()
                       .setVertexShapeFunction(

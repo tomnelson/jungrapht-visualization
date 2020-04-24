@@ -106,7 +106,14 @@ public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
             .sorted(Comparator.comparingInt(v -> TreeLayout.vertexIsolationScore(graph, v)))
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
-    if (roots.size() == 0) throw new IllegalArgumentException("graph has no root vertices");
+    if (roots.size() == 0) {
+      Graph<V, ?> tree = TreeLayoutAlgorithm.getSpanningTree(graph);
+      layoutModel.setGraph(tree);
+      Set<V> treeRoots = buildTree(layoutModel);
+      layoutModel.setGraph(graph);
+      return treeRoots;
+    }
+    //    if (roots.size() == 0) throw new IllegalArgumentException("graph has no root vertices");
     // the width of the tree under 'roots'. Includes one 'horizontalVertexSpacing' per child vertex
     int overallWidth = calculateWidth(layoutModel, roots, new HashSet<>());
     int overallHeight = calculateOverallHeight(layoutModel, roots, overallWidth);
