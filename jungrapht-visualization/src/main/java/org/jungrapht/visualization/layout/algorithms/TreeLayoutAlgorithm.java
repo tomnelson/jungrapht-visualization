@@ -311,14 +311,17 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
     log.trace(
         "layoutModel.getHeight() {} overallHeight {}", layoutModel.getHeight(), overallHeight);
     int largerWidth = Math.max(layoutModel.getWidth(), overallWidth);
-    int largerHeight = Math.max(layoutModel.getHeight(), overallHeight);
-    if (expandLayout) {
-      layoutModel.setSize(largerWidth, largerHeight);
-    }
+    int largerHeight = Math.min(layoutModel.getHeight(), overallHeight);
+    int larger = Math.max(largerWidth, largerHeight);
     int x = getInitialPosition(horizontalVertexSpacing, layoutModel.getWidth(), overallWidth);
-
     int y = getInitialPosition(verticalVertexSpacing, layoutModel.getHeight(), overallHeight);
     log.trace("got initial y of {}", y);
+    if (expandLayout) {
+      layoutModel.setSize(larger, larger);
+      adjustToFill(largerWidth, largerHeight);
+      overallHeight = largerHeight;
+      y = verticalVertexSpacing;
+    }
 
     Set<V> seen = new HashSet<>();
     for (V vertex : roots) {
@@ -332,6 +335,46 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
     }
     this.rootPredicate = null;
     return new LinkedHashSet<>(roots);
+  }
+
+  protected void adjustToFill(int largerWidth, int largerHeight) {
+    if (largerWidth > largerHeight) {
+      double expansion = (double) largerWidth / largerHeight;
+      verticalVertexSpacing *= expansion;
+    } else if (largerWidth < largerHeight) {
+      double expansion = (double) largerHeight / largerWidth;
+      horizontalVertexSpacing *= expansion;
+    }
+  }
+
+  protected void expandToFill(LayoutModel<V> layoutModel, int largerWidth, int largerHeight) {
+    // lets make it square
+
+    if (largerWidth > largerHeight) {
+      double expansion = (double) largerWidth / largerHeight;
+      Graph<V, ?> graph = layoutModel.getGraph();
+      graph
+          .vertexSet()
+          .forEach(
+              v -> {
+                Point p = layoutModel.get(v);
+                p = Point.of(p.x, expansion * p.y);
+                layoutModel.set(v, p);
+              });
+      layoutModel.setSize(largerWidth, largerHeight);
+    } else if (largerWidth < largerHeight) {
+      double expansion = (double) largerHeight / largerWidth;
+      Graph<V, ?> graph = layoutModel.getGraph();
+      graph
+          .vertexSet()
+          .forEach(
+              v -> {
+                Point p = layoutModel.get(v);
+                p = Point.of(expansion * p.x, p.y);
+                layoutModel.set(v, p);
+              });
+      layoutModel.setSize(largerWidth, largerHeight);
+    }
   }
 
   /**

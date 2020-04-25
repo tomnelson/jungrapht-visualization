@@ -480,7 +480,11 @@ public class GEMLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorithm<V
       if (!sorted.contains(n)) {
 
         // create new cluster starting at this node
-        Graph<V, E> cluster = GraphTypeBuilder.<V, E>undirected().buildGraph();
+        Graph<V, E> cluster =
+            GraphTypeBuilder.<V, E>undirected()
+                .allowingSelfLoops(true)
+                .allowingMultipleEdges(true)
+                .buildGraph();
         subgraphs.add(cluster);
 
         // add node to new cluster and mark as sorted
