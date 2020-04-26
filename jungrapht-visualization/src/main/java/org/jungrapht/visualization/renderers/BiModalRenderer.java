@@ -386,66 +386,66 @@ public class BiModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeListene
         }
       }
     } else {
-      rendererMap.get(mode).renderVertex(renderContext, visualizationModel, v);
+      rendererMap.get(getMode()).renderVertex(renderContext, visualizationModel, v);
     }
   }
 
   @Override
   public void renderVertexLabel(
       RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {
-    rendererMap.get(mode).renderVertexLabel(renderContext, visualizationModel, v);
+    rendererMap.get(getMode()).renderVertexLabel(renderContext, visualizationModel, v);
   }
 
   @Override
   public void renderEdge(
       RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e) {
-    rendererMap.get(mode).renderEdge(renderContext, visualizationModel, e);
+    rendererMap.get(getMode()).renderEdge(renderContext, visualizationModel, e);
   }
 
   @Override
   public void renderEdgeLabel(
       RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e) {
-    rendererMap.get(mode).renderEdgeLabel(renderContext, visualizationModel, e);
+    rendererMap.get(getMode()).renderEdgeLabel(renderContext, visualizationModel, e);
   }
 
   @Override
   public void setVertexRenderer(Vertex<V, E> r) {
-    rendererMap.get(mode).setVertexRenderer(r);
+    rendererMap.get(getMode()).setVertexRenderer(r);
   }
 
   @Override
   public void setEdgeRenderer(Edge<V, E> r) {
-    rendererMap.get(mode).setEdgeRenderer(r);
+    rendererMap.get(getMode()).setEdgeRenderer(r);
   }
 
   @Override
   public void setVertexLabelRenderer(VertexLabel<V, E> r) {
-    rendererMap.get(mode).setVertexLabelRenderer(r);
+    rendererMap.get(getMode()).setVertexLabelRenderer(r);
   }
 
   @Override
   public void setEdgeLabelRenderer(EdgeLabel<V, E> r) {
-    rendererMap.get(mode).setEdgeLabelRenderer(r);
+    rendererMap.get(getMode()).setEdgeLabelRenderer(r);
   }
 
   @Override
   public VertexLabel<V, E> getVertexLabelRenderer() {
-    return rendererMap.get(mode).getVertexLabelRenderer();
+    return rendererMap.get(getMode()).getVertexLabelRenderer();
   }
 
   @Override
   public Vertex<V, E> getVertexRenderer() {
-    return rendererMap.get(mode).getVertexRenderer();
+    return rendererMap.get(getMode()).getVertexRenderer();
   }
 
   @Override
   public Edge<V, E> getEdgeRenderer() {
-    return rendererMap.get(mode).getEdgeRenderer();
+    return rendererMap.get(getMode()).getEdgeRenderer();
   }
 
   @Override
   public EdgeLabel<V, E> getEdgeLabelRenderer() {
-    return rendererMap.get(mode).getEdgeLabelRenderer();
+    return rendererMap.get(getMode()).getEdgeLabelRenderer();
   }
 
   @Override

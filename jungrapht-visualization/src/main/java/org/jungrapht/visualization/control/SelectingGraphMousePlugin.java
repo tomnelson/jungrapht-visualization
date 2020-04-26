@@ -233,7 +233,6 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
       selectedEdgeState.clear();
       selectedVertexState.clear();
       vv.addPostRenderPaintable(lensPaintable);
-      e.consume();
       return;
 
     } else if (e.getModifiersEx() == (modifiers | selectionModifiers | addToSelectionModifiers)) {
@@ -268,7 +267,9 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     } else {
       down = null;
     }
-    e.consume();
+    if (vertex != null) {
+      e.consume();
+    }
   }
 
   /**

@@ -14,7 +14,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.RenderContext;
-import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnable;
+import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnableWithGraph;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.RenderContextAware;
@@ -258,7 +258,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
               .build();
     } else {
       runnable =
-          EiglspergerRunnable.<V, E>builder()
+          EiglspergerRunnableWithGraph.<V, E>builder()
               .layoutModel(layoutModel)
               .renderContext(renderContext)
               .straightenEdges(straightenEdges)

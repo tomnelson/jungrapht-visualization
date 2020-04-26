@@ -40,10 +40,12 @@ public class TestTreeLayouts {
             });
 
     TreeLayoutAlgorithm<String> treeLayoutAlgorithm =
-            TreeLayoutAlgorithm.<String>builder().expandLayout(false).build();
+        TreeLayoutAlgorithm.<String>builder().expandLayout(false).build();
 
     EdgeAwareTreeLayoutAlgorithm<String, Integer> multiRowEdgeAwareTreeLayoutAlgorithm =
-        EdgeAwareTreeLayoutAlgorithm.<String, Integer>edgeAwareBuilder().expandLayout(false).build();
+        EdgeAwareTreeLayoutAlgorithm.<String, Integer>edgeAwareBuilder()
+            .expandLayout(false)
+            .build();
 
     testEdgeAwareTrees(graph, treeLayoutAlgorithm, multiRowEdgeAwareTreeLayoutAlgorithm);
   }

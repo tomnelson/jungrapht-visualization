@@ -18,12 +18,11 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
 import javax.swing.JComponent;
-import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.selection.MutableSelectedState;
+import org.jungrapht.visualization.util.VertexLocationAnimator;
 
 /**
  * AnimatedPickingGraphMousePlugin supports the picking of one Graph Vertex. When the mouse is
@@ -85,39 +84,8 @@ public class AnimatedPickingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
    */
   @SuppressWarnings("unchecked")
   public void mouseReleased(MouseEvent e) {
-    if (e.getModifiersEx() == modifiers) {
-      final VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
-      Point newCenter = null;
-      if (vertex != null) {
-        // center the selected vertex
-        LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
-        newCenter = layoutModel.apply(vertex);
-      } else {
-        // they did not pick a vertex to center, so
-        // just center the graph
-        Point2D center = vv.getCenter();
-        newCenter = Point.of(center.getX(), center.getY());
-      }
-      Point2D lvc =
-          vv.getRenderContext().getMultiLayerTransformer().inverseTransform(vv.getCenter());
-      final double dx = (lvc.getX() - newCenter.x) / 10;
-      final double dy = (lvc.getY() - newCenter.y) / 10;
-
-      Runnable animator =
-          () -> {
-            for (int i = 0; i < 10; i++) {
-              vv.getRenderContext()
-                  .getMultiLayerTransformer()
-                  .getTransformer(MultiLayerTransformer.Layer.LAYOUT)
-                  .translate(dx, dy);
-              try {
-                Thread.sleep(100);
-              } catch (InterruptedException ex) {
-              }
-            }
-          };
-      Thread thread = new Thread(animator);
-      thread.start();
+    if (e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK) {
+      VertexLocationAnimator.scrollVertexToCenter((VisualizationViewer) e.getSource(), vertex);
     }
   }
 
