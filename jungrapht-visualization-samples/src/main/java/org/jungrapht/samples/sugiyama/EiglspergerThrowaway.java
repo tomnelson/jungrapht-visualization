@@ -13,7 +13,7 @@ import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
-import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithmWithGraph;
+import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,11 +32,12 @@ public class EiglspergerThrowaway extends JFrame {
 
     vv3.getRenderContext().setEdgeLabelFunction(Object::toString);
 
-    EiglspergerLayoutAlgorithmWithGraph<Integer, Integer> layoutAlgorithm3 =
-        EiglspergerLayoutAlgorithmWithGraph.<Integer, Integer>edgeAwareBuilder()
+    EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm3 =
+        EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             //                        .straightenEdges(false)
             .postStraighten(true)
             .threaded(false)
+            .useCompactionGraph(true)
             //            .postStraighten(false)
             .after(vv3::scaleToLayout)
             .build();

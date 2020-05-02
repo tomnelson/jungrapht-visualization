@@ -128,9 +128,6 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
     long transformTime = System.currentTimeMillis();
     log.trace("transform Graph took {}", (transformTime - startTime));
 
-    if (checkStopped()) {
-      return;
-    }
     GreedyCycleRemoval<LV<V>, LE<V, E>> greedyCycleRemoval = new GreedyCycleRemoval<>(svGraph);
     Collection<LE<V, E>> feedbackArcs = greedyCycleRemoval.getFeedbackArcs();
 
@@ -156,20 +153,12 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
       GraphLayers.checkLayers(layers);
     }
 
-    if (checkStopped()) {
-      return;
-    }
-
     Synthetics<V, E> synthetics = new Synthetics<>(svGraph);
     List<LE<V, E>> edges = new ArrayList<>(svGraph.edgeSet());
     LV<V>[][] layersArray = synthetics.createVirtualVerticesAndEdges(edges, layers);
 
     if (log.isTraceEnabled()) {
       GraphLayers.checkLayers(layersArray);
-    }
-
-    if (checkStopped()) {
-      return;
     }
 
     long syntheticsTime = System.currentTimeMillis();

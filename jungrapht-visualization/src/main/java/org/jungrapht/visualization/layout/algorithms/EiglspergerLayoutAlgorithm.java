@@ -1,3 +1,4 @@
+
 package org.jungrapht.visualization.layout.algorithms;
 
 import static org.jungrapht.visualization.VisualizationServer.PREFIX;
@@ -14,6 +15,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnable;
+import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnableWithGraph;
 import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.RenderContextAware;
 import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
@@ -78,7 +80,8 @@ public class EiglspergerLayoutAlgorithm<V, E>
     protected int maxLevelCross = Integer.getInteger(MAX_LEVEL_CROSS, 23);
     protected boolean expandLayout = true;
     boolean useLongestPathLayering =
-        Boolean.parseBoolean(System.getProperty(MINCROSS_USE_LONGEST_PATH, "false"));;
+        Boolean.parseBoolean(System.getProperty(MINCROSS_USE_LONGEST_PATH, "false"));
+    boolean useCompactionGraph = true;
     protected Runnable after = () -> {};
     protected boolean threaded =
         Boolean.parseBoolean(System.getProperty(MINCROSS_THREADED, "true"));
@@ -124,6 +127,11 @@ public class EiglspergerLayoutAlgorithm<V, E>
       return self();
     }
 
+    public B useCompactionGraph(boolean useCompactionGraph) {
+      this.useCompactionGraph = useCompactionGraph;
+      return self();
+    }
+
     public B threaded(boolean threaded) {
       this.threaded = threaded;
       return self();
@@ -161,6 +169,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
   protected RenderContext<V, E> renderContext;
   protected boolean threaded;
   protected boolean useLongestPathLayering;
+  protected boolean useCompactionGraph;
   protected CompletableFuture theFuture;
   protected Runnable after;
 
@@ -176,6 +185,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
         builder.transpose,
         builder.maxLevelCross,
         builder.expandLayout,
+        builder.useCompactionGraph,
         builder.useLongestPathLayering,
         builder.threaded,
         builder.after);
@@ -188,6 +198,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
       boolean transpose,
       int maxLevelCross,
       boolean expandLayout,
+      boolean useCompactionGraph,
       boolean useLongestPathLayering,
       boolean threaded,
       Runnable after) {
@@ -197,6 +208,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
     this.transpose = transpose;
     this.maxLevelCross = maxLevelCross;
     this.expandLayout = expandLayout;
+    this.useCompactionGraph = useCompactionGraph;
     this.useLongestPathLayering = useLongestPathLayering;
     this.after = after;
     this.threaded = threaded;
@@ -216,15 +228,25 @@ public class EiglspergerLayoutAlgorithm<V, E>
   public void visit(LayoutModel<V> layoutModel) {
 
     Runnable runnable =
-        EiglspergerRunnable.<V, E>builder()
-            .layoutModel(layoutModel)
-            .renderContext(renderContext)
-            .straightenEdges(straightenEdges)
-            .transpose(transpose)
-            .postStraighten(postStraighten)
-            .maxLevelCross(maxLevelCross)
-            .useLongestPathLayering(useLongestPathLayering)
-            .build();
+        useCompactionGraph
+            ? EiglspergerRunnableWithGraph.<V, E>builder()
+                .layoutModel(layoutModel)
+                .renderContext(renderContext)
+                .straightenEdges(straightenEdges)
+                .transpose(transpose)
+                .postStraighten(postStraighten)
+                .maxLevelCross(maxLevelCross)
+                .useLongestPathLayering(useLongestPathLayering)
+                .build()
+            : EiglspergerRunnable.<V, E>builder()
+                .layoutModel(layoutModel)
+                .renderContext(renderContext)
+                .straightenEdges(straightenEdges)
+                .transpose(transpose)
+                .postStraighten(postStraighten)
+                .maxLevelCross(maxLevelCross)
+                .useLongestPathLayering(useLongestPathLayering)
+                .build();
     if (threaded) {
 
       theFuture =

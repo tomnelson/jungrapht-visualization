@@ -19,7 +19,7 @@ import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.CircleLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.DAGLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.EdgeAwareTreeLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithmWithGraph;
+import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.GEMLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.HierarchicalMinCrossLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -239,8 +239,8 @@ public class TreeLayoutSelector<V, E> extends JPanel {
             .after(after)
             .build();
 
-    EiglspergerLayoutAlgorithmWithGraph<V, E> eiglspergerLayoutAlgorithm =
-        EiglspergerLayoutAlgorithmWithGraph.<V, E>edgeAwareBuilder()
+    EiglspergerLayoutAlgorithm<V, E> eiglspergerLayoutAlgorithm =
+        EiglspergerLayoutAlgorithm.<V, E>edgeAwareBuilder()
             .straightenEdges(true)
             .postStraighten(true)
             .threaded(false)

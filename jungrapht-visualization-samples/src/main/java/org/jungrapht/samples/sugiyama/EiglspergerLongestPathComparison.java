@@ -14,7 +14,6 @@ import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithmWithGraph;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,8 +31,8 @@ public class EiglspergerLongestPathComparison extends JFrame {
     VisualizationViewer<Integer, Integer> vv1 = configureVisualizationViewer(graph);
     vv1.getRenderContext().setEdgeLabelFunction(Object::toString);
 
-    EiglspergerLayoutAlgorithmWithGraph<Integer, Integer> layoutAlgorithm1 =
-        EiglspergerLayoutAlgorithmWithGraph.<Integer, Integer>edgeAwareBuilder()
+    EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm1 =
+        EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             //                        .straightenEdges(false)
             .postStraighten(true)
             .threaded(false)

@@ -14,6 +14,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.RenderContext;
+import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnable;
 import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnableWithGraph;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
@@ -89,6 +90,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
     protected boolean threaded =
         Boolean.parseBoolean(System.getProperty(MINCROSS_THREADED, "true"));
     protected int eiglspergerThreshold = Integer.getInteger(EIGLSPERGER_THRESHOLD, 500);
+    protected boolean useCompactionGraph = true;
     protected boolean useLongestPathLayering =
         Boolean.parseBoolean(System.getProperty(MINCROSS_USE_LONGEST_PATH, "false"));;
 
@@ -148,6 +150,11 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
       return self();
     }
 
+    public B useCompactionGraph(boolean useCompactionGraph) {
+      this.useCompactionGraph = useCompactionGraph;
+      return self();
+    }
+
     public B useLongestPathLayering(boolean useLongestPathLayering) {
       this.useLongestPathLayering = useLongestPathLayering;
       return self();
@@ -181,6 +188,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
   protected boolean expandLayout;
   protected RenderContext<V, E> renderContext;
   protected boolean threaded;
+  protected boolean useCompactionGraph;
   protected boolean useLongestPathLayering;
   protected CompletableFuture theFuture;
   protected Runnable after;
@@ -199,6 +207,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
         builder.transposeLimit,
         builder.maxLevelCross,
         builder.expandLayout,
+        builder.useCompactionGraph,
         builder.useLongestPathLayering,
         builder.threaded,
         builder.after);
@@ -213,6 +222,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
       int transposeLimit,
       int maxLevelCross,
       boolean expandLayout,
+      boolean useCompactionGraph,
       boolean useLongestPathLayering,
       boolean threaded,
       Runnable after) {
@@ -224,6 +234,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
     this.transposeLimit = transposeLimit;
     this.maxLevelCross = maxLevelCross;
     this.expandLayout = expandLayout;
+    this.useCompactionGraph = useCompactionGraph;
     this.useLongestPathLayering = useLongestPathLayering;
     this.threaded = threaded;
     this.after = after;
@@ -258,14 +269,23 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
               .build();
     } else {
       runnable =
-          EiglspergerRunnableWithGraph.<V, E>builder()
-              .layoutModel(layoutModel)
-              .renderContext(renderContext)
-              .straightenEdges(straightenEdges)
-              .postStraighten(postStraighten)
-              .maxLevelCross(maxLevelCross)
-              .useLongestPathLayering(useLongestPathLayering)
-              .build();
+          useCompactionGraph
+              ? EiglspergerRunnableWithGraph.<V, E>builder()
+                  .layoutModel(layoutModel)
+                  .renderContext(renderContext)
+                  .straightenEdges(straightenEdges)
+                  .postStraighten(postStraighten)
+                  .maxLevelCross(maxLevelCross)
+                  .useLongestPathLayering(useLongestPathLayering)
+                  .build()
+              : EiglspergerRunnable.<V, E>builder()
+                  .layoutModel(layoutModel)
+                  .renderContext(renderContext)
+                  .straightenEdges(straightenEdges)
+                  .postStraighten(postStraighten)
+                  .maxLevelCross(maxLevelCross)
+                  .useLongestPathLayering(useLongestPathLayering)
+                  .build();
     }
     if (threaded) {
 

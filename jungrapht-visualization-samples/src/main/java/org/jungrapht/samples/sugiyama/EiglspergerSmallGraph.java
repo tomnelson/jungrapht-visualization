@@ -38,6 +38,7 @@ public class EiglspergerSmallGraph extends JFrame {
             //                        .straightenEdges(false)
             .postStraighten(true)
             .threaded(false)
+            .useCompactionGraph(false)
             .useLongestPathLayering(false)
             .after(vv3::scaleToLayout)
             .build();

@@ -71,6 +71,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     protected boolean postStraighten;
     protected boolean transpose;
     protected int maxLevelCross;
+    protected boolean minimizeEdgeLength = true;
     protected boolean useLongestPathLayering;
 
     /** {@inheritDoc} */
@@ -109,6 +110,11 @@ public class EiglspergerRunnable<V, E> implements Runnable {
       return self();
     }
 
+    public B minimzeEdgeLength(boolean minimizeEdgeLength) {
+      this.minimizeEdgeLength = minimizeEdgeLength;
+      return self();
+    }
+
     public B useLongestPathLayering(boolean useLongestPathLayering) {
       this.useLongestPathLayering = useLongestPathLayering;
       return self();
@@ -142,6 +148,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
   protected boolean postStraighten;
   protected boolean transpose;
   protected int maxLevelCross;
+  protected boolean minimizeEdgeLength;
   protected boolean useLongestPathLayering;
   protected Map<LV<V>, VertexMetadata<V>> vertexMetadataMap = new HashMap<>();
 
@@ -157,6 +164,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
         builder.postStraighten,
         builder.transpose,
         builder.maxLevelCross,
+        builder.minimizeEdgeLength,
         builder.useLongestPathLayering);
   }
 
@@ -167,6 +175,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
       boolean postStraighten,
       boolean transpose,
       int maxLevelCross,
+      boolean minimizeEdgeLength,
       boolean useLongestPathLayering) {
     this.layoutModel = layoutModel;
     this.renderContext = renderContext;
@@ -174,18 +183,8 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     this.postStraighten = postStraighten;
     this.transpose = transpose;
     this.maxLevelCross = maxLevelCross;
+    this.minimizeEdgeLength = minimizeEdgeLength;
     this.useLongestPathLayering = useLongestPathLayering;
-  }
-
-  protected boolean checkStopped() {
-    try {
-      Thread.sleep(1);
-      if (stopit) {
-        return true;
-      }
-    } catch (InterruptedException ex) {
-    }
-    return false;
   }
 
   @Override
@@ -198,9 +197,6 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     long transformTime = System.currentTimeMillis();
     log.trace("transform Graph took {}", (transformTime - startTime));
 
-    if (checkStopped()) {
-      return;
-    }
     GreedyCycleRemoval<LV<V>, LE<V, E>> greedyCycleRemoval = new GreedyCycleRemoval<>(svGraph);
     Collection<LE<V, E>> feedbackArcs = greedyCycleRemoval.getFeedbackArcs();
 
@@ -220,15 +216,13 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     } else {
       layers = GraphLayers.assign(svGraph);
     }
-    //    GraphLayers.minimizeEdgeLength(svGraph, layers);
+    if (minimizeEdgeLength) {
+      GraphLayers.minimizeEdgeLength(svGraph, layers);
+    }
     long assignLayersTime = System.currentTimeMillis();
     log.trace("assign layers took {} ", (assignLayersTime - cycles));
     if (log.isTraceEnabled()) {
       GraphLayers.checkLayers(layers);
-    }
-
-    if (checkStopped()) {
-      return;
     }
 
     Synthetics<V, E> synthetics = new Synthetics<>(svGraph);
@@ -237,10 +231,6 @@ public class EiglspergerRunnable<V, E> implements Runnable {
 
     if (log.isTraceEnabled()) {
       GraphLayers.checkLayers(layersArray);
-    }
-
-    if (checkStopped()) {
-      return;
     }
 
     long syntheticsTime = System.currentTimeMillis();
@@ -253,18 +243,12 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     stepsBackward = new EiglspergerStepsBackward<>(svGraph, layersArray, transpose);
 
     int bestCrossCount = Integer.MAX_VALUE;
-    LV<V>[][] best = null;
-    VertexMetadata<V>[][] vertexMetadata = null;
-    Graph<LV<V>, Integer> bestCompactionGraph = null;
     for (int i = 0; i < maxLevelCross; i++) {
       if (i % 2 == 0) {
         int sweepCrossCount = stepsForward.sweep(layersArray);
-        Graph<LV<V>, Integer> compactionGraph = stepsForward.compactionGraph;
         if (sweepCrossCount < bestCrossCount) {
           bestCrossCount = sweepCrossCount;
           vertexMetadataMap = save(layersArray);
-          best = copy(layersArray);
-          bestCompactionGraph = copy(compactionGraph);
         } else {
           if (log.isTraceEnabled()) {
             log.trace("best:{}", layersArray);
@@ -273,12 +257,9 @@ public class EiglspergerRunnable<V, E> implements Runnable {
         }
       } else {
         int sweepCrossCount = stepsBackward.sweep(layersArray);
-        Graph<LV<V>, Integer> compactionGraph = stepsForward.compactionGraph;
         if (sweepCrossCount < bestCrossCount) {
           bestCrossCount = sweepCrossCount;
           vertexMetadataMap = save(layersArray);
-          best = copy(layersArray);
-          bestCompactionGraph = copy(compactionGraph);
         } else {
           if (log.isTraceEnabled()) {
             log.trace("best:{}", layersArray);
@@ -292,16 +273,6 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     restore(layersArray, vertexMetadataMap);
     Arrays.stream(layersArray)
         .forEach(layer -> Arrays.sort(layer, Comparator.comparingInt(LV::getIndex)));
-
-    for (int i = 0; i < best.length; i++) {
-      LV<V>[] layer = best[i];
-      for (int j = 0; j < layer.length; j++) {
-        LV<V> v = layer[j];
-        if (v.getVertex() != layersArray[i][j].getVertex()) {
-          log.error("not equal");
-        }
-      }
-    }
 
     // figure out the avg size of rendered vertex
     java.awt.Rectangle avgVertexBounds =

@@ -127,9 +127,6 @@ public class TestSugiyamaRunnable<V, E> extends SugiyamaRunnable<V, E> implement
     long transformTime = System.currentTimeMillis();
     log.trace("transform Graph took {}", (transformTime - startTime));
 
-    if (checkStopped()) {
-      return;
-    }
     GreedyCycleRemoval<LV<V>, LE<V, E>> greedyCycleRemoval = new GreedyCycleRemoval(svGraph);
     Collection<LE<V, E>> feedbackArcs = greedyCycleRemoval.getFeedbackArcs();
 
@@ -154,18 +151,10 @@ public class TestSugiyamaRunnable<V, E> extends SugiyamaRunnable<V, E> implement
 
     GraphLayers.checkLayers(layers);
 
-    if (checkStopped()) {
-      return;
-    }
-
     Synthetics<V, E> synthetics = new Synthetics<>(svGraph);
     List<LE<V, E>> edges = new ArrayList<>(svGraph.edgeSet());
     LV<V>[][] layersArray = synthetics.createVirtualVerticesAndEdges(edges, layers);
     GraphLayers.checkLayers(layersArray);
-
-    if (checkStopped()) {
-      return;
-    }
 
     //  save off a map of edge lists keyed on the target vertex rank
     Map<Integer, List<LE<V, E>>> edgesKeyedOnTarget = new LinkedHashMap<>();
@@ -217,9 +206,6 @@ public class TestSugiyamaRunnable<V, E> extends SugiyamaRunnable<V, E> implement
         vertexMetadataMap = save(layersArray);
         GraphLayers.checkLayers(layersArray);
         lowestCrossCount = allLevelCrossCount;
-      }
-      if (checkStopped()) {
-        return;
       }
     }
     log.trace("lowest cross count: {}", lowestCrossCount);
