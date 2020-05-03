@@ -5,7 +5,6 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.layout.algorithms.SpringLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutSpringRepulsion;
@@ -40,7 +39,7 @@ public class PerformanceGraph {
             .graphMouse(graphMouse)
             .build();
 
-    vv.scaleToLayout(new CrossoverScalingControl());
+    vv.scaleToLayout();
 
     f.getContentPane().add(vv.getComponent());
     f.setSize(viewSize);

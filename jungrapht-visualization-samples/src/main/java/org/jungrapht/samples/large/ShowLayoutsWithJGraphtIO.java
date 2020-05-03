@@ -25,11 +25,9 @@ import org.jungrapht.samples.util.LensControlHelper;
 import org.jungrapht.samples.util.SpanningTreeAdapter;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.LensMagnificationGraphMousePlugin;
 import org.jungrapht.visualization.control.ModalLensGraphMouse;
-import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
@@ -106,8 +104,7 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
                 + ". with neighbors:"
                 + Graphs.neighborListOf(vv.getVisualizationModel().getGraph(), vertex));
 
-    final ScalingControl scaler = new CrossoverScalingControl();
-    vv.scaleToLayout(scaler);
+    vv.scaleToLayout();
 
     JComboBox modeBox = graphMouse.getModeComboBox();
     modeBox.addItemListener(

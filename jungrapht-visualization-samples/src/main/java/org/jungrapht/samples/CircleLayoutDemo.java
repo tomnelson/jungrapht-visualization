@@ -10,8 +10,6 @@ import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.samples.util.LayoutHelper;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.CrossoverScalingControl;
-import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
@@ -49,8 +47,7 @@ public class CircleLayoutDemo extends JPanel {
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
 
-    final ScalingControl scaler = new CrossoverScalingControl();
-    vv.scaleToLayout(scaler);
+    vv.scaleToLayout();
 
     final JRadioButton animateLayoutTransition = new JRadioButton("Animate Layout Transition");
 

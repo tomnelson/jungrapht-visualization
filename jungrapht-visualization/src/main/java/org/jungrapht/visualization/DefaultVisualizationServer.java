@@ -398,17 +398,33 @@ class DefaultVisualizationServer<V, E> extends JPanel
     return renderer;
   }
 
+  @Override
   public void scaleToLayout() {
     SwingUtilities.invokeLater(() -> scaleToLayout(new CrossoverScalingControl()));
   }
 
+  @Override
+  public void scaleToLayout(boolean resizeToPoints) {
+    SwingUtilities.invokeLater(() -> scaleToLayout(new CrossoverScalingControl(), resizeToPoints));
+  }
+
+  @Override
   public void scaleToLayout(ScalingControl scaler) {
+    this.scaleToLayout(scaler, false);
+  }
+
+  @Override
+  public void scaleToLayout(ScalingControl scaler, boolean resizeToPoints) {
     getRenderContext().getMultiLayerTransformer().setToIdentity();
     Dimension vd = getPreferredSize();
     log.trace("pref vd {}", vd);
     if (this.isShowing()) {
       vd = getSize();
       log.trace("actual vd {}", vd);
+    }
+    if (resizeToPoints) {
+      LayoutModel<V> layoutModel = visualizationModel.getLayoutModel();
+      layoutModel.resizeToSurroundingRectangle();
     }
     Dimension ld = visualizationModel.getLayoutSize();
     if (!vd.equals(ld)) {

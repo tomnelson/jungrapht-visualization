@@ -237,6 +237,11 @@ public class AggregateLayoutModel<V> implements LayoutModel<V> {
   }
 
   @Override
+  public void resizeToSurroundingRectangle() {
+    delegate.resizeToSurroundingRectangle();
+  }
+
+  @Override
   public LayoutStateChange.Support getLayoutStateChangeSupport() {
     return delegate.getLayoutStateChangeSupport();
   }

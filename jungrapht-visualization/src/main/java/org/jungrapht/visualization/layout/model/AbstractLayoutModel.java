@@ -400,6 +400,41 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
   public void layoutVertexPositionChanged(LayoutVertexPositionChange.GraphEvent<V> evt) {}
 
   @Override
+  public void resizeToSurroundingRectangle() {
+    int maxX = Integer.MIN_VALUE;
+    int maxY = Integer.MIN_VALUE;
+    int minX = Integer.MAX_VALUE;
+    int minY = Integer.MAX_VALUE;
+    for (Point p : getLocations().values()) {
+      if (p.x > maxX) maxX = (int) p.x;
+      if (p.x < minX) minX = (int) p.x;
+      if (p.y > maxY) maxY = (int) p.y;
+      if (p.y < minY) minY = (int) p.y;
+    }
+    int dx = 0;
+    int dy = 0;
+    minX -= 50;
+    minY -= 50;
+    if (minX != 0) {
+      dx = -minX;
+    }
+    if (minY != 0) {
+      dy = -minY;
+    }
+    maxX += 50;
+    maxY += 50;
+    if (dx != 0 || dy != 0) {
+      for (V v : getGraph().vertexSet()) {
+        Point vp = apply(v).add(dx, dy);
+        set(v, vp);
+      }
+    }
+    int newWidth = maxX + dx;
+    int newHeight = maxY + dy;
+    setSize(newWidth, newHeight);
+  }
+
+  @Override
   public String toString() {
     return "AbstractLayoutModel{"
         + "hashCode="

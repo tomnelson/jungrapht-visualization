@@ -23,7 +23,6 @@ import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
@@ -136,8 +135,8 @@ public class SatelliteViewDemo extends JPanel {
         .getRenderContext()
         .setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
 
-    mainVisualizationViewer.scaleToLayout(new CrossoverScalingControl());
-    satelliteVisualizationViewer.scaleToLayout(new CrossoverScalingControl());
+    mainVisualizationViewer.scaleToLayout();
+    satelliteVisualizationViewer.scaleToLayout();
 
     viewGrid = new ViewGrid(satelliteVisualizationViewer, mainVisualizationViewer);
 

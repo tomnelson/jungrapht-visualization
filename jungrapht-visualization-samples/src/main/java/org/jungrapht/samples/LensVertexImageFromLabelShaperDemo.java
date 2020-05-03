@@ -175,8 +175,7 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
       lightweightVertexRenderer.setVertexShapeFunction(n -> new Ellipse2D.Double(-10, -10, 20, 20));
     }
 
-    final ScalingControl scaler = new CrossoverScalingControl();
-    vv.scaleToLayout(scaler);
+    vv.scaleToLayout();
 
     Box controls = Box.createHorizontalBox();
     controls.add(ControlHelpers.getZoomControls("Zoom", vv));

@@ -106,8 +106,7 @@ public class InternalFrameSatelliteViewDemo {
             new PickableElementPaintFunction<>(
                 satellite.getSelectedVertexState(), Color.red, Color.yellow));
 
-    ScalingControl satelliteScaler = new CrossoverScalingControl();
-    satellite.scaleToLayout(satelliteScaler);
+    satellite.scaleToLayout();
 
     JFrame frame = new JFrame();
     desktop = new JDesktopPane();

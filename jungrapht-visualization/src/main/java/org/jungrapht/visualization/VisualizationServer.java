@@ -306,4 +306,14 @@ public interface VisualizationServer<V, E>
 
   /** scale the graph visualization to fit within the view window */
   void scaleToLayout();
+
+  /**
+   * scale the graph layout to fit withon the view window
+   *
+   * @param scaler the {@link ScalingControl} to change the view scale
+   */
+  void scaleToLayout(ScalingControl scaler, boolean resizeToPoints);
+
+  /** scale the graph visualization to fit within the view window */
+  void scaleToLayout(boolean resizeToPoints);
 }

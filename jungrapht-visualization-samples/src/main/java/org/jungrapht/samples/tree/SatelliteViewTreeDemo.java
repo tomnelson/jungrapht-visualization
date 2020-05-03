@@ -31,7 +31,6 @@ import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.annotations.MultiSelectedVertexPaintable;
 import org.jungrapht.visualization.annotations.SingleSelectedVertexPaintable;
-import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultSatelliteGraphMouse;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
@@ -166,8 +165,8 @@ public class SatelliteViewTreeDemo extends JPanel {
     mainVisualizationViewer.getRenderContext().setEdgeShapeFunction(e -> EdgeShape.LINE);
     satelliteVisualizationViewer.getRenderContext().setEdgeShapeFunction(e -> EdgeShape.LINE);
 
-    mainVisualizationViewer.scaleToLayout(new CrossoverScalingControl());
-    satelliteVisualizationViewer.scaleToLayout(new CrossoverScalingControl());
+    mainVisualizationViewer.scaleToLayout();
+    satelliteVisualizationViewer.scaleToLayout();
 
     viewGrid = new ViewGrid(satelliteVisualizationViewer, mainVisualizationViewer);
 

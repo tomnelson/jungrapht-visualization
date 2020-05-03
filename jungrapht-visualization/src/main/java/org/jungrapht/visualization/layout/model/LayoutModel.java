@@ -188,4 +188,6 @@ public interface LayoutModel<V>
   boolean isLocked();
 
   void setInitializer(Function<V, Point> initializer);
+
+  void resizeToSurroundingRectangle();
 }
