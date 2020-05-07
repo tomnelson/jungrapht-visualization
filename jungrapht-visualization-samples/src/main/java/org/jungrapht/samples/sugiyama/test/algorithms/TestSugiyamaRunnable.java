@@ -141,10 +141,16 @@ public class TestSugiyamaRunnable<V, E> extends SugiyamaRunnable<V, E> implement
     log.trace("remove cycles took {}", (cycles - transformTime));
 
     List<List<LV<V>>> layers;
-    if (useLongestPathLayering) {
-      layers = GraphLayers.longestPath(svGraph);
-    } else {
-      layers = GraphLayers.assign(svGraph);
+    switch (layering) {
+      case LONGEST_PATH:
+        layers = GraphLayers.longestPath(svGraph);
+        break;
+      case COFFMAN_GRAHAM:
+        layers = GraphLayers.coffmanGraham(svGraph, 10);
+        break;
+      case NORMAL:
+      default:
+        layers = GraphLayers.assign(svGraph);
     }
     long assignLayersTime = System.currentTimeMillis();
     log.trace("assign layers took {} ", (assignLayersTime - cycles));

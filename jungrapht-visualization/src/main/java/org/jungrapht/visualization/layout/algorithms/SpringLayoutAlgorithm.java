@@ -8,7 +8,8 @@
 package org.jungrapht.visualization.layout.algorithms;
 
 import java.util.ConcurrentModificationException;
-import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.repulsion.StandardSpringRepulsion;
@@ -37,7 +38,7 @@ public class SpringLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorith
   protected double force_multiplier = 1.0 / 3.0;
   boolean done = false;
 
-  protected HashMap<V, SpringVertexData> springVertexData = new HashMap<>();
+  protected Map<V, SpringVertexData> springVertexData = new ConcurrentHashMap<>();
 
   protected StandardSpringRepulsion.Builder repulsionContractBuilder;
   protected StandardSpringRepulsion repulsionContract;

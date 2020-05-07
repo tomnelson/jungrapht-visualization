@@ -108,7 +108,7 @@ public class TestEiglspergerLayoutAlgorithm<V, E> extends EiglspergerLayoutAlgor
             .transpose(transpose)
             .postStraighten(postStraighten)
             .maxLevelCross(maxLevelCross)
-            .useLongestPathLayering(useLongestPathLayering)
+            .layering(layering)
             .doUpLeft(doUpLeft)
             .doUpRight(doUpRight)
             .doDownLeft(doDownLeft)

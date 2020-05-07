@@ -21,8 +21,9 @@ public class TestNetworkSimplexThree {
 
     buildGraphAndSpanningTree();
 
-    NetworkSimplex<String, Integer> networkSimplex = new NetworkSimplex<>(dag, spanningTree);
-    Graph<String, Integer> best = networkSimplex.getTheBestSpanningTree();
+    NetworkSimplexDevelopment<String, Integer> networkSimplexDevelopment =
+        new NetworkSimplexDevelopment<>(dag, spanningTree);
+    Graph<String, Integer> best = networkSimplexDevelopment.getTheBestSpanningTree();
     log.info("bestSpanningTree: {}", best);
   }
 
@@ -47,6 +48,8 @@ public class TestNetworkSimplexThree {
     dag.addEdge("1", "3");
     dag.addEdge("1", "4");
 
-    spanningTree = NetworkSimplex.getSpanningTree(dag);
+    log.info("dag: {}", dag);
+    spanningTree = NetworkSimplexDevelopment.getSpanningTree(dag);
+    log.info("spanningTree: {}", spanningTree);
   }
 }

@@ -27,10 +27,12 @@ import org.jungrapht.visualization.layout.algorithms.sugiyama.GraphLayers;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.GreedyCycleRemoval;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.TransformedGraphSupplier;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Unaligned;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.VertexMetadata;
 import org.jungrapht.visualization.layout.algorithms.util.Attributed;
+import org.jungrapht.visualization.layout.algorithms.util.NetworkSimplex;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.slf4j.Logger;
@@ -72,7 +74,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     protected boolean transpose;
     protected int maxLevelCross;
     protected boolean minimizeEdgeLength = true;
-    protected boolean useLongestPathLayering;
+    protected Layering layering = Layering.LONGEST_PATH;
 
     /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
@@ -115,8 +117,8 @@ public class EiglspergerRunnable<V, E> implements Runnable {
       return self();
     }
 
-    public B useLongestPathLayering(boolean useLongestPathLayering) {
-      this.useLongestPathLayering = useLongestPathLayering;
+    public B layering(Layering layering) {
+      this.layering = layering;
       return self();
     }
 
@@ -149,7 +151,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
   protected boolean transpose;
   protected int maxLevelCross;
   protected boolean minimizeEdgeLength;
-  protected boolean useLongestPathLayering;
+  protected Layering layering = Layering.LONGEST_PATH;
   protected Map<LV<V>, VertexMetadata<V>> vertexMetadataMap = new HashMap<>();
 
   protected EiglspergerStepsForward<V, E> stepsForward;
@@ -165,7 +167,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
         builder.transpose,
         builder.maxLevelCross,
         builder.minimizeEdgeLength,
-        builder.useLongestPathLayering);
+        builder.layering);
   }
 
   protected EiglspergerRunnable(
@@ -176,7 +178,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
       boolean transpose,
       int maxLevelCross,
       boolean minimizeEdgeLength,
-      boolean useLongestPathLayering) {
+      Layering layering) {
     this.layoutModel = layoutModel;
     this.renderContext = renderContext;
     this.straightenEdges = straightenEdges;
@@ -184,7 +186,10 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     this.transpose = transpose;
     this.maxLevelCross = maxLevelCross;
     this.minimizeEdgeLength = minimizeEdgeLength;
-    this.useLongestPathLayering = useLongestPathLayering;
+    if (layering == null) {
+      layering = Layering.LONGEST_PATH;
+    }
+    this.layering = layering;
   }
 
   @Override
@@ -211,10 +216,21 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     log.trace("remove cycles took {}", (cycles - transformTime));
 
     List<List<LV<V>>> layers;
-    if (useLongestPathLayering) {
-      layers = GraphLayers.longestPath(svGraph);
-    } else {
-      layers = GraphLayers.assign(svGraph);
+    switch (layering) {
+      case NETWORK_SIMPLEX:
+        NetworkSimplex<V, E> ns = NetworkSimplex.builder(svGraph).build();
+        ns.run();
+        layers = ns.getLayerList();
+        break;
+      case LONGEST_PATH:
+        layers = GraphLayers.longestPath(svGraph);
+        break;
+      case COFFMAN_GRAHAM:
+        layers = GraphLayers.coffmanGraham(svGraph, 10);
+        break;
+      case NORMAL:
+      default:
+        layers = GraphLayers.assign(svGraph);
     }
     if (minimizeEdgeLength) {
       GraphLayers.minimizeEdgeLength(svGraph, layers);

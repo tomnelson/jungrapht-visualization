@@ -23,15 +23,16 @@ public class TestNetworkSimplexFour {
 
     buildGraphAndSpanningTree();
 
-    NetworkSimplex<String, Integer> networkSimplex = new NetworkSimplex<>(dag, spanningTree);
+    NetworkSimplexDevelopment<String, Integer> networkSimplexDevelopment =
+        new NetworkSimplexDevelopment<>(dag, spanningTree);
 
     Map<Integer, Integer> expectedFirstCutValueMap =
         Map.of(2, 3, 3, 3, 4, 0, 5, 0, 6, 3, 7, -1, 8, 3);
     // preliminary cut value map. check to make sure it matches values in the paper
-    Map<Integer, Integer> cutValueMap = networkSimplex.getEdgeCutValues(spanningTree);
+    Map<Integer, Integer> cutValueMap = networkSimplexDevelopment.getEdgeCutValues(spanningTree);
     Assert.assertEquals(expectedFirstCutValueMap, cutValueMap);
-    Graph<String, Integer> best = networkSimplex.getTheBestSpanningTree();
-    cutValueMap = networkSimplex.getEdgeCutValues(spanningTree);
+    Graph<String, Integer> best = networkSimplexDevelopment.getTheBestSpanningTree();
+    cutValueMap = networkSimplexDevelopment.getEdgeCutValues(spanningTree);
 
     Map<Integer, Integer> expectedSecondCutValueMap =
         Map.of(0, 1, 2, 2, 3, 2, 4, 1, 5, 0, 6, 2, 8, 2);

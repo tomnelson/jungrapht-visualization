@@ -22,8 +22,9 @@ public class TestNetworkSimplexSix {
 
     buildGraphAndSpanningTree();
 
-    NetworkSimplex<String, Integer> networkSimplex = new NetworkSimplex<>(dag);
-    Graph<String, Integer> best = networkSimplex.getTheBestSpanningTree();
+    NetworkSimplexDevelopment<String, Integer> networkSimplexDevelopment =
+        new NetworkSimplexDevelopment<>(dag);
+    Graph<String, Integer> best = networkSimplexDevelopment.getTheBestSpanningTree();
     log.info("bestSpanningTree: {}", best);
   }
 

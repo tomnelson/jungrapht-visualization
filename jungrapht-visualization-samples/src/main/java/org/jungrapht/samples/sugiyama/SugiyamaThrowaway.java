@@ -14,6 +14,7 @@ import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.SugiyamaLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +35,7 @@ public class SugiyamaThrowaway extends JFrame {
     SugiyamaLayoutAlgorithm<Integer, Integer> layoutAlgorithm3 =
         SugiyamaLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .threaded(false)
-            .useLongestPathLayering(false)
+            .layering(Layering.NORMAL)
             .after(vv3::scaleToLayout)
             .build();
     layoutAlgorithm3.setRenderContext(vv3.getRenderContext());

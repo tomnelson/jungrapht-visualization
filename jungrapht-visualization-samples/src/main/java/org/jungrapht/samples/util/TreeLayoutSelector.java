@@ -34,6 +34,7 @@ import org.jungrapht.visualization.layout.algorithms.TidierRadialTreeLayoutAlgor
 import org.jungrapht.visualization.layout.algorithms.TidierTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TreeLayout;
 import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.layout.algorithms.util.RenderContextAware;
 import org.jungrapht.visualization.util.Context;
@@ -229,6 +230,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
         HierarchicalMinCrossLayoutAlgorithm.<V, E>edgeAwareBuilder()
             .straightenEdges(true)
             .postStraighten(true)
+            .layering(Layering.NETWORK_SIMPLEX)
             .after(after)
             .build();
 

@@ -72,7 +72,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     protected boolean transpose;
     protected int transposeLimit;
     protected int maxLevelCross;
-    boolean useLongestPathLayering;
+    protected Layering layering;
 
     /** {@inheritDoc} */
     protected B self() {
@@ -150,8 +150,8 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       return self();
     }
 
-    public B useLongestPathLayering(boolean useLongestPathLayering) {
-      this.useLongestPathLayering = useLongestPathLayering;
+    public B layering(Layering layering) {
+      this.layering = layering;
       return self();
     }
 
@@ -184,7 +184,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
   protected boolean transpose;
   protected int transposeLimit;
   protected int maxLevelCross;
-  protected boolean useLongestPathLayering;
+  protected Layering layering;
   protected Map<LV<V>, VertexMetadata<V>> vertexMetadataMap = new HashMap<>();
 
   protected SugiyamaRunnable(Builder<V, E, ?, ?> builder) {
@@ -200,7 +200,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
         builder.transpose,
         builder.transposeLimit,
         builder.maxLevelCross,
-        builder.useLongestPathLayering);
+        builder.layering);
   }
 
   private SugiyamaRunnable(
@@ -215,7 +215,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       boolean transpose,
       int transposeLimit,
       int maxLevelCross,
-      boolean useLongestPathLayering) {
+      Layering layering) {
     this.layoutModel = layoutModel;
     this.renderContext = renderContext;
     this.vertexComparator = vertexComparator;
@@ -227,7 +227,10 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     this.transpose = transpose;
     this.transposeLimit = transposeLimit;
     this.maxLevelCross = maxLevelCross;
-    this.useLongestPathLayering = useLongestPathLayering;
+    if (layering == null) {
+      layering = Layering.LONGEST_PATH;
+    }
+    this.layering = layering;
   }
 
   @Override
@@ -254,10 +257,16 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     log.trace("remove cycles took {}", (cycles - transformTime));
 
     List<List<LV<V>>> layers;
-    if (useLongestPathLayering) {
-      layers = GraphLayers.longestPath(svGraph);
-    } else {
-      layers = GraphLayers.assign(svGraph);
+    switch (layering) {
+      case LONGEST_PATH:
+        layers = GraphLayers.longestPath(svGraph);
+        break;
+      case COFFMAN_GRAHAM:
+        layers = GraphLayers.coffmanGraham(svGraph, 10);
+        break;
+      case NORMAL:
+      default:
+        layers = GraphLayers.assign(svGraph);
     }
     long assignLayersTime = System.currentTimeMillis();
     log.trace("assign layers took {} ", (assignLayersTime - cycles));

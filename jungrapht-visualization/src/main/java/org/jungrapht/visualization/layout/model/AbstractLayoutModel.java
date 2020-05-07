@@ -411,18 +411,22 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
       if (p.y > maxY) maxY = (int) p.y;
       if (p.y < minY) minY = (int) p.y;
     }
+    int vertexSpaceWidth = maxX - minX;
+    int vertexSpaceHeight = maxY - minY;
+    int paddingX = vertexSpaceWidth / 10;
+    int paddingY = vertexSpaceHeight / 10;
     int dx = 0;
     int dy = 0;
-    minX -= 50;
-    minY -= 50;
+    minX -= paddingX;
+    minY -= paddingY;
     if (minX != 0) {
       dx = -minX;
     }
     if (minY != 0) {
       dy = -minY;
     }
-    maxX += 50;
-    maxY += 50;
+    maxX += paddingX;
+    maxY += paddingY;
     if (dx != 0 || dy != 0) {
       for (V v : getGraph().vertexSet()) {
         Point vp = apply(v).add(dx, dy);

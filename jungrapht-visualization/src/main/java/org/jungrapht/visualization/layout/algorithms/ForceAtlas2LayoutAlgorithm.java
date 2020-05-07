@@ -4,6 +4,7 @@ import java.awt.*;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.repulsion.StandardFA2Repulsion;
@@ -304,7 +305,7 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
       log.trace("visiting " + layoutModel);
     }
 
-    frVertexData = new HashMap<>(layoutModel.getGraph().vertexSet().size());
+    frVertexData = new ConcurrentHashMap<>(layoutModel.getGraph().vertexSet().size());
     for (V vertex : layoutModel.getGraph().vertexSet()) {
       frVertexData.put(vertex, Point.ORIGIN);
     }

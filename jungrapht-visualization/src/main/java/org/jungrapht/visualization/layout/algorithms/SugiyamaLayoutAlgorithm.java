@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import org.jungrapht.visualization.RenderContext;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.RenderContextAware;
@@ -77,8 +78,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
     protected int transposeLimit = Integer.getInteger(TRANSPOSE_LIMIT, 6);
     protected int maxLevelCross = Integer.getInteger(MAX_LEVEL_CROSS, 23);
     protected boolean expandLayout = true;
-    protected boolean useLongestPathLayering =
-        Boolean.parseBoolean(System.getProperty(MINCROSS_USE_LONGEST_PATH, "false"));;
+    protected Layering layering;
     protected Runnable after = () -> {};
     protected boolean threaded =
         Boolean.parseBoolean(System.getProperty(MINCROSS_THREADED, "true"));
@@ -124,8 +124,8 @@ public class SugiyamaLayoutAlgorithm<V, E>
       return self();
     }
 
-    public B useLongestPathLayering(boolean useLongestPathLayering) {
-      this.useLongestPathLayering = useLongestPathLayering;
+    public B layering(Layering layering) {
+      this.layering = layering;
       return self();
     }
 
@@ -166,7 +166,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
   protected boolean expandLayout;
   protected RenderContext<V, E> renderContext;
   protected boolean threaded;
-  protected boolean useLongestPathLayering;
+  protected Layering layering;
   protected CompletableFuture theFuture;
   protected Runnable after;
 
@@ -183,7 +183,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
         builder.transposeLimit,
         builder.maxLevelCross,
         builder.expandLayout,
-        builder.useLongestPathLayering,
+        builder.layering,
         builder.threaded,
         builder.after);
   }
@@ -196,7 +196,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
       int transposeLimit,
       int maxLevelCross,
       boolean expandLayout,
-      boolean useLongestPathLayering,
+      Layering layering,
       boolean threaded,
       Runnable after) {
     this.vertexShapeFunction = vertexShapeFunction;
@@ -206,7 +206,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
     this.transposeLimit = transposeLimit;
     this.maxLevelCross = maxLevelCross;
     this.expandLayout = expandLayout;
-    this.useLongestPathLayering = useLongestPathLayering;
+    this.layering = layering;
     this.threaded = threaded;
     this.after = after;
   }
@@ -233,7 +233,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
             .transpose(transpose)
             .transposeLimit(transposeLimit)
             .maxLevelCross(maxLevelCross)
-            .useLongestPathLayering(useLongestPathLayering)
+            .layering(layering)
             .build();
     if (threaded) {
 

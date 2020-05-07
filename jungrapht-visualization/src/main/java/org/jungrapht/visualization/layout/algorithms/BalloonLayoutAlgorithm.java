@@ -17,6 +17,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
@@ -47,7 +48,7 @@ public class BalloonLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
     }
   }
 
-  protected Map<V, PolarPoint> polarLocations = new HashMap<>();
+  protected Map<V, PolarPoint> polarLocations = new ConcurrentHashMap<>();
 
   private Function<V, PolarPoint> initializer = v -> PolarPoint.ORIGIN;
 

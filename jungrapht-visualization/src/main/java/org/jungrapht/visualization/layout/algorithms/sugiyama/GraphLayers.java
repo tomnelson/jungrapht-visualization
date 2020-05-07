@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jungrapht.visualization.layout.algorithms.util.ComponentGrouping;
+import org.jungrapht.visualization.layout.algorithms.util.NetworkSimplexDevelopment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -128,6 +129,123 @@ public class GraphLayers {
 
     return list;
   }
+
+  public static <V, E> List<List<LV<V>>> longestPathReverse(Graph<LV<V>, LE<V, E>> dag) {
+    List<List<LV<V>>> list = new ArrayList<>();
+
+    Set<LV<V>> U = new HashSet<>();
+    Set<LV<V>> Z = new HashSet<>();
+    Set<LV<V>> V = new HashSet<>(dag.vertexSet());
+    int currentLayer = 0;
+    list.add(new ArrayList<>());
+    while (U.size() != dag.vertexSet().size()) {
+      Optional<LV<V>> optional =
+          V.stream()
+              .filter(v -> !U.contains(v))
+              .filter(v -> Z.containsAll(Graphs.successorListOf(dag, v)))
+              .findFirst();
+      if (optional.isPresent()) {
+        LV<V> got = optional.get();
+        //        got.setRank(currentLayer);
+        list.get(currentLayer).add(got);
+        U.add(got);
+      } else {
+        currentLayer++;
+        list.add(new ArrayList<>());
+        Z.addAll(U);
+      }
+    }
+
+    //    Collections.reverse(list);
+    for (int i = 0; i < list.size(); i++) {
+      List<LV<V>> layer = list.get(i);
+      for (int j = 0; j < layer.size(); j++) {
+        LV<V> v = layer.get(j);
+        v.setRank(i);
+        v.setIndex(j);
+      }
+    }
+
+    return list;
+  }
+
+  public static <V, E> List<List<LV<V>>> coffmanGraham(Graph<LV<V>, LE<V, E>> dag, int width) {
+    List<List<LV<V>>> list = new ArrayList<>();
+    Set<LV<V>> Z = new HashSet<>(); // seen
+    Map<LV<V>, Integer> lambda = new HashMap<>(); //
+    Set<LV<V>> V = new HashSet<>(dag.vertexSet());
+    V.stream().forEach(v -> lambda.put(v, Integer.MAX_VALUE));
+
+    for (int i = 0; i < V.size(); i++) {
+      LV<V> mv =
+          V.stream()
+              .filter(v -> lambda.get(v) == Integer.MAX_VALUE)
+              .min(Comparator.comparingInt(dag::inDegreeOf))
+              .get();
+      lambda.put(mv, i);
+      log.debug("put {}, {}", mv, i);
+    }
+    int k = 0;
+    list.add(new ArrayList<>());
+    Set<LV<V>> U = new HashSet<>();
+    while (U.size() != dag.vertexSet().size()) {
+      LV<V> got =
+          V.stream()
+              .filter(v -> !U.contains(v))
+              .filter(v -> U.containsAll(Graphs.successorListOf(dag, v)))
+              .max(Comparator.comparingInt(lambda::get))
+              .get();
+      if (list.get(k).size() <= width && Z.containsAll(Graphs.successorListOf(dag, got))) {
+        list.get(k).add(got);
+      } else {
+        Z.addAll(list.get(k));
+        k++;
+        list.add(new ArrayList<>());
+        list.get(k).add(got);
+      }
+      U.add(got);
+    }
+
+    Collections.reverse(list);
+    for (int i = 0; i < list.size(); i++) {
+      List<LV<V>> layer = list.get(i);
+      for (int j = 0; j < layer.size(); j++) {
+        LV<V> v = layer.get(j);
+        v.setRank(i);
+        v.setIndex(j);
+      }
+    }
+
+    return list;
+  }
+
+  private static <V, E> int tightTree(Graph<V, E> dag) {
+    NetworkSimplexDevelopment<V, E> networkSimplexDevelopment =
+        new NetworkSimplexDevelopment<>(dag);
+    return networkSimplexDevelopment.getTheBestSpanningTree().vertexSet().size();
+  }
+
+  //  private static <V, E> Graph<LV<V>, LE<V,E>> feasibleTree(Graph<LV<V>, LE<V,E>> dag) {
+  //    List<List<LV<V>>> list = GraphLayers.longestPath(dag);
+  //    NetworkSimplex<LV<V>,LE<V,E>> networkSimplex = new NetworkSimplex<>(dag);
+  //    Graph<LV<V>,LE<V,E>> tree = networkSimplex.getTheBestSpanningTree();
+  //    Map<LE<V,E>, Integer> cutValueMap = networkSimplex.getEdgeCutValues(tree);
+  //    while (tree.vertexSet().size() < dag.vertexSet().size()) {
+  //      LE<V,E> le = dag.edgeSet().stream()
+  //              .filter(v -> !tree.containsEdge(v)).min(Comparator.comparingInt(cutValueMap::get)).get();
+  //
+  //
+  //
+  //      int delta = cutValueMap.get(le);
+  //
+  //
+  //      Pair<Set<V>> headAndTail = networkSimplex.getHeadAndTailComponents(tree, le);
+  //      spanningTree.removeEdge(edgeToCut);
+  //      Set<E> crossComponentEdges = getCrossComponentEdges(spanningTree, headAndTail);
+  //
+  //    }
+  //    return null;
+  //  }
 
   /**
    * Find all vertices that have no incoming edges by

@@ -8,8 +8,8 @@
 package org.jungrapht.visualization.layout.algorithms;
 
 import java.util.ConcurrentModificationException;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.repulsion.StandardFRRepulsion;
@@ -50,7 +50,7 @@ public class FRLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
 
   private int maxIterations;
 
-  protected Map<V, Point> frVertexData = new HashMap<>();
+  protected Map<V, Point> frVertexData = new ConcurrentHashMap<>();
 
   protected Function<V, Point> initializer = v -> Point.ORIGIN;
 

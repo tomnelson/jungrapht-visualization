@@ -16,6 +16,7 @@ import java.util.function.Function;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnable;
 import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnableWithGraph;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.RenderContextAware;
 import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
@@ -79,8 +80,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
     protected boolean transpose = true;
     protected int maxLevelCross = Integer.getInteger(MAX_LEVEL_CROSS, 23);
     protected boolean expandLayout = true;
-    boolean useLongestPathLayering =
-        Boolean.parseBoolean(System.getProperty(MINCROSS_USE_LONGEST_PATH, "false"));
+    Layering layering = Layering.LONGEST_PATH;
     boolean useCompactionGraph = true;
     protected Runnable after = () -> {};
     protected boolean threaded =
@@ -122,8 +122,8 @@ public class EiglspergerLayoutAlgorithm<V, E>
       return self();
     }
 
-    public B useLongestPathLayering(boolean useLongestPathLayering) {
-      this.useLongestPathLayering = useLongestPathLayering;
+    public B layering(Layering layering) {
+      this.layering = layering;
       return self();
     }
 
@@ -168,7 +168,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
   protected boolean expandLayout;
   protected RenderContext<V, E> renderContext;
   protected boolean threaded;
-  protected boolean useLongestPathLayering;
+  protected Layering layering;
   protected boolean useCompactionGraph;
   protected CompletableFuture theFuture;
   protected Runnable after;
@@ -186,7 +186,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
         builder.maxLevelCross,
         builder.expandLayout,
         builder.useCompactionGraph,
-        builder.useLongestPathLayering,
+        builder.layering,
         builder.threaded,
         builder.after);
   }
@@ -199,7 +199,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
       int maxLevelCross,
       boolean expandLayout,
       boolean useCompactionGraph,
-      boolean useLongestPathLayering,
+      Layering layering,
       boolean threaded,
       Runnable after) {
     this.vertexShapeFunction = vertexShapeFunction;
@@ -209,7 +209,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
     this.maxLevelCross = maxLevelCross;
     this.expandLayout = expandLayout;
     this.useCompactionGraph = useCompactionGraph;
-    this.useLongestPathLayering = useLongestPathLayering;
+    this.layering = layering;
     this.after = after;
     this.threaded = threaded;
   }
@@ -236,7 +236,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
                 .transpose(transpose)
                 .postStraighten(postStraighten)
                 .maxLevelCross(maxLevelCross)
-                .useLongestPathLayering(useLongestPathLayering)
+                .layering(layering)
                 .build()
             : EiglspergerRunnable.<V, E>builder()
                 .layoutModel(layoutModel)
@@ -245,7 +245,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
                 .transpose(transpose)
                 .postStraighten(postStraighten)
                 .maxLevelCross(maxLevelCross)
-                .useLongestPathLayering(useLongestPathLayering)
+                .layering(layering)
                 .build();
     if (threaded) {
 

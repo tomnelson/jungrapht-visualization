@@ -1,11 +1,11 @@
 package org.jungrapht.samples.sugiyama;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.util.stream.IntStream;
 import javax.swing.*;
 import org.jgrapht.Graph;
@@ -14,34 +14,51 @@ import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EiglspergerSmallGraphWithGraph extends JFrame {
+public class EiglspergerNetworkSimplexComparison extends JFrame {
 
-  private static final Logger log = LoggerFactory.getLogger(EiglspergerSmallGraphWithGraph.class);
+  private static final Logger log =
+      LoggerFactory.getLogger(EiglspergerNetworkSimplexComparison.class);
 
-  public EiglspergerSmallGraphWithGraph() {
+  public EiglspergerNetworkSimplexComparison() {
 
-    JPanel container = new JPanel(new BorderLayout());
+    JPanel container = new JPanel(new GridLayout(0, 2));
 
     Graph<Integer, Integer> graph = createInitialGraph();
 
-    VisualizationViewer<Integer, Integer> vv3 = configureVisualizationViewer(graph);
-    vv3.getRenderContext().setEdgeLabelFunction(Object::toString);
+    VisualizationViewer<Integer, Integer> vv1 = configureVisualizationViewer(graph);
+    vv1.getRenderContext().setEdgeLabelFunction(Object::toString);
 
-    EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm3 =
+    EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm1 =
         EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             //                        .straightenEdges(false)
             .postStraighten(true)
             .threaded(false)
-            //            .useLongestPathLayering(false)
-            .after(vv3::scaleToLayout)
+            .layering(Layering.NORMAL)
+            .after(vv1::scaleToLayout)
             .build();
-    layoutAlgorithm3.setRenderContext(vv3.getRenderContext());
-    vv3.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm3);
-    container.add(vv3.getComponent());
+    layoutAlgorithm1.setRenderContext(vv1.getRenderContext());
+    vv1.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm1);
+    container.add(vv1.getComponent());
+
+    VisualizationViewer<Integer, Integer> vv2 = configureVisualizationViewer(graph);
+    vv2.getRenderContext().setEdgeLabelFunction(Object::toString);
+
+    EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm2 =
+        EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+            //                        .straightenEdges(false)
+            .postStraighten(true)
+            .threaded(false)
+            .layering(Layering.NETWORK_SIMPLEX)
+            .after(vv2::scaleToLayout)
+            .build();
+    layoutAlgorithm2.setRenderContext(vv2.getRenderContext());
+    vv2.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm2);
+    container.add(vv2.getComponent());
 
     setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -106,6 +123,11 @@ public class EiglspergerSmallGraphWithGraph extends JFrame {
     }
   }
 
+  /**
+   * creates a graph to look like the one in the paper
+   *
+   * @return
+   */
   Graph<Integer, Integer> createInitialGraph() {
 
     Graph<Integer, Integer> graph =
@@ -114,20 +136,64 @@ public class EiglspergerSmallGraphWithGraph extends JFrame {
             .vertexSupplier(SupplierUtil.createIntegerSupplier())
             .buildGraph();
 
-    IntStream.rangeClosed(0, 4).forEach(graph::addVertex);
-    graph.addEdge(0, 1);
-    graph.addEdge(1, 2);
-    graph.addEdge(2, 3);
-    graph.addEdge(3, 4);
-    graph.addEdge(0, 4);
-    graph.addEdge(2, 4);
+    IntStream.rangeClosed(1, 23).forEach(graph::addVertex);
     graph.addEdge(1, 3);
     graph.addEdge(1, 4);
+    graph.addEdge(1, 13);
+    graph.addEdge(1, 21);
 
+    graph.addEdge(2, 3);
+    graph.addEdge(2, 20);
+
+    graph.addEdge(3, 4);
+    graph.addEdge(3, 5);
+    graph.addEdge(3, 23);
+
+    graph.addEdge(4, 6);
+
+    graph.addEdge(5, 7);
+
+    graph.addEdge(6, 8);
+    graph.addEdge(6, 16);
+    graph.addEdge(6, 23);
+
+    graph.addEdge(7, 9);
+
+    graph.addEdge(8, 10);
+    graph.addEdge(8, 11);
+
+    graph.addEdge(9, 12);
+
+    graph.addEdge(10, 13);
+    graph.addEdge(10, 14);
+    graph.addEdge(10, 15);
+
+    graph.addEdge(11, 15);
+    graph.addEdge(11, 16);
+
+    graph.addEdge(12, 20);
+
+    graph.addEdge(13, 17);
+
+    graph.addEdge(14, 17);
+    graph.addEdge(14, 18);
+    // no 15 targets
+
+    graph.addEdge(16, 18);
+    graph.addEdge(16, 19);
+    graph.addEdge(16, 20);
+
+    graph.addEdge(18, 21);
+
+    graph.addEdge(19, 22);
+
+    graph.addEdge(21, 23);
+
+    graph.addEdge(22, 23);
     return graph;
   }
 
   public static void main(String[] args) {
-    new EiglspergerSmallGraphWithGraph();
+    new EiglspergerNetworkSimplexComparison();
   }
 }

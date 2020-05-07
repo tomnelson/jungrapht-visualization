@@ -14,6 +14,7 @@ import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,7 @@ public class EiglspergerLongestPathComparison extends JFrame {
             //                        .straightenEdges(false)
             .postStraighten(true)
             .threaded(false)
-            .useLongestPathLayering(false)
+            .layering(Layering.NORMAL)
             .after(vv1::scaleToLayout)
             .build();
     layoutAlgorithm1.setRenderContext(vv1.getRenderContext());
@@ -51,7 +52,7 @@ public class EiglspergerLongestPathComparison extends JFrame {
             //                        .straightenEdges(false)
             .postStraighten(true)
             .threaded(false)
-            .useLongestPathLayering(true)
+            .layering(Layering.COFFMAN_GRAHAM)
             .after(vv2::scaleToLayout)
             .build();
     layoutAlgorithm2.setRenderContext(vv2.getRenderContext());
