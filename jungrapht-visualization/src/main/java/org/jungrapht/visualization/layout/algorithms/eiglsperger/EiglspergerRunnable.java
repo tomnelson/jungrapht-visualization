@@ -32,7 +32,6 @@ import org.jungrapht.visualization.layout.algorithms.sugiyama.TransformedGraphSu
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Unaligned;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.VertexMetadata;
 import org.jungrapht.visualization.layout.algorithms.util.Attributed;
-import org.jungrapht.visualization.layout.algorithms.util.NetworkSimplex;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.slf4j.Logger;
@@ -218,9 +217,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     List<List<LV<V>>> layers;
     switch (layering) {
       case NETWORK_SIMPLEX:
-        NetworkSimplex<V, E> ns = NetworkSimplex.builder(svGraph).build();
-        ns.run();
-        layers = ns.getLayerList();
+        layers = GraphLayers.networkSimplex(svGraph);
         break;
       case LONGEST_PATH:
         layers = GraphLayers.longestPath(svGraph);

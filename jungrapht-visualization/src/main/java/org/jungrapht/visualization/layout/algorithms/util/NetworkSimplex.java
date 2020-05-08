@@ -1,11 +1,11 @@
 package org.jungrapht.visualization.layout.algorithms.util;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Stack;
 import java.util.function.Function;
@@ -16,6 +16,37 @@ import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The NetworkSimplex algorithm
+ *
+ * <p>This class leverages a modified version of the NetworkSimplex class in
+ *
+ * <p>Microsoft Automatic Graph Layout,MSAGL
+ *
+ * <p>which is licensed as follows:
+ *
+ * <p>Copyright (c) Microsoft Corporation
+ *
+ * <p>All rights reserved.
+ *
+ * <p>MIT License
+ *
+ * <p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+ * and associated documentation files (the ""Software""), to deal in the Software without
+ * restriction, including without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * <p>The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
+ *
+ * <p>This file is re-licensed under the compatible BSD license.
+ *
+ * @see "A Technique for Drawing Directed Graphs. Emden R. Gansner, Eleftherios Koutsofios, Stephen
+ *     C. North, and Gem-Phong Vo"
+ * @param <V> vertex type
+ * @param <E> edge type
+ */
 public class NetworkSimplex<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(NetworkSimplex.class);
@@ -30,6 +61,7 @@ public class NetworkSimplex<V, E> {
     protected Builder(Graph<LV<V>, LE<V, E>> svGraph) {
       this.svGraph = svGraph;
     }
+
     /** @return this builder cast to type B */
     protected B self() {
       return (B) this;
@@ -67,55 +99,115 @@ public class NetworkSimplex<V, E> {
     return new Builder<>(svGraph);
   }
 
+  private static class Incidence<V, E> {
+    final LV<V> v;
+    final Iterator<LE<V, E>> outEdges;
+    final Iterator<LE<V, E>> inEdges;
+
+    static <V, E> Incidence<V, E> of(
+        LV<V> v, Iterator<LE<V, E>> outEdges, Iterator<LE<V, E>> inEdges) {
+      return new Incidence<>(v, outEdges, inEdges);
+    }
+
+    private Incidence(LV<V> v, Iterator<LE<V, E>> outEdges, Iterator<LE<V, E>> inEdges) {
+      this.v = v;
+      this.outEdges = outEdges;
+      this.inEdges = inEdges;
+    }
+  }
+
+  protected List<LV<V>> leaves = new ArrayList<>();
+  protected Graph<LV<V>, LE<V, E>> svGraph;
+  protected Function<LE<V, E>, Integer> weightFunction;
+  protected Function<LE<V, E>, Integer> separationFunction;
+  protected Map<LV<V>, Integer> layers = new HashMap<>();
+  protected Map<LE<V, E>, Integer> cutValues = new HashMap<>();
+  protected Map<LE<V, E>, Integer> cutMap = new HashMap<>();
+  protected List<List<LV<V>>> layerList;
+  protected Map<LV<V>, Integer> lim = new HashMap<>();
+  protected Map<LV<V>, Integer> low = new HashMap<>();
+  protected Map<LV<V>, LE<V, E>> parent = new HashMap<>();
+  protected List<LV<V>> treeVertices = new ArrayList<>();
+  protected Map<LV<V>, Boolean> vertexInTreeMap = new HashMap<>();
+  protected Map<LE<V, E>, Boolean> edgeInTreeMap = new HashMap<>();
+
   protected NetworkSimplex(Builder<V, E, ?, ?> builder) {
     this.svGraph = builder.svGraph;
     this.weightFunction = builder.weightFunction;
     this.separationFunction = builder.separationFunction;
   }
 
-  protected Graph<LV<V>, LE<V, E>> svGraph;
-  protected Function<LE<V, E>, Integer> weightFunction = e -> 1;
-  protected Function<LE<V, E>, Integer> separationFunction;
-  protected Map<LV<V>, Integer> layers = new HashMap<>();
-  protected Map<LE<V, E>, Integer> cutValues = new HashMap<>();
+  public void run() {
+    if (svGraph.edgeSet().size() == 0 && svGraph.vertexSet().size() == 0) layers = new HashMap<>();
 
-  protected List<List<LV<V>>> layerList;
+    svGraph.edgeSet().forEach(e -> cutMap.put(e, Integer.MAX_VALUE));
 
-  public List<List<LV<V>>> getLayerList() {
-    return layerList;
+    feasibleTree();
+
+    Pair<LE<V, E>> leaveEnter;
+    while ((leaveEnter = getLeaveEnterEdge()) != null) {
+      exchange(leaveEnter.first, leaveEnter.second);
+    }
+
+    shiftLayerToZero();
+    //    Collections.reverse(layerList);
+
+    for (int i = 0; i < layerList.size(); i++) {
+      List<LV<V>> layer = layerList.get(i);
+      for (int j = 0; j < layer.size(); j++) {
+        LV<V> v = layer.get(j);
+        v.setRank(i);
+        v.setIndex(j);
+      }
+    }
+    if (log.isTraceEnabled()) {
+      log.trace("layersArray are {}", layerList);
+
+      log.trace("layers are {}", layers);
+
+      log.trace("vinTreeMap: {}", vertexInTreeMap);
+      log.trace("einTreeMap: {}", edgeInTreeMap);
+      for (Map.Entry<LE<V, E>, Boolean> entry : edgeInTreeMap.entrySet()) {
+        log.info("{}", entry);
+      }
+    }
   }
 
-  int slack(LE<V, E> edge) {
-    return edge.getSource().getRank() - edge.getTarget().getRank() - separationFunction.apply(edge);
+  private void feasibleTree() {
+    layerList = GraphLayers.longestPathReverse(svGraph);
+    svGraph.vertexSet().forEach(v -> layers.put(v, v.getRank()));
+
+    while (tightTree() < this.svGraph.vertexSet().size()) {
+
+      LE<V, E> e = getNonTreeEdgeIncidentToTheTreeWithMinimalAmountOfSlack();
+      if (e == null) break; //all edges are tree edges
+      int slack = slack(e);
+      if (slack == 0) throw new IllegalArgumentException(); //"the tree should be tight");
+
+      if (vertexInTreeMap.get(e.getSource())) slack = -slack;
+
+      //shift the tree rigidly up or down and make e tight ; since the slack is the minimum of slacks
+      //the layering will still remain feasible
+      for (LV<V> v : treeVertices) {
+        int newRank = layers.get(v) + slack;
+        v.setRank(newRank);
+        layers.put(v, newRank);
+      }
+    }
+    initCutValues();
   }
 
-  public List<LV<V>> getTreeVertices() {
-    return treeVertices;
-  }
-
-  public Map<LV<V>, Boolean> getVinTreeMap() {
-    return vinTreeMap;
-  }
-
-  public Map<LE<V, E>, Boolean> getEinTreeMap() {
-    return einTreeMap;
-  }
-
-  List<LV<V>> treeVertices = new ArrayList<>();
-  Map<LV<V>, Boolean> vinTreeMap = new HashMap<>();
-  Map<LE<V, E>, Boolean> einTreeMap = new HashMap<>();
-
-  int tightTree() {
+  private int tightTree() {
     treeVertices.clear();
     for (LE<V, E> ie : svGraph.edgeSet()) {
-      einTreeMap.put(ie, false);
+      edgeInTreeMap.put(ie, false);
     }
     for (LV<V> v : svGraph.vertexSet()) {
-      vinTreeMap.put(v, false);
+      vertexInTreeMap.put(v, false);
     }
     // first vertex
     LV<V> v0 = svGraph.vertexSet().stream().findFirst().get();
-    vinTreeMap.put(v0, true);
+    vertexInTreeMap.put(v0, true);
     treeVertices.add(v0);
 
     Stack<LV<V>> queue = new Stack<>();
@@ -125,38 +217,58 @@ public class NetworkSimplex<V, E> {
       LV<V> v = queue.pop();
 
       for (LE<V, E> e : svGraph.outgoingEdgesOf(v)) {
-        if (vinTreeMap.get(e.getTarget())) {
+        if (vertexInTreeMap.get(e.getTarget())) {
           continue;
         }
         if (e.getSource().getRank() - e.getTarget().getRank() == separationFunction.apply(e)) {
           queue.push(e.getTarget());
-          vinTreeMap.put(e.getTarget(), true);
+          vertexInTreeMap.put(e.getTarget(), true);
           treeVertices.add(e.getTarget());
-          einTreeMap.put(e, true);
+          edgeInTreeMap.put(e, true);
         }
       }
 
       for (LE<V, E> e : svGraph.incomingEdgesOf(v)) {
-        if (vinTreeMap.get(e.getSource())) {
+        if (vertexInTreeMap.get(e.getSource())) {
           continue;
         }
         if (e.getSource().getRank() - e.getTarget().getRank() == separationFunction.apply(e)) {
           queue.push(e.getSource());
-          vinTreeMap.put(e.getSource(), true);
+          vertexInTreeMap.put(e.getSource(), true);
           treeVertices.add(e.getSource());
-          einTreeMap.put(e, true);
+          edgeInTreeMap.put(e, true);
         }
       }
     }
     return treeVertices.size();
   }
 
-  Pair<LE<V, E>> getLeaveEnterEdge() {
+  public List<List<LV<V>>> getLayerList() {
+    return layerList;
+  }
+
+  private int slack(LE<V, E> edge) {
+    return edge.getSource().getRank() - edge.getTarget().getRank() - separationFunction.apply(edge);
+  }
+
+  public List<LV<V>> getTreeVertices() {
+    return treeVertices;
+  }
+
+  public Map<LV<V>, Boolean> getVertexInTreeMap() {
+    return vertexInTreeMap;
+  }
+
+  public Map<LE<V, E>, Boolean> getEdgeInTreeMap() {
+    return edgeInTreeMap;
+  }
+
+  private Pair<LE<V, E>> getLeaveEnterEdge() {
     LE<V, E> leavingEdge = null;
     LE<V, E> enteringEdge = null;
     int minCut = 0;
     for (LE<V, E> e : svGraph.edgeSet()) {
-      if (einTreeMap.get(e)) {
+      if (edgeInTreeMap.get(e)) {
         if (cutValues.getOrDefault(e, 0) < minCut) {
           minCut = cutValues.get(e);
           leavingEdge = e;
@@ -166,18 +278,18 @@ public class NetworkSimplex<V, E> {
     if (leavingEdge == null) return null;
 
     //now we are looking for a non-tree edge with a minimal slack belonging to TS
-    boolean continuation = false;
+    //    boolean continuation = false;
     int minSlack = Integer.MAX_VALUE;
     for (LE<V, E> f : svGraph.edgeSet()) {
       int slack = slack(f);
-      if (einTreeMap.get(f) == false
+      boolean continuation = random.nextInt(2) == 1;
+      if (!edgeInTreeMap.get(f)
           && edgeSourceTargetVal(f, leavingEdge) == -1
-          && (slack < minSlack
-              || (slack == minSlack && (continuation = (random.nextInt(2) == 1))))) {
+          && (slack < minSlack || (slack == minSlack && continuation))) {
         minSlack = slack;
         enteringEdge = f;
         if (minSlack == 0 && !continuation) break;
-        continuation = false;
+        //        continuation = false;
       }
     }
 
@@ -187,11 +299,7 @@ public class NetworkSimplex<V, E> {
     return Pair.of(leavingEdge, enteringEdge);
   }
 
-  Map<LV<V>, Integer> lim = new HashMap<>();
-  Map<LV<V>, Integer> low = new HashMap<>();
-  Map<LV<V>, LE<V, E>> parent = new HashMap<>();
-
-  void initLimLowAndParent() {
+  private void initLimLowAndParent() {
     svGraph
         .vertexSet()
         .forEach(
@@ -201,33 +309,40 @@ public class NetworkSimplex<V, E> {
               parent.put(v, null);
             });
 
-    int curLim = 1;
+    int currentLimit = 1;
     LV<V> v = svGraph.vertexSet().stream().findFirst().get();
-    initLimLowParentAndLeavesOnSubtree(curLim, v);
+    initLimLowParentAndLeavesOnSubtree(currentLimit, v);
   }
 
-  void initCutValues() {
+  private void initCutValues() {
     initLimLowAndParent();
 
     //going up from the leaves following parents
     Stack<LV<V>> front = new Stack<>();
-    for (LV<V> i : leaves) front.push(i);
+    for (LV<V> leaf : leaves) {
+      front.push(leaf);
+    }
     Stack<LV<V>> newFront = new Stack<>();
     while (front.size() > 0) {
       while (front.size() > 0) {
         LV<V> w = front.pop();
         LE<V, E> cutEdge = parent.get(w); //have to find the cut of e
-        if (cutEdge == null) continue;
+        if (cutEdge == null) {
+          continue;
+        }
         int cut = 0;
         for (LE<V, E> e : svGraph.edgesOf(w)) {
 
-          if (einTreeMap.get(e) == false) {
+          if (!edgeInTreeMap.get(e)) {
             int e0Val = edgeSourceTargetVal(e, cutEdge);
-            if (e0Val != 0) cut += e0Val * weightFunction.apply(e);
-          } else //e0 is a tree edge
-          {
-            if (e == cutEdge) cut += weightFunction.apply(e);
-            else {
+            if (e0Val != 0) {
+              cut += e0Val * weightFunction.apply(e);
+            }
+          } else {
+            //e0 is a tree edge
+            if (e == cutEdge) {
+              cut += weightFunction.apply(e);
+            } else {
               int impact =
                   cutEdge.getSource() == e.getTarget() || cutEdge.getTarget() == e.getSource()
                       ? 1
@@ -240,7 +355,9 @@ public class NetworkSimplex<V, E> {
 
         cutMap.put(cutEdge, cut);
         LV<V> v = cutEdge.getSource() == w ? cutEdge.getTarget() : cutEdge.getSource();
-        if (allLowCutsHaveBeenDone(v)) newFront.push(v);
+        if (allLowCutsHaveBeenDone(v)) {
+          newFront.push(v);
+        }
       }
       //swap newFrontAndFront
       Stack<LV<V>> t = front;
@@ -249,34 +366,15 @@ public class NetworkSimplex<V, E> {
     }
   }
 
-  static class StackStruct<V, E> {
-    final LV<V> v;
-    final Iterator<LE<V, E>> outEdges;
-    final Iterator<LE<V, E>> inEdges;
-
-    static <V, E> StackStruct<V, E> of(
-        LV<V> v, Iterator<LE<V, E>> outEdges, Iterator<LE<V, E>> inEdges) {
-      return new StackStruct<>(v, outEdges, inEdges);
-    }
-
-    StackStruct(LV<V> v, Iterator<LE<V, E>> outEdges, Iterator<LE<V, E>> inEdges) {
-      this.v = v;
-      this.outEdges = outEdges;
-      this.inEdges = inEdges;
-    }
-  }
-
-  List<LV<V>> leaves = new ArrayList<>();
-
-  void initLimLowParentAndLeavesOnSubtree(int curLim, LV<V> v) {
-    Stack<StackStruct> stack = new Stack<>();
+  private void initLimLowParentAndLeavesOnSubtree(int curLim, LV<V> v) {
+    Stack<Incidence<V, E>> stack = new Stack<>();
     Iterator<LE<V, E>> outEdges = svGraph.outgoingEdgesOf(v).iterator();
     Iterator<LE<V, E>> inEdges = svGraph.incomingEdgesOf(v).iterator();
-    stack.push(StackStruct.of(v, outEdges, inEdges));
+    stack.push(Incidence.of(v, outEdges, inEdges));
     low.put(v, curLim);
 
     while (stack.size() > 0) {
-      StackStruct<V, E> ss = stack.pop();
+      Incidence<V, E> ss = stack.pop();
       v = ss.v;
       outEdges = ss.outEdges;
       inEdges = ss.inEdges;
@@ -286,10 +384,10 @@ public class NetworkSimplex<V, E> {
         done = true;
         while (outEdges.hasNext()) {
           LE<V, E> e = outEdges.next();
-          if (!einTreeMap.get(e) || low.get(e.getTarget()) > 0) {
+          if (!edgeInTreeMap.get(e) || low.get(e.getTarget()) > 0) {
             continue;
           }
-          stack.push(StackStruct.of(v, outEdges, inEdges));
+          stack.push(Incidence.of(v, outEdges, inEdges));
           v = e.getTarget();
           parent.put(v, e);
           low.put(v, curLim);
@@ -298,10 +396,10 @@ public class NetworkSimplex<V, E> {
         }
         while (inEdges.hasNext()) {
           LE<V, E> e = inEdges.next();
-          if (!einTreeMap.get(e) || low.get(e.getSource()) > 0) {
+          if (!edgeInTreeMap.get(e) || low.get(e.getSource()) > 0) {
             continue;
           }
-          stack.push(StackStruct.of(v, outEdges, inEdges));
+          stack.push(Incidence.of(v, outEdges, inEdges));
           v = e.getSource();
           low.put(v, curLim);
           parent.put(v, e);
@@ -313,7 +411,7 @@ public class NetworkSimplex<V, E> {
       } while (!done);
 
       lim.put(v, curLim++);
-      if (lim.get(v) == low.get(v)) {
+      if (Objects.equals(lim.get(v), low.get(v))) {
         leaves.add(v);
       }
     }
@@ -332,21 +430,19 @@ public class NetworkSimplex<V, E> {
     while (front.size() > 0) {
       LV<V> u = front.pop();
       for (LE<V, E> oe : svGraph.outgoingEdgesOf(u)) {
-        if (einTreeMap.get(oe) && oe.getTarget().getRank() == Integer.MAX_VALUE) {
+        if (edgeInTreeMap.get(oe) && oe.getTarget().getRank() == Integer.MAX_VALUE) {
           oe.getTarget().setRank(u.getRank() - separationFunction.apply(oe));
           front.push(oe.getTarget());
         }
       }
       for (LE<V, E> ie : svGraph.incomingEdgesOf(u)) {
-        if (einTreeMap.get(ie) && ie.getSource().getRank() == Integer.MAX_VALUE) {
+        if (edgeInTreeMap.get(ie) && ie.getSource().getRank() == Integer.MAX_VALUE) {
           ie.getSource().setRank(u.getRank() + 1);
           front.push(ie.getSource());
         }
       }
     }
   }
-
-  Map<LE<V, E>, Integer> cutMap = new HashMap<>();
 
   private void updateCuts(LE<V, E> e) {
     Stack<LV<V>> front = new Stack<>();
@@ -367,7 +463,7 @@ public class NetworkSimplex<V, E> {
         }
         int cut = 0;
         for (LE<V, E> ce : svGraph.edgesOf(w)) {
-          if (einTreeMap.get(ce) == false) {
+          if (!edgeInTreeMap.get(ce)) {
             int e0val = edgeSourceTargetVal(ce, cutEdge);
             if (e0val != 0) {
               cut += e0val * weightFunction.apply(ce);
@@ -397,26 +493,26 @@ public class NetworkSimplex<V, E> {
     }
   }
 
-  boolean allLowCutsHaveBeenDone(LV<V> v) {
+  private boolean allLowCutsHaveBeenDone(LV<V> v) {
     for (LE<V, E> ie : svGraph.edgesOf(v))
-      if (einTreeMap.get(ie)
+      if (edgeInTreeMap.get(ie)
           && cutMap.getOrDefault(ie, 0) == Integer.MAX_VALUE
           && ie != parent.get(v)) return false;
     return true;
   }
 
-  int edgeSourceTargetVal(LE<V, E> e, LE<V, E> treeEdge) {
+  private int edgeSourceTargetVal(LE<V, E> e, LE<V, E> treeEdge) {
 
-    if (einTreeMap.get(e) || !einTreeMap.get(treeEdge)) {
+    if (edgeInTreeMap.get(e) || !edgeInTreeMap.get(treeEdge)) {
       throw new RuntimeException("Wrong parameters");
     }
     return vertexSourceTargetVal(e.getSource(), treeEdge)
         - vertexSourceTargetVal(e.getTarget(), treeEdge);
   }
 
-  int vertexSourceTargetVal(LV<V> v, LE<V, E> treeEdge) {
+  private int vertexSourceTargetVal(LV<V> v, LE<V, E> treeEdge) {
 
-    if (einTreeMap.get(treeEdge) == false) {
+    if (!edgeInTreeMap.get(treeEdge)) {
       throw new RuntimeException("wrong params for VertexSourceTargetVal");
     }
 
@@ -437,109 +533,53 @@ public class NetworkSimplex<V, E> {
     }
   }
 
-  LE<V, E> getNonTreeEdgeIncidentToTheTreeWithMinimalAmountOfSlack() {
-    LE<V, E> eret = null;
+  private LE<V, E> getNonTreeEdgeIncidentToTheTreeWithMinimalAmountOfSlack() {
+    LE<V, E> edge = null;
     int minSlack = Integer.MAX_VALUE;
 
     for (LV<V> v : this.treeVertices) {
       for (LE<V, E> e : this.svGraph.outgoingEdgesOf(v)) {
-        if (vinTreeMap.get(e.getSource()) && vinTreeMap.get(e.getTarget())) continue;
+        if (vertexInTreeMap.get(e.getSource()) && vertexInTreeMap.get(e.getTarget())) continue;
         int slack = slack(e);
         if (slack < minSlack) {
-          eret = e;
+          edge = e;
           minSlack = slack;
           if (slack == 1) return e;
         }
       }
 
       for (LE<V, E> e : this.svGraph.incomingEdgesOf(v)) {
-        if (vinTreeMap.get(e.getSource()) && vinTreeMap.get(e.getTarget())) continue;
+        if (vertexInTreeMap.get(e.getSource()) && vertexInTreeMap.get(e.getTarget())) continue;
 
         int slack = slack(e);
         if (slack < minSlack) {
-          eret = e;
+          edge = e;
           minSlack = slack;
           if (slack == 1) return e;
         }
       }
     }
-
-    return eret;
+    return edge;
   }
 
-  public void feasibleTree() {
-    layerList = GraphLayers.longestPathReverse(svGraph);
-    svGraph.vertexSet().forEach(v -> layers.put(v, v.getRank()));
-
-    while (tightTree() < this.svGraph.vertexSet().size()) {
-
-      LE<V, E> e = getNonTreeEdgeIncidentToTheTreeWithMinimalAmountOfSlack();
-      if (e == null) break; //all edges are tree edges
-      int slack = slack(e);
-      if (slack == 0) throw new IllegalArgumentException(); //"the tree should be tight");
-
-      if (vinTreeMap.get(e.getSource())) slack = -slack;
-
-      //shift the tree rigidly up or down and make e tight ; since the slack is the minimum of slacks
-      //the layering will still remain feasible
-      for (LV<V> i : treeVertices) {
-        int newRank = layers.get(i) + slack;
-        i.setRank(newRank);
-        layers.put(i, newRank);
-      }
-    }
-
-    initCutValues();
-  }
-
-  int edgeContribution(LE<V, E> e, LV<V> w) {
-    int ret = cutMap.get(e) - weightFunction.apply(e);
+  private int edgeContribution(LE<V, E> e, LV<V> w) {
+    int edgeContribution = cutMap.get(e) - weightFunction.apply(e);
     for (LE<V, E> ie : svGraph.edgesOf(w)) {
-      if (einTreeMap.get(ie) == false) {
+      if (!edgeInTreeMap.get(ie)) {
         int sign = edgeSourceTargetVal(ie, e);
-        if (sign == -1) ret += weightFunction.apply(ie);
-        else if (sign == 1) ret -= weightFunction.apply(ie);
+        if (sign == -1) {
+          edgeContribution += weightFunction.apply(ie);
+        } else if (sign == 1) {
+          edgeContribution -= weightFunction.apply(ie);
+        }
       }
     }
-    return ret;
-  }
-
-  public void run() {
-    if (svGraph.edgeSet().size() == 0 && svGraph.vertexSet().size() == 0) layers = new HashMap<>();
-
-    feasibleTree();
-
-    Pair<LE<V, E>> leaveEnter;
-    while ((leaveEnter = getLeaveEnterEdge()) != null) {
-      //      ProgressStep();
-      exchange(leaveEnter.first, leaveEnter.second);
-    }
-
-    shiftLayerToZero();
-    Collections.reverse(layerList);
-
-    for (int i = 0; i < layerList.size(); i++) {
-      List<LV<V>> layer = layerList.get(i);
-      for (int j = 0; j < layer.size(); j++) {
-        LV<V> v = layer.get(j);
-        v.setRank(i);
-        v.setIndex(j);
-      }
-    }
-    log.info("layersArray are {}", layerList);
-
-    log.info("layers are {}", layers);
-
-    log.info("vinTreeMap: {}", vinTreeMap);
-    log.info("einTreeMap: {}", einTreeMap);
-    for (Map.Entry<LE<V, E>, Boolean> entry : einTreeMap.entrySet()) {
-      log.info("{}", entry);
-    }
+    return edgeContribution;
   }
 
   private void shiftLayerToZero() {
     int minLayer = Integer.MAX_VALUE;
-    for (LV<V> i : layers.keySet()) if (layers.get(i) < minLayer) minLayer = layers.get(i);
+    for (LV<V> v : layers.keySet()) if (layers.get(v) < minLayer) minLayer = layers.get(v);
 
     for (LV<V> v : svGraph.vertexSet()) {
       int newRank = layers.get(v) - minLayer;
@@ -548,47 +588,45 @@ public class NetworkSimplex<V, E> {
     }
   }
 
-  void exchange(LE<V, E> e, LE<V, E> f) {
-    LV<V> l = commonPredecessorOfSourceAndTargetOfF(f);
+  private void exchange(LE<V, E> e, LE<V, E> f) {
+    LV<V> node = commonPredecessorOfSourceAndTargetOfF(f);
 
-    createPathForCutUpdates(e, f, l);
-    updateLimLowLeavesAndParentsUnderNode(l);
+    createPathForCutUpdates(e, f, node);
+    updateLimLowLeavesAndParentsUnderNode(node);
 
     updateCuts(e);
 
-    updateLayersUnderNode(l);
+    updateLayersUnderNode(node);
   }
 
-  void updateLimLowLeavesAndParentsUnderNode(LV<V> l) {
+  private void updateLimLowLeavesAndParentsUnderNode(LV<V> node) {
 
     //first we zero all low values in the subtree since they are an indication when positive that
     //the node has been processed
     //We are updating leaves also
-    int llow = low.get(l);
-    int llim = lim.get(l);
+    int llow = low.get(node);
+    int llim = lim.get(node);
 
     leaves.clear();
 
-    for (LV<V> i : svGraph.vertexSet()) {
-      //    for (int i = 0; i < this.graph.NodeCount; i++) {
-      if (llow <= lim.get(i) && lim.get(i) <= llim) low.put(i, 0);
-      else if (low.get(i) == lim.get(i)) leaves.add(i);
+    for (LV<V> v : svGraph.vertexSet()) {
+      if (llow <= lim.get(v) && lim.get(v) <= llim) low.put(v, 0);
+      else if (Objects.equals(low.get(v), lim.get(v))) leaves.add(v);
     }
 
-    LV<V> v = l;
-    initLowLimParentAndLeavesOnSubtree(llow, v);
+    initLowLimParentAndLeavesOnSubtree(llow, node);
   }
 
   private void initLowLimParentAndLeavesOnSubtree(int curLim, LV<V> v) {
-    Stack<StackStruct> stack = new Stack<>();
+    Stack<Incidence<V, E>> stack = new Stack<>();
     Iterator<LE<V, E>> outEnum = this.svGraph.outgoingEdgesOf(v).iterator();
     Iterator<LE<V, E>> inEnum = this.svGraph.incomingEdgesOf(v).iterator();
 
-    stack.push(new StackStruct(v, outEnum, inEnum)); //vroot is 0 here
+    stack.push(new Incidence<>(v, outEnum, inEnum)); //vroot is 0 here
     low.put(v, curLim);
 
     while (stack.size() > 0) {
-      StackStruct ss = stack.pop();
+      Incidence<V, E> ss = stack.pop();
       v = ss.v;
       outEnum = ss.outEdges;
       inEnum = ss.inEdges;
@@ -598,8 +636,8 @@ public class NetworkSimplex<V, E> {
         done = true;
         while (outEnum.hasNext()) {
           LE<V, E> e = outEnum.next();
-          if (!einTreeMap.get(e) || low.get(e.getTarget()) > 0) continue;
-          stack.push(new StackStruct(v, outEnum, inEnum));
+          if (!edgeInTreeMap.get(e) || low.get(e.getTarget()) > 0) continue;
+          stack.push(new Incidence<>(v, outEnum, inEnum));
           v = e.getTarget();
           parent.put(v, e);
           low.put(v, curLim);
@@ -608,10 +646,10 @@ public class NetworkSimplex<V, E> {
         }
         while (inEnum.hasNext()) {
           LE<V, E> e = inEnum.next();
-          if (!einTreeMap.get(e) || low.get(e.getSource()) > 0) {
+          if (!edgeInTreeMap.get(e) || low.get(e.getSource()) > 0) {
             continue;
           }
-          stack.push(new StackStruct(v, outEnum, inEnum));
+          stack.push(new Incidence<>(v, outEnum, inEnum));
           v = e.getSource();
           low.put(v, curLim);
           parent.put(v, e);
@@ -624,7 +662,7 @@ public class NetworkSimplex<V, E> {
 
       //finally done with v
       lim.put(v, curLim++);
-      if (lim.get(v) == low.get(v)) leaves.add(v);
+      if (Objects.equals(lim.get(v), low.get(v))) leaves.add(v);
     }
   }
 
@@ -639,8 +677,8 @@ public class NetworkSimplex<V, E> {
 
     cutMap.put(f, Integer.MAX_VALUE);
 
-    einTreeMap.put(e, false);
-    einTreeMap.put(f, true);
+    edgeInTreeMap.put(e, false);
+    edgeInTreeMap.put(f, true);
   }
 
   private LV<V> commonPredecessorOfSourceAndTargetOfF(LE<V, E> f) {
@@ -658,7 +696,7 @@ public class NetworkSimplex<V, E> {
     //so just start walking up from the source
     LV<V> l = f.getSource();
 
-    while ((low.get(l) <= fMin && fmax <= lim.get(l)) == false) {
+    while (!(low.get(l) <= fMin && fmax <= lim.get(l))) {
       LE<V, E> p = parent.get(l);
 
       cutMap.put(p, Integer.MAX_VALUE);

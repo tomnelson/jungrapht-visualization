@@ -56,7 +56,7 @@ public class EiglspergerNetworkSimplex extends JFrame {
     Graph<LV<String>, LE<String, Integer>> svGraph = transformedGraphSupplier.get();
     NetworkSimplex<String, Integer> ns = NetworkSimplex.builder(svGraph).build();
     ns.run();
-    Map<LE<String, Integer>, Boolean> eiMap = ns.getEinTreeMap();
+    Map<LE<String, Integer>, Boolean> eiMap = ns.getEdgeInTreeMap();
     Map<Integer, Boolean> map = new HashMap<>();
     eiMap.entrySet().stream().forEach(entry -> map.put(entry.getKey().getEdge(), entry.getValue()));
     vv3.getRenderContext()

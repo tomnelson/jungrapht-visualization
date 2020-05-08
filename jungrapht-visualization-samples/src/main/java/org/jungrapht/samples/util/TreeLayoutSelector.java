@@ -245,6 +245,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
         EiglspergerLayoutAlgorithm.<V, E>edgeAwareBuilder()
             .straightenEdges(true)
             .postStraighten(true)
+            .layering(Layering.COFFMAN_GRAHAM)
             .threaded(false)
             .after(after)
             .build();

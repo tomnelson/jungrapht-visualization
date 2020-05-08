@@ -258,6 +258,9 @@ public class SugiyamaRunnable<V, E> implements Runnable {
 
     List<List<LV<V>>> layers;
     switch (layering) {
+      case NETWORK_SIMPLEX:
+        layers = GraphLayers.networkSimplex(svGraph);
+        break;
       case LONGEST_PATH:
         layers = GraphLayers.longestPath(svGraph);
         break;

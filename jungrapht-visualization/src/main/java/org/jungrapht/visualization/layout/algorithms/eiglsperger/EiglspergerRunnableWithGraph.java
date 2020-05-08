@@ -33,7 +33,6 @@ import org.jungrapht.visualization.layout.algorithms.sugiyama.TransformedGraphSu
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Unaligned;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.VertexMetadata;
 import org.jungrapht.visualization.layout.algorithms.util.Attributed;
-import org.jungrapht.visualization.layout.algorithms.util.NetworkSimplex;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.slf4j.Logger;
@@ -225,12 +224,7 @@ public class EiglspergerRunnableWithGraph<V, E> implements Runnable {
         layers = GraphLayers.coffmanGraham(svGraph, 10);
         break;
       case NETWORK_SIMPLEX:
-        NetworkSimplex<V, E> ns = NetworkSimplex.builder(svGraph).build();
-        ns.run();
-        layers = ns.getLayerList();
-        //        Graph<LV<V>, LE<V,E>> best =
-        //        svGraph = new NetworkSimplex<>(svGraph).getTheBestSpanningTree();
-        //        layers = GraphLayers.assign(svGraph);
+        layers = GraphLayers.networkSimplex(svGraph);
         break;
       case NORMAL:
       default:

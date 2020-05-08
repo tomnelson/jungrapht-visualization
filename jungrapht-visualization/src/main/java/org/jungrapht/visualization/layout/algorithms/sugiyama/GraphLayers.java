@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jungrapht.visualization.layout.algorithms.util.ComponentGrouping;
+import org.jungrapht.visualization.layout.algorithms.util.NetworkSimplex;
 import org.jungrapht.visualization.layout.algorithms.util.NetworkSimplexDevelopment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -167,6 +168,37 @@ public class GraphLayers {
     }
 
     return list;
+  }
+
+  public static <V, E> List<List<LV<V>>> networkSimplex(Graph<LV<V>, LE<V, E>> dag) {
+    List<List<LV<V>>> layerList = new ArrayList<>();
+    List<Graph<LV<V>, LE<V, E>>> componentList = ComponentGrouping.getComponentGraphs(dag);
+    componentList.sort(Comparator.comparingInt(l -> -componentList.size()));
+    for (Graph<LV<V>, LE<V, E>> sub : componentList) {
+      NetworkSimplex<V, E> ns = NetworkSimplex.builder(sub).build();
+      ns.run();
+      List<List<LV<V>>> layers = ns.getLayerList();
+      for (int i = 0; i < layers.size(); i++) {
+        List<LV<V>> layer = layers.get(i);
+        if (layerList.size() <= i) {
+          layerList.add(new ArrayList<>());
+        }
+        layerList.get(i).addAll(layer);
+      }
+    }
+
+    Collections.reverse(layerList);
+
+    for (int i = 0; i < layerList.size(); i++) {
+      List<LV<V>> layer = layerList.get(i);
+      for (int j = 0; j < layer.size(); j++) {
+        LV<V> v = layer.get(j);
+        v.setRank(i);
+        v.setIndex(j);
+      }
+    }
+
+    return layerList;
   }
 
   public static <V, E> List<List<LV<V>>> coffmanGraham(Graph<LV<V>, LE<V, E>> dag, int width) {

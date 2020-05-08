@@ -19,22 +19,22 @@ import org.jungrapht.visualization.renderers.Renderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EiglspergerNetworkSimplexComparison extends JFrame {
+public class EiglspergerSmallNetworkSimplexComparison extends JFrame {
 
   private static final Logger log =
-      LoggerFactory.getLogger(EiglspergerNetworkSimplexComparison.class);
+      LoggerFactory.getLogger(EiglspergerSmallNetworkSimplexComparison.class);
 
-  public EiglspergerNetworkSimplexComparison() {
+  public EiglspergerSmallNetworkSimplexComparison() {
 
     JPanel container = new JPanel(new GridLayout(0, 2));
 
-    Graph<Integer, Integer> graph = createInitialGraph();
+    Graph<String, Integer> graph = createInitialGraph();
 
-    VisualizationViewer<Integer, Integer> vv1 = configureVisualizationViewer(graph);
+    VisualizationViewer<String, Integer> vv1 = configureVisualizationViewer(graph);
     vv1.getRenderContext().setEdgeLabelFunction(Object::toString);
 
-    EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm1 =
-        EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+    EiglspergerLayoutAlgorithm<String, Integer> layoutAlgorithm1 =
+        EiglspergerLayoutAlgorithm.<String, Integer>edgeAwareBuilder()
             //                        .straightenEdges(false)
             .postStraighten(true)
             .threaded(false)
@@ -45,11 +45,11 @@ public class EiglspergerNetworkSimplexComparison extends JFrame {
     vv1.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm1);
     container.add(vv1.getComponent());
 
-    VisualizationViewer<Integer, Integer> vv2 = configureVisualizationViewer(graph);
+    VisualizationViewer<String, Integer> vv2 = configureVisualizationViewer(graph);
     vv2.getRenderContext().setEdgeLabelFunction(Object::toString);
 
-    EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm2 =
-        EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+    EiglspergerLayoutAlgorithm<String, Integer> layoutAlgorithm2 =
+        EiglspergerLayoutAlgorithm.<String, Integer>edgeAwareBuilder()
             //                        .straightenEdges(false)
             .postStraighten(true)
             .threaded(false)
@@ -67,9 +67,9 @@ public class EiglspergerNetworkSimplexComparison extends JFrame {
     setVisible(true);
   }
 
-  private VisualizationViewer<Integer, Integer> configureVisualizationViewer(
-      Graph<Integer, Integer> graph) {
-    VisualizationViewer<Integer, Integer> vv =
+  private VisualizationViewer<String, Integer> configureVisualizationViewer(
+      Graph<String, Integer> graph) {
+    VisualizationViewer<String, Integer> vv =
         VisualizationViewer.builder(graph)
             .layoutSize(new Dimension(600, 600))
             .viewSize(new Dimension(700, 500))
@@ -123,12 +123,39 @@ public class EiglspergerNetworkSimplexComparison extends JFrame {
     }
   }
 
+  Graph<String, Integer> createInitialGraph() {
+    Graph<String, Integer> dag =
+        GraphTypeBuilder.<String, Integer>directed()
+            .edgeSupplier(SupplierUtil.createIntegerSupplier())
+            .buildGraph();
+    dag.addVertex("a");
+    dag.addVertex("b");
+    dag.addVertex("c");
+    dag.addVertex("d");
+    dag.addVertex("e");
+    dag.addVertex("f");
+    dag.addVertex("g");
+    dag.addVertex("h");
+
+    int ae = dag.addEdge("a", "e");
+    int af = dag.addEdge("a", "f");
+    int ab = dag.addEdge("a", "b");
+    int bc = dag.addEdge("b", "c");
+    int eg = dag.addEdge("e", "g");
+    int fg = dag.addEdge("f", "g");
+    int cd = dag.addEdge("c", "d");
+    int gh = dag.addEdge("g", "h");
+    int dh = dag.addEdge("d", "h");
+
+    return dag;
+  }
+
   /**
    * creates a graph to look like the one in the paper
    *
    * @return
    */
-  Graph<Integer, Integer> createInitialGraph() {
+  Graph<Integer, Integer> createInitialGraph2() {
 
     Graph<Integer, Integer> graph =
         GraphTypeBuilder.<Integer, Integer>directed()
@@ -194,6 +221,6 @@ public class EiglspergerNetworkSimplexComparison extends JFrame {
   }
 
   public static void main(String[] args) {
-    new EiglspergerNetworkSimplexComparison();
+    new EiglspergerSmallNetworkSimplexComparison();
   }
 }
