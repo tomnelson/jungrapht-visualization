@@ -1,16 +1,19 @@
 package org.jungrapht.samples.sugiyama;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.GridLayout;
+import java.awt.event.ItemEvent;
 import java.util.stream.IntStream;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
+import org.jungrapht.samples.util.ControlHelpers;
+import org.jungrapht.samples.util.LayeringConfiguration;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.SugiyamaLayoutAlgorithm;
@@ -19,45 +22,53 @@ import org.jungrapht.visualization.renderers.Renderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SugiyamaWithWithoutTransposeSwapping extends JFrame {
+public class SugiyamaLayeringOptions extends JFrame {
 
-  private static final Logger log =
-      LoggerFactory.getLogger(SugiyamaWithWithoutTransposeSwapping.class);
+  private static final Logger log = LoggerFactory.getLogger(SugiyamaLayeringOptions.class);
 
-  public SugiyamaWithWithoutTransposeSwapping() {
+  public SugiyamaLayeringOptions() {
 
-    JPanel container = new JPanel(new GridLayout(0, 2));
+    JPanel container = new JPanel(new BorderLayout());
 
-    Graph<Integer, Integer> graph1 = createInitialGraph();
-    VisualizationViewer<Integer, Integer> vv1 = configureVisualizationViewer(graph1);
-    vv1.getRenderContext().setEdgeLabelFunction(Object::toString);
+    Graph<Integer, Integer> graph = createInitialGraph();
 
-    SugiyamaLayoutAlgorithm<Integer, Integer> layoutAlgorithm1 =
+    VisualizationViewer<Integer, Integer> vv3 = configureVisualizationViewer(graph);
+
+    vv3.getRenderContext().setEdgeLabelFunction(Object::toString);
+
+    LayeringConfiguration layeringConfiguration = new LayeringConfiguration();
+
+    layeringConfiguration.addItemListener(
+        e -> {
+          if (e.getStateChange() == ItemEvent.SELECTED) {
+            SugiyamaLayoutAlgorithm<Integer, Integer> layoutAlgorithm =
+                SugiyamaLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+                    .postStraighten(true)
+                    .threaded(false)
+                    .layering((Layering) e.getItem())
+                    .after(vv3::scaleToLayout)
+                    .build();
+            layoutAlgorithm.setRenderContext(vv3.getRenderContext());
+            vv3.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm);
+          }
+        });
+
+    SugiyamaLayoutAlgorithm<Integer, Integer> layoutAlgorithm3 =
         SugiyamaLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+            .postStraighten(true)
             .threaded(false)
-            .layering(Layering.TOP_DOWN)
-            .after(vv1::scaleToLayout)
+            .layering(layeringConfiguration.getLayeringPreference())
+            .after(vv3::scaleToLayout)
             .build();
-    layoutAlgorithm1.setRenderContext(vv1.getRenderContext());
-    vv1.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm1);
-    container.add(vv1.getComponent());
-
-    Graph<Integer, Integer> graph2 = createInitialGraph();
-    VisualizationViewer<Integer, Integer> vv2 = configureVisualizationViewer(graph2);
-    vv2.getRenderContext().setEdgeLabelFunction(Object::toString);
-
-    SugiyamaLayoutAlgorithm<Integer, Integer> layoutAlgorithm2 =
-        SugiyamaLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
-            .threaded(false)
-            .transpose(false)
-            .layering(Layering.TOP_DOWN)
-            .after(vv2::scaleToLayout)
-            .build();
-    layoutAlgorithm2.setRenderContext(vv2.getRenderContext());
-    vv2.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm2);
-    container.add(vv2.getComponent());
+    layoutAlgorithm3.setRenderContext(vv3.getRenderContext());
+    vv3.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm3);
+    container.add(vv3.getComponent());
 
     setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+    add(
+        ControlHelpers.getCenteredContainer("Layering Style", layeringConfiguration),
+        BorderLayout.SOUTH);
 
     add(container);
     pack();
@@ -191,6 +202,6 @@ public class SugiyamaWithWithoutTransposeSwapping extends JFrame {
   }
 
   public static void main(String[] args) {
-    new SugiyamaWithWithoutTransposeSwapping();
+    new SugiyamaLayeringOptions();
   }
 }

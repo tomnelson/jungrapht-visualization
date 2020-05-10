@@ -40,7 +40,7 @@ public class EiglspergerSmallGraph extends JFrame {
             .postStraighten(true)
             .threaded(false)
             .useCompactionGraph(false)
-            .layering(Layering.NORMAL)
+            .layering(Layering.TOP_DOWN)
             .after(vv3::scaleToLayout)
             .build();
     layoutAlgorithm3.setRenderContext(vv3.getRenderContext());

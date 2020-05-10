@@ -35,7 +35,7 @@ public class SugiyamaThrowaway extends JFrame {
     SugiyamaLayoutAlgorithm<Integer, Integer> layoutAlgorithm3 =
         SugiyamaLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .threaded(false)
-            .layering(Layering.NORMAL)
+            .layering(Layering.TOP_DOWN)
             .after(vv3::scaleToLayout)
             .build();
     layoutAlgorithm3.setRenderContext(vv3.getRenderContext());

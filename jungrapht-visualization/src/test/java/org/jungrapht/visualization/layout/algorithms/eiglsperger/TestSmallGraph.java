@@ -58,8 +58,9 @@ public class TestSmallGraph {
 
     //        Graph<LV<Integer>, Integer> compactionGraph =
     //                stepsForward.compactionGraph;
-    HorizontalCoordinateAssignment<Integer, Integer> horizontalCoordinateAssignment =
-        new HorizontalCoordinateAssignment<>(layersArray, svGraph, new HashSet<>(), 100, 100);
+    HorizontalCoordinateAssignmentDeprecated<Integer, Integer> horizontalCoordinateAssignment =
+        new HorizontalCoordinateAssignmentDeprecated<>(
+            layersArray, svGraph, new HashSet<>(), 100, 100);
     horizontalCoordinateAssignment.horizontalCoordinateAssignment();
   }
 
@@ -92,8 +93,8 @@ public class TestSmallGraph {
     //        int backwardCrossCount = stepsBackward.sweep(layersArray);
 
     Graph<LV<Integer>, Integer> compactionGraph = stepsForward.compactionGraph;
-    HorizontalCoordinateAssignmentWithGraph<Integer, Integer> horizontalCoordinateAssignment =
-        new HorizontalCoordinateAssignmentWithGraph<>(
+    HorizontalCoordinateAssignment<Integer, Integer> horizontalCoordinateAssignment =
+        new HorizontalCoordinateAssignment<>(
             layersArray, svGraph, compactionGraph, new HashSet<>(), 100, 100);
     horizontalCoordinateAssignment.horizontalCoordinateAssignment();
   }

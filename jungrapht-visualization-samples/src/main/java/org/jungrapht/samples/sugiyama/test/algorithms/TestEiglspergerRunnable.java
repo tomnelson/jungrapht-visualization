@@ -149,7 +149,7 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
       case COFFMAN_GRAHAM:
         layers = GraphLayers.coffmanGraham(svGraph, 10);
         break;
-      case NORMAL:
+      case TOP_DOWN:
       default:
         layers = GraphLayers.assign(svGraph);
     }

@@ -2,8 +2,7 @@ package org.jungrapht.visualization.layout.algorithms.eiglsperger;
 
 import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 
-import java.awt.Rectangle;
-import java.awt.Shape;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -53,9 +52,9 @@ import org.slf4j.LoggerFactory;
  * @param <V> vertex type
  * @param <E> edge type
  */
-public class EiglspergerRunnableWithGraph<V, E> implements Runnable {
+public class EiglspergerRunnableDeprecated<V, E> implements Runnable {
 
-  private static final Logger log = LoggerFactory.getLogger(EiglspergerRunnableWithGraph.class);
+  private static final Logger log = LoggerFactory.getLogger(EiglspergerRunnableDeprecated.class);
 
   /**
    * a Builder to create a configured instance
@@ -66,14 +65,14 @@ public class EiglspergerRunnableWithGraph<V, E> implements Runnable {
    * @param <B> the builder type
    */
   public static class Builder<
-      V, E, T extends EiglspergerRunnableWithGraph<V, E>, B extends Builder<V, E, T, B>> {
+      V, E, T extends EiglspergerRunnableDeprecated<V, E>, B extends Builder<V, E, T, B>> {
     protected LayoutModel<V> layoutModel;
     protected RenderContext<V, E> renderContext;
     protected boolean straightenEdges;
     protected boolean postStraighten;
     protected boolean transpose;
     protected int maxLevelCross;
-    protected boolean minimizeEdgeLength = false;
+    protected boolean minimizeEdgeLength = true;
     protected Layering layering = Layering.LONGEST_PATH;
 
     /** {@inheritDoc} */
@@ -124,7 +123,7 @@ public class EiglspergerRunnableWithGraph<V, E> implements Runnable {
 
     /** {@inheritDoc} */
     public T build() {
-      return (T) new EiglspergerRunnableWithGraph<>(this);
+      return (T) new EiglspergerRunnableDeprecated<>(this);
     }
   }
 
@@ -151,14 +150,14 @@ public class EiglspergerRunnableWithGraph<V, E> implements Runnable {
   protected boolean transpose;
   protected int maxLevelCross;
   protected boolean minimizeEdgeLength;
-  protected Layering layering;
+  protected Layering layering = Layering.LONGEST_PATH;
   protected Map<LV<V>, VertexMetadata<V>> vertexMetadataMap = new HashMap<>();
 
   protected EiglspergerStepsForward<V, E> stepsForward;
   protected EiglspergerStepsBackward<V, E> stepsBackward;
   EiglspergerSteps<V, E> steps = null;
 
-  protected EiglspergerRunnableWithGraph(Builder<V, E, ?, ?> builder) {
+  protected EiglspergerRunnableDeprecated(Builder<V, E, ?, ?> builder) {
     this(
         builder.layoutModel,
         builder.renderContext,
@@ -170,7 +169,7 @@ public class EiglspergerRunnableWithGraph<V, E> implements Runnable {
         builder.layering);
   }
 
-  protected EiglspergerRunnableWithGraph(
+  protected EiglspergerRunnableDeprecated(
       LayoutModel<V> layoutModel,
       RenderContext<V, E> renderContext,
       boolean straightenEdges,
@@ -217,16 +216,16 @@ public class EiglspergerRunnableWithGraph<V, E> implements Runnable {
 
     List<List<LV<V>>> layers;
     switch (layering) {
+      case NETWORK_SIMPLEX:
+        layers = GraphLayers.networkSimplex(svGraph);
+        break;
       case LONGEST_PATH:
         layers = GraphLayers.longestPath(svGraph);
         break;
       case COFFMAN_GRAHAM:
         layers = GraphLayers.coffmanGraham(svGraph, 10);
         break;
-      case NETWORK_SIMPLEX:
-        layers = GraphLayers.networkSimplex(svGraph);
-        break;
-      case NORMAL:
+      case TOP_DOWN:
       default:
         layers = GraphLayers.assign(svGraph);
     }
@@ -257,15 +256,12 @@ public class EiglspergerRunnableWithGraph<V, E> implements Runnable {
     stepsBackward = new EiglspergerStepsBackward<>(svGraph, layersArray, transpose);
 
     int bestCrossCount = Integer.MAX_VALUE;
-    Graph<LV<V>, Integer> bestCompactionGraph = null;
     for (int i = 0; i < maxLevelCross; i++) {
       if (i % 2 == 0) {
         int sweepCrossCount = stepsForward.sweep(layersArray);
-        Graph<LV<V>, Integer> compactionGraph = stepsForward.compactionGraph;
         if (sweepCrossCount < bestCrossCount) {
           bestCrossCount = sweepCrossCount;
           vertexMetadataMap = save(layersArray);
-          bestCompactionGraph = copy(compactionGraph);
         } else {
           if (log.isTraceEnabled()) {
             log.trace("best:{}", layersArray);
@@ -274,11 +270,9 @@ public class EiglspergerRunnableWithGraph<V, E> implements Runnable {
         }
       } else {
         int sweepCrossCount = stepsBackward.sweep(layersArray);
-        Graph<LV<V>, Integer> compactionGraph = stepsForward.compactionGraph;
         if (sweepCrossCount < bestCrossCount) {
           bestCrossCount = sweepCrossCount;
           vertexMetadataMap = save(layersArray);
-          bestCompactionGraph = copy(compactionGraph);
         } else {
           if (log.isTraceEnabled()) {
             log.trace("best:{}", layersArray);
@@ -294,7 +288,7 @@ public class EiglspergerRunnableWithGraph<V, E> implements Runnable {
         .forEach(layer -> Arrays.sort(layer, Comparator.comparingInt(LV::getIndex)));
 
     // figure out the avg size of rendered vertex
-    Rectangle avgVertexBounds =
+    java.awt.Rectangle avgVertexBounds =
         maxVertexBounds(layersArray, renderContext.getVertexShapeFunction());
 
     int horizontalOffset =
@@ -313,14 +307,9 @@ public class EiglspergerRunnableWithGraph<V, E> implements Runnable {
       }
     }
     if (straightenEdges) {
-      HorizontalCoordinateAssignmentWithGraph<V, E> horizontalCoordinateAssignment =
-          new HorizontalCoordinateAssignmentWithGraph<>(
-              layersArray,
-              svGraph,
-              bestCompactionGraph,
-              new HashSet<>(),
-              horizontalOffset,
-              verticalOffset);
+      HorizontalCoordinateAssignmentDeprecated<V, E> horizontalCoordinateAssignment =
+          new HorizontalCoordinateAssignmentDeprecated<>(
+              layersArray, svGraph, new HashSet<>(), horizontalOffset, verticalOffset);
       horizontalCoordinateAssignment.horizontalCoordinateAssignment();
 
       GraphLayers.checkLayers(layersArray);

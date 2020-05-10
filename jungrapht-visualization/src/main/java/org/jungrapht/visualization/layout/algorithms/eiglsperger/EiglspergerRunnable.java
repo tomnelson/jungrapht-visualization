@@ -2,7 +2,8 @@ package org.jungrapht.visualization.layout.algorithms.eiglsperger;
 
 import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 
-import java.awt.*;
+import java.awt.Rectangle;
+import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -72,7 +73,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     protected boolean postStraighten;
     protected boolean transpose;
     protected int maxLevelCross;
-    protected boolean minimizeEdgeLength = true;
+    protected boolean minimizeEdgeLength = false;
     protected Layering layering = Layering.LONGEST_PATH;
 
     /** {@inheritDoc} */
@@ -150,7 +151,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
   protected boolean transpose;
   protected int maxLevelCross;
   protected boolean minimizeEdgeLength;
-  protected Layering layering = Layering.LONGEST_PATH;
+  protected Layering layering;
   protected Map<LV<V>, VertexMetadata<V>> vertexMetadataMap = new HashMap<>();
 
   protected EiglspergerStepsForward<V, E> stepsForward;
@@ -216,16 +217,16 @@ public class EiglspergerRunnable<V, E> implements Runnable {
 
     List<List<LV<V>>> layers;
     switch (layering) {
-      case NETWORK_SIMPLEX:
-        layers = GraphLayers.networkSimplex(svGraph);
-        break;
       case LONGEST_PATH:
         layers = GraphLayers.longestPath(svGraph);
         break;
       case COFFMAN_GRAHAM:
         layers = GraphLayers.coffmanGraham(svGraph, 10);
         break;
-      case NORMAL:
+      case NETWORK_SIMPLEX:
+        layers = GraphLayers.networkSimplex(svGraph);
+        break;
+      case TOP_DOWN:
       default:
         layers = GraphLayers.assign(svGraph);
     }
@@ -256,12 +257,15 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     stepsBackward = new EiglspergerStepsBackward<>(svGraph, layersArray, transpose);
 
     int bestCrossCount = Integer.MAX_VALUE;
+    Graph<LV<V>, Integer> bestCompactionGraph = null;
     for (int i = 0; i < maxLevelCross; i++) {
       if (i % 2 == 0) {
         int sweepCrossCount = stepsForward.sweep(layersArray);
+        Graph<LV<V>, Integer> compactionGraph = stepsForward.compactionGraph;
         if (sweepCrossCount < bestCrossCount) {
           bestCrossCount = sweepCrossCount;
           vertexMetadataMap = save(layersArray);
+          bestCompactionGraph = copy(compactionGraph);
         } else {
           if (log.isTraceEnabled()) {
             log.trace("best:{}", layersArray);
@@ -270,9 +274,11 @@ public class EiglspergerRunnable<V, E> implements Runnable {
         }
       } else {
         int sweepCrossCount = stepsBackward.sweep(layersArray);
+        Graph<LV<V>, Integer> compactionGraph = stepsForward.compactionGraph;
         if (sweepCrossCount < bestCrossCount) {
           bestCrossCount = sweepCrossCount;
           vertexMetadataMap = save(layersArray);
+          bestCompactionGraph = copy(compactionGraph);
         } else {
           if (log.isTraceEnabled()) {
             log.trace("best:{}", layersArray);
@@ -288,7 +294,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
         .forEach(layer -> Arrays.sort(layer, Comparator.comparingInt(LV::getIndex)));
 
     // figure out the avg size of rendered vertex
-    java.awt.Rectangle avgVertexBounds =
+    Rectangle avgVertexBounds =
         maxVertexBounds(layersArray, renderContext.getVertexShapeFunction());
 
     int horizontalOffset =
@@ -309,7 +315,12 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     if (straightenEdges) {
       HorizontalCoordinateAssignment<V, E> horizontalCoordinateAssignment =
           new HorizontalCoordinateAssignment<>(
-              layersArray, svGraph, new HashSet<>(), horizontalOffset, verticalOffset);
+              layersArray,
+              svGraph,
+              bestCompactionGraph,
+              new HashSet<>(),
+              horizontalOffset,
+              verticalOffset);
       horizontalCoordinateAssignment.horizontalCoordinateAssignment();
 
       GraphLayers.checkLayers(layersArray);

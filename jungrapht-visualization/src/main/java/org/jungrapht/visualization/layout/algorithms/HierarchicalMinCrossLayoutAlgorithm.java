@@ -15,7 +15,7 @@ import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnable;
-import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnableWithGraph;
+import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnableDeprecated;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
@@ -270,7 +270,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
     } else {
       runnable =
           useCompactionGraph
-              ? EiglspergerRunnableWithGraph.<V, E>builder()
+              ? EiglspergerRunnable.<V, E>builder()
                   .layoutModel(layoutModel)
                   .renderContext(renderContext)
                   .straightenEdges(straightenEdges)
@@ -278,7 +278,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
                   .maxLevelCross(maxLevelCross)
                   .layering(layering)
                   .build()
-              : EiglspergerRunnable.<V, E>builder()
+              : EiglspergerRunnableDeprecated.<V, E>builder()
                   .layoutModel(layoutModel)
                   .renderContext(renderContext)
                   .straightenEdges(straightenEdges)

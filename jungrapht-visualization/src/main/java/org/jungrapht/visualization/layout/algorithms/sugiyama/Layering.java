@@ -1,8 +1,8 @@
 package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
 public enum Layering {
-  NORMAL,
+  TOP_DOWN,
   LONGEST_PATH,
   COFFMAN_GRAHAM,
-  NETWORK_SIMPLEX // not used yet
+  NETWORK_SIMPLEX
 }

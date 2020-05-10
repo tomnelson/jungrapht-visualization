@@ -37,7 +37,7 @@ public class EiglspergerWithWithoutTransposeSwapping extends JFrame {
     EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm1 =
         EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .threaded(false)
-            .layering(Layering.NORMAL)
+            .layering(Layering.TOP_DOWN)
             .after(vv1::scaleToLayout)
             .build();
     layoutAlgorithm1.setRenderContext(vv1.getRenderContext());
@@ -52,7 +52,7 @@ public class EiglspergerWithWithoutTransposeSwapping extends JFrame {
         EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .threaded(false)
             .transpose(false)
-            .layering(Layering.NORMAL)
+            .layering(Layering.TOP_DOWN)
             .after(vv2::scaleToLayout)
             .build();
     layoutAlgorithm2.setRenderContext(vv2.getRenderContext());

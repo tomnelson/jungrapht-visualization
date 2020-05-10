@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
-import org.jungrapht.visualization.layout.algorithms.eiglsperger.HorizontalCompaction;
-import org.jungrapht.visualization.layout.algorithms.eiglsperger.HorizontalCoordinateAssignment;
-import org.jungrapht.visualization.layout.algorithms.eiglsperger.VerticalAlignment;
+import org.jungrapht.visualization.layout.algorithms.eiglsperger.HorizontalCompactionDeprecated;
+import org.jungrapht.visualization.layout.algorithms.eiglsperger.HorizontalCoordinateAssignmentDeprecated;
+import org.jungrapht.visualization.layout.algorithms.eiglsperger.VerticalAlignmentDeprecated;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.AverageMedian;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
@@ -23,7 +23,7 @@ import org.jungrapht.visualization.layout.model.Point;
  *     Germany"
  */
 public class SelectiveEiglspergerHorizontalCoordinateAssignment<V, E>
-    extends HorizontalCoordinateAssignment<V, E> {
+    extends HorizontalCoordinateAssignmentDeprecated<V, E> {
 
   boolean doUpLeft;
   boolean doDownLeft;
@@ -48,26 +48,26 @@ public class SelectiveEiglspergerHorizontalCoordinateAssignment<V, E>
   }
 
   public void horizontalCoordinateAssignment() {
-    HorizontalCompaction<V> upLeftCompaction = null;
-    HorizontalCompaction<V> upRightCompaction = null;
-    HorizontalCompaction<V> downLeftCompaction = null;
-    HorizontalCompaction<V> downRightCompaction = null;
+    HorizontalCompactionDeprecated<V> upLeftCompaction = null;
+    HorizontalCompactionDeprecated<V> upRightCompaction = null;
+    HorizontalCompactionDeprecated<V> downLeftCompaction = null;
+    HorizontalCompactionDeprecated<V> downRightCompaction = null;
 
     if (doUpLeft) {
-      VerticalAlignment.LeftmostUpper<V, E> upLeft =
-          new VerticalAlignment.LeftmostUpper<>(layers, svGraph, markedSegments);
+      VerticalAlignmentDeprecated.LeftmostUpper<V, E> upLeft =
+          new VerticalAlignmentDeprecated.LeftmostUpper<>(layers, svGraph, markedSegments);
       upLeft.align();
       upLeftCompaction =
-          new HorizontalCompaction<>(
+          new HorizontalCompactionDeprecated<>(
               layers, upLeft.getRootMap(), upLeft.getAlignMap(), horizontalOffset, verticalOffset);
       upLeftCompaction.horizontalCompaction();
     }
     if (doUpRight) {
-      VerticalAlignment.RightmostUpper<V, E> upRight =
-          new VerticalAlignment.RightmostUpper<>(layers, svGraph, markedSegments);
+      VerticalAlignmentDeprecated.RightmostUpper<V, E> upRight =
+          new VerticalAlignmentDeprecated.RightmostUpper<>(layers, svGraph, markedSegments);
       upRight.align();
       upRightCompaction =
-          new HorizontalCompaction<>(
+          new HorizontalCompactionDeprecated<>(
               layers,
               upRight.getRootMap(),
               upRight.getAlignMap(),
@@ -77,11 +77,11 @@ public class SelectiveEiglspergerHorizontalCoordinateAssignment<V, E>
     }
 
     if (doDownLeft) {
-      VerticalAlignment.LeftmostLower<V, E> downLeft =
-          new VerticalAlignment.LeftmostLower<>(layers, svGraph, markedSegments);
+      VerticalAlignmentDeprecated.LeftmostLower<V, E> downLeft =
+          new VerticalAlignmentDeprecated.LeftmostLower<>(layers, svGraph, markedSegments);
       downLeft.align();
       downLeftCompaction =
-          new HorizontalCompaction<>(
+          new HorizontalCompactionDeprecated<>(
               layers,
               downLeft.getRootMap(),
               downLeft.getAlignMap(),
@@ -91,11 +91,11 @@ public class SelectiveEiglspergerHorizontalCoordinateAssignment<V, E>
     }
 
     if (doDownRight) {
-      VerticalAlignment.RightmostLower<V, E> downRight =
-          new VerticalAlignment.RightmostLower<>(layers, svGraph, markedSegments);
+      VerticalAlignmentDeprecated.RightmostLower<V, E> downRight =
+          new VerticalAlignmentDeprecated.RightmostLower<>(layers, svGraph, markedSegments);
       downRight.align();
       downRightCompaction =
-          new HorizontalCompaction<>(
+          new HorizontalCompactionDeprecated<>(
               layers,
               downRight.getRootMap(),
               downRight.getAlignMap(),

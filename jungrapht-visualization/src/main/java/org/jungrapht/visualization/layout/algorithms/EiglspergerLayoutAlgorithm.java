@@ -15,7 +15,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnable;
-import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnableWithGraph;
+import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnableDeprecated;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.RenderContextAware;
@@ -229,7 +229,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
 
     Runnable runnable =
         useCompactionGraph
-            ? EiglspergerRunnableWithGraph.<V, E>builder()
+            ? EiglspergerRunnable.<V, E>builder()
                 .layoutModel(layoutModel)
                 .renderContext(renderContext)
                 .straightenEdges(straightenEdges)
@@ -238,7 +238,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
                 .maxLevelCross(maxLevelCross)
                 .layering(layering)
                 .build()
-            : EiglspergerRunnable.<V, E>builder()
+            : EiglspergerRunnableDeprecated.<V, E>builder()
                 .layoutModel(layoutModel)
                 .renderContext(renderContext)
                 .straightenEdges(straightenEdges)

@@ -37,7 +37,7 @@ public class EiglspergerLongestPathComparison extends JFrame {
             //                        .straightenEdges(false)
             .postStraighten(true)
             .threaded(false)
-            .layering(Layering.NORMAL)
+            .layering(Layering.TOP_DOWN)
             .after(vv1::scaleToLayout)
             .build();
     layoutAlgorithm1.setRenderContext(vv1.getRenderContext());

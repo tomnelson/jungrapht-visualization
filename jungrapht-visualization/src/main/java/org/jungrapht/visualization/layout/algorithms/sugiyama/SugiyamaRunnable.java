@@ -267,7 +267,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       case COFFMAN_GRAHAM:
         layers = GraphLayers.coffmanGraham(svGraph, 10);
         break;
-      case NORMAL:
+      case TOP_DOWN:
       default:
         layers = GraphLayers.assign(svGraph);
     }
