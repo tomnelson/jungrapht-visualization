@@ -270,11 +270,11 @@ public class EiglspergerRunnable<V, E> implements Runnable {
           if (log.isTraceEnabled()) {
             log.trace("best:{}", layersArray);
           }
-          //          break;
+          //                    break;
         }
       } else {
         int sweepCrossCount = stepsBackward.sweep(layersArray);
-        Graph<LV<V>, Integer> compactionGraph = stepsForward.compactionGraph;
+        Graph<LV<V>, Integer> compactionGraph = stepsBackward.compactionGraph;
         if (sweepCrossCount < bestCrossCount) {
           bestCrossCount = sweepCrossCount;
           vertexMetadataMap = save(layersArray);
@@ -283,7 +283,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
           if (log.isTraceEnabled()) {
             log.trace("best:{}", layersArray);
           }
-          //          break;
+          //                    break;
         }
       }
     }
