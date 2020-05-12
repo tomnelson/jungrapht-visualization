@@ -53,7 +53,6 @@ public class SugiyamaLayoutAlgorithm<V, E>
   protected static final String MINCROSS_THREADED = PREFIX + "mincross.threaded";
   protected static final String TRANSPOSE_LIMIT = PREFIX + "mincross.transposeLimit";
   protected static final String MAX_LEVEL_CROSS = PREFIX + "mincross.maxLevelCross";
-  protected static final String MINCROSS_USE_LONGEST_PATH = PREFIX + "mincross.useLongestPath";
 
   /**
    * a Builder to create a configured instance

@@ -15,7 +15,6 @@ import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnable;
-import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnableDeprecated;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
@@ -62,7 +61,6 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
   protected static final String TRANSPOSE_LIMIT = PREFIX + "mincross.transposeLimit";
   protected static final String MAX_LEVEL_CROSS = PREFIX + "mincross.maxLevelCross";
   protected static final String EIGLSPERGER_THRESHOLD = PREFIX + "mincross.eiglspergerThreshold";
-  protected static final String MINCROSS_USE_LONGEST_PATH = PREFIX + "mincross.useLongestPath";
 
   /**
    * a Builder to create a configured instance
@@ -91,7 +89,6 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
     protected boolean threaded =
         Boolean.parseBoolean(System.getProperty(MINCROSS_THREADED, "true"));
     protected int eiglspergerThreshold = Integer.getInteger(EIGLSPERGER_THRESHOLD, 500);
-    protected boolean useCompactionGraph = true;
     protected Layering layering = Layering.NETWORK_SIMPLEX;
 
     /** {@inheritDoc} */
@@ -150,11 +147,6 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
       return self();
     }
 
-    public B useCompactionGraph(boolean useCompactionGraph) {
-      this.useCompactionGraph = useCompactionGraph;
-      return self();
-    }
-
     public B layering(Layering layering) {
       this.layering = layering;
       return self();
@@ -207,7 +199,6 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
         builder.transposeLimit,
         builder.maxLevelCross,
         builder.expandLayout,
-        builder.useCompactionGraph,
         builder.layering,
         builder.threaded,
         builder.after);
@@ -222,7 +213,6 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
       int transposeLimit,
       int maxLevelCross,
       boolean expandLayout,
-      boolean useCompactionGraph,
       Layering layering,
       boolean threaded,
       Runnable after) {
@@ -234,7 +224,6 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
     this.transposeLimit = transposeLimit;
     this.maxLevelCross = maxLevelCross;
     this.expandLayout = expandLayout;
-    this.useCompactionGraph = useCompactionGraph;
     this.layering = layering;
     this.threaded = threaded;
     this.after = after;
@@ -269,23 +258,14 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
               .build();
     } else {
       runnable =
-          useCompactionGraph
-              ? EiglspergerRunnable.<V, E>builder()
-                  .layoutModel(layoutModel)
-                  .renderContext(renderContext)
-                  .straightenEdges(straightenEdges)
-                  .postStraighten(postStraighten)
-                  .maxLevelCross(maxLevelCross)
-                  .layering(layering)
-                  .build()
-              : EiglspergerRunnableDeprecated.<V, E>builder()
-                  .layoutModel(layoutModel)
-                  .renderContext(renderContext)
-                  .straightenEdges(straightenEdges)
-                  .postStraighten(postStraighten)
-                  .maxLevelCross(maxLevelCross)
-                  .layering(layering)
-                  .build();
+          EiglspergerRunnable.<V, E>builder()
+              .layoutModel(layoutModel)
+              .renderContext(renderContext)
+              .straightenEdges(straightenEdges)
+              .postStraighten(postStraighten)
+              .maxLevelCross(maxLevelCross)
+              .layering(layering)
+              .build();
     }
     if (threaded) {
 

@@ -45,7 +45,6 @@ public class EiglspergerLayeringOptions extends JFrame {
                 EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
                     .postStraighten(true)
                     .threaded(false)
-                    .useCompactionGraph(true)
                     .layering((Layering) e.getItem())
                     .after(vv3::scaleToLayout)
                     .build();
@@ -58,7 +57,6 @@ public class EiglspergerLayeringOptions extends JFrame {
         EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .postStraighten(true)
             .threaded(false)
-            .useCompactionGraph(true)
             .layering(layeringConfiguration.getLayeringPreference())
             .after(vv3::scaleToLayout)
             .build();

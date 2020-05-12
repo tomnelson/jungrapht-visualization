@@ -43,7 +43,6 @@ public class EiglspergerNetworkSimplex extends JFrame {
             //                        .straightenEdges(false)
             .postStraighten(true)
             .threaded(false)
-            .useCompactionGraph(true)
             .layering(Layering.NETWORK_SIMPLEX)
             .after(vv3::scaleToLayout)
             .build();

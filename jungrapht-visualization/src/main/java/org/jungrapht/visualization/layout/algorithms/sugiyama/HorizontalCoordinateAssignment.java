@@ -63,7 +63,7 @@ public class HorizontalCoordinateAssignment<V, E> {
   public void horizontalCoordinateAssignment() {
     preprocessing();
     if (log.isTraceEnabled()) {
-      log.info("marked segments:{}", markedSegments);
+      log.trace("marked segments:{}", markedSegments);
     }
     VerticalAlignment.LeftmostUpper<V, E> upLeft =
         new VerticalAlignment.LeftmostUpper<>(layers, svGraph, markedSegments);

@@ -221,7 +221,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
         layers = GraphLayers.longestPath(svGraph);
         break;
       case COFFMAN_GRAHAM:
-        layers = GraphLayers.coffmanGraham(svGraph, 10);
+        layers = GraphLayers.coffmanGraham(svGraph, 0);
         break;
       case NETWORK_SIMPLEX:
         layers = GraphLayers.networkSimplex(svGraph);

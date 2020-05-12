@@ -223,7 +223,7 @@ public class EiglspergerRunnableDeprecated<V, E> implements Runnable {
         layers = GraphLayers.longestPath(svGraph);
         break;
       case COFFMAN_GRAHAM:
-        layers = GraphLayers.coffmanGraham(svGraph, 10);
+        layers = GraphLayers.coffmanGraham(svGraph, 2); //svGraph.vertexSet().size()/10);
         break;
       case TOP_DOWN:
       default:

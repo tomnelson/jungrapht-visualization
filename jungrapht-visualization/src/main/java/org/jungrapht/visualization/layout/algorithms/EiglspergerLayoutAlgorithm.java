@@ -15,7 +15,6 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnable;
-import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnableDeprecated;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.RenderContextAware;
@@ -56,7 +55,6 @@ public class EiglspergerLayoutAlgorithm<V, E>
   protected static final String MINCROSS_POST_STRAIGHTEN = PREFIX + "mincross.postStraighten";
   protected static final String MINCROSS_THREADED = PREFIX + "mincross.threaded";
   protected static final String MAX_LEVEL_CROSS = PREFIX + "mincross.maxLevelCross";
-  protected static final String MINCROSS_USE_LONGEST_PATH = PREFIX + "mincross.useLongestPath";
 
   /**
    * a Builder to create a configured instance
@@ -80,8 +78,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
     protected boolean transpose = true;
     protected int maxLevelCross = Integer.getInteger(MAX_LEVEL_CROSS, 23);
     protected boolean expandLayout = true;
-    Layering layering = Layering.LONGEST_PATH;
-    boolean useCompactionGraph = true;
+    Layering layering = Layering.TOP_DOWN;
     protected Runnable after = () -> {};
     protected boolean threaded =
         Boolean.parseBoolean(System.getProperty(MINCROSS_THREADED, "true"));
@@ -127,11 +124,6 @@ public class EiglspergerLayoutAlgorithm<V, E>
       return self();
     }
 
-    public B useCompactionGraph(boolean useCompactionGraph) {
-      this.useCompactionGraph = useCompactionGraph;
-      return self();
-    }
-
     public B threaded(boolean threaded) {
       this.threaded = threaded;
       return self();
@@ -169,7 +161,6 @@ public class EiglspergerLayoutAlgorithm<V, E>
   protected RenderContext<V, E> renderContext;
   protected boolean threaded;
   protected Layering layering;
-  protected boolean useCompactionGraph;
   protected CompletableFuture theFuture;
   protected Runnable after;
 
@@ -185,7 +176,6 @@ public class EiglspergerLayoutAlgorithm<V, E>
         builder.transpose,
         builder.maxLevelCross,
         builder.expandLayout,
-        builder.useCompactionGraph,
         builder.layering,
         builder.threaded,
         builder.after);
@@ -198,7 +188,6 @@ public class EiglspergerLayoutAlgorithm<V, E>
       boolean transpose,
       int maxLevelCross,
       boolean expandLayout,
-      boolean useCompactionGraph,
       Layering layering,
       boolean threaded,
       Runnable after) {
@@ -208,7 +197,6 @@ public class EiglspergerLayoutAlgorithm<V, E>
     this.transpose = transpose;
     this.maxLevelCross = maxLevelCross;
     this.expandLayout = expandLayout;
-    this.useCompactionGraph = useCompactionGraph;
     this.layering = layering;
     this.after = after;
     this.threaded = threaded;
@@ -228,27 +216,17 @@ public class EiglspergerLayoutAlgorithm<V, E>
   public void visit(LayoutModel<V> layoutModel) {
 
     Runnable runnable =
-        useCompactionGraph
-            ? EiglspergerRunnable.<V, E>builder()
-                .layoutModel(layoutModel)
-                .renderContext(renderContext)
-                .straightenEdges(straightenEdges)
-                .transpose(transpose)
-                .postStraighten(postStraighten)
-                .maxLevelCross(maxLevelCross)
-                .layering(layering)
-                .build()
-            : EiglspergerRunnableDeprecated.<V, E>builder()
-                .layoutModel(layoutModel)
-                .renderContext(renderContext)
-                .straightenEdges(straightenEdges)
-                .transpose(transpose)
-                .postStraighten(postStraighten)
-                .maxLevelCross(maxLevelCross)
-                .layering(layering)
-                .build();
-    if (threaded) {
+        EiglspergerRunnable.<V, E>builder()
+            .layoutModel(layoutModel)
+            .renderContext(renderContext)
+            .straightenEdges(straightenEdges)
+            .transpose(transpose)
+            .postStraighten(postStraighten)
+            .maxLevelCross(maxLevelCross)
+            .layering(layering)
+            .build();
 
+    if (threaded) {
       theFuture =
           CompletableFuture.runAsync(runnable)
               .thenRun(

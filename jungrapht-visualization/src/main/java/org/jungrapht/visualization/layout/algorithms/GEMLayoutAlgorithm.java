@@ -101,6 +101,7 @@ public class GEMLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorithm<V
 
   protected GEMLayoutAlgorithm(Builder builder) {
     super(builder);
+    this.maxIterations = builder.maxIterations;
     this.multi = builder.multi;
     this.horizontalSpacing = builder.horizontalSpacing;
     this.verticalSpacing = builder.verticalSpacing;
@@ -161,6 +162,8 @@ public class GEMLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorithm<V
 
   // multiplicator of largest cluster
   public int multi;
+
+  protected int maxIterations;
 
   //
   // GEM Constants

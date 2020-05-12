@@ -69,7 +69,9 @@ public class GraphLayers {
         if (minRank != v.getRank()) {
           // change the rank of v and move it (below)
           verticesToMove.put(v, minRank);
-          log.debug("moving {} to rank {}", v, minRank);
+          if (log.isTraceEnabled()) {
+            log.trace("moving {} to rank {}", v, minRank);
+          }
         }
       }
       for (Map.Entry<LV<V>, Integer> entry : verticesToMove.entrySet()) {
@@ -202,6 +204,9 @@ public class GraphLayers {
   }
 
   public static <V, E> List<List<LV<V>>> coffmanGraham(Graph<LV<V>, LE<V, E>> dag, int width) {
+    if (width == 0) {
+      width = dag.vertexSet().size() / 10;
+    }
     List<List<LV<V>>> list = new ArrayList<>();
     Set<LV<V>> Z = new HashSet<>(); // seen
     Map<LV<V>, Integer> lambda = new HashMap<>(); //
@@ -215,7 +220,6 @@ public class GraphLayers {
               .min(Comparator.comparingInt(dag::inDegreeOf))
               .get();
       lambda.put(mv, i);
-      log.debug("put {}, {}", mv, i);
     }
     int k = 0;
     list.add(new ArrayList<>());
@@ -227,7 +231,7 @@ public class GraphLayers {
               .filter(v -> U.containsAll(Graphs.successorListOf(dag, v)))
               .max(Comparator.comparingInt(lambda::get))
               .get();
-      if (list.get(k).size() <= width && Z.containsAll(Graphs.successorListOf(dag, got))) {
+      if (list.get(k).size() < width && Z.containsAll(Graphs.successorListOf(dag, got))) {
         list.get(k).add(got);
       } else {
         Z.addAll(list.get(k));

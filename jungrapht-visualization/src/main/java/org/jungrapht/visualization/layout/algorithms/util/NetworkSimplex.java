@@ -168,7 +168,7 @@ public class NetworkSimplex<V, E> {
       log.trace("vinTreeMap: {}", vertexInTreeMap);
       log.trace("einTreeMap: {}", edgeInTreeMap);
       for (Map.Entry<LE<V, E>, Boolean> entry : edgeInTreeMap.entrySet()) {
-        log.info("{}", entry);
+        log.trace("{}", entry);
       }
     }
   }
