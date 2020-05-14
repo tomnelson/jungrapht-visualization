@@ -192,44 +192,48 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
             .filter(visualizationServer.getVisualizationModel().getGraph().vertexSet()::contains)
             .collect(Collectors.toList());
 
-    GraphicsDecorator graphicsDecorator =
-        visualizationServer.getRenderContext().getGraphicsContext();
+    if (!selectedVertices.isEmpty()) {
 
-    if (graphicsDecorator instanceof TransformingGraphics) {
-      // get a copy of the current transform used by g2d
-      AffineTransform savedTransform = g2d.getTransform();
-      AffineTransform graphicsTransformCopy = new AffineTransform(g2d.getTransform());
+      GraphicsDecorator graphicsDecorator =
+          visualizationServer.getRenderContext().getGraphicsContext();
 
-      AffineTransform viewTransform =
-          visualizationServer
-              .getRenderContext()
-              .getMultiLayerTransformer()
-              .getTransformer(MultiLayerTransformer.Layer.VIEW)
-              .getTransform();
+      if (graphicsDecorator instanceof TransformingGraphics) {
+        // get a copy of the current transform used by g2d
+        AffineTransform savedTransform = g2d.getTransform();
+        AffineTransform graphicsTransformCopy = new AffineTransform(g2d.getTransform());
 
-      // don't mutate the viewTransform!
-      graphicsTransformCopy.concatenate(viewTransform);
-      g2d.setTransform(graphicsTransformCopy);
-      Stroke savedStroke = g2d.getStroke();
-      float strokeWidth =
-          Math.max(selectionStrokeMin, (int) (selectionStrokeMin / g2d.getTransform().getScaleX()));
-      g2d.setStroke(new BasicStroke(strokeWidth));
-      for (V vertex : selectedVertices) {
-        paintTransformed(vertex);
+        AffineTransform viewTransform =
+            visualizationServer
+                .getRenderContext()
+                .getMultiLayerTransformer()
+                .getTransformer(MultiLayerTransformer.Layer.VIEW)
+                .getTransform();
+
+        // don't mutate the viewTransform!
+        graphicsTransformCopy.concatenate(viewTransform);
+        g2d.setTransform(graphicsTransformCopy);
+        Stroke savedStroke = g2d.getStroke();
+        float strokeWidth =
+            Math.max(
+                selectionStrokeMin, (int) (selectionStrokeMin / g2d.getTransform().getScaleX()));
+        g2d.setStroke(new BasicStroke(strokeWidth));
+        for (V vertex : selectedVertices) {
+          paintTransformed(vertex);
+        }
+        g2d.setStroke(savedStroke);
+
+      } else {
+        for (V vertex : selectedVertices) {
+          paintIconForVertex(
+              visualizationServer.getRenderContext(),
+              visualizationServer.getVisualizationModel(),
+              vertex);
+        }
       }
-      g2d.setStroke(savedStroke);
-
-    } else {
-      for (V vertex : selectedVertices) {
-        paintIconForVertex(
-            visualizationServer.getRenderContext(),
-            visualizationServer.getVisualizationModel(),
-            vertex);
-      }
+      // put back the old values
+      g2d.setPaint(oldPaint);
+      g2d.setTransform(oldTransform);
     }
-    // put back the old values
-    g2d.setPaint(oldPaint);
-    g2d.setTransform(oldTransform);
   }
 
   protected void paintSingleTransformed(V vertex) {

@@ -193,38 +193,40 @@ public class SingleSelectedVertexPaintable<V, E> implements VisualizationServer.
             .filter(visualizationServer.getVisualizationModel().getGraph().vertexSet()::contains)
             .findFirst()
             .orElse(null);
+    if (selectedVertex != null) {
 
-    GraphicsDecorator graphicsDecorator =
-        visualizationServer.getRenderContext().getGraphicsContext();
+      GraphicsDecorator graphicsDecorator =
+          visualizationServer.getRenderContext().getGraphicsContext();
 
-    if (graphicsDecorator instanceof TransformingGraphics) {
-      // get a copy of the current transform used by g2d
-      AffineTransform savedTransform = g2d.getTransform();
-      AffineTransform graphicsTransformCopy = new AffineTransform(g2d.getTransform());
+      if (graphicsDecorator instanceof TransformingGraphics) {
+        // get a copy of the current transform used by g2d
+        AffineTransform savedTransform = g2d.getTransform();
+        AffineTransform graphicsTransformCopy = new AffineTransform(g2d.getTransform());
 
-      AffineTransform viewTransform =
-          visualizationServer
-              .getRenderContext()
-              .getMultiLayerTransformer()
-              .getTransformer(MultiLayerTransformer.Layer.VIEW)
-              .getTransform();
+        AffineTransform viewTransform =
+            visualizationServer
+                .getRenderContext()
+                .getMultiLayerTransformer()
+                .getTransformer(MultiLayerTransformer.Layer.VIEW)
+                .getTransform();
 
-      // don't mutate the viewTransform!
-      graphicsTransformCopy.concatenate(viewTransform);
-      g2d.setTransform(graphicsTransformCopy);
-      if (selectedVertex != null) {
-        paintSingleTransformed(selectedVertex);
+        // don't mutate the viewTransform!
+        graphicsTransformCopy.concatenate(viewTransform);
+        g2d.setTransform(graphicsTransformCopy);
+        if (selectedVertex != null) {
+          paintSingleTransformed(selectedVertex);
+        }
+
+      } else {
+        if (selectedVertex != null) {
+          ((JComponent) visualizationServer).revalidate();
+          paintSingleNormal(g2d, selectedVertex);
+        }
       }
-
-    } else {
-      if (selectedVertex != null) {
-        ((JComponent) visualizationServer).revalidate();
-        paintSingleNormal(g2d, selectedVertex);
-      }
+      // put back the old values
+      g2d.setPaint(oldPaint);
+      g2d.setTransform(oldTransform);
     }
-    // put back the old values
-    g2d.setPaint(oldPaint);
-    g2d.setTransform(oldTransform);
   }
 
   protected void paintSingleTransformed(V vertex) {

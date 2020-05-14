@@ -29,6 +29,7 @@ import org.jungrapht.samples.util.LayoutHelper;
 import org.jungrapht.samples.util.SpanningTreeAdapter;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationViewer;
+import org.jungrapht.visualization.annotations.MultiSelectedVertexPaintable;
 import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.decorators.IconShapeFunction;
 import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
@@ -158,10 +159,8 @@ public class ShowLayoutsWithImageIconVertices extends JPanel {
         new IconShapeFunction<>(new EllipseShapeFunction<>());
     vertexImageShapeFunction.setIconFunction(iconCache);
 
-    vv.getRenderContext()
-        .setVertexShapeFunction(v -> new Ellipse2D.Float(-20 / 2.f, -20 / 2.f, 20, 20));
+    vv.getRenderContext().setVertexShapeFunction(vertexImageShapeFunction);
     vv.getRenderContext().setVertexIconFunction(iconCache);
-    //      vv.getRenderContext().setVertexLabelFunction(Object::toString);
 
     vv.setVertexToolTipFunction(
         vertex ->
@@ -169,15 +168,14 @@ public class ShowLayoutsWithImageIconVertices extends JPanel {
                 + ". with neighbors:"
                 + Graphs.neighborListOf(vv.getVisualizationModel().getGraph(), vertex));
 
-    vv.getRenderContext()
-        .setVertexShapeFunction(
-            v -> {
-              int size = Math.max(5, 2 * vv.getVisualizationModel().getGraph().degreeOf(v));
-              return new Ellipse2D.Float(-size / 2.f, -size / 2.f, size, size);
-            });
-
     setLayout(new BorderLayout());
     add(vv.getComponent(), BorderLayout.CENTER);
+
+    vv.addPostRenderPaintable(
+        MultiSelectedVertexPaintable.builder(vv)
+            .selectionPaint(Color.red)
+            .selectionStrokeMin(4.f)
+            .build());
 
     final JRadioButton animateLayoutTransition = new JRadioButton("Animate Layout Transition");
 

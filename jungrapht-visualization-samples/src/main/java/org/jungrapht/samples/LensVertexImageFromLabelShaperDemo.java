@@ -37,7 +37,6 @@ import org.jungrapht.visualization.renderers.JLabelVertexLabelRenderer;
 import org.jungrapht.visualization.renderers.LightweightVertexRenderer;
 import org.jungrapht.visualization.renderers.ModalRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
-import org.jungrapht.visualization.selection.MutableSelectedState;
 import org.jungrapht.visualization.transform.LayoutLensSupport;
 import org.jungrapht.visualization.transform.Lens;
 import org.jungrapht.visualization.transform.LensSupport;
@@ -147,9 +146,7 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
     final IconShapeFunction<String> vertexImageShapeFunction =
         new IconShapeFunction<>(new EllipseShapeFunction<>());
     vertexImageShapeFunction.setIconFunction(iconCache);
-
-    vv.getRenderContext()
-        .setVertexShapeFunction(v -> new Ellipse2D.Float(-20 / 2.f, -20 / 2.f, 20, 20));
+    vv.getRenderContext().setVertexShapeFunction(vertexImageShapeFunction);
     vv.getRenderContext().setVertexIconFunction(iconCache);
 
     vv.addPostRenderPaintable(
@@ -157,9 +154,6 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
             .selectionPaint(Color.red)
             .selectionStrokeMin(4.f)
             .build());
-    // Get the pickedState and add a listener that will decorate the
-    //Vertex images with a checkmark icon when they are selected
-    MutableSelectedState<String> ps = vv.getSelectedVertexState();
 
     // add a listener for ToolTips
     vv.setVertexToolTipFunction(Object::toString);

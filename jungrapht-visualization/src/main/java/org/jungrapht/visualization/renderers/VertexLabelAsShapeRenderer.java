@@ -9,6 +9,7 @@
  */
 package org.jungrapht.visualization.renderers;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -38,16 +39,16 @@ public class VertexLabelAsShapeRenderer<V, E>
 
   protected Map<V, Shape> shapes = new HashMap<>();
   protected final LayoutModel<V> layoutModel;
-  protected final RenderContext<V, ?> renderContext;
+  protected final RenderContext<V, E> renderContext;
 
   public VertexLabelAsShapeRenderer(
-      VisualizationModel<V, E> visualizationModel, RenderContext<V, ?> rc) {
+      VisualizationModel<V, E> visualizationModel, RenderContext<V, E> rc) {
     this.layoutModel = visualizationModel.getLayoutModel();
     this.renderContext = rc;
   }
 
   public Component prepareRenderer(
-      RenderContext<V, ?> rc, Object value, boolean isSelected, V vertex) {
+      RenderContext<V, E> rc, Object value, boolean isSelected, V vertex) {
     return rc.getVertexLabelRenderer()
         .getVertexLabelRendererComponent(
             rc.getScreenDevice(),
@@ -89,6 +90,10 @@ public class VertexLabelAsShapeRenderer<V, E>
     int x = (int) p2d.getX();
     int y = (int) p2d.getY();
 
+    boolean selected = renderContext.getSelectedVertexState().isSelected(v);
+    if (selected) {
+      component.setBackground(Color.pink);
+    }
     g.draw(
         component,
         renderContext.getRendererPane(),

@@ -8,7 +8,10 @@
  */
 package org.jungrapht.samples;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.ControlHelpers;
@@ -21,7 +24,7 @@ import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.control.ModalGraphMouse.Mode;
 import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
-import org.jungrapht.visualization.layout.algorithms.ISOMLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.GEMLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 
 /**
@@ -74,7 +77,7 @@ public class InternalFrameSatelliteViewDemo {
     // create a simple graph for the demo
     graph = TestGraphs.getOneComponentGraph();
 
-    LayoutAlgorithm<String> layout = new ISOMLayoutAlgorithm<>();
+    LayoutAlgorithm<String> layout = new GEMLayoutAlgorithm<>();
 
     final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
 

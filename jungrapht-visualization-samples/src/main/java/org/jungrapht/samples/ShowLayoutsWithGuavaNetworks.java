@@ -7,19 +7,19 @@
  */
 package org.jungrapht.samples;
 
-import com.google.common.graph.GraphBuilder;
-import com.google.common.graph.MutableGraph;
+import com.google.common.graph.MutableNetwork;
+import com.google.common.graph.NetworkBuilder;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
-import org.jgrapht.graph.guava.MutableGraphAdapter;
+import org.jgrapht.graph.guava.MutableNetworkAdapter;
 import org.jungrapht.samples.spatial.RTreeVisualization;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.LayoutHelper;
 import org.jungrapht.samples.util.SpanningTreeAdapter;
-import org.jungrapht.samples.util.TestGuavaGraphs;
+import org.jungrapht.samples.util.TestGuavaNetworks;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
@@ -34,43 +34,44 @@ import org.jungrapht.visualization.layout.model.LayoutModel;
 
 /**
  * Demonstrates several of the graph layout algorithms. Allows the user to interactively select one
- * of several guava common-graph Graphs, and one of several layouts, and visualizes the combination.
+ * of several guava common-graph Networks, and one of several layouts, and visualizes the
+ * combination.
  *
  * @author Tom Nelson
  */
-public class ShowLayoutsWithGuavaGraphs extends JPanel {
+public class ShowLayoutsWithGuavaNetworks extends JPanel {
 
   protected static Graph<String, Integer>[] graphArray;
   protected static int graphIndex;
   protected static String[] graphNames = {
-    "Two component graph",
-    "Random mixed-mode graph",
-    "One component graph",
-    "Chain+isolate graph",
-    "Trivial (disconnected) graph",
-    "Little Graph",
-    "Generated Graph"
+    "Two component network",
+    "Random mixed-mode network",
+    "One component network",
+    "Chain+isolate network",
+    "Trivial (disconnected) network",
+    "Little Network",
+    "Generated Network"
   };
 
   LayoutPaintable.BalloonRings balloonLayoutRings;
   LayoutPaintable.RadialRings radialLayoutRings;
 
-  public ShowLayoutsWithGuavaGraphs() {
+  public ShowLayoutsWithGuavaNetworks() {
 
     graphArray = new Graph[graphNames.length];
 
-    graphArray[0] = new MutableGraphAdapter(TestGuavaGraphs.createTestGraph(false));
-    graphArray[1] = new MutableGraphAdapter(TestGuavaGraphs.getDemoGraph());
-    graphArray[2] = new MutableGraphAdapter(TestGuavaGraphs.getOneComponentGraph());
-    graphArray[3] = new MutableGraphAdapter(TestGuavaGraphs.createChainPlusIsolates(18, 5));
-    graphArray[4] = new MutableGraphAdapter(TestGuavaGraphs.createChainPlusIsolates(0, 20));
-    MutableGraph<String> graph = GraphBuilder.directed().build();
+    graphArray[0] = new MutableNetworkAdapter(TestGuavaNetworks.createTestNetwork(false));
+    graphArray[1] = new MutableNetworkAdapter(TestGuavaNetworks.getDemoNetwork());
+    graphArray[2] = new MutableNetworkAdapter(TestGuavaNetworks.getOneComponentNetwork());
+    graphArray[3] = new MutableNetworkAdapter(TestGuavaNetworks.createChainPlusIsolates(18, 5));
+    graphArray[4] = new MutableNetworkAdapter(TestGuavaNetworks.createChainPlusIsolates(0, 20));
+    MutableNetwork<String, Integer> graph = NetworkBuilder.directed().build();
+    int edge = 0;
+    graph.addEdge("A", "B", edge++);
+    graph.addEdge("A", "C", edge++);
 
-    graph.putEdge("A", "B");
-    graph.putEdge("A", "C");
-
-    graphArray[5] = new MutableGraphAdapter(graph);
-    graphArray[6] = new MutableGraphAdapter(TestGuavaGraphs.getGeneratedGraph());
+    graphArray[5] = new MutableNetworkAdapter(graph);
+    graphArray[6] = new MutableNetworkAdapter(TestGuavaNetworks.getGeneratedNetwork());
 
     Graph<String, Integer> initialGraph = graphArray[2]; // initial graph
 
@@ -177,7 +178,7 @@ public class ShowLayoutsWithGuavaGraphs extends JPanel {
   }
 
   public static void main(String[] args) {
-    JPanel jp = new ShowLayoutsWithGuavaGraphs();
+    JPanel jp = new ShowLayoutsWithGuavaNetworks();
 
     JFrame jf = new JFrame();
     jf.setTitle("Guava Graph Visualization");
