@@ -1,5 +1,18 @@
 package org.jungrapht.samples.large;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipInputStream;
+import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultEdge;
@@ -35,20 +48,6 @@ import org.jungrapht.visualization.transform.shape.ViewLensSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.ZipInputStream;
-
 /**
  * Demonstrates several of the graph layout algorithms. Allows the user to interactively select one
  * of several graphs, and one of several layouts, and visualizes the combination.
@@ -82,9 +81,11 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
 
   public ShowLayoutsWithJGraphtIO() {
 
-    Graph<String, DefaultEdge> graph = GraphTypeBuilder.undirected()
+    Graph<String, DefaultEdge> graph =
+        GraphTypeBuilder.undirected()
             .edgeClass(DefaultEdge.class)
-            .vertexSupplier(SupplierUtil.createStringSupplier(1)).buildGraph();
+            .vertexSupplier(SupplierUtil.createStringSupplier(1))
+            .buildGraph();
     JPanel container = new JPanel(new BorderLayout());
 
     final DefaultModalGraphMouse<Integer, DefaultEdge> graphMouse = new DefaultModalGraphMouse<>();

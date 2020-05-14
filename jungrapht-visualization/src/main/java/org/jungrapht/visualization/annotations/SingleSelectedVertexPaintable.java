@@ -125,8 +125,6 @@ public class SingleSelectedVertexPaintable<V, E> implements VisualizationServer.
 
   private BiModalSelectionRenderer<V, E> biModalRenderer;
 
-  private V selectedVertex;
-
   /**
    * Create an instance of a {@code SelectedVertexPaintable}
    *
@@ -172,10 +170,6 @@ public class SingleSelectedVertexPaintable<V, E> implements VisualizationServer.
             .build();
   }
 
-  public void setSelectedVertex(V selectedVertex) {
-    this.selectedVertex = selectedVertex;
-  }
-
   /**
    * Draw shapes to indicate selected vertices
    *
@@ -190,6 +184,15 @@ public class SingleSelectedVertexPaintable<V, E> implements VisualizationServer.
     AffineTransform oldTransform = g2d.getTransform();
     // set the new color
     g2d.setPaint(selectionPaint);
+
+    V selectedVertex =
+        visualizationServer
+            .getSelectedVertexState()
+            .getSelected()
+            .stream()
+            .filter(visualizationServer.getVisualizationModel().getGraph().vertexSet()::contains)
+            .findFirst()
+            .orElse(null);
 
     GraphicsDecorator graphicsDecorator =
         visualizationServer.getRenderContext().getGraphicsContext();

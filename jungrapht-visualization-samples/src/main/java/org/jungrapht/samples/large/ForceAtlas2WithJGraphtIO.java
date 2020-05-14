@@ -27,8 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Demonstrates several of the graph layout algorithms. Allows the user to interactively select one
- * of several graphs, and one of several layouts, and visualizes the combination.
+ * Demonstrates settings for ForceAtlas2 layout algorithm. Allows the user to interactively select
+ * one of several graphs.
  *
  * @author Tom Nelson
  */

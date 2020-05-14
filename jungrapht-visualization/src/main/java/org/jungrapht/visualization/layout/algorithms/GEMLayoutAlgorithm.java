@@ -601,37 +601,6 @@ public class GEMLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorithm<V
     return new int[] {aX, aY};
   }
 
-  ////	@Override
-  //	public int getMaxProgress() {
-  //		if (!clustered)
-  //			return 4;
-  //		else {
-  //			int size = nbClusters;
-  //			size += size * 4;
-  //			return size;
-  //		}
-  //	}
-  //
-  ////	@Override
-  //	public int getMinProgress() {
-  //		return 0;
-  //	}
-
-  //	@Override
-  //	public int getProgress() {
-  //		return progress;
-  //	}
-  //
-  //	@Override
-  //	public String getState() {
-  //		return state;
-  //	}
-  //
-  //	@Override
-  //	public Throwable getUncaughtException() {
-  //		return null;
-  //	}
-
   /**
    * Returns node for the graph center.
    *

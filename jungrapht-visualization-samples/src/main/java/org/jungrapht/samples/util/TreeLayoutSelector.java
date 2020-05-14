@@ -253,10 +253,6 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     MultiRowTreeLayoutAlgorithm<V> multiRowTreeLayoutAlgorithm =
         MultiRowTreeLayoutAlgorithm.<V>builder().vertexShapeFunction(vertexShapeFunction).build();
 
-    GEMLayoutAlgorithm<V, E> gemLayoutAlgorithm = new GEMLayoutAlgorithm<>();
-
-    DAGLayoutAlgorithm<V, E> dagLayoutAlgorithm = DAGLayoutAlgorithm.<V, E>builder().build();
-
     int layoutNumber = 0;
 
     BalloonLayoutAlgorithm<V> balloonLayoutAlgorithm = new BalloonLayoutAlgorithm<>();
@@ -310,6 +306,10 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     CircleLayoutAlgorithm<V> reduceEdgeCrossingCircleLayoutAlgorithm =
         CircleLayoutAlgorithm.<V>builder().reduceEdgeCrossing(true).build();
 
+    GEMLayoutAlgorithm<V, E> gemLayoutAlgorithm = new GEMLayoutAlgorithm<>();
+
+    DAGLayoutAlgorithm<V, E> dagLayoutAlgorithm = new DAGLayoutAlgorithm<>();
+
     JRadioButton treeButton = new JRadioButton("Tree");
     treeButton.addItemListener(new LayoutItemListener(treeLayoutAlgorithm, vv));
     treeButton.setSelected(initialSelection == layoutNumber++);
@@ -333,14 +333,6 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     JRadioButton multiRowTreeButton = new JRadioButton("MultiRowTree");
     multiRowTreeButton.addItemListener(new LayoutItemListener(multiRowTreeLayoutAlgorithm, vv));
     multiRowTreeButton.setSelected(initialSelection == layoutNumber++);
-
-    JRadioButton gemButton = new JRadioButton("GEM");
-    gemButton.addItemListener(new LayoutItemListener(gemLayoutAlgorithm, vv));
-    gemButton.setSelected(initialSelection == layoutNumber++);
-
-    JRadioButton dagButton = new JRadioButton("DAG");
-    dagButton.addItemListener(new LayoutItemListener(dagLayoutAlgorithm, vv));
-    dagButton.setSelected(initialSelection == layoutNumber++);
 
     JRadioButton balloonButton = new JRadioButton("Balloon");
     balloonButton.addItemListener(new LayoutItemListener(balloonLayoutAlgorithm, vv));
@@ -377,6 +369,14 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     betterCircleButton.addItemListener(
         new LayoutItemListener(reduceEdgeCrossingCircleLayoutAlgorithm, vv));
     betterCircleButton.setSelected(initialSelection == layoutNumber++);
+
+    JRadioButton gemButton = new JRadioButton("GEM");
+    gemButton.addItemListener(new LayoutItemListener(gemLayoutAlgorithm, vv));
+    gemButton.setSelected(initialSelection == layoutNumber++);
+
+    JRadioButton dagButton = new JRadioButton("DAG");
+    dagButton.addItemListener(new LayoutItemListener(dagLayoutAlgorithm, vv));
+    dagButton.setSelected(initialSelection == layoutNumber++);
 
     ButtonGroup layoutRadio = new ButtonGroup();
     layoutRadio.add(treeButton);

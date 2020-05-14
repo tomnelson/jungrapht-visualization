@@ -86,6 +86,10 @@ public class DAGLayoutAlgorithm<V, E> extends SpringLayoutAlgorithm<V, E> {
     super(builder);
   }
 
+  public DAGLayoutAlgorithm() {
+    this(builder());
+  }
+
   @Override
   public void visit(LayoutModel<V> layoutModel) {
     super.visit(layoutModel);

@@ -8,6 +8,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import javax.swing.*;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
@@ -120,8 +121,6 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
 
   private BiModalSelectionRenderer<V, E> biModalRenderer;
 
-  private Collection<V> selectedVertices;
-
   /**
    * Create an instance of a {@code SelectedVertexPaintable}
    *
@@ -153,8 +152,6 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
       Icon selectionIcon,
       float selectionStrokeMin) {
     this.visualizationServer = visualizationServer;
-    this.selectedVertices =
-        visualizationServer.getRenderContext().getSelectedVertexState().getSelected();
     this.selectionShape = shape;
     this.useBounds = useBounds;
     this.selectionPaint = selectionPaint;
@@ -172,10 +169,6 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
             .build();
   }
 
-  public void setSelectedVertices(Collection<V> selectedVertices) {
-    this.selectedVertices = selectedVertices;
-  }
-
   /**
    * Draw shapes to indicate selected vertices
    *
@@ -190,6 +183,14 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
     AffineTransform oldTransform = g2d.getTransform();
     // set the new color
     g2d.setPaint(selectionPaint);
+
+    Collection<V> selectedVertices =
+        visualizationServer
+            .getSelectedVertexState()
+            .getSelected()
+            .stream()
+            .filter(visualizationServer.getVisualizationModel().getGraph().vertexSet()::contains)
+            .collect(Collectors.toList());
 
     GraphicsDecorator graphicsDecorator =
         visualizationServer.getRenderContext().getGraphicsContext();

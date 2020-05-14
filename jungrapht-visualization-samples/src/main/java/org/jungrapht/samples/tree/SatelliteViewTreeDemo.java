@@ -122,20 +122,6 @@ public class SatelliteViewTreeDemo extends JPanel {
 
     mainVisualizationViewer
         .getRenderContext()
-        .getSelectedVertexState()
-        .addItemListener(
-            item -> {
-              if (item.getStateChange() == ItemEvent.SELECTED) {
-                if (item.getItem() instanceof String) {
-                  singleSelectedVertexPaintable.setSelectedVertex((String) item.getItem());
-                }
-              } else if (item.getStateChange() == ItemEvent.DESELECTED) {
-                singleSelectedVertexPaintable.setSelectedVertex(null);
-              }
-            });
-
-    mainVisualizationViewer
-        .getRenderContext()
         .setEdgeDrawPaintFunction(
             new PickableElementPaintFunction<>(
                 mainVisualizationViewer.getSelectedEdgeState(), Color.black, Color.cyan));
