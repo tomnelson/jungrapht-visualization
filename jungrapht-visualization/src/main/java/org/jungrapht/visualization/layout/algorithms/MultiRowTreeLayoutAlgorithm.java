@@ -3,6 +3,7 @@ package org.jungrapht.visualization.layout.algorithms;
 import java.awt.Dimension;
 import java.awt.Shape;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -86,6 +87,9 @@ public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
   protected Set<V> buildTree(LayoutModel<V> layoutModel) {
     rowCount = 1;
     Graph<V, ?> graph = layoutModel.getGraph();
+    if (graph == null || graph.vertexSet().isEmpty()) {
+      return Collections.emptySet();
+    }
     this.defaultRootPredicate =
         v -> graph.incomingEdgesOf(v).isEmpty() || TreeLayout.isIsolatedVertex(graph, v);
     if (vertexShapeFunction != null) {

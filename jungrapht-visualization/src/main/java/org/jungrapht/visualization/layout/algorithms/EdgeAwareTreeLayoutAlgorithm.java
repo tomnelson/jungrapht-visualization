@@ -209,12 +209,18 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
   /** @param vertexComparator parameter to set */
   @Override
   public void setVertexComparator(Comparator<V> vertexComparator) {
+    if (vertexComparator == null) {
+      vertexComparator = (v1, v2) -> 0;
+    }
     this.vertexComparator = vertexComparator;
   }
 
   /** @param edgeComparator parameter to set */
   @Override
   public void setEdgeComparator(Comparator<E> edgeComparator) {
+    if (edgeComparator == null) {
+      edgeComparator = (e1, e2) -> 0;
+    }
     this.edgeComparator = edgeComparator;
   }
 

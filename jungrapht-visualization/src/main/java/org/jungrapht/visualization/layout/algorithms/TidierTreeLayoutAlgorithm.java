@@ -596,6 +596,9 @@ public class TidierTreeLayoutAlgorithm<V, E>
     this.rootPredicate = this.builderRootPredicate;
     this.layoutModel = layoutModel;
     Graph<V, E> graph = layoutModel.getGraph();
+    if (graph == null || graph.vertexSet().isEmpty()) {
+      return;
+    }
     this.defaultRootPredicate =
         v ->
             layoutModel.getGraph().incomingEdgesOf(v).isEmpty()

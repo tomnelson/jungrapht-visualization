@@ -264,6 +264,9 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
    */
   protected Set<V> buildTree(LayoutModel<V> layoutModel) {
     Graph<V, ?> graph = layoutModel.getGraph();
+    if (graph == null || graph.vertexSet().isEmpty()) {
+      return Collections.emptySet();
+    }
     if (layoutModel instanceof Caching) {
       ((Caching) layoutModel).clear();
     }
