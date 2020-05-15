@@ -274,13 +274,13 @@ public class EiglspergerSteps<V, E> {
     }
     if (listS.size() > 0
         && listS.stream().mapToDouble(Container::getMeasure).min().getAsDouble() < 0) {
-      log.error("something missing");
+      log.debug("something missing");
     }
     if (log.isTraceEnabled()) {
       log.trace("listV measures: {}", listV);
     }
     if (listV.size() > 0 && listV.stream().mapToDouble(LV::getMeasure).min().getAsDouble() < 0) {
-      log.error("something missing");
+      log.debug("something missing");
     }
     try {
       listS.sort(Comparator.comparingDouble(Container::getMeasure));
@@ -800,7 +800,7 @@ public class EiglspergerSteps<V, E> {
         } else {
           // leave the measure as as the current pos
           if (v.getPos() < 0) {
-            log.error("no pos for {}", v);
+            log.debug("no pos for {}", v);
           }
           double measure = v.getPos();
           v.setMeasure(measure);

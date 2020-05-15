@@ -70,7 +70,7 @@ public class AccumulatorTree<V, E> {
         index = (index - 1) / 2;
         tree[index]++;
         if (log.isTraceEnabled()) {
-          log.info("incremented {} in  tree:{}", index, this.toString());
+          log.trace("incremented {} in  tree:{}", index, this.toString());
         }
       }
     }

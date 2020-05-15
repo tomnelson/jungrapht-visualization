@@ -208,7 +208,7 @@ public class HorizontalCompaction<V, E>
       for (LV<V> v : layer) {
         int x = x(v);
         if (xValuesThisLayer.containsKey(x)) {
-          log.info("already seen {} in this layer {}", x, layer);
+          log.trace("already seen {} in this layer {}", x, layer);
         } else {
           xValuesThisLayer.put(x, v);
         }
