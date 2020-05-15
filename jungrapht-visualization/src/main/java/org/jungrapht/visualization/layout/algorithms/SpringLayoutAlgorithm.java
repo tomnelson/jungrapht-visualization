@@ -88,6 +88,10 @@ public class SpringLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorith
    */
   @Override
   public void visit(LayoutModel<V> layoutModel) {
+    Graph<V, E> graph = layoutModel.getGraph();
+    if (graph == null || graph.vertexSet().isEmpty()) {
+      return;
+    }
     super.visit(layoutModel);
 
     // setting the layout model will build the BHQT if the builder is the

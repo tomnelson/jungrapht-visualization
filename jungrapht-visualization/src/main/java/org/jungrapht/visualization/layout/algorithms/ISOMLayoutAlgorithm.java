@@ -91,7 +91,10 @@ public class ISOMLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
     if (log.isTraceEnabled()) {
       log.trace("visiting {}", layoutModel);
     }
-
+    Graph<V, ?> graph = layoutModel.getGraph();
+    if (graph == null || graph.vertexSet().isEmpty()) {
+      return;
+    }
     super.visit(layoutModel);
     this.elementAccessor = new RadiusVertexAccessor<>();
     initialize();

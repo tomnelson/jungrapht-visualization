@@ -1,6 +1,7 @@
 package org.jungrapht.visualization.layout.algorithms;
 
 import java.util.*;
+import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.PolarPoint;
@@ -44,6 +45,10 @@ public class TidierRadialTreeLayoutAlgorithm<V, E> extends TidierTreeLayoutAlgor
 
   @Override
   public void visit(LayoutModel<V> layoutModel) {
+    Graph<V, E> graph = layoutModel.getGraph();
+    if (graph == null || graph.vertexSet().isEmpty()) {
+      return;
+    }
     super.visit(layoutModel);
     log.trace("roots are {}", roots);
     setRadialLocations(super.roots, layoutModel);

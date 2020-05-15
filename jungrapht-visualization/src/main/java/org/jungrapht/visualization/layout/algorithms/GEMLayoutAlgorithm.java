@@ -267,8 +267,11 @@ public class GEMLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorithm<V
   private Graph<V, E> graph;
 
   public void visit(LayoutModel<V> layoutModel) {
-    super.visit(layoutModel);
     this.graph = layoutModel.getGraph();
+    if (graph == null || graph.vertexSet().isEmpty()) {
+      return;
+    }
+    super.visit(layoutModel);
     this.initialize();
     this.arrange();
     if (adjustToFit) {

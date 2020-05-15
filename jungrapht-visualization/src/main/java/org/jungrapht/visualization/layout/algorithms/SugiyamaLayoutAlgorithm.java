@@ -12,6 +12,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
+import org.jgrapht.Graph;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaRunnable;
@@ -222,7 +223,10 @@ public class SugiyamaLayoutAlgorithm<V, E>
 
   @Override
   public void visit(LayoutModel<V> layoutModel) {
-
+    Graph<V, E> graph = layoutModel.getGraph();
+    if (graph == null || graph.vertexSet().isEmpty()) {
+      return;
+    }
     Runnable runnable =
         SugiyamaRunnable.<V, E>builder()
             .layoutModel(layoutModel)

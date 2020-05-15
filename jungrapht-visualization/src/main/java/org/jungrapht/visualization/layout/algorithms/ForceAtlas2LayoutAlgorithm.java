@@ -292,6 +292,10 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
 
   @Override
   public void visit(LayoutModel<V> layoutModel) {
+    Graph<V, ?> graph = layoutModel.getGraph();
+    if (graph == null || graph.vertexSet().isEmpty()) {
+      return;
+    }
     super.visit(layoutModel);
     if (nodeSizes == null) {
       this.nodeSizes = v -> 1.0;

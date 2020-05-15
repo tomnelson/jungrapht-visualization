@@ -92,6 +92,10 @@ public class DAGLayoutAlgorithm<V, E> extends SpringLayoutAlgorithm<V, E> {
 
   @Override
   public void visit(LayoutModel<V> layoutModel) {
+    Graph<V, ?> graph = layoutModel.getGraph();
+    if (graph == null || graph.vertexSet().isEmpty()) {
+      return;
+    }
     super.visit(layoutModel);
     initialize();
   }

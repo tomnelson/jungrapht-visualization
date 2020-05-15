@@ -1,5 +1,6 @@
 package org.jungrapht.visualization.layout.algorithms;
 
+import org.jgrapht.Graph;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.layout.algorithms.util.IterativeContext;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -66,6 +67,10 @@ public class AnimationLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorith
   }
 
   public void visit(LayoutModel<V> layoutModel) {
+    Graph<V, ?> graph = layoutModel.getGraph();
+    if (graph == null || graph.vertexSet().isEmpty()) {
+      return;
+    }
     // save off the existing layoutModel
     this.layoutModel = layoutModel;
     // create a LayoutModel to hold points for the transition

@@ -68,6 +68,10 @@ public class BalloonLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
 
   @Override
   public void visit(LayoutModel<V> layoutModel) {
+    Graph<V, ?> graph = layoutModel.getGraph();
+    if (graph == null || graph.vertexSet().isEmpty()) {
+      return;
+    }
     super.visit(layoutModel);
     if (log.isTraceEnabled()) {
       log.trace("visit {}", layoutModel);

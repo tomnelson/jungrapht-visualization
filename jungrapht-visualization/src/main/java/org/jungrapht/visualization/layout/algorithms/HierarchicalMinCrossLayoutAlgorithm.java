@@ -243,6 +243,9 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
   public void visit(LayoutModel<V> layoutModel) {
 
     Graph<V, E> graph = layoutModel.getGraph();
+    if (graph == null || graph.vertexSet().isEmpty()) {
+      return;
+    }
     Runnable runnable;
     if (graph.vertexSet().size() + graph.edgeSet().size() < eiglspergerThreshold) {
       runnable =
