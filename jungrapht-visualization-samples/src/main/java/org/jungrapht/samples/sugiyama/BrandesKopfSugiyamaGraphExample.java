@@ -12,12 +12,17 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.SugiyamaLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.Renderer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+/**
+ * Fast and Simple Horizontal Coordinate Assignment by Ulrik Brandes and Boris Köpf on page 39,
+ * shows four horizontal coordinate assignments, plus the average median. This demo creates the
+ * graph from that paper, hard-codes the layer assignment, and runs the horizontal coordinate
+ * assignment to confirm that the results look like those depicted in the paper. This is a visual
+ * check of the correctness of the code for the HorizontalCoordinate assignment algorithm
+ *
+ * @author Tom Nelson
+ */
 public class BrandesKopfSugiyamaGraphExample extends JFrame {
-
-  private static final Logger log = LoggerFactory.getLogger(BrandesKopfSugiyamaGraphExample.class);
 
   public BrandesKopfSugiyamaGraphExample() {
 
@@ -29,8 +34,6 @@ public class BrandesKopfSugiyamaGraphExample extends JFrame {
 
     SugiyamaLayoutAlgorithm<Integer, Integer> layoutAlgorithm =
         SugiyamaLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
-            //                .straightenEdges(false)
-            //                .postStraighten(false)
             .after(vv::scaleToLayout)
             .build();
     layoutAlgorithm.setRenderContext(vv.getRenderContext());

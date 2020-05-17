@@ -22,6 +22,11 @@ import org.jungrapht.visualization.renderers.Renderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Demonstrates 4 layering algorithms with the SugiyamaLayoutAlgoithm
+ *
+ * @author Tom Nelson
+ */
 public class SugiyamaLayeringOptions extends JFrame {
 
   private static final Logger log = LoggerFactory.getLogger(SugiyamaLayeringOptions.class);

@@ -19,6 +19,12 @@ import org.jungrapht.visualization.renderers.Renderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Demonstrates the original sugiyama layout algorithm with and without edge straightening Also
+ * shows the Eiglsperger optimized sugiyama layout algorithm with/without edge straightening.
+ *
+ * @author Tom Nelson
+ */
 public class SugiyamaEiglspergerWithWithoutHorizontalCompaction extends JFrame {
 
   private static final Logger log =

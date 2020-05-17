@@ -18,6 +18,12 @@ import org.jungrapht.visualization.renderers.Renderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Shows the four HorizontalCompaction algorithms, plus the average median for
+ * SugiyamaLayoutAlgorithm
+ *
+ * @author Tom Nelson
+ */
 public class SugiyamaSixTestGraphExample extends JFrame {
 
   private static final Logger log = LoggerFactory.getLogger(SugiyamaSixTestGraphExample.class);

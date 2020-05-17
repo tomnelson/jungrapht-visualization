@@ -19,6 +19,11 @@ import org.jungrapht.visualization.renderers.Renderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Compares the original sugiyama layout with the Eiglsperger optimized version.
+ *
+ * @author Tom Nelson
+ */
 public class SugiyamaAndEiglsperger extends JFrame {
 
   private static final Logger log = LoggerFactory.getLogger(SugiyamaAndEiglsperger.class);

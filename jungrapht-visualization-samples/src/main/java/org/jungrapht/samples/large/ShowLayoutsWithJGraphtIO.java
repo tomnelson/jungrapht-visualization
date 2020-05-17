@@ -50,7 +50,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Demonstrates several of the graph layout algorithms. Allows the user to interactively select one
- * of several graphs, and one of several layouts, and visualizes the combination.
+ * of several graphs, loaded from urls using JGrapht io, and one of several layouts, and visualizes
+ * the combination.
  *
  * @author Tom Nelson
  */

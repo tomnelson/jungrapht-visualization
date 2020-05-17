@@ -15,7 +15,7 @@ import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
 
 /**
- * Demonstrates two circle layout algorithms. One (the orginal) makes no effor to reduce edge
+ * Demonstrates two circle layout algorithms. One (the orginal) makes no effort to reduce edge
  * crossing. The second applies techniques from
  * (https://www.csd.uoc.gr/~hy583/reviewed_notes/circular.pdf) to reduce edge crossing.
  *
