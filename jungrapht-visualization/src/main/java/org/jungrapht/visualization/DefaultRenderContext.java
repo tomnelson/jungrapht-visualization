@@ -38,20 +38,37 @@ import org.jungrapht.visualization.util.ParallelEdgeIndexFunction;
  */
 public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
 
+  /** event support for changes in the RenderContext state */
   private RenderContextStateChange.Support<V, E> renderContextStateChangeSupport =
       RenderContextStateChange.Support.create();
 
+  /**
+   * getter for event support. Caller can add itself as a listener to RenderContextStateChange
+   * events
+   *
+   * @return theRenderContextStateChangeSupport that will fire events to listeners
+   */
   @Override
   public RenderContextStateChange.Support getRenderContextStateChangeSupport() {
     return renderContextStateChangeSupport;
   }
 
+  /**
+   * Supplies Shapes for vertices by checking various properties
+   *
+   * @param <V>
+   */
   public static class ShapeFunctionSupplier<V> implements Supplier<Function<V, Shape>> {
+    /**
+     * determine Shape and size from properties
+     *
+     * @return the same Shape for any vertex
+     */
     @Override
     public Function<V, Shape> get() {
       int vertexSize = Integer.getInteger(VERTEX_SIZE, 20);
       String vertexShapeString = System.getProperty(VERTEX_SHAPE, "CIRCLE");
-      Shape vertexShape = getVertexShape(vertexShapeString, vertexSize);
+      Shape vertexShape = DefaultRenderContext.getVertexShape(vertexShapeString, vertexSize);
       return v -> vertexShape;
     }
   }
@@ -90,9 +107,12 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
   private static final String ARROW_PLACEMENT_TOLERANCE = PREFIX + "arrowPlacementTolerance";
   private static final String ARROWS_ON_UNDIRECTED_EDGES = PREFIX + "arrowsOnUndirectedEdges";
 
-  protected MutableSelectedState<V> pickedVertexState;
-  protected MutableSelectedState<E> pickedEdgeState;
+  /** Holds a subset of vertices that are selected */
+  protected MutableSelectedState<V> selectedVertexState;
+  /** Holds asubset of edges that are selected */
+  protected MutableSelectedState<E> selectedEdgeState;
 
+  /** the {@link Stroke} used to draw edges */
   protected Stroke edgeStroke;
 
   // vertex properties
@@ -100,20 +120,28 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
   private String vertexShapeString = System.getProperty(VERTEX_SHAPE, "CIRCLE");
   private Paint vertexDrawPaint = Color.getColor(VERTEX_DRAW_COLOR, Color.BLACK);
   private Paint vertexFillPaint = Color.getColor(VERTEX_FILL_COLOR, Color.RED);
-  private Paint pickedVertexFillPaint = Color.getColor(PICKED_VERTEX_COLOR, Color.YELLOW);
+  private Paint selectedVertexFillPaint = Color.getColor(PICKED_VERTEX_COLOR, Color.YELLOW);
   private Shape vertexShape = getVertexShape(vertexShapeString, vertexSize);
 
   // vertex functions
+  /** Implement to limit which vertices are rendered */
   protected Predicate<V> vertexIncludePredicate = n -> true;
+  /** the {@link Stroke} used to draw (outline) vertex shapes */
   protected Function<V, Stroke> vertexStrokeFunction =
       n -> new BasicStroke(Float.parseFloat(System.getProperty(VERTEX_STROKE_WIDTH, "1.0")));
+  /** implement to provide Shapes for vertices */
   protected Function<V, Shape> vertexShapeFunction = n -> vertexShape;
 
+  /** implement to provide outline color for vertices */
   protected Function<V, Paint> vertexDrawPaintFunction = n -> vertexDrawPaint;
+  /**
+   * implement to provide fill color for vertices. Default version uses default fill paint and
+   * selected vertex fill paing
+   */
   protected Function<V, Paint> vertexFillPaintFunction =
       n ->
-          pickedVertexState != null && pickedVertexState.isSelected(n)
-              ? pickedVertexFillPaint
+          selectedVertexState != null && selectedVertexState.isSelected(n)
+              ? selectedVertexFillPaint
               : vertexFillPaint;
 
   // vertex label properties
@@ -123,7 +151,9 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
       getPosition(System.getProperty(VERTEX_LABEL_POSITION));
 
   // vertex label functions
+  /** implement to provide {@code Font}s for vertices */
   protected Function<V, Font> vertexFontFunction = n -> vertexFont;
+  /** implement to provide Colors for vertex labels */
   protected Function<V, Paint> vertexLabelDrawPaintFunction = n -> vertexLabelDrawPaint;
 
   // edge properties
@@ -132,16 +162,24 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
   private Color edgePaint = Color.getColor(EDGE_COLOR, Color.BLACK);
 
   // edge functions
+  /** implement to provide {@code Stroke}s for edges */
   protected Function<E, Stroke> edgeStrokeFunction = e -> edgeStroke;
+  /** implement to provide fill color for edges (rarely useful) */
   protected Function<E, Paint> edgeFillPaintFunction = n -> null;
+  /** implement to provide draw {@Paint}s for edges */
   protected Function<E, Paint> edgeDrawPaintFunction =
-      e -> pickedEdgeState != null && pickedEdgeState.isSelected(e) ? pickedEdgePaint : edgePaint;
+      e ->
+          selectedEdgeState != null && selectedEdgeState.isSelected(e)
+              ? pickedEdgePaint
+              : edgePaint;
 
   // edge label properties
   private Font edgeLabelFont = Font.getFont(EDGE_LABEL_FONT, new Font("Helvetica", Font.PLAIN, 12));
 
   // edge label functions
+  /** implement to provide {@Font}s for edge labels */
   protected Function<E, Font> edgeFontFunction = n -> edgeLabelFont;
+  /** implement to provide edge labels */
   protected Function<E, String> edgeLabelFunction = e -> null;
 
   // edge arrow properties
@@ -151,19 +189,34 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
   protected Shape edgeArrow;
   protected float arrowPlacementTolerance =
       Float.parseFloat(System.getProperty(ARROW_PLACEMENT_TOLERANCE, "1.0"));
-  private Stroke edgeArrowStroke =
+  protected Stroke edgeArrowStroke =
       new BasicStroke(Float.parseFloat(System.getProperty(EDGE_ARROW_STROKE, "1.0")));
 
   // edge arrow functions
+  /** implement to provide {@code Stroke}s for edge arrows */
   protected Function<E, Stroke> edgeArrowStrokeFunction = e -> edgeArrowStroke;
+  /** implement to provide {@code Paint}s for edge arrows */
   protected Function<E, Paint> arrowFillPaintFunction =
-      e -> pickedEdgeState != null && pickedEdgeState.isSelected(e) ? pickedEdgePaint : edgePaint;
+      e ->
+          selectedEdgeState != null && selectedEdgeState.isSelected(e)
+              ? pickedEdgePaint
+              : edgePaint;
+  /** implement to provide {@code Paint}s for edge arrow outline */
   protected Function<E, Paint> arrowDrawPaintFunction =
-      e -> pickedEdgeState != null && pickedEdgeState.isSelected(e) ? pickedEdgePaint : edgePaint;
+      e ->
+          selectedEdgeState != null && selectedEdgeState.isSelected(e)
+              ? pickedEdgePaint
+              : edgePaint;
+  /**
+   * when {@code true}, draws arrows at both ends of undirected edges default is {@code false} - no
+   * arrows drawn for undirected edges
+   */
   protected boolean arrowsOnUndirectedEdges =
       Boolean.parseBoolean(System.getProperty(ARROWS_ON_UNDIRECTED_EDGES, "false"));
 
+  /** provide labels for vertices */
   protected Function<V, String> vertexLabelFunction = n -> null;
+
   protected Function<V, Icon> vertexIconFunction;
 
   protected boolean renderEdgeArrow;
@@ -217,7 +270,12 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
     setupArrows(graph.getType().isDirected());
   }
 
-  void setupArrows(boolean directed) {
+  /**
+   * sets the arrow functions, depending on the graph type
+   *
+   * @param directed {@code true} if the {@link Graph} is a directed graph
+   */
+  protected void setupArrows(boolean directed) {
     if (directed) {
       this.edgeArrow =
           ArrowFactory.getNotchedArrow(edgeArrowWidth, edgeArrowLength, edgeArrowNotchDepth);
@@ -416,19 +474,19 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
   }
 
   public MutableSelectedState<E> getSelectedEdgeState() {
-    return pickedEdgeState;
+    return selectedEdgeState;
   }
 
   public void setSelectedEdgeState(MutableSelectedState<E> pickedEdgeState) {
-    this.pickedEdgeState = pickedEdgeState;
+    this.selectedEdgeState = pickedEdgeState;
   }
 
   public MutableSelectedState<V> getSelectedVertexState() {
-    return pickedVertexState;
+    return selectedVertexState;
   }
 
   public void setSelectedVertexState(MutableSelectedState<V> pickedVertexState) {
-    this.pickedVertexState = pickedVertexState;
+    this.selectedVertexState = pickedVertexState;
   }
 
   public CellRendererPane getRendererPane() {
