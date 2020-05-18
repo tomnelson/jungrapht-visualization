@@ -266,8 +266,11 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
 
   /** */
   public void setSize(int width, int height) {
-    if (width == 0 || height == 0) {
-      throw new IllegalArgumentException("Can't be zeros " + width + "/" + height);
+    if (width <= 0) {
+      width = preferredWidth;
+    }
+    if (height <= 0) {
+      height = preferredHeight;
     }
     this.width = width;
     this.height = height;
