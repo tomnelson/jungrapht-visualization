@@ -415,7 +415,13 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
       if (p.y < minY) minY = (int) p.y;
     }
     int vertexSpaceWidth = maxX - minX;
+    if (vertexSpaceWidth <= 0) {
+      vertexSpaceWidth = 100;
+    }
     int vertexSpaceHeight = maxY - minY;
+    if (vertexSpaceHeight <= 0) {
+      vertexSpaceHeight = 100;
+    }
     int paddingX = vertexSpaceWidth / 10;
     int paddingY = vertexSpaceHeight / 10;
     int dx = 0;

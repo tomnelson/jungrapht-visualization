@@ -8,6 +8,7 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.flow.EdmondsKarpMFImpl;
 import org.jgrapht.alg.interfaces.MaximumFlowAlgorithm;
+import org.jgrapht.graph.AsWeightedGraph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
@@ -58,7 +59,12 @@ public class MaxFlowDemo {
   }
 
   public Graph<MyNode, MyLink> constructGraph() {
-    Graph<MyNode, MyLink> graph = GraphTypeBuilder.<MyNode, MyLink>directed().buildGraph();
+    Graph<MyNode, MyLink> graph =
+        new AsWeightedGraph<>(
+            GraphTypeBuilder.<MyNode, MyLink>directed().weighted(true).buildGraph(),
+            MyLink::capacity,
+            true,
+            true);
 
     MyNode n1 = new MyNode(1);
     MyNode n2 = new MyNode(2);
@@ -122,6 +128,10 @@ public class MaxFlowDemo {
     public MyLink(double capacity) {
       this.id = edgeCount++;
       this.capacity = capacity;
+    }
+
+    public double capacity() {
+      return this.capacity;
     }
 
     public String toString() {
