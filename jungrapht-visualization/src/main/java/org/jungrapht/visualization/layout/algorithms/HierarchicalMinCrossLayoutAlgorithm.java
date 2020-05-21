@@ -1,8 +1,18 @@
 package org.jungrapht.visualization.layout.algorithms;
 
-import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+import org.jgrapht.Graph;
+import org.jungrapht.visualization.RenderContext;
+import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnable;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaRunnable;
+import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
+import org.jungrapht.visualization.layout.algorithms.util.RenderContextAware;
+import org.jungrapht.visualization.layout.model.LayoutModel;
+import org.jungrapht.visualization.layout.model.Rectangle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.awt.*;
+import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.util.List;
 import java.util.concurrent.CancellationException;
@@ -12,18 +22,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
-import org.jgrapht.Graph;
-import org.jungrapht.visualization.RenderContext;
-import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnable;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaRunnable;
-import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
-import org.jungrapht.visualization.layout.algorithms.util.RenderContextAware;
-import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
-import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.jungrapht.visualization.layout.model.Rectangle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 
 /**
  * A Hierarchical Minimum-Cross layout algorithm based on Sugiyama. Uses the Eiglsperger optimations
@@ -47,7 +47,6 @@ import org.slf4j.LoggerFactory;
 public class HierarchicalMinCrossLayoutAlgorithm<V, E>
     implements LayoutAlgorithm<V>,
         RenderContextAware<V, E>,
-        VertexShapeAware<V>,
         AfterRunnable,
         Future {
 
@@ -232,11 +231,6 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
   @Override
   public void setRenderContext(RenderContext<V, E> renderContext) {
     this.renderContext = renderContext;
-  }
-
-  @Override
-  public void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
-    this.vertexShapeFunction = vertexShapeFunction;
   }
 
   @Override

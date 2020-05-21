@@ -7,7 +7,6 @@ import org.jungrapht.visualization.layout.algorithms.EdgeAwareLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.SugiyamaLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.util.RenderContextAware;
-import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +18,7 @@ import org.slf4j.LoggerFactory;
  * @param <E>
  */
 public class TestSugiyamaLayoutAlgorithm<V, E> extends SugiyamaLayoutAlgorithm<V, E>
-    implements LayoutAlgorithm<V>, RenderContextAware<V, E>, VertexShapeAware<V> {
+    implements LayoutAlgorithm<V>, RenderContextAware<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(TestSugiyamaLayoutAlgorithm.class);
 

@@ -11,25 +11,31 @@ import org.jgrapht.alg.interfaces.MaximumFlowAlgorithm;
 import org.jgrapht.graph.AsWeightedGraph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.decorators.EdgeShape;
-import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.SugiyamaLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.Renderer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+/**
+ * Demo of the EdmondsKarp Max Flow algorithm applied to a graph with a capacity property as edge
+ * weight
+ */
 public class MaxFlowDemo {
-
-  private static Logger log = LoggerFactory.getLogger(MaxFlowDemo.class);
 
   public MaxFlowDemo() {
     Graph<MyNode, MyLink> graph = constructGraph();
-    VisualizationViewer<MyNode, MyLink> vv =
-        VisualizationViewer.builder(graph).layoutAlgorithm(new FRLayoutAlgorithm<>()).build();
+    VisualizationViewer<MyNode, MyLink> vv = VisualizationViewer.builder(graph).build();
+
+    SugiyamaLayoutAlgorithm<MyNode, MyLink> layoutAlgorithm =
+        SugiyamaLayoutAlgorithm.<MyNode, MyLink>edgeAwareBuilder().build();
+
+    // the SugiyamaLayoutAlgorithm needs the RenderContext so that it
+    // can access the Vertex sizes, and so it can set the EdgeShape to
+    // Articulated edges.
+    layoutAlgorithm.setRenderContext(vv.getRenderContext());
+    vv.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm);
 
     vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
     vv.getRenderContext().setVertexLabelDrawPaintFunction(v -> Color.white);
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
-    vv.getRenderContext().setEdgeShapeFunction(new EdgeShape.Line());
 
     Map<MyLink, Double> edgeFlowMap = new HashMap<>();
     Map<MyLink, MaximumFlowAlgorithm.MaximumFlow<MyLink>> maxFlowMap = new HashMap<>();
@@ -46,9 +52,6 @@ public class MaxFlowDemo {
 
     vv.getRenderContext()
         .setEdgeLabelFunction(e -> edgeFlowMap.get(e).intValue() + "/" + (int) e.capacity);
-
-    log.info("edgeFlowMap: {}", edgeFlowMap);
-    log.info("maxFlowMap: {}", maxFlowMap);
 
     // create a frame to hold the graph visualization
     final JFrame frame = new JFrame();

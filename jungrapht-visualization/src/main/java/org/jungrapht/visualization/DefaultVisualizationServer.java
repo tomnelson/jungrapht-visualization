@@ -187,7 +187,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
         layoutSize = viewSize;
       }
       if (layoutSize.width <= 0 || layoutSize.height <= 0)
-        throw new IllegalArgumentException("height must be > 0");
+        throw new IllegalArgumentException("width and height must be > 0");
       visualizationModel =
           VisualizationModel.builder(graph)
               .layoutAlgorithm(layoutAlgorithm)
