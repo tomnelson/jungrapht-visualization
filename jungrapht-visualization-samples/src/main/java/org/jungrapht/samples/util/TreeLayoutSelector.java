@@ -1,6 +1,9 @@
 package org.jungrapht.samples.util;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.GridLayout;
+import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Comparator;
@@ -35,8 +38,8 @@ import org.jungrapht.visualization.layout.algorithms.TidierTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TreeLayout;
 import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
+import org.jungrapht.visualization.layout.algorithms.util.EdgeShapeFunctionSupplier;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
-import org.jungrapht.visualization.layout.algorithms.util.RenderContextAware;
 import org.jungrapht.visualization.util.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -422,7 +425,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
   class LayoutItemListener implements ItemListener {
 
     LayoutAlgorithm layoutAlgorithm;
-    VisualizationServer vv;
+    VisualizationServer<V, E> vv;
 
     LayoutItemListener(LayoutAlgorithm layoutAlgorithm, VisualizationServer vv) {
       this.layoutAlgorithm = layoutAlgorithm;
@@ -432,9 +435,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     @Override
     public void itemStateChanged(ItemEvent e) {
       if (e.getStateChange() == ItemEvent.SELECTED) {
-        if (layoutAlgorithm instanceof RenderContextAware) {
-          ((RenderContextAware) layoutAlgorithm).setRenderContext(vv.getRenderContext());
-        } else {
+        if (!(layoutAlgorithm instanceof EdgeShapeFunctionSupplier)) {
           vv.getRenderContext().setEdgeShapeFunction(originalEdgeShapeFunction);
         }
         if (animateTransition.isSelected()) {

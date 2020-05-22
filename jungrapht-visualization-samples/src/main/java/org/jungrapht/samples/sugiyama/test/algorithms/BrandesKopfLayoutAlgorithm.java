@@ -2,7 +2,7 @@ package org.jungrapht.samples.sugiyama.test.algorithms;
 
 import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 
-import java.awt.*;
+import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.RenderContext;
@@ -25,12 +26,13 @@ import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Synthetics;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.TransformedGraphSupplier;
-import org.jungrapht.visualization.layout.algorithms.util.RenderContextAware;
+import org.jungrapht.visualization.layout.algorithms.util.EdgeShapeFunctionSupplier;
 import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
 import org.jungrapht.visualization.layout.util.synthetics.Synthetic;
+import org.jungrapht.visualization.util.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * @param <E>
  */
 public class BrandesKopfLayoutAlgorithm<V, E>
-    implements LayoutAlgorithm<V>, RenderContextAware<V, E>, VertexShapeAware<V> {
+    implements LayoutAlgorithm<V>, EdgeShapeFunctionSupplier<V, E>, VertexShapeAware<V> {
 
   private static final Logger log = LoggerFactory.getLogger(BrandesKopfLayoutAlgorithm.class);
 
@@ -62,6 +64,7 @@ public class BrandesKopfLayoutAlgorithm<V, E>
           B extends Builder<V, E, T, B>>
       implements LayoutAlgorithm.Builder<V, T, B> {
     protected Function<V, Shape> vertexShapeFunction = v -> IDENTITY_SHAPE;
+    protected Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer;
     protected boolean expandLayout = true;
     protected Runnable after = () -> {};
     boolean doUpLeft = false;
@@ -76,6 +79,12 @@ public class BrandesKopfLayoutAlgorithm<V, E>
 
     public B vertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
       this.vertexShapeFunction = vertexShapeFunction;
+      return self();
+    }
+
+    public B edgeShapeConsumer(
+        Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer) {
+      this.edgeShapeConsumer = edgeShapeConsumer;
       return self();
     }
 
@@ -129,6 +138,7 @@ public class BrandesKopfLayoutAlgorithm<V, E>
   protected List<V> roots;
 
   protected Function<V, Shape> vertexShapeFunction;
+  Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer;
   protected boolean expandLayout;
   protected RenderContext<V, E> renderContext;
   Runnable after;
@@ -146,6 +156,7 @@ public class BrandesKopfLayoutAlgorithm<V, E>
   private BrandesKopfLayoutAlgorithm(Builder builder) {
     this(
         builder.vertexShapeFunction,
+        builder.edgeShapeConsumer,
         builder.expandLayout,
         builder.after,
         builder.doUpLeft,
@@ -156,6 +167,7 @@ public class BrandesKopfLayoutAlgorithm<V, E>
 
   private BrandesKopfLayoutAlgorithm(
       Function<V, Shape> vertexShapeFunction,
+      Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer,
       boolean expandLayout,
       Runnable after,
       boolean doUpLeft,
@@ -163,6 +175,7 @@ public class BrandesKopfLayoutAlgorithm<V, E>
       boolean doDownLeft,
       boolean doDownRight) {
     this.vertexShapeFunction = vertexShapeFunction;
+    this.edgeShapeConsumer = edgeShapeConsumer;
     this.expandLayout = expandLayout;
     this.after = after;
     this.doUpLeft = doUpLeft;
@@ -172,13 +185,14 @@ public class BrandesKopfLayoutAlgorithm<V, E>
   }
 
   @Override
-  public void setRenderContext(RenderContext<V, E> renderContext) {
-    this.renderContext = renderContext;
+  public void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
+    this.vertexShapeFunction = vertexShapeFunction;
   }
 
   @Override
-  public void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
-    this.vertexShapeFunction = vertexShapeFunction;
+  public void setEdgeShapeFunctionConsumer(
+      Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer) {
+    this.edgeShapeConsumer = edgeShapeConsumer;
   }
 
   Graph<V, E> originalGraph;

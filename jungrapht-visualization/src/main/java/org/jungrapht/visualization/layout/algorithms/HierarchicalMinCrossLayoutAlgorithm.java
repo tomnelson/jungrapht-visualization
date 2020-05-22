@@ -1,16 +1,6 @@
 package org.jungrapht.visualization.layout.algorithms;
 
-import org.jgrapht.Graph;
-import org.jungrapht.visualization.RenderContext;
-import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnable;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaRunnable;
-import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
-import org.jungrapht.visualization.layout.algorithms.util.RenderContextAware;
-import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.jungrapht.visualization.layout.model.Rectangle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
@@ -21,9 +11,21 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
 import java.util.function.Function;
-
-import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+import org.jgrapht.Graph;
+import org.jungrapht.visualization.RenderContext;
+import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnable;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaRunnable;
+import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
+import org.jungrapht.visualization.layout.algorithms.util.EdgeShapeFunctionSupplier;
+import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
+import org.jungrapht.visualization.layout.model.LayoutModel;
+import org.jungrapht.visualization.layout.model.Rectangle;
+import org.jungrapht.visualization.util.Context;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Hierarchical Minimum-Cross layout algorithm based on Sugiyama. Uses the Eiglsperger optimations
@@ -46,7 +48,8 @@ import static org.jungrapht.visualization.VisualizationServer.PREFIX;
  */
 public class HierarchicalMinCrossLayoutAlgorithm<V, E>
     implements LayoutAlgorithm<V>,
-        RenderContextAware<V, E>,
+        VertexShapeAware<V>,
+        EdgeShapeFunctionSupplier<V, E>,
         AfterRunnable,
         Future {
 
@@ -76,6 +79,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
           B extends Builder<V, E, T, B>>
       implements LayoutAlgorithm.Builder<V, T, B> {
     protected Function<V, Shape> vertexShapeFunction = v -> IDENTITY_SHAPE;
+    protected Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer;
     protected boolean straightenEdges =
         Boolean.parseBoolean(System.getProperty(MINCROSS_STRAIGHTEN_EDGES, "true"));
     protected boolean postStraighten =
@@ -102,6 +106,12 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
 
     public B vertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
       this.vertexShapeFunction = vertexShapeFunction;
+      return self();
+    }
+
+    public B edgeShapeConsumer(
+        Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer) {
+      this.edgeShapeConsumer = edgeShapeConsumer;
       return self();
     }
 
@@ -170,6 +180,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
   protected List<V> roots;
 
   protected Function<V, Shape> vertexShapeFunction;
+  protected Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer;
   protected int eiglspergerThreshold;
   protected boolean straightenEdges;
   protected boolean postStraighten;
@@ -191,6 +202,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
   private HierarchicalMinCrossLayoutAlgorithm(Builder builder) {
     this(
         builder.vertexShapeFunction,
+        builder.edgeShapeConsumer,
         builder.eiglspergerThreshold,
         builder.straightenEdges,
         builder.postStraighten,
@@ -205,6 +217,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
 
   private HierarchicalMinCrossLayoutAlgorithm(
       Function<V, Shape> vertexShapeFunction,
+      Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer,
       int eiglspergerThreshold,
       boolean straightenEdges,
       boolean postStraighten,
@@ -216,6 +229,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
       boolean threaded,
       Runnable after) {
     this.vertexShapeFunction = vertexShapeFunction;
+    this.edgeShapeConsumer = edgeShapeConsumer;
     this.eiglspergerThreshold = eiglspergerThreshold;
     this.straightenEdges = straightenEdges;
     this.postStraighten = postStraighten;
@@ -229,8 +243,14 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
   }
 
   @Override
-  public void setRenderContext(RenderContext<V, E> renderContext) {
-    this.renderContext = renderContext;
+  public void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
+    this.vertexShapeFunction = vertexShapeFunction;
+  }
+
+  @Override
+  public void setEdgeShapeFunctionConsumer(
+      Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer) {
+    this.edgeShapeConsumer = edgeShapeConsumer;
   }
 
   @Override
@@ -245,7 +265,8 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
       runnable =
           SugiyamaRunnable.<V, E>builder()
               .layoutModel(layoutModel)
-              .renderContext(renderContext)
+              .vertexShapeFunction(vertexShapeFunction)
+              .edgeShapeConsumer(edgeShapeConsumer)
               .straightenEdges(straightenEdges)
               .postStraighten(postStraighten)
               .transpose(transpose)
@@ -257,7 +278,8 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
       runnable =
           EiglspergerRunnable.<V, E>builder()
               .layoutModel(layoutModel)
-              .renderContext(renderContext)
+              .vertexShapeFunction(vertexShapeFunction)
+              .edgeShapeFunctionConsumer(edgeShapeConsumer)
               .straightenEdges(straightenEdges)
               .postStraighten(postStraighten)
               .maxLevelCross(maxLevelCross)

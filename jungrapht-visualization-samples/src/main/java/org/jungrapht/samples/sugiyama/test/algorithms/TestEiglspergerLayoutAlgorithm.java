@@ -6,7 +6,6 @@ import java.util.concurrent.CompletableFuture;
 import org.jungrapht.visualization.layout.algorithms.EdgeAwareLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.util.RenderContextAware;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +17,7 @@ import org.slf4j.LoggerFactory;
  * @param <E>
  */
 public class TestEiglspergerLayoutAlgorithm<V, E> extends EiglspergerLayoutAlgorithm<V, E>
-    implements LayoutAlgorithm<V>, RenderContextAware<V, E> {
+    implements LayoutAlgorithm<V> {
 
   private static final Logger log = LoggerFactory.getLogger(TestEiglspergerLayoutAlgorithm.class);
 
@@ -102,7 +101,8 @@ public class TestEiglspergerLayoutAlgorithm<V, E> extends EiglspergerLayoutAlgor
     Runnable runnable =
         TestEiglspergerRunnable.<V, E>builder()
             .layoutModel(layoutModel)
-            .renderContext(renderContext)
+            .vertexShapeFunction(vertexShapeFunction)
+            .edgeShapeFunctionConsumer(edgeShapeConsumer)
             .straightenEdges(straightenEdges)
             .transpose(transpose)
             .postStraighten(postStraighten)

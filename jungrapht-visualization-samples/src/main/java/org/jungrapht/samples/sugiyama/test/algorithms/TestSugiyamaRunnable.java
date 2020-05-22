@@ -227,8 +227,7 @@ public class TestSugiyamaRunnable<V, E> extends SugiyamaRunnable<V, E> implement
     // done optimizing for edge crossing
 
     // figure out the avg size of rendered vertex
-    Rectangle avgVertexBounds =
-        avgVertexBounds(layersArray, renderContext.getVertexShapeFunction());
+    Rectangle avgVertexBounds = avgVertexBounds(layersArray, vertexShapeFunction);
 
     int horizontalOffset =
         Math.max(
@@ -268,17 +267,13 @@ public class TestSugiyamaRunnable<V, E> extends SugiyamaRunnable<V, E> implement
 
     } else {
       Unaligned.centerPoints(
-          layersArray,
-          renderContext.getVertexShapeFunction(),
-          horizontalOffset,
-          verticalOffset,
-          vertexPointMap);
+          layersArray, vertexShapeFunction, horizontalOffset, verticalOffset, vertexPointMap);
     }
 
     Map<Integer, Integer> rowWidthMap = new HashMap<>(); // all the row widths
     Map<Integer, Integer> rowMaxHeightMap = new HashMap<>(); // all the row heights
     int layerIndex = 0;
-    Function<V, Shape> vertexShapeFunction = renderContext.getVertexShapeFunction();
+    //    Function<V, Shape> vertexShapeFunction = vertexShapeFunction;
     int totalHeight = 0;
     int totalWidth = 0;
     for (int i = 0; i < layersArray.length; i++) {
@@ -415,7 +410,7 @@ public class TestSugiyamaRunnable<V, E> extends SugiyamaRunnable<V, E> implement
     edgeShape.setEdgeArticulationFunction(
         e -> edgePointMap.getOrDefault(e, Collections.emptyList()));
 
-    renderContext.setEdgeShapeFunction(edgeShape);
+    edgeShapeConsumer.accept(edgeShape);
 
     long articulatedEdgeTime = System.currentTimeMillis();
     log.trace("articulated edges took {}", (articulatedEdgeTime - pointsSetTime));

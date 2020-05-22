@@ -210,8 +210,7 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
         .forEach(layer -> Arrays.sort(layer, Comparator.comparingInt(LV::getIndex)));
 
     // figure out the avg size of rendered vertex
-    java.awt.Rectangle avgVertexBounds =
-        maxVertexBounds(layersArray, renderContext.getVertexShapeFunction());
+    java.awt.Rectangle avgVertexBounds = maxVertexBounds(layersArray, vertexShapeFunction);
 
     int horizontalOffset =
         Math.max(
@@ -252,17 +251,12 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
 
     } else {
       Unaligned.centerPoints(
-          layersArray,
-          renderContext.getVertexShapeFunction(),
-          horizontalOffset,
-          verticalOffset,
-          vertexPointMap);
+          layersArray, vertexShapeFunction, horizontalOffset, verticalOffset, vertexPointMap);
     }
 
     Map<Integer, Integer> rowWidthMap = new HashMap<>(); // all the row widths
     Map<Integer, Integer> rowMaxHeightMap = new HashMap<>(); // all the row heights
     int layerIndex = 0;
-    Function<V, Shape> vertexShapeFunction = renderContext.getVertexShapeFunction();
     int totalHeight = 0;
     int totalWidth = 0;
 
@@ -402,7 +396,7 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
     edgeShape.setEdgeArticulationFunction(
         e -> edgePointMap.getOrDefault(e, Collections.emptyList()));
 
-    renderContext.setEdgeShapeFunction(edgeShape);
+    edgeShapeFunctionConsumer.accept(edgeShape);
 
     long articulatedEdgeTime = System.currentTimeMillis();
     log.trace("articulated edges took {}", (articulatedEdgeTime - pointsSetTime));

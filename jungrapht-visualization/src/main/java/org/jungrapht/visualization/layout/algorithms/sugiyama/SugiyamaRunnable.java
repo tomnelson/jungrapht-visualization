@@ -17,17 +17,18 @@ import java.util.LongSummaryStatistics;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
-import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.SugiyamaLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.util.InsertionSortCounter;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.util.synthetics.Synthetic;
+import org.jungrapht.visualization.util.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +63,8 @@ public class SugiyamaRunnable<V, E> implements Runnable {
   public static class Builder<
       V, E, T extends SugiyamaRunnable<V, E>, B extends Builder<V, E, T, B>> {
     protected LayoutModel<V> layoutModel;
-    protected RenderContext<V, E> renderContext;
+    protected Function<V, Shape> vertexShapeFunction;
+    protected Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer;
     protected Predicate<V> vertexPredicate; // can be null
     protected Predicate<E> edgePredicate; // can be null
     protected Comparator<V> vertexComparator = (v1, v2) -> 0;
@@ -120,8 +122,14 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       return self();
     }
 
-    public B renderContext(RenderContext<V, E> renderContext) {
-      this.renderContext = renderContext;
+    public B vertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
+      this.vertexShapeFunction = vertexShapeFunction;
+      return self();
+    }
+
+    public B edgeShapeConsumer(
+        Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer) {
+      this.edgeShapeConsumer = edgeShapeConsumer;
       return self();
     }
 
@@ -171,7 +179,8 @@ public class SugiyamaRunnable<V, E> implements Runnable {
   }
 
   protected final LayoutModel<V> layoutModel;
-  protected final RenderContext<V, E> renderContext;
+  protected Function<V, Shape> vertexShapeFunction;
+  protected Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer;
   protected Graph<V, E> graph;
   protected Graph<LV<V>, LE<V, E>> svGraph;
   boolean stopit = false;
@@ -190,7 +199,8 @@ public class SugiyamaRunnable<V, E> implements Runnable {
   protected SugiyamaRunnable(Builder<V, E, ?, ?> builder) {
     this(
         builder.layoutModel,
-        builder.renderContext,
+        builder.vertexShapeFunction,
+        builder.edgeShapeConsumer,
         builder.vertexPredicate,
         builder.edgePredicate,
         builder.vertexComparator,
@@ -205,7 +215,8 @@ public class SugiyamaRunnable<V, E> implements Runnable {
 
   private SugiyamaRunnable(
       LayoutModel<V> layoutModel,
-      RenderContext<V, E> renderContext,
+      Function<V, Shape> vertexShapeFunction,
+      Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer,
       Predicate<V> vertexPredicate,
       Predicate<E> edgePredicate,
       Comparator<V> vertexComparator,
@@ -217,7 +228,8 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       int maxLevelCross,
       Layering layering) {
     this.layoutModel = layoutModel;
-    this.renderContext = renderContext;
+    this.vertexShapeFunction = vertexShapeFunction;
+    this.edgeShapeConsumer = edgeShapeConsumer;
     this.vertexComparator = vertexComparator;
     this.vertexPredicate = vertexPredicate;
     this.edgeComparator = edgeComparator;
@@ -364,8 +376,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     // done optimizing for edge crossing
 
     // figure out the avg size of rendered vertex
-    Rectangle avgVertexBounds =
-        avgVertexBounds(layersArray, renderContext.getVertexShapeFunction());
+    Rectangle avgVertexBounds = avgVertexBounds(layersArray, vertexShapeFunction);
 
     int horizontalOffset =
         Math.max(
@@ -393,17 +404,12 @@ public class SugiyamaRunnable<V, E> implements Runnable {
 
     } else {
       Unaligned.centerPoints(
-          layersArray,
-          renderContext.getVertexShapeFunction(),
-          horizontalOffset,
-          verticalOffset,
-          vertexPointMap);
+          layersArray, vertexShapeFunction, horizontalOffset, verticalOffset, vertexPointMap);
     }
 
     Map<Integer, Integer> rowWidthMap = new HashMap<>(); // all the row widths
     Map<Integer, Integer> rowMaxHeightMap = new HashMap<>(); // all the row heights
     int layerIndex = 0;
-    Function<V, Shape> vertexShapeFunction = renderContext.getVertexShapeFunction();
     int totalHeight = 0;
     int totalWidth = 0;
     for (int i = 0; i < layersArray.length; i++) {
@@ -540,7 +546,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     edgeShape.setEdgeArticulationFunction(
         e -> edgePointMap.getOrDefault(e, Collections.emptyList()));
 
-    renderContext.setEdgeShapeFunction(edgeShape);
+    edgeShapeConsumer.accept(edgeShape);
 
     long articulatedEdgeTime = System.currentTimeMillis();
     log.trace("articulated edges took {}", (articulatedEdgeTime - pointsSetTime));

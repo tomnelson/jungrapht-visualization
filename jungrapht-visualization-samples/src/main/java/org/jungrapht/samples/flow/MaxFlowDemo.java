@@ -30,7 +30,8 @@ public class MaxFlowDemo {
     // the SugiyamaLayoutAlgorithm needs the RenderContext so that it
     // can access the Vertex sizes, and so it can set the EdgeShape to
     // Articulated edges.
-    layoutAlgorithm.setRenderContext(vv.getRenderContext());
+    layoutAlgorithm.setVertexShapeFunction(vv.getRenderContext().getVertexShapeFunction());
+    layoutAlgorithm.setEdgeShapeFunctionConsumer(vv.getRenderContext()::setEdgeShapeFunction);
     vv.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm);
 
     vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);

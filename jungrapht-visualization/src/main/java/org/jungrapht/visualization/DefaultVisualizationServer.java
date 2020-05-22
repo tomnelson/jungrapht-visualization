@@ -32,6 +32,8 @@ import org.jungrapht.visualization.control.TransformSupport;
 import org.jungrapht.visualization.layout.BoundingRectangleCollector;
 import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.util.EdgeShapeFunctionSupplier;
+import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
 import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
 import org.jungrapht.visualization.layout.event.RenderContextStateChange;
@@ -560,8 +562,21 @@ class DefaultVisualizationServer<V, E> extends JPanel
       ((DefaultRenderContext) renderContext)
           .setupArrows(visualizationModel.getGraph().getType().isDirected());
     }
+    considerLayoutAlgorithm();
     renderer.setCountSupplier(visualizationModel.getGraph().vertexSet()::size);
     repaint();
+  }
+
+  protected void considerLayoutAlgorithm() {
+    LayoutAlgorithm<V> layoutAlgorithm = visualizationModel.getLayoutAlgorithm();
+    if (layoutAlgorithm instanceof EdgeShapeFunctionSupplier) {
+      ((EdgeShapeFunctionSupplier<V, E>) layoutAlgorithm)
+          .setEdgeShapeFunctionConsumer(renderContext::setEdgeShapeFunction);
+    }
+    if (layoutAlgorithm instanceof VertexShapeAware) {
+      ((VertexShapeAware) layoutAlgorithm)
+          .setVertexShapeFunction(renderContext.getVertexShapeFunction());
+    }
   }
 
   @Override

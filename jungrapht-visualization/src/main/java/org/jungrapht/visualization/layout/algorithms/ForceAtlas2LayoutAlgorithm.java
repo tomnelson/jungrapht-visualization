@@ -1,6 +1,7 @@
 package org.jungrapht.visualization.layout.algorithms;
 
-import java.awt.*;
+import java.awt.Rectangle;
+import java.awt.Shape;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Map;
