@@ -48,6 +48,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
     implements LayoutAlgorithm<V>,
         VertexShapeAware<V>,
         EdgeShapeFunctionSupplier<V, E>,
+        Layered,
         AfterRunnable,
         Future {
 
@@ -226,6 +227,11 @@ public class EiglspergerLayoutAlgorithm<V, E>
   public void setEdgeShapeFunctionConsumer(
       Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer) {
     this.edgeShapeConsumer = edgeShapeConsumer;
+  }
+
+  @Override
+  public void setLayering(Layering layering) {
+    this.layering = layering;
   }
 
   @Override

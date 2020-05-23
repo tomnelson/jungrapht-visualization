@@ -101,6 +101,7 @@ public class BalloonLayoutForestDemo extends JPanel {
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
             .lensGraphMouse(new DefaultLensGraphMouse())
+            .useGradient(true)
             .build();
 
     hyperbolicSupport =
@@ -113,6 +114,7 @@ public class BalloonLayoutForestDemo extends JPanel {
                             .getTransformer(Layer.LAYOUT))
                     .build())
             .lensGraphMouse(new DefaultLensGraphMouse())
+            .useGradient(true)
             .build();
 
     vv.scaleToLayout(new CrossoverScalingControl());

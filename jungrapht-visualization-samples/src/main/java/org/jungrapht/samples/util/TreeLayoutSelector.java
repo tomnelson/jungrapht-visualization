@@ -25,6 +25,7 @@ import org.jungrapht.visualization.layout.algorithms.EdgeAwareTreeLayoutAlgorith
 import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.GEMLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.HierarchicalMinCrossLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.Layered;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
 import org.jungrapht.visualization.layout.algorithms.MultiRowEdgeAwareTreeLayoutAlgorithm;
@@ -194,6 +195,13 @@ public class TreeLayoutSelector<V, E> extends JPanel {
   final JRadioButton animateTransition = new JRadioButton("Animate Transition", true);
 
   Function<Context<Graph<V, E>, E>, Shape> originalEdgeShapeFunction;
+
+  JComboBox<Layering> layeringComboBox =
+      new JComboBox<>(
+          new Layering[] {
+            Layering.TOP_DOWN, Layering.LONGEST_PATH,
+            Layering.NETWORK_SIMPLEX, Layering.COFFMAN_GRAHAM
+          });
 
   private TreeLayoutSelector(
       VisualizationServer<V, E> vv,
@@ -399,6 +407,15 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     layoutRadio.add(circleButton);
     layoutRadio.add(betterCircleButton);
 
+    layeringComboBox.addItemListener(
+        item -> {
+          LayoutAlgorithm<V> layoutAlgotithm = vv.getVisualizationModel().getLayoutAlgorithm();
+          if (layoutAlgotithm instanceof Layered) {
+            ((Layered) layoutAlgotithm).setLayering((Layering) item.getItem());
+            vv.getVisualizationModel().setLayoutAlgorithm(layoutAlgotithm);
+          }
+        });
+
     this.add(treeButton);
     this.add(edgeAwareTreeButton);
     this.add(multiRowTreeButton);
@@ -416,6 +433,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     this.add(circleButton);
     this.add(betterCircleButton);
     this.add(animateTransition);
+    this.add(layeringComboBox);
   }
 
   /**
@@ -438,6 +456,11 @@ public class TreeLayoutSelector<V, E> extends JPanel {
         if (!(layoutAlgorithm instanceof EdgeShapeFunctionSupplier)) {
           vv.getRenderContext().setEdgeShapeFunction(originalEdgeShapeFunction);
         }
+        if (layoutAlgorithm instanceof Layered) {
+          ((Layered) layoutAlgorithm)
+              .setLayering(layeringComboBox.getItemAt(layeringComboBox.getSelectedIndex()));
+        }
+
         if (animateTransition.isSelected()) {
           LayoutAlgorithmTransition.animate(vv, layoutAlgorithm, after);
         } else {

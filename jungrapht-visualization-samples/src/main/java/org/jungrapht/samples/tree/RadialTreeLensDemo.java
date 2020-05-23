@@ -106,6 +106,7 @@ public class RadialTreeLensDemo extends JPanel {
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
             .lensGraphMouse(new DefaultLensGraphMouse())
+            .useGradient(true)
             .build();
 
     hyperbolicLayoutSupport =
@@ -118,6 +119,7 @@ public class RadialTreeLensDemo extends JPanel {
                             .getTransformer(Layer.LAYOUT))
                     .build())
             .lensGraphMouse(new DefaultLensGraphMouse())
+            .useGradient(true)
             .build();
 
     final JButton hyperView = new JButton("Hyperbolic View");

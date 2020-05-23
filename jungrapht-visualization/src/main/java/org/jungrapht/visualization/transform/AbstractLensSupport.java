@@ -184,17 +184,22 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse>
     RectangularShape lensShape;
 
     Paint paint = Color.getColor(PREFIX + "lensColor", Color.decode("0xFAFAFA"));
-    float[] dist = {0f, 1f};
-    Color color = ((Color) paint).darker();
-    Color[] colors = {
-      new Color(color.getRed(), color.getGreen(), color.getBlue(), 0),
-      new Color(color.getRed(), color.getGreen(), color.getBlue(), 255)
-    };
+    float[] dist;
+    Color[] colors;
     boolean useGradient;
 
     public LensPaintable(LensTransformer lensTransformer, boolean useGradient) {
       this.lensShape = lensTransformer.getLens().getLensShape();
       this.useGradient = useGradient;
+      if (useGradient) {
+        Color darker = ((Color) paint).darker();
+        colors =
+            new Color[] {
+              new Color(darker.getRed(), darker.getGreen(), darker.getBlue(), 0),
+              new Color(darker.getRed(), darker.getGreen(), darker.getBlue(), 255)
+            };
+        dist = new float[] {0f, 1f};
+      }
     }
 
     public LensPaintable(LensTransformer lensTransformer) {

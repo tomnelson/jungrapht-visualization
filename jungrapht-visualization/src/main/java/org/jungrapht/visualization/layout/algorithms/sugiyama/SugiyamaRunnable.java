@@ -355,8 +355,10 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     Arrays.stream(layersArray)
         .forEach(layer -> Arrays.sort(layer, Comparator.comparingInt(LV::getIndex)));
     // compare best and layersArray
-    log.info("best:{}", best);
-    log.info("layersArray:{}", layersArray);
+    if (log.isTraceEnabled()) {
+      log.trace("best:{}", best);
+      log.trace("layersArray:{}", layersArray);
+    }
 
     for (int i = 0; i < best.length; i++) {
       LV<V>[] layer = best[i];
