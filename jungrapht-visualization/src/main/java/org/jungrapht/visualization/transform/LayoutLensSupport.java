@@ -81,7 +81,7 @@ public class LayoutLensSupport<V, E, M extends LensGraphMouse> extends AbstractL
   public void activate() {
     if (allowed()) {
       if (lensPaintable == null) {
-        lensPaintable = new LensPaintable(lensTransformer);
+        lensPaintable = new LensPaintable(lensTransformer, useGradient);
       }
       if (lensControls == null) {
         lensControls = new LensControls(lensTransformer);

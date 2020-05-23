@@ -40,7 +40,6 @@ import org.jungrapht.visualization.layout.algorithms.RadialTreeLayout;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TreeLayout;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
-import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.renderers.JLabelEdgeLabelRenderer;
 import org.jungrapht.visualization.renderers.JLabelVertexLabelRenderer;
@@ -192,18 +191,15 @@ public class ShowLayoutsWithImageIconVertices extends JPanel {
                   vv.reset();
                   LayoutAlgorithm.Builder<String, ?, ?> builder =
                       layoutFunction.apply((String) jcb.getSelectedItem());
-                  LayoutAlgorithm layoutAlgorithm = builder.build();
+                  LayoutAlgorithm<String> layoutAlgorithm = builder.build();
                   vv.removePreRenderPaintable(balloonLayoutRings);
                   vv.removePreRenderPaintable(radialLayoutRings);
-                  if (layoutAlgorithm instanceof VertexShapeAware) {
-                    ((VertexShapeAware<String>) layoutAlgorithm)
-                        .setVertexShapeFunction(vv.getRenderContext().getVertexShapeFunction());
-                  }
                   if ((layoutAlgorithm instanceof TreeLayout)
                       && vv.getVisualizationModel().getGraph().getType().isUndirected()) {
-                    Graph tree =
+                    Graph<String, Integer> tree =
                         SpanningTreeAdapter.getSpanningTree(vv.getVisualizationModel().getGraph());
-                    LayoutModel positionModel = this.getTreeLayoutPositions(tree, layoutAlgorithm);
+                    LayoutModel<String> positionModel =
+                        this.getTreeLayoutPositions(tree, layoutAlgorithm);
                     vv.getVisualizationModel().getLayoutModel().setInitializer(positionModel);
                     layoutAlgorithm = new StaticLayoutAlgorithm();
                   }

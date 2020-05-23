@@ -11,6 +11,7 @@ import org.jgrapht.alg.interfaces.MaximumFlowAlgorithm;
 import org.jgrapht.graph.AsWeightedGraph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.visualization.VisualizationViewer;
+import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.SugiyamaLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.Renderer;
 
@@ -37,6 +38,8 @@ public class MaxFlowDemo {
     vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
     vv.getRenderContext().setVertexLabelDrawPaintFunction(v -> Color.white);
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
+    // the edge shape set here will be changed to EdgeShape.ArticulatedLine by the LayoutAlgorithm
+    vv.getRenderContext().setEdgeShapeFunction(new EdgeShape.QuadCurve<>());
 
     Map<MyLink, Double> edgeFlowMap = new HashMap<>();
     Map<MyLink, MaximumFlowAlgorithm.MaximumFlow<MyLink>> maxFlowMap = new HashMap<>();

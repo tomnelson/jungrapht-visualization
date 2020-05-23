@@ -52,6 +52,7 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse>
     protected Runnable killSwitch;
     protected LensTransformer lensTransformer;
     protected GraphElementAccessor<V, E> pickSupport;
+    protected boolean useGradient;
 
     public B self() {
       return (B) this;
@@ -91,6 +92,11 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse>
       return self();
     }
 
+    public B useGradient(boolean useGradient) {
+      this.useGradient = useGradient;
+      return self();
+    }
+
     public abstract T build();
   }
 
@@ -104,6 +110,7 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse>
   boolean active;
   Runnable manager;
   protected GraphElementAccessor<V, E> pickSupport;
+  protected boolean useGradient;
 
   protected static final String instructions =
       "<html><center>Mouse-Drag the Lens center to move it<p>"
@@ -121,6 +128,7 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse>
         Optional.ofNullable(builder.killSwitch).orElse(this::deactivate));
     this.lensTransformer = builder.lensTransformer;
     this.pickSupport = Optional.ofNullable(builder.pickSupport).orElse(vv.getPickSupport());
+    this.useGradient = builder.useGradient;
   }
   /**
    * create the base class, setting common members and creating a custom GraphMouse
@@ -176,9 +184,21 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse>
     RectangularShape lensShape;
 
     Paint paint = Color.getColor(PREFIX + "lensColor", Color.decode("0xFAFAFA"));
+    float[] dist = {0f, 1f};
+    Color color = ((Color) paint).darker();
+    Color[] colors = {
+      new Color(color.getRed(), color.getGreen(), color.getBlue(), 0),
+      new Color(color.getRed(), color.getGreen(), color.getBlue(), 255)
+    };
+    boolean useGradient;
+
+    public LensPaintable(LensTransformer lensTransformer, boolean useGradient) {
+      this.lensShape = lensTransformer.getLens().getLensShape();
+      this.useGradient = useGradient;
+    }
 
     public LensPaintable(LensTransformer lensTransformer) {
-      this.lensShape = lensTransformer.getLens().getLensShape();
+      this(lensTransformer, false);
     }
 
     /** @return the paint */
@@ -193,7 +213,17 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse>
 
     public void paint(Graphics g) {
       Graphics2D g2d = (Graphics2D) g;
-      g2d.setPaint(paint);
+      if (useGradient) {
+        Paint gradientPaint =
+            new RadialGradientPaint(
+                new Point2D.Double(lensShape.getCenterX(), lensShape.getCenterY()),
+                (float) lensShape.getWidth(),
+                dist,
+                colors);
+        g2d.setPaint(gradientPaint);
+      } else {
+        setPaint(paint);
+      }
       g2d.fill(lensShape);
     }
 

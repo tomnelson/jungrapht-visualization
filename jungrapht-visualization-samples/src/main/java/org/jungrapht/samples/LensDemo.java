@@ -142,6 +142,7 @@ public class LensDemo extends JPanel {
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
             .lensGraphMouse(new ModalLensGraphMouse())
+            .useGradient(true)
             .build();
 
     hyperbolicLayoutSupport =
@@ -154,6 +155,7 @@ public class LensDemo extends JPanel {
                             .getTransformer(Layer.LAYOUT))
                     .build())
             .lensGraphMouse(new ModalLensGraphMouse())
+            .useGradient(true)
             .build();
 
     // the magnification lens uses a different magnification than the hyperbolic lens

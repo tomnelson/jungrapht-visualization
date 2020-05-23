@@ -562,12 +562,17 @@ class DefaultVisualizationServer<V, E> extends JPanel
       ((DefaultRenderContext) renderContext)
           .setupArrows(visualizationModel.getGraph().getType().isDirected());
     }
-    considerLayoutAlgorithm();
+    applyLayoutAlgorithmConnections();
     renderer.setCountSupplier(visualizationModel.getGraph().vertexSet()::size);
     repaint();
   }
 
-  protected void considerLayoutAlgorithm() {
+  /**
+   * The LayoutAlgorithms that use Articulated edges (with bends) need to set the edgeShapeFunction
+   * to a class that will provide the bend points for each edge. The LayoutAlgorithms that comsider
+   * vertex Shape during layout need to access the vertexShapeFunction
+   */
+  protected void applyLayoutAlgorithmConnections() {
     LayoutAlgorithm<V> layoutAlgorithm = visualizationModel.getLayoutAlgorithm();
     if (layoutAlgorithm instanceof EdgeShapeFunctionSupplier) {
       ((EdgeShapeFunctionSupplier<V, E>) layoutAlgorithm)

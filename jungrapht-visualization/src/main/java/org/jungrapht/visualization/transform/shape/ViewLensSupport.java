@@ -89,7 +89,7 @@ public class ViewLensSupport<V, E, M extends LensGraphMouse> extends AbstractLen
               .getMultiLayerTransformer()
               .getTransformer(MultiLayerTransformer.Layer.VIEW));
       if (lensPaintable == null) {
-        lensPaintable = new LensPaintable(lensTransformer);
+        lensPaintable = new LensPaintable(lensTransformer, useGradient);
       }
       if (lensControls == null) {
         lensControls = new LensControls(lensTransformer);
