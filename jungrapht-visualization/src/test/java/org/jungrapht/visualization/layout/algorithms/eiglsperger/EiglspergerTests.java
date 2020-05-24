@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.jgrapht.Graph;
+import org.jgrapht.alg.util.NeighborCache;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.GraphLayers;
@@ -24,6 +25,7 @@ public class EiglspergerTests {
 
   Graph<String, Integer> graph;
   Graph<LV<String>, LE<String, Integer>> svGraph;
+  NeighborCache<LV<String>, LE<String, Integer>> neighborCache;
   LV<String>[][] layersArray;
   EiglspergerRunnable<String, Integer> runnable;
   EiglspergerStepsForward<String, Integer> stepsForward;
@@ -34,8 +36,10 @@ public class EiglspergerTests {
     buildGraph();
     createLayers();
     runnable = EiglspergerRunnable.<String, Integer>builder().build();
-    stepsForward = new EiglspergerStepsForward<>(svGraph, layersArray, true);
-    stepsBackward = new EiglspergerStepsBackward<>(svGraph, layersArray, true);
+    neighborCache = new NeighborCache<>(svGraph);
+
+    stepsForward = new EiglspergerStepsForward<>(svGraph, neighborCache, layersArray, true);
+    stepsBackward = new EiglspergerStepsBackward<>(svGraph, neighborCache, layersArray, true);
   }
 
   @Test
@@ -147,7 +151,7 @@ public class EiglspergerTests {
     list = EiglspergerUtil.scan(list);
 
     EiglspergerStepsForward<String, Integer> stepsForward =
-        new EiglspergerStepsForward<>(svGraph, layersArray, true);
+        new EiglspergerStepsForward<>(svGraph, neighborCache, layersArray, true);
 
     stepsForward.stepOne(list);
     log.info("biLayer");

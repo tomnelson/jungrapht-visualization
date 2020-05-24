@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.IntStream;
 import org.jgrapht.Graph;
+import org.jgrapht.alg.util.NeighborCache;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.GraphLayers;
@@ -21,6 +22,7 @@ public class TestSmallGraph {
 
   private Graph<Integer, Integer> graph;
   private Graph<LV<Integer>, LE<Integer, Integer>> svGraph;
+  private NeighborCache<LV<Integer>, LE<Integer, Integer>> neighborCache;
 
   @Before
   public void setup() {
@@ -32,6 +34,7 @@ public class TestSmallGraph {
     TransformedGraphSupplier<Integer, Integer> transformedGraphSupplier =
         new TransformedGraphSupplier<>(graph);
     this.svGraph = transformedGraphSupplier.get();
+    neighborCache = new NeighborCache<>(svGraph);
     GreedyCycleRemoval<LV<Integer>, LE<Integer, Integer>> greedyCycleRemoval =
         new GreedyCycleRemoval<>(svGraph);
     Collection<LE<Integer, Integer>> feedbackArcs = greedyCycleRemoval.getFeedbackArcs();
@@ -49,9 +52,9 @@ public class TestSmallGraph {
     checkLayersArray(layersArray);
 
     EiglspergerStepsForward<Integer, Integer> stepsForward =
-        new EiglspergerStepsForward<>(svGraph, layersArray, true);
+        new EiglspergerStepsForward<>(svGraph, neighborCache, layersArray, true);
     EiglspergerStepsBackward<Integer, Integer> stepsBackward =
-        new EiglspergerStepsBackward<>(svGraph, layersArray, true);
+        new EiglspergerStepsBackward<>(svGraph, neighborCache, layersArray, true);
 
     int forwardCrossCount = stepsForward.sweep(layersArray);
     //        int backwardCrossCount = stepsBackward.sweep(layersArray);
@@ -69,6 +72,7 @@ public class TestSmallGraph {
     TransformedGraphSupplier<Integer, Integer> transformedGraphSupplier =
         new TransformedGraphSupplier<>(graph);
     this.svGraph = transformedGraphSupplier.get();
+    neighborCache = new NeighborCache<>(svGraph);
     GreedyCycleRemoval<LV<Integer>, LE<Integer, Integer>> greedyCycleRemoval =
         new GreedyCycleRemoval<>(svGraph);
     Collection<LE<Integer, Integer>> feedbackArcs = greedyCycleRemoval.getFeedbackArcs();
@@ -86,7 +90,7 @@ public class TestSmallGraph {
     checkLayersArray(layersArray);
 
     EiglspergerStepsForward<Integer, Integer> stepsForward =
-        new EiglspergerStepsForward<>(svGraph, layersArray, true);
+        new EiglspergerStepsForward<>(svGraph, neighborCache, layersArray, true);
     //        EiglspergerStepsBackward<Integer, Integer> stepsBackward = new EiglspergerStepsBackward<>(svGraph, layersArray, true);
 
     int forwardCrossCount = stepsForward.sweep(layersArray);

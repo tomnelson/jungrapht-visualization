@@ -18,6 +18,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
+import org.jgrapht.alg.util.NeighborCache;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.RenderContext;
@@ -252,8 +253,9 @@ public class EiglspergerRunnableDeprecated<V, E> implements Runnable {
     if (svGraph.edgeSet().size() > 200) {
       maxLevelCross = 2;
     }
-    stepsForward = new EiglspergerStepsForward<>(svGraph, layersArray, transpose);
-    stepsBackward = new EiglspergerStepsBackward<>(svGraph, layersArray, transpose);
+    NeighborCache<LV<V>, LE<V, E>> neighborCache = new NeighborCache<>(svGraph);
+    stepsForward = new EiglspergerStepsForward<>(svGraph, neighborCache, layersArray, transpose);
+    stepsBackward = new EiglspergerStepsBackward<>(svGraph, neighborCache, layersArray, transpose);
 
     int bestCrossCount = Integer.MAX_VALUE;
     for (int i = 0; i < maxLevelCross; i++) {

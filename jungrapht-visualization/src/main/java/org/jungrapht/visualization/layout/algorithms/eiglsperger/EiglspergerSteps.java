@@ -9,12 +9,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.jgrapht.Graph;
+import org.jgrapht.alg.util.NeighborCache;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.AccumulatorTreeUtil;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Comparators;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
@@ -50,6 +50,8 @@ public class EiglspergerSteps<V, E> {
   /** The delegate Graph to layout */
   protected Graph<LV<V>, LE<V, E>> svGraph;
 
+  protected NeighborCache<LV<V>, LE<V, E>> neighborCache;
+
   /** the result of layering the graph vertices and introducint synthetic vertices and edges */
   protected LV<V>[][] layersArray;
   /** when sweeping top to bottom, this is a PVertex, bottom to top, this is a QVertex */
@@ -63,7 +65,7 @@ public class EiglspergerSteps<V, E> {
    * When sweeping top to bottom, this function returns predecessors When sweeping bottom to top,
    * this function returns sucessors
    */
-  protected BiFunction<Graph<LV<V>, LE<V, E>>, LV<V>, List<LV<V>>> neighborFunction;
+  protected Function<LV<V>, Set<LV<V>>> neighborFunction;
 
   protected Function<LE<V, E>, LV<V>> edgeSourceFunction;
   protected Function<LE<V, E>, LV<V>> edgeTargetFunction;
@@ -85,10 +87,11 @@ public class EiglspergerSteps<V, E> {
       Predicate<LV<V>> splitVertexPredicate,
       Function<LE<V, E>, LV<V>> edgeSourceFunction,
       Function<LE<V, E>, LV<V>> edgeTargetFunction,
-      BiFunction<Graph<LV<V>, LE<V, E>>, LV<V>, List<LV<V>>> neighborFunction,
+      Function<LV<V>, Set<LV<V>>> neighborFunction,
       Function<List<LE<V, E>>, List<LE<V, E>>> edgeEndpointSwapOrNot,
       boolean transpose) {
     this.svGraph = svGraph;
+    this.neighborCache = new NeighborCache<>(svGraph);
     this.layersArray = layersArray;
     this.joinVertexPredicate = joinVertexPredicate;
     this.splitVertexPredicate = splitVertexPredicate;
@@ -791,9 +794,13 @@ public class EiglspergerSteps<V, E> {
       } else {
         // not a container (nor QVertex for top to bottom)
         // measure will be related to the median of the pos of predecessor vert
-        List<LV<V>> neighbors = neighborFunction.apply(svGraph, v);
+        Set<LV<V>> neighbors = neighborFunction.apply(v);
         int[] poses = new int[neighbors.size()];
-        IntStream.range(0, poses.length).forEach(idx -> poses[idx] = neighbors.get(idx).getPos());
+        int i = 0;
+        for (LV<V> neighbor : neighbors) {
+          poses[i++] = neighbor.getPos();
+        }
+        //        IntStream.range(0, poses.length).forEach(idx -> poses[idx] = neighbors.get(idx).getPos());
         if (poses.length > 0) {
           int measure = medianValue(poses); // poses will be sorted in medianValue method
           v.setMeasure(measure);

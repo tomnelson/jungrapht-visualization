@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import org.jgrapht.Graph;
-import org.jgrapht.Graphs;
+import org.jgrapht.alg.util.NeighborCache;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
@@ -23,7 +23,10 @@ public class EiglspergerStepsBackward<V, E> extends EiglspergerSteps<V, E> {
   private static final Logger log = LoggerFactory.getLogger(EiglspergerStepsBackward.class);
 
   public EiglspergerStepsBackward(
-      Graph<LV<V>, LE<V, E>> svGraph, LV<V>[][] layersArray, boolean transpose) {
+      Graph<LV<V>, LE<V, E>> svGraph,
+      NeighborCache<LV<V>, LE<V, E>> neighborCache,
+      LV<V>[][] layersArray,
+      boolean transpose) {
     super(
         svGraph,
         layersArray,
@@ -31,7 +34,7 @@ public class EiglspergerStepsBackward<V, E> extends EiglspergerSteps<V, E> {
         PVertex.class::isInstance,
         svGraph::getEdgeTarget,
         svGraph::getEdgeSource,
-        Graphs::successorListOf,
+        neighborCache::successorsOf,
         EiglspergerSteps::swapEdgeEndpoints,
         transpose);
   }

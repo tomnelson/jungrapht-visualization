@@ -16,6 +16,7 @@ import java.util.LongSummaryStatistics;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import org.jgrapht.alg.util.NeighborCache;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnable;
 import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerStepsBackward;
@@ -173,8 +174,9 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
     if (svGraph.edgeSet().size() > 200) {
       maxLevelCross = 2;
     }
-    stepsForward = new EiglspergerStepsForward<>(svGraph, layersArray, true);
-    stepsBackward = new EiglspergerStepsBackward<>(svGraph, layersArray, true);
+    NeighborCache<LV<V>, LE<V, E>> neighborCache = new NeighborCache<>(svGraph);
+    stepsForward = new EiglspergerStepsForward<>(svGraph, neighborCache, layersArray, true);
+    stepsBackward = new EiglspergerStepsBackward<>(svGraph, neighborCache, layersArray, true);
 
     int bestCrossCount = Integer.MAX_VALUE;
     VertexMetadata<V>[][] vertexMetadata = null;
