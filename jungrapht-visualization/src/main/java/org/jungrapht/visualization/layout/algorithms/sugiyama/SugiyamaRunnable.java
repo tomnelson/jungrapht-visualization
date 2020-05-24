@@ -16,12 +16,11 @@ import java.util.List;
 import java.util.LongSummaryStatistics;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import org.jgrapht.Graph;
-import org.jgrapht.Graphs;
+import org.jgrapht.alg.util.NeighborCache;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.SugiyamaLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.util.InsertionSortCounter;
@@ -183,6 +182,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
   protected Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer;
   protected Graph<V, E> graph;
   protected Graph<LV<V>, LE<V, E>> svGraph;
+  protected NeighborCache<LV<V>, LE<V, E>> neighborCache;
   boolean stopit = false;
   protected Predicate<V> vertexPredicate;
   protected Predicate<E> edgePredicate;
@@ -252,6 +252,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     long startTime = System.currentTimeMillis();
     TransformedGraphSupplier<V, E> transformedGraphSupplier = new TransformedGraphSupplier(graph);
     this.svGraph = transformedGraphSupplier.get();
+    this.neighborCache = new NeighborCache<>(svGraph);
     long transformTime = System.currentTimeMillis();
     log.trace("transform Graph took {}", (transformTime - startTime));
 
@@ -757,30 +758,21 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     }
   }
 
-  int[] upperNeighborIndices(Graph<LV<V>, LE<V, E>> graph, LV<V> vertex) {
-    return Graphs.predecessorListOf(graph, vertex)
-        .stream()
-        .mapToInt(LV::getIndex)
-        .sorted()
-        .toArray();
+  int[] upperNeighborIndices(LV<V> vertex) {
+    return neighborCache.predecessorsOf(vertex).stream().mapToInt(LV::getIndex).sorted().toArray();
   }
 
-  int[] lowerNeighborIndices(Graph<LV<V>, LE<V, E>> graph, LV<V> vertex) {
-    List<LV<V>> neighbors = Graphs.successorListOf(graph, vertex);
-    return Graphs.successorListOf(graph, vertex).stream().mapToInt(LV::getIndex).sorted().toArray();
+  int[] lowerNeighborIndices(LV<V> vertex) {
+    return neighborCache.successorsOf(vertex).stream().mapToInt(LV::getIndex).sorted().toArray();
   }
 
   int[] adjPosition(
-      LV<V> v,
-      BiFunction<Graph<LV<V>, LE<V, E>>, LV<V>, int[]> neighborFunction,
-      Graph<LV<V>, LE<V, E>> svGraph) {
-    return neighborFunction.apply(svGraph, v);
+      LV<V> v, Function<LV<V>, int[]> neighborFunction, Graph<LV<V>, LE<V, E>> svGraph) {
+    return neighborFunction.apply(v);
   }
 
   double medianValue(
-      LV<V> v,
-      BiFunction<Graph<LV<V>, LE<V, E>>, LV<V>, int[]> neighborFunction,
-      Graph<LV<V>, LE<V, E>> svGraph) {
+      LV<V> v, Function<LV<V>, int[]> neighborFunction, Graph<LV<V>, LE<V, E>> svGraph) {
     // get the positions of adjacent vertices in adj_rank
     int[] P = adjPosition(v, neighborFunction, svGraph);
     int m = P.length / 2;

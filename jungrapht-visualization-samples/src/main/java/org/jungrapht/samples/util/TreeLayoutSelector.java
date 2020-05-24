@@ -409,12 +409,16 @@ public class TreeLayoutSelector<V, E> extends JPanel {
 
     layeringComboBox.addItemListener(
         item -> {
-          LayoutAlgorithm<V> layoutAlgotithm = vv.getVisualizationModel().getLayoutAlgorithm();
-          if (layoutAlgotithm instanceof Layered) {
-            ((Layered) layoutAlgotithm).setLayering((Layering) item.getItem());
-            vv.getVisualizationModel().setLayoutAlgorithm(layoutAlgotithm);
+          if (item.getStateChange() == ItemEvent.SELECTED) {
+            LayoutAlgorithm<V> layoutAlgotithm = vv.getVisualizationModel().getLayoutAlgorithm();
+            if (layoutAlgotithm instanceof Layered) {
+              ((Layered) layoutAlgotithm).setLayering((Layering) item.getItem());
+              vv.getVisualizationModel().setLayoutAlgorithm(layoutAlgotithm);
+            }
           }
         });
+    layeringComboBox.setToolTipText(
+        "Layering Algorithm for Sugiyama, Eiglsperger, and HierarchicalMinCross");
 
     this.add(treeButton);
     this.add(edgeAwareTreeButton);
