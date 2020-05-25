@@ -9,6 +9,7 @@ import java.util.concurrent.Future;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.IterativeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.util.Threaded;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
 import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
 import org.jungrapht.visualization.layout.event.ModelChange;
@@ -112,6 +113,14 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
    * accept the visit of a LayoutAlgorithm. If it is an IterativeContext, create a VisRunner to run
    * its relaxer in a new Thread. If there is a current VisRunner, stop it first.
    *
+   * <ul>
+   *   <li>set size to preferred width/height
+   *   <li>fire LayoutStateChanged event
+   *   <li>enable LayoutVertexPosition event firing
+   *   <li>fire ModelChanged event
+   *   <li>call the LayoutAlgorithm visit method to initiate the algorithm
+   * </ul>
+   *
    * @param layoutAlgorithm the algorithm to apply to the model vertex locations
    */
   @Override
@@ -145,11 +154,8 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
         setupVisRunner((IterativeLayoutAlgorithm) layoutAlgorithm);
 
         // need to have the visRunner fire the layoutStateChanged event when it finishes
-      } else {
-        if (log.isTraceEnabled()) {
-          log.trace("no visRunner for this {}", this);
-        }
-        // the layout model has finished with the layout algorithm
+      } else if (!(layoutAlgorithm instanceof Threaded)
+          || !((Threaded) layoutAlgorithm).isThreaded()) {
         log.trace("will fire layoutStateCHanged with false");
         layoutStateChangeSupport.fireLayoutStateChanged(this, false);
       }

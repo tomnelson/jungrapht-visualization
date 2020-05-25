@@ -33,6 +33,7 @@ import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.CircleLayoutReduceEdgeCrossing;
+import org.jungrapht.visualization.layout.algorithms.util.Threaded;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +44,8 @@ import org.slf4j.LoggerFactory;
  * @author Masanori Harada
  * @author Tom Nelson - adapted to an algorithm
  */
-public class CircleLayoutAlgorithm<V> implements LayoutAlgorithm<V>, AfterRunnable, Future {
+public class CircleLayoutAlgorithm<V>
+    implements LayoutAlgorithm<V>, AfterRunnable, Threaded, Future {
 
   private static final Logger log = LoggerFactory.getLogger(CircleLayoutAlgorithm.class);
 
@@ -186,6 +188,7 @@ public class CircleLayoutAlgorithm<V> implements LayoutAlgorithm<V>, AfterRunnab
     } else {
       this.vertexOrderedList = new ArrayList<>(graph.vertexSet());
       layoutVertices(layoutModel);
+      layoutModel.getLayoutStateChangeSupport().fireLayoutStateChanged(layoutModel, false);
     }
     if (log.isTraceEnabled()) {
       log.trace(
@@ -199,6 +202,11 @@ public class CircleLayoutAlgorithm<V> implements LayoutAlgorithm<V>, AfterRunnab
       this.crossingCount = countCrossings();
     }
     return this.crossingCount;
+  }
+
+  @Override
+  public boolean isThreaded() {
+    return this.threaded;
   }
 
   /**

@@ -20,6 +20,7 @@ import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunn
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.EdgeShapeFunctionSupplier;
+import org.jungrapht.visualization.layout.algorithms.util.Threaded;
 import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Rectangle;
@@ -50,6 +51,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
         EdgeShapeFunctionSupplier<V, E>,
         Layered,
         AfterRunnable,
+        Threaded,
         Future {
 
   private static final Logger log = LoggerFactory.getLogger(EiglspergerLayoutAlgorithm.class);
@@ -232,6 +234,11 @@ public class EiglspergerLayoutAlgorithm<V, E>
   @Override
   public void setLayering(Layering layering) {
     this.layering = layering;
+  }
+
+  @Override
+  public boolean isThreaded() {
+    return this.threaded;
   }
 
   @Override
