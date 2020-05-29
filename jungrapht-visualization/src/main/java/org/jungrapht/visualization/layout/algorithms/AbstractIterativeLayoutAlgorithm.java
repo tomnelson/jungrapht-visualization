@@ -12,13 +12,14 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-public abstract class AbstractIterativeLayoutAlgorithm<V> implements IterativeLayoutAlgorithm<V> {
+public abstract class AbstractIterativeLayoutAlgorithm<V> extends AbstractLayoutAlgorithm<V>
+    implements IterativeLayoutAlgorithm<V> {
 
   private static final Logger log = LoggerFactory.getLogger(AbstractIterativeLayoutAlgorithm.class);
 
   public abstract static class Builder<
           V, T extends AbstractIterativeLayoutAlgorithm<V>, B extends Builder<V, T, B>>
-      implements LayoutAlgorithm.Builder<V, T, B> {
+      extends AbstractLayoutAlgorithm.Builder<V, T, B> implements LayoutAlgorithm.Builder<V, T, B> {
     protected Random random = new Random();
     protected boolean shouldPrerelax = true;
     protected int preRelaxDurationMs = 500;
@@ -46,6 +47,7 @@ public abstract class AbstractIterativeLayoutAlgorithm<V> implements IterativeLa
   }
 
   protected AbstractIterativeLayoutAlgorithm(Builder builder) {
+    super(builder);
     this.random = builder.random;
     this.shouldPreRelax = builder.shouldPrerelax;
     this.preRelaxDurationMs = builder.preRelaxDurationMs;

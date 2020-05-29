@@ -9,6 +9,7 @@ package org.jungrapht.samples;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
@@ -68,6 +69,9 @@ public class ShowLayoutsWithImageIconVertices extends JPanel {
     "Bipartite Graph"
   };
 
+  private static int LAYOUT_PREFERRED_WIDTH = 1200;
+  private static int LAYOUT_PREFERRED_HEIGHT = 1200;
+
   LayoutPaintable.BalloonRings balloonLayoutRings;
   LayoutPaintable.RadialRings radialLayoutRings;
 
@@ -99,6 +103,7 @@ public class ShowLayoutsWithImageIconVertices extends JPanel {
     final VisualizationViewer<String, Integer> vv =
         VisualizationViewer.builder(initialGraph)
             .layoutAlgorithm(new KKLayoutAlgorithm<>())
+            .layoutSize(new Dimension(1200, 1200))
             .build();
 
     IconCache<String> iconCache =
@@ -187,7 +192,7 @@ public class ShowLayoutsWithImageIconVertices extends JPanel {
         e ->
             SwingUtilities.invokeLater(
                 () -> {
-                  vv.getVisualizationModel().getLayoutModel().setPreferredSize(600, 600);
+                  vv.getVisualizationModel().getLayoutModel().setPreferredSize(1200, 1200);
                   vv.reset();
                   LayoutAlgorithm.Builder<String, ?, ?> builder =
                       layoutFunction.apply((String) jcb.getSelectedItem());
@@ -204,9 +209,9 @@ public class ShowLayoutsWithImageIconVertices extends JPanel {
                     layoutAlgorithm = new StaticLayoutAlgorithm();
                   }
                   if (animateLayoutTransition.isSelected()) {
-                    LayoutAlgorithmTransition.animate(vv, layoutAlgorithm);
+                    LayoutAlgorithmTransition.animate(vv, layoutAlgorithm, vv::scaleToLayout);
                   } else {
-                    LayoutAlgorithmTransition.apply(vv, layoutAlgorithm);
+                    LayoutAlgorithmTransition.apply(vv, layoutAlgorithm, vv::scaleToLayout);
                   }
                   if (layoutAlgorithm instanceof BalloonLayoutAlgorithm) {
                     balloonLayoutRings =
@@ -238,7 +243,7 @@ public class ShowLayoutsWithImageIconVertices extends JPanel {
                   graphIndex = graphChooser.getSelectedIndex();
                   vv.getVertexSpatial().clear();
                   vv.getEdgeSpatial().clear();
-                  vv.getVisualizationModel().getLayoutModel().setSize(600, 600);
+                  vv.getVisualizationModel().getLayoutModel().setSize(1200, 1200);
                   vv.reset();
                   vv.getVisualizationModel().setGraph(graphArray[graphIndex]);
                   vv.getRenderContext()
@@ -260,7 +265,7 @@ public class ShowLayoutsWithImageIconVertices extends JPanel {
   }
 
   LayoutModel getTreeLayoutPositions(Graph tree, LayoutAlgorithm treeLayout) {
-    LayoutModel model = LayoutModel.builder().size(600, 600).graph(tree).build();
+    LayoutModel model = LayoutModel.builder().size(1200, 1200).graph(tree).build();
     model.accept(treeLayout);
     return model;
   }

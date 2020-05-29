@@ -1,10 +1,8 @@
 package org.jungrapht.visualization.layout.algorithms;
 
-import java.awt.Shape;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
@@ -119,18 +117,12 @@ public class MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> extends MultiRowTreeLayo
    * @param builder the builder that holds configuration parameters
    */
   protected MultiRowEdgeAwareTreeLayoutAlgorithm(Builder<V, E, ?, ?> builder) {
-    this(
-        builder.rootPredicate,
-        builder.rootComparator,
-        builder.horizontalVertexSpacing,
-        builder.verticalVertexSpacing,
-        builder.vertexShapeFunction,
-        builder.vertexPredicate,
-        builder.edgePredicate,
-        builder.vertexComparator,
-        builder.edgeComparator,
-        builder.expandLayout,
-        builder.alignFavoredEdges);
+    super(builder);
+    this.vertexPredicate = builder.vertexPredicate;
+    this.edgePredicate = builder.edgePredicate;
+    this.vertexComparator = builder.vertexComparator;
+    this.edgeComparator = builder.edgeComparator;
+    this.alignFavoredEdges = builder.alignFavoredEdges;
   }
 
   /**
@@ -144,31 +136,31 @@ public class MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> extends MultiRowTreeLayo
    * @param vertexComparator a {@link Comparator} to sort vertices
    * @param edgeComparator a {@link Comparator} to sort edges
    */
-  protected MultiRowEdgeAwareTreeLayoutAlgorithm(
-      Predicate<V> rootPredicate,
-      Comparator<V> rootComparator,
-      int horizontalVertexSpacing,
-      int verticalVertexSpacing,
-      Function<V, Shape> vertexShapeFunction,
-      Predicate<V> vertexPredicate,
-      Predicate<E> edgePredicate,
-      Comparator<V> vertexComparator,
-      Comparator<E> edgeComparator,
-      boolean expandLayout,
-      boolean alignFavoredEdges) {
-    super(
-        rootPredicate,
-        rootComparator,
-        horizontalVertexSpacing,
-        verticalVertexSpacing,
-        vertexShapeFunction,
-        expandLayout);
-    this.vertexPredicate = vertexPredicate;
-    this.edgePredicate = edgePredicate;
-    this.vertexComparator = vertexComparator;
-    this.edgeComparator = edgeComparator;
-    this.alignFavoredEdges = alignFavoredEdges;
-  }
+  //  protected MultiRowEdgeAwareTreeLayoutAlgorithm(
+  //      Predicate<V> rootPredicate,
+  //      Comparator<V> rootComparator,
+  //      int horizontalVertexSpacing,
+  //      int verticalVertexSpacing,
+  //      Function<V, Shape> vertexShapeFunction,
+  //      Predicate<V> vertexPredicate,
+  //      Predicate<E> edgePredicate,
+  //      Comparator<V> vertexComparator,
+  //      Comparator<E> edgeComparator,
+  //      boolean expandLayout,
+  //      boolean alignFavoredEdges) {
+  //    super(
+  //        rootPredicate,
+  //        rootComparator,
+  //        horizontalVertexSpacing,
+  //        verticalVertexSpacing,
+  //        vertexShapeFunction,
+  //        expandLayout);
+  //    this.vertexPredicate = builder.vertexPredicate;
+  //    this.edgePredicate = builder.edgePredicate;
+  //    this.vertexComparator = builder.vertexComparator;
+  //    this.edgeComparator = builder.edgeComparator;
+  //    this.alignFavoredEdges = builder.alignFavoredEdges;
+  //  }
 
   /** a {@link Predicate} to filter vertices */
   protected Predicate<V> vertexPredicate;

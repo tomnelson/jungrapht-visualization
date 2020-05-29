@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * @param <V> vertex type
  * @param <E> edge type
  */
-public class TidierTreeLayoutAlgorithm<V, E>
+public class TidierTreeLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
     implements LayoutAlgorithm<V>,
         TreeLayout<V>,
         VertexShapeAware<V>,
@@ -59,6 +59,7 @@ public class TidierTreeLayoutAlgorithm<V, E>
    */
   public static class Builder<
           V, E, T extends TidierTreeLayoutAlgorithm<V, E>, B extends Builder<V, E, T, B>>
+      extends AbstractLayoutAlgorithm.Builder<V, T, B>
       implements LayoutAlgorithm.Builder<V, T, B>, EdgeAwareLayoutAlgorithm.Builder<V, E, T, B> {
     protected Predicate<V> rootPredicate;
     protected Comparator<V> rootComparator = (v1, v2) -> 0;
@@ -198,41 +199,41 @@ public class TidierTreeLayoutAlgorithm<V, E>
   }
 
   protected TidierTreeLayoutAlgorithm(Builder builder) {
-    this(
-        builder.rootPredicate,
-        builder.rootComparator,
-        builder.vertexShapeFunction,
-        builder.vertexPredicate,
-        builder.vertexComparator,
-        builder.edgePredicate,
-        builder.edgeComparator,
-        builder.horizontalVertexSpacing,
-        builder.verticalVertexSpacing,
-        builder.expandLayout);
+    super(builder);
+    this.builderRootPredicate = builder.rootPredicate;
+    this.rootComparator = builder.rootComparator;
+    this.vertexShapeFunction = builder.vertexShapeFunction;
+    this.vertexPredicate = builder.vertexPredicate;
+    this.vertexComparator = builder.vertexComparator;
+    this.edgePredicate = builder.edgePredicate;
+    this.edgeComparator = builder.edgeComparator;
+    this.horizontalVertexSpacing = builder.horizontalVertexSpacing;
+    this.verticalVertexSpacing = builder.verticalVertexSpacing;
+    this.expandLayout = builder.expandLayout;
   }
 
-  private TidierTreeLayoutAlgorithm(
-      Predicate<V> rootPredicate,
-      Comparator<V> rootComparator,
-      Function<V, Shape> vertexShapeFunction,
-      Predicate<V> vertexPredicate,
-      Comparator<V> vertexComparator,
-      Predicate<E> edgePredicate,
-      Comparator<E> edgeComparator,
-      int horizontalVertexSpacing,
-      int verticalVertexSpacing,
-      boolean expandLayout) {
-    this.builderRootPredicate = rootPredicate;
-    this.rootComparator = rootComparator;
-    this.vertexShapeFunction = vertexShapeFunction;
-    this.vertexPredicate = vertexPredicate;
-    this.vertexComparator = vertexComparator;
-    this.edgePredicate = edgePredicate;
-    this.edgeComparator = edgeComparator;
-    this.horizontalVertexSpacing = horizontalVertexSpacing;
-    this.verticalVertexSpacing = verticalVertexSpacing;
-    this.expandLayout = expandLayout;
-  }
+  //  private TidierTreeLayoutAlgorithm(
+  //      Predicate<V> rootPredicate,
+  //      Comparator<V> rootComparator,
+  //      Function<V, Shape> vertexShapeFunction,
+  //      Predicate<V> vertexPredicate,
+  //      Comparator<V> vertexComparator,
+  //      Predicate<E> edgePredicate,
+  //      Comparator<E> edgeComparator,
+  //      int horizontalVertexSpacing,
+  //      int verticalVertexSpacing,
+  //      boolean expandLayout) {
+  //    this.builderRootPredicate = builder.rootPredicate;
+  //    this.rootComparator = builder.rootComparator;
+  //    this.vertexShapeFunction = builder.vertexShapeFunction;
+  //    this.vertexPredicate = builder.vertexPredicate;
+  //    this.vertexComparator = builder.vertexComparator;
+  //    this.edgePredicate = builder.edgePredicate;
+  //    this.edgeComparator = builder.edgeComparator;
+  //    this.horizontalVertexSpacing = builder.horizontalVertexSpacing;
+  //    this.verticalVertexSpacing = builder.verticalVertexSpacing;
+  //    this.expandLayout = builder.expandLayout;
+  //  }
 
   private final Map<V, VertexData<V>> vertexData = new HashMap<>();
 
@@ -678,5 +679,6 @@ public class TidierTreeLayoutAlgorithm<V, E>
       np = np.add(xoffset, yoffset);
       layoutModel.set(entry.getKey(), np);
     }
+    after.run();
   }
 }

@@ -1,15 +1,12 @@
 package org.jungrapht.visualization.layout.algorithms;
 
 import java.awt.Dimension;
-import java.awt.Shape;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -57,21 +54,21 @@ public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
    * @param expandLayout whether to expand the size of the layout area to accomodate the entire
    *     forest
    */
-  protected MultiRowTreeLayoutAlgorithm(
-      Predicate<V> rootPredicate,
-      Comparator<V> rootComparator,
-      int horizontalVertexSpacing,
-      int verticalVertexSpacing,
-      Function<V, Shape> vertexShapeFunction,
-      boolean expandLayout) {
-    super(
-        rootPredicate,
-        rootComparator,
-        horizontalVertexSpacing,
-        verticalVertexSpacing,
-        vertexShapeFunction,
-        expandLayout);
-  }
+  //  protected MultiRowTreeLayoutAlgorithm(
+  //      Predicate<V> rootPredicate,
+  //      Comparator<V> rootComparator,
+  //      int horizontalVertexSpacing,
+  //      int verticalVertexSpacing,
+  //      Function<V, Shape> vertexShapeFunction,
+  //      boolean expandLayout) {
+  //    super(
+  //        rootPredicate,
+  //        rootComparator,
+  //        horizontalVertexSpacing,
+  //        verticalVertexSpacing,
+  //        vertexShapeFunction,
+  //        expandLayout);
+  //  }
 
   /** keeps track of how many rows have been created */
   protected int rowCount = 1;

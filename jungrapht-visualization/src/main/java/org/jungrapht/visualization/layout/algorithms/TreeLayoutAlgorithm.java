@@ -39,7 +39,8 @@ import org.slf4j.LoggerFactory;
  *
  * @param <V> vertex type
  */
-public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V> {
+public class TreeLayoutAlgorithm<V> extends AbstractLayoutAlgorithm<V>
+    implements LayoutAlgorithm<V>, TreeLayout<V> {
 
   private static final Logger log = LoggerFactory.getLogger(TreeLayoutAlgorithm.class);
 
@@ -51,7 +52,7 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
    * @param <B> the builder type
    */
   public static class Builder<V, T extends TreeLayoutAlgorithm<V>, B extends Builder<V, T, B>>
-      implements LayoutAlgorithm.Builder<V, T, B> {
+      extends AbstractLayoutAlgorithm.Builder<V, T, B> implements LayoutAlgorithm.Builder<V, T, B> {
     protected Predicate<V> rootPredicate;
     protected Comparator<V> rootComparator = (v1, v2) -> 0;
     protected int horizontalVertexSpacing = TREE_LAYOUT_HORIZONTAL_SPACING;
@@ -152,13 +153,14 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
    * @param builder the {@code Builder} with configuration properties
    */
   protected TreeLayoutAlgorithm(Builder<V, ?, ?> builder) {
-    this(
-        builder.rootPredicate,
-        builder.rootComparator,
-        builder.horizontalVertexSpacing,
-        builder.verticalVertexSpacing,
-        builder.vertexShapeFunction,
-        builder.expandLayout);
+    super(builder);
+    Objects.requireNonNull(builder.vertexShapeFunction);
+    this.rootPredicate = builder.rootPredicate;
+    this.rootComparator = builder.rootComparator;
+    this.horizontalVertexSpacing = builder.horizontalVertexSpacing;
+    this.verticalVertexSpacing = builder.verticalVertexSpacing;
+    this.vertexShapeFunction = builder.vertexShapeFunction;
+    this.expandLayout = builder.expandLayout;
   }
 
   /**
@@ -169,21 +171,24 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
    * @param verticalVertexSpacing the vertical spacing between adjacent siblings
    * @param expandLayout whether to expand the layout size to accommodate the entire tree
    */
-  protected TreeLayoutAlgorithm(
-      Predicate<V> rootPredicate,
-      Comparator<V> rootComparator,
-      int horizontalVertexSpacing,
-      int verticalVertexSpacing,
-      Function<V, Shape> vertexShapeFunction,
-      boolean expandLayout) {
-    Objects.requireNonNull(vertexShapeFunction);
-    this.rootPredicate = rootPredicate;
-    this.rootComparator = rootComparator;
-    this.horizontalVertexSpacing = horizontalVertexSpacing;
-    this.verticalVertexSpacing = verticalVertexSpacing;
-    this.vertexShapeFunction = vertexShapeFunction;
-    this.expandLayout = expandLayout;
-  }
+  //  protected TreeLayoutAlgorithm(
+  //          Runnable after,
+  //      Predicate<V> rootPredicate,
+  //      Comparator<V> rootComparator,
+  //      int horizontalVertexSpacing,
+  //      int verticalVertexSpacing,
+  //      Function<V, Shape> vertexShapeFunction,
+  //      boolean expandLayout) {
+  //    super(builder);
+  //    Objects.requireNonNull(vertexShapeFunction);
+  //    this.after = after;
+  //    this.rootPredicate = rootPredicate;
+  //    this.rootComparator = rootComparator;
+  //    this.horizontalVertexSpacing = horizontalVertexSpacing;
+  //    this.verticalVertexSpacing = verticalVertexSpacing;
+  //    this.vertexShapeFunction = vertexShapeFunction;
+  //    this.expandLayout = expandLayout;
+  //  }
 
   /** the {}@link Predicate} to determine root vertices */
   protected Predicate<V> rootPredicate;
@@ -337,6 +342,7 @@ public class TreeLayoutAlgorithm<V> implements LayoutAlgorithm<V>, TreeLayout<V>
       x += w / 2 + horizontalVertexSpacing;
     }
     this.rootPredicate = null;
+    after.run();
     return new LinkedHashSet<>(roots);
   }
 

@@ -174,7 +174,11 @@ public class KKLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
 
   /** @return true if the current iteration has passed the maximum count. */
   public boolean done() {
-    return currentIteration > maxIterations;
+    boolean done = currentIteration > maxIterations;
+    if (done) {
+      after.run();
+    }
+    return done;
   }
 
   @SuppressWarnings("unchecked")

@@ -402,7 +402,8 @@ class DefaultVisualizationServer<V, E> extends JPanel
 
   @Override
   public void scaleToLayout() {
-    SwingUtilities.invokeLater(() -> scaleToLayout(new CrossoverScalingControl()));
+    this.scaleToLayout(true);
+    //    SwingUtilities.invokeLater(() -> scaleToLayout(new CrossoverScalingControl()));
   }
 
   @Override
