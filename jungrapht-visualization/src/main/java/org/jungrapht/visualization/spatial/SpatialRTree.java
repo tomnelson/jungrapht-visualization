@@ -123,7 +123,9 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
   @Override
   public List<Shape> getGrid() {
     if (gridCache == null) {
-      log.trace("getting Grid from tree size {}", rtree.count());
+      if (log.isTraceEnabled()) {
+        log.trace("getting Grid from tree size {}", rtree.count());
+      }
       if (!isActive()) {
         // just return the entire layout area
         return Collections.singletonList(getLayoutArea());
@@ -131,7 +133,9 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
       List<Shape> areas = new ArrayList<>();
 
       gridCache = collectGrids(areas, rtree);
-      log.trace("getGrid got {} and {}", areas.size(), gridCache.size());
+      if (log.isTraceEnabled()) {
+        log.trace("getGrid got {} and {}", areas.size(), gridCache.size());
+      }
       return gridCache;
     } else {
       return gridCache;
@@ -180,13 +184,19 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
         rtree =
             RTree.add(
                 rtree, splitterContext, element, boundingRectangleCollector.getForElement(element));
-        log.trace("added {} got {} nodes in {}", element, rtree.count(), rtree);
+        if (log.isTraceEnabled()) {
+          log.trace("added {} got {} nodes in {}", element, rtree.count(), rtree);
+        }
       }
       if (reinsert) {
-        log.trace("before reinsert node count: {}", rtree.count());
+        if (log.isTraceEnabled()) {
+          log.trace("before reinsert node count: {}", rtree.count());
+        }
 
         rtree = RTree.reinsert(rtree, splitterContext);
-        log.trace("after reinsert node count: {}", rtree.count());
+        if (log.isTraceEnabled()) {
+          log.trace("after reinsert node count: {}", rtree.count());
+        }
       }
     } else {
       log.trace("got no rectangles");
@@ -259,7 +269,9 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
       pickShapes.add(shape);
 
       Node<V> root = rtree.getRoot().get();
-      log.trace("out of nodes {}", layoutModel.getGraph().vertexSet());
+      if (log.isTraceEnabled()) {
+        log.trace("out of nodes {}", layoutModel.getGraph().vertexSet());
+      }
       Set<V> visibleElements = new HashSet<>();
       return root.getVisibleElements(visibleElements, shape);
     }
@@ -483,10 +495,14 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
               log.trace("{} changed in place", element);
             } else {
               containingLeaf.remove(element);
-              log.trace("rtree now size {}", rtree.count());
+              if (log.isTraceEnabled()) {
+                log.trace("rtree now size {}", rtree.count());
+              }
               rtree = RTree.add(rtree, splitterContext, element, itsShape);
-              log.trace(
-                  "added back {} with {} into rtree size {}", element, itsShape, rtree.count());
+              if (log.isTraceEnabled()) {
+                log.trace(
+                    "added back {} with {} into rtree size {}", element, itsShape, rtree.count());
+              }
             }
           } else {
             rtree = RTree.add(rtree, splitterContext, element, itsShape);
@@ -625,7 +641,9 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
           isActive(),
           layoutModel.isRelaxing());
       if (isActive()) {
-        log.trace("recalculate for edges: {}", visualizationModel.getGraph().edgeSet());
+        if (log.isTraceEnabled()) {
+          log.trace("recalculate for edges: {}", visualizationModel.getGraph().edgeSet());
+        }
         recalculate(visualizationModel.getGraph().edgeSet());
       }
     }

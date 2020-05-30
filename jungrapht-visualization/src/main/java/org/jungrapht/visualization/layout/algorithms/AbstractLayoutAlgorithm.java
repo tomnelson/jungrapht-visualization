@@ -1,7 +1,5 @@
 package org.jungrapht.visualization.layout.algorithms;
 
-
-
 /**
  * For Layout algorithms that can run an 'after' function
  *

@@ -489,6 +489,7 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
 
   @Override
   public synchronized void step() {
+    if (repulsionContract == null) return;
     repulsionContract.step();
     Graph<V, ?> graph = layoutModel.getGraph();
     currentIteration++;

@@ -77,11 +77,7 @@ public class ForceAtlas2WithJGraphtIO extends JFrame {
             .build();
 
     ForceAtlas2LayoutAlgorithm layoutAlgorithm =
-        builder.repulsionContractBuilder(repulsion).build();
-
-    vv.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm);
-
-    vv.scaleToLayout();
+        builder.repulsionContractBuilder(repulsion).after(vv::scaleToLayout).build();
 
     final JComboBox graphComboBox = new JComboBox(getCombos());
     graphComboBox.addActionListener(
@@ -100,7 +96,9 @@ public class ForceAtlas2WithJGraphtIO extends JFrame {
                 }
                 int size = (int) (50 * Math.sqrt(graph.vertexSet().size()));
                 vv.getVisualizationModel().getLayoutModel().setSize(size, size);
-                vv.getVisualizationModel().setGraph(graph);
+                vv.getVisualizationModel().setGraph(graph, false);
+                vv.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm);
+                vv.scaleToLayout();
                 setTitle(
                     "Graph With "
                         + graph.vertexSet().size()

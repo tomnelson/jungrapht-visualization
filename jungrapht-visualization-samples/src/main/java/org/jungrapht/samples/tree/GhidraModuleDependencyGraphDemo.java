@@ -187,8 +187,7 @@ public class GhidraModuleDependencyGraphDemo extends JPanel {
             .allowingSelfLoops(true)
             .allowingMultipleEdges(true)
             .buildGraph();
-    InputStream stream =
-        GhidraModuleDependencyGraphDemo.class.getResourceAsStream(file);
+    InputStream stream = GhidraModuleDependencyGraphDemo.class.getResourceAsStream(file);
     BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
     String line;
     while ((line = reader.readLine()) != null) {

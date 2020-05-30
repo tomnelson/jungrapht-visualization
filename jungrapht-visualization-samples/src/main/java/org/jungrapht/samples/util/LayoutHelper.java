@@ -5,6 +5,7 @@ import java.util.Map;
 import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.CircleLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.ForceAtlas2LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.GEMLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.ISOMLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
@@ -13,6 +14,7 @@ import org.jungrapht.visualization.layout.algorithms.MultiRowTreeLayoutAlgorithm
 import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.SpringLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFA2Repulsion;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFRRepulsion;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutSpringRepulsion;
 
@@ -32,6 +34,12 @@ public class LayoutHelper {
         "Fruchterman Reingold (BH Optimized)",
         FRLayoutAlgorithm.builder()
             .repulsionContractBuilder(BarnesHutFRRepulsion.barnesHutBuilder())
+            .build()),
+    FA2("ForceAtlas2", new ForceAtlas2LayoutAlgorithm<>()),
+    FA2_BH_VISITOR(
+        "ForceAtlas2 (BH Optimized)",
+        ForceAtlas2LayoutAlgorithm.builder()
+            .repulsionContractBuilder(BarnesHutFA2Repulsion.builder())
             .build()),
     SPRING("Spring", new SpringLayoutAlgorithm<>()),
     GEM("GEM", GEMLayoutAlgorithm.edgeAwareBuilder().build()),
