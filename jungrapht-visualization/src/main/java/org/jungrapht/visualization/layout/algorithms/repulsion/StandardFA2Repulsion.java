@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 
@@ -33,7 +34,7 @@ public class StandardFA2Repulsion<
     protected Random random = new Random();
     protected double kr = 1.0;
     protected Function<V, Double> nodeSizes = null; // Sizes for prevent overlapping
-    protected Function<V, Double> nodeMasses = null; // Masses for "Repulsion by Degree"
+    protected Map<V, Double> nodeMasses = null; // Masses for "Repulsion by Degree"
 
     public B nodeData(Map<V, Point> frVertexData) {
       this.frVertexData = frVertexData;
@@ -87,7 +88,7 @@ public class StandardFA2Repulsion<
      * @param nodeMasses
      * @return
      */
-    public B nodeMasses(Function<V, Double> nodeMasses) {
+    public B nodeMasses(Map<V, Double> nodeMasses) {
       this.nodeMasses = nodeMasses;
       return (B) this;
     }
@@ -105,7 +106,7 @@ public class StandardFA2Repulsion<
   protected Random random = new Random();
   protected double kr = 100.0; // 100.0 is default value in Gephi
   protected Function<V, Double> nodeSizes; // Sizes for prevent overlapping
-  protected Function<V, Double> nodeMasses; // Masses for "Repulsion by Degree"
+  protected Map<V, Double> nodeMasses; // Masses for "Repulsion by Degree"
   protected static final double epsilon = 1e-16; // Math stability
 
   public static Builder builder() {
@@ -127,7 +128,12 @@ public class StandardFA2Repulsion<
     }
 
     if (builder.nodeMasses == null) {
-      this.nodeMasses = v -> layoutModel.getGraph().degreeOf(v) + 1.0;
+      this.nodeMasses =
+          layoutModel
+              .getGraph()
+              .vertexSet()
+              .stream()
+              .collect(Collectors.toMap(v -> v, v -> layoutModel.getGraph().degreeOf(v) + 1.0));
     } else {
       this.nodeMasses = builder.nodeMasses;
     }
@@ -144,7 +150,7 @@ public class StandardFA2Repulsion<
     for (V vertex1 : vertexSet) {
       Point fvd1 = Point.ORIGIN;
       Point p1 = layoutModel.apply(vertex1);
-      double vertexOneMass = nodeMasses.apply(vertex1);
+      double vertexOneMass = nodeMasses.get(vertex1);
       double vertexOneSize = nodeSizes.apply(vertex1);
 
       try {
@@ -158,7 +164,7 @@ public class StandardFA2Repulsion<
             double dx = p1.x - p2.x;
             double dy = p1.y - p2.y;
 
-            double vertex2Mass = nodeMasses.apply(vertex2);
+            double vertex2Mass = nodeMasses.get(vertex2);
 
             double dist = Math.max(epsilon, Math.sqrt((dx * dx) + (dy * dy)));
             dist -= vertexOneSize + nodeSizes.apply(vertex2);

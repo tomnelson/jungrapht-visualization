@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.repulsion.StandardFA2Repulsion;
 import org.jungrapht.visualization.layout.algorithms.util.IterativeContext;
@@ -55,7 +56,7 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
 
   // Sizes and masses
   private Function<V, Double> nodeSizes;
-  private Function<V, Double> nodeMasses;
+  private Map<V, Double> nodeMasses;
 
   // Swinging
   private double globalSwg; // Global swinging
@@ -302,9 +303,12 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
       this.nodeSizes = v -> 1.0;
     }
 
-    if (nodeMasses == null) {
-      this.nodeMasses = v -> layoutModel.getGraph().degreeOf(v) + 1.0;
-    }
+    this.nodeMasses =
+        layoutModel
+            .getGraph()
+            .vertexSet()
+            .stream()
+            .collect(Collectors.toMap(v -> v, v -> layoutModel.getGraph().degreeOf(v) + 1.0));
 
     if (log.isTraceEnabled()) {
       log.trace("visiting " + layoutModel);
@@ -361,7 +365,7 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
     Point xy = layoutModel.apply(vertex);
     Point center = layoutModel.getCenter();
     double r = xy.distanceSquared(center);
-    double gravity = -kg * nodeMasses.apply(vertex) / r;
+    double gravity = -kg * nodeMasses.get(vertex) / r;
 
     boolean locked = layoutModel.isLocked(vertex);
 
@@ -405,8 +409,8 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
       if (useLinLog) {
         force1 = force2 = Math.log(1 + dist);
       } else if (dissuadeHubs) {
-        force1 = dist / nodeMasses.apply(vertex1);
-        force2 = dist / nodeMasses.apply(vertex2);
+        force1 = dist / nodeMasses.getOrDefault(vertex1, 1.0);
+        force2 = dist / nodeMasses.getOrDefault(vertex2, 1.0);
       } else if (attractionByWeights) {
         force1 = force2 = Math.pow(graph.getEdgeWeight(edge), weightsDelta) * dist;
       } else {
@@ -448,8 +452,8 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
 
       //      double deg = layoutModel.getGraph().degreeOf(vertex);
 
-      globalSwg += nodeMasses.apply(vertex) * swg.get(vertex);
-      globalTra += nodeMasses.apply(vertex) * trace.get(vertex);
+      globalSwg += nodeMasses.get(vertex) * swg.get(vertex);
+      globalTra += nodeMasses.get(vertex) * trace.get(vertex);
     }
   }
 

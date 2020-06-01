@@ -125,20 +125,24 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
    */
   @Override
   public void accept(LayoutAlgorithm<V> layoutAlgorithm) {
-    setSize(preferredWidth, preferredHeight);
-    log.trace("reset the model size to {},{}", preferredWidth, preferredHeight);
-    // the layoutMode is active with a new LayoutAlgorithm
-    layoutStateChangeSupport.fireLayoutStateChanged(this, true);
-    log.trace("accepting {}", layoutAlgorithm);
-    layoutVertexPositionSupport.setFireEvents(true);
-    modelChangeSupport.fireModelChanged();
     if (this.visRunnable != null) {
-      log.trace("stopping {}", visRunnable);
+      if (log.isTraceEnabled()) {
+        log.trace("stopping {}", visRunnable);
+      }
       this.visRunnable.stop();
     }
     if (theFuture != null) {
       theFuture.cancel(true);
     }
+    setSize(preferredWidth, preferredHeight);
+    log.trace("reset the model size to {},{}", preferredWidth, preferredHeight);
+    // the layoutMode is active with a new LayoutAlgorithm
+    layoutStateChangeSupport.fireLayoutStateChanged(this, true);
+    if (log.isTraceEnabled()) {
+      log.trace("accepting {}", layoutAlgorithm);
+    }
+    layoutVertexPositionSupport.setFireEvents(true);
+    modelChangeSupport.fireModelChanged();
     if (log.isTraceEnabled()) {
       log.trace("{} will visit {}", layoutAlgorithm, this);
     }
@@ -156,7 +160,9 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
         // need to have the visRunner fire the layoutStateChanged event when it finishes
       } else if (!(layoutAlgorithm instanceof Threaded)
           || !((Threaded) layoutAlgorithm).isThreaded()) {
-        log.trace("will fire layoutStateCHanged with false");
+        if (log.isTraceEnabled()) {
+          log.trace("will fire layoutStateCHanged with false");
+        }
         layoutStateChangeSupport.fireLayoutStateChanged(this, false);
       }
     }

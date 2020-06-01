@@ -403,7 +403,6 @@ class DefaultVisualizationServer<V, E> extends JPanel
   @Override
   public void scaleToLayout() {
     this.scaleToLayout(true);
-    //    SwingUtilities.invokeLater(() -> scaleToLayout(new CrossoverScalingControl()));
   }
 
   @Override
@@ -427,6 +426,9 @@ class DefaultVisualizationServer<V, E> extends JPanel
     }
     if (resizeToPoints) {
       LayoutModel<V> layoutModel = visualizationModel.getLayoutModel();
+      // switch off spatial structures
+      vertexSpatial.setActive(false);
+      edgeSpatial.setActive(false);
       layoutModel.resizeToSurroundingRectangle();
     }
     Dimension ld = visualizationModel.getLayoutSize();
