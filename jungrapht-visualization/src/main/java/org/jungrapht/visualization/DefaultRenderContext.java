@@ -9,7 +9,12 @@ package org.jungrapht.visualization;
 
 import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Paint;
+import java.awt.Shape;
+import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Objects;
@@ -22,8 +27,11 @@ import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.decorators.ParallelEdgeShapeFunction;
 import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.event.RenderContextStateChange;
-import org.jungrapht.visualization.renderers.*;
+import org.jungrapht.visualization.renderers.EdgeLabelRenderer;
+import org.jungrapht.visualization.renderers.JLabelEdgeLabelRenderer;
+import org.jungrapht.visualization.renderers.JLabelVertexLabelRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
+import org.jungrapht.visualization.renderers.VertexLabelRenderer;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.util.ArrowFactory;
@@ -187,7 +195,8 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
   // edge arrow properties
   private int edgeArrowLength = Integer.getInteger(EDGE_ARROW_LENGTH, 10);
   private int edgeArrowWidth = Integer.getInteger(EDGE_ARROW_WIDTH, 8);
-  private int edgeArrowNotchDepth = Integer.getInteger(EDGE_ARROW_NOTCH_DEPTH, 4);
+  private double edgeArrowNotchDepth =
+      Double.parseDouble(System.getProperty(EDGE_ARROW_NOTCH_DEPTH, "0.4"));
   protected Shape edgeArrow;
   protected float arrowPlacementTolerance =
       Float.parseFloat(System.getProperty(ARROW_PLACEMENT_TOLERANCE, "1.0"));
@@ -260,27 +269,29 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
 
   protected GraphicsDecorator graphicsContext;
 
-  DefaultRenderContext(Builder<V, E, ?, ?> builder) {
-    this(builder.graph);
-  }
+  //  DefaultRenderContext(Builder<V, E, ?, ?> builder) {
+  //    this(builder.graph);
+  //  }
 
-  private DefaultRenderContext(Graph<V, E> graph) {
+  DefaultRenderContext() {
     this.parallelEdgeIndexFunction = new ParallelEdgeIndexFunction<>();
     setEdgeShape(System.getProperty(EDGE_SHAPE, "QUAD_CURVE"));
     this.edgeWidth = Float.parseFloat(System.getProperty(EDGE_WIDTH, "1.0f"));
     setEdgeStroke(System.getProperty(EDGE_STROKE, "LINE"), edgeWidth);
-    setupArrows(graph.getType().isDirected());
+    //    setupArrows(graph.getType().isDirected());
   }
 
   /**
    * sets the arrow functions, depending on the graph type
    *
-   * @param directed {@code true} if the {@link Graph} is a directed graph
+   * @param {@code Graph} if the {@link Graph} is a directed graph
    */
-  protected void setupArrows(boolean directed) {
+  @Override
+  public void setupArrows(boolean directed) {
     if (directed) {
       this.edgeArrow =
-          ArrowFactory.getNotchedArrow(edgeArrowWidth, edgeArrowLength, edgeArrowNotchDepth);
+          ArrowFactory.getNotchedArrow(
+              edgeArrowWidth, edgeArrowLength, (int) (edgeArrowLength * edgeArrowNotchDepth));
       this.renderEdgeArrow = true;
       this.edgeLabelCloseness = directedEdgeLabelCloseness;
     } else {

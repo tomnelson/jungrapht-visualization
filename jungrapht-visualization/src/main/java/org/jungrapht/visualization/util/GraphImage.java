@@ -23,7 +23,7 @@ import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 
-public class GraphImage<V, E> {
+public class GraphImage {
 
   /**
    * @param vv
@@ -61,6 +61,7 @@ public class GraphImage<V, E> {
                     vv.getRenderContext().getVertexShapeFunction().apply(v));
         vis.getRenderContext().setVertexShapeFunction(visVertexShapeFunction);
 
+        // scale up the arrows by 'scale'
         vis.getRenderContext()
             .setEdgeArrowWidth((int) (vv.getRenderContext().getEdgeArrowWidth() * scale));
         vis.getRenderContext()
@@ -68,6 +69,8 @@ public class GraphImage<V, E> {
 
         // make the edge stroke 'scale' times wider
         vis.getRenderContext().setEdgeWidth((float) (vv.getRenderContext().getEdgeWidth() * scale));
+
+        // make the label fonts 'scale' times bigger
         Function<V, Font> vertexFontFunction = vv.getRenderContext().getVertexFontFunction();
         vis.getRenderContext()
             .setVertexFontFunction(
@@ -92,10 +95,6 @@ public class GraphImage<V, E> {
         vis.getRenderContext()
             .setVertexLabelPosition(vv.getRenderContext().getVertexLabelPosition());
 
-        vv.getVisualizationModel()
-            .getModelChangeSupport()
-            .addModelChangeListener(vis.getVisualizationModel());
-        vv.getVisualizationModel().getModelChangeSupport().fireModelChanged();
         // move all the layout points by the scale factor
         Map<V, Point> scaledPoints =
             graph

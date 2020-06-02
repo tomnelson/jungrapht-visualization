@@ -200,7 +200,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
     setBackground(Color.white);
     setLayout(null); // don't want a default FlowLayout
     setVisualizationModel(visualizationModel);
-    renderContext = RenderContext.builder(this.visualizationModel.getGraph()).build();
+    renderContext = new DefaultRenderContext();
     renderContext.getRenderContextStateChangeSupport().addRenderContextStateChangeListener(this);
     renderContext.setScreenDevice(this);
     renderer = DefaultModalRenderer.<V, E>builder().component(this).build();
@@ -496,6 +496,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
   }
 
   protected void renderGraph(Graphics2D g2d) {
+    renderContext.setupArrows(visualizationModel.getGraph().getType().isDirected());
     if (renderContext.getGraphicsContext() == null) {
       renderContext.setGraphicsContext(new GraphicsDecorator(g2d));
     } else {

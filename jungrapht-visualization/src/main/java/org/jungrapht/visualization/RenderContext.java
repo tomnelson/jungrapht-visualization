@@ -18,46 +18,16 @@ import org.jungrapht.visualization.util.Context;
 import org.jungrapht.visualization.util.EdgeIndexFunction;
 
 /**
- * @param <V>
- * @param <E>
+ * Holds the {@link Function}s and state for rendering a graph
+ *
+ * @param <V> vertex type
+ * @param <E> edge type
  * @author Tom Nelson
  */
 public interface RenderContext<V, E> extends RenderContextStateChange.Producer {
 
-  class Builder<V, E, T extends RenderContext<V, E>, B extends Builder<V, E, T, B>> {
-
-    Graph<V, E> graph;
-
-    public Builder(Graph<V, E> graph) {
-      this.graph = graph;
-    }
-
-    T build() {
-      return (T) new DefaultRenderContext<>(this);
-    }
-  }
-
-  static <V, E> Builder<V, E, ?, ?> builder(Graph<V, E> graph) {
-    return new Builder<>(graph);
-  }
-
   float[] dotting = {1.0f, 3.0f};
   float[] dashing = {5.0f};
-
-  /**
-   * A stroke for a dotted line: 1 pixel width, round caps, round joins, and an array of {1.0f,
-   * 3.0f}.
-   */
-  Stroke DOTTED =
-      new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, dotting, 0f);
-
-  /**
-   * A stroke for a dashed line: 1 pixel width, square caps, beveled joins, and an array of {5.0f}.
-   */
-  Stroke DASHED =
-      new BasicStroke(1.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL, 1.0f, dashing, 0f);
-
-  Stroke LINE = new BasicStroke(1.0f);
 
   /** Specifies the offset for the edge labels. */
   int LABEL_OFFSET = 10;
@@ -77,6 +47,8 @@ public interface RenderContext<V, E> extends RenderContextStateChange.Producer {
   boolean renderEdgeArrow();
 
   void setRenderEdgeArrow(boolean render);
+
+  void setupArrows(boolean directed);
 
   void setArrowsOnUndirectedEdges(boolean setArrowsOnUndirectedEdges);
 
