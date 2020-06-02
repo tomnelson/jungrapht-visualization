@@ -402,7 +402,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
 
   @Override
   public void scaleToLayout() {
-    this.scaleToLayout(true);
+    this.scaleToLayout(false);
   }
 
   @Override
@@ -417,6 +417,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
 
   @Override
   public void scaleToLayout(ScalingControl scaler, boolean resizeToPoints) {
+    log.trace("scaleToLayout({})", resizeToPoints);
     getRenderContext().getMultiLayerTransformer().setToIdentity();
     Dimension vd = getPreferredSize();
     log.trace("pref vd {}", vd);

@@ -9,7 +9,6 @@
  */
 package org.jungrapht.visualization.renderers;
 
-import static org.jungrapht.visualization.DefaultRenderContext.EDGE_WIDTH;
 import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 
 import java.awt.*;
@@ -169,10 +168,10 @@ public class HeavyweightEdgeRenderer<V, E> extends AbstractEdgeRenderer<V, E>
 
     Graphics2D g2d = renderContext.getGraphicsContext().getDelegate();
     Stroke savedStroke = g2d.getStroke();
-    float minStrokeWidth = Float.parseFloat(System.getProperty(EDGE_WIDTH, "1.0f"));
+    float savedStrokeWidth = renderContext.getEdgeWidth();
     // if the transform scale is small, make the stroke wider so it is still visible
     g2d.setStroke(
-        new BasicStroke(Math.max(minStrokeWidth, (int) (1.0 / g2d.getTransform().getScaleX()))));
+        new BasicStroke(Math.max(savedStrokeWidth, (int) (1.0 / g2d.getTransform().getScaleX()))));
 
     int[] coords = new int[4];
     boolean[] loop = new boolean[1];

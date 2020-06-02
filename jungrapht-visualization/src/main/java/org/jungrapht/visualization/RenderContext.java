@@ -126,6 +126,10 @@ public interface RenderContext<V, E> extends RenderContextStateChange.Producer {
 
   void setEdgeStrokeFunction(Function<E, Stroke> edgeStrokeFunction);
 
+  void setEdgeWidth(float edgeWidth);
+
+  float getEdgeWidth();
+
   Function<E, Stroke> getEdgeArrowStrokeFunction();
 
   void setEdgeArrowStrokeFunction(Function<E, Stroke> edgeArrowStrokeFunction);

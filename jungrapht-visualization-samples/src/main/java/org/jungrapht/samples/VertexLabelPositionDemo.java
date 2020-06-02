@@ -23,6 +23,7 @@ import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.renderers.Renderer.VertexLabel.Position;
 import org.jungrapht.visualization.selection.MutableSelectedState;
+import org.jungrapht.visualization.util.GraphImage;
 
 /**
  * Demonstrates vertex label positioning controlled by the user. In the AUTO setting, labels are
@@ -111,7 +112,11 @@ public class VertexLabelPositionDemo extends JPanel {
     positionPanel.add(cb);
     JPanel controls = new JPanel();
 
+    JButton imageButton = new JButton("Image");
+    imageButton.addActionListener(e -> GraphImage.capture(vv, 4.0));
+
     controls.add(ControlHelpers.getZoomControls("Zoom", vv));
+    controls.add(imageButton);
     controls.add(ControlHelpers.getCenteredContainer("Label", positionPanel));
     add(controls, BorderLayout.SOUTH);
   }

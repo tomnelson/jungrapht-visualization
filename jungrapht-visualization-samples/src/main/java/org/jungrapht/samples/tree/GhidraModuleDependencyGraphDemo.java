@@ -39,6 +39,7 @@ import org.jungrapht.visualization.transform.Lens;
 import org.jungrapht.visualization.transform.LensSupport;
 import org.jungrapht.visualization.transform.shape.HyperbolicShapeTransformer;
 import org.jungrapht.visualization.transform.shape.ViewLensSupport;
+import org.jungrapht.visualization.util.GraphImage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,6 +117,10 @@ public class GhidraModuleDependencyGraphDemo extends JPanel {
     vv.scaleToLayout();
 
     Box controls = Box.createHorizontalBox();
+
+    JButton imageButton = new JButton("Save Image");
+    imageButton.addActionListener(e -> GraphImage.capture(vv, 4.0));
+
     MultipleLayoutSelector<ModuleVertex, ModuleEdge> treeLayoutSelector =
         MultipleLayoutSelector.<ModuleVertex, ModuleEdge>builder(vv)
             .edgePredicate(edgePredicate)
@@ -139,6 +144,7 @@ public class GhidraModuleDependencyGraphDemo extends JPanel {
             .build()
             .container());
 
+    controls.add(imageButton);
     add(controls, BorderLayout.SOUTH);
   }
 

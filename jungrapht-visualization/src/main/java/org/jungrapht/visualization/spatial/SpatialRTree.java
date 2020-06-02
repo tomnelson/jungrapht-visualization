@@ -374,18 +374,25 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
      */
     @Override
     public void recalculate() {
-      gridCache = null;
-      log.trace(
-          "called recalculate while active:{} layout model relaxing:{}",
-          isActive(),
-          layoutModel.isRelaxing());
-      if (isActive()) {
-        log.trace("recalculate for nodes: {}", layoutModel.getGraph().vertexSet());
-        recalculate(layoutModel.getGraph().vertexSet());
-        //        bulkInsert(layoutModel.getGraph().vertexSet());
-      } else {
-        log.trace("no recalculate when active: {}", isActive());
+      try {
+        gridCache = null;
+        log.trace(
+            "called recalculate while active:{} layout model relaxing:{}",
+            isActive(),
+            layoutModel.isRelaxing());
+        if (isActive()) {
+          if (log.isTraceEnabled()) {
+            log.trace("recalculate for nodes: {}", layoutModel.getGraph().vertexSet());
+          }
+          recalculate(layoutModel.getGraph().vertexSet());
+          //        bulkInsert(layoutModel.getGraph().vertexSet());
+        } else {
+          log.trace("no recalculate when active: {}", isActive());
+        }
+      } catch (ConcurrentModificationException ex) {
+        recalculate();
       }
+      log.trace("recalculate tries");
     }
 
     @Override

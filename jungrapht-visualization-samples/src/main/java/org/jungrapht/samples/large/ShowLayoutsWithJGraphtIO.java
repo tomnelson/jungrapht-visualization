@@ -45,6 +45,7 @@ import org.jungrapht.visualization.transform.MagnifyTransformer;
 import org.jungrapht.visualization.transform.shape.HyperbolicShapeTransformer;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
 import org.jungrapht.visualization.transform.shape.ViewLensSupport;
+import org.jungrapht.visualization.util.GraphImage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -283,10 +284,14 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
     JButton showRTree = new JButton("Show RTree");
     showRTree.addActionListener(e -> RTreeVisualization.showRTree(vv));
 
+    JButton imageButton = new JButton("Save Image");
+    imageButton.addActionListener(e -> GraphImage.capture(vv, 2.0));
+
     JComponent bottom =
         ControlHelpers.getContainer(
             Box.createHorizontalBox(),
             ControlHelpers.getZoomControls("Scale", vv),
+            imageButton,
             ControlHelpers.getCenteredContainer("Mouse Mode", modeBox),
             lensBox,
             ControlHelpers.getCenteredContainer(

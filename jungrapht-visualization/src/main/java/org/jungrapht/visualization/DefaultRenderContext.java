@@ -115,6 +115,8 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
   /** the {@link Stroke} used to draw edges */
   protected Stroke edgeStroke;
 
+  protected float edgeStrokeWidth = Float.parseFloat(System.getProperty(EDGE_WIDTH, "1.0f"));
+
   // vertex properties
   private int vertexSize = Integer.getInteger(VERTEX_SIZE, 20);
   private String vertexShapeString = System.getProperty(VERTEX_SHAPE, "CIRCLE");
@@ -265,7 +267,7 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
   private DefaultRenderContext(Graph<V, E> graph) {
     this.parallelEdgeIndexFunction = new ParallelEdgeIndexFunction<>();
     setEdgeShape(System.getProperty(EDGE_SHAPE, "QUAD_CURVE"));
-    float edgeWidth = Float.parseFloat(System.getProperty(EDGE_WIDTH, "1.0f"));
+    this.edgeWidth = Float.parseFloat(System.getProperty(EDGE_WIDTH, "1.0f"));
     setEdgeStroke(System.getProperty(EDGE_STROKE, "LINE"), edgeWidth);
     setupArrows(graph.getType().isDirected());
   }
@@ -436,6 +438,14 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
 
   public void setEdgeStrokeFunction(Function<E, Stroke> edgeStrokeFunction) {
     this.edgeStrokeFunction = edgeStrokeFunction;
+  }
+
+  public void setEdgeWidth(float edgeWidth) {
+    this.edgeWidth = edgeWidth;
+  }
+
+  public float getEdgeWidth() {
+    return edgeWidth;
   }
 
   public Function<E, Stroke> getEdgeArrowStrokeFunction() {
