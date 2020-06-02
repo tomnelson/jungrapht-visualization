@@ -24,6 +24,7 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.layout.algorithms.*;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
+import org.jungrapht.visualization.util.GraphImage;
 
 /**
  * Demonstrates several of the graph layout algorithms. Allows the user to interactively select one
@@ -175,11 +176,15 @@ public class ShowLayouts extends JPanel {
     JButton showRTree = new JButton("Show RTree");
     showRTree.addActionListener(e -> RTreeVisualization.showRTree(vv));
 
+    JButton imageButton = new JButton("Save Image");
+    imageButton.addActionListener(e -> GraphImage.capture(vv, 4.0));
+
     topControls.add(jcb);
     topControls.add(graphChooser);
     bottomControls.add(animateLayoutTransition);
     bottomControls.add(ControlHelpers.getZoomControls("Zoom", vv));
     bottomControls.add(showRTree);
+    bottomControls.add(imageButton);
   }
 
   LayoutModel getTreeLayoutPositions(Graph tree, LayoutAlgorithm treeLayout) {

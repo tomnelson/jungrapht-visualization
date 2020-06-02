@@ -47,7 +47,7 @@ public class GraphImage<V, E> {
             new Dimension((int) (vvLayoutSize.width * scale), (int) (vvLayoutSize.height * scale));
 
         VisualizationImageServer<V, E> vis =
-            VisualizationImageServer.<V, E>builder(graph)
+            VisualizationImageServer.builder(graph)
                 .viewSize(imageLayoutSize)
                 .layoutSize(imageLayoutSize)
                 .layoutAlgorithm(new StaticLayoutAlgorithm<>())
@@ -60,6 +60,11 @@ public class GraphImage<V, E> {
                 scaler.createTransformedShape(
                     vv.getRenderContext().getVertexShapeFunction().apply(v));
         vis.getRenderContext().setVertexShapeFunction(visVertexShapeFunction);
+
+        vis.getRenderContext()
+            .setEdgeArrowWidth((int) (vv.getRenderContext().getEdgeArrowWidth() * scale));
+        vis.getRenderContext()
+            .setEdgeArrowLength((int) (vv.getRenderContext().getEdgeArrowLength() * scale));
 
         // make the edge stroke 'scale' times wider
         vis.getRenderContext().setEdgeWidth((float) (vv.getRenderContext().getEdgeWidth() * scale));
@@ -87,6 +92,10 @@ public class GraphImage<V, E> {
         vis.getRenderContext()
             .setVertexLabelPosition(vv.getRenderContext().getVertexLabelPosition());
 
+        vv.getVisualizationModel()
+            .getModelChangeSupport()
+            .addModelChangeListener(vis.getVisualizationModel());
+        vv.getVisualizationModel().getModelChangeSupport().fireModelChanged();
         // move all the layout points by the scale factor
         Map<V, Point> scaledPoints =
             graph

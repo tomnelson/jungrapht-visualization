@@ -345,6 +345,26 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
   }
 
   @Override
+  public void setEdgeArrowWidth(int edgeArrowWidth) {
+    this.edgeArrowWidth = edgeArrowWidth;
+  }
+
+  @Override
+  public int getEdgeArrowWidth() {
+    return this.edgeArrowWidth;
+  }
+
+  @Override
+  public void setEdgeArrowLength(int edgeArrowLength) {
+    this.edgeArrowLength = edgeArrowLength;
+  }
+
+  @Override
+  public int getEdgeArrowLength() {
+    return this.edgeArrowLength;
+  }
+
+  @Override
   public void setArrowsOnUndirectedEdges(boolean arrowsOnUndirectedEdges) {
     this.arrowsOnUndirectedEdges = arrowsOnUndirectedEdges;
   }
