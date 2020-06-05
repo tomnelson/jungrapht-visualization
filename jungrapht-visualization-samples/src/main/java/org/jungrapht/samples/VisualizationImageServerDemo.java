@@ -9,7 +9,6 @@
 package org.jungrapht.samples;
 
 import java.awt.*;
-import java.awt.geom.Point2D;
 import java.util.stream.IntStream;
 import javax.swing.*;
 import org.jgrapht.Graph;
@@ -71,7 +70,7 @@ public class VisualizationImageServerDemo {
 
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-    Image im = vv.getImage(new Point2D.Double(300, 300), new Dimension(600, 600));
+    Image im = vv.getFullImage();
     Icon icon = new ImageIcon(im);
     JLabel label = new JLabel(icon);
     content.add(label);

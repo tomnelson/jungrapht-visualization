@@ -6,8 +6,10 @@ import java.util.List;
 
 /**
  * For the most general change to a LayoutModel. There is no Event payload, only an indication that
- * there was a change. A visualization would consume the event and re-draw itself. Use-cases for
- * firing this event are when the Graph or LayoutAlgorithm is changed in the LayoutModel
+ * there was a change in the model. A visualization would consume the event and re-draw itself.
+ * Use-cases for firing this event are when the Graph or LayoutAlgorithm is changed in the
+ * LayoutModel. The LayoutModel fires this event to the VisualizationModel and the
+ * VisualizationModel fires this event to the VisualizationServer (the view)
  *
  * @author Tom Nelson
  */

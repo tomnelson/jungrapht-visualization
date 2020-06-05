@@ -269,16 +269,11 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
 
   protected GraphicsDecorator graphicsContext;
 
-  //  DefaultRenderContext(Builder<V, E, ?, ?> builder) {
-  //    this(builder.graph);
-  //  }
-
   DefaultRenderContext() {
     this.parallelEdgeIndexFunction = new ParallelEdgeIndexFunction<>();
     setEdgeShape(System.getProperty(EDGE_SHAPE, "QUAD_CURVE"));
     this.edgeWidth = Float.parseFloat(System.getProperty(EDGE_WIDTH, "1.0f"));
     setEdgeStroke(System.getProperty(EDGE_STROKE, "LINE"), edgeWidth);
-    //    setupArrows(graph.getType().isDirected());
   }
 
   /**

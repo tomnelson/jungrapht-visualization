@@ -297,6 +297,11 @@ public class FRLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
   /** @return true once the current iteration has passed the maximum count. */
   @Override
   public boolean done() {
-    return currentIteration > maxIterations || temperature < 1.0 / max_dimension;
+
+    boolean done = currentIteration > maxIterations || temperature < 1.0 / max_dimension;
+    if (done) {
+      after.run();
+    }
+    return done;
   }
 }

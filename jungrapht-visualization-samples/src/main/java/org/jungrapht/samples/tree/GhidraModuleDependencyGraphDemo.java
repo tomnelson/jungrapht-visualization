@@ -80,6 +80,7 @@ public class GhidraModuleDependencyGraphDemo extends JPanel {
 
     vv.setVertexToolTipFunction(Object::toString);
     vv.setEdgeToolTipFunction(Object::toString);
+    vv.getRenderContext().setVertexLabelFunction(Object::toString);
 
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
@@ -119,7 +120,7 @@ public class GhidraModuleDependencyGraphDemo extends JPanel {
     Box controls = Box.createHorizontalBox();
 
     JButton imageButton = new JButton("Save Image");
-    imageButton.addActionListener(e -> GraphImage.capture(vv, 4.0));
+    imageButton.addActionListener(e -> GraphImage.capture(vv));
 
     MultipleLayoutSelector<ModuleVertex, ModuleEdge> treeLayoutSelector =
         MultipleLayoutSelector.<ModuleVertex, ModuleEdge>builder(vv)
@@ -170,7 +171,7 @@ public class GhidraModuleDependencyGraphDemo extends JPanel {
 
     @Override
     public String toString() {
-      return "ModuleVertex{" + "name='" + name + '\'' + '}';
+      return name;
     }
   }
 

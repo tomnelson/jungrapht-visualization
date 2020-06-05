@@ -45,6 +45,7 @@ import org.jungrapht.visualization.transform.LensSupport;
 import org.jungrapht.visualization.transform.MagnifyTransformer;
 import org.jungrapht.visualization.transform.shape.MagnifyImageLensSupport;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
+import org.jungrapht.visualization.util.GraphImage;
 
 /**
  * Demonstrates the use of images to represent graph vertices. The images are added to the
@@ -199,6 +200,9 @@ public class LensVertexImageShaperDemo extends JPanel {
     controls.add(ControlHelpers.getZoomControls("Scale", vv));
 
     controls.add(modePanel);
+    JButton imageButton = new JButton("Save Image");
+    imageButton.addActionListener(evt -> GraphImage.capture(vv));
+    controls.add(imageButton);
     add(controls, BorderLayout.SOUTH);
 
     LayoutModel<Number> layoutModel = vv.getVisualizationModel().getLayoutModel();

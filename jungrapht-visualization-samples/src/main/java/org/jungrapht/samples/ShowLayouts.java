@@ -177,7 +177,7 @@ public class ShowLayouts extends JPanel {
     showRTree.addActionListener(e -> RTreeVisualization.showRTree(vv));
 
     JButton imageButton = new JButton("Save Image");
-    imageButton.addActionListener(e -> GraphImage.capture(vv, 4.0));
+    imageButton.addActionListener(e -> GraphImage.capture(vv));
 
     topControls.add(jcb);
     topControls.add(graphChooser);

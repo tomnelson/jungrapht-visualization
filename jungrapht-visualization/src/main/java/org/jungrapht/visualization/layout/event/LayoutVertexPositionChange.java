@@ -8,7 +8,8 @@ import org.jungrapht.visualization.layout.model.Point;
 
 /**
  * Event support to indicate that a Vertex's position has changed. The jung-visualization spatial
- * data structures will consume this event and re-insert the vertex or edge.
+ * data structures will consume this event and re-insert the vertex or edge. The event payload is a
+ * single vertex and its (possibly new) Point location.
  *
  * @author Tom Nelson
  */

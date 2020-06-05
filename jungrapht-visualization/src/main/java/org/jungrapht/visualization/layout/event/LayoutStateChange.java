@@ -10,10 +10,10 @@ import org.slf4j.LoggerFactory;
 /**
  * An event model to convey that the LayoutModel is either active (busy) or not. Consumers of this
  * event can modify their behavior based on the state of the LayoutModel. A use-case for a consumer
- * of this event is the spatial data structures. When the LayoutModel is active, the spatial data
- * structures do not constantly rebuild and compete with the LayoutAlgorithm relax Thread by doing
- * unnecessary work. When the relax thread completes, this event will alert the spatial data
- * structures to rebuild themselves.
+ * of this event is the spatial data structures. When the LayoutModel is active (busy), the spatial
+ * data structures do not constantly rebuild and compete with the LayoutAlgorithm relax Thread by
+ * doing unnecessary work. When the relax thread completes, this event will alert the spatial data
+ * structures to rebuild themselves by firing with 'false' (not busy)
  */
 public interface LayoutStateChange {
 

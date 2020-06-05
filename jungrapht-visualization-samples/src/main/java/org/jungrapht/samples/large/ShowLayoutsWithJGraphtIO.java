@@ -285,7 +285,7 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
     showRTree.addActionListener(e -> RTreeVisualization.showRTree(vv));
 
     JButton imageButton = new JButton("Save Image");
-    imageButton.addActionListener(e -> GraphImage.capture(vv, 4.0));
+    imageButton.addActionListener(e -> GraphImage.capture(vv));
 
     JComponent bottom =
         ControlHelpers.getContainer(

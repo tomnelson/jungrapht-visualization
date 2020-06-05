@@ -113,7 +113,7 @@ public class VertexLabelPositionDemo extends JPanel {
     JPanel controls = new JPanel();
 
     JButton imageButton = new JButton("Image");
-    imageButton.addActionListener(e -> GraphImage.capture(vv, 4.0));
+    imageButton.addActionListener(e -> GraphImage.capture(vv));
 
     controls.add(ControlHelpers.getZoomControls("Zoom", vv));
     controls.add(imageButton);
