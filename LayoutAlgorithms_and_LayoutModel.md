@@ -13,7 +13,7 @@ The superclass of the DefaultLayoutModel (AbstractLayoutModel) fires events at v
 * If there is a previous layout algorithm thread running, stop it
 * Layout model sets its size back to its ‘original’ preferred size
 * Fire an event to say that the layout model is now ‘busy’ (this allows the RTree spatial data structures to pause rebuilding)
-* Enable the LayoutVertexPositionChange service (so that vertex moves will allow the spatial data structures (like the barnes hut quad tree) to update cells
+* Enable the LayoutVertexPositionChange service (spatial RTrees are currently inactive)
 * Fire an event to say that the model has changed (will cause repaint)
 * Tell the LayoutAlgorithm to visit this LayoutModel so it can start setting points
 * If the LayoutAlgorithm is an iterative one, set up the VisRunnable on a thread to call the step methods. 
