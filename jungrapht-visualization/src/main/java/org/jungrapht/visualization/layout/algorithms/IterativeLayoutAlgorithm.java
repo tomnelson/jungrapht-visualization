@@ -1,8 +1,7 @@
 package org.jungrapht.visualization.layout.algorithms;
 
-import java.util.concurrent.Executor;
+import org.jungrapht.visualization.layout.algorithms.util.ExecutorConsumer;
 import org.jungrapht.visualization.layout.algorithms.util.IterativeContext;
-import org.jungrapht.visualization.layout.algorithms.util.Threaded;
 
 /**
  * A LayoutAlgorithm that may utilize a pre-relax phase, which is a loop of calls to <code>step
@@ -13,13 +12,11 @@ import org.jungrapht.visualization.layout.algorithms.util.Threaded;
  * @param <V> the Vertex type
  */
 public interface IterativeLayoutAlgorithm<V>
-    extends LayoutAlgorithm<V>, IterativeContext, Threaded {
+    extends LayoutAlgorithm<V>, IterativeContext, ExecutorConsumer {
   /**
    * may be a no-op depending on how the algorithm instance is created
    *
    * @return true if a prerelax was done, false otherwise
    */
   boolean preRelax();
-
-  Executor getExecutor();
 }

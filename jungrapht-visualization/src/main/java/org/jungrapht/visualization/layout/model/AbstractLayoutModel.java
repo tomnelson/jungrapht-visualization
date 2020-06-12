@@ -35,6 +35,8 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
     protected Graph<V, ?> graph;
     protected int width;
     protected int height;
+    // the model will create a VisRunnable and start it in a new Thread
+    protected boolean createVisRunnable = true;
 
     public B graph(Graph<V, ?> graph) {
       this.graph = graph;
@@ -56,6 +58,11 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
       this.height = height;
       return (B) this;
     }
+
+    public B createVisRunnable(boolean createVisRunnable) {
+      this.createVisRunnable = createVisRunnable;
+      return (B) this;
+    }
   }
 
   protected Set<V> lockedVertices = new HashSet<>();
@@ -64,6 +71,7 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
   protected int height;
   protected int preferredWidth;
   protected int preferredHeight;
+  protected boolean createVisRunnable;
 
   protected Graph<V, ?> graph;
   protected VisRunnable visRunnable;
@@ -81,6 +89,7 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
     this.graph = Objects.requireNonNull(builder.graph);
     setSize(builder.width, builder.height);
     setPreferredSize(builder.width, builder.height);
+    this.createVisRunnable = builder.createVisRunnable;
   }
 
   protected AbstractLayoutModel(LayoutModel<V> other) {
@@ -148,13 +157,10 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
       if (layoutAlgorithm instanceof Future) {
         this.theFuture = (Future) layoutAlgorithm;
       }
-      if (layoutAlgorithm instanceof IterativeLayoutAlgorithm) {
-        Threaded threadedLayoutAlgorithm = (Threaded) layoutAlgorithm;
-        if (threadedLayoutAlgorithm.isThreaded()) {
-          setRelaxing(true);
-          // don't start a visRunner if the called has set threaded tp false
-          setupVisRunner((IterativeLayoutAlgorithm) layoutAlgorithm);
-        }
+      if (createVisRunnable && layoutAlgorithm instanceof IterativeLayoutAlgorithm) {
+        setRelaxing(true);
+        // don't start a visRunner if the called has set threaded tp false
+        setupVisRunner((IterativeLayoutAlgorithm) layoutAlgorithm);
         // ...the visRunner will fire the layoutStateChanged event when it finishes
 
       } else if (!(layoutAlgorithm instanceof Threaded)

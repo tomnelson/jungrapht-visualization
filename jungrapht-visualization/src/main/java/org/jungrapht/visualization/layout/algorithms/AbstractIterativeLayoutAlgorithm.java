@@ -2,7 +2,6 @@ package org.jungrapht.visualization.layout.algorithms;
 
 import java.util.Random;
 import java.util.concurrent.Executor;
-import org.jungrapht.visualization.layout.algorithms.util.Threaded;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +14,7 @@ import org.slf4j.LoggerFactory;
  * @author Tom Nelson
  */
 public abstract class AbstractIterativeLayoutAlgorithm<V> extends AbstractLayoutAlgorithm<V>
-    implements IterativeLayoutAlgorithm<V>, Threaded {
+    implements IterativeLayoutAlgorithm<V> {
 
   private static final Logger log = LoggerFactory.getLogger(AbstractIterativeLayoutAlgorithm.class);
 
@@ -23,7 +22,6 @@ public abstract class AbstractIterativeLayoutAlgorithm<V> extends AbstractLayout
           V, T extends AbstractIterativeLayoutAlgorithm<V>, B extends Builder<V, T, B>>
       extends AbstractLayoutAlgorithm.Builder<V, T, B> implements LayoutAlgorithm.Builder<V, T, B> {
     protected Executor executor;
-    protected boolean threaded = true;
     protected Random random = new Random();
     protected boolean shouldPrerelax = true;
     protected int preRelaxDurationMs = 500;
@@ -48,11 +46,6 @@ public abstract class AbstractIterativeLayoutAlgorithm<V> extends AbstractLayout
       return self();
     }
 
-    public B threaded(boolean threaded) {
-      this.threaded = threaded;
-      return self();
-    }
-
     protected B self() {
       return (B) this;
     }
@@ -63,7 +56,6 @@ public abstract class AbstractIterativeLayoutAlgorithm<V> extends AbstractLayout
   protected AbstractIterativeLayoutAlgorithm(Builder builder) {
     super(builder);
     this.executor = builder.executor;
-    this.threaded = builder.threaded;
     this.random = builder.random;
     this.shouldPreRelax = builder.shouldPrerelax;
     this.preRelaxDurationMs = builder.preRelaxDurationMs;
@@ -76,8 +68,6 @@ public abstract class AbstractIterativeLayoutAlgorithm<V> extends AbstractLayout
   protected LayoutModel<V> layoutModel;
 
   protected Executor executor;
-
-  boolean threaded;
 
   // both of these can be set at instance creation time
   protected boolean shouldPreRelax;
@@ -109,16 +99,6 @@ public abstract class AbstractIterativeLayoutAlgorithm<V> extends AbstractLayout
   @Override
   public Executor getExecutor() {
     return this.executor;
-  }
-
-  @Override
-  public boolean isThreaded() {
-    return this.threaded;
-  }
-
-  @Override
-  public void setThreaded(boolean threaded) {
-    this.threaded = threaded;
   }
 
   /**

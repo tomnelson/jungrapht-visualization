@@ -34,6 +34,7 @@ import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.CircleLayoutReduceEdgeCrossing;
+import org.jungrapht.visualization.layout.algorithms.util.ExecutorConsumer;
 import org.jungrapht.visualization.layout.algorithms.util.Threaded;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.slf4j.Logger;
@@ -46,7 +47,7 @@ import org.slf4j.LoggerFactory;
  * @author Tom Nelson - adapted to an algorithm
  */
 public class CircleLayoutAlgorithm<V>
-    implements LayoutAlgorithm<V>, AfterRunnable, Threaded, Future {
+    implements LayoutAlgorithm<V>, AfterRunnable, Threaded, ExecutorConsumer, Future {
 
   private static final Logger log = LoggerFactory.getLogger(CircleLayoutAlgorithm.class);
 

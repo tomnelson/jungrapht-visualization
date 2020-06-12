@@ -69,6 +69,11 @@ public interface LayoutModel<V>
       return (B) this;
     }
 
+    public B createVisRunnable(boolean createVisRunnable) {
+      this.createVisRunnable = createVisRunnable;
+      return (B) this;
+    }
+
     /**
      * build an instance of the requested LayoutModel of type T
      *
