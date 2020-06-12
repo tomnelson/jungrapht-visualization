@@ -24,11 +24,10 @@ The superclass of the DefaultLayoutModel (AbstractLayoutModel) fires events at v
 VisRunnable in new Thread will do the following:
 * Stop any active VisRunnable threads
 * Fire an event to say the layout model is busy (no spatial RTree updates)
-* Fire an event to turn off model changes 
-* Prerelax the layout algorithm (makes a fast bunch of step calls that are not animated in the view
-* Fire an event to turn on model changes
-
-
+* pause visual updates to 'pre-relax' layout algorithm (to get it to a better starting state visually):
+   * Fire an event to turn off model changes (no repaints)
+   * Prerelax the layout algorithm (makes a series of 'step' calls that are not animated in the view
+   * Fire an event to turn on model changes
 * Run the VisRunnable in a new thread
 * When the VisRUnnable thread completes, fire an event to cause a repaint
 * Fire an event to say that the LayoutModel is no longer busy (so RTrees can update)

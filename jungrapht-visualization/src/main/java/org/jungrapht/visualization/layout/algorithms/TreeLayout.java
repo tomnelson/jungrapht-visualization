@@ -30,7 +30,7 @@ public interface TreeLayout<V> extends LayoutAlgorithm<V> {
   void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction);
 
   static <V, E> boolean isLoopVertex(Graph<V, E> graph, V v) {
-    return graph.outgoingEdgesOf(v).equals(graph.incomingEdgesOf(v));
+    return false; //graph.outgoingEdgesOf(v).equals(graph.incomingEdgesOf(v));
   }
 
   static <V, E> boolean isZeroDegreeVertex(Graph<V, E> graph, V v) {

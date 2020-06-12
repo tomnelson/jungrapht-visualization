@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -74,6 +75,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
           T extends SugiyamaLayoutAlgorithm<V, E> & EdgeAwareLayoutAlgorithm<V, E>,
           B extends Builder<V, E, T, B>>
       implements LayoutAlgorithm.Builder<V, T, B> {
+    protected Executor executor;
     protected Function<V, Shape> vertexShapeFunction = v -> IDENTITY_SHAPE;
     protected Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer;
     protected boolean straightenEdges =
@@ -146,6 +148,11 @@ public class SugiyamaLayoutAlgorithm<V, E>
       return self();
     }
 
+    public B executor(Executor executor) {
+      this.executor = executor;
+      return self();
+    }
+
     public B after(Runnable after) {
       this.after = after;
       return self();
@@ -180,6 +187,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
   protected RenderContext<V, E> renderContext;
   protected boolean threaded;
   protected Layering layering;
+  protected Executor executor;
   protected CompletableFuture theFuture;
   protected Runnable after;
 
@@ -199,6 +207,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
         builder.expandLayout,
         builder.layering,
         builder.threaded,
+        builder.executor,
         builder.after);
   }
 
@@ -213,6 +222,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
       boolean expandLayout,
       Layering layering,
       boolean threaded,
+      Executor executor,
       Runnable after) {
     this.vertexShapeFunction = vertexShapeFunction;
     this.edgeShapeConsumer = edgeShapeConsumer;
@@ -224,6 +234,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
     this.expandLayout = expandLayout;
     this.layering = layering;
     this.threaded = threaded;
+    this.executor = executor;
     this.after = after;
   }
 
@@ -249,6 +260,21 @@ public class SugiyamaLayoutAlgorithm<V, E>
   }
 
   @Override
+  public void setThreaded(boolean threaded) {
+    this.threaded = threaded;
+  }
+
+  @Override
+  public void setExecutor(Executor executor) {
+    this.executor = executor;
+  }
+
+  @Override
+  public Executor getExecutor() {
+    return this.executor;
+  }
+
+  @Override
   public void visit(LayoutModel<V> layoutModel) {
     Graph<V, E> graph = layoutModel.getGraph();
     if (graph == null || graph.vertexSet().isEmpty()) {
@@ -267,19 +293,33 @@ public class SugiyamaLayoutAlgorithm<V, E>
             .layering(layering)
             .build();
     if (threaded) {
-
-      theFuture =
-          CompletableFuture.runAsync(runnable)
-              .thenRun(
-                  () -> {
-                    log.trace("Sugiyama layout done");
-                    this.run(); // run the after function
-                    layoutModel.getViewChangeSupport().fireViewChanged();
-                    // fire an event to say that the layout is done
-                    layoutModel
-                        .getLayoutStateChangeSupport()
-                        .fireLayoutStateChanged(layoutModel, false);
-                  });
+      if (executor != null) {
+        theFuture =
+            CompletableFuture.runAsync(runnable, executor)
+                .thenRun(
+                    () -> {
+                      log.trace("Sugiyama layout done");
+                      this.run(); // run the after function
+                      layoutModel.getViewChangeSupport().fireViewChanged();
+                      // fire an event to say that the layout is done
+                      layoutModel
+                          .getLayoutStateChangeSupport()
+                          .fireLayoutStateChanged(layoutModel, false);
+                    });
+      } else {
+        theFuture =
+            CompletableFuture.runAsync(runnable)
+                .thenRun(
+                    () -> {
+                      log.trace("Sugiyama layout done");
+                      this.run(); // run the after function
+                      layoutModel.getViewChangeSupport().fireViewChanged();
+                      // fire an event to say that the layout is done
+                      layoutModel
+                          .getLayoutStateChangeSupport()
+                          .fireLayoutStateChanged(layoutModel, false);
+                    });
+      }
     } else {
       runnable.run();
       after.run();

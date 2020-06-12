@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.IterativeLayoutAlgorithm;
@@ -148,8 +149,12 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
         this.theFuture = (Future) layoutAlgorithm;
       }
       if (layoutAlgorithm instanceof IterativeLayoutAlgorithm) {
-        setRelaxing(true);
-        setupVisRunner((IterativeLayoutAlgorithm) layoutAlgorithm);
+        Threaded threadedLayoutAlgorithm = (Threaded) layoutAlgorithm;
+        if (threadedLayoutAlgorithm.isThreaded()) {
+          setRelaxing(true);
+          // don't start a visRunner if the called has set threaded tp false
+          setupVisRunner((IterativeLayoutAlgorithm) layoutAlgorithm);
+        }
         // ...the visRunner will fire the layoutStateChanged event when it finishes
 
       } else if (!(layoutAlgorithm instanceof Threaded)
@@ -198,17 +203,33 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
     layoutVertexPositionSupport.setFireEvents(true);
     log.trace("prerelax is done");
 
+    Executor executor = iterativeContext.getExecutor();
+
     visRunnable = new VisRunnable(iterativeContext);
-    theFuture =
-        CompletableFuture.runAsync(visRunnable)
-            .thenRun(
-                () -> {
-                  log.trace("We're done");
-                  setRelaxing(false);
-                  this.viewChangeSupport.fireViewChanged();
-                  // fire an event to say that the layout relax is done
-                  this.layoutStateChangeSupport.fireLayoutStateChanged(this, false);
-                });
+
+    if (executor != null) {
+      // use the Executor provided with the LayoutAlgorithm
+      CompletableFuture.runAsync(visRunnable, executor)
+          .thenRun(
+              () -> {
+                log.trace("We're done");
+                setRelaxing(false);
+                this.viewChangeSupport.fireViewChanged();
+                // fire an event to say that the layout relax is done
+                this.layoutStateChangeSupport.fireLayoutStateChanged(this, false);
+              });
+    } else {
+      theFuture =
+          CompletableFuture.runAsync(visRunnable)
+              .thenRun(
+                  () -> {
+                    log.trace("We're done");
+                    setRelaxing(false);
+                    this.viewChangeSupport.fireViewChanged();
+                    // fire an event to say that the layout relax is done
+                    this.layoutStateChangeSupport.fireLayoutStateChanged(this, false);
+                  });
+    }
   }
 
   /** @return the graph */

@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -55,6 +56,7 @@ public class CircleLayoutAlgorithm<V>
   protected static final String CIRCLE_THREADED = PREFIX + "circle.threaded";
 
   protected LayoutModel<V> layoutModel;
+  protected Executor executor;
   protected double radius;
   protected boolean reduceEdgeCrossing;
   protected List<V> vertexOrderedList;
@@ -67,6 +69,7 @@ public class CircleLayoutAlgorithm<V>
   public static class Builder<V, T extends CircleLayoutAlgorithm<V>, B extends Builder<V, T, B>>
       implements LayoutAlgorithm.Builder<V, T, B> {
     protected int radius;
+    protected Executor executor;
     protected boolean reduceEdgeCrossing =
         Boolean.parseBoolean(System.getProperty(CIRCLE_REDUCE_EDGE_CROSSING, "true"));
     protected int reduceEdgeCrossingMaxEdges =
@@ -76,6 +79,11 @@ public class CircleLayoutAlgorithm<V>
 
     B self() {
       return (B) this;
+    }
+
+    public B executor(Executor executor) {
+      this.executor = executor;
+      return self();
     }
 
     public B radius(int radius) {
@@ -114,6 +122,7 @@ public class CircleLayoutAlgorithm<V>
 
   protected CircleLayoutAlgorithm(Builder<V, ?, ?> builder) {
     this(
+        builder.executor,
         builder.radius,
         builder.reduceEdgeCrossing,
         builder.reduceEdgeCrossingMaxEdges,
@@ -122,11 +131,13 @@ public class CircleLayoutAlgorithm<V>
   }
 
   private CircleLayoutAlgorithm(
+      Executor executor,
       int radius,
       boolean reduceEdgeCrossing,
       int reduceEdgeCrossingMaxEdges,
       boolean threaded,
       Runnable after) {
+    this.executor = executor;
     this.radius = radius;
     this.reduceEdgeCrossing = reduceEdgeCrossing;
     this.reduceEdgeCrossingMaxEdges = reduceEdgeCrossingMaxEdges;
@@ -154,6 +165,16 @@ public class CircleLayoutAlgorithm<V>
     this.radius = radius;
   }
 
+  @Override
+  public void setExecutor(Executor executor) {
+    this.executor = executor;
+  }
+
+  @Override
+  public Executor getExecutor() {
+    return this.executor;
+  }
+
   private void computeVertexOrder(LayoutModel<V> layoutModel) {
     Graph<V, ?> graph = layoutModel.getGraph();
     if (reduceEdgeCrossing) {
@@ -164,19 +185,35 @@ public class CircleLayoutAlgorithm<V>
       ReduceCrossingRunnable<V, ?> reduceCrossingRunnable =
           new ReduceCrossingRunnable<>(graph, this.vertexOrderedList);
       if (threaded) {
-        theFuture =
-            CompletableFuture.runAsync(reduceCrossingRunnable)
-                .thenRun(
-                    () -> {
-                      log.trace("ReduceEdgeCrossing done");
-                      layoutVertices(layoutModel);
-                      this.run(); // run the after function
-                      layoutModel.getViewChangeSupport().fireViewChanged();
-                      // fire an event to say that the layout is done
-                      layoutModel
-                          .getLayoutStateChangeSupport()
-                          .fireLayoutStateChanged(layoutModel, false);
-                    });
+        if (executor != null) {
+          theFuture =
+              CompletableFuture.runAsync(reduceCrossingRunnable, executor)
+                  .thenRun(
+                      () -> {
+                        log.trace("ReduceEdgeCrossing done");
+                        layoutVertices(layoutModel);
+                        this.run(); // run the after function
+                        layoutModel.getViewChangeSupport().fireViewChanged();
+                        // fire an event to say that the layout is done
+                        layoutModel
+                            .getLayoutStateChangeSupport()
+                            .fireLayoutStateChanged(layoutModel, false);
+                      });
+        } else {
+          theFuture =
+              CompletableFuture.runAsync(reduceCrossingRunnable)
+                  .thenRun(
+                      () -> {
+                        log.trace("ReduceEdgeCrossing done");
+                        layoutVertices(layoutModel);
+                        this.run(); // run the after function
+                        layoutModel.getViewChangeSupport().fireViewChanged();
+                        // fire an event to say that the layout is done
+                        layoutModel
+                            .getLayoutStateChangeSupport()
+                            .fireLayoutStateChanged(layoutModel, false);
+                      });
+        }
       } else {
         reduceCrossingRunnable.run();
         layoutVertices(layoutModel);
@@ -207,6 +244,11 @@ public class CircleLayoutAlgorithm<V>
   @Override
   public boolean isThreaded() {
     return this.threaded;
+  }
+
+  @Override
+  public void setThreaded(boolean threaded) {
+    this.threaded = threaded;
   }
 
   /**

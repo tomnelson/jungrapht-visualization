@@ -24,7 +24,6 @@ import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.visualization.DefaultRenderContext;
-import org.jungrapht.visualization.layout.algorithms.util.ComponentGrouping;
 import org.jungrapht.visualization.layout.algorithms.util.DimensionSummaryStatistics;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
@@ -299,7 +298,7 @@ public class TreeLayoutAlgorithm<V> extends AbstractLayoutAlgorithm<V>
             .sorted(Comparator.comparingInt(v -> TreeLayout.vertexIsolationScore(graph, v)))
             .collect(Collectors.toList());
 
-    roots = ComponentGrouping.groupByComponents(graph, roots);
+    //    roots = ComponentGrouping.groupByComponents(graph, roots);
 
     if (roots.size() == 0) {
       Graph<V, ?> tree = TreeLayoutAlgorithm.getSpanningTree(graph);

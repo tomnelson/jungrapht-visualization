@@ -47,7 +47,6 @@ public class HeavyweightVertexRenderer<V, E> extends AbstractVertexRenderer<V, E
     Shape shape = renderContext.getVertexShapeFunction().apply(v);
     Point p = visualizationModel.getLayoutModel().apply(v);
     // p is the vertex location in layout coordinates
-    log.trace("prepared a shape for " + v + " to go at " + p);
     Point2D p2d =
         renderContext
             .getMultiLayerTransformer()

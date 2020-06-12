@@ -26,8 +26,7 @@ public class LayoutHelper {
         "Circle",
         CircleLayoutAlgorithm.builder().reduceEdgeCrossing(false).threaded(false).build()),
     REDUCE_XING_CIRCLE(
-        "Reduce Xing Circle",
-        CircleLayoutAlgorithm.builder().reduceEdgeCrossing(true).threaded(false).build()),
+        "Reduce Xing Circle", CircleLayoutAlgorithm.builder().reduceEdgeCrossing(true).build()),
     SELF_ORGANIZING_MAP("Self Organizing Map", new ISOMLayoutAlgorithm<>()),
     FR("Fruchterman Reingold", new FRLayoutAlgorithm<>()),
     FR_BH_VISITOR(

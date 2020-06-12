@@ -29,10 +29,6 @@ public class DefaultLayoutModel<V> extends AbstractLayoutModel<V>
     return new DefaultLayoutModel<>(other);
   }
 
-  public DefaultLayoutModel() {
-    this(LayoutModel.builder());
-  }
-
   protected DefaultLayoutModel(LayoutModel.Builder builder) {
     super(builder);
     this.initializer = builder.initializer;
