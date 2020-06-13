@@ -9,9 +9,7 @@ import java.util.*;
 import java.util.List;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.VisualizationModel;
-import org.jungrapht.visualization.layout.BoundingRectangleCollector;
 import org.jungrapht.visualization.layout.GraphElementAccessor;
-import org.jungrapht.visualization.layout.RadiusGraphElementAccessor;
 import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
@@ -19,6 +17,8 @@ import org.jungrapht.visualization.spatial.rtree.LeafNode;
 import org.jungrapht.visualization.spatial.rtree.Node;
 import org.jungrapht.visualization.spatial.rtree.RTree;
 import org.jungrapht.visualization.spatial.rtree.SplitterContext;
+import org.jungrapht.visualization.util.BoundingRectangleCollector;
+import org.jungrapht.visualization.util.RadiusGraphElementAccessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -8,13 +8,14 @@
  *
  * Created on Apr 12, 2005
  */
-package org.jungrapht.visualization.layout;
+package org.jungrapht.visualization.util;
 
 import java.awt.*;
 import java.util.ConcurrentModificationException;
 import java.util.HashSet;
 import java.util.Set;
 import org.jgrapht.Graph;
+import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.util.RadiusVertexAccessor;

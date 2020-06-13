@@ -8,12 +8,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import org.jungrapht.visualization.VisualizationModel;
-import org.jungrapht.visualization.layout.RadiusGraphElementAccessor;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.util.RadiusVertexAccessor;
 import org.jungrapht.visualization.spatial.rtree.TreeNode;
+import org.jungrapht.visualization.util.RadiusGraphElementAccessor;
 
 /**
  * Basic interface for Spatial data

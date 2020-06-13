@@ -1,4 +1,4 @@
-package org.jungrapht.visualization.layout;
+package org.jungrapht.visualization.util;
 
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
@@ -11,7 +11,6 @@ import java.util.List;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.layout.model.Point;
-import org.jungrapht.visualization.util.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

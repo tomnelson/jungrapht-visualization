@@ -1,4 +1,4 @@
-package org.jungrapht.visualization.layout;
+package org.jungrapht.visualization.util;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -9,7 +9,6 @@ import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.jungrapht.visualization.util.ChangeEventSupport;
 
 public class BoundingRectanglePaintable<V> implements VisualizationServer.Paintable {
 
