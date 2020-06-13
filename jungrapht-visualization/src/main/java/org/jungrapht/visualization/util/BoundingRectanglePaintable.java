@@ -6,7 +6,6 @@ import java.util.List;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
-import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 
@@ -17,13 +16,13 @@ public class BoundingRectanglePaintable<V> implements VisualizationServer.Painta
   protected LayoutModel<V> layoutModel;
   protected List<Rectangle2D> rectangles;
 
-  public BoundingRectanglePaintable(RenderContext rc, VisualizationModel<V, ?> visualizationModel) {
+  public BoundingRectanglePaintable(RenderContext rc, LayoutModel<V> layoutModel) {
     super();
     this.rc = rc;
-    this.layoutModel = visualizationModel.getLayoutModel();
-    this.graph = visualizationModel.getGraph();
+    this.layoutModel = layoutModel;
+    this.graph = layoutModel.getGraph();
     final BoundingRectangleCollector.Vertices<V> brc =
-        new BoundingRectangleCollector.Vertices<>(rc, visualizationModel);
+        new BoundingRectangleCollector.Vertices<>(rc.getVertexShapeFunction(), layoutModel);
     this.rectangles = brc.getRectangles();
     if (layoutModel instanceof ChangeEventSupport) {
       ((ChangeEventSupport) layoutModel)

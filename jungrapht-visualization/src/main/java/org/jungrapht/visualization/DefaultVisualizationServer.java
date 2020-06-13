@@ -853,7 +853,8 @@ class DefaultVisualizationServer<V, E> extends JPanel
         return SpatialRTree.Vertices.builder()
             .visualizationModel(visualizationModel)
             .boundingRectangleCollector(
-                new BoundingRectangleCollector.Vertices<>(renderContext, visualizationModel))
+                new BoundingRectangleCollector.Vertices<>(
+                    renderContext.getVertexShapeFunction(), visualizationModel.getLayoutModel()))
             .splitterContext(SplitterContext.of(new RStarLeafSplitter<>(), new RStarSplitter<>()))
             .reinsert(true)
             .build();
@@ -874,7 +875,10 @@ class DefaultVisualizationServer<V, E> extends JPanel
         return SpatialRTree.Edges.builder()
             .visualizationModel(visualizationModel)
             .boundingRectangleCollector(
-                new BoundingRectangleCollector.Edges<>(renderContext, visualizationModel))
+                new BoundingRectangleCollector.Edges<>(
+                    renderContext.getVertexShapeFunction(),
+                    renderContext.getEdgeShapeFunction(),
+                    visualizationModel.getLayoutModel()))
             .splitterContext(
                 SplitterContext.of(new QuadraticLeafSplitter(), new QuadraticSplitter()))
             .reinsert(false)
