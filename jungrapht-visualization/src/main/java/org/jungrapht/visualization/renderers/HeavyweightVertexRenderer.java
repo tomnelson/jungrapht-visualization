@@ -10,12 +10,10 @@
 package org.jungrapht.visualization.renderers;
 
 import java.awt.Shape;
-import javax.swing.Icon;
+import javax.swing.*;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @param <V> vertex type
@@ -23,8 +21,6 @@ import org.slf4j.LoggerFactory;
  */
 public class HeavyweightVertexRenderer<V, E> extends AbstractVertexRenderer<V, E>
     implements Renderer.Vertex<V, E> {
-
-  private static final Logger log = LoggerFactory.getLogger(HeavyweightVertexRenderer.class);
 
   protected Shape getVertexShape(RenderContext<V, E> renderContext, V vertex) {
     return renderContext.getVertexShapeFunction().apply(vertex);

@@ -9,13 +9,13 @@
  */
 package org.jungrapht.visualization.renderers;
 
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Shape;
+import java.awt.Stroke;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @param <V> vertex type
@@ -23,9 +23,6 @@ import org.slf4j.LoggerFactory;
  */
 public class HeavyweightVertexSelectionRenderer<V, E> extends HeavyweightVertexRenderer<V, E>
     implements Renderer.Vertex<V, E> {
-
-  private static final Logger log =
-      LoggerFactory.getLogger(HeavyweightVertexSelectionRenderer.class);
 
   private VisualizationServer<V, E> visualizationServer;
 
@@ -37,7 +34,6 @@ public class HeavyweightVertexSelectionRenderer<V, E> extends HeavyweightVertexR
       RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {
     int[] coords = new int[2];
     Shape shape = prepareFinalVertexShape(renderContext, visualizationModel, v, coords);
-    log.trace("shape bounds: {}", shape.getBounds());
     paintShapeForVertex(renderContext, v, shape);
   }
 

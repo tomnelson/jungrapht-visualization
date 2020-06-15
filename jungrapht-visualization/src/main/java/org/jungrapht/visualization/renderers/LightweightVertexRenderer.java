@@ -9,13 +9,11 @@
  */
 package org.jungrapht.visualization.renderers;
 
-import java.awt.*;
+import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.util.function.Function;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationModel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @param <V> vertex type
@@ -23,8 +21,6 @@ import org.slf4j.LoggerFactory;
  */
 public class LightweightVertexRenderer<V, E> extends AbstractVertexRenderer<V, E>
     implements Renderer.Vertex<V, E> {
-
-  private static final Logger log = LoggerFactory.getLogger(LightweightVertexRenderer.class);
 
   protected Function<V, Shape> simpleVertexShapeFunction =
       n -> new Ellipse2D.Float(-10.f, -10.f, 20, 20);
@@ -43,7 +39,7 @@ public class LightweightVertexRenderer<V, E> extends AbstractVertexRenderer<V, E
 
   /**
    * Paint <code>v</code>'s icon on <code>g</code> at <code>(x,y)</code>. Paints only the shape,
-   * unlike superclass
+   * unlike HeavyweightVertexRenderer, which will paint an icon if supplied
    *
    * @param v the vertex to be painted
    */

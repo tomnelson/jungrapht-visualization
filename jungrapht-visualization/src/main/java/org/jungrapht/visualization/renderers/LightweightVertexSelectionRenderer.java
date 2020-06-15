@@ -9,11 +9,11 @@
  */
 package org.jungrapht.visualization.renderers;
 
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Shape;
+import java.awt.Stroke;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @param <V> vertex type
@@ -21,9 +21,6 @@ import org.slf4j.LoggerFactory;
  */
 public class LightweightVertexSelectionRenderer<V, E> extends LightweightVertexRenderer<V, E>
     implements Renderer.Vertex<V, E> {
-
-  private static final Logger log =
-      LoggerFactory.getLogger(LightweightVertexSelectionRenderer.class);
 
   protected void paintShapeForVertex(RenderContext<V, E> renderContext, V v, Shape shape) {
     GraphicsDecorator g = renderContext.getGraphicsContext();
