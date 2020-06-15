@@ -12,17 +12,11 @@ package org.jungrapht.visualization.renderers;
 import static org.jungrapht.visualization.DefaultRenderContext.EDGE_WIDTH;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Path2D;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.util.function.Function;
 import org.jgrapht.Graph;
-import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.decorators.EdgeShape;
-import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.util.Context;
 
@@ -32,72 +26,6 @@ import org.jungrapht.visualization.util.Context;
  */
 public class LightweightEdgeRenderer<V, E> extends AbstractEdgeRenderer<V, E>
     implements Renderer.Edge<V, E> {
-
-  protected Shape prepareFinalEdgeShape(
-      RenderContext<V, E> renderContext,
-      VisualizationModel<V, E> visualizationModel,
-      E e,
-      int[] coords,
-      boolean[] loop) {
-    V v1 = visualizationModel.getGraph().getEdgeSource(e);
-    V v2 = visualizationModel.getGraph().getEdgeTarget(e);
-
-    org.jungrapht.visualization.layout.model.Point p1 =
-        visualizationModel.getLayoutModel().apply(v1);
-    Point p2 = visualizationModel.getLayoutModel().apply(v2);
-    Point2D p2d1 =
-        renderContext
-            .getMultiLayerTransformer()
-            .transform(MultiLayerTransformer.Layer.LAYOUT, p1.x, p1.y);
-    Point2D p2d2 =
-        renderContext
-            .getMultiLayerTransformer()
-            .transform(MultiLayerTransformer.Layer.LAYOUT, p2.x, p2.y);
-    float x1 = (float) p2d1.getX();
-    float y1 = (float) p2d1.getY();
-    float x2 = (float) p2d2.getX();
-    float y2 = (float) p2d2.getY();
-    coords[0] = (int) x1;
-    coords[1] = (int) y1;
-    coords[2] = (int) x2;
-    coords[3] = (int) y2;
-
-    boolean isLoop = loop[0] = v1.equals(v2);
-    Shape s2 = renderContext.getVertexShapeFunction().apply(v2);
-    // use LINE or ArticulatedLine for lightweight edges
-
-    Shape edgeShape =
-        getEdgeShape(renderContext.getEdgeShapeFunction(), e, visualizationModel.getGraph());
-
-    AffineTransform xform = AffineTransform.getTranslateInstance(x1, y1);
-
-    if (isLoop) {
-      // this is a self-loop. scale it is larger than the vertex
-      // it decorates and translate it so that its nadir is
-      // at the center of the vertex.
-      Rectangle2D s2Bounds = s2.getBounds2D();
-      xform.scale(s2Bounds.getWidth(), s2Bounds.getHeight());
-      xform.translate(0, -edgeShape.getBounds2D().getWidth() / 2);
-
-    } else {
-      // this is a normal edge. Rotate it to the angle between
-      // vertex endpoints, then scale it to the distance between
-      // the vertices
-      float dx = x2 - x1;
-      float dy = y2 - y1;
-      float thetaRadians = (float) Math.atan2(dy, dx);
-      xform.rotate(thetaRadians);
-      float dist = (float) Math.sqrt(dx * dx + dy * dy);
-      if (edgeShape instanceof Path2D) {
-        xform.scale(dist, dist);
-      } else {
-        xform.scale(dist, 1.0);
-      }
-    }
-    edgeShape = xform.createTransformedShape(edgeShape);
-
-    return edgeShape;
-  }
 
   /**
    * For the LightweightEdgeRenderer, we only want the default 'line' edge shape when the edge is
