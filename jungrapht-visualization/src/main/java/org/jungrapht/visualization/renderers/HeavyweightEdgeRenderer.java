@@ -13,6 +13,7 @@ import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 
 import java.awt.*;
 import java.awt.geom.*;
+import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
@@ -79,9 +80,7 @@ public class HeavyweightEdgeRenderer<V, E> extends AbstractEdgeRenderer<V, E>
     boolean isLoop = loop[0] = source.equals(target);
     Shape targetShape = renderContext.getVertexShapeFunction().apply(target);
     Shape edgeShape =
-        renderContext
-            .getEdgeShapeFunction()
-            .apply(Context.getInstance(visualizationModel.getGraph(), e));
+        getEdgeShape(renderContext.getEdgeShapeFunction(), e, visualizationModel.getGraph());
 
     AffineTransform xform = AffineTransform.getTranslateInstance(sourcePoint2DX, sourcePoint2DY);
 
@@ -153,6 +152,21 @@ public class HeavyweightEdgeRenderer<V, E> extends AbstractEdgeRenderer<V, E>
     edgeShape = xform.createTransformedShape(edgeShape);
 
     return edgeShape;
+  }
+
+  /**
+   * for the HeavyweightEdgeRenderer, we use whatever edge shape was provided by the
+   * edgeShapeFunction.
+   *
+   * @param edgeShapeFunction the visualization's edge shape
+   * @param edge the edge to render
+   * @param graph the graph for the function context
+   * @return the edgeShape specified by the edgeShapeFunction
+   */
+  @Override
+  protected Shape getEdgeShape(
+      Function<Context<Graph<V, E>, E>, Shape> edgeShapeFunction, E edge, Graph<V, E> graph) {
+    return edgeShapeFunction.apply(Context.getInstance(graph, edge));
   }
 
   /**

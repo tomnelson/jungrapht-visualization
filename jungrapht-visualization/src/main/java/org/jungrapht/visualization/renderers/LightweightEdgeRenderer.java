@@ -65,18 +65,9 @@ public class LightweightEdgeRenderer<V, E> extends AbstractEdgeRenderer<V, E>
     boolean isLoop = loop[0] = v1.equals(v2);
     Shape s2 = renderContext.getVertexShapeFunction().apply(v2);
     // use LINE or ArticulatedLine for lightweight edges
-    Shape edgeShape;
-    Function<Context<Graph<V, E>, E>, Shape> edgeShapeFunction =
-        renderContext.getEdgeShapeFunction();
-    if (edgeShapeFunction instanceof EdgeShape.ArticulatedLine) {
-      edgeShape =
-          renderContext
-              .getEdgeShapeFunction()
-              .apply(Context.getInstance(visualizationModel.getGraph(), e));
-    } else {
-      edgeShape =
-          EdgeShape.<V, E>line().apply(Context.getInstance(visualizationModel.getGraph(), e));
-    }
+
+    Shape edgeShape =
+        getEdgeShape(renderContext.getEdgeShapeFunction(), e, visualizationModel.getGraph());
 
     AffineTransform xform = AffineTransform.getTranslateInstance(x1, y1);
 
@@ -106,6 +97,25 @@ public class LightweightEdgeRenderer<V, E> extends AbstractEdgeRenderer<V, E>
     edgeShape = xform.createTransformedShape(edgeShape);
 
     return edgeShape;
+  }
+
+  /**
+   * For the LightweightEdgeRenderer, we only want the default 'line' edge shape when the edge is
+   * not an articulated edge
+   *
+   * @param edgeShapeFunction the visualization's edge shape function
+   * @param edge the edge to render
+   * @param graph the graph (for the function context)
+   * @return either a (lightweight) line edge or an articulated edge
+   */
+  @Override
+  protected Shape getEdgeShape(
+      Function<Context<Graph<V, E>, E>, Shape> edgeShapeFunction, E edge, Graph<V, E> graph) {
+    if (edgeShapeFunction instanceof EdgeShape.ArticulatedLine) {
+      return edgeShapeFunction.apply(Context.getInstance(graph, edge));
+    } else {
+      return EdgeShape.<V, E>line().apply(Context.getInstance(graph, edge));
+    }
   }
 
   /**
