@@ -46,8 +46,8 @@ import org.jungrapht.visualization.transform.shape.ViewLensSupport;
 
 /**
  * Demonstrates the use of <code>HyperbolicTransform</code> and <code>MagnifyTransform</code>
- * applied to either the model (graph layout) or the view (VisualizationViewer) The hyperbolic
- * transform is applied in an elliptical lens that affects that part of the visualization.
+ * applied to either the model (graph layout) or the view (VisualizationViewer) The transforms are
+ * applied in a rectangular lens that affects that part of the visualization.
  *
  * @author Tom Nelson
  */
