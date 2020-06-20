@@ -118,11 +118,12 @@ public class KKLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
 
   @Override
   public void visit(LayoutModel<V> layoutModel) {
+    super.visit(layoutModel);
     Graph<V, ?> graph = layoutModel.getGraph();
     if (graph == null || graph.vertexSet().isEmpty()) {
       return;
     }
-    super.visit(layoutModel);
+    //    super.visit(layoutModel);
 
     if (graph != null) {
       this.distance = getDistances(graph);
