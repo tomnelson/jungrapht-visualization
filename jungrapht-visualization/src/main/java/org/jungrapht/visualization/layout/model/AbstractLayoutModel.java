@@ -157,7 +157,10 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
       if (layoutAlgorithm instanceof Future) {
         this.theFuture = (Future) layoutAlgorithm;
       }
-      if (createVisRunnable && layoutAlgorithm instanceof IterativeLayoutAlgorithm) {
+      if (graph.vertexSet().size() > 0
+          && // don't create thread for empty graph
+          createVisRunnable
+          && layoutAlgorithm instanceof IterativeLayoutAlgorithm) {
         setRelaxing(true);
         // don't start a visRunner if the called has set threaded tp false
         setupVisRunner((IterativeLayoutAlgorithm) layoutAlgorithm);
