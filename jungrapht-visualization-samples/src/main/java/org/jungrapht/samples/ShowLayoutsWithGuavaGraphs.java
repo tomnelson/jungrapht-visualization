@@ -180,7 +180,7 @@ public class ShowLayoutsWithGuavaGraphs extends JPanel {
     JPanel jp = new ShowLayoutsWithGuavaGraphs();
 
     JFrame jf = new JFrame();
-    jf.setTitle("Guava Graph Visualization");
+    jf.setTitle(jp.getClass().getSimpleName());
     jf.getContentPane().add(jp);
     jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     jf.pack();

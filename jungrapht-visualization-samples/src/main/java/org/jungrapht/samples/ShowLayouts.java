@@ -197,6 +197,7 @@ public class ShowLayouts extends JPanel {
     JPanel jp = new ShowLayouts();
 
     JFrame jf = new JFrame();
+    jf.setTitle(jp.getClass().getSimpleName());
     jf.getContentPane().add(jp);
     jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     jf.pack();

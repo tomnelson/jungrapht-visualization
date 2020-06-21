@@ -9,18 +9,13 @@ package org.jungrapht.samples;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.Rectangle;
-import java.awt.Shape;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Ellipse2D;
+import java.awt.Paint;
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
+import org.jgrapht.alg.color.GreedyColoring;
+import org.jgrapht.alg.interfaces.VertexColoringAlgorithm;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.samples.spatial.RTreeVisualization;
@@ -30,9 +25,6 @@ import org.jungrapht.samples.util.LayoutHelper;
 import org.jungrapht.samples.util.SpanningTreeAdapter;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.annotations.MultiSelectedVertexPaintable;
-import org.jungrapht.visualization.decorators.EllipseShapeFunction;
-import org.jungrapht.visualization.decorators.IconShapeFunction;
 import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -42,9 +34,7 @@ import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TreeLayout;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.jungrapht.visualization.renderers.JLabelEdgeLabelRenderer;
-import org.jungrapht.visualization.renderers.JLabelVertexLabelRenderer;
-import org.jungrapht.visualization.util.IconCache;
+import org.jungrapht.visualization.util.GraphImage;
 
 /**
  * Demonstrates several of the graph layout algorithms. Allows the user to interactively select one
@@ -54,7 +44,7 @@ import org.jungrapht.visualization.util.IconCache;
  * @author Joshua O'Madadhain
  * @author Tom Nelson - extensive modification
  */
-public class ShowLayoutsWithImageIconVertices extends JPanel {
+public class ShowLayoutsWithGreedyVertexColoring extends JPanel {
 
   protected static Graph<String, Integer>[] graphArray;
   protected static int graphIndex;
@@ -68,14 +58,26 @@ public class ShowLayoutsWithImageIconVertices extends JPanel {
     "Little Graph",
     "Bipartite Graph"
   };
-
-  private static int LAYOUT_PREFERRED_WIDTH = 1200;
-  private static int LAYOUT_PREFERRED_HEIGHT = 1200;
+  Paint[] colorArray =
+      new Paint[] {
+        Color.red,
+        Color.green,
+        Color.blue,
+        Color.cyan,
+        Color.magenta,
+        Color.yellow,
+        Color.pink,
+        Color.gray,
+        Color.darkGray,
+        Color.lightGray,
+        Color.orange
+      };
 
   LayoutPaintable.BalloonRings balloonLayoutRings;
   LayoutPaintable.RadialRings radialLayoutRings;
+  VertexColoringAlgorithm.Coloring<String> coloring;
 
-  public ShowLayoutsWithImageIconVertices() {
+  public ShowLayoutsWithGreedyVertexColoring() {
 
     graphArray = new Graph[graphNames.length];
 
@@ -99,72 +101,15 @@ public class ShowLayoutsWithImageIconVertices extends JPanel {
     graphArray[7] = TestGraphs.getGeneratedBipartiteGraph();
 
     Graph<String, Integer> initialGraph = graphArray[3]; // initial graph
+    coloring = new GreedyColoring<>(initialGraph).getColoring();
 
     final VisualizationViewer<String, Integer> vv =
         VisualizationViewer.builder(initialGraph)
             .layoutAlgorithm(new KKLayoutAlgorithm<>())
-            .layoutSize(new Dimension(1200, 1200))
             .build();
 
-    IconCache<String> iconCache =
-        IconCache.<String>builder(n -> "<html>This<br>is a<br>multiline<br>label " + n + "</html>")
-            .vertexShapeFunction(vv.getRenderContext().getVertexShapeFunction())
-            .colorFunction(
-                n -> {
-                  if (vv.getVisualizationModel().getGraph().degreeOf(n) > 9) return Color.red;
-                  if (vv.getVisualizationModel().getGraph().degreeOf(n) < 7) return Color.green;
-                  return Color.lightGray;
-                })
-            .stylist(
-                (label, vertex, colorFunction) -> {
-                  label.setFont(new Font("Serif", Font.BOLD, 20));
-                  label.setForeground(Color.black);
-                  label.setBackground(Color.white);
-                  //                  label.setOpaque(true);
-                  Border lineBorder =
-                      BorderFactory.createEtchedBorder(); //Border(BevelBorder.RAISED);
-                  Border marginBorder = BorderFactory.createEmptyBorder(4, 4, 4, 4);
-                  label.setBorder(new CompoundBorder(lineBorder, marginBorder));
-                })
-            .preDecorator(
-                (graphics, vertex, labelBounds, vertexShapeFunction, colorFunction) -> {
-                  Color color = (Color) colorFunction.apply(vertex);
-                  color =
-                      new Color(
-                          color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha() / 4);
-                  // save off the old color
-                  Color oldColor = graphics.getColor();
-                  // fill the image background with white
-                  graphics.setPaint(Color.white);
-                  graphics.fill(labelBounds);
-
-                  Shape shape = vertexShapeFunction.apply(vertex);
-                  Rectangle shapeBounds = shape.getBounds();
-
-                  AffineTransform scale =
-                      AffineTransform.getScaleInstance(
-                          1.3 * labelBounds.width / shapeBounds.getWidth(),
-                          1.3 * labelBounds.height / shapeBounds.getHeight());
-                  AffineTransform translate =
-                      AffineTransform.getTranslateInstance(
-                          labelBounds.width / 2, labelBounds.height / 2);
-                  translate.concatenate(scale);
-                  shape = translate.createTransformedShape(shape);
-                  graphics.setColor(Color.pink);
-                  graphics.fill(shape);
-                  graphics.setColor(oldColor);
-                })
-            .build();
-
-    vv.getRenderContext().setVertexLabelRenderer(new JLabelVertexLabelRenderer(Color.cyan));
-    vv.getRenderContext().setEdgeLabelRenderer(new JLabelEdgeLabelRenderer(Color.cyan));
-
-    final IconShapeFunction<String> vertexImageShapeFunction =
-        new IconShapeFunction<>(new EllipseShapeFunction<>());
-    vertexImageShapeFunction.setIconFunction(iconCache);
-
-    vv.getRenderContext().setVertexShapeFunction(vertexImageShapeFunction);
-    vv.getRenderContext().setVertexIconFunction(iconCache);
+    vv.getRenderContext().setVertexLabelFunction(Object::toString);
+    vv.getRenderContext().setVertexFillPaintFunction(v -> colorArray[coloring.getColors().get(v)]);
 
     vv.setVertexToolTipFunction(
         vertex ->
@@ -174,12 +119,6 @@ public class ShowLayoutsWithImageIconVertices extends JPanel {
 
     setLayout(new BorderLayout());
     add(vv.getComponent(), BorderLayout.CENTER);
-
-    vv.addPostRenderPaintable(
-        MultiSelectedVertexPaintable.builder(vv)
-            .selectionPaint(Color.red)
-            .selectionStrokeMin(4.f)
-            .build());
 
     final JRadioButton animateLayoutTransition = new JRadioButton("Animate Layout Transition");
 
@@ -192,7 +131,7 @@ public class ShowLayoutsWithImageIconVertices extends JPanel {
         e ->
             SwingUtilities.invokeLater(
                 () -> {
-                  vv.getVisualizationModel().getLayoutModel().setPreferredSize(1200, 1200);
+                  vv.getVisualizationModel().getLayoutModel().setPreferredSize(600, 600);
                   vv.reset();
                   LayoutAlgorithm.Builder<String, ?, ?> builder =
                       layoutFunction.apply((String) jcb.getSelectedItem());
@@ -206,12 +145,12 @@ public class ShowLayoutsWithImageIconVertices extends JPanel {
                     LayoutModel<String> positionModel =
                         this.getTreeLayoutPositions(tree, layoutAlgorithm);
                     vv.getVisualizationModel().getLayoutModel().setInitializer(positionModel);
-                    layoutAlgorithm = new StaticLayoutAlgorithm();
+                    layoutAlgorithm = new StaticLayoutAlgorithm<>();
                   }
                   if (animateLayoutTransition.isSelected()) {
-                    LayoutAlgorithmTransition.animate(vv, layoutAlgorithm, vv::scaleToLayout);
+                    LayoutAlgorithmTransition.animate(vv, layoutAlgorithm);
                   } else {
-                    LayoutAlgorithmTransition.apply(vv, layoutAlgorithm, vv::scaleToLayout);
+                    LayoutAlgorithmTransition.apply(vv, layoutAlgorithm);
                   }
                   if (layoutAlgorithm instanceof BalloonLayoutAlgorithm) {
                     balloonLayoutRings =
@@ -243,35 +182,34 @@ public class ShowLayoutsWithImageIconVertices extends JPanel {
                   graphIndex = graphChooser.getSelectedIndex();
                   vv.getVertexSpatial().clear();
                   vv.getEdgeSpatial().clear();
-                  vv.getVisualizationModel().getLayoutModel().setSize(1200, 1200);
+                  vv.getVisualizationModel().getLayoutModel().setSize(600, 600);
                   vv.reset();
                   vv.getVisualizationModel().setGraph(graphArray[graphIndex]);
-                  vv.getRenderContext()
-                      .setVertexShapeFunction(
-                          v -> {
-                            int size = Math.max(5, 2 * graphArray[graphIndex].degreeOf(v));
-                            return new Ellipse2D.Float(-size / 2.f, -size / 2.f, size, size);
-                          });
+                  coloring = new GreedyColoring<>(graphArray[graphIndex]).getColoring();
                 }));
 
     JButton showRTree = new JButton("Show RTree");
     showRTree.addActionListener(e -> RTreeVisualization.showRTree(vv));
+
+    JButton imageButton = new JButton("Save Image");
+    imageButton.addActionListener(e -> GraphImage.capture(vv));
 
     topControls.add(jcb);
     topControls.add(graphChooser);
     bottomControls.add(animateLayoutTransition);
     bottomControls.add(ControlHelpers.getZoomControls("Zoom", vv));
     bottomControls.add(showRTree);
+    bottomControls.add(imageButton);
   }
 
   LayoutModel getTreeLayoutPositions(Graph tree, LayoutAlgorithm treeLayout) {
-    LayoutModel model = LayoutModel.builder().size(1200, 1200).graph(tree).build();
+    LayoutModel model = LayoutModel.builder().size(600, 600).graph(tree).build();
     model.accept(treeLayout);
     return model;
   }
 
   public static void main(String[] args) {
-    JPanel jp = new ShowLayoutsWithImageIconVertices();
+    JPanel jp = new ShowLayoutsWithGreedyVertexColoring();
 
     JFrame jf = new JFrame();
     jf.setTitle(jp.getClass().getSimpleName());

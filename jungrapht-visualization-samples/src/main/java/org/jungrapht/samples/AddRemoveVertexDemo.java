@@ -30,7 +30,7 @@ public class AddRemoveVertexDemo extends JPanel {
 
   private static final Logger log = LoggerFactory.getLogger(AddRemoveVertexDemo.class);
 
-  private static final int MAX_VERTICES = 10;
+  private static final int MAX_VERTICES = 30;
 
   private Graph<Number, Number> graph;
 
