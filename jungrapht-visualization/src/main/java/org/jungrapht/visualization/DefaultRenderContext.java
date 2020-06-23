@@ -102,9 +102,7 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
 
   // edge label visual property symbols
   private static final String EDGE_LABEL_FONT = PREFIX + "edgeLabelFont";
-  private static final String DIRECTED_EDGE_LABEL_CLOSENESS = PREFIX + "directedEdgeLabelCloseness";
-  private static final String UNDIRECTED_EDGE_LABEL_CLOSENESS =
-      PREFIX + "undirectedEdgeLabelCloseness";
+  private static final String EDGE_LABEL_CLOSENESS = PREFIX + "edgeLabelCloseness";
 
   // edge arrow visual property symbols
   private static final String ARROW_STYLE = PREFIX + "arrowStyle";
@@ -234,11 +232,8 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
 
   protected Predicate<E> edgeIncludePredicate = n -> true;
 
-  private static final float directedEdgeLabelCloseness =
-      Float.parseFloat(System.getProperty(DIRECTED_EDGE_LABEL_CLOSENESS, "0.65f"));
-  private static final float undirectedEdgeLabelCloseness =
-      Float.parseFloat(System.getProperty(UNDIRECTED_EDGE_LABEL_CLOSENESS, "0.65f"));
-  protected float edgeLabelCloseness; // will be set depending on graph type
+  private float edgeLabelCloseness =
+      Float.parseFloat(System.getProperty(EDGE_LABEL_CLOSENESS, "0.65f"));
 
   protected Function<Context<Graph<V, E>, E>, Shape> edgeShapeFunction;
 
@@ -288,11 +283,9 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
           ArrowFactory.getNotchedArrow(
               edgeArrowWidth, edgeArrowLength, (int) (edgeArrowLength * edgeArrowNotchDepth));
       this.renderEdgeArrow = true;
-      this.edgeLabelCloseness = directedEdgeLabelCloseness;
     } else {
       this.edgeArrow = ArrowFactory.getWedgeArrow(edgeArrowWidth, edgeArrowLength);
       this.renderEdgeArrow = arrowsOnUndirectedEdges;
-      this.edgeLabelCloseness = undirectedEdgeLabelCloseness;
     }
   }
 

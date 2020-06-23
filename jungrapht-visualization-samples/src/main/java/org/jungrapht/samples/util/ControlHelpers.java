@@ -12,7 +12,12 @@ import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.control.ScalingControl;
 
-/** @author Tom Nelson */
+/**
+ * helpers for sample demos. Not included/supported in jungrapht-visualization jar Copy and modify
+ * at will for use in other applications.
+ *
+ * @author Tom Nelson
+ */
 public class ControlHelpers {
 
   public static JComponent getZoomControls(String title, VisualizationServer vv) {

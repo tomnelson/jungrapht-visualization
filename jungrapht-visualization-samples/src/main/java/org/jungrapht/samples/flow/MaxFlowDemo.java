@@ -17,7 +17,7 @@ import org.jungrapht.visualization.renderers.Renderer;
 
 /**
  * Demo of the EdmondsKarp Max Flow algorithm applied to a graph with a capacity property as edge
- * weight
+ * weight.
  */
 public class MaxFlowDemo {
 
@@ -28,17 +28,16 @@ public class MaxFlowDemo {
     SugiyamaLayoutAlgorithm<MyNode, MyLink> layoutAlgorithm =
         SugiyamaLayoutAlgorithm.<MyNode, MyLink>edgeAwareBuilder().build();
 
-    // the SugiyamaLayoutAlgorithm needs the RenderContext so that it
-    // can access the Vertex sizes, and so it can set the EdgeShape to
-    // Articulated edges.
+    // the SugiyamaLayoutAlgorithm needs the Vertex sizes
     layoutAlgorithm.setVertexShapeFunction(vv.getRenderContext().getVertexShapeFunction());
+    // The SugiyamaLayoutAlgorithm needs to be able to set the EdgeShape Function for Articulated edges.
     layoutAlgorithm.setEdgeShapeFunctionConsumer(vv.getRenderContext()::setEdgeShapeFunction);
     vv.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm);
 
     vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
     vv.getRenderContext().setVertexLabelDrawPaintFunction(v -> Color.white);
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
-    // the edge shape set here will be changed to EdgeShape.ArticulatedLine by the LayoutAlgorithm
+    // even though the edge shape is set here, it will be changed to EdgeShape.ArticulatedLine by the LayoutAlgorithm
     vv.getRenderContext().setEdgeShapeFunction(new EdgeShape.QuadCurve<>());
 
     Map<MyLink, Double> edgeFlowMap = new HashMap<>();
@@ -56,6 +55,8 @@ public class MaxFlowDemo {
 
     vv.getRenderContext()
         .setEdgeLabelFunction(e -> edgeFlowMap.get(e).intValue() + "/" + (int) e.capacity);
+    vv.setEdgeToolTipFunction(
+        e -> "Flow:" + edgeFlowMap.get(e).intValue() + " / Capacity:" + (int) e.capacity);
 
     // create a frame to hold the graph visualization
     final JFrame frame = new JFrame();

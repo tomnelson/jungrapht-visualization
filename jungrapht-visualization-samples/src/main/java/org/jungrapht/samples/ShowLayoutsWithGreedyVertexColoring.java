@@ -37,12 +37,9 @@ import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.util.GraphImage;
 
 /**
- * Demonstrates several of the graph layout algorithms. Allows the user to interactively select one
- * of several graphs, and one of several layouts, and visualizes the combination.
+ * Demonstrates graph vertex coloring for several {@link Graph}s and {@link LayoutAlgorithm}s.
  *
- * @author Danyel Fisher
- * @author Joshua O'Madadhain
- * @author Tom Nelson - extensive modification
+ * @author Tom Nelson
  */
 public class ShowLayoutsWithGreedyVertexColoring extends JPanel {
 

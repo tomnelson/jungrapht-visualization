@@ -47,12 +47,10 @@ import org.jungrapht.visualization.renderers.JLabelVertexLabelRenderer;
 import org.jungrapht.visualization.util.IconCache;
 
 /**
- * Demonstrates several of the graph layout algorithms. Allows the user to interactively select one
- * of several graphs, and one of several layouts, and visualizes the combination.
+ * Demonstrates the use of {@link ImageIcon}s for vertices. Several {@link Graph}s and several
+ * {@link LayoutAlgorithm}s may be selected.
  *
- * @author Danyel Fisher
- * @author Joshua O'Madadhain
- * @author Tom Nelson - extensive modification
+ * @author Tom Nelson
  */
 public class ShowLayoutsWithImageIconVertices extends JPanel {
 

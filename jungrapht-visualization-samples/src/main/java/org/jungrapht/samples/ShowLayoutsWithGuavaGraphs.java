@@ -33,8 +33,9 @@ import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 
 /**
- * Demonstrates several of the graph layout algorithms. Allows the user to interactively select one
- * of several guava common-graph Graphs, and one of several layouts, and visualizes the combination.
+ * Demo that visualizes {@link com.google.common.graph.Graph}s. Demonstrates several of the graph
+ * layout algorithms. Allows the user to interactively select one of several Graphs, and one of
+ * several layouts, and visualizes the combination.
  *
  * @author Tom Nelson
  */
