@@ -45,7 +45,13 @@ import org.jungrapht.visualization.transform.shape.MagnifyImageLensSupport;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
 import org.jungrapht.visualization.util.IconCache;
 
-/** @author Tom Nelson */
+/**
+ * Displays a graph using multi-line JLabel images as vertices. The Magnifier will magnify the
+ * images in the lens. Multiple vertex selection (CTRL mouse button 1 drag) will trace an arbitrary
+ * shape (instead of a Rectangle) and vertices within the shape will be selected
+ *
+ * @author Tom Nelson
+ */
 public class LensVertexImageFromLabelShaperDemo extends JPanel {
 
   /** */
@@ -66,11 +72,11 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
     Dimension viewSize = new Dimension(600, 600);
 
     setLayout(new BorderLayout());
-    // create a simple graph for the demo
+
     graph = TestGraphs.getOneComponentGraph();
 
-    FRLayoutAlgorithm<String> layoutAlgorithm = new FRLayoutAlgorithm<>();
-    layoutAlgorithm.setMaxIterations(100);
+    FRLayoutAlgorithm<String> layoutAlgorithm =
+        FRLayoutAlgorithm.<String>builder().maxIterations(100).build();
 
     final DefaultGraphMouse<String, Integer> graphMouse = new DefaultGraphMouse<>();
     graphMouse.setMultiSelectionStrategy(MultiSelectionStrategy.arbitrary());

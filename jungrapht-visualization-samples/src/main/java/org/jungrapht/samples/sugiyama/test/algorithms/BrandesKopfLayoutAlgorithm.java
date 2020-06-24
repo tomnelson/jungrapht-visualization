@@ -15,7 +15,6 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import org.jgrapht.Graph;
-import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.EdgeAwareLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -140,10 +139,9 @@ public class BrandesKopfLayoutAlgorithm<V, E>
   protected Function<V, Shape> vertexShapeFunction;
   Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer;
   protected boolean expandLayout;
-  protected RenderContext<V, E> renderContext;
-  Runnable after;
-  int horizontalOffset = Integer.getInteger(PREFIX + "mincross.horizontalOffset", 50);
-  int verticalOffset = Integer.getInteger(PREFIX + "mincross.verticalOffset", 50);
+  protected Runnable after;
+  protected int horizontalOffset = Integer.getInteger(PREFIX + "mincross.horizontalOffset", 50);
+  protected int verticalOffset = Integer.getInteger(PREFIX + "mincross.verticalOffset", 50);
   boolean doUpLeft;
   boolean doDownLeft;
   boolean doUpRight;
@@ -265,7 +263,7 @@ public class BrandesKopfLayoutAlgorithm<V, E>
     Map<Integer, Integer> rowWidthMap = new HashMap<>();
     Map<Integer, Integer> rowMaxHeightMap = new HashMap<>();
     int layerIndex = 0;
-    Function<V, Shape> vertexShapeFunction = renderContext.getVertexShapeFunction();
+    //    Function<V, Shape> vertexShapeFunction = renderContext.getVertexShapeFunction();
     int totalHeight = 0;
     int totalWidth = 0;
     for (List<LV<V>> layer : layers) {
@@ -344,7 +342,7 @@ public class BrandesKopfLayoutAlgorithm<V, E>
     edgeShape.setEdgeArticulationFunction(
         e -> edgePointMap.getOrDefault(e, Collections.emptyList()));
 
-    renderContext.setEdgeShapeFunction(edgeShape);
+    edgeShapeConsumer.accept(edgeShape);
 
     svGraph.vertexSet().forEach(v -> layoutModel.set(v.getVertex(), v.getPoint()));
     after.run();

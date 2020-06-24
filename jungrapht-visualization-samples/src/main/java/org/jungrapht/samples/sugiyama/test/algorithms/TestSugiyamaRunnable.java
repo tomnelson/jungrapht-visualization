@@ -17,6 +17,7 @@ import java.util.LongSummaryStatistics;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import org.jgrapht.alg.util.NeighborCache;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.AllLevelCross;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.ArticulatedEdge;
@@ -124,6 +125,7 @@ public class TestSugiyamaRunnable<V, E> extends SugiyamaRunnable<V, E> implement
     long startTime = System.currentTimeMillis();
     TransformedGraphSupplier<V, E> transformedGraphSupplier = new TransformedGraphSupplier(graph);
     this.svGraph = transformedGraphSupplier.get();
+    this.neighborCache = new NeighborCache<>(svGraph);
     long transformTime = System.currentTimeMillis();
     log.trace("transform Graph took {}", (transformTime - startTime));
 

@@ -48,11 +48,7 @@ import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
 import org.jungrapht.visualization.util.GraphImage;
 
 /**
- * Demonstrates the use of images to represent graph vertices. The images are added to the
- * DefaultGraphLabelRenderer and can either be offset from the vertex, or centered on the vertex.
- * Additionally, the relative positioning of the label and image is controlled by subclassing the
- * DefaultGraphLabelRenderer and setting the appropriate properties on its JLabel superclass
- * FancyGraphLabelRenderer
+ * Demonstrates the use of images to represent graph vertices.
  *
  * <p>The images used in this demo (courtesy of slashdot.org) are rectangular but with a transparent
  * background. When vertices are represented by these images, it looks better if the actual shape of
