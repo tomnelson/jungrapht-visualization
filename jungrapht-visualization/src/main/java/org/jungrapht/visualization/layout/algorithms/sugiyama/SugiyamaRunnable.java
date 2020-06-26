@@ -269,6 +269,11 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     long cycles = System.currentTimeMillis();
     log.trace("remove cycles took {}", (cycles - transformTime));
 
+    // check for interrupted before layering
+    if (Thread.currentThread().isInterrupted()) {
+      log.info("interrupted before layering");
+      return;
+    }
     List<List<LV<V>>> layers;
     switch (layering) {
       case NETWORK_SIMPLEX:
@@ -330,6 +335,10 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     int lowestCrossCount = Integer.MAX_VALUE;
     // order the ranks
     for (int i = 0; i < maxLevelCross; i++) {
+      if (Thread.currentThread().isInterrupted()) {
+        log.info("interrupted in level cross");
+        return;
+      }
       if (i % 2 == 0) {
         medianDownwards(layersArray, svGraph);
         if (transpose) transposeDownwards(layersArray, edgesKeyedOnTarget);
@@ -390,6 +399,10 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     GraphLayers.checkLayers(layersArray);
     Map<LV<V>, Point> vertexPointMap = new HashMap<>();
 
+    if (Thread.currentThread().isInterrupted()) {
+      log.info("interrupted before compaction");
+      return;
+    }
     if (straightenEdges) {
       HorizontalCoordinateAssignment<V, E> horizontalCoordinateAssignment =
           new HorizontalCoordinateAssignment<>(

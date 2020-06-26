@@ -229,6 +229,10 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     long cycles = System.currentTimeMillis();
     log.trace("remove cycles took {}", (cycles - transformTime));
 
+    if (Thread.currentThread().isInterrupted()) {
+      log.info("interrupted before layering");
+      return;
+    }
     List<List<LV<V>>> layers;
     switch (layering) {
       case LONGEST_PATH:
@@ -274,6 +278,10 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     int bestCrossCount = Integer.MAX_VALUE;
     Graph<LV<V>, Integer> bestCompactionGraph = null;
     for (int i = 0; i < maxLevelCross; i++) {
+      if (Thread.currentThread().isInterrupted()) {
+        log.info("interrupted in level cross");
+        return;
+      }
       if (i % 2 == 0) {
         int sweepCrossCount = stepsForward.sweep(layersArray);
         Graph<LV<V>, Integer> compactionGraph = stepsForward.compactionGraph;
@@ -326,6 +334,11 @@ public class EiglspergerRunnable<V, E> implements Runnable {
         value[j].setIndex(j);
       }
     }
+    if (Thread.currentThread().isInterrupted()) {
+      log.info("interrupted before compaction");
+      return;
+    }
+
     if (straightenEdges) {
       HorizontalCoordinateAssignment<V, E> horizontalCoordinateAssignment =
           new HorizontalCoordinateAssignment<>(
