@@ -59,7 +59,6 @@ public class MinimumSpanningTreeDemo extends JPanel {
 
   Dimension preferredSize = new Dimension(300, 300);
   Dimension preferredSizeRect = new Dimension(1100, 300);
-  Dimension viewSizeRect = new Dimension(1100, 300);
 
   /** create an instance of a simple graph in two views with controls to demo the zoom features. */
   public MinimumSpanningTreeDemo() {
@@ -72,7 +71,8 @@ public class MinimumSpanningTreeDemo extends JPanel {
     tree = SpanningTreeAdapter.getSpanningTree(graph);
 
     LayoutAlgorithm<String> kkLayoutAlgorithm = new KKLayoutAlgorithm<>();
-    LayoutAlgorithm<String> treeLayoutAlgorithm = new TreeLayoutAlgorithm<>();
+    LayoutAlgorithm<String> treeLayoutAlgorithm =
+        TreeLayoutAlgorithm.<String>builder().expandLayout(false).build();
     LayoutAlgorithm<String> staticLayoutAlgorithm = new StaticLayoutAlgorithm<>();
 
     // create the models, each with a different layout
@@ -92,7 +92,7 @@ public class MinimumSpanningTreeDemo extends JPanel {
         VisualizationModel.builder(graph)
             .layoutAlgorithm(staticLayoutAlgorithm)
             .initializer(vm1.getLayoutModel())
-            .layoutSize(vm1.getLayoutSize())
+            .layoutSize(preferredSizeRect)
             .build();
 
     // create a GraphMouse for each view
@@ -103,8 +103,8 @@ public class MinimumSpanningTreeDemo extends JPanel {
     // create the two views, one for each model
     // they share the same renderer
     vv0 = VisualizationViewer.builder(vm0).graphMouse(gm0).viewSize(preferredSize).build();
-    vv1 = VisualizationViewer.builder(vm1).graphMouse(gm1).viewSize(viewSizeRect).build();
-    vv2 = VisualizationViewer.builder(vm2).graphMouse(gm2).viewSize(viewSizeRect).build();
+    vv1 = VisualizationViewer.builder(vm1).graphMouse(gm1).viewSize(preferredSizeRect).build();
+    vv2 = VisualizationViewer.builder(vm2).graphMouse(gm2).viewSize(preferredSizeRect).build();
 
     vv1.getRenderContext()
         .setMultiLayerTransformer(vv0.getRenderContext().getMultiLayerTransformer());
