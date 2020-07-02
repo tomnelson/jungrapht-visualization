@@ -46,10 +46,10 @@ public class SatelliteScalingGraphMousePlugin extends ScalingGraphMousePlugin {
         int amount = e.getWheelRotation();
 
         if (amount < 0) {
-          scaler.scale(vvMaster, in, vvMaster.getCenter());
+          scaler.scale(vvMaster, in, in, vvMaster.getCenter());
 
         } else if (amount > 0) {
-          scaler.scale(vvMaster, out, vvMaster.getCenter());
+          scaler.scale(vvMaster, out, out, vvMaster.getCenter());
         }
         e.consume();
         vv.repaint();

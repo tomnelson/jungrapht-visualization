@@ -28,9 +28,9 @@ public class ControlHelpers {
 
     final ScalingControl scaler = new CrossoverScalingControl();
     JButton plus = new JButton("+");
-    plus.addActionListener(e -> scaler.scale(vv, 1.1f, vv.getCenter()));
+    plus.addActionListener(e -> scaler.scale(vv, 1.1f, 1.1f, vv.getCenter()));
     JButton minus = new JButton("-");
-    minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
+    minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, 1 / 1.1f, vv.getCenter()));
 
     JPanel zoomPanel = new JPanel();
     zoomPanel.add(plus);
@@ -49,9 +49,9 @@ public class ControlHelpers {
 
     final ScalingControl scaler = new CrossoverScalingControl();
     JButton plus = new JButton("+");
-    plus.addActionListener(e -> scaler.scale(vv, 1.1f, vv.getCenter()));
+    plus.addActionListener(e -> scaler.scale(vv, 1.1f, 1.1f, vv.getCenter()));
     JButton minus = new JButton("-");
-    minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, vv.getCenter()));
+    minus.addActionListener(e -> scaler.scale(vv, 1 / 1.1f, 1 / 1.1f, vv.getCenter()));
 
     JPanel zoomPanel = new JPanel(buttonContainerLayoutManager);
     zoomPanel.add(plus);

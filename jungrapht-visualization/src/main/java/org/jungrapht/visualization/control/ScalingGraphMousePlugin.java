@@ -11,11 +11,14 @@
  */
 package org.jungrapht.visualization.control;
 
+import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
 import org.jungrapht.visualization.VisualizationViewer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * ScalingGraphMouse applies a scaling transformation to the graph layout. The Vertices get closer
@@ -26,6 +29,8 @@ import org.jungrapht.visualization.VisualizationViewer;
  */
 public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
     implements MouseWheelListener {
+
+  private static final Logger log = LoggerFactory.getLogger(ScalingGraphMousePlugin.class);
 
   /** the amount to zoom in by */
   protected float in = 1.1f;
@@ -54,28 +59,44 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
   }
 
   public boolean checkModifiers(MouseEvent e) {
-    return e.getModifiersEx() == modifiers || (e.getModifiersEx() & modifiers) != 0;
+    return e.getModifiersEx() == modifiers
+        || (e.getModifiersEx() & modifiers) != 0
+        || e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK
+        || e.getModifiersEx() == InputEvent.ALT_DOWN_MASK;
   }
 
   /** zoom the display in or out, depending on the direction of the mouse wheel motion. */
   public void mouseWheelMoved(MouseWheelEvent e) {
     boolean accepted = checkModifiers(e);
     if (accepted) {
+      float xin = in;
+      float yin = in;
+      float xout = out;
+      float yout = out;
+      // check for single axis
+      if ((e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) == InputEvent.CTRL_DOWN_MASK) {
+        // only scale x axis,
+        yin = yout = 1.0f;
+      }
+      if ((e.getModifiersEx() & InputEvent.ALT_DOWN_MASK) == InputEvent.ALT_DOWN_MASK) {
+        // only scroll y axis
+        xin = xout = 1.0f;
+      }
       VisualizationViewer vv = (VisualizationViewer) e.getSource();
       Point2D mouse = e.getPoint();
       Point2D center = vv.getCenter();
       int amount = e.getWheelRotation();
       if (zoomAtMouse) {
         if (amount < 0) {
-          scaler.scale(vv, in, mouse);
+          scaler.scale(vv, xin, yin, mouse);
         } else if (amount > 0) {
-          scaler.scale(vv, out, mouse);
+          scaler.scale(vv, xout, yout, mouse);
         }
       } else {
         if (amount < 0) {
-          scaler.scale(vv, in, center);
+          scaler.scale(vv, xin, yin, center);
         } else if (amount > 0) {
-          scaler.scale(vv, out, center);
+          scaler.scale(vv, xout, yout, center);
         }
       }
       e.consume();

@@ -27,10 +27,12 @@ public class AbsoluteCrossoverScalingControl extends CrossoverScalingControl
    *
    * @param vv the VisualizationServer used for rendering; provides the layout and view
    *     transformers.
-   * @param amount the amount by which to scale
+   * @param horizontalAmount the horizontal amount by which to scale
+   * @param verticalAmount the vertical amount by which to scale
    * @param at the point of reference for scaling
    */
-  public void scale(VisualizationServer<?, ?> vv, double amount, Point2D at) {
+  public void scale(
+      VisualizationServer<?, ?> vv, double horizontalAmount, double verticalAmount, Point2D at) {
     MutableTransformer layoutTransformer =
         vv.getRenderContext()
             .getMultiLayerTransformer()
@@ -53,6 +55,6 @@ public class AbsoluteCrossoverScalingControl extends CrossoverScalingControl
     layoutTransformer.scale(inverseModelScale, inverseModelScale, transformedAt);
     viewTransformer.scale(inverseViewScale, inverseViewScale, at);
 
-    super.scale(vv, amount, at);
+    super.scale(vv, horizontalAmount, verticalAmount, at);
   }
 }
