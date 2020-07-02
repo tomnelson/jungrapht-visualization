@@ -441,7 +441,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
           "scaling with {} {}", (widthRatio < heightRatio ? "widthRatio" : "heightRatio"), ratio);
       log.debug("vd.getWidth() {} ld.getWidth() {} ", vd.getWidth(), ld.getWidth());
       log.debug("vd.getHeight() {} ld.getHeight() {} ", vd.getHeight(), ld.getHeight());
-      scaler.scale(this, (float) (ratio), new Point2D.Double());
+      scaler.scale(this, (float) ratio, (float) ratio, new Point2D.Double());
       log.trace("center of view is " + this.getCenter());
       log.trace(
           "center of layout is "
