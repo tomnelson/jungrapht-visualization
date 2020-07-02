@@ -88,18 +88,7 @@ public class CrossoverScalingControl implements ScalingControl {
       viewTransformer.scale(inverseViewScaleX, inverseViewScaleY, at);
     } else if ((horizontalAmount != 1.0 && scaleX * horizontalAmount < crossover)
         || (verticalAmount != 1.0 && scaleY * verticalAmount < crossover)) {
-      // scale the viewTransformer, return the layoutTransformer to sqrt crossover value
-      //      double amount = Math.min(horizontalAmount, verticalAmount);
-      //      double amount = horizontalAmount;
-      //      if (horizontalAmount == 1.0) {
-      //        amount = verticalAmount;
-      //      }
-      //      viewTransformer.scale(amount, amount, at);
       viewTransformer.scale(horizontalAmount, verticalAmount, at);
-      log.info(
-          "returning the layoutTransformer based on hs {} and vs {}",
-          horizontalAmount,
-          verticalAmount);
       layoutTransformer.scale(inverseModelScaleX, inverseModelScaleY, transformedAt);
     } else {
       // scale the layoutTransformer, return the viewTransformer to crossover value
@@ -108,41 +97,4 @@ public class CrossoverScalingControl implements ScalingControl {
     }
     vv.repaint();
   }
-
-  //  public void scale(VisualizationServer<?, ?> vv, double amount, Point2D at) {
-  //
-  //    MutableTransformer layoutTransformer =
-  //        vv.getRenderContext()
-  //            .getMultiLayerTransformer()
-  //            .getTransformer(MultiLayerTransformer.Layer.LAYOUT);
-  //    MutableTransformer viewTransformer =
-  //        vv.getRenderContext()
-  //            .getMultiLayerTransformer()
-  //            .getTransformer(MultiLayerTransformer.Layer.VIEW);
-  //    double modelScale = layoutTransformer.getScale();
-  //    double viewScale = viewTransformer.getScale();
-  //    double inverseModelScale = Math.sqrt(crossover) / modelScale;
-  //    double inverseViewScale = Math.sqrt(crossover) / viewScale;
-  //    double scale = modelScale * viewScale;
-  //
-  //    Point2D transformedAt =
-  //        vv.getRenderContext()
-  //            .getMultiLayerTransformer()
-  //            .inverseTransform(MultiLayerTransformer.Layer.VIEW, at);
-  //
-  //    if ((scale * amount - crossover) * (scale * amount - crossover) < 0.001) {
-  //      // close to the control point, return both Functions to a scale of sqrt crossover value
-  //      layoutTransformer.scale(inverseModelScale, inverseModelScale, transformedAt);
-  //      viewTransformer.scale(inverseViewScale, inverseViewScale, at);
-  //    } else if (scale * amount < crossover) {
-  //      // scale the viewTransformer, return the layoutTransformer to sqrt crossover value
-  //      viewTransformer.scale(amount, amount, at);
-  //      layoutTransformer.scale(inverseModelScale, inverseModelScale, transformedAt);
-  //    } else {
-  //      // scale the layoutTransformer, return the viewTransformer to crossover value
-  //      layoutTransformer.scale(amount, amount, transformedAt);
-  //      viewTransformer.scale(inverseViewScale, inverseViewScale, at);
-  //    }
-  //    vv.repaint();
-  //  }
 }

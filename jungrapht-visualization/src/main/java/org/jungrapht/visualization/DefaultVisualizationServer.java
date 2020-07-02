@@ -437,17 +437,21 @@ class DefaultVisualizationServer<V, E> extends JPanel
       double widthRatio = vd.getWidth() / ld.getWidth();
       double heightRatio = vd.getHeight() / ld.getHeight();
       double ratio = Math.min(widthRatio, heightRatio);
-      log.debug(
-          "scaling with {} {}", (widthRatio < heightRatio ? "widthRatio" : "heightRatio"), ratio);
-      log.debug("vd.getWidth() {} ld.getWidth() {} ", vd.getWidth(), ld.getWidth());
-      log.debug("vd.getHeight() {} ld.getHeight() {} ", vd.getHeight(), ld.getHeight());
+      if (log.isTraceEnabled()) {
+        log.trace(
+            "scaling with {} {}", (widthRatio < heightRatio ? "widthRatio" : "heightRatio"), ratio);
+        log.trace("vd.getWidth() {} ld.getWidth() {} ", vd.getWidth(), ld.getWidth());
+        log.trace("vd.getHeight() {} ld.getHeight() {} ", vd.getHeight(), ld.getHeight());
+      }
       scaler.scale(this, (float) ratio, (float) ratio, new Point2D.Double());
-      log.trace("center of view is " + this.getCenter());
-      log.trace(
-          "center of layout is "
-              + visualizationModel.getLayoutModel().getWidth() / 2
-              + ", "
-              + visualizationModel.getLayoutModel().getHeight() / 2);
+      if (log.isTraceEnabled()) {
+        log.trace("center of view is " + this.getCenter());
+        log.trace(
+            "center of layout is "
+                + visualizationModel.getLayoutModel().getWidth() / 2
+                + ", "
+                + visualizationModel.getLayoutModel().getHeight() / 2);
+      }
       Point2D centerOfView = this.getCenter();
       // transform to layout coords
       Point2D viewCenterOnLayout =

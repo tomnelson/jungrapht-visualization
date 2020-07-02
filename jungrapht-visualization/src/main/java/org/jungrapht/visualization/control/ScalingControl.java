@@ -13,15 +13,17 @@ import org.jungrapht.visualization.VisualizationServer;
 
 public interface ScalingControl {
 
-  //  /**
-  //   * zoom the display in or out
-  //   *
-  //   * @param vv the VisualizationViewer
-  //   * @param amount how much to adjust scale by
-  //   * @param at where to adjust scale from
-  //   */
-  //  @Deprecated
-  //  void scale(VisualizationServer<?, ?> vv, double amount, Point2D at);
+  /**
+   * zoom the display in or out
+   *
+   * @param vv the VisualizationViewer
+   * @param amount how much to adjust scale by
+   * @param at where to adjust scale from
+   */
+  @Deprecated
+  default void scale(VisualizationServer<?, ?> vv, double amount, Point2D at) {
+    scale(vv, amount, amount, at);
+  }
 
   /**
    * zoom the display in or out

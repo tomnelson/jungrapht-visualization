@@ -59,11 +59,6 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
   }
 
   public boolean checkModifiers(MouseEvent e) {
-    //    log.info("e.getModifiersEx() == {}", e.getModifiersEx());
-    //    log.info("modifiers == {}", modifiers);
-    //    log.info("InputEvent.CTRL_DOWN_MASK == {}", InputEvent.CTRL_DOWN_MASK);
-    //    log.info("InputEvent.ALT_DOWN_MASK == {}", InputEvent.ALT_DOWN_MASK);
-    //    log.info("(e.getModifiersEx() & modifiers) == {}", ((e.getModifiersEx() & modifiers)));
     return e.getModifiersEx() == modifiers
         || (e.getModifiersEx() & modifiers) != 0
         || e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK
@@ -82,12 +77,10 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
       if ((e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) == InputEvent.CTRL_DOWN_MASK) {
         // only scale x axis,
         yin = yout = 1.0f;
-        log.info("scale x only");
       }
       if ((e.getModifiersEx() & InputEvent.ALT_DOWN_MASK) == InputEvent.ALT_DOWN_MASK) {
         // only scroll y axis
         xin = xout = 1.0f;
-        log.info("scale y only");
       }
       VisualizationViewer vv = (VisualizationViewer) e.getSource();
       Point2D mouse = e.getPoint();
