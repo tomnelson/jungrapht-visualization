@@ -13,6 +13,11 @@ import org.jungrapht.visualization.VisualizationServer;
 
 public interface ScalingControl {
 
+  enum Axis {
+    XY,
+    X,
+    Y
+  }
   /**
    * zoom the display in or out
    *

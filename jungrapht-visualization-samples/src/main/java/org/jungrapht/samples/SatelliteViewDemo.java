@@ -66,7 +66,10 @@ public class SatelliteViewDemo extends JPanel {
           + "<ul>"
           + "<li>Mousewheel scales with a crossover value of 1.0.<p>"
           + "     - scales the graph layout when the combined scale is greater than 1<p>"
-          + "     - scales the graph view when the combined scale is less than 1";
+          + "     - scales the graph view when the combined scale is less than 1"
+          + "<li>Mousewheel scales x and y independently.<p>"
+          + "     - CTRL+MouseWheel scales in the X axis<p>"
+          + "     - ALT+MouseWheel scales in the Y axis";
 
   JDialog helpDialog;
 

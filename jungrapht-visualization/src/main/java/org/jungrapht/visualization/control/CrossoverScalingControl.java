@@ -50,6 +50,11 @@ public class CrossoverScalingControl implements ScalingControl {
   @Override
   public void scale(
       VisualizationServer<?, ?> vv, double horizontalAmount, double verticalAmount, Point2D at) {
+    Axis axis =
+        horizontalAmount == verticalAmount
+            ? Axis.XY
+            : verticalAmount == 1.0 ? Axis.X : horizontalAmount == 1.0 ? Axis.Y : Axis.XY;
+
     MutableTransformer layoutTransformer =
         vv.getRenderContext()
             .getMultiLayerTransformer()
@@ -61,10 +66,7 @@ public class CrossoverScalingControl implements ScalingControl {
     double modelScaleX = layoutTransformer.getScaleX();
     double modelScaleY = layoutTransformer.getScaleY();
     double viewScaleX = viewTransformer.getScaleX();
-    //Math.min(viewTransformer.getScaleX(), viewTransformer.getScaleY());
-    double viewScaleY =
-        //            viewScaleX;
-        viewTransformer.getScaleY();
+    double viewScaleY = viewTransformer.getScaleY();
     double inverseModelScaleX = Math.sqrt(crossover) / modelScaleX;
     double inverseModelScaleY = Math.sqrt(crossover) / modelScaleY;
     double inverseViewScaleX = Math.sqrt(crossover) / viewScaleX;
@@ -77,17 +79,78 @@ public class CrossoverScalingControl implements ScalingControl {
             .getMultiLayerTransformer()
             .inverseTransform(MultiLayerTransformer.Layer.VIEW, at);
 
-    if ((horizontalAmount != 1.0
-            && (scaleX * horizontalAmount - crossover) * (scaleX * horizontalAmount - crossover)
-                < 0.001)
-        || (verticalAmount != 1.0
-            && (scaleY * verticalAmount - crossover) * (scaleY * verticalAmount - crossover)
-                < 0.001)) {
+    double newX = scaleX * horizontalAmount;
+    double newY = scaleY * verticalAmount;
+    double minX = newX - crossover;
+    double minY = newY - crossover;
+    switch (axis) {
+      case X:
+        adjustTransformers(
+            horizontalAmount,
+            verticalAmount,
+            at,
+            layoutTransformer,
+            viewTransformer,
+            inverseModelScaleX,
+            inverseModelScaleY,
+            inverseViewScaleX,
+            inverseViewScaleY,
+            transformedAt,
+            minX * minX < 0.001,
+            newX < crossover);
+        break;
+      case Y:
+        adjustTransformers(
+            horizontalAmount,
+            verticalAmount,
+            at,
+            layoutTransformer,
+            viewTransformer,
+            inverseModelScaleX,
+            inverseModelScaleY,
+            inverseViewScaleX,
+            inverseViewScaleY,
+            transformedAt,
+            minY * minY < 0.001,
+            newY < crossover);
+        break;
+      case XY:
+      default:
+        adjustTransformers(
+            horizontalAmount,
+            verticalAmount,
+            at,
+            layoutTransformer,
+            viewTransformer,
+            inverseModelScaleX,
+            inverseModelScaleY,
+            inverseViewScaleX,
+            inverseViewScaleY,
+            transformedAt,
+            minX * minX < 0.001 || minY * minY < 0.001,
+            newX < crossover || newY < crossover);
+    }
+    vv.repaint();
+  }
+
+  protected void adjustTransformers(
+      double horizontalAmount,
+      double verticalAmount,
+      Point2D at,
+      MutableTransformer layoutTransformer,
+      MutableTransformer viewTransformer,
+      double inverseModelScaleX,
+      double inverseModelScaleY,
+      double inverseViewScaleX,
+      double inverseViewScaleY,
+      Point2D transformedAt,
+      boolean closeToControlPoint,
+      boolean adjustViewTransform) {
+    if (closeToControlPoint) {
       // close to the control point, return both Functions to a scale of sqrt crossover value
       layoutTransformer.scale(inverseModelScaleX, inverseModelScaleY, transformedAt);
       viewTransformer.scale(inverseViewScaleX, inverseViewScaleY, at);
-    } else if ((horizontalAmount != 1.0 && scaleX * horizontalAmount < crossover)
-        || (verticalAmount != 1.0 && scaleY * verticalAmount < crossover)) {
+    } else if (adjustViewTransform) {
       viewTransformer.scale(horizontalAmount, verticalAmount, at);
       layoutTransformer.scale(inverseModelScaleX, inverseModelScaleY, transformedAt);
     } else {
@@ -95,6 +158,5 @@ public class CrossoverScalingControl implements ScalingControl {
       layoutTransformer.scale(horizontalAmount, verticalAmount, transformedAt);
       viewTransformer.scale(inverseViewScaleX, inverseViewScaleY, at);
     }
-    vv.repaint();
   }
 }

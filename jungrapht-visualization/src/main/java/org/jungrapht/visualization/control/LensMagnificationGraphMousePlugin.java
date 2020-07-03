@@ -38,7 +38,7 @@ public class LensMagnificationGraphMousePlugin extends AbstractGraphMousePlugin
    * 1/4/0.2.
    */
   public LensMagnificationGraphMousePlugin() {
-    this(MouseEvent.CTRL_DOWN_MASK);
+    this(0);
   }
 
   /**
@@ -49,7 +49,7 @@ public class LensMagnificationGraphMousePlugin extends AbstractGraphMousePlugin
    * @param delta the change in zoom value caused by each mouse event
    */
   public LensMagnificationGraphMousePlugin(float floor, float ceiling, float delta) {
-    this(MouseEvent.CTRL_DOWN_MASK, floor, ceiling, delta);
+    this(0, floor, ceiling, delta);
   }
 
   /**
@@ -71,7 +71,7 @@ public class LensMagnificationGraphMousePlugin extends AbstractGraphMousePlugin
    * @param delta the change in zoom value caused by each mouse event
    */
   public LensMagnificationGraphMousePlugin(int modifiers, float floor, float ceiling, float delta) {
-    super(modifiers);
+    super(0);
     this.floor = floor;
     this.ceiling = ceiling;
     this.delta = delta;
@@ -79,7 +79,7 @@ public class LensMagnificationGraphMousePlugin extends AbstractGraphMousePlugin
 
   /** override to check equality with a mask */
   public boolean checkModifiers(MouseEvent e) {
-    return (e.getModifiersEx() & modifiers) != 0;
+    return e.getModifiersEx() == modifiers;
   }
 
   private void changeMagnification(Lens lens, float delta) {
@@ -113,11 +113,11 @@ public class LensMagnificationGraphMousePlugin extends AbstractGraphMousePlugin
               : (viewTransformer instanceof LensTransformer)
                   ? ((LensTransformer) viewTransformer).getLens()
                   : null;
-      if (lens != null) {
+      if (lens != null && lens.getLensShape().contains(e.getPoint())) {
         changeMagnification(lens, -delta);
+        vv.repaint();
+        e.consume();
       }
-      vv.repaint();
-      e.consume();
     }
   }
 }

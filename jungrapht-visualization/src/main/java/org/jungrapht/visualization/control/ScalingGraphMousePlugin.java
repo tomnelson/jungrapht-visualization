@@ -22,8 +22,11 @@ import org.slf4j.LoggerFactory;
 
 /**
  * ScalingGraphMouse applies a scaling transformation to the graph layout. The Vertices get closer
- * or farther apart, but do not themselves change layoutSize. ScalingGraphMouse uses
- * MouseWheelEvents to apply the scaling.
+ * or farther apart, but do not themselves change size. ScalingGraphMouse uses MouseWheelEvents to
+ * apply the scaling.
+ * <li>Using only the mouse wheel, both the X-axis and Y-axis are scaled equally.
+ * <li>If the CTRL key is pressed while the mouse wheel is turned, only the X-axis is scaled
+ * <li>If the ALT key is pressed while the mouse wheel is turned, only the Y-axis is scaled
  *
  * @author Tom Nelson
  */
@@ -60,7 +63,6 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
 
   public boolean checkModifiers(MouseEvent e) {
     return e.getModifiersEx() == modifiers
-        || (e.getModifiersEx() & modifiers) != 0
         || e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK
         || e.getModifiersEx() == InputEvent.ALT_DOWN_MASK;
   }
@@ -84,7 +86,6 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
       }
       VisualizationViewer vv = (VisualizationViewer) e.getSource();
       Point2D mouse = e.getPoint();
-      Point2D center = vv.getCenter();
       int amount = e.getWheelRotation();
       if (zoomAtMouse) {
         if (amount < 0) {
@@ -93,6 +94,7 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
           scaler.scale(vv, xout, yout, mouse);
         }
       } else {
+        Point2D center = vv.getCenter();
         if (amount < 0) {
           scaler.scale(vv, xin, yin, center);
         } else if (amount > 0) {
