@@ -63,6 +63,7 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
 
   public boolean checkModifiers(MouseEvent e) {
     return e.getModifiersEx() == modifiers
+        || (e.getModifiersEx() & modifiers) != 0
         || e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK
         || e.getModifiersEx() == InputEvent.ALT_DOWN_MASK;
   }
