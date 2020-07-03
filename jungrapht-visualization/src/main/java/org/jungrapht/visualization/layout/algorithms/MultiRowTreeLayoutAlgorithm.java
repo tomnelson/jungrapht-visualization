@@ -45,31 +45,6 @@ public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
     super(builder);
   }
 
-  /**
-   * Creates an instance for the specified graph, X distance, and Y distance.
-   *
-   * @param rootPredicate the {@link Predicate} to determine root vertices
-   * @param horizontalVertexSpacing the horizontal spacing between adjacent siblings
-   * @param verticalVertexSpacing the vertical spacing between adjacent siblings
-   * @param expandLayout whether to expand the size of the layout area to accomodate the entire
-   *     forest
-   */
-  //  protected MultiRowTreeLayoutAlgorithm(
-  //      Predicate<V> rootPredicate,
-  //      Comparator<V> rootComparator,
-  //      int horizontalVertexSpacing,
-  //      int verticalVertexSpacing,
-  //      Function<V, Shape> vertexShapeFunction,
-  //      boolean expandLayout) {
-  //    super(
-  //        rootPredicate,
-  //        rootComparator,
-  //        horizontalVertexSpacing,
-  //        verticalVertexSpacing,
-  //        vertexShapeFunction,
-  //        expandLayout);
-  //  }
-
   /** keeps track of how many rows have been created */
   protected int rowCount = 1;
 

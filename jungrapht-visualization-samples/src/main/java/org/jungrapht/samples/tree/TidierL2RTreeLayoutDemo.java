@@ -41,16 +41,15 @@ import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.PolarPoint;
 
 /**
- * A variant of TreeLayoutDemo that rotates the view by 90 degrees from the default orientation.
+ * A variant of TidierTreeLayoutDemo that rotates the view by 90 degrees from the default
+ * orientation.
  *
  * @author Tom Nelson
  */
 public class TidierL2RTreeLayoutDemo extends JPanel {
 
-  /** the graph */
   Graph<String, Integer> graph;
 
-  /** the visual component and renderer for the graph */
   VisualizationViewer<String, Integer> vv;
 
   VisualizationServer.Paintable rings;
@@ -63,28 +62,31 @@ public class TidierL2RTreeLayoutDemo extends JPanel {
 
     setLayout(new BorderLayout());
 
-    // create a simple graph for the demo
     graph = DemoTreeSupplier.createTreeOne();
 
-    treeLayoutAlgorithm = new TidierTreeLayoutAlgorithm<>();
-    radialLayoutAlgorithm = new TidierRadialTreeLayoutAlgorithm<>();
+    treeLayoutAlgorithm =
+        TidierTreeLayoutAlgorithm.<String, Integer>edgeAwareBuilder().expandLayout(true).build();
+    radialLayoutAlgorithm =
+        TidierRadialTreeLayoutAlgorithm.<String, Integer>edgeAwareBuilder()
+            .expandLayout(true)
+            .build();
 
     final DefaultGraphMouse<String, Integer> graphMouse = new DefaultGraphMouse<>();
 
     vv =
         VisualizationViewer.builder(graph)
-            .layoutAlgorithm(treeLayoutAlgorithm)
-            .viewSize(new Dimension(600, 600))
+            .viewSize(new Dimension(700, 700))
+            .layoutSize(new Dimension(600, 600))
             .graphMouse(graphMouse)
             .build();
     treeLayoutAlgorithm.setVertexShapeFunction(vv.getRenderContext().getVertexShapeFunction());
     radialLayoutAlgorithm.setVertexShapeFunction(vv.getRenderContext().getVertexShapeFunction());
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
-    // add a listener for ToolTips
     vv.setVertexToolTipFunction(Object::toString);
     vv.getRenderContext().setArrowFillPaintFunction(a -> Color.lightGray);
-
+    vv.getVisualizationModel()
+        .setLayoutAlgorithm(treeLayoutAlgorithm); // after the vertexShapeFunction is set
     setLtoR(vv);
 
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
@@ -95,7 +97,6 @@ public class TidierL2RTreeLayoutDemo extends JPanel {
         e -> {
           if (e.getStateChange() == ItemEvent.SELECTED) {
             LayoutAlgorithmTransition.animate(vv, radialLayoutAlgorithm);
-            vv.getRenderContext().getMultiLayerTransformer().setToIdentity();
             if (rings == null) {
               rings = new Rings(vv.getVisualizationModel().getLayoutModel());
             }
@@ -106,7 +107,6 @@ public class TidierL2RTreeLayoutDemo extends JPanel {
             setLtoR(vv);
             vv.removePreRenderPaintable(rings);
           }
-
           vv.repaint();
         });
 
@@ -120,12 +120,25 @@ public class TidierL2RTreeLayoutDemo extends JPanel {
   }
 
   private void setLtoR(VisualizationViewer<String, Integer> vv) {
-    Dimension d = vv.getVisualizationModel().getLayoutSize();
-    Point2D center = new Point2D.Double(d.width / 2, d.height / 2);
+    Point2D viewCenter = vv.getCenter();
+    Point2D viewCenterInLayout =
+        vv.getRenderContext().getMultiLayerTransformer().inverseTransform(viewCenter);
+    Point layoutCenter =
+        Point.centroidOf(vv.getVisualizationModel().getLayoutModel().getLocations().values());
+
+    // move the layout center to the viewCenterInLayout
+    double deltaX = viewCenterInLayout.getX() - layoutCenter.x;
+    double deltaY = viewCenterInLayout.getY() - layoutCenter.y;
+
     vv.getRenderContext()
         .getMultiLayerTransformer()
         .getTransformer(Layer.LAYOUT)
-        .rotate(-Math.PI / 2, center);
+        .translate(deltaX, deltaY);
+
+    vv.getRenderContext()
+        .getMultiLayerTransformer()
+        .getTransformer(Layer.LAYOUT)
+        .rotate(-Math.PI / 2, viewCenterInLayout);
   }
 
   class Rings implements VisualizationServer.Paintable {
