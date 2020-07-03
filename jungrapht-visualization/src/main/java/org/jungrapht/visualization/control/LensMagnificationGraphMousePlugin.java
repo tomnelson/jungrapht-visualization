@@ -19,6 +19,8 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.transform.Lens;
 import org.jungrapht.visualization.transform.LensTransformer;
 import org.jungrapht.visualization.transform.MutableTransformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * HyperbolicMagnificationGraphMousePlugin changes the magnification within the Hyperbolic
@@ -29,6 +31,8 @@ import org.jungrapht.visualization.transform.MutableTransformer;
 public class LensMagnificationGraphMousePlugin extends AbstractGraphMousePlugin
     implements MouseWheelListener {
 
+  private static final Logger log =
+      LoggerFactory.getLogger(LensMagnificationGraphMousePlugin.class);
   protected final float floor;
   protected final float ceiling;
   protected final float delta;
