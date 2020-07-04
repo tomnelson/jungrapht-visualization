@@ -25,7 +25,7 @@ public class DefaultLayoutModel<V> extends AbstractLayoutModel<V>
 
   protected Function<V, Point> initializer;
 
-  public static <V> DefaultLayoutModel<V> from(DefaultLayoutModel<V> other) {
+  public static <V> DefaultLayoutModel<V> from(LayoutModel<V> other) {
     return new DefaultLayoutModel<>(other);
   }
 
@@ -34,9 +34,11 @@ public class DefaultLayoutModel<V> extends AbstractLayoutModel<V>
     this.initializer = builder.initializer;
   }
 
-  private DefaultLayoutModel(DefaultLayoutModel<V> other) {
-    super(other.graph, other.width, other.height);
-    this.initializer = other.initializer;
+  private DefaultLayoutModel(LayoutModel<V> other) {
+    super(other.getGraph(), other.getWidth(), other.getHeight());
+    if (other instanceof DefaultLayoutModel) {
+      this.initializer = ((DefaultLayoutModel) other).initializer;
+    }
   }
 
   @Override

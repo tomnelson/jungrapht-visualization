@@ -79,7 +79,7 @@ public class EiglspergerUtil {
         }
       }
     }
-    if (!(outList.get(outList.size() - 1) instanceof Container)) {
+    if (!outList.isEmpty() && !(outList.get(outList.size() - 1) instanceof Container)) {
       outList.add(Container.createSubContainer());
       if (log.isTraceEnabled()) log.trace("appended empty container");
     }

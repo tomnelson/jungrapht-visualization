@@ -293,4 +293,9 @@ public class AggregateLayoutModel<V> implements LayoutModel<V> {
 
   @Override
   public void layoutVertexPositionChanged(LayoutVertexPositionChange.GraphEvent<V> evt) {}
+
+  @Override
+  public void appendLayoutModel(LayoutModel<V> layoutModel) {
+    delegate.appendLayoutModel(layoutModel);
+  }
 }

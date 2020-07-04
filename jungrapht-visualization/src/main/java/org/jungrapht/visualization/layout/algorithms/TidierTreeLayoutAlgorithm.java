@@ -212,29 +212,6 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
     this.expandLayout = builder.expandLayout;
   }
 
-  //  private TidierTreeLayoutAlgorithm(
-  //      Predicate<V> rootPredicate,
-  //      Comparator<V> rootComparator,
-  //      Function<V, Shape> vertexShapeFunction,
-  //      Predicate<V> vertexPredicate,
-  //      Comparator<V> vertexComparator,
-  //      Predicate<E> edgePredicate,
-  //      Comparator<E> edgeComparator,
-  //      int horizontalVertexSpacing,
-  //      int verticalVertexSpacing,
-  //      boolean expandLayout) {
-  //    this.builderRootPredicate = builder.rootPredicate;
-  //    this.rootComparator = builder.rootComparator;
-  //    this.vertexShapeFunction = builder.vertexShapeFunction;
-  //    this.vertexPredicate = builder.vertexPredicate;
-  //    this.vertexComparator = builder.vertexComparator;
-  //    this.edgePredicate = builder.edgePredicate;
-  //    this.edgeComparator = builder.edgeComparator;
-  //    this.horizontalVertexSpacing = builder.horizontalVertexSpacing;
-  //    this.verticalVertexSpacing = builder.verticalVertexSpacing;
-  //    this.expandLayout = builder.expandLayout;
-  //  }
-
   private final Map<V, VertexData<V>> vertexData = new HashMap<>();
 
   @Override

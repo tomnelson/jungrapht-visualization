@@ -5,7 +5,11 @@ import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -17,14 +21,17 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.RenderContext;
+import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnable;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
+import org.jungrapht.visualization.layout.algorithms.util.ComponentGrouping;
 import org.jungrapht.visualization.layout.algorithms.util.EdgeShapeFunctionSupplier;
 import org.jungrapht.visualization.layout.algorithms.util.ExecutorConsumer;
 import org.jungrapht.visualization.layout.algorithms.util.Threaded;
 import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
 import org.jungrapht.visualization.layout.model.LayoutModel;
+import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
 import org.jungrapht.visualization.util.Context;
 import org.slf4j.Logger;
@@ -188,6 +195,8 @@ public class EiglspergerLayoutAlgorithm<V, E>
   protected Executor executor;
   protected CompletableFuture theFuture;
   protected Runnable after;
+  protected Map<E, List<Point>> edgePointMap = new HashMap<>();
+  protected EdgeShape.ArticulatedLine<V, E> edgeShape = new EdgeShape.ArticulatedLine<>();
 
   public EiglspergerLayoutAlgorithm() {
     this(EiglspergerLayoutAlgorithm.edgeAwareBuilder());
@@ -231,6 +240,9 @@ public class EiglspergerLayoutAlgorithm<V, E>
     this.after = after;
     this.executor = executor;
     this.threaded = threaded;
+
+    this.edgeShape.setEdgeArticulationFunction(
+        e -> edgePointMap.getOrDefault(e, Collections.emptyList()));
   }
 
   @Override
@@ -276,52 +288,77 @@ public class EiglspergerLayoutAlgorithm<V, E>
     if (graph == null || graph.vertexSet().isEmpty()) {
       return;
     }
-    Runnable runnable =
-        EiglspergerRunnable.<V, E>builder()
-            .layoutModel(layoutModel)
-            .vertexShapeFunction(vertexShapeFunction)
-            .edgeShapeFunctionConsumer(edgeShapeConsumer)
-            .straightenEdges(straightenEdges)
-            .transpose(transpose)
-            .postStraighten(postStraighten)
-            .maxLevelCross(maxLevelCross)
-            .layering(layering)
-            .build();
+    // if this is a multicomponent graph, discover components and create a temp
+    // LayoutModel for each to visit. Afterwards, append all the layoutModels
+    // to the one visited above.
+    List<Graph<V, E>> graphs = ComponentGrouping.getComponentGraphs(graph);
+    List<LayoutModel<V>> layoutModels = new ArrayList<>();
+    for (int i = 0; i < graphs.size(); i++) {
+      LayoutModel<V> componentLayoutModel =
+          LayoutModel.<V>builder()
+              .graph(graphs.get(i))
+              .width(50)
+              .height(layoutModel.getHeight())
+              .build();
+      layoutModels.add(componentLayoutModel);
+    }
 
-    if (threaded) {
-      if (executor != null) {
-        theFuture =
-            CompletableFuture.runAsync(runnable, executor)
-                .thenRun(
-                    () -> {
-                      log.trace("Eiglsperger layout done");
-                      this.run(); // run the after function
-                      layoutModel.getViewChangeSupport().fireViewChanged();
-                      // fire an event to say that the layout is done
-                      layoutModel
-                          .getLayoutStateChangeSupport()
-                          .fireLayoutStateChanged(layoutModel, false);
-                    });
+    for (LayoutModel<V> componentLayoutModel : layoutModels) {
+      EiglspergerRunnable runnable =
+          EiglspergerRunnable.<V, E>builder()
+              .layoutModel(componentLayoutModel)
+              .vertexShapeFunction(vertexShapeFunction)
+              .edgeShapeFunctionConsumer(edgeShapeConsumer)
+              .straightenEdges(straightenEdges)
+              .transpose(transpose)
+              .postStraighten(postStraighten)
+              .maxLevelCross(maxLevelCross)
+              .layering(layering)
+              .build();
+
+      if (threaded) {
+        if (executor != null) {
+          theFuture =
+              CompletableFuture.runAsync(runnable, executor)
+                  .thenRun(
+                      () -> {
+                        log.trace("Eiglsperger layout done");
+                        this.edgePointMap.putAll(runnable.getEdgePointMap());
+                        layoutModel.appendLayoutModel(componentLayoutModel);
+                        this.run(); // run the after function
+                        layoutModel.getViewChangeSupport().fireViewChanged();
+                        // fire an event to say that the layout is done
+                        layoutModel
+                            .getLayoutStateChangeSupport()
+                            .fireLayoutStateChanged(layoutModel, false);
+                      });
+        } else {
+          theFuture =
+              CompletableFuture.runAsync(runnable)
+                  .thenRun(
+                      () -> {
+                        log.trace("Eiglsperger layout done");
+                        this.edgePointMap.putAll(runnable.getEdgePointMap());
+                        layoutModel.appendLayoutModel(componentLayoutModel);
+                        this.run(); // run the after function
+                        layoutModel.getViewChangeSupport().fireViewChanged();
+                        // fire an event to say that the layout is done
+                        layoutModel
+                            .getLayoutStateChangeSupport()
+                            .fireLayoutStateChanged(layoutModel, false);
+                      });
+        }
       } else {
-        theFuture =
-            CompletableFuture.runAsync(runnable)
-                .thenRun(
-                    () -> {
-                      log.trace("Eiglsperger layout done");
-                      this.run(); // run the after function
-                      layoutModel.getViewChangeSupport().fireViewChanged();
-                      // fire an event to say that the layout is done
-                      layoutModel
-                          .getLayoutStateChangeSupport()
-                          .fireLayoutStateChanged(layoutModel, false);
-                    });
+        runnable.run();
+        this.edgePointMap.putAll(runnable.getEdgePointMap());
+        layoutModel.appendLayoutModel(componentLayoutModel);
+        after.run();
+        layoutModel.getViewChangeSupport().fireViewChanged();
+        // fire an event to say that the layout is done
+        layoutModel.getLayoutStateChangeSupport().fireLayoutStateChanged(layoutModel, false);
       }
-    } else {
-      runnable.run();
-      after.run();
-      layoutModel.getViewChangeSupport().fireViewChanged();
-      // fire an event to say that the layout is done
-      layoutModel.getLayoutStateChangeSupport().fireLayoutStateChanged(layoutModel, false);
+
+      edgeShapeConsumer.accept(edgeShape);
     }
   }
 

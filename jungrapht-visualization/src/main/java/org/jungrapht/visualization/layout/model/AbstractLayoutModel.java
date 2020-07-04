@@ -84,6 +84,7 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
   protected LayoutStateChange.Support layoutStateChangeSupport = LayoutStateChange.Support.create();
   protected ModelChange.Support modelChangeSupport = ModelChange.Support.create();
   protected ViewChange.Support viewChangeSupport = ViewChange.Support.create();
+  protected int appendageCount;
 
   protected AbstractLayoutModel(Builder builder) {
     this.graph = Objects.requireNonNull(builder.graph);
@@ -492,5 +493,35 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
         + ", graph of size ="
         + graph.vertexSet().size()
         + '}';
+  }
+
+  /**
+   * Append the supplied layoutModel to the right of this LayoutModel by increasing the width of
+   * this layoutModel by the width of the supplied LayoutModel, and by offsetting all locations in
+   * the new layoutModel by the previous width of this layoutModel
+   *
+   * @param layoutModel
+   */
+  @Override
+  public void appendLayoutModel(LayoutModel<V> layoutModel) {
+    log.info(
+        "appending layoutModel with width {} to this layoutModel width:{}",
+        layoutModel.getWidth(),
+        this.width);
+    if (appendageCount++ == 0) {
+      // first one in
+      this.width = layoutModel.getWidth();
+      layoutModel.getLocations().keySet().stream().forEach(v -> this.set(v, layoutModel.get(v)));
+
+    } else {
+      int widthDelta = this.width;
+      this.width += layoutModel.getWidth();
+      int delta = widthDelta;
+      layoutModel
+          .getLocations()
+          .keySet()
+          .stream()
+          .forEach(v -> this.set(v, layoutModel.get(v).add(delta, 0)));
+    }
   }
 }

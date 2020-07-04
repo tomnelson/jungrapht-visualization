@@ -1,8 +1,10 @@
 package org.jungrapht.samples;
 
-import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -11,11 +13,16 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.samples.util.LayoutFunction;
-import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
-import org.jungrapht.visualization.layout.algorithms.*;
-import org.jungrapht.visualization.layout.model.LayoutModel;
+import org.jungrapht.visualization.layout.algorithms.CircleLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.ISOMLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
+import org.jungrapht.visualization.layout.algorithms.SpringLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,10 +46,6 @@ public class AddRemoveVertexDemo extends JPanel {
   private LayoutAlgorithm<Number> layoutAlgorithm;
 
   private Timer timer;
-
-  private JButton switchLayout;
-
-  private static final int EDGE_LENGTH = 100;
 
   private int previousVertex = -1;
 
@@ -72,27 +75,6 @@ public class AddRemoveVertexDemo extends JPanel {
     vv.setForeground(Color.white);
 
     this.add(vv.getComponent());
-
-    // add listener to change layout size and restart layoutalgorithm when
-    // the view is resized
-    vv.getComponent()
-        .addComponentListener(
-            new ComponentAdapter() {
-              /**
-               * Invoked when the component's size changes.
-               *
-               * @param e the event payload
-               */
-              @Override
-              public void componentResized(ComponentEvent e) {
-                super.componentResized(e);
-                VisualizationViewer vv = (VisualizationViewer) e.getComponent();
-                VisualizationModel model = vv.getVisualizationModel();
-                LayoutModel layoutModel = model.getLayoutModel();
-                layoutModel.setSize(vv.getWidth(), vv.getHeight());
-                layoutModel.accept(model.getLayoutAlgorithm());
-              }
-            });
 
     final JRadioButton animateLayoutTransition = new JRadioButton("Animate Layout Transition");
 

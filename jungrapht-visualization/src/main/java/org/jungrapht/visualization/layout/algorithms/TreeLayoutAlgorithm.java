@@ -162,33 +162,6 @@ public class TreeLayoutAlgorithm<V> extends AbstractLayoutAlgorithm<V>
     this.expandLayout = builder.expandLayout;
   }
 
-  /**
-   * Creates an instance for the specified parameters
-   *
-   * @param rootPredicate the {@link Predicate} function to determine root vertices
-   * @param horizontalVertexSpacing the horizontal spacing between adjacent siblings
-   * @param verticalVertexSpacing the vertical spacing between adjacent siblings
-   * @param expandLayout whether to expand the layout size to accommodate the entire tree
-   */
-  //  protected TreeLayoutAlgorithm(
-  //          Runnable after,
-  //      Predicate<V> rootPredicate,
-  //      Comparator<V> rootComparator,
-  //      int horizontalVertexSpacing,
-  //      int verticalVertexSpacing,
-  //      Function<V, Shape> vertexShapeFunction,
-  //      boolean expandLayout) {
-  //    super(builder);
-  //    Objects.requireNonNull(vertexShapeFunction);
-  //    this.after = after;
-  //    this.rootPredicate = rootPredicate;
-  //    this.rootComparator = rootComparator;
-  //    this.horizontalVertexSpacing = horizontalVertexSpacing;
-  //    this.verticalVertexSpacing = verticalVertexSpacing;
-  //    this.vertexShapeFunction = vertexShapeFunction;
-  //    this.expandLayout = expandLayout;
-  //  }
-
   /** the {}@link Predicate} to determine root vertices */
   protected Predicate<V> rootPredicate;
 

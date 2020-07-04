@@ -241,6 +241,8 @@ public class GraphLayers {
       }
       U.add(got);
     }
+    // remove any empty lists from list
+    list = list.stream().filter(l -> !l.isEmpty()).collect(Collectors.toList());
 
     Collections.reverse(list);
     for (int i = 0; i < list.size(); i++) {

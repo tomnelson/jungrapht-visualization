@@ -7,7 +7,6 @@ import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,7 +22,6 @@ import org.jgrapht.Graphs;
 import org.jgrapht.alg.util.NeighborCache;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
-import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.ArticulatedEdge;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.GraphLayers;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.GreedyCycleRemoval;
@@ -164,10 +162,10 @@ public class EiglspergerRunnable<V, E> implements Runnable {
   protected boolean minimizeEdgeLength;
   protected Layering layering;
   protected Map<LV<V>, VertexMetadata<V>> vertexMetadataMap = new HashMap<>();
-
+  protected Map<E, List<Point>> edgePointMap = new HashMap<>();
   protected EiglspergerStepsForward<V, E> stepsForward;
   protected EiglspergerStepsBackward<V, E> stepsBackward;
-  EiglspergerSteps<V, E> steps = null;
+  protected EiglspergerSteps<V, E> steps = null;
 
   protected EiglspergerRunnable(Builder<V, E, ?, ?> builder) {
     this(
@@ -453,7 +451,8 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     int maxDimension = Math.max(totalWidth, totalHeight);
 
     layoutModel.setSize(
-        Math.max(maxDimension, layoutModel.getWidth()),
+        totalWidth,
+        //        Math.max(maxDimension, layoutModel.getWidth()),
         Math.max(maxDimension, layoutModel.getHeight()));
     long pointsSetTime = System.currentTimeMillis();
     double scalex = (double) layoutModel.getWidth() / pointRangeWidth;
@@ -486,7 +485,6 @@ public class EiglspergerRunnable<V, E> implements Runnable {
               svGraph.addEdge(reversed.getSource(), reversed.getTarget(), reversed);
             });
 
-    Map<E, List<Point>> edgePointMap = new HashMap<>();
     for (ArticulatedEdge<V, E> ae : articulatedEdges) {
       List<Point> points = new ArrayList<>();
       if (feedbackEdges.contains(ae.getEdge())) {
@@ -501,11 +499,6 @@ public class EiglspergerRunnable<V, E> implements Runnable {
 
       edgePointMap.put(ae.edge, points);
     }
-    EdgeShape.ArticulatedLine<V, E> edgeShape = new EdgeShape.ArticulatedLine<>();
-    edgeShape.setEdgeArticulationFunction(
-        e -> edgePointMap.getOrDefault(e, Collections.emptyList()));
-
-    edgeShapeFunctionConsumer.accept(edgeShape);
 
     long articulatedEdgeTime = System.currentTimeMillis();
     log.trace("articulated edges took {}", (articulatedEdgeTime - pointsSetTime));
@@ -520,6 +513,10 @@ public class EiglspergerRunnable<V, E> implements Runnable {
         va.set("rank", "" + v.getRank());
       }
     }
+  }
+
+  public Map<E, List<Point>> getEdgePointMap() {
+    return edgePointMap;
   }
 
   protected LV<V>[][] copy(LV<V>[][] in) {

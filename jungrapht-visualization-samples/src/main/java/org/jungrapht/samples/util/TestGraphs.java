@@ -17,6 +17,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.function.Supplier;
 import org.jgrapht.Graph;
+import org.jgrapht.GraphType;
 import org.jgrapht.generate.BarabasiAlbertGraphGenerator;
 import org.jgrapht.generate.CompleteBipartiteGraphGenerator;
 import org.jgrapht.graph.DefaultGraphType;
@@ -213,8 +214,20 @@ public class TestGraphs {
    * @return a demonstration graph of type <tt>UndirectedSparseMultiGraph</tt> with 28 vertices.
    */
   public static Graph<String, Integer> getDemoGraph() {
+    return getDemoGraph(false);
+  }
+
+  /**
+   * Returns a bigger test graph with a clique, several components, and other parts.
+   *
+   * @param directed true if the supplied graph should be directed
+   * @return a demonstration graph of type <tt>UndirectedSparseMultiGraph</tt> with 28 vertices.
+   */
+  public static Graph<String, Integer> getDemoGraph(boolean directed) {
+    GraphType graphType =
+        directed ? DefaultGraphType.directedMultigraph() : DefaultGraphType.multigraph();
     Graph<String, Integer> graph =
-        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.multigraph())
+        GraphTypeBuilder.<String, Integer>forGraphType(graphType)
             .edgeSupplier(SupplierUtil.createIntegerSupplier())
             .buildGraph();
 

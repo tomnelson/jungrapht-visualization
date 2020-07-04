@@ -195,4 +195,6 @@ public interface LayoutModel<V>
   void setInitializer(Function<V, Point> initializer);
 
   void resizeToSurroundingRectangle();
+
+  void appendLayoutModel(LayoutModel<V> layoutModel);
 }
