@@ -308,7 +308,6 @@ public class EiglspergerLayoutAlgorithm<V, E>
           EiglspergerRunnable.<V, E>builder()
               .layoutModel(componentLayoutModel)
               .vertexShapeFunction(vertexShapeFunction)
-              .edgeShapeFunctionConsumer(edgeShapeConsumer)
               .straightenEdges(straightenEdges)
               .transpose(transpose)
               .postStraighten(postStraighten)

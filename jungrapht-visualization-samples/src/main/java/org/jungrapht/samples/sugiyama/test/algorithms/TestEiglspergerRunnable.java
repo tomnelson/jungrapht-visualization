@@ -7,7 +7,6 @@ import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,7 +16,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import org.jgrapht.alg.util.NeighborCache;
-import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnable;
 import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerStepsBackward;
 import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerStepsForward;
@@ -149,6 +147,9 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
         break;
       case COFFMAN_GRAHAM:
         layers = GraphLayers.coffmanGraham(svGraph, 10);
+        break;
+      case NETWORK_SIMPLEX:
+        layers = GraphLayers.networkSimplex(svGraph);
         break;
       case TOP_DOWN:
       default:
@@ -379,7 +380,6 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
               svGraph.addEdge(reversed.getSource(), reversed.getTarget(), reversed);
             });
 
-    Map<E, List<Point>> edgePointMap = new HashMap<>();
     for (ArticulatedEdge<V, E> ae : articulatedEdges) {
       List<Point> points = new ArrayList<>();
       if (feedbackEdges.contains(ae.getEdge())) {
@@ -394,11 +394,6 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
 
       edgePointMap.put(ae.edge, points);
     }
-    EdgeShape.ArticulatedLine<V, E> edgeShape = new EdgeShape.ArticulatedLine<>();
-    edgeShape.setEdgeArticulationFunction(
-        e -> edgePointMap.getOrDefault(e, Collections.emptyList()));
-
-    edgeShapeFunctionConsumer.accept(edgeShape);
 
     long articulatedEdgeTime = System.currentTimeMillis();
     log.trace("articulated edges took {}", (articulatedEdgeTime - pointsSetTime));

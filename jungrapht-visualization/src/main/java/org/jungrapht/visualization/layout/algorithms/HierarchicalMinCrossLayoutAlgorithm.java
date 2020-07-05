@@ -320,7 +320,6 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
           EiglspergerRunnable.<V, E>builder()
               .layoutModel(layoutModel)
               .vertexShapeFunction(vertexShapeFunction)
-              .edgeShapeFunctionConsumer(edgeShapeConsumer)
               .straightenEdges(straightenEdges)
               .postStraighten(postStraighten)
               .maxLevelCross(maxLevelCross)

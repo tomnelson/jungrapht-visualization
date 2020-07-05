@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.LongSummaryStatistics;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import org.jgrapht.Graph;
@@ -34,7 +33,6 @@ import org.jungrapht.visualization.layout.algorithms.sugiyama.VertexMetadata;
 import org.jungrapht.visualization.layout.algorithms.util.Attributed;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
-import org.jungrapht.visualization.util.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,8 +67,6 @@ public class EiglspergerRunnable<V, E> implements Runnable {
       V, E, T extends EiglspergerRunnable<V, E>, B extends Builder<V, E, T, B>> {
     protected LayoutModel<V> layoutModel;
     protected Function<V, Shape> vertexShapeFunction;
-    protected Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeFunctionConsumer =
-        i -> {};
     protected boolean straightenEdges;
     protected boolean postStraighten;
     protected boolean transpose;
@@ -91,12 +87,6 @@ public class EiglspergerRunnable<V, E> implements Runnable {
 
     public B vertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
       this.vertexShapeFunction = vertexShapeFunction;
-      return self();
-    }
-
-    public B edgeShapeFunctionConsumer(
-        Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeFunctionConsumer) {
-      this.edgeShapeFunctionConsumer = edgeShapeFunctionConsumer;
       return self();
     }
 
@@ -147,14 +137,11 @@ public class EiglspergerRunnable<V, E> implements Runnable {
 
   protected final LayoutModel<V> layoutModel;
   protected Function<V, Shape> vertexShapeFunction;
-  protected Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeFunctionConsumer;
   protected Graph<V, E> graph;
   protected Graph<LV<V>, LE<V, E>> svGraph;
   boolean stopit = false;
   protected Predicate<V> vertexPredicate;
   protected Predicate<E> edgePredicate;
-  protected Comparator<V> vertexComparator;
-  protected Comparator<E> edgeComparator;
   protected boolean straightenEdges;
   protected boolean postStraighten;
   protected boolean transpose;
@@ -171,7 +158,6 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     this(
         builder.layoutModel,
         builder.vertexShapeFunction,
-        builder.edgeShapeFunctionConsumer,
         builder.straightenEdges,
         builder.postStraighten,
         builder.transpose,
@@ -183,7 +169,6 @@ public class EiglspergerRunnable<V, E> implements Runnable {
   protected EiglspergerRunnable(
       LayoutModel<V> layoutModel,
       Function<V, Shape> vertexShapeFunction,
-      Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeFunctionConsumer,
       boolean straightenEdges,
       boolean postStraighten,
       boolean transpose,
@@ -192,7 +177,6 @@ public class EiglspergerRunnable<V, E> implements Runnable {
       Layering layering) {
     this.layoutModel = layoutModel;
     this.vertexShapeFunction = vertexShapeFunction;
-    this.edgeShapeFunctionConsumer = edgeShapeFunctionConsumer;
     this.straightenEdges = straightenEdges;
     this.postStraighten = postStraighten;
     this.transpose = transpose;

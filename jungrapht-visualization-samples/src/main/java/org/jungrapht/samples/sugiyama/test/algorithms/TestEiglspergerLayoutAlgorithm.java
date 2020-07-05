@@ -3,6 +3,7 @@ package org.jungrapht.samples.sugiyama.test.algorithms;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.util.concurrent.CompletableFuture;
+import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.EdgeAwareLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -98,11 +99,14 @@ public class TestEiglspergerLayoutAlgorithm<V, E> extends EiglspergerLayoutAlgor
   @Override
   public void visit(LayoutModel<V> layoutModel) {
 
-    Runnable runnable =
+    Graph<V, E> graph = layoutModel.getGraph();
+    if (graph == null || graph.vertexSet().isEmpty()) {
+      return;
+    }
+    TestEiglspergerRunnable runnable =
         TestEiglspergerRunnable.<V, E>builder()
             .layoutModel(layoutModel)
             .vertexShapeFunction(vertexShapeFunction)
-            .edgeShapeFunctionConsumer(edgeShapeConsumer)
             .straightenEdges(straightenEdges)
             .transpose(transpose)
             .postStraighten(postStraighten)
@@ -120,6 +124,7 @@ public class TestEiglspergerLayoutAlgorithm<V, E> extends EiglspergerLayoutAlgor
               .thenRun(
                   () -> {
                     log.trace("Eiglsperger layout done");
+                    this.edgePointMap.putAll(runnable.getEdgePointMap());
                     this.run(); // run the after function
                     layoutModel.getViewChangeSupport().fireViewChanged();
                     // fire an event to say that the layout is done
@@ -129,10 +134,12 @@ public class TestEiglspergerLayoutAlgorithm<V, E> extends EiglspergerLayoutAlgor
                   });
     } else {
       runnable.run();
+      this.edgePointMap.putAll(runnable.getEdgePointMap());
       after.run();
       layoutModel.getViewChangeSupport().fireViewChanged();
       // fire an event to say that the layout is done
       layoutModel.getLayoutStateChangeSupport().fireLayoutStateChanged(layoutModel, false);
     }
+    edgeShapeConsumer.accept(edgeShape);
   }
 }
