@@ -435,8 +435,8 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     int maxDimension = Math.max(totalWidth, totalHeight);
 
     layoutModel.setSize(
-        totalWidth,
-        //        Math.max(maxDimension, layoutModel.getWidth()),
+        //        totalWidth,
+        Math.max(maxDimension, layoutModel.getWidth()),
         Math.max(maxDimension, layoutModel.getHeight()));
     long pointsSetTime = System.currentTimeMillis();
     double scalex = (double) layoutModel.getWidth() / pointRangeWidth;

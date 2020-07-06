@@ -24,21 +24,19 @@ public class EiglspergerMulticomponent extends JFrame {
 
     Graph<String, Integer> graph = TestGraphs.getDemoGraph(true);
 
-    VisualizationViewer<String, Integer> vv3 = configureVisualizationViewer(graph);
+    VisualizationViewer<String, Integer> vv = configureVisualizationViewer(graph);
 
-    vv3.getRenderContext().setEdgeLabelFunction(Object::toString);
-
-    EiglspergerLayoutAlgorithm<String, Integer> layoutAlgorithm3 =
+    EiglspergerLayoutAlgorithm<String, Integer> layoutAlgorithm =
         EiglspergerLayoutAlgorithm.<String, Integer>edgeAwareBuilder()
             .postStraighten(true)
             .threaded(false)
             .layering(Layering.COFFMAN_GRAHAM)
-            .after(vv3::scaleToLayout)
+            .after(vv::scaleToLayout)
             .build();
-    layoutAlgorithm3.setVertexShapeFunction(vv3.getRenderContext().getVertexShapeFunction());
-    layoutAlgorithm3.setEdgeShapeFunctionConsumer(vv3.getRenderContext()::setEdgeShapeFunction);
-    vv3.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm3);
-    container.add(vv3.getComponent());
+    layoutAlgorithm.setVertexShapeFunction(vv.getRenderContext().getVertexShapeFunction());
+    layoutAlgorithm.setEdgeShapeFunctionConsumer(vv.getRenderContext()::setEdgeShapeFunction);
+    vv.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm);
+    container.add(vv.getComponent());
 
     setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 

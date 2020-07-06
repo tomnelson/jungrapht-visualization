@@ -292,12 +292,13 @@ public class EiglspergerLayoutAlgorithm<V, E>
     // LayoutModel for each to visit. Afterwards, append all the layoutModels
     // to the one visited above.
     List<Graph<V, E>> graphs = ComponentGrouping.getComponentGraphs(graph);
+
     List<LayoutModel<V>> layoutModels = new ArrayList<>();
     for (int i = 0; i < graphs.size(); i++) {
       LayoutModel<V> componentLayoutModel =
           LayoutModel.<V>builder()
               .graph(graphs.get(i))
-              .width(50)
+              .width(layoutModel.getWidth())
               .height(layoutModel.getHeight())
               .build();
       layoutModels.add(componentLayoutModel);
@@ -356,7 +357,6 @@ public class EiglspergerLayoutAlgorithm<V, E>
         // fire an event to say that the layout is done
         layoutModel.getLayoutStateChangeSupport().fireLayoutStateChanged(layoutModel, false);
       }
-
       edgeShapeConsumer.accept(edgeShape);
     }
   }

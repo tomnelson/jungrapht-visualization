@@ -155,6 +155,7 @@ public class CrossoverScalingControl implements ScalingControl {
       layoutTransformer.scale(inverseModelScaleX, inverseModelScaleY, transformedAt);
     } else {
       // scale the layoutTransformer, return the viewTransformer to crossover value
+      log.trace("layout transform scale by {}  {}", horizontalAmount, verticalAmount);
       layoutTransformer.scale(horizontalAmount, verticalAmount, transformedAt);
       viewTransformer.scale(inverseViewScaleX, inverseViewScaleY, at);
     }

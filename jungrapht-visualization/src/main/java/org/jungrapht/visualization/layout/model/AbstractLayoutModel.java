@@ -500,28 +500,32 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
    * this layoutModel by the width of the supplied LayoutModel, and by offsetting all locations in
    * the new layoutModel by the previous width of this layoutModel
    *
-   * @param layoutModel
+   * @param layoutModel contains width and vertex locations to place
    */
   @Override
   public void appendLayoutModel(LayoutModel<V> layoutModel) {
-    log.info(
-        "appending layoutModel with width {} to this layoutModel width:{}",
-        layoutModel.getWidth(),
-        this.width);
+    if (log.isTraceEnabled()) {
+      log.trace(
+          "appending layoutModel with width {} to this layoutModel width:{}",
+          layoutModel.getWidth(),
+          this.width);
+    }
     if (appendageCount++ == 0) {
       // first one in
       this.width = layoutModel.getWidth();
       layoutModel.getLocations().keySet().stream().forEach(v -> this.set(v, layoutModel.get(v)));
 
     } else {
+      // how much to move over incoming vertex locations
       int widthDelta = this.width;
+      // make this wider
       this.width += layoutModel.getWidth();
-      int delta = widthDelta;
+      // offset the incoming vertex locations and place them in this layoutModel
       layoutModel
           .getLocations()
           .keySet()
           .stream()
-          .forEach(v -> this.set(v, layoutModel.get(v).add(delta, 0)));
+          .forEach(v -> this.set(v, layoutModel.get(v).add(widthDelta, 0)));
     }
   }
 }

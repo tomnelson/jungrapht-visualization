@@ -528,11 +528,13 @@ public class BiModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeListene
 
   @Override
   public void stateChanged(ChangeEvent e) {
-    log.trace("count supplier got {}", countSupplier.get());
-    log.trace("count threshold is {}", lightweightRenderingCountThreshold);
-    log.trace("count predicate {}", countPredicate);
-    log.trace("scale supplier got {}", scaleSupplier.get());
-    log.trace("scale threshold is {}", lightweightRenderingScaleThreshold);
+    if (log.isTraceEnabled()) {
+      log.trace("count supplier got {}", countSupplier.get());
+      log.trace("count threshold is {}", lightweightRenderingCountThreshold);
+      log.trace("count predicate {}", countPredicate);
+      log.trace("scale supplier got {}", scaleSupplier.get());
+      log.trace("scale threshold is {}", lightweightRenderingScaleThreshold);
+    }
     manageMode();
   }
 

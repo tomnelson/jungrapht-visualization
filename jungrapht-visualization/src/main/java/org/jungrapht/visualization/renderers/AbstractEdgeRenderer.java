@@ -19,12 +19,16 @@ import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.util.Context;
 import org.jungrapht.visualization.util.EdgeIndexFunction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @param <V> vertex type
  * @param <E> edge type
  */
 public abstract class AbstractEdgeRenderer<V, E> implements Renderer.Edge<V, E> {
+
+  private static final Logger log = LoggerFactory.getLogger(AbstractEdgeRenderer.class);
 
   @Override
   public void paintEdge(

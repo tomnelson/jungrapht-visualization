@@ -17,6 +17,8 @@ import javax.swing.event.EventListenerList;
 import org.jungrapht.visualization.transform.shape.ShapeTransformer;
 import org.jungrapht.visualization.util.ChangeEventSupport;
 import org.jungrapht.visualization.util.DefaultChangeEventSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Provides methods to mutate the AffineTransform used by AffineTransformer base class to map points
@@ -26,6 +28,8 @@ import org.jungrapht.visualization.util.DefaultChangeEventSupport;
  */
 public class MutableAffineTransformer extends AffineTransformer
     implements MutableTransformer, ShapeTransformer, ChangeEventSupport {
+
+  private static Logger log = LoggerFactory.getLogger(MutableAffineTransformer.class);
 
   protected ChangeEventSupport changeSupport = new DefaultChangeEventSupport(this);
 
