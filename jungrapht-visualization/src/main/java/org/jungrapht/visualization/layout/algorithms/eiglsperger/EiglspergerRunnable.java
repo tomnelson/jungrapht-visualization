@@ -73,6 +73,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     protected int maxLevelCross;
     protected boolean minimizeEdgeLength = false;
     protected Layering layering = Layering.LONGEST_PATH;
+    protected boolean multiComponent;
 
     /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
@@ -120,6 +121,11 @@ public class EiglspergerRunnable<V, E> implements Runnable {
       return self();
     }
 
+    public B multiComponent(boolean multiComponent) {
+      this.multiComponent = multiComponent;
+      return self();
+    }
+
     /** {@inheritDoc} */
     public T build() {
       return (T) new EiglspergerRunnable<>(this);
@@ -153,6 +159,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
   protected EiglspergerStepsForward<V, E> stepsForward;
   protected EiglspergerStepsBackward<V, E> stepsBackward;
   protected EiglspergerSteps<V, E> steps = null;
+  protected boolean multiComponent;
 
   protected EiglspergerRunnable(Builder<V, E, ?, ?> builder) {
     this(
@@ -163,7 +170,8 @@ public class EiglspergerRunnable<V, E> implements Runnable {
         builder.transpose,
         builder.maxLevelCross,
         builder.minimizeEdgeLength,
-        builder.layering);
+        builder.layering,
+        builder.multiComponent);
   }
 
   protected EiglspergerRunnable(
@@ -174,7 +182,8 @@ public class EiglspergerRunnable<V, E> implements Runnable {
       boolean transpose,
       int maxLevelCross,
       boolean minimizeEdgeLength,
-      Layering layering) {
+      Layering layering,
+      boolean multiComponent) {
     this.layoutModel = layoutModel;
     this.vertexShapeFunction = vertexShapeFunction;
     this.straightenEdges = straightenEdges;
@@ -186,6 +195,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
       layering = Layering.LONGEST_PATH;
     }
     this.layering = layering;
+    this.multiComponent = multiComponent;
   }
 
   @Override
@@ -435,8 +445,7 @@ public class EiglspergerRunnable<V, E> implements Runnable {
     int maxDimension = Math.max(totalWidth, totalHeight);
 
     layoutModel.setSize(
-        //        totalWidth,
-        Math.max(maxDimension, layoutModel.getWidth()),
+        multiComponent ? totalWidth : Math.max(maxDimension, layoutModel.getWidth()),
         Math.max(maxDimension, layoutModel.getHeight()));
     long pointsSetTime = System.currentTimeMillis();
     double scalex = (double) layoutModel.getWidth() / pointRangeWidth;

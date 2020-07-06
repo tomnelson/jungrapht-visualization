@@ -314,6 +314,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
               .postStraighten(postStraighten)
               .maxLevelCross(maxLevelCross)
               .layering(layering)
+              .multiComponent(graphs.size() > 1)
               .build();
 
       if (threaded) {
