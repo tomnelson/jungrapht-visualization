@@ -117,7 +117,9 @@ public class LensMagnificationGraphMousePlugin extends AbstractGraphMousePlugin
               : (viewTransformer instanceof LensTransformer)
                   ? ((LensTransformer) viewTransformer).getLens()
                   : null;
-      if (lens != null && lens.getLensShape().contains(e.getPoint())) {
+
+      if (lens != null
+          && lens.getLensShape().contains(viewTransformer.inverseTransform(e.getPoint()))) {
         changeMagnification(lens, -delta);
         vv.repaint();
         e.consume();
