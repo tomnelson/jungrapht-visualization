@@ -179,9 +179,6 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
   protected void recalculate(Collection<T> elements) {
     log.trace("start recalculate");
     clear();
-    if (layoutModel.getLocations().isEmpty()) {
-      return;
-    }
     if (boundingRectangleCollector != null) {
       for (T element : elements) {
         rtree =
@@ -387,7 +384,7 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
           if (log.isTraceEnabled()) {
             log.trace("recalculate for nodes: {}", layoutModel.getGraph().vertexSet());
           }
-          recalculate(layoutModel.getLocations().keySet());
+          recalculate(layoutModel.getGraph().vertexSet());
           //        bulkInsert(layoutModel.getGraph().vertexSet());
         } else {
           log.trace("no recalculate when active: {}", isActive());
