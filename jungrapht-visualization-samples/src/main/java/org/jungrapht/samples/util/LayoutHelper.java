@@ -32,36 +32,36 @@ public class LayoutHelper {
         "Reduce Xing Circle", CircleLayoutAlgorithm.builder().reduceEdgeCrossing(true).build()),
     SELF_ORGANIZING_MAP("Self Organizing Map", new ISOMLayoutAlgorithm<>()),
     FR(
-        "Fruchterman Reingold",
+        "Fruchterman Reingold (Not Optimized)",
         FRLayoutAlgorithm.builder()
             .repulsionContractBuilder(StandardFRRepulsion.builder())
             .build()),
     FR_BH_VISITOR(
-        "Fruchterman Reingold (BH Optimized)",
+        "Fruchterman Reingold (Barnes Hut Optimized)",
         FRLayoutAlgorithm.builder()
             .repulsionContractBuilder(BarnesHutFRRepulsion.builder())
             .build()),
     FA2(
-        "ForceAtlas2",
+        "ForceAtlas2 (Not Optimized)",
         ForceAtlas2LayoutAlgorithm.builder()
             .repulsionContractBuilder(StandardFA2Repulsion.builder())
             .build()),
     FA2_BH_VISITOR(
-        "ForceAtlas2 (BH Optimized)",
+        "ForceAtlas2 (Barnes Hut Optimized)",
         ForceAtlas2LayoutAlgorithm.builder()
             .repulsionContractBuilder(BarnesHutFA2Repulsion.builder()) // the default
             .build()),
     SPRING(
-        "Spring",
+        "Spring (Not Optimized)",
         SpringLayoutAlgorithm.builder()
             .repulsionContractBuilder(StandardSpringRepulsion.builder())
             .build()),
-    GEM("GEM", GEMLayoutAlgorithm.edgeAwareBuilder().build()),
     SPRING_BH_VISITOR(
-        "Spring (BH Optimized)",
+        "Spring (Barnes Hut Optimized)",
         SpringLayoutAlgorithm.builder()
             .repulsionContractBuilder(BarnesHutSpringRepulsion.builder()) // the default
             .build()),
+    GEM("GEM", GEMLayoutAlgorithm.edgeAwareBuilder().build()),
     TREE("Tree", new TreeLayoutAlgorithm<>()),
     MULTI_ROW_TREE("Multirow Tree", new MultiRowTreeLayoutAlgorithm<>()),
     BALLOON("Balloon", new BalloonLayoutAlgorithm<>()),

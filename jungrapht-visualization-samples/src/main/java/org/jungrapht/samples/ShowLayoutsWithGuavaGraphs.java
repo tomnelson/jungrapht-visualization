@@ -17,6 +17,7 @@ import org.jgrapht.Graphs;
 import org.jgrapht.graph.guava.MutableGraphAdapter;
 import org.jungrapht.samples.spatial.RTreeVisualization;
 import org.jungrapht.samples.util.ControlHelpers;
+import org.jungrapht.samples.util.LayoutFunction;
 import org.jungrapht.samples.util.LayoutHelper;
 import org.jungrapht.samples.util.SpanningTreeAdapter;
 import org.jungrapht.samples.util.TestGuavaGraphs;
@@ -97,10 +98,12 @@ public class ShowLayoutsWithGuavaGraphs extends JPanel {
 
     setLayout(new BorderLayout());
     add(vv.getComponent(), BorderLayout.CENTER);
-    LayoutHelper.Layouts[] combos = LayoutHelper.getCombos();
-    final JRadioButton animateLayoutTransition = new JRadioButton("Animate Layout Transition");
 
-    final JComboBox jcb = new JComboBox(combos);
+    LayoutFunction<String> layoutFunction = new LayoutFunction.FullLayoutFunction<>();
+
+    final JComboBox jcb = new JComboBox(layoutFunction.getNames().toArray());
+
+    final JRadioButton animateLayoutTransition = new JRadioButton("Animate Layout Transition");
 
     jcb.setSelectedItem(LayoutHelper.Layouts.KK);
 
@@ -108,8 +111,9 @@ public class ShowLayoutsWithGuavaGraphs extends JPanel {
         e ->
             SwingUtilities.invokeLater(
                 () -> {
-                  LayoutHelper.Layouts layoutType = (LayoutHelper.Layouts) jcb.getSelectedItem();
-                  LayoutAlgorithm layoutAlgorithm = layoutType.getLayoutAlgorithm();
+                  LayoutAlgorithm.Builder<String, ?, ?> builder =
+                      layoutFunction.apply((String) jcb.getSelectedItem());
+                  LayoutAlgorithm<String> layoutAlgorithm = builder.build();
                   vv.removePreRenderPaintable(balloonLayoutRings);
                   vv.removePreRenderPaintable(radialLayoutRings);
                   if ((layoutAlgorithm instanceof TreeLayout)

@@ -10,6 +10,7 @@ import org.jungrapht.visualization.layout.algorithms.CircleLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.DAGLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.EdgeAwareTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.ForceAtlas2LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.GEMLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.ISOMLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
@@ -21,8 +22,7 @@ import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.SpringLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TidierTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFRRepulsion;
-import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutSpringRepulsion;
+import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFA2Repulsion;
 
 public class LayoutFunction<V>
     implements Function<String, LayoutAlgorithm.Builder<V, LayoutAlgorithm<V>, ?>> {
@@ -66,14 +66,11 @@ public class LayoutFunction<V>
           Layout.of("Self Organizing Map", ISOMLayoutAlgorithm.<V>builder()),
           Layout.of("Fruchterman Reingold", FRLayoutAlgorithm.<V>builder()),
           Layout.of(
-              "Fruchterman Reingold (BH Optimized)",
-              FRLayoutAlgorithm.builder().repulsionContractBuilder(BarnesHutFRRepulsion.builder())),
-          Layout.of("GEM", GEMLayoutAlgorithm.<V, E>edgeAwareBuilder()),
+              "ForceAtlas2",
+              ForceAtlas2LayoutAlgorithm.builder()
+                  .repulsionContractBuilder(BarnesHutFA2Repulsion.builder().repulsionK(50))),
           Layout.of("Spring", SpringLayoutAlgorithm.<V, E>builder()),
-          Layout.of(
-              "Spring (BH Optimized)",
-              SpringLayoutAlgorithm.<V, E>builder()
-                  .repulsionContractBuilder(BarnesHutSpringRepulsion.builder())),
+          Layout.of("GEM", GEMLayoutAlgorithm.<V, E>edgeAwareBuilder()),
           Layout.of("DAG", DAGLayoutAlgorithm.<V, E>builder()),
           Layout.of("Tree", TreeLayoutAlgorithm.<V>builder()),
           Layout.of("TidierTree", TidierTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()),

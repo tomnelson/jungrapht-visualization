@@ -7,11 +7,11 @@ import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.layout.algorithms.SpringLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutSpringRepulsion;
+import org.jungrapht.visualization.layout.algorithms.repulsion.StandardSpringRepulsion;
 
 /**
- * demonstrates a large graph with animated layout lightweight rendering is enabled for better
- * performance
+ * First demo I made that shows how the Lightweight rendering and the BH optimization of the layout
+ * algorithm can acceptably render a larger graph.
  */
 public class PerformanceGraph {
   public static void main(String[] args) {
@@ -32,7 +32,7 @@ public class PerformanceGraph {
         VisualizationViewer.builder(graph)
             .layoutAlgorithm(
                 SpringLayoutAlgorithm.<String, Integer>builder()
-                    .repulsionContractBuilder(BarnesHutSpringRepulsion.builder())
+                    .repulsionContractBuilder(StandardSpringRepulsion.builder())
                     .build())
             .layoutSize(layoutSize)
             .viewSize(viewSize)
