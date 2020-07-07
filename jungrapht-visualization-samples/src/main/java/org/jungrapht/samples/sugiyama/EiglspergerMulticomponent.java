@@ -1,11 +1,12 @@
 package org.jungrapht.samples.sugiyama;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.TestGraphs;
+import org.jungrapht.samples.util.TitlePaintable;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
@@ -20,23 +21,42 @@ public class EiglspergerMulticomponent extends JFrame {
 
   public EiglspergerMulticomponent() {
 
-    JPanel container = new JPanel(new BorderLayout());
+    JPanel container = new JPanel(new GridLayout(0, 2));
 
     Graph<String, Integer> graph = TestGraphs.getDemoGraph(true);
 
-    VisualizationViewer<String, Integer> vv = configureVisualizationViewer(graph);
-
-    EiglspergerLayoutAlgorithm<String, Integer> layoutAlgorithm =
+    VisualizationViewer<String, Integer> vv1 = configureVisualizationViewer(graph);
+    EiglspergerLayoutAlgorithm<String, Integer> layoutAlgorithm1 =
         EiglspergerLayoutAlgorithm.<String, Integer>edgeAwareBuilder()
             .postStraighten(true)
             .threaded(false)
             .layering(Layering.COFFMAN_GRAHAM)
-            .after(vv::scaleToLayout)
+            .after(vv1::scaleToLayout)
             .build();
-    layoutAlgorithm.setVertexShapeFunction(vv.getRenderContext().getVertexShapeFunction());
-    layoutAlgorithm.setEdgeShapeFunctionConsumer(vv.getRenderContext()::setEdgeShapeFunction);
-    vv.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm);
-    container.add(vv.getComponent());
+    layoutAlgorithm1.setVertexShapeFunction(vv1.getRenderContext().getVertexShapeFunction());
+    layoutAlgorithm1.setEdgeShapeFunctionConsumer(vv1.getRenderContext()::setEdgeShapeFunction);
+    vv1.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm1);
+    container.add(vv1.getComponent());
+
+    VisualizationViewer<String, Integer> vv2 = configureVisualizationViewer(graph);
+    EiglspergerLayoutAlgorithm<String, Integer> layoutAlgorithm2 =
+        EiglspergerLayoutAlgorithm.<String, Integer>edgeAwareBuilder()
+            .postStraighten(true)
+            .threaded(false)
+            .layering(Layering.COFFMAN_GRAHAM)
+            .after(vv2::scaleToLayout)
+            .separateComponents(false)
+            .build();
+    layoutAlgorithm2.setVertexShapeFunction(vv2.getRenderContext().getVertexShapeFunction());
+    layoutAlgorithm2.setEdgeShapeFunctionConsumer(vv2.getRenderContext()::setEdgeShapeFunction);
+    vv2.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm2);
+    container.add(vv2.getComponent());
+
+    vv2.setSelectedVertexState(vv1.getSelectedVertexState());
+
+    vv1.addPreRenderPaintable(new TitlePaintable("Separated Components", vv1.getPreferredSize()));
+    vv2.addPreRenderPaintable(
+        new TitlePaintable("Not Separated Components", vv2.getPreferredSize()));
 
     setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 

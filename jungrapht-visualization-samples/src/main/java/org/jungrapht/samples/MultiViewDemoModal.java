@@ -23,10 +23,13 @@ import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.DefaultGraphMouse;
+import org.jungrapht.visualization.control.AnimatedPickingGraphMousePlugin;
+import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.LayoutScalingControl;
+import org.jungrapht.visualization.control.RotatingGraphMousePlugin;
 import org.jungrapht.visualization.control.ScalingGraphMousePlugin;
 import org.jungrapht.visualization.control.SelectingGraphMousePlugin;
+import org.jungrapht.visualization.control.ShearingGraphMousePlugin;
 import org.jungrapht.visualization.control.TranslatingGraphMousePlugin;
 import org.jungrapht.visualization.control.ViewScalingControl;
 import org.jungrapht.visualization.decorators.EdgeShape;
@@ -43,7 +46,7 @@ import org.jungrapht.visualization.selection.ShapePickSupport;
  *
  * @author Tom Nelson
  */
-public class MultiViewDemo extends JPanel {
+public class MultiViewDemoModal extends JPanel {
 
   /** the graph */
   Graph<String, Integer> graph;
@@ -77,7 +80,7 @@ public class MultiViewDemo extends JPanel {
   JScrollPane scrollPane;
 
   /** create an instance of a simple graph in two views with controls to demo the zoom features. */
-  public MultiViewDemo() {
+  public MultiViewDemoModal() {
 
     setLayout(new BorderLayout());
     // create a simple graph for the demo
@@ -187,29 +190,37 @@ public class MultiViewDemo extends JPanel {
 
     // create a GraphMouse for each view
     // each one has a different scaling plugin
-    DefaultGraphMouse<String, Integer> gm1 =
-        new DefaultGraphMouse<>() {
+    DefaultModalGraphMouse<String, Integer> gm1 =
+        new DefaultModalGraphMouse<>() {
           protected void loadPlugins() {
-            scalingPlugin = new ScalingGraphMousePlugin(new LayoutScalingControl(), 0, in, out);
-            add(new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK));
-            pickingPlugin = new SelectingGraphMousePlugin<>();
-            add(pickingPlugin);
+            pickingPlugin = new SelectingGraphMousePlugin<String, Integer>();
+            animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<String, Integer>();
+            translatingPlugin = new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
+            scalingPlugin = new ScalingGraphMousePlugin(new LayoutScalingControl(), 0);
+            rotatingPlugin = new RotatingGraphMousePlugin();
+            shearingPlugin = new ShearingGraphMousePlugin();
+
             add(scalingPlugin);
+            setMode(Mode.TRANSFORMING);
           }
         };
 
-    DefaultGraphMouse<String, Integer> gm2 =
-        new DefaultGraphMouse<>() {
+    DefaultModalGraphMouse<String, Integer> gm2 =
+        new DefaultModalGraphMouse<>() {
           protected void loadPlugins() {
-            scalingPlugin = new ScalingGraphMousePlugin(new ViewScalingControl(), 0, in, out);
-            add(new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK));
-            pickingPlugin = new SelectingGraphMousePlugin<>();
-            add(pickingPlugin);
+            pickingPlugin = new SelectingGraphMousePlugin<String, Integer>();
+            animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<String, Integer>();
+            translatingPlugin = new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
+            scalingPlugin = new ScalingGraphMousePlugin(new ViewScalingControl(), 0);
+            rotatingPlugin = new RotatingGraphMousePlugin();
+            shearingPlugin = new ShearingGraphMousePlugin();
+
             add(scalingPlugin);
+            setMode(Mode.TRANSFORMING);
           }
         };
 
-    DefaultGraphMouse<String, Integer> gm3 = new DefaultGraphMouse<>() {};
+    DefaultModalGraphMouse<String, Integer> gm3 = new DefaultModalGraphMouse<>() {};
 
     vv1.setGraphMouse(gm1);
     vv2.setGraphMouse(gm2);
@@ -236,12 +247,15 @@ public class MultiViewDemo extends JPanel {
 
     JPanel flow = new JPanel();
     flow.add(h1);
+    flow.add(gm1.getModeComboBox());
     p1.add(flow, BorderLayout.SOUTH);
     flow = new JPanel();
     flow.add(h2);
+    flow.add(gm2.getModeComboBox());
     p2.add(flow, BorderLayout.SOUTH);
     flow = new JPanel();
     flow.add(h3);
+    flow.add(gm3.getModeComboBox());
     p3.add(flow, BorderLayout.SOUTH);
 
     panel.add(p1);
@@ -290,7 +304,7 @@ public class MultiViewDemo extends JPanel {
   public static void main(String[] args) {
     JFrame f = new JFrame();
     f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-    f.getContentPane().add(new MultiViewDemo());
+    f.getContentPane().add(new MultiViewDemoModal());
     f.pack();
     f.setVisible(true);
   }

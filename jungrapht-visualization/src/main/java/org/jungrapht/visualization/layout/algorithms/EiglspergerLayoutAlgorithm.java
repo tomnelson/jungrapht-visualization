@@ -101,6 +101,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
     protected Runnable after = () -> {};
     protected boolean threaded =
         Boolean.parseBoolean(System.getProperty(MINCROSS_THREADED, "true"));
+    protected boolean separateComponents = true;
 
     /** {@inheritDoc} */
     protected B self() {
@@ -164,6 +165,11 @@ public class EiglspergerLayoutAlgorithm<V, E>
       return self();
     }
 
+    public B separateComponents(boolean separateComponents) {
+      this.separateComponents = separateComponents;
+      return self();
+    }
+
     /** {@inheritDoc} */
     public T build() {
       return (T) new EiglspergerLayoutAlgorithm<>(this);
@@ -195,6 +201,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
   protected Executor executor;
   protected CompletableFuture theFuture;
   protected Runnable after;
+  protected boolean separateCommponents;
   protected Map<E, List<Point>> edgePointMap = new HashMap<>();
   protected EdgeShape.ArticulatedLine<V, E> edgeShape = new EdgeShape.ArticulatedLine<>();
 
@@ -214,6 +221,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
         builder.layering,
         builder.threaded,
         builder.executor,
+        builder.separateComponents,
         builder.after);
   }
 
@@ -228,6 +236,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
       Layering layering,
       boolean threaded,
       Executor executor,
+      boolean separateComponents,
       Runnable after) {
     this.vertexShapeFunction = vertexShapeFunction;
     this.edgeShapeConsumer = edgeShapeConsumer;
@@ -238,6 +247,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
     this.expandLayout = expandLayout;
     this.layering = layering;
     this.after = after;
+    this.separateCommponents = separateComponents;
     this.executor = executor;
     this.threaded = threaded;
 
@@ -288,20 +298,28 @@ public class EiglspergerLayoutAlgorithm<V, E>
     if (graph == null || graph.vertexSet().isEmpty()) {
       return;
     }
-    // if this is a multicomponent graph, discover components and create a temp
-    // LayoutModel for each to visit. Afterwards, append all the layoutModels
-    // to the one visited above.
-    List<Graph<V, E>> graphs = ComponentGrouping.getComponentGraphs(graph);
 
+    List<Graph<V, E>> graphs;
     List<LayoutModel<V>> layoutModels = new ArrayList<>();
-    for (int i = 0; i < graphs.size(); i++) {
-      LayoutModel<V> componentLayoutModel =
-          LayoutModel.<V>builder()
-              .graph(graphs.get(i))
-              .width(layoutModel.getWidth())
-              .height(layoutModel.getHeight())
-              .build();
-      layoutModels.add(componentLayoutModel);
+
+    if (separateCommponents) {
+      // if this is a multicomponent graph, discover components and create a temp
+      // LayoutModel for each to visit. Afterwards, append all the layoutModels
+      // to the one visited above.
+      graphs = ComponentGrouping.getComponentGraphs(graph);
+
+      for (int i = 0; i < graphs.size(); i++) {
+        LayoutModel<V> componentLayoutModel =
+            LayoutModel.<V>builder()
+                .graph(graphs.get(i))
+                .width(layoutModel.getWidth())
+                .height(layoutModel.getHeight())
+                .build();
+        layoutModels.add(componentLayoutModel);
+      }
+    } else {
+      graphs = Collections.singletonList(graph);
+      layoutModels.add(layoutModel);
     }
 
     for (LayoutModel<V> componentLayoutModel : layoutModels) {
