@@ -163,8 +163,7 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
             .lightweightRenderer(
                 new SelectionRenderer<>(new LightweightVertexSelectionRenderer<>()))
             .heavyweightRenderer(
-                (new SelectionRenderer<>(
-                    new HeavyweightVertexSelectionRenderer<>(visualizationServer))))
+                (new SelectionRenderer<>(new HeavyweightVertexSelectionRenderer<>())))
             .modeSourceRenderer((BiModalRenderer<V, E>) visualizationServer.getRenderer())
             .build();
   }

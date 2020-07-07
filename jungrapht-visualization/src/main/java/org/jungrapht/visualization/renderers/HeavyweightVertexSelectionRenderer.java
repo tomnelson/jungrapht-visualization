@@ -14,7 +14,6 @@ import java.awt.Shape;
 import java.awt.Stroke;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationModel;
-import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 
 /**
@@ -23,12 +22,6 @@ import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
  */
 public class HeavyweightVertexSelectionRenderer<V, E> extends HeavyweightVertexRenderer<V, E>
     implements Renderer.Vertex<V, E> {
-
-  private VisualizationServer<V, E> visualizationServer;
-
-  public HeavyweightVertexSelectionRenderer(VisualizationServer<V, E> visualizationServer) {
-    this.visualizationServer = visualizationServer;
-  }
 
   protected void paintIconForVertex(
       RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {
