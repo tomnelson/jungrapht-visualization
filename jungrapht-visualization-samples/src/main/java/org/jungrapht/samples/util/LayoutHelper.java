@@ -17,6 +17,9 @@ import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFA2Repulsion;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFRRepulsion;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutSpringRepulsion;
+import org.jungrapht.visualization.layout.algorithms.repulsion.StandardFA2Repulsion;
+import org.jungrapht.visualization.layout.algorithms.repulsion.StandardFRRepulsion;
+import org.jungrapht.visualization.layout.algorithms.repulsion.StandardSpringRepulsion;
 
 public class LayoutHelper {
 
@@ -28,24 +31,36 @@ public class LayoutHelper {
     REDUCE_XING_CIRCLE(
         "Reduce Xing Circle", CircleLayoutAlgorithm.builder().reduceEdgeCrossing(true).build()),
     SELF_ORGANIZING_MAP("Self Organizing Map", new ISOMLayoutAlgorithm<>()),
-    FR("Fruchterman Reingold", new FRLayoutAlgorithm<>()),
+    FR(
+        "Fruchterman Reingold",
+        FRLayoutAlgorithm.builder()
+            .repulsionContractBuilder(StandardFRRepulsion.builder())
+            .build()),
     FR_BH_VISITOR(
         "Fruchterman Reingold (BH Optimized)",
         FRLayoutAlgorithm.builder()
-            .repulsionContractBuilder(BarnesHutFRRepulsion.barnesHutBuilder())
+            .repulsionContractBuilder(BarnesHutFRRepulsion.builder())
             .build()),
-    FA2("ForceAtlas2", new ForceAtlas2LayoutAlgorithm<>()),
+    FA2(
+        "ForceAtlas2",
+        ForceAtlas2LayoutAlgorithm.builder()
+            .repulsionContractBuilder(StandardFA2Repulsion.builder())
+            .build()),
     FA2_BH_VISITOR(
         "ForceAtlas2 (BH Optimized)",
         ForceAtlas2LayoutAlgorithm.builder()
-            .repulsionContractBuilder(BarnesHutFA2Repulsion.builder())
+            .repulsionContractBuilder(BarnesHutFA2Repulsion.builder()) // the default
             .build()),
-    SPRING("Spring", new SpringLayoutAlgorithm<>()),
+    SPRING(
+        "Spring",
+        SpringLayoutAlgorithm.builder()
+            .repulsionContractBuilder(StandardSpringRepulsion.builder())
+            .build()),
     GEM("GEM", GEMLayoutAlgorithm.edgeAwareBuilder().build()),
     SPRING_BH_VISITOR(
         "Spring (BH Optimized)",
         SpringLayoutAlgorithm.builder()
-            .repulsionContractBuilder(BarnesHutSpringRepulsion.barnesHutBuilder())
+            .repulsionContractBuilder(BarnesHutSpringRepulsion.builder()) // the default
             .build()),
     TREE("Tree", new TreeLayoutAlgorithm<>()),
     MULTI_ROW_TREE("Multirow Tree", new MultiRowTreeLayoutAlgorithm<>()),

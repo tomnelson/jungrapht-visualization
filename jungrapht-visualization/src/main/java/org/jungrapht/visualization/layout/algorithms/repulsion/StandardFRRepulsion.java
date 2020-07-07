@@ -68,7 +68,7 @@ public class StandardFRRepulsion<
   protected Set<V> vertexSet;
   double repulsionSquared;
 
-  public static Builder standardBuilder() {
+  public static Builder builder() {
     return new Builder();
   }
 

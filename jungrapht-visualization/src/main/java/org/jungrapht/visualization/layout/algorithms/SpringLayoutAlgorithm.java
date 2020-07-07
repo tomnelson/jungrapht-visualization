@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import org.jgrapht.Graph;
+import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutSpringRepulsion;
 import org.jungrapht.visualization.layout.algorithms.repulsion.StandardSpringRepulsion;
 import org.jungrapht.visualization.layout.algorithms.util.IterativeContext;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -49,7 +50,7 @@ public class SpringLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorith
       implements LayoutAlgorithm.Builder<V, T, B> {
 
     private StandardSpringRepulsion.Builder repulsionContractBuilder =
-        StandardSpringRepulsion.standardBuilder();
+        BarnesHutSpringRepulsion.builder();
     private Function<E, Integer> lengthFunction = n -> 30;
 
     public B repulsionContractBuilder(StandardSpringRepulsion.Builder repulsionContractBuilder) {

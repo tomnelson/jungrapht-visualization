@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import org.jgrapht.Graph;
+import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFRRepulsion;
 import org.jungrapht.visualization.layout.algorithms.repulsion.StandardFRRepulsion;
 import org.jungrapht.visualization.layout.algorithms.util.IterativeContext;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -73,7 +74,7 @@ public class FRLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
       extends AbstractIterativeLayoutAlgorithm.Builder<V, T, B>
       implements LayoutAlgorithm.Builder<V, T, B> {
     private StandardFRRepulsion.Builder repulsionContractBuilder =
-        new StandardFRRepulsion.Builder();
+        new BarnesHutFRRepulsion.Builder();
     private int maxIterations = 700;
 
     public B repulsionContractBuilder(StandardFRRepulsion.Builder repulsionContractBuilder) {

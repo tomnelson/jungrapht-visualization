@@ -64,7 +64,7 @@ public class FRLayoutsTimingTest {
   public void testFRBHVisitor() {
     FRLayoutAlgorithm layoutAlgorithmThree =
         FRLayoutAlgorithm.builder()
-            .repulsionContractBuilder(BarnesHutFRRepulsion.barnesHutBuilder()) //.randomSeed(0))
+            .repulsionContractBuilder(BarnesHutFRRepulsion.builder()) //.randomSeed(0))
             .build();
     doTest(layoutAlgorithmThree);
     doTest(layoutAlgorithmThree);

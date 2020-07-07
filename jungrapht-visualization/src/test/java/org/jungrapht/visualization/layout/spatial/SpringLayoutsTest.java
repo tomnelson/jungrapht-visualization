@@ -85,7 +85,7 @@ public class SpringLayoutsTest {
     // using the same random seed each time for repeatable results from each test.
     SpringLayoutAlgorithm layoutAlgorithmOne =
         SpringLayoutAlgorithm.builder()
-            .repulsionContractBuilder(StandardSpringRepulsion.standardBuilder())
+            .repulsionContractBuilder(StandardSpringRepulsion.builder())
             .randomSeed(0)
             .build();
     doTest(layoutAlgorithmOne, mapOne);
@@ -96,7 +96,7 @@ public class SpringLayoutsTest {
     // using the same random seed each time for repeatable results from each test.
     SpringLayoutAlgorithm layoutAlgorithmThree =
         SpringLayoutAlgorithm.builder()
-            .repulsionContractBuilder(BarnesHutSpringRepulsion.barnesHutBuilder())
+            .repulsionContractBuilder(BarnesHutSpringRepulsion.builder())
             .randomSeed(0)
             .build();
     doTest(layoutAlgorithmThree, mapThree);
@@ -112,7 +112,7 @@ public class SpringLayoutsTest {
     // using the same random seed each time for repeatable results from each test.
     SpringLayoutAlgorithm layoutAlgorithmFour =
         SpringLayoutAlgorithm.builder()
-            .repulsionContractBuilder(BarnesHutSpringRepulsion.barnesHutBuilder().theta(0))
+            .repulsionContractBuilder(BarnesHutSpringRepulsion.builder().theta(0))
             .randomSeed(0)
             .build();
     doTest(layoutAlgorithmFour, mapFour);

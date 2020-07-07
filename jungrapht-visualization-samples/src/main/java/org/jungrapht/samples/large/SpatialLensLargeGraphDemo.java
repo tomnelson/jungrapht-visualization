@@ -82,7 +82,7 @@ public class SpatialLensLargeGraphDemo extends JPanel {
 
     graphLayoutAlgorithm =
         FRLayoutAlgorithm.<String>builder()
-            .repulsionContractBuilder(BarnesHutFRRepulsion.barnesHutBuilder())
+            .repulsionContractBuilder(BarnesHutFRRepulsion.builder())
             .build();
 
     Dimension preferredSize = new Dimension(800, 800);

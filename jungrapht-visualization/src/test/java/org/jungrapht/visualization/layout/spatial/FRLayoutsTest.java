@@ -87,7 +87,7 @@ public class FRLayoutsTest {
   public void testFRLayouts() {
     FRLayoutAlgorithm layoutAlgorithmOne =
         FRLayoutAlgorithm.builder()
-            .repulsionContractBuilder(StandardFRRepulsion.standardBuilder())
+            .repulsionContractBuilder(StandardFRRepulsion.builder())
             .randomSeed(0)
             .build();
 
@@ -100,7 +100,7 @@ public class FRLayoutsTest {
   public void testFRBHVisitor() {
     FRLayoutAlgorithm layoutAlgorithmThree =
         FRLayoutAlgorithm.builder()
-            .repulsionContractBuilder(BarnesHutFRRepulsion.barnesHutBuilder())
+            .repulsionContractBuilder(BarnesHutFRRepulsion.builder())
             .randomSeed(0)
             .build();
     // using the same random seed each time for repeatable results from each test.
@@ -117,7 +117,7 @@ public class FRLayoutsTest {
   public void testFRBHWithThetaZero() {
     FRLayoutAlgorithm layoutAlgorithmFour =
         FRLayoutAlgorithm.builder()
-            .repulsionContractBuilder(BarnesHutFRRepulsion.barnesHutBuilder().theta(0))
+            .repulsionContractBuilder(BarnesHutFRRepulsion.builder().theta(0))
             .randomSeed(0)
             .build();
     // using the same random seed each time for repeatable results from each test.

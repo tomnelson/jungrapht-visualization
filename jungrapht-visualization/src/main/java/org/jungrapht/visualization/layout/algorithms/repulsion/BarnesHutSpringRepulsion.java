@@ -68,7 +68,7 @@ public class BarnesHutSpringRepulsion<V>
 
   protected BarnesHutQuadTree<V> tree;
 
-  public static Builder barnesHutBuilder() {
+  public static Builder builder() {
     return new Builder();
   }
 

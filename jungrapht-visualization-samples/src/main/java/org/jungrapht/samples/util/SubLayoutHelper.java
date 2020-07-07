@@ -21,13 +21,13 @@ public class SubLayoutHelper {
     FR_BH_VISITOR(
         "Fruchterman Reingold",
         FRLayoutAlgorithm.builder()
-            .repulsionContractBuilder(BarnesHutFRRepulsion.barnesHutBuilder())
+            .repulsionContractBuilder(BarnesHutFRRepulsion.builder())
             .build()),
     SPRING("Spring", new SpringLayoutAlgorithm<>()),
     SPRING_BH_VISITOR(
         "Spring (BH Optimized)",
         SpringLayoutAlgorithm.builder()
-            .repulsionContractBuilder(StandardSpringRepulsion.standardBuilder())
+            .repulsionContractBuilder(StandardSpringRepulsion.builder())
             .build());
 
     private static final Map<String, Layouts> BY_NAME = new HashMap<>();

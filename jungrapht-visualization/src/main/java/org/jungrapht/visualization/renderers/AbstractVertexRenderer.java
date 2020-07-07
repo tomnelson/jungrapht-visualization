@@ -39,7 +39,7 @@ public abstract class AbstractVertexRenderer<V, E> implements Renderer.Vertex<V,
    * Returns the vertex shape in layout coordinates.
    *
    * @param v the vertex whose shape is to be returned
-   * @param coords the x and y view coordinates
+   * @param coords the x and y view coordinates. used by caller to place the icon if available
    * @return the vertex shape in view coordinates
    */
   protected Shape prepareFinalVertexShape(
@@ -60,6 +60,7 @@ public abstract class AbstractVertexRenderer<V, E> implements Renderer.Vertex<V,
     // graphics context
     float x = (float) p2d.getX();
     float y = (float) p2d.getY();
+    // coords values are set and returned to the caller in order to place an Icon instead of Shape
     coords[0] = (int) x;
     coords[1] = (int) y;
     // create a transform that translates to the location of

@@ -331,7 +331,7 @@ public class MultipleLayoutSelector<V, E> extends JPanel {
 
     FRLayoutAlgorithm<V> frLayoutAlgorithm =
         FRLayoutAlgorithm.<V>builder()
-            .repulsionContractBuilder(BarnesHutFRRepulsion.barnesHutBuilder())
+            .repulsionContractBuilder(BarnesHutFRRepulsion.builder())
             .build();
 
     KKLayoutAlgorithm<V> kkLayoutAlgorithm = new KKLayoutAlgorithm<>();

@@ -60,7 +60,7 @@ public class StandardSpringRepulsion<
   protected LayoutModel<V> layoutModel;
   protected Set<V> vertexSet;
 
-  public static Builder standardBuilder() {
+  public static Builder builder() {
     return new Builder();
   }
 

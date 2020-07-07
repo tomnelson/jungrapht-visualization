@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
+import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFA2Repulsion;
 import org.jungrapht.visualization.layout.algorithms.repulsion.StandardFA2Repulsion;
 import org.jungrapht.visualization.layout.algorithms.util.IterativeContext;
 import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
@@ -77,7 +78,7 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
       extends AbstractIterativeLayoutAlgorithm.Builder<V, T, B>
       implements LayoutAlgorithm.Builder<V, T, B> {
     private StandardFA2Repulsion.Builder repulsionContractBuilder =
-        new StandardFA2Repulsion.Builder();
+        new BarnesHutFA2Repulsion.Builder();
 
     private boolean useLinLog = false;
     private boolean attractionByWeights = false;
