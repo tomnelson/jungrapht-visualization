@@ -23,6 +23,8 @@ import org.jungrapht.visualization.layout.algorithms.CircleLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.DAGLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.EdgeAwareTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.ForceAtlas2LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.GEMLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.HierarchicalMinCrossLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.Layered;
@@ -33,11 +35,13 @@ import org.jungrapht.visualization.layout.algorithms.MultiRowTreeLayoutAlgorithm
 import org.jungrapht.visualization.layout.algorithms.RadialEdgeAwareTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.RadialTreeLayout;
 import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.SpringLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.SugiyamaLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TidierRadialTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TidierTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TreeLayout;
 import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFA2Repulsion;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.layout.algorithms.util.EdgeShapeFunctionSupplier;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
@@ -321,6 +325,15 @@ public class TreeLayoutSelector<V, E> extends JPanel {
 
     DAGLayoutAlgorithm<V, E> dagLayoutAlgorithm = new DAGLayoutAlgorithm<>();
 
+    FRLayoutAlgorithm<V> frLayoutAlgorithm = new FRLayoutAlgorithm<>();
+
+    ForceAtlas2LayoutAlgorithm<V> forceAtlas2LayoutAlgorithm =
+        ForceAtlas2LayoutAlgorithm.<V>builder()
+            .repulsionContractBuilder(BarnesHutFA2Repulsion.builder())
+            .build();
+
+    SpringLayoutAlgorithm<V, E> springLayoutAlgorithm = new SpringLayoutAlgorithm<>();
+
     JRadioButton treeButton = new JRadioButton("Tree");
     treeButton.addItemListener(new LayoutItemListener(treeLayoutAlgorithm, vv));
     treeButton.setSelected(initialSelection == layoutNumber++);
@@ -389,6 +402,18 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     dagButton.addItemListener(new LayoutItemListener(dagLayoutAlgorithm, vv));
     dagButton.setSelected(initialSelection == layoutNumber++);
 
+    JRadioButton frButton = new JRadioButton("FR");
+    frButton.addItemListener(new LayoutItemListener(frLayoutAlgorithm, vv));
+    frButton.setSelected(initialSelection == layoutNumber++);
+
+    JRadioButton fa2Button = new JRadioButton("FA2");
+    fa2Button.addItemListener(new LayoutItemListener(forceAtlas2LayoutAlgorithm, vv));
+    fa2Button.setSelected(initialSelection == layoutNumber++);
+
+    JRadioButton springButton = new JRadioButton("Spring");
+    springButton.addItemListener(new LayoutItemListener(springLayoutAlgorithm, vv));
+    springButton.setSelected(initialSelection == layoutNumber++);
+
     ButtonGroup layoutRadio = new ButtonGroup();
     layoutRadio.add(treeButton);
     layoutRadio.add(tidierTreeButton);
@@ -406,6 +431,9 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     layoutRadio.add(multiRowEdgeAwareTreeButton);
     layoutRadio.add(circleButton);
     layoutRadio.add(betterCircleButton);
+    layoutRadio.add(frButton);
+    layoutRadio.add(fa2Button);
+    layoutRadio.add(springButton);
 
     layeringComboBox.addItemListener(
         item -> {
@@ -436,6 +464,9 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     this.add(dagButton);
     this.add(circleButton);
     this.add(betterCircleButton);
+    this.add(frButton);
+    this.add(fa2Button);
+    this.add(springButton);
     this.add(animateTransition);
     this.add(layeringComboBox);
   }

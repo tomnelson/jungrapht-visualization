@@ -49,7 +49,8 @@ public class LayoutHelper {
     FA2_BH_VISITOR(
         "ForceAtlas2 (Barnes Hut Optimized)",
         ForceAtlas2LayoutAlgorithm.builder()
-            .repulsionContractBuilder(BarnesHutFA2Repulsion.builder()) // the default
+            .repulsionContractBuilder(
+                BarnesHutFA2Repulsion.builder().repulsionK(100)) // the default
             .build()),
     SPRING(
         "Spring (Not Optimized)",

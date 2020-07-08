@@ -91,7 +91,6 @@ public class BalloonLayoutForestDemo extends JPanel {
         .addItemListener(new SelectedState.StateChangeListener<>(this::selected, this::deselected));
 
     LayoutModel layoutModel = vv.getVisualizationModel().getLayoutModel();
-    Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
     Lens lens = new Lens();
     hyperbolicViewSupport =
         ViewLensSupport.builder(vv)
