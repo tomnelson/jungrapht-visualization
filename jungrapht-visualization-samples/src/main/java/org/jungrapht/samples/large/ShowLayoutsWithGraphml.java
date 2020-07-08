@@ -20,6 +20,7 @@ import org.jgrapht.nio.csv.CSVImporter;
 import org.jgrapht.nio.dot.DOTImporter;
 import org.jgrapht.nio.gml.GmlImporter;
 import org.jgrapht.nio.graphml.GraphMLImporter;
+import org.jgrapht.nio.json.JSONImporter;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.samples.spatial.RTreeVisualization;
 import org.jungrapht.samples.util.ControlHelpers;
@@ -242,7 +243,7 @@ public class ShowLayoutsWithGraphml extends JFrame {
           if (option == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
             String fileName = file.getName();
-            String suffix = fileName.substring(fileName.lastIndexOf('.')+1).toLowerCase();
+            String suffix = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
             GraphImporter importer;
             switch (suffix) {
               case "graphml":
@@ -257,9 +258,14 @@ public class ShowLayoutsWithGraphml extends JFrame {
               case "csv":
                 importer = new CSVImporter();
                 break;
+              case "json":
+                importer = new JSONImporter();
+                break;
               default:
+                JOptionPane.showMessageDialog(vv.getComponent(), "Unable to open " + fileName);
                 return;
             }
+            clear(graph);
             try (InputStreamReader inputStreamReader = new FileReader(file)) {
               importer.importGraph(graph, inputStreamReader);
             } catch (Exception ex) {
@@ -269,7 +275,9 @@ public class ShowLayoutsWithGraphml extends JFrame {
             vv.getVisualizationModel().getLayoutModel().setSize(size, size);
             vv.getVisualizationModel().setGraph(graph);
             setTitle(
-                "Graph With "
+                "Graph of "
+                    + fileName
+                    + " with "
                     + graph.vertexSet().size()
                     + " vertices and "
                     + graph.edgeSet().size()
@@ -282,7 +290,7 @@ public class ShowLayoutsWithGraphml extends JFrame {
         ControlHelpers.getContainer(
             Box.createHorizontalBox(),
             ControlHelpers.getCenteredContainer("Layouts", layoutComboBox),
-            ControlHelpers.getCenteredContainer("Load from File", loadFileButton));
+            ControlHelpers.getCenteredContainer(Box.createHorizontalBox(), loadFileButton));
     controlPanel.add(top);
 
     JButton showRTree = new JButton("Show RTree");
