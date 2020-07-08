@@ -15,6 +15,10 @@ import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jgrapht.nio.GraphImporter;
+import org.jgrapht.nio.csv.CSVImporter;
+import org.jgrapht.nio.dot.DOTImporter;
+import org.jgrapht.nio.gml.GmlImporter;
 import org.jgrapht.nio.graphml.GraphMLImporter;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.samples.spatial.RTreeVisualization;
@@ -60,6 +64,7 @@ public class ShowLayoutsWithGraphml extends JFrame {
 
   LayoutPaintable.BalloonRings balloonLayoutRings;
   LayoutPaintable.RadialRings radialLayoutRings;
+  JFileChooser fileChooser;
 
   public ShowLayoutsWithGraphml() {
 
@@ -230,13 +235,33 @@ public class ShowLayoutsWithGraphml extends JFrame {
     JButton loadFileButton = new JButton("Load File");
     loadFileButton.addActionListener(
         e -> {
-          JFileChooser chooser = new JFileChooser();
-          int option = chooser.showOpenDialog(vv.getComponent());
+          if (fileChooser == null) {
+            fileChooser = new JFileChooser();
+          }
+          int option = fileChooser.showOpenDialog(vv.getComponent());
           if (option == JFileChooser.APPROVE_OPTION) {
-            File file = chooser.getSelectedFile();
+            File file = fileChooser.getSelectedFile();
+            String fileName = file.getName();
+            String suffix = fileName.substring(fileName.lastIndexOf('.')+1).toLowerCase();
+            GraphImporter importer;
+            switch (suffix) {
+              case "graphml":
+                importer = new GraphMLImporter();
+                break;
+              case "gml":
+                importer = new GmlImporter();
+                break;
+              case "dot":
+                importer = new DOTImporter();
+                break;
+              case "csv":
+                importer = new CSVImporter();
+                break;
+              default:
+                return;
+            }
             try (InputStreamReader inputStreamReader = new FileReader(file)) {
-              GraphMLImporter gmlImporter = new GraphMLImporter();
-              gmlImporter.importGraph(graph, inputStreamReader);
+              importer.importGraph(graph, inputStreamReader);
             } catch (Exception ex) {
               ex.printStackTrace();
             }
@@ -257,7 +282,7 @@ public class ShowLayoutsWithGraphml extends JFrame {
         ControlHelpers.getContainer(
             Box.createHorizontalBox(),
             ControlHelpers.getCenteredContainer("Layouts", layoutComboBox),
-            loadFileButton);
+            ControlHelpers.getCenteredContainer("Load from File", loadFileButton));
     controlPanel.add(top);
 
     JButton showRTree = new JButton("Show RTree");
