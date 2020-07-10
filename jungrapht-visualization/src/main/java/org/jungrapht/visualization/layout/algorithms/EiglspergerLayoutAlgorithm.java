@@ -278,6 +278,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
 
   @Override
   public void setLayering(Layering layering) {
+    this.edgePointMap.clear();
     this.layering = layering;
   }
 

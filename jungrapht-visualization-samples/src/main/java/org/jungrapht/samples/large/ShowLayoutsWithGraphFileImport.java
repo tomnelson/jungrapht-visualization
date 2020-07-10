@@ -1,5 +1,25 @@
 package org.jungrapht.samples.large;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.Paint;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.alg.interfaces.VertexScoringAlgorithm;
@@ -50,27 +70,6 @@ import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
 import org.jungrapht.visualization.transform.shape.ViewLensSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.swing.*;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Paint;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileReader;
-import java.io.InputStreamReader;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Demonstrates several of the graph layout algorithms. Allows the user to interactively select one
@@ -393,9 +392,9 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
     JPanel scoringGrid = new JPanel(new GridLayout(0, 3));
     scoringGrid.add(pageRankButton);
     scoringGrid.add(betweennessButton);
-//    scoringGrid.add(alphaButton);
+    //    scoringGrid.add(alphaButton);
     scoringGrid.add(closenessButton);
-//    scoringGrid.add(clusteringButton);
+    //    scoringGrid.add(clusteringButton);
     scoringGrid.add(harmonicButton);
     scoringGrid.add(noScores);
 
@@ -411,15 +410,15 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
     JButton showRTree = new JButton("Show RTree");
     showRTree.addActionListener(e -> RTreeVisualization.showRTree(vv));
 
-//    JButton imageButton = new JButton("Save Image");
-//    imageButton.addActionListener(e -> GraphImage.capture(vv));
+    //    JButton imageButton = new JButton("Save Image");
+    //    imageButton.addActionListener(e -> GraphImage.capture(vv));
 
     JComponent bottom =
         ControlHelpers.getContainer(
             Box.createHorizontalBox(),
             ControlHelpers.getZoomControls("Scale", vv),
-//            imageButton,
-//            ControlHelpers.getCenteredContainer("Mouse Mode", modeBox),
+            //            imageButton,
+            //            ControlHelpers.getCenteredContainer("Mouse Mode", modeBox),
             lensBox,
             ControlHelpers.getCenteredContainer(
                 "Effects", Box.createVerticalBox(), showRTree, animateLayoutTransition));

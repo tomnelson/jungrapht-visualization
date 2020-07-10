@@ -202,6 +202,16 @@ public class EiglspergerRunnable<V, E> implements Runnable {
   public void run() {
     this.graph = layoutModel.getGraph();
 
+    if (graph.vertexSet().isEmpty()) {
+      return;
+    }
+    if (graph.vertexSet().size() == 1) {
+      V v = graph.vertexSet().stream().findFirst().get();
+      layoutModel.setSize(50, layoutModel.getHeight());
+      layoutModel.set(v, layoutModel.getWidth() / 2, layoutModel.getHeight() / 2);
+      return;
+    }
+
     long startTime = System.currentTimeMillis();
     TransformedGraphSupplier<V, E> transformedGraphSupplier = new TransformedGraphSupplier<>(graph);
     this.svGraph = transformedGraphSupplier.get();
