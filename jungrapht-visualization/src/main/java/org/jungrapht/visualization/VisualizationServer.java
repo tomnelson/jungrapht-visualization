@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.RenderingHints.Key;
 import java.awt.geom.Point2D;
 import java.util.Map;
+import java.util.function.Function;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
@@ -67,6 +68,8 @@ public interface VisualizationServer<V, E>
     /** the model to hold state for the visualization */
     protected VisualizationModel<V, E> visualizationModel;
 
+    protected Function<Graph<V, ?>, Integer> initialDimensionFunction;
+
     /** create an instance with no args */
     protected Builder() {}
 
@@ -119,6 +122,11 @@ public interface VisualizationServer<V, E>
     public B layoutAlgorithm(LayoutAlgorithm<V> layoutAlgorithm) {
       this.layoutAlgorithm = layoutAlgorithm;
       return self();
+    }
+
+    public B initialDimensionFunction(Function<Graph<V, ?>, Integer> initialDimensionFunction) {
+      this.initialDimensionFunction = initialDimensionFunction;
+      return (B) this;
     }
 
     /** @return a new instance of a {@link DefaultVisualizationServer} */

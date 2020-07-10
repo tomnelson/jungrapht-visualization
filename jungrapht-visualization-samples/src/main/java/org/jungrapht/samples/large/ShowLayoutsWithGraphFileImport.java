@@ -1,37 +1,37 @@
 package org.jungrapht.samples.large;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.io.File;
-import java.io.FileReader;
-import java.io.InputStreamReader;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
+import org.jgrapht.alg.interfaces.VertexScoringAlgorithm;
+import org.jgrapht.alg.scoring.AlphaCentrality;
+import org.jgrapht.alg.scoring.BetweennessCentrality;
+import org.jgrapht.alg.scoring.ClosenessCentrality;
+import org.jgrapht.alg.scoring.ClusteringCoefficient;
+import org.jgrapht.alg.scoring.HarmonicCentrality;
+import org.jgrapht.alg.scoring.PageRank;
+import org.jgrapht.alg.util.Pair;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jgrapht.nio.Attribute;
 import org.jgrapht.nio.GraphImporter;
 import org.jgrapht.nio.csv.CSVImporter;
+import org.jgrapht.nio.dimacs.DIMACSImporter;
 import org.jgrapht.nio.dot.DOTImporter;
 import org.jgrapht.nio.gml.GmlImporter;
 import org.jgrapht.nio.graphml.GraphMLImporter;
 import org.jgrapht.nio.json.JSONImporter;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.samples.spatial.RTreeVisualization;
+import org.jungrapht.samples.util.Colors;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.LayoutHelper;
 import org.jungrapht.samples.util.LensControlHelper;
 import org.jungrapht.samples.util.SpanningTreeAdapter;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.DefaultModalGraphMouse;
+import org.jungrapht.visualization.control.DefaultGraphMouse;
+import org.jungrapht.visualization.control.DefaultLensGraphMouse;
 import org.jungrapht.visualization.control.LensMagnificationGraphMousePlugin;
-import org.jungrapht.visualization.control.ModalLensGraphMouse;
 import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
@@ -48,9 +48,29 @@ import org.jungrapht.visualization.transform.MagnifyTransformer;
 import org.jungrapht.visualization.transform.shape.HyperbolicShapeTransformer;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
 import org.jungrapht.visualization.transform.shape.ViewLensSupport;
-import org.jungrapht.visualization.util.GraphImage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.Paint;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Demonstrates several of the graph layout algorithms. Allows the user to interactively select one
@@ -59,45 +79,68 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-public class ShowLayoutsWithGraphml extends JFrame {
+public class ShowLayoutsWithGraphFileImport extends JFrame {
 
-  private static final Logger log = LoggerFactory.getLogger(ShowLayoutsWithGraphml.class);
+  private static final Logger log = LoggerFactory.getLogger(ShowLayoutsWithGraphFileImport.class);
 
   LayoutPaintable.BalloonRings balloonLayoutRings;
   LayoutPaintable.RadialRings radialLayoutRings;
   JFileChooser fileChooser;
+  Map<String, Map<String, Attribute>> vertexAttributes = new HashMap<>();
 
-  public ShowLayoutsWithGraphml() {
+  Function<String, Paint> vertexFillPaintFunction =
+      v -> {
+        // try to parse from attributemap
+        Map<String, String> map =
+            vertexAttributes
+                .getOrDefault(v, Collections.emptyMap())
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().getValue()));
+        return Colors.getColor(map);
+      };
+
+  public ShowLayoutsWithGraphFileImport() {
+    Paint[] colorArray =
+        new Paint[] {
+          Color.red,
+          Color.green,
+          Color.blue,
+          Color.cyan,
+          Color.magenta,
+          Color.yellow,
+          Color.pink,
+          Color.gray,
+          Color.darkGray,
+          Color.lightGray,
+          Color.orange
+        };
 
     Graph<String, DefaultEdge> graph =
         GraphTypeBuilder.undirected()
             .edgeClass(DefaultEdge.class)
             .vertexSupplier(SupplierUtil.createStringSupplier(1))
+            .allowingSelfLoops(true)
+            .allowingMultipleEdges(true)
+            .vertexSupplier(SupplierUtil.createStringSupplier(1))
+            .edgeSupplier(SupplierUtil.DEFAULT_EDGE_SUPPLIER)
             .buildGraph();
     JPanel container = new JPanel(new BorderLayout());
 
-    final DefaultModalGraphMouse<Integer, DefaultEdge> graphMouse = new DefaultModalGraphMouse<>();
+    final DefaultGraphMouse<Integer, DefaultEdge> graphMouse = new DefaultGraphMouse<>();
 
     final VisualizationViewer<String, DefaultEdge> vv =
         VisualizationViewer.builder(graph)
-            .layoutSize(new Dimension(3000, 3000))
+            .layoutSize(new Dimension(1800, 1800))
             .viewSize(new Dimension(900, 900))
             .graphMouse(graphMouse)
             .build();
 
-    vv.getRenderContext().setVertexLabelFunction(Object::toString);
+    vv.setVertexToolTipFunction(vertex -> vertex + " " + vertexAttributes.get(vertex));
 
-    vv.setVertexToolTipFunction(
-        vertex ->
-            vertex
-                + ". with neighbors:"
-                + Graphs.neighborListOf(vv.getVisualizationModel().getGraph(), vertex));
+    vv.getRenderContext().setVertexFillPaintFunction(vertexFillPaintFunction);
 
     vv.scaleToLayout();
-
-    JComboBox modeBox = graphMouse.getModeComboBox();
-    modeBox.addItemListener(
-        ((DefaultModalGraphMouse<Integer, DefaultEdge>) vv.getGraphMouse()).getModeListener());
 
     container.add(vv.getComponent(), BorderLayout.CENTER);
     LayoutHelper.Layouts[] combos = LayoutHelper.getCombos();
@@ -148,8 +191,8 @@ public class ShowLayoutsWithGraphml extends JFrame {
     LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
     Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
     Lens lens = new Lens(); /* provides a Hyperbolic lens for the view */
-    LensSupport<ModalLensGraphMouse> hyperbolicViewSupport =
-        ViewLensSupport.<String, DefaultEdge, ModalLensGraphMouse>builder(vv)
+    LensSupport<DefaultLensGraphMouse> hyperbolicViewSupport =
+        ViewLensSupport.<String, DefaultEdge, DefaultLensGraphMouse>builder(vv)
             .lensTransformer(
                 HyperbolicShapeTransformer.builder(lens)
                     .delegate(
@@ -157,11 +200,11 @@ public class ShowLayoutsWithGraphml extends JFrame {
                             .getMultiLayerTransformer()
                             .getTransformer(MultiLayerTransformer.Layer.VIEW))
                     .build())
-            .lensGraphMouse(new ModalLensGraphMouse())
+            .lensGraphMouse(new DefaultLensGraphMouse())
             .build();
 
-    LensSupport<ModalLensGraphMouse> hyperbolicLayoutSupport =
-        LayoutLensSupport.<String, DefaultEdge, ModalLensGraphMouse>builder(vv)
+    LensSupport<DefaultLensGraphMouse> hyperbolicLayoutSupport =
+        LayoutLensSupport.<String, DefaultEdge, DefaultLensGraphMouse>builder(vv)
             .lensTransformer(
                 HyperbolicTransformer.builder(lens)
                     .delegate(
@@ -169,15 +212,15 @@ public class ShowLayoutsWithGraphml extends JFrame {
                             .getMultiLayerTransformer()
                             .getTransformer(MultiLayerTransformer.Layer.LAYOUT))
                     .build())
-            .lensGraphMouse(new ModalLensGraphMouse())
+            .lensGraphMouse(new DefaultLensGraphMouse())
             .build();
 
     // the magnification lens uses a different magnification than the hyperbolic lens
     // create a new one to share between the two magnigy transformers
     lens = new Lens();
     lens.setMagnification(3.f);
-    LensSupport<ModalLensGraphMouse> magnifyViewSupport =
-        ViewLensSupport.<String, DefaultEdge, ModalLensGraphMouse>builder(vv)
+    LensSupport<DefaultLensGraphMouse> magnifyViewSupport =
+        ViewLensSupport.<String, DefaultEdge, DefaultLensGraphMouse>builder(vv)
             .lensTransformer(
                 MagnifyShapeTransformer.builder(lens)
                     .delegate(
@@ -186,11 +229,11 @@ public class ShowLayoutsWithGraphml extends JFrame {
                             .getTransformer(MultiLayerTransformer.Layer.VIEW))
                     .build())
             .lensGraphMouse(
-                new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
+                new DefaultLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
             .build();
 
-    LensSupport<ModalLensGraphMouse> magnifyLayoutSupport =
-        LayoutLensSupport.<String, DefaultEdge, ModalLensGraphMouse>builder(vv)
+    LensSupport<DefaultLensGraphMouse> magnifyLayoutSupport =
+        LayoutLensSupport.<String, DefaultEdge, DefaultLensGraphMouse>builder(vv)
             .lensTransformer(
                 MagnifyTransformer.builder(lens)
                     .delegate(
@@ -199,7 +242,7 @@ public class ShowLayoutsWithGraphml extends JFrame {
                             .getTransformer(MultiLayerTransformer.Layer.LAYOUT))
                     .build())
             .lensGraphMouse(
-                new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
+                new DefaultLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
             .build();
 
     hyperbolicLayoutSupport
@@ -214,11 +257,6 @@ public class ShowLayoutsWithGraphml extends JFrame {
         .getLensTransformer()
         .getLens()
         .setLensShape(magnifyViewSupport.getLensTransformer().getLens().getLensShape());
-
-    graphMouse.addItemListener(hyperbolicLayoutSupport.getGraphMouse().getModeListener());
-    graphMouse.addItemListener(hyperbolicViewSupport.getGraphMouse().getModeListener());
-    graphMouse.addItemListener(magnifyLayoutSupport.getGraphMouse().getModeListener());
-    graphMouse.addItemListener(magnifyViewSupport.getGraphMouse().getModeListener());
 
     JComponent lensBox =
         LensControlHelper.builder(
@@ -248,6 +286,16 @@ public class ShowLayoutsWithGraphml extends JFrame {
             switch (suffix) {
               case "graphml":
                 importer = new GraphMLImporter();
+                GraphMLImporter gmlImporter = (GraphMLImporter) importer;
+                gmlImporter.addVertexAttributeConsumer(
+                    (BiConsumer<Pair<String, String>, Attribute>)
+                        (pair, attribute) -> {
+                          String vertex = pair.getFirst();
+                          String key = pair.getSecond();
+                          vertexAttributes
+                              .computeIfAbsent(vertex, m -> new HashMap<>())
+                              .put(key, attribute);
+                        });
                 break;
               case "gml":
                 importer = new GmlImporter();
@@ -258,6 +306,12 @@ public class ShowLayoutsWithGraphml extends JFrame {
               case "csv":
                 importer = new CSVImporter();
                 break;
+              case "col":
+                importer = new DIMACSImporter();
+                break;
+              case "gv":
+                importer = new DOTImporter();
+                break;
               case "json":
                 importer = new JSONImporter();
                 break;
@@ -266,13 +320,13 @@ public class ShowLayoutsWithGraphml extends JFrame {
                 return;
             }
             clear(graph);
+            vertexAttributes.clear();
+            vv.getRenderContext().setVertexFillPaintFunction(vertexFillPaintFunction);
             try (InputStreamReader inputStreamReader = new FileReader(file)) {
               importer.importGraph(graph, inputStreamReader);
             } catch (Exception ex) {
               ex.printStackTrace();
             }
-            int size = (int) (50 * Math.sqrt(graph.vertexSet().size()));
-            vv.getVisualizationModel().getLayoutModel().setSize(size, size);
             vv.getVisualizationModel().setGraph(graph);
             setTitle(
                 "Graph of "
@@ -285,26 +339,87 @@ public class ShowLayoutsWithGraphml extends JFrame {
           }
         });
 
+    class RankListener implements ActionListener {
+      VertexScoringAlgorithm<String, Double> scoring;
+
+      RankListener(VertexScoringAlgorithm<String, Double> scoring) {
+        this.scoring = scoring;
+      }
+
+      public void actionPerformed(ActionEvent event) {
+        Map<String, Double> scores = scoring.getScores();
+        if (scores.isEmpty()) return;
+        double min = scores.values().stream().min(Double::compare).get();
+        double max = scores.values().stream().max(Double::compare).get();
+        double range = max - min;
+        log.info("min:{}, max:{}, range:{}", min, max, range);
+        double delta = range / colorArray.length;
+        log.info("delta:{}", delta);
+        vv.getRenderContext()
+            .setVertexFillPaintFunction(
+                v -> {
+                  if (scores.isEmpty() || !scores.containsKey(v)) return Color.red;
+                  double score = scores.get(v);
+                  double index = score / delta;
+                  int idx = (int) Math.max(0, Math.min(colorArray.length - 1, index));
+                  //                    log.info("{} index is {}", v, index);
+                  return colorArray[idx];
+                });
+        vv.repaint();
+      }
+    }
+
+    JButton pageRankButton = new JButton("Page Rank");
+    pageRankButton.addActionListener(new RankListener(new PageRank(graph)));
+    JButton betweennessButton = new JButton("Betweenness");
+    betweennessButton.addActionListener(new RankListener(new BetweennessCentrality<>(graph)));
+    JButton alphaButton = new JButton("Alpha");
+    alphaButton.addActionListener(new RankListener(new AlphaCentrality<>(graph)));
+    JButton closenessButton = new JButton("Closeness");
+    closenessButton.addActionListener(new RankListener(new ClosenessCentrality<>(graph)));
+    JButton clusteringButton = new JButton("Clustering");
+    clusteringButton.addActionListener(new RankListener(new ClusteringCoefficient<>(graph)));
+    //    JButton corenessButton = new JButton("Coreness");
+    //        corenessButton.addActionListener(new RankListener(new Coreness<>(graph)));
+    JButton harmonicButton = new JButton("Harmonic");
+    harmonicButton.addActionListener(new RankListener(new HarmonicCentrality<>(graph)));
+    JButton noScores = new JButton("None");
+    noScores.addActionListener(
+        event -> {
+          vv.getRenderContext().setVertexFillPaintFunction(vertexFillPaintFunction);
+          vv.repaint();
+        });
+
+    JPanel scoringGrid = new JPanel(new GridLayout(0, 3));
+    scoringGrid.add(pageRankButton);
+    scoringGrid.add(betweennessButton);
+//    scoringGrid.add(alphaButton);
+    scoringGrid.add(closenessButton);
+//    scoringGrid.add(clusteringButton);
+    scoringGrid.add(harmonicButton);
+    scoringGrid.add(noScores);
+
     JPanel controlPanel = new JPanel(new GridLayout(2, 1));
     JComponent top =
         ControlHelpers.getContainer(
             Box.createHorizontalBox(),
             ControlHelpers.getCenteredContainer("Layouts", layoutComboBox),
-            ControlHelpers.getCenteredContainer(Box.createHorizontalBox(), loadFileButton));
+            ControlHelpers.getCenteredContainer(
+                Box.createHorizontalBox(), loadFileButton, scoringGrid));
     controlPanel.add(top);
 
     JButton showRTree = new JButton("Show RTree");
     showRTree.addActionListener(e -> RTreeVisualization.showRTree(vv));
 
-    JButton imageButton = new JButton("Save Image");
-    imageButton.addActionListener(e -> GraphImage.capture(vv));
+//    JButton imageButton = new JButton("Save Image");
+//    imageButton.addActionListener(e -> GraphImage.capture(vv));
 
     JComponent bottom =
         ControlHelpers.getContainer(
             Box.createHorizontalBox(),
             ControlHelpers.getZoomControls("Scale", vv),
-            imageButton,
-            ControlHelpers.getCenteredContainer("Mouse Mode", modeBox),
+//            imageButton,
+//            ControlHelpers.getCenteredContainer("Mouse Mode", modeBox),
             lensBox,
             ControlHelpers.getCenteredContainer(
                 "Effects", Box.createVerticalBox(), showRTree, animateLayoutTransition));
@@ -352,6 +467,6 @@ public class ShowLayoutsWithGraphml extends JFrame {
   }
 
   public static void main(String[] args) {
-    new ShowLayoutsWithGraphml();
+    new ShowLayoutsWithGraphFileImport();
   }
 }

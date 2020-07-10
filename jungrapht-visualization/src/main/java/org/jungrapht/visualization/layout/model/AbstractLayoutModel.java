@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
+import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.IterativeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -35,6 +36,8 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
     protected Graph<V, ?> graph;
     protected int width;
     protected int height;
+    protected Function<Graph<V, ?>, Integer> initialDimensionFunction; // null check later
+
     // the model will create a VisRunnable and start it in a new Thread
     protected boolean createVisRunnable = true;
 
@@ -56,6 +59,11 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
 
     public B height(int height) {
       this.height = height;
+      return (B) this;
+    }
+
+    public B initialDimensionFunction(Function<Graph<V, ?>, Integer> initialDimensionFunction) {
+      this.initialDimensionFunction = initialDimensionFunction;
       return (B) this;
     }
 
@@ -85,9 +93,11 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
   protected ModelChange.Support modelChangeSupport = ModelChange.Support.create();
   protected ViewChange.Support viewChangeSupport = ViewChange.Support.create();
   protected int appendageCount;
+  protected Function<Graph<V, ?>, Integer> initialDimensionFunction;
 
   protected AbstractLayoutModel(Builder builder) {
     this.graph = Objects.requireNonNull(builder.graph);
+    this.initialDimensionFunction = builder.initialDimensionFunction; // check for null before use
     setSize(builder.width, builder.height);
     setPreferredSize(builder.width, builder.height);
     this.createVisRunnable = builder.createVisRunnable;
@@ -136,6 +146,7 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
    */
   @Override
   public void accept(LayoutAlgorithm<V> layoutAlgorithm) {
+    this.appendageCount = 0;
     if (this.visRunnable != null) {
       if (log.isTraceEnabled()) {
         log.trace("stopping {}", visRunnable);
@@ -145,7 +156,12 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
     if (theFuture != null) {
       theFuture.cancel(true);
     }
-    setSize(preferredWidth, preferredHeight);
+    if (initialDimensionFunction != null) {
+      int dimension = initialDimensionFunction.apply(graph);
+      setSize(dimension, dimension);
+    } else {
+      setSize(preferredWidth, preferredHeight);
+    }
     log.trace("reset the model size to {},{}", preferredWidth, preferredHeight);
     // the layoutMode is active with a new LayoutAlgorithm
     layoutStateChangeSupport.fireLayoutStateChanged(this, true);
@@ -250,6 +266,7 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
 
   @Override
   public void setGraph(Graph<V, ?> graph) {
+    this.appendageCount = 0;
     this.graph = graph;
     this.modelChangeSupport.fireModelChanged();
     if (log.isTraceEnabled()) {
@@ -300,6 +317,7 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
 
   /** */
   public void setSize(int width, int height) {
+    log.info("setSize({},{})", width, height);
     if (width <= 0) {
       width = preferredWidth;
     }
@@ -312,6 +330,7 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
   }
 
   public void setPreferredSize(int preferredWidth, int preferredHeight) {
+    log.info("setPreferredSize({},{})", preferredWidth, preferredHeight);
     if (preferredWidth == 0 || preferredHeight == 0) {
       throw new IllegalArgumentException(
           "Can't be zeros " + preferredWidth + "/" + preferredHeight);

@@ -67,6 +67,10 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
    * @param <V>
    */
   public static class ShapeFunctionSupplier<V> implements Supplier<Function<V, Shape>> {
+
+    int vertexSize = Integer.getInteger(VERTEX_SIZE, 20);
+    String vertexShapeString = System.getProperty(VERTEX_SHAPE, "CIRCLE");
+
     /**
      * determine Shape and size from properties
      *
@@ -74,8 +78,6 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
      */
     @Override
     public Function<V, Shape> get() {
-      int vertexSize = Integer.getInteger(VERTEX_SIZE, 20);
-      String vertexShapeString = System.getProperty(VERTEX_SHAPE, "CIRCLE");
       Shape vertexShape = DefaultRenderContext.getVertexShape(vertexShapeString, vertexSize);
       return v -> vertexShape;
     }
@@ -138,7 +140,7 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
   protected Function<V, Stroke> vertexStrokeFunction =
       n -> new BasicStroke(Float.parseFloat(System.getProperty(VERTEX_STROKE_WIDTH, "1.0")));
   /** implement to provide Shapes for vertices */
-  protected Function<V, Shape> vertexShapeFunction = n -> vertexShape;
+  protected Function<V, Shape> vertexShapeFunction = v -> vertexShape;
 
   /** implement to provide outline color for vertices */
   protected Function<V, Paint> vertexDrawPaintFunction = n -> vertexDrawPaint;

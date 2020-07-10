@@ -21,6 +21,7 @@ import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.util.*;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -171,6 +172,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
     this(
         builder.graph,
         builder.visualizationModel,
+        builder.initialDimensionFunction,
         builder.layoutAlgorithm,
         builder.layoutSize,
         builder.viewSize);
@@ -179,6 +181,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
   protected DefaultVisualizationServer(
       Graph<V, E> graph,
       VisualizationModel<V, E> visualizationModel,
+      Function<Graph<V, ?>, Integer> initialDimensionFunction,
       LayoutAlgorithm<V> layoutAlgorithm,
       Dimension layoutSize,
       Dimension viewSize) {
@@ -193,6 +196,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
       visualizationModel =
           VisualizationModel.builder(graph)
               .layoutAlgorithm(layoutAlgorithm)
+              .initialDimensionFunction(initialDimensionFunction)
               .layoutSize(layoutSize)
               .build();
     }

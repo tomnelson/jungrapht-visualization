@@ -49,6 +49,8 @@ public interface VisualizationModel<V, E>
     /** a {@code Function} to set initial vertex locations */
     protected Function<V, Point> initializer;
 
+    protected Function<Graph<V, ?>, Integer> initialDimensionFunction;
+
     /** @return this builder cast to type B */
     protected B self() {
       return (B) this;
@@ -90,6 +92,11 @@ public interface VisualizationModel<V, E>
     public B layoutModel(LayoutModel<V> layoutModel) {
       this.layoutModel = layoutModel;
       return self();
+    }
+
+    public B initialDimensionFunction(Function<Graph<V, ?>, Integer> initialDimensionFunction) {
+      this.initialDimensionFunction = initialDimensionFunction;
+      return (B) this;
     }
 
     /**
@@ -177,4 +184,6 @@ public interface VisualizationModel<V, E>
    * @param forceUpdate whether to force an update
    */
   void setGraph(Graph<V, E> graph, boolean forceUpdate);
+
+  Function<Graph<V, ?>, Integer> getInitialDimensionFunction();
 }

@@ -42,6 +42,7 @@ class DefaultVisualizationViewer<V, E> extends DefaultVisualizationServer<V, E>
     this(
         builder.graph,
         builder.visualizationModel,
+        builder.initialDimensionFunction,
         builder.graphMouse,
         builder.layoutAlgorithm,
         builder.layoutSize,
@@ -51,11 +52,13 @@ class DefaultVisualizationViewer<V, E> extends DefaultVisualizationServer<V, E>
   protected DefaultVisualizationViewer(
       Graph<V, E> graph,
       VisualizationModel<V, E> visualizationModel,
+      Function<Graph<V, ?>, Integer> initialDimensionFunction,
       GraphMouse graphMouse,
       LayoutAlgorithm<V> layoutAlgorithm,
       Dimension layoutSize,
       Dimension viewSize) {
-    super(graph, visualizationModel, layoutAlgorithm, layoutSize, viewSize);
+    super(
+        graph, visualizationModel, initialDimensionFunction, layoutAlgorithm, layoutSize, viewSize);
     addMouseListener(requestFocusListener);
     setGraphMouse(graphMouse);
     if (graphMouse instanceof ModalGraphMouse) {

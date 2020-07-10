@@ -33,6 +33,7 @@ class DefaultVisualizationModel<V, E> implements VisualizationModel<V, E> {
         builder.graph,
         builder.layoutAlgorithm,
         builder.layoutModel,
+        builder.initialDimensionFunction,
         builder.layoutSize,
         builder.initializer);
   }
@@ -41,6 +42,7 @@ class DefaultVisualizationModel<V, E> implements VisualizationModel<V, E> {
       Graph<V, E> graph,
       LayoutAlgorithm<V> layoutAlgorithm,
       LayoutModel<V> layoutModel,
+      Function<Graph<V, ?>, Integer> initialDimensionFunction,
       Dimension layoutSize,
       Function<V, Point> initializer) {
     if (layoutModel == null) {
@@ -57,6 +59,7 @@ class DefaultVisualizationModel<V, E> implements VisualizationModel<V, E> {
       layoutModel =
           LayoutModel.<V>builder()
               .graph(graph)
+              .initialDimensionFunction(initialDimensionFunction)
               .size(layoutSize.width, layoutSize.height)
               .initializer(initializer)
               .build();
@@ -76,6 +79,7 @@ class DefaultVisualizationModel<V, E> implements VisualizationModel<V, E> {
         other.getGraph(),
         other.getLayoutAlgorithm(),
         other.getLayoutModel(),
+        other.getInitialDimensionFunction(),
         other.getLayoutSize(),
         null);
   }
@@ -83,6 +87,8 @@ class DefaultVisualizationModel<V, E> implements VisualizationModel<V, E> {
   protected LayoutModel<V> layoutModel;
 
   protected LayoutAlgorithm<V> layoutAlgorithm;
+
+  protected Function<Graph<V, ?>, Integer> initialDimensionFunction;
 
   protected ModelChange.Support modelChangeSupport = ModelChange.Support.create();
 
@@ -143,6 +149,11 @@ class DefaultVisualizationModel<V, E> implements VisualizationModel<V, E> {
       modelChangeSupport.fireModelChanged();
       log.trace("fired fireModelChanged");
     }
+  }
+
+  @Override
+  public Function<Graph<V, ?>, Integer> getInitialDimensionFunction() {
+    return this.initialDimensionFunction;
   }
 
   @Override

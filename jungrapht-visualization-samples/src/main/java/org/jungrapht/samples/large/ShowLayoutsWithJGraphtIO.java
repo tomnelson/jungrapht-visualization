@@ -96,6 +96,12 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
         VisualizationViewer.builder(graph)
             .layoutSize(new Dimension(3000, 3000))
             .viewSize(new Dimension(900, 900))
+            //            .initialDimensionFunction(
+            //                g -> {
+            //                  // this is a WAG to try to make the layout area good for the graph size
+            //                  int vertexCount = g.vertexSet().size();
+            //                  return Math.min(Math.max(600, vertexCount * 2), 10000);
+            //                })
             .graphMouse(graphMouse)
             .build();
 
