@@ -7,7 +7,6 @@ import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,7 +17,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import org.jgrapht.alg.util.NeighborCache;
-import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.AllLevelCross;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.ArticulatedEdge;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.GraphLayers;
@@ -408,11 +406,11 @@ public class TestSugiyamaRunnable<V, E> extends SugiyamaRunnable<V, E> implement
 
       edgePointMap.put(ae.edge, points);
     }
-    EdgeShape.ArticulatedLine<V, E> edgeShape = new EdgeShape.ArticulatedLine<>();
-    edgeShape.setEdgeArticulationFunction(
-        e -> edgePointMap.getOrDefault(e, Collections.emptyList()));
+    //    EdgeShape.ArticulatedLine<V, E> edgeShape = new EdgeShape.ArticulatedLine<>();
+    //    edgeShape.setEdgeArticulationFunction(
+    //        e -> edgePointMap.getOrDefault(e, Collections.emptyList()));
 
-    edgeShapeConsumer.accept(edgeShape);
+    //    edgeShapeConsumer.accept(edgeShape);
 
     long articulatedEdgeTime = System.currentTimeMillis();
     log.trace("articulated edges took {}", (articulatedEdgeTime - pointsSetTime));

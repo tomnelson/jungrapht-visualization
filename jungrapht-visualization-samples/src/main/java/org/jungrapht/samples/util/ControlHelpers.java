@@ -130,6 +130,23 @@ public class ControlHelpers {
     return box;
   }
 
+  public static JComponent getGridContainer(String title, int rows, JComponent... children) {
+    Box verticalBox = Box.createVerticalBox();
+    verticalBox.setBorder(new TitledBorder(title));
+    int cols = children.length / rows;
+    Box horizontalBox = null;
+    for (int i = 0; i < children.length; i++) {
+      if (i % cols == 0) {
+        horizontalBox = Box.createHorizontalBox();
+        verticalBox.add(Box.createGlue());
+        verticalBox.add(horizontalBox);
+        verticalBox.add(Box.createGlue());
+      }
+      horizontalBox.add(children[i]);
+    }
+    return verticalBox;
+  }
+
   public static JComponent getContainer(String title, Box box, JComponent... children) {
     box.setBorder(new TitledBorder(title));
     return getContainer(box, children);

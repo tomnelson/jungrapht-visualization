@@ -307,7 +307,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
           SugiyamaRunnable.<V, E>builder()
               .layoutModel(layoutModel)
               .vertexShapeFunction(vertexShapeFunction)
-              .edgeShapeConsumer(edgeShapeConsumer)
+              //              .edgeShapeConsumer(edgeShapeConsumer)
               .straightenEdges(straightenEdges)
               .postStraighten(postStraighten)
               .transpose(transpose)

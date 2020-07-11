@@ -269,7 +269,9 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
             .build()
             .container();
 
+    JPanel loadFilePanel = new JPanel();
     JButton loadFileButton = new JButton("Load File");
+    loadFilePanel.add(loadFileButton);
     loadFileButton.addActionListener(
         e -> {
           if (fileChooser == null) {
@@ -358,12 +360,12 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
           vv.repaint();
         });
 
-    JPanel scoringGrid = new JPanel(new GridLayout(0, 3));
+    JPanel scoringGrid = new JPanel(new GridLayout(0, 2));
     scoringGrid.add(pageRankButton);
     scoringGrid.add(betweennessButton);
     //    scoringGrid.add(alphaButton);
     scoringGrid.add(closenessButton);
-    //    scoringGrid.add(clusteringButton);
+    scoringGrid.add(clusteringButton);
     scoringGrid.add(harmonicButton);
     scoringGrid.add(noScores);
 
@@ -371,9 +373,10 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
     JComponent top =
         ControlHelpers.getContainer(
             Box.createHorizontalBox(),
+            ControlHelpers.getCenteredContainer("Graph Source", loadFilePanel),
             ControlHelpers.getCenteredContainer("Layouts", layoutComboBox),
-            ControlHelpers.getCenteredContainer(
-                Box.createHorizontalBox(), loadFileButton, scoringGrid));
+            ControlHelpers.getCenteredContainer("Scoring", scoringGrid));
+
     controlPanel.add(top);
 
     JButton showRTree = new JButton("Show RTree");
@@ -382,7 +385,7 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
     JComponent bottom =
         ControlHelpers.getContainer(
             Box.createHorizontalBox(),
-            ControlHelpers.getZoomControls("Scale", vv),
+            //            ControlHelpers.getZoomControls("Scale", vv),
             lensBox,
             ControlHelpers.getCenteredContainer(
                 "Effects", Box.createVerticalBox(), showRTree, animateLayoutTransition));
@@ -417,7 +420,6 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
               double score = scores.get(v);
               double index = score / delta;
               int idx = (int) Math.max(0, Math.min(colorArray.length - 1, index));
-              //                    log.info("{} index is {}", v, index);
               return colorArray[idx];
             });
     vv.repaint();

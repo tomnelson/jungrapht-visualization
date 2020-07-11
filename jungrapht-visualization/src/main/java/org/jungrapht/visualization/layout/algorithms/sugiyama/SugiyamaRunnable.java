@@ -16,18 +16,15 @@ import java.util.List;
 import java.util.LongSummaryStatistics;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.util.NeighborCache;
-import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.SugiyamaLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.util.InsertionSortCounter;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.util.synthetics.Synthetic;
-import org.jungrapht.visualization.util.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +60,6 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       V, E, T extends SugiyamaRunnable<V, E>, B extends Builder<V, E, T, B>> {
     protected LayoutModel<V> layoutModel;
     protected Function<V, Shape> vertexShapeFunction;
-    protected Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer;
     protected Predicate<V> vertexPredicate; // can be null
     protected Predicate<E> edgePredicate; // can be null
     protected Comparator<V> vertexComparator = (v1, v2) -> 0;
@@ -73,7 +69,8 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     protected boolean transpose;
     protected int transposeLimit;
     protected int maxLevelCross;
-    protected Layering layering;
+    protected Layering layering = Layering.TOP_DOWN;
+    protected boolean multiComponent;
 
     /** {@inheritDoc} */
     protected B self() {
@@ -126,12 +123,6 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       return self();
     }
 
-    public B edgeShapeConsumer(
-        Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer) {
-      this.edgeShapeConsumer = edgeShapeConsumer;
-      return self();
-    }
-
     public B straightenEdges(boolean straightenEdges) {
       this.straightenEdges = straightenEdges;
       return self();
@@ -162,6 +153,11 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       return self();
     }
 
+    public B multiComponent(boolean multiComponent) {
+      this.multiComponent = multiComponent;
+      return self();
+    }
+
     /** {@inheritDoc} */
     public T build() {
       return (T) new SugiyamaRunnable<>(this);
@@ -179,7 +175,6 @@ public class SugiyamaRunnable<V, E> implements Runnable {
 
   protected final LayoutModel<V> layoutModel;
   protected Function<V, Shape> vertexShapeFunction;
-  protected Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer;
   protected Graph<V, E> graph;
   protected Graph<LV<V>, LE<V, E>> svGraph;
   protected NeighborCache<LV<V>, LE<V, E>> neighborCache;
@@ -195,12 +190,13 @@ public class SugiyamaRunnable<V, E> implements Runnable {
   protected int maxLevelCross;
   protected Layering layering;
   protected Map<LV<V>, VertexMetadata<V>> vertexMetadataMap = new HashMap<>();
+  protected Map<E, List<Point>> edgePointMap = new HashMap<>();
+  protected boolean multiComponent;
 
   protected SugiyamaRunnable(Builder<V, E, ?, ?> builder) {
     this(
         builder.layoutModel,
         builder.vertexShapeFunction,
-        builder.edgeShapeConsumer,
         builder.vertexPredicate,
         builder.edgePredicate,
         builder.vertexComparator,
@@ -210,13 +206,13 @@ public class SugiyamaRunnable<V, E> implements Runnable {
         builder.transpose,
         builder.transposeLimit,
         builder.maxLevelCross,
-        builder.layering);
+        builder.layering,
+        builder.multiComponent);
   }
 
   private SugiyamaRunnable(
       LayoutModel<V> layoutModel,
       Function<V, Shape> vertexShapeFunction,
-      Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer,
       Predicate<V> vertexPredicate,
       Predicate<E> edgePredicate,
       Comparator<V> vertexComparator,
@@ -226,10 +222,10 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       boolean transpose,
       int transposeLimit,
       int maxLevelCross,
-      Layering layering) {
+      Layering layering,
+      boolean multiComponent) {
     this.layoutModel = layoutModel;
     this.vertexShapeFunction = vertexShapeFunction;
-    this.edgeShapeConsumer = edgeShapeConsumer;
     this.vertexComparator = vertexComparator;
     this.vertexPredicate = vertexPredicate;
     this.edgeComparator = edgeComparator;
@@ -240,15 +236,25 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     this.transposeLimit = transposeLimit;
     this.maxLevelCross = maxLevelCross;
     if (layering == null) {
-      layering = Layering.LONGEST_PATH;
+      layering = Layering.TOP_DOWN;
     }
     this.layering = layering;
+    this.multiComponent = multiComponent;
   }
 
   @Override
   public void run() {
     this.graph = layoutModel.getGraph();
 
+    if (graph.vertexSet().isEmpty()) {
+      return;
+    }
+    if (graph.vertexSet().size() == 1) {
+      V v = graph.vertexSet().stream().findFirst().get();
+      layoutModel.setSize(50, layoutModel.getHeight());
+      layoutModel.set(v, layoutModel.getWidth() / 2, layoutModel.getHeight() / 2);
+      return;
+    }
     long startTime = System.currentTimeMillis();
     TransformedGraphSupplier<V, E> transformedGraphSupplier = new TransformedGraphSupplier(graph);
     this.svGraph = transformedGraphSupplier.get();
@@ -511,8 +517,9 @@ public class SugiyamaRunnable<V, E> implements Runnable {
     int maxDimension = Math.max(totalWidth, totalHeight);
 
     layoutModel.setSize(
-        Math.max(maxDimension, layoutModel.getWidth()),
+        multiComponent ? totalWidth : Math.max(maxDimension, layoutModel.getWidth()),
         Math.max(maxDimension, layoutModel.getHeight()));
+
     long pointsSetTime = System.currentTimeMillis();
     double scalex = (double) layoutModel.getWidth() / pointRangeWidth;
     double scaley = (double) layoutModel.getHeight() / pointRangeHeight;
@@ -543,7 +550,7 @@ public class SugiyamaRunnable<V, E> implements Runnable {
               svGraph.addEdge(reversed.getSource(), reversed.getTarget(), reversed);
             });
 
-    Map<E, List<Point>> edgePointMap = new HashMap<>();
+    //    Map<E, List<Point>> edgePointMap = new HashMap<>();
     for (ArticulatedEdge<V, E> ae : articulatedEdges) {
       List<Point> points = new ArrayList<>();
       if (feedbackEdges.contains(ae.edge)) {
@@ -558,11 +565,6 @@ public class SugiyamaRunnable<V, E> implements Runnable {
 
       edgePointMap.put(ae.edge, points);
     }
-    EdgeShape.ArticulatedLine<V, E> edgeShape = new EdgeShape.ArticulatedLine<>();
-    edgeShape.setEdgeArticulationFunction(
-        e -> edgePointMap.getOrDefault(e, Collections.emptyList()));
-
-    edgeShapeConsumer.accept(edgeShape);
 
     long articulatedEdgeTime = System.currentTimeMillis();
     log.trace("articulated edges took {}", (articulatedEdgeTime - pointsSetTime));
@@ -679,6 +681,10 @@ public class SugiyamaRunnable<V, E> implements Runnable {
       }
     }
     GraphLayers.checkLayers(ranks);
+  }
+
+  public Map<E, List<Point>> getEdgePointMap() {
+    return edgePointMap;
   }
 
   private <V> void swap(LV<V>[] array, int i, int j) {
