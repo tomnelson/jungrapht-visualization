@@ -31,6 +31,7 @@ import org.jungrapht.visualization.layout.algorithms.sugiyama.TransformedGraphSu
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Unaligned;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.VertexMetadata;
 import org.jungrapht.visualization.layout.algorithms.util.Attributed;
+import org.jungrapht.visualization.layout.algorithms.util.LayeredRunnable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.slf4j.Logger;
@@ -51,7 +52,7 @@ import org.slf4j.LoggerFactory;
  * @param <V> vertex type
  * @param <E> edge type
  */
-public class EiglspergerRunnable<V, E> implements Runnable {
+public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
 
   private static final Logger log = LoggerFactory.getLogger(EiglspergerRunnable.class);
 

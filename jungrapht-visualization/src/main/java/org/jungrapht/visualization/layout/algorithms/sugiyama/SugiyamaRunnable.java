@@ -22,6 +22,7 @@ import org.jgrapht.Graph;
 import org.jgrapht.alg.util.NeighborCache;
 import org.jungrapht.visualization.layout.algorithms.SugiyamaLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.util.InsertionSortCounter;
+import org.jungrapht.visualization.layout.algorithms.util.LayeredRunnable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.util.synthetics.Synthetic;
@@ -44,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * @param <V> vertex type
  * @param <E> edge type
  */
-public class SugiyamaRunnable<V, E> implements Runnable {
+public class SugiyamaRunnable<V, E> implements LayeredRunnable<E> {
 
   private static final Logger log = LoggerFactory.getLogger(SugiyamaRunnable.class);
 

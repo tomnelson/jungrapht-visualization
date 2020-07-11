@@ -114,8 +114,8 @@ public class EiglspergerLayoutAlgorithm<V, E>
     }
 
     public B edgeShapeFunctionConsumer(
-        Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer) {
-      this.edgeShapeFunctionConsumer = edgeShapeConsumer;
+        Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeFunctionConsumer) {
+      this.edgeShapeFunctionConsumer = edgeShapeFunctionConsumer;
       return self();
     }
 
@@ -324,7 +324,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
     }
 
     for (LayoutModel<V> componentLayoutModel : layoutModels) {
-      EiglspergerRunnable runnable =
+      EiglspergerRunnable<V, E> runnable =
           EiglspergerRunnable.<V, E>builder()
               .layoutModel(componentLayoutModel)
               .vertexShapeFunction(vertexShapeFunction)

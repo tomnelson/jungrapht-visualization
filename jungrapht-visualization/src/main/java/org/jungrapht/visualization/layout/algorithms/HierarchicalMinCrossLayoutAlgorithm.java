@@ -4,7 +4,11 @@ import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -16,15 +20,19 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.RenderContext;
+import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnable;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
+import org.jungrapht.visualization.layout.algorithms.util.ComponentGrouping;
 import org.jungrapht.visualization.layout.algorithms.util.EdgeShapeFunctionSupplier;
 import org.jungrapht.visualization.layout.algorithms.util.ExecutorConsumer;
+import org.jungrapht.visualization.layout.algorithms.util.LayeredRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.Threaded;
 import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
 import org.jungrapht.visualization.layout.model.LayoutModel;
+import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
 import org.jungrapht.visualization.util.Context;
 import org.slf4j.Logger;
@@ -86,7 +94,8 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
       implements LayoutAlgorithm.Builder<V, T, B> {
     protected Executor executor;
     protected Function<V, Shape> vertexShapeFunction = v -> IDENTITY_SHAPE;
-    protected Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer;
+    protected Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeFunctionConsumer =
+        i -> {};
     protected boolean straightenEdges =
         Boolean.parseBoolean(System.getProperty(MINCROSS_STRAIGHTEN_EDGES, "true"));
     protected boolean postStraighten =
@@ -100,6 +109,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
         Boolean.parseBoolean(System.getProperty(MINCROSS_THREADED, "true"));
     protected int eiglspergerThreshold = Integer.getInteger(EIGLSPERGER_THRESHOLD, 500);
     protected Layering layering = Layering.NETWORK_SIMPLEX;
+    protected boolean separateComponents = true;
 
     /** {@inheritDoc} */
     protected B self() {
@@ -116,9 +126,9 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
       return self();
     }
 
-    public B edgeShapeConsumer(
-        Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer) {
-      this.edgeShapeConsumer = edgeShapeConsumer;
+    public B edgeShapeFunctionConsumer(
+        Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeFunctionConsumer) {
+      this.edgeShapeFunctionConsumer = edgeShapeFunctionConsumer;
       return self();
     }
 
@@ -173,6 +183,11 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
       return self();
     }
 
+    public B separateComponents(boolean separateComponents) {
+      this.separateComponents = separateComponents;
+      return self();
+    }
+
     /** {@inheritDoc} */
     public T build() {
       return (T) new HierarchicalMinCrossLayoutAlgorithm<>(this);
@@ -207,6 +222,9 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
   protected Executor executor;
   protected CompletableFuture theFuture;
   protected Runnable after;
+  protected boolean separateCommponents;
+  protected Map<E, List<Point>> edgePointMap = new HashMap<>();
+  protected EdgeShape.ArticulatedLine<V, E> edgeShape = new EdgeShape.ArticulatedLine<>();
 
   public HierarchicalMinCrossLayoutAlgorithm() {
     this(HierarchicalMinCrossLayoutAlgorithm.edgeAwareBuilder());
@@ -215,7 +233,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
   private HierarchicalMinCrossLayoutAlgorithm(Builder builder) {
     this(
         builder.vertexShapeFunction,
-        builder.edgeShapeConsumer,
+        builder.edgeShapeFunctionConsumer,
         builder.eiglspergerThreshold,
         builder.straightenEdges,
         builder.postStraighten,
@@ -226,6 +244,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
         builder.layering,
         builder.threaded,
         builder.executor,
+        builder.separateComponents,
         builder.after);
   }
 
@@ -242,6 +261,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
       Layering layering,
       boolean threaded,
       Executor executor,
+      boolean separateComponents,
       Runnable after) {
     this.vertexShapeFunction = vertexShapeFunction;
     this.edgeShapeConsumer = edgeShapeConsumer;
@@ -255,7 +275,11 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
     this.layering = layering;
     this.threaded = threaded;
     this.executor = executor;
+    this.separateCommponents = separateComponents;
     this.after = after;
+
+    this.edgeShape.setEdgeArticulationFunction(
+        e -> edgePointMap.getOrDefault(e, Collections.emptyList()));
   }
 
   @Override
@@ -271,6 +295,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
 
   @Override
   public void setLayering(Layering layering) {
+    this.edgePointMap.clear();
     this.layering = layering;
   }
 
@@ -301,66 +326,101 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
     if (graph == null || graph.vertexSet().isEmpty()) {
       return;
     }
-    Runnable runnable;
-    if (graph.vertexSet().size() + graph.edgeSet().size() < eiglspergerThreshold) {
-      runnable =
-          SugiyamaRunnable.<V, E>builder()
-              .layoutModel(layoutModel)
-              .vertexShapeFunction(vertexShapeFunction)
-              //              .edgeShapeConsumer(edgeShapeConsumer)
-              .straightenEdges(straightenEdges)
-              .postStraighten(postStraighten)
-              .transpose(transpose)
-              .transposeLimit(transposeLimit)
-              .maxLevelCross(maxLevelCross)
-              .layering(layering)
-              .build();
-    } else {
-      runnable =
-          EiglspergerRunnable.<V, E>builder()
-              .layoutModel(layoutModel)
-              .vertexShapeFunction(vertexShapeFunction)
-              .straightenEdges(straightenEdges)
-              .postStraighten(postStraighten)
-              .maxLevelCross(maxLevelCross)
-              .layering(layering)
-              .build();
-    }
-    if (threaded) {
-      if (executor != null) {
+    LayeredRunnable<E> runnable;
+    List<Graph<V, E>> graphs;
+    List<LayoutModel<V>> layoutModels = new ArrayList<>();
 
-        theFuture =
-            CompletableFuture.runAsync(runnable, executor)
-                .thenRun(
-                    () -> {
-                      log.trace("MinCross layout done");
-                      this.run(); // run the after function
-                      layoutModel.getViewChangeSupport().fireViewChanged();
-                      // fire an event to say that the layout is done
-                      layoutModel
-                          .getLayoutStateChangeSupport()
-                          .fireLayoutStateChanged(layoutModel, false);
-                    });
-      } else {
-        theFuture =
-            CompletableFuture.runAsync(runnable)
-                .thenRun(
-                    () -> {
-                      log.trace("MinCross layout done");
-                      this.run(); // run the after function
-                      layoutModel.getViewChangeSupport().fireViewChanged();
-                      // fire an event to say that the layout is done
-                      layoutModel
-                          .getLayoutStateChangeSupport()
-                          .fireLayoutStateChanged(layoutModel, false);
-                    });
+    if (separateCommponents) {
+      // if this is a multicomponent graph, discover components and create a temp
+      // LayoutModel for each to visit. Afterwards, append all the layoutModels
+      // to the one visited above.
+      graphs = ComponentGrouping.getComponentGraphs(graph);
+
+      for (int i = 0; i < graphs.size(); i++) {
+        LayoutModel<V> componentLayoutModel =
+            LayoutModel.<V>builder()
+                .graph(graphs.get(i))
+                .width(layoutModel.getWidth())
+                .height(layoutModel.getHeight())
+                .build();
+        layoutModels.add(componentLayoutModel);
       }
     } else {
-      runnable.run();
-      after.run();
-      layoutModel.getViewChangeSupport().fireViewChanged();
-      // fire an event to say that the layout is done
-      layoutModel.getLayoutStateChangeSupport().fireLayoutStateChanged(layoutModel, false);
+      graphs = Collections.singletonList(graph);
+      layoutModels.add(layoutModel);
+    }
+
+    for (LayoutModel<V> componentLayoutModel : layoutModels) {
+
+      if (graph.vertexSet().size() + graph.edgeSet().size() < eiglspergerThreshold) {
+        runnable =
+            SugiyamaRunnable.<V, E>builder()
+                .layoutModel(componentLayoutModel)
+                .vertexShapeFunction(vertexShapeFunction)
+                .straightenEdges(straightenEdges)
+                .postStraighten(postStraighten)
+                .transpose(transpose)
+                .transposeLimit(transposeLimit)
+                .maxLevelCross(maxLevelCross)
+                .layering(layering)
+                .multiComponent(graphs.size() > 1)
+                .build();
+      } else {
+        runnable =
+            EiglspergerRunnable.<V, E>builder()
+                .layoutModel(componentLayoutModel)
+                .vertexShapeFunction(vertexShapeFunction)
+                .straightenEdges(straightenEdges)
+                .postStraighten(postStraighten)
+                .maxLevelCross(maxLevelCross)
+                .layering(layering)
+                .multiComponent(graphs.size() > 1)
+                .build();
+      }
+      if (threaded) {
+        LayeredRunnable<E> finalRunnable = runnable; // for silence of the lambdas
+        if (executor != null) {
+
+          theFuture =
+              CompletableFuture.runAsync(runnable, executor)
+                  .thenRun(
+                      () -> {
+                        log.trace("MinCross layout done");
+                        this.edgePointMap.putAll(finalRunnable.getEdgePointMap());
+                        layoutModel.appendLayoutModel(componentLayoutModel);
+                        this.run(); // run the after function
+                        layoutModel.getViewChangeSupport().fireViewChanged();
+                        // fire an event to say that the layout is done
+                        layoutModel
+                            .getLayoutStateChangeSupport()
+                            .fireLayoutStateChanged(layoutModel, false);
+                      });
+        } else {
+          theFuture =
+              CompletableFuture.runAsync(runnable)
+                  .thenRun(
+                      () -> {
+                        log.trace("MinCross layout done");
+                        this.edgePointMap.putAll(finalRunnable.getEdgePointMap());
+                        layoutModel.appendLayoutModel(componentLayoutModel);
+                        this.run(); // run the after function
+                        layoutModel.getViewChangeSupport().fireViewChanged();
+                        // fire an event to say that the layout is done
+                        layoutModel
+                            .getLayoutStateChangeSupport()
+                            .fireLayoutStateChanged(layoutModel, false);
+                      });
+        }
+      } else {
+        runnable.run();
+        this.edgePointMap.putAll(runnable.getEdgePointMap());
+        layoutModel.appendLayoutModel(componentLayoutModel);
+        after.run();
+        layoutModel.getViewChangeSupport().fireViewChanged();
+        // fire an event to say that the layout is done
+        layoutModel.getLayoutStateChangeSupport().fireLayoutStateChanged(layoutModel, false);
+      }
+      edgeShapeConsumer.accept(edgeShape);
     }
   }
 
