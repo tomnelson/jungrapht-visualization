@@ -5,8 +5,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Paint;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
@@ -86,6 +84,21 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
   LayoutPaintable.RadialRings radialLayoutRings;
   JFileChooser fileChooser;
   Map<String, Map<String, Attribute>> vertexAttributes = new HashMap<>();
+  VisualizationViewer<String, DefaultEdge> vv;
+  Paint[] colorArray =
+      new Paint[] {
+        Color.red,
+        Color.green,
+        Color.blue,
+        Color.cyan,
+        Color.magenta,
+        Color.yellow,
+        Color.pink,
+        Color.gray,
+        Color.darkGray,
+        Color.lightGray,
+        Color.orange
+      };
 
   Function<String, Paint> vertexFillPaintFunction =
       v -> {
@@ -100,20 +113,6 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
       };
 
   public ShowLayoutsWithGraphFileImport() {
-    Paint[] colorArray =
-        new Paint[] {
-          Color.red,
-          Color.green,
-          Color.blue,
-          Color.cyan,
-          Color.magenta,
-          Color.yellow,
-          Color.pink,
-          Color.gray,
-          Color.darkGray,
-          Color.lightGray,
-          Color.orange
-        };
 
     Graph<String, DefaultEdge> graph =
         GraphTypeBuilder.undirected()
@@ -128,7 +127,7 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
 
     final DefaultGraphMouse<Integer, DefaultEdge> graphMouse = new DefaultGraphMouse<>();
 
-    final VisualizationViewer<String, DefaultEdge> vv =
+    vv =
         VisualizationViewer.builder(graph)
             .layoutSize(new Dimension(1800, 1800))
             .viewSize(new Dimension(900, 900))
@@ -338,50 +337,20 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
           }
         });
 
-    class RankListener implements ActionListener {
-      VertexScoringAlgorithm<String, Double> scoring;
-
-      RankListener(VertexScoringAlgorithm<String, Double> scoring) {
-        this.scoring = scoring;
-      }
-
-      public void actionPerformed(ActionEvent event) {
-        Map<String, Double> scores = scoring.getScores();
-        if (scores.isEmpty()) return;
-        double min = scores.values().stream().min(Double::compare).get();
-        double max = scores.values().stream().max(Double::compare).get();
-        double range = max - min;
-        log.info("min:{}, max:{}, range:{}", min, max, range);
-        double delta = range / colorArray.length;
-        log.info("delta:{}", delta);
-        vv.getRenderContext()
-            .setVertexFillPaintFunction(
-                v -> {
-                  if (scores.isEmpty() || !scores.containsKey(v)) return Color.red;
-                  double score = scores.get(v);
-                  double index = score / delta;
-                  int idx = (int) Math.max(0, Math.min(colorArray.length - 1, index));
-                  //                    log.info("{} index is {}", v, index);
-                  return colorArray[idx];
-                });
-        vv.repaint();
-      }
-    }
-
     JButton pageRankButton = new JButton("Page Rank");
-    pageRankButton.addActionListener(new RankListener(new PageRank(graph)));
+    pageRankButton.addActionListener(event -> computeScores(new PageRank(graph)));
     JButton betweennessButton = new JButton("Betweenness");
-    betweennessButton.addActionListener(new RankListener(new BetweennessCentrality<>(graph)));
+    betweennessButton.addActionListener(event -> computeScores(new BetweennessCentrality<>(graph)));
     JButton alphaButton = new JButton("Alpha");
-    alphaButton.addActionListener(new RankListener(new AlphaCentrality<>(graph)));
+    alphaButton.addActionListener(event -> computeScores(new AlphaCentrality<>(graph)));
     JButton closenessButton = new JButton("Closeness");
-    closenessButton.addActionListener(new RankListener(new ClosenessCentrality<>(graph)));
+    closenessButton.addActionListener(event -> computeScores(new ClosenessCentrality<>(graph)));
     JButton clusteringButton = new JButton("Clustering");
-    clusteringButton.addActionListener(new RankListener(new ClusteringCoefficient<>(graph)));
+    clusteringButton.addActionListener(event -> computeScores(new ClusteringCoefficient<>(graph)));
     //    JButton corenessButton = new JButton("Coreness");
-    //        corenessButton.addActionListener(new RankListener(new Coreness<>(graph)));
+    //        corenessButton.addActionListener(event -> computeScores(new Coreness<>(graph)));
     JButton harmonicButton = new JButton("Harmonic");
-    harmonicButton.addActionListener(new RankListener(new HarmonicCentrality<>(graph)));
+    harmonicButton.addActionListener(event -> computeScores(new HarmonicCentrality<>(graph)));
     JButton noScores = new JButton("None");
     noScores.addActionListener(
         event -> {
@@ -410,15 +379,10 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
     JButton showRTree = new JButton("Show RTree");
     showRTree.addActionListener(e -> RTreeVisualization.showRTree(vv));
 
-    //    JButton imageButton = new JButton("Save Image");
-    //    imageButton.addActionListener(e -> GraphImage.capture(vv));
-
     JComponent bottom =
         ControlHelpers.getContainer(
             Box.createHorizontalBox(),
             ControlHelpers.getZoomControls("Scale", vv),
-            //            imageButton,
-            //            ControlHelpers.getCenteredContainer("Mouse Mode", modeBox),
             lensBox,
             ControlHelpers.getCenteredContainer(
                 "Effects", Box.createVerticalBox(), showRTree, animateLayoutTransition));
@@ -435,6 +399,28 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
     setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     pack();
     setVisible(true);
+  }
+
+  private void computeScores(VertexScoringAlgorithm<String, Double> scoring) {
+    Map<String, Double> scores = scoring.getScores();
+    if (scores.isEmpty()) return;
+    double min = scores.values().stream().min(Double::compare).get();
+    double max = scores.values().stream().max(Double::compare).get();
+    double range = max - min;
+    log.info("min:{}, max:{}, range:{}", min, max, range);
+    double delta = range / colorArray.length;
+    log.info("delta:{}", delta);
+    vv.getRenderContext()
+        .setVertexFillPaintFunction(
+            v -> {
+              if (scores.isEmpty() || !scores.containsKey(v)) return Color.red;
+              double score = scores.get(v);
+              double index = score / delta;
+              int idx = (int) Math.max(0, Math.min(colorArray.length - 1, index));
+              //                    log.info("{} index is {}", v, index);
+              return colorArray[idx];
+            });
+    vv.repaint();
   }
 
   void clear(Graph graph) {
