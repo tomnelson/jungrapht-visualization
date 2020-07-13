@@ -177,12 +177,17 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
           if (p == null) {
             continue;
           }
-          // translate the shape to the vertex location in layout coordinates
-          AffineTransform xform = AffineTransform.getTranslateInstance(p.x, p.y);
-          shape = xform.createTransformedShape(shape);
 
-          // transform the shape into the view coordinate system
-          shape = mlt.transform(shape);
+          Point2D p2d = mlt.transform(MultiLayerTransformer.Layer.LAYOUT, p.x, p.y);
+          // now p is in view coordinates, ready to be further transformed by any transform in the
+          // graphics context
+          float x = (float) p2d.getX();
+          float y = (float) p2d.getY();
+          // create a transform that translates to the location of
+          // the vertex to be rendered
+          AffineTransform xform = AffineTransform.getTranslateInstance(x, y);
+          // return the transformed vertex shape
+          shape = xform.createTransformedShape(shape);
 
           if (shape.intersects(pickingFootprint)) {
             log.info("view xform: {}", mlt.getTransformer(Layer.VIEW).getTransform());
