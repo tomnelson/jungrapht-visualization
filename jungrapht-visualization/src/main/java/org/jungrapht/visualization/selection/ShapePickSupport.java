@@ -52,6 +52,7 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
   private static final String PICK_AREA_SIZE = PREFIX + "pickAreaSize";
 
   private static final Logger log = LoggerFactory.getLogger(ShapePickSupport.class);
+
   /**
    * The available picking heuristics:
    *
@@ -164,6 +165,12 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
     if (log.isTraceEnabled()) {
       log.trace("look for vertex intersecting {}", pickingFootprint);
     }
+
+    Spatial<V> vertexSpatial = vv.getVertexSpatial();
+    if (vertexSpatial.isActive()) {
+      return getVertex(vertexSpatial, layoutModel, pickingFootprint);
+    }
+
     V closest = null;
     double minDistance = Double.MAX_VALUE;
     MultiLayerTransformer mlt = vv.getRenderContext().getMultiLayerTransformer();
@@ -232,117 +239,28 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
     return closest;
   }
 
-  @Override
-  public V getVertex(LayoutModel<V> layoutModel, org.jungrapht.visualization.layout.model.Point p) {
-    return getVertex(layoutModel, p.x, p.y);
-  }
-
-  /**
-   * Returns the vertex, if any, whose shape contains (x, y). If (x,y) is contained in more than one
-   * vertex's shape, returns the vertex whose center is closest to the pick point.
-   *
-   * @param x the x coordinate of the pick point
-   * @param y the y coordinate of the pick point
-   * @return the vertex whose shape contains (x,y), and whose center is closest to the pick point
-   */
-  @Override
-  public V getVertex(LayoutModel<V> layoutModel, double x, double y) {
-
-    log.trace("look for vertex in (layout coords) {},{}", x, y);
-    V closest = null;
-    double minDistance = Double.MAX_VALUE;
-    // x,y is in layout coordinate system.
-    Point2D pickPoint = new Point2D.Double(x, y);
-
-    Spatial<V> vertexSpatial = vv.getVertexSpatial();
-    if (vertexSpatial.isActive()) {
-      return getVertex(vertexSpatial, layoutModel, pickPoint.getX(), pickPoint.getY());
-    }
-
-    // fall back on checking every vertex
-    Rectangle2D pickArea =
-        new Rectangle2D.Float(
-            (float) x - pickSize / 2, (float) y - pickSize / 2, pickSize, pickSize);
-
-    MultiLayerTransformer mlt = vv.getRenderContext().getMultiLayerTransformer();
-    // draw the pick area in the view
-    vv.addPreRenderPaintable(new FootprintPaintable(Color.red, mlt.transform(pickArea)));
-    // pick area is in layout coordinates
-    while (true) {
-      try {
-        for (V v : getFilteredVertices()) {
-
-          // get the shape for the vertex (it is at the origin)
-          Shape shape = vv.getRenderContext().getVertexShapeFunction().apply(v);
-          // invert any scale in the Layout transform
-          AffineTransform layoutTransform = mlt.getTransformer(Layer.LAYOUT).getTransform();
-          double scaleX = layoutTransform.getScaleX();
-          double scaleY = layoutTransform.getScaleY();
-          layoutTransform.getScaleY();
-          AffineTransform unscale = AffineTransform.getScaleInstance(1 / scaleX, 1 / scaleY);
-          shape = unscale.createTransformedShape(shape);
-          // get the vertex location in layout coordinate system
-          org.jungrapht.visualization.layout.model.Point p = layoutModel.apply(v);
-          if (p == null) {
-            continue;
-          }
-          // translate the shape to the vertex location in layout coordinates
-          AffineTransform xform = AffineTransform.getTranslateInstance(p.x, p.y);
-          shape = xform.createTransformedShape(shape);
-
-          if (shape.intersects(pickArea)) {
-
-            vv.addPreRenderPaintable(new FootprintPaintable(Color.green, mlt.transform(shape)));
-
-            if (style == Style.LOWEST) {
-              // return the first match
-              return v;
-            } else if (style == Style.HIGHEST) {
-              // will return the last match
-              closest = v;
-            } else {
-
-              // return the vertex closest to the
-              // center of a vertex shape
-              Rectangle2D bounds = shape.getBounds2D();
-              double dx = bounds.getCenterX() - pickPoint.getY();
-              double dy = bounds.getCenterY() - pickPoint.getY();
-              double dist = dx * dx + dy * dy;
-              if (dist < minDistance) {
-                minDistance = dist;
-                closest = v;
-              }
-            }
-          }
-        }
-        break;
-      } catch (ConcurrentModificationException cme) {
-      }
-    }
-    return closest;
-  }
-
   /**
    * uses the spatialRTree to find the closest vertex to the points
    *
    * @param spatial
    * @param layoutModel
-   * @param x in the layout coordinate system
-   * @param y in the layout coordinate system
+   * @param pickingFootprint
    * @return the selected vertex
    */
-  protected V getVertex(Spatial<V> spatial, LayoutModel<V> layoutModel, double x, double y) {
+  protected V getVertex(
+      Spatial<V> spatial, LayoutModel<V> layoutModel, Rectangle2D pickingFootprint) {
 
-    Rectangle2D pickArea =
-        new Rectangle2D.Float(
-            (float) x - pickSize / 2, (float) y - pickSize / 2, pickSize, pickSize);
+    MultiLayerTransformer mlt = vv.getRenderContext().getMultiLayerTransformer();
 
     // find the leaf vertex that would contain a point at x,y
-    Collection<? extends TreeNode> containingLeafs =
-        spatial.getContainingLeafs(new Point2D.Double(x, y));
-    if (log.isTraceEnabled()) {
-      log.trace("leaf for {},{} is {}", x, y, containingLeafs);
-    }
+    Point2D pickingCenter =
+        new Point2D.Double(pickingFootprint.getCenterX(), pickingFootprint.getCenterY());
+
+    // transform the pickingCenter to the layout coordinates
+    pickingCenter = mlt.inverseTransform(pickingCenter);
+
+    Collection<? extends TreeNode> containingLeafs = spatial.getContainingLeafs(pickingCenter);
+
     if (containingLeafs == null || containingLeafs.size() == 0) return null;
     // make a target circle the same size as the leaf vertex
     // leaf vertices are small when vertices are close and large when they are sparse
@@ -359,7 +277,9 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
     double height = union.getHeight();
     double radiusx = width / 2;
     double radiusy = height / 2;
-    Ellipse2D target = new Ellipse2D.Double(x - radiusx, y - radiusy, width, height);
+    Ellipse2D target =
+        new Ellipse2D.Double(
+            pickingCenter.getX() - radiusx, pickingCenter.getY() - radiusy, width, height);
     if (log.isTraceEnabled()) {
       log.trace("target is {}", target);
     }
@@ -375,37 +295,44 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
       log.trace("instead of checking all vertices: {}", getFilteredVertices());
       log.trace("out of these candidates: {}...", vertices);
     }
-    MultiLayerTransformer mlt = vv.getRenderContext().getMultiLayerTransformer();
 
     // Check the (smaller) set of eligible vertices
     // to return the one that contains the (x,y)
-    for (V vertex : vertices) {
+    for (V v : vertices) {
 
       // get the shape for the vertex (it is at the origin)
-      Shape shape = vv.getRenderContext().getVertexShapeFunction().apply(vertex);
-      // invert any scale in the Layout transform
-      AffineTransform layoutTransform = mlt.getTransformer(Layer.LAYOUT).getTransform();
-      double scaleX = layoutTransform.getScaleX();
-      double scaleY = layoutTransform.getScaleY();
-      layoutTransform.getScaleY();
-      AffineTransform unscale = AffineTransform.getScaleInstance(1 / scaleX, 1 / scaleY);
-      shape = unscale.createTransformedShape(shape);
+      Shape shape = vv.getRenderContext().getVertexShapeFunction().apply(v);
       // get the vertex location in layout coordinate system
-      org.jungrapht.visualization.layout.model.Point p = layoutModel.apply(vertex);
+      org.jungrapht.visualization.layout.model.Point p = layoutModel.apply(v);
       if (p == null) {
         continue;
       }
-      // translate the shape to the vertex location in layout coordinates
-      AffineTransform xform = AffineTransform.getTranslateInstance(p.x, p.y);
+
+      Point2D p2d = mlt.transform(MultiLayerTransformer.Layer.LAYOUT, p.x, p.y);
+      // now p is in view coordinates, ready to be further transformed by any transform in the
+      // graphics context
+      float x = (float) p2d.getX();
+      float y = (float) p2d.getY();
+      // create a transform that translates to the location of
+      // the vertex to be rendered
+      AffineTransform xform = AffineTransform.getTranslateInstance(x, y);
+      // return the transformed vertex shape
       shape = xform.createTransformedShape(shape);
 
-      if (shape.intersects(pickArea)) {
+      MutableTransformer viewTransformer = mlt.getTransformer(Layer.VIEW);
+      // in case there is a shape changing lens in place:
+      if (viewTransformer instanceof ShapeFlatnessTransformer) {
+        // further change the vertex shape
+        shape = viewTransformer.transform(shape);
+      }
+
+      if (shape.intersects(pickingFootprint)) {
         if (style == Style.LOWEST) {
           // return the first match
-          return vertex;
+          return v;
         } else if (style == Style.HIGHEST) {
           // will return the last match
-          closest = vertex;
+          closest = v;
         } else {
 
           // return the vertex closest to the
@@ -416,7 +343,7 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
           double dist = dx * dx + dy * dy;
           if (dist < minDistance) {
             minDistance = dist;
-            closest = vertex;
+            closest = v;
           }
         }
       }
@@ -425,6 +352,34 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
       log.trace("selected {} with spatial quadtree", closest);
     }
     return closest;
+  }
+
+  @Override
+  public V getVertex(LayoutModel<V> layoutModel, org.jungrapht.visualization.layout.model.Point p) {
+    return getVertex(layoutModel, p.x, p.y);
+  }
+
+  /**
+   * Returns the vertex, if any, whose shape contains (x, y). If (x,y) is contained in more than one
+   * vertex's shape, returns the vertex whose center is closest to the pick point.
+   *
+   * @param x the x coordinate of the pick point
+   * @param y the y coordinate of the pick point
+   * @return the vertex whose shape contains (x,y), and whose center is closest to the pick point
+   */
+  @Override
+  public V getVertex(LayoutModel<V> layoutModel, double x, double y) {
+
+    MultiLayerTransformer mlt = vv.getRenderContext().getMultiLayerTransformer();
+
+    // x and y anre in layout coordinates. Translate to view and make a footprint
+    Point2D layoutPoint = new Point2D.Double(x, y);
+    Point2D viewPoint = mlt.transform(layoutPoint);
+    Rectangle2D pickFootprint =
+        new Rectangle2D.Double(
+            viewPoint.getX() - pickSize / 2, viewPoint.getY() - pickSize / 2, pickSize, pickSize);
+
+    return getVertex(layoutModel, pickFootprint);
   }
 
   /**
