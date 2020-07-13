@@ -42,7 +42,7 @@ public class LensSelectingGraphMousePlugin<V, E> extends SelectingGraphMousePlug
   }
 
   /**
-   * Overriden to apply lens effects to the transformation from view to layout coordinates
+   * Overridden to apply lens effects to the transformation from view to layout coordinates
    *
    * @param vv
    * @param p
@@ -54,7 +54,7 @@ public class LensSelectingGraphMousePlugin<V, E> extends SelectingGraphMousePlug
   }
 
   /**
-   * Overriden to perform lens effects when transforming from Layout to view. Used when projecting
+   * Overridden to perform lens effects when transforming from Layout to view. Used when projecting
    * the selection Lens (the rectangular area drawn with the mouse) back into the view.
    *
    * @param vv
