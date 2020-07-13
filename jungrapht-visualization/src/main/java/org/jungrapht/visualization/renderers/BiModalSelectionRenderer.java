@@ -1,12 +1,12 @@
 package org.jungrapht.visualization.renderers;
 
-import java.awt.*;
+import java.awt.Shape;
 import java.awt.geom.Point2D;
 import java.util.Map;
-import javax.swing.*;
+import javax.swing.JComponent;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
-import org.jungrapht.visualization.VisualizationModel;
+import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.transform.BidirectionalTransformer;
 import org.jungrapht.visualization.transform.Lens;
@@ -65,12 +65,11 @@ public class BiModalSelectionRenderer<V, E> extends BiModalRenderer<V, E> {
    * Render the highlights for the supplied vertex
    *
    * @param renderContext to supply properties
-   * @param visualizationModel to supply the LayoutModel
+   * @param layoutModel to supply the Graph
    * @param v the vertex to render highlights for
    */
   @Override
-  public void renderVertex(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {
+  public void renderVertex(RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, V v) {
 
     GraphicsDecorator graphicsDecorator = renderContext.getGraphicsContext();
     /*
@@ -85,7 +84,7 @@ public class BiModalSelectionRenderer<V, E> extends BiModalRenderer<V, E> {
         LensTransformer magnifyTransformer = (LensTransformer) bidirectionalTransformer;
         Lens lens = magnifyTransformer.getLens();
         // layoutLocation
-        Point p = visualizationModel.getLayoutModel().apply(v);
+        Point p = layoutModel.apply(v);
         Point2D layoutPoint = new Point2D.Double(p.x, p.y);
         // transform to view
         Point2D viewPoint =
@@ -98,13 +97,13 @@ public class BiModalSelectionRenderer<V, E> extends BiModalRenderer<V, E> {
           double product = magnification * magnifyTransformer.getScale();
           // override for the magnifier scale. This may set the mode to Heavyweight inside the lens
           Mode mode = other.getModeFor(() -> product);
-          rendererMap.get(mode).renderVertex(renderContext, visualizationModel, v);
+          rendererMap.get(mode).renderVertex(renderContext, layoutModel, v);
         } else {
-          rendererMap.get(other.getMode()).renderVertex(renderContext, visualizationModel, v);
+          rendererMap.get(other.getMode()).renderVertex(renderContext, layoutModel, v);
         }
       }
     } else {
-      rendererMap.get(other.getMode()).renderVertex(renderContext, visualizationModel, v);
+      rendererMap.get(other.getMode()).renderVertex(renderContext, layoutModel, v);
     }
   }
 }

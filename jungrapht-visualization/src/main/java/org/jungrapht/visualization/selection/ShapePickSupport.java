@@ -11,6 +11,7 @@
  */
 package org.jungrapht.visualization.selection;
 
+import static org.jungrapht.visualization.MultiLayerTransformer.*;
 import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 
 import java.awt.*;
@@ -23,6 +24,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
+import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -147,6 +149,74 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
     this.style = style;
   }
 
+  /**
+   * Returns the vertex, if any, whose shape intersects the supplied pickingFootprint. The
+   * pickingFootprint is in the view coordinate system. To test each vertex, it will have its shape
+   * transformed to the view coordinate system (what the user sees rendered on the screen).
+   *
+   * @param layoutModel
+   * @param pickingFootprint a rectangle in the view coordinate system
+   * @return the vertex whos shape intersects the pickingFootprint in the view.
+   */
+  public V getVertex(LayoutModel<V> layoutModel, Rectangle2D pickingFootprint) {
+    log.info("look for vertex intersecting {}", pickingFootprint);
+    V closest = null;
+    double minDistance = Double.MAX_VALUE;
+    MultiLayerTransformer mlt = vv.getRenderContext().getMultiLayerTransformer();
+    // draw the pick area in the view
+    vv.addPreRenderPaintable(new FootprintPaintable(Color.magenta, pickingFootprint));
+    // pick area is in layout coordinates
+    while (true) {
+      try {
+        for (V v : getFilteredVertices()) {
+
+          // get the shape for the vertex (it is at the origin)
+          Shape shape = vv.getRenderContext().getVertexShapeFunction().apply(v);
+          // get the vertex location in layout coordinate system
+          org.jungrapht.visualization.layout.model.Point p = layoutModel.apply(v);
+          if (p == null) {
+            continue;
+          }
+          // translate the shape to the vertex location in layout coordinates
+          AffineTransform xform = AffineTransform.getTranslateInstance(p.x, p.y);
+          shape = xform.createTransformedShape(shape);
+
+          // transform the shape into the view coordinate system
+          shape = mlt.transform(shape);
+
+          if (shape.intersects(pickingFootprint)) {
+            log.info("view xform: {}", mlt.getTransformer(Layer.VIEW).getTransform());
+            log.info("layout xform: {}", mlt.getTransformer(Layer.LAYOUT).getTransform());
+            vv.addPreRenderPaintable(new FootprintPaintable(Color.green, shape));
+
+            if (style == Style.LOWEST) {
+              // return the first match
+              return v;
+            } else if (style == Style.HIGHEST) {
+              // will return the last match
+              closest = v;
+            } else {
+
+              // return the vertex closest to the
+              // center of a vertex shape
+              Rectangle2D bounds = shape.getBounds2D();
+              double dx = bounds.getCenterX() - pickingFootprint.getCenterX();
+              double dy = bounds.getCenterY() - pickingFootprint.getCenterY();
+              double dist = dx * dx + dy * dy;
+              if (dist < minDistance) {
+                minDistance = dist;
+                closest = v;
+              }
+            }
+          }
+        }
+        break;
+      } catch (ConcurrentModificationException cme) {
+      }
+    }
+    return closest;
+  }
+
   @Override
   public V getVertex(LayoutModel<V> layoutModel, org.jungrapht.visualization.layout.model.Point p) {
     return getVertex(layoutModel, p.x, p.y);
@@ -163,27 +233,39 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
   @Override
   public V getVertex(LayoutModel<V> layoutModel, double x, double y) {
 
-    log.trace("look for vertex in (layout coords) {},{}", x, y);
+    log.info("look for vertex in (layout coords) {},{}", x, y);
     V closest = null;
     double minDistance = Double.MAX_VALUE;
     // x,y is in layout coordinate system.
     Point2D pickPoint = new Point2D.Double(x, y);
 
     Spatial<V> vertexSpatial = vv.getVertexSpatial();
-    if (vertexSpatial.isActive()) {
-      return getVertex(vertexSpatial, layoutModel, pickPoint.getX(), pickPoint.getY());
-    }
+    //    if (vertexSpatial.isActive()) {
+    //      return getVertex(vertexSpatial, layoutModel, pickPoint.getX(), pickPoint.getY());
+    //    }
 
     // fall back on checking every vertex
     Rectangle2D pickArea =
         new Rectangle2D.Float(
             (float) x - pickSize / 2, (float) y - pickSize / 2, pickSize, pickSize);
+
+    MultiLayerTransformer mlt = vv.getRenderContext().getMultiLayerTransformer();
+    // draw the pick area in the view
+    vv.addPreRenderPaintable(new FootprintPaintable(Color.red, mlt.transform(pickArea)));
+    // pick area is in layout coordinates
     while (true) {
       try {
         for (V v : getFilteredVertices()) {
 
           // get the shape for the vertex (it is at the origin)
           Shape shape = vv.getRenderContext().getVertexShapeFunction().apply(v);
+          // invert any scale in the Layout transform
+          AffineTransform layoutTransform = mlt.getTransformer(Layer.LAYOUT).getTransform();
+          double scaleX = layoutTransform.getScaleX();
+          double scaleY = layoutTransform.getScaleY();
+          layoutTransform.getScaleY();
+          AffineTransform unscale = AffineTransform.getScaleInstance(1 / scaleX, 1 / scaleY);
+          shape = unscale.createTransformedShape(shape);
           // get the vertex location in layout coordinate system
           org.jungrapht.visualization.layout.model.Point p = layoutModel.apply(v);
           if (p == null) {
@@ -194,6 +276,9 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
           shape = xform.createTransformedShape(shape);
 
           if (shape.intersects(pickArea)) {
+            log.info("view xform: {}", mlt.getTransformer(Layer.VIEW).getTransform());
+            log.info("layout xform: {}", mlt.getTransformer(Layer.LAYOUT).getTransform());
+            vv.addPreRenderPaintable(new FootprintPaintable(Color.green, mlt.transform(shape)));
 
             if (style == Style.LOWEST) {
               // return the first match
@@ -752,5 +837,26 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
    */
   public void setPickSize(int pickSize) {
     this.pickSize = pickSize;
+  }
+
+  class FootprintPaintable implements VisualizationServer.Paintable {
+    Shape footPrint;
+    Color color;
+
+    public FootprintPaintable(Color color, Shape footPrint) {
+      this.color = color;
+      this.footPrint = footPrint;
+    }
+
+    public void paint(Graphics g) {
+      Color oldColor = g.getColor();
+      g.setColor(color);
+      ((Graphics2D) g).draw(footPrint);
+      g.setColor(oldColor);
+    }
+
+    public boolean useTransform() {
+      return false;
+    }
   }
 }

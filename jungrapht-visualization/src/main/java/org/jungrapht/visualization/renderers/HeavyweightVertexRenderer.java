@@ -12,7 +12,7 @@ package org.jungrapht.visualization.renderers;
 import java.awt.Shape;
 import javax.swing.*;
 import org.jungrapht.visualization.RenderContext;
-import org.jungrapht.visualization.VisualizationModel;
+import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 
 /**
@@ -33,10 +33,10 @@ public class HeavyweightVertexRenderer<V, E> extends AbstractVertexRenderer<V, E
    */
   @Override
   protected void paintIconForVertex(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {
+      RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, V v) {
     GraphicsDecorator g = renderContext.getGraphicsContext();
     int[] coords = new int[2];
-    Shape shape = prepareFinalVertexShape(renderContext, visualizationModel, v, coords);
+    Shape shape = prepareFinalVertexShape(renderContext, layoutModel, v, coords);
 
     if (renderContext.getVertexIconFunction() != null) {
       Icon icon = renderContext.getVertexIconFunction().apply(v);

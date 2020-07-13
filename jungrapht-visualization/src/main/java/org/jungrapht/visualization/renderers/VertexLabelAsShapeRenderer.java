@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.function.Function;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
-import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
@@ -41,9 +40,8 @@ public class VertexLabelAsShapeRenderer<V, E>
   protected final LayoutModel<V> layoutModel;
   protected final RenderContext<V, E> renderContext;
 
-  public VertexLabelAsShapeRenderer(
-      VisualizationModel<V, E> visualizationModel, RenderContext<V, E> rc) {
-    this.layoutModel = visualizationModel.getLayoutModel();
+  public VertexLabelAsShapeRenderer(LayoutModel<V> layoutModel, RenderContext<V, E> rc) {
+    this.layoutModel = layoutModel;
     this.renderContext = rc;
   }
 
@@ -65,10 +63,7 @@ public class VertexLabelAsShapeRenderer<V, E>
    * the position of the vertex; otherwise the label is offset slightly.
    */
   public void labelVertex(
-      RenderContext<V, E> renderContext,
-      VisualizationModel<V, E> visualizationModel,
-      V v,
-      String label) {
+      RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, V v, String label) {
     if (!renderContext.getVertexIncludePredicate().test(v)) {
       return;
     }

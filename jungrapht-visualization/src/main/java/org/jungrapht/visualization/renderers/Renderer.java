@@ -9,9 +9,9 @@
  */
 package org.jungrapht.visualization.renderers;
 
-import java.awt.*;
+import java.awt.Dimension;
 import org.jungrapht.visualization.RenderContext;
-import org.jungrapht.visualization.VisualizationModel;
+import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.spatial.Spatial;
 
 /**
@@ -36,23 +36,19 @@ public interface Renderer<V, E> {
 
   void render(
       RenderContext<V, E> renderContext,
-      VisualizationModel<V, E> visualizationModel,
+      LayoutModel<V> layoutModel,
       Spatial<V> vertexSpatial,
       Spatial<E> edgeSpatial);
 
-  void render(RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel);
+  void render(RenderContext<V, E> renderContext, LayoutModel<V> layoutModel);
 
-  void renderVertex(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v);
+  void renderVertex(RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, V v);
 
-  void renderVertexLabel(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v);
+  void renderVertexLabel(RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, V v);
 
-  void renderEdge(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e);
+  void renderEdge(RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, E e);
 
-  void renderEdgeLabel(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e);
+  void renderEdgeLabel(RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, E e);
 
   void setVertexRenderer(Vertex<V, E> r);
 
@@ -71,18 +67,15 @@ public interface Renderer<V, E> {
   Renderer.EdgeLabel<V, E> getEdgeLabelRenderer();
 
   interface Vertex<V, E> {
-    void paintVertex(
-        RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v);
+    void paintVertex(RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, V v);
 
     class NOOP<V, E> implements Vertex<V, E> {
-      public void paintVertex(
-          RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {}
+      public void paintVertex(RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, V v) {}
     }
   }
 
   interface Edge<V, E> {
-    void paintEdge(
-        RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e);
+    void paintEdge(RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, E e);
 
     EdgeArrowRenderingSupport<V, E> getEdgeArrowRenderingSupport();
 
@@ -90,8 +83,7 @@ public interface Renderer<V, E> {
 
     @SuppressWarnings("rawtypes")
     class NOOP<V, E> implements Edge<V, E> {
-      public void paintEdge(
-          RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e) {}
+      public void paintEdge(RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, E e) {}
 
       public EdgeArrowRenderingSupport getEdgeArrowRenderingSupport() {
         return null;
@@ -104,10 +96,7 @@ public interface Renderer<V, E> {
 
   interface VertexLabel<V, E> {
     void labelVertex(
-        RenderContext<V, E> renderContext,
-        VisualizationModel<V, E> visualizationModel,
-        V v,
-        String label);
+        RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, V v, String label);
 
     void setPositioner(Positioner positioner);
 
@@ -115,10 +104,7 @@ public interface Renderer<V, E> {
 
     class NOOP<V, E> implements VertexLabel<V, E> {
       public void labelVertex(
-          RenderContext<V, E> renderContext,
-          VisualizationModel<V, E> visualizationModel,
-          V v,
-          String label) {}
+          RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, V v, String label) {}
 
       public Position getPosition() {
         return Position.CNTR;
@@ -153,17 +139,11 @@ public interface Renderer<V, E> {
 
   interface EdgeLabel<V, E> {
     void labelEdge(
-        RenderContext<V, E> renderContext,
-        VisualizationModel<V, E> visualizationModel,
-        E e,
-        String label);
+        RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, E e, String label);
 
     class NOOP<V, E> implements EdgeLabel<V, E> {
       public void labelEdge(
-          RenderContext<V, E> renderContext,
-          VisualizationModel<V, E> visualizationModel,
-          E e,
-          String label) {}
+          RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, E e, String label) {}
     }
   }
 }

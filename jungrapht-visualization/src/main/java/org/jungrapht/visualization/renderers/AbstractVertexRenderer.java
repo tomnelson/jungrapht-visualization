@@ -7,7 +7,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
-import org.jungrapht.visualization.VisualizationModel;
+import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 
@@ -18,10 +18,9 @@ import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 public abstract class AbstractVertexRenderer<V, E> implements Renderer.Vertex<V, E> {
 
   @Override
-  public void paintVertex(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {
+  public void paintVertex(RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, V v) {
     if (renderContext.getVertexIncludePredicate().test(v)) {
-      paintIconForVertex(renderContext, visualizationModel, v);
+      paintIconForVertex(renderContext, layoutModel, v);
     }
   }
 
@@ -43,14 +42,11 @@ public abstract class AbstractVertexRenderer<V, E> implements Renderer.Vertex<V,
    * @return the vertex shape in view coordinates
    */
   protected Shape prepareFinalVertexShape(
-      RenderContext<V, E> renderContext,
-      VisualizationModel<V, E> visualizationModel,
-      V v,
-      int[] coords) {
+      RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, V v, int[] coords) {
 
     // get the shape to be rendered
     Shape shape = getVertexShape(renderContext, v);
-    Point p = visualizationModel.getLayoutModel().apply(v);
+    Point p = layoutModel.apply(v);
     // p is the vertex location in layout coordinates
     Point2D p2d =
         renderContext
@@ -94,5 +90,5 @@ public abstract class AbstractVertexRenderer<V, E> implements Renderer.Vertex<V,
   }
 
   protected abstract void paintIconForVertex(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v);
+      RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, V v);
 }

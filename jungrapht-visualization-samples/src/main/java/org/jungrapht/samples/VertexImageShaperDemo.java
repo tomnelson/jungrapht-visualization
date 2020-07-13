@@ -36,6 +36,7 @@ import org.jungrapht.visualization.decorators.IconShapeFunction;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.CircleLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
+import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.util.RandomLocationTransformer;
 import org.jungrapht.visualization.renderers.Checkmark;
@@ -438,9 +439,9 @@ public class VertexImageShaperDemo extends JPanel {
 
     @Override
     public void paintIconForVertex(
-        RenderContext<V, E> renderContext, VisualizationModel<V, E> model, V v) {
+        RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, V v) {
 
-      Point p = model.getLayoutModel().apply(v);
+      Point p = layoutModel.apply(v);
       Point2D p2d = renderContext.getMultiLayerTransformer().transform(Layer.LAYOUT, p.x, p.y);
       float x = (float) p2d.getX();
       float y = (float) p2d.getY();

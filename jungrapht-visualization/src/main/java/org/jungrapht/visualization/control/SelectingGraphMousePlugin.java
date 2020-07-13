@@ -30,6 +30,7 @@ import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.selection.MutableSelectedState;
+import org.jungrapht.visualization.selection.ShapePickSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -185,6 +186,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
 
     MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
 
+    // a rectangle in the view coordinate system.
     this.footprintRectangle =
         new Rectangle2D.Float(
             (float) e.getPoint().x - pickSize / 2,
@@ -203,7 +205,12 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     log.trace("layout coords of mouse click {}", layoutPoint);
     if (e.getModifiersEx() == (modifiers | selectionModifiers)) { // default button1 down and ctrl
 
-      this.vertex = pickSupport.getVertex(layoutModel, layoutPoint.getX(), layoutPoint.getY());
+      if (pickSupport instanceof ShapePickSupport) {
+        ShapePickSupport<V, E> shapePickSupport = (ShapePickSupport<V, E>) pickSupport;
+        this.vertex = shapePickSupport.getVertex(layoutModel, footprintRectangle);
+      } else {
+        this.vertex = pickSupport.getVertex(layoutModel, layoutPoint.getX(), layoutPoint.getY());
+      }
 
       if (vertex != null) {
 

@@ -12,9 +12,9 @@ import java.util.function.Predicate;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
-import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.decorators.ParallelEdgeShapeFunction;
+import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.util.Context;
@@ -31,16 +31,15 @@ public abstract class AbstractEdgeRenderer<V, E> implements Renderer.Edge<V, E> 
   private static final Logger log = LoggerFactory.getLogger(AbstractEdgeRenderer.class);
 
   @Override
-  public void paintEdge(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e) {
+  public void paintEdge(RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, E e) {
     GraphicsDecorator g2d = renderContext.getGraphicsContext();
     if (!renderContext.getEdgeIncludePredicate().test(e)) {
       return;
     }
 
     // don't draw edge if either incident vertex is not drawn
-    V u = visualizationModel.getGraph().getEdgeSource(e);
-    V v = visualizationModel.getGraph().getEdgeTarget(e);
+    V u = layoutModel.getGraph().getEdgeSource(e);
+    V v = layoutModel.getGraph().getEdgeTarget(e);
     Predicate<V> vertexIncludePredicate = renderContext.getVertexIncludePredicate();
     if (!vertexIncludePredicate.test(u) || !vertexIncludePredicate.test(v)) {
       return;
@@ -52,7 +51,7 @@ public abstract class AbstractEdgeRenderer<V, E> implements Renderer.Edge<V, E> 
       g2d.setStroke(new_stroke);
     }
 
-    drawSimpleEdge(renderContext, visualizationModel, e);
+    drawSimpleEdge(renderContext, layoutModel, e);
 
     // restore paint and stroke
     if (new_stroke != null) {
@@ -62,15 +61,15 @@ public abstract class AbstractEdgeRenderer<V, E> implements Renderer.Edge<V, E> 
 
   protected Shape prepareFinalEdgeShape(
       RenderContext<V, E> renderContext,
-      VisualizationModel<V, E> visualizationModel,
+      LayoutModel<V> layoutModel,
       E e,
       int[] coords,
       boolean[] loop) {
-    V source = visualizationModel.getGraph().getEdgeSource(e);
-    V target = visualizationModel.getGraph().getEdgeTarget(e);
+    V source = layoutModel.getGraph().getEdgeSource(e);
+    V target = layoutModel.getGraph().getEdgeTarget(e);
 
-    Point sourcePoint = visualizationModel.getLayoutModel().apply(source);
-    Point targetPoint = visualizationModel.getLayoutModel().apply(target);
+    Point sourcePoint = layoutModel.apply(source);
+    Point targetPoint = layoutModel.apply(target);
     Point2D sourcePoint2D =
         renderContext
             .getMultiLayerTransformer()
@@ -94,8 +93,7 @@ public abstract class AbstractEdgeRenderer<V, E> implements Renderer.Edge<V, E> 
 
     boolean isLoop = loop[0] = source.equals(target);
     Shape targetShape = renderContext.getVertexShapeFunction().apply(target);
-    Shape edgeShape =
-        getEdgeShape(renderContext.getEdgeShapeFunction(), e, visualizationModel.getGraph());
+    Shape edgeShape = getEdgeShape(renderContext.getEdgeShapeFunction(), e, layoutModel.getGraph());
 
     AffineTransform xform = AffineTransform.getTranslateInstance(sourcePoint2DX, sourcePoint2DY);
 
@@ -114,7 +112,7 @@ public abstract class AbstractEdgeRenderer<V, E> implements Renderer.Edge<V, E> 
         EdgeIndexFunction<V, E> peif =
             ((ParallelEdgeShapeFunction<V, E>) renderContext.getEdgeShapeFunction())
                 .getEdgeIndexFunction();
-        index = peif.apply(Context.getInstance(visualizationModel.getGraph(), e));
+        index = peif.apply(Context.getInstance(layoutModel.getGraph(), e));
         index *= 20;
       }
       GeneralPath gp = new GeneralPath();
@@ -184,5 +182,5 @@ public abstract class AbstractEdgeRenderer<V, E> implements Renderer.Edge<V, E> 
       Function<Context<Graph<V, E>, E>, Shape> edgeShapeFunction, E edge, Graph<V, E> graph);
 
   protected abstract void drawSimpleEdge(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e);
+      RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, E e);
 }

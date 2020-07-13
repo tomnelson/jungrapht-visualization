@@ -13,7 +13,7 @@ import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.util.function.Function;
 import org.jungrapht.visualization.RenderContext;
-import org.jungrapht.visualization.VisualizationModel;
+import org.jungrapht.visualization.layout.model.LayoutModel;
 
 /**
  * @param <V> vertex type
@@ -45,9 +45,9 @@ public class LightweightVertexRenderer<V, E> extends AbstractVertexRenderer<V, E
    */
   @Override
   protected void paintIconForVertex(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {
+      RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, V v) {
     int[] coords = new int[2];
-    Shape shape = prepareFinalVertexShape(renderContext, visualizationModel, v, coords);
+    Shape shape = prepareFinalVertexShape(renderContext, layoutModel, v, coords);
 
     paintShapeForVertex(renderContext, v, shape);
   }

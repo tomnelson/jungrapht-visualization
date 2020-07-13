@@ -11,8 +11,8 @@ import java.awt.*;
 import java.util.ConcurrentModificationException;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.RenderContext;
-import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationServer;
+import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.spatial.Spatial;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,11 +37,11 @@ class DefaultRenderer<V, E> implements Renderer<V, E> {
 
   public void render(
       RenderContext<V, E> renderContext,
-      VisualizationModel<V, E> visualizationModel,
+      LayoutModel<V> layoutModel,
       Spatial<V> vertexSpatial,
       Spatial<E> edgeSpatial) {
     if (vertexSpatial == null) {
-      render(renderContext, visualizationModel);
+      render(renderContext, layoutModel);
       return;
     }
     renderContext
@@ -61,7 +61,8 @@ class DefaultRenderer<V, E> implements Renderer<V, E> {
             edgeSpatial.getVisibleElements(
                 ((VisualizationServer) renderContext.getScreenDevice()).viewOnLayout());
       } else {
-        visibleEdges = visualizationModel.getGraph().edgeSet();
+        Graph<V, E> graph = layoutModel.getGraph();
+        visibleEdges = graph.edgeSet();
       }
     } catch (ConcurrentModificationException ex) {
       // skip rendering until graph vertex index is stable,
@@ -70,20 +71,20 @@ class DefaultRenderer<V, E> implements Renderer<V, E> {
       log.info("got {} so returning", ex.toString());
       log.info(
           "layoutMode active: {}, edgeSpatial active {}, vertexSpatial active: {}",
-          visualizationModel.getLayoutModel().isRelaxing(),
+          layoutModel.isRelaxing(),
           edgeSpatial != null && edgeSpatial.isActive(),
           vertexSpatial.isActive());
       return;
     }
 
     try {
-      Graph<V, E> graph = visualizationModel.getGraph();
+      Graph<V, E> graph = layoutModel.getGraph();
       // paint all the edges
       log.trace("the visibleEdges are {}", visibleEdges);
       for (E e : visibleEdges) {
         if (graph.edgeSet().contains(e)) {
-          renderEdge(renderContext, visualizationModel, e);
-          renderEdgeLabel(renderContext, visualizationModel, e);
+          renderEdge(renderContext, layoutModel, e);
+          renderEdgeLabel(renderContext, layoutModel, e);
         }
       }
     } catch (ConcurrentModificationException cme) {
@@ -95,8 +96,8 @@ class DefaultRenderer<V, E> implements Renderer<V, E> {
       log.trace("the visibleVertices are {}", visibleVertices);
 
       for (V v : visibleVertices) {
-        renderVertex(renderContext, visualizationModel, v);
-        renderVertexLabel(renderContext, visualizationModel, v);
+        renderVertex(renderContext, layoutModel, v);
+        renderVertexLabel(renderContext, layoutModel, v);
       }
     } catch (ConcurrentModificationException cme) {
       renderContext.getScreenDevice().repaint();
@@ -104,18 +105,17 @@ class DefaultRenderer<V, E> implements Renderer<V, E> {
   }
 
   @Override
-  public void render(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel) {
+  public void render(RenderContext<V, E> renderContext, LayoutModel<V> layoutModel) {
     renderContext
         .getGraphicsContext()
         .getRenderingHints()
         .put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-    Graph<V, E> graph = visualizationModel.getGraph();
+    Graph<V, E> graph = layoutModel.getGraph();
     // paint all the edges
     try {
       for (E e : graph.edgeSet()) {
-        renderEdge(renderContext, visualizationModel, e);
-        renderEdgeLabel(renderContext, visualizationModel, e);
+        renderEdge(renderContext, layoutModel, e);
+        renderEdgeLabel(renderContext, layoutModel, e);
       }
     } catch (ConcurrentModificationException cme) {
       renderContext.getScreenDevice().repaint();
@@ -124,34 +124,31 @@ class DefaultRenderer<V, E> implements Renderer<V, E> {
     // paint all the vertices
     try {
       for (V v : graph.vertexSet()) {
-        renderVertex(renderContext, visualizationModel, v);
-        renderVertexLabel(renderContext, visualizationModel, v);
+        renderVertex(renderContext, layoutModel, v);
+        renderVertexLabel(renderContext, layoutModel, v);
       }
     } catch (ConcurrentModificationException cme) {
       renderContext.getScreenDevice().repaint();
     }
   }
 
-  public void renderVertex(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {
-    vertexRenderer.paintVertex(renderContext, visualizationModel, v);
+  public void renderVertex(RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, V v) {
+    vertexRenderer.paintVertex(renderContext, layoutModel, v);
   }
 
   public void renderVertexLabel(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {
+      RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, V v) {
     vertexLabelRenderer.labelVertex(
-        renderContext, visualizationModel, v, renderContext.getVertexLabelFunction().apply(v));
+        renderContext, layoutModel, v, renderContext.getVertexLabelFunction().apply(v));
   }
 
-  public void renderEdge(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e) {
-    edgeRenderer.paintEdge(renderContext, visualizationModel, e);
+  public void renderEdge(RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, E e) {
+    edgeRenderer.paintEdge(renderContext, layoutModel, e);
   }
 
-  public void renderEdgeLabel(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e) {
+  public void renderEdgeLabel(RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, E e) {
     edgeLabelRenderer.labelEdge(
-        renderContext, visualizationModel, e, renderContext.getEdgeLabelFunction().apply(e));
+        renderContext, layoutModel, e, renderContext.getEdgeLabelFunction().apply(e));
   }
 
   public void setVertexRenderer(Vertex<V, E> r) {

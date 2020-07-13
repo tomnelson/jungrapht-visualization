@@ -123,7 +123,8 @@ public class ShortestPathDemo extends JPanel {
             for (Integer e : graph.edgeSet()) {
               if (onShortestPath(e)) {
                 Renderer<String, Integer> renderer = vv.getRenderer();
-                renderer.renderEdge(vv.getRenderContext(), vv.getVisualizationModel(), e);
+                renderer.renderEdge(
+                    vv.getRenderContext(), vv.getVisualizationModel().getLayoutModel(), e);
               }
             }
           }

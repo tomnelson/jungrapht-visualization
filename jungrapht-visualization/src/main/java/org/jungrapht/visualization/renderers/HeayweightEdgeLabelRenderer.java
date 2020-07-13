@@ -23,9 +23,9 @@ import java.util.function.Predicate;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
-import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.decorators.ArticulatedEdgeShapeFunction;
 import org.jungrapht.visualization.decorators.EdgeShape;
+import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.util.Context;
@@ -54,24 +54,21 @@ public class HeayweightEdgeLabelRenderer<V, E> implements Renderer.EdgeLabel<V, 
 
   @Override
   public void labelEdge(
-      RenderContext<V, E> renderContext,
-      VisualizationModel<V, E> visualizationModel,
-      E e,
-      String label) {
+      RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, E e, String label) {
     if (label == null || label.length() == 0) {
       return;
     }
 
     // don't draw edge if either incident vertex is not drawn
-    V v1 = visualizationModel.getGraph().getEdgeSource(e);
-    V v2 = visualizationModel.getGraph().getEdgeTarget(e);
+    V v1 = layoutModel.getGraph().getEdgeSource(e);
+    V v2 = layoutModel.getGraph().getEdgeTarget(e);
     Predicate<V> vertexIncludePredicate = renderContext.getVertexIncludePredicate();
     if (!vertexIncludePredicate.test(v1) || !vertexIncludePredicate.test(v2)) {
       return;
     }
 
-    Point p1 = visualizationModel.getLayoutModel().apply(v1);
-    Point p2 = visualizationModel.getLayoutModel().apply(v2);
+    Point p1 = layoutModel.apply(v1);
+    Point p2 = layoutModel.apply(v2);
 
     // if this in an articulated edge, use only the first segment for label positioning
     // get the edge shape, move it into position (layout coords), get the first articulation point
@@ -85,7 +82,7 @@ public class HeayweightEdgeLabelRenderer<V, E> implements Renderer.EdgeLabel<V, 
           articulatedEdgeShapeFunction.getEdgeArticulationFunction();
       if (edgeArticulationFunction.apply(e).size() > 0) {
 
-        Shape edgeShape = getArticulatedEdgeShape(renderContext, visualizationModel, e);
+        Shape edgeShape = getArticulatedEdgeShape(renderContext, layoutModel, e);
 
         if (edgeShape instanceof Path2D) {
 
@@ -138,16 +135,14 @@ public class HeayweightEdgeLabelRenderer<V, E> implements Renderer.EdgeLabel<V, 
     Dimension d = component.getPreferredSize();
 
     Shape edgeShape =
-        renderContext
-            .getEdgeShapeFunction()
-            .apply(Context.getInstance(visualizationModel.getGraph(), e));
+        renderContext.getEdgeShapeFunction().apply(Context.getInstance(layoutModel.getGraph(), e));
 
     double parallelOffset = 1;
 
     parallelOffset +=
         renderContext
             .getParallelEdgeIndexFunction()
-            .apply(Context.getInstance(visualizationModel.getGraph(), e));
+            .apply(Context.getInstance(layoutModel.getGraph(), e));
 
     parallelOffset *= d.height;
     if (edgeShape instanceof Ellipse2D) {
@@ -182,18 +177,17 @@ public class HeayweightEdgeLabelRenderer<V, E> implements Renderer.EdgeLabel<V, 
    * used for articulated edges. returns the final edge shape in layout space
    *
    * @param renderContext
-   * @param visualizationModel
+   * @param layoutModel
    * @param e
    * @return
    */
   private Shape getArticulatedEdgeShape(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e) {
-    V v1 = visualizationModel.getGraph().getEdgeSource(e);
-    V v2 = visualizationModel.getGraph().getEdgeTarget(e);
+      RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, E e) {
+    V v1 = layoutModel.getGraph().getEdgeSource(e);
+    V v2 = layoutModel.getGraph().getEdgeTarget(e);
 
-    org.jungrapht.visualization.layout.model.Point p1 =
-        visualizationModel.getLayoutModel().apply(v1);
-    Point p2 = visualizationModel.getLayoutModel().apply(v2);
+    org.jungrapht.visualization.layout.model.Point p1 = layoutModel.apply(v1);
+    Point p2 = layoutModel.apply(v2);
     float x1 = (float) p1.x;
     float y1 = (float) p1.y;
     float x2 = (float) p2.x;
@@ -207,10 +201,9 @@ public class HeayweightEdgeLabelRenderer<V, E> implements Renderer.EdgeLabel<V, 
       edgeShape =
           renderContext
               .getEdgeShapeFunction()
-              .apply(Context.getInstance(visualizationModel.getGraph(), e));
+              .apply(Context.getInstance(layoutModel.getGraph(), e));
     } else {
-      edgeShape =
-          EdgeShape.<V, E>line().apply(Context.getInstance(visualizationModel.getGraph(), e));
+      edgeShape = EdgeShape.<V, E>line().apply(Context.getInstance(layoutModel.getGraph(), e));
     }
 
     AffineTransform xform = AffineTransform.getTranslateInstance(x1, y1);

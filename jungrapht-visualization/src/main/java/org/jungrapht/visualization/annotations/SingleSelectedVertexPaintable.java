@@ -240,7 +240,7 @@ public class SingleSelectedVertexPaintable<V, E> implements VisualizationServer.
 
     biModalRenderer.renderVertex(
         visualizationServer.getRenderContext(),
-        visualizationServer.getVisualizationModel(),
+        visualizationServer.getVisualizationModel().getLayoutModel(),
         vertex);
 
     visualizationServer.getRenderContext().setVertexShapeFunction(oldShapeFunction);
@@ -251,7 +251,7 @@ public class SingleSelectedVertexPaintable<V, E> implements VisualizationServer.
   protected void paintTransformed(V vertex) {
     biModalRenderer.renderVertex(
         visualizationServer.getRenderContext(),
-        visualizationServer.getVisualizationModel(),
+        visualizationServer.getVisualizationModel().getLayoutModel(),
         vertex);
   }
 

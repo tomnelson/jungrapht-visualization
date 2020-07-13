@@ -551,7 +551,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
       }
     }
 
-    renderer.render(renderContext, visualizationModel, vertexSpatial, edgeSpatial);
+    renderer.render(renderContext, visualizationModel.getLayoutModel(), vertexSpatial, edgeSpatial);
 
     // if there are postRenderers set, do it
     for (Paintable paintable : postRenderers) {

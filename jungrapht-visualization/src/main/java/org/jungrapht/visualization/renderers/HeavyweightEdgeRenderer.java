@@ -16,7 +16,7 @@ import java.awt.geom.*;
 import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.RenderContext;
-import org.jungrapht.visualization.VisualizationModel;
+import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.util.Context;
 
@@ -64,7 +64,7 @@ public class HeavyweightEdgeRenderer<V, E> extends AbstractEdgeRenderer<V, E>
    * @param e the edge to be drawn
    */
   protected void drawSimpleEdge(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e) {
+      RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, E e) {
 
     Graphics2D g2d = renderContext.getGraphicsContext().getDelegate();
     Stroke savedStroke = g2d.getStroke();
@@ -75,7 +75,7 @@ public class HeavyweightEdgeRenderer<V, E> extends AbstractEdgeRenderer<V, E>
 
     int[] coords = new int[4];
     boolean[] loop = new boolean[1];
-    Shape edgeShape = prepareFinalEdgeShape(renderContext, visualizationModel, e, coords, loop);
+    Shape edgeShape = prepareFinalEdgeShape(renderContext, layoutModel, e, coords, loop);
 
     int x1 = coords[0];
     int y1 = coords[1];
@@ -84,7 +84,7 @@ public class HeavyweightEdgeRenderer<V, E> extends AbstractEdgeRenderer<V, E>
     boolean isLoop = loop[0];
 
     GraphicsDecorator g = renderContext.getGraphicsContext();
-    Graph<V, E> graph = visualizationModel.getGraph();
+    Graph<V, E> graph = layoutModel.getGraph();
 
     Paint oldPaint = g.getPaint();
 

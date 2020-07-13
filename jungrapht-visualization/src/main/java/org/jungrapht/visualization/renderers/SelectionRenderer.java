@@ -1,7 +1,7 @@
 package org.jungrapht.visualization.renderers;
 
 import org.jungrapht.visualization.RenderContext;
-import org.jungrapht.visualization.VisualizationModel;
+import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.spatial.Spatial;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,35 +23,31 @@ public class SelectionRenderer<V, E> implements Renderer<V, E> {
   @Override
   public void render(
       RenderContext<V, E> renderContext,
-      VisualizationModel<V, E> visualizationModel,
+      LayoutModel<V> layoutModel,
       Spatial<V> vertexSpatial,
       Spatial<E> edgeSpatial) {
     // BiModalRenderer handles this
   }
 
   @Override
-  public void render(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel) {
+  public void render(RenderContext<V, E> renderContext, LayoutModel<V> layoutModel) {
     // BiModalRenderer handles this
   }
 
   @Override
-  public void renderVertex(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {
-    vertexRenderer.paintVertex(renderContext, visualizationModel, v);
+  public void renderVertex(RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, V v) {
+    vertexRenderer.paintVertex(renderContext, layoutModel, v);
   }
 
   @Override
   public void renderVertexLabel(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {}
+      RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, V v) {}
 
   @Override
-  public void renderEdge(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e) {}
+  public void renderEdge(RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, E e) {}
 
   @Override
-  public void renderEdgeLabel(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e) {}
+  public void renderEdgeLabel(RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, E e) {}
 
   @Override
   public void setVertexRenderer(Vertex<V, E> r) {

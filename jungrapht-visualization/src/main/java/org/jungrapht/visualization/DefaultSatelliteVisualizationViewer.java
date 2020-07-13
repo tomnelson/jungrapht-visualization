@@ -133,7 +133,7 @@ public class DefaultSatelliteVisualizationViewer<V, E> extends DefaultVisualizat
       }
     }
 
-    renderer.render(renderContext, visualizationModel);
+    renderer.render(renderContext, visualizationModel.getLayoutModel());
 
     // if there are postRenderers set, do it
     for (Paintable paintable : postRenderers) {

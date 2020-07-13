@@ -247,7 +247,7 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
 
     biModalRenderer.renderVertex(
         visualizationServer.getRenderContext(),
-        visualizationServer.getVisualizationModel(),
+        visualizationServer.getVisualizationModel().getLayoutModel(),
         vertex);
 
     visualizationServer.getRenderContext().setVertexShapeFunction(oldShapeFunction);
@@ -258,7 +258,7 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
   protected void paintTransformed(V vertex) {
     biModalRenderer.renderVertex(
         visualizationServer.getRenderContext(),
-        visualizationServer.getVisualizationModel(),
+        visualizationServer.getVisualizationModel().getLayoutModel(),
         vertex);
   }
 
