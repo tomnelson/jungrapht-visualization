@@ -321,11 +321,7 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
       shape = xform.createTransformedShape(shape);
 
       MutableTransformer viewTransformer = mlt.getTransformer(Layer.VIEW);
-      // in case there is a shape changing lens in place:
-      if (viewTransformer instanceof ShapeFlatnessTransformer) {
-        // further change the vertex shape
-        shape = viewTransformer.transform(shape);
-      }
+      shape = viewTransformer.transform(shape);
 
       if (shape.intersects(pickingFootprint)) {
         if (style == Style.LOWEST) {
@@ -593,11 +589,11 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
           }
 
           MutableTransformer viewTransformer = mlt.getTransformer(Layer.VIEW);
-          // handle a lens
-          if (viewTransformer instanceof ShapeFlatnessTransformer) {
+//           handle a lens
+//          if (viewTransformer instanceof ShapeFlatnessTransformer) {
             // further change the vertex shape
             edgeShape = viewTransformer.transform(edgeShape);
-          }
+//          }
 
           Line2D endToEnd = getLineFromShape(edgeShape);
           // for articulated edges, the edge 'shape' is an area bounded by the zig-zag edge and the
