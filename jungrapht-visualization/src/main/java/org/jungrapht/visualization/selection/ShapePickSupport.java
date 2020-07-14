@@ -592,9 +592,12 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
             continue;
           }
 
-          edgeShape = mlt.transform(edgeShape);
-
-          vv.addPreRenderPaintable(new FootprintPaintable(Color.red, edgeShape));
+          MutableTransformer viewTransformer = mlt.getTransformer(Layer.VIEW);
+          // handle a lens
+          if (viewTransformer instanceof ShapeFlatnessTransformer) {
+            // further change the vertex shape
+            edgeShape = viewTransformer.transform(edgeShape);
+          }
 
           Line2D endToEnd = getLineFromShape(edgeShape);
           // for articulated edges, the edge 'shape' is an area bounded by the zig-zag edge and the
