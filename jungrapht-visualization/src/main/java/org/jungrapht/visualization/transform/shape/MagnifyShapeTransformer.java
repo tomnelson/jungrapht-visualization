@@ -139,6 +139,7 @@ public class MagnifyShapeTransformer extends MagnifyTransformer
           break;
       }
     }
+    log.info("magnified shape bounds: {}", newPath.getBounds());
     return newPath;
   }
 

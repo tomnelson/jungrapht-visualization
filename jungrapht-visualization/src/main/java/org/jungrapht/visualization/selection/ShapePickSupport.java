@@ -11,11 +11,20 @@
  */
 package org.jungrapht.visualization.selection;
 
-import static org.jungrapht.visualization.MultiLayerTransformer.*;
+import static org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 
-import java.awt.*;
-import java.awt.geom.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
+import java.awt.geom.PathIterator;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.HashSet;
@@ -34,8 +43,8 @@ import org.jungrapht.visualization.spatial.Spatial;
 import org.jungrapht.visualization.spatial.SpatialRTree;
 import org.jungrapht.visualization.spatial.rtree.LeafNode;
 import org.jungrapht.visualization.spatial.rtree.TreeNode;
+import org.jungrapht.visualization.transform.LensTransformer;
 import org.jungrapht.visualization.transform.MutableTransformer;
-import org.jungrapht.visualization.transform.shape.ShapeFlatnessTransformer;
 import org.jungrapht.visualization.util.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -166,17 +175,22 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
     if (log.isTraceEnabled()) {
       log.trace("look for vertex intersecting {}", pickingFootprint);
     }
+    MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
 
+    MutableTransformer viewTransformer = multiLayerTransformer.getTransformer(Layer.VIEW);
+
+    // if there is a spatial data structure active, use it
     Spatial<V> vertexSpatial = vv.getVertexSpatial();
-    if (vertexSpatial.isActive()) {
+    if (!(viewTransformer instanceof LensTransformer) && vertexSpatial.isActive()) {
       return getVertex(vertexSpatial, layoutModel, pickingFootprint);
     }
 
     V closest = null;
     double minDistance = Double.MAX_VALUE;
-    MultiLayerTransformer mlt = vv.getRenderContext().getMultiLayerTransformer();
     // draw the pick area in the view
-    vv.addPreRenderPaintable(new FootprintPaintable(Color.magenta, pickingFootprint));
+    if (log.isTraceEnabled()) {
+      vv.addPreRenderPaintable(new FootprintPaintable(Color.magenta, pickingFootprint));
+    }
     // pick area is in layout coordinates
     while (true) {
       try {
@@ -190,7 +204,8 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
             continue;
           }
 
-          Point2D p2d = mlt.transform(MultiLayerTransformer.Layer.LAYOUT, p.x, p.y);
+          Point2D p2d =
+              multiLayerTransformer.transform(MultiLayerTransformer.Layer.LAYOUT, p.x, p.y);
           // now p is in view coordinates, ready to be further transformed by any transform in the
           // graphics context
           float x = (float) p2d.getX();
@@ -201,16 +216,22 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
           // return the transformed vertex shape
           shape = xform.createTransformedShape(shape);
 
-          MutableTransformer viewTransformer = mlt.getTransformer(Layer.VIEW);
-          // in case there is a shape changing lens in place:
-          if (viewTransformer instanceof ShapeFlatnessTransformer) {
-            // further change the vertex shape
-            shape = viewTransformer.transform(shape);
+          // account for the graphics transform, or perhaps the lens transform
+          shape = viewTransformer.transform(shape);
+
+          if (viewTransformer instanceof LensTransformer) {
+            LensTransformer lensTransformer = (LensTransformer) viewTransformer;
+            shape = lensTransformer.getDelegate().transform(shape);
+          }
+          if (log.isTraceEnabled()) {
+            vv.addPreRenderPaintable(new FootprintPaintable(Color.pink, shape));
           }
 
           if (shape.intersects(pickingFootprint)) {
 
-            vv.addPreRenderPaintable(new FootprintPaintable(Color.green, shape));
+            if (log.isTraceEnabled()) {
+              vv.addPreRenderPaintable(new FootprintPaintable(Color.green, shape));
+            }
 
             if (style == Style.LOWEST) {
               // return the first match
@@ -322,6 +343,10 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
 
       MutableTransformer viewTransformer = mlt.getTransformer(Layer.VIEW);
       shape = viewTransformer.transform(shape);
+      if (viewTransformer instanceof LensTransformer) {
+        LensTransformer lensTransformer = (LensTransformer) viewTransformer;
+        shape = lensTransformer.getDelegate().transform(shape);
+      }
 
       if (shape.intersects(pickingFootprint)) {
         if (style == Style.LOWEST) {
@@ -497,9 +522,6 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
     // find the leaf vertices that would contain a point at x,y
     Collection<LeafNode<E>> containingLeafs = spatial.getContainingLeafs(pickingCenter);
 
-    //    if (log.isTraceEnabled()) {
-    //      log.trace("leaf for {},{} is {}", x, y, containingLeafs);
-    //    }
     if (containingLeafs == null || containingLeafs.size() == 0) return null;
     // make a target circle the same size as the leaf vertex area union
     // leaf vertices are small when vertices are close and large when they are sparse
@@ -535,10 +557,6 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
       log.trace("out of these {} candidates: {}...", edges.size(), edges);
     }
 
-    //    Rectangle2D pickArea =
-    //            new Rectangle2D.Float(
-    //                    (float) x - pickSize / 2, (float) y - pickSize / 2, pickSize, pickSize);
-
     // Check the (smaller) set of eligible edges
     // to return the one that contains the (x,y)
     for (E edge : edges) {
@@ -548,6 +566,13 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
       if (edgeShape == null) {
         continue;
       }
+      MutableTransformer viewTransformer = mlt.getTransformer(Layer.VIEW);
+      edgeShape = viewTransformer.transform(edgeShape);
+      if (viewTransformer instanceof LensTransformer) {
+        LensTransformer lensTransformer = (LensTransformer) viewTransformer;
+        edgeShape = lensTransformer.getDelegate().transform(edgeShape);
+      }
+
       Line2D endToEnd = getLineFromShape(edgeShape);
       // for articulated edges, the edge 'shape' is an area bounded by the zig-zag edge and the
       // (invisible) line from source to target vertex. The pick footprint is not inside the shape
@@ -563,21 +588,14 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
   }
 
   public E getEdge(LayoutModel<V> layoutModel, Rectangle2D pickFootprint) {
-    // as a Line has no area, we can't always use edgeshape.contains(point) so we
-    // make a small rectangular pickArea around the point and check if the
-    // edgeshape.intersects(pickArea)
-    //    Rectangle2D pickArea =
-    //            new Rectangle2D.Float(
-    //                    (float) x - pickSize / 2, (float) y - pickSize / 2, pickSize, pickSize);
     E closest = null;
-    MultiLayerTransformer mlt = vv.getRenderContext().getMultiLayerTransformer();
+    MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
+    MutableTransformer viewTransformer = multiLayerTransformer.getTransformer(Layer.VIEW);
 
-    //    Point2D pickPoint = new Point2D.Double(x, y);
-
-    Spatial<E> edgeSpatial = vv.getEdgeSpatial();
-    if (edgeSpatial instanceof SpatialRTree.Edges) {
-      return getEdge((SpatialRTree.Edges<E, V>) edgeSpatial, layoutModel, pickFootprint);
-    }
+    //    Spatial<E> edgeSpatial = vv.getEdgeSpatial();
+    //    if (!(viewTransformer instanceof LensTransformer) && edgeSpatial instanceof SpatialRTree.Edges && edgeSpatial.isActive()) {
+    //      return getEdge((SpatialRTree.Edges<E, V>) edgeSpatial, layoutModel, pickFootprint);
+    //    }
     while (true) {
       try {
         // this checks every edge.
@@ -588,12 +606,11 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
             continue;
           }
 
-          MutableTransformer viewTransformer = mlt.getTransformer(Layer.VIEW);
-//           handle a lens
-//          if (viewTransformer instanceof ShapeFlatnessTransformer) {
-            // further change the vertex shape
-            edgeShape = viewTransformer.transform(edgeShape);
-//          }
+          edgeShape = viewTransformer.transform(edgeShape);
+          if (viewTransformer instanceof LensTransformer) {
+            LensTransformer lensTransformer = (LensTransformer) viewTransformer;
+            edgeShape = lensTransformer.getDelegate().transform(edgeShape);
+          }
 
           Line2D endToEnd = getLineFromShape(edgeShape);
           // for articulated edges, the edge 'shape' is an area bounded by the zig-zag edge and the
@@ -622,6 +639,7 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
    */
   @Override
   public E getEdge(LayoutModel<V> layoutModel, double x, double y) {
+
     MultiLayerTransformer mlt = vv.getRenderContext().getMultiLayerTransformer();
 
     // x and y anre in layout coordinates. Translate to view and make a footprint
@@ -632,48 +650,6 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
             viewPoint.getX() - pickSize / 2, viewPoint.getY() - pickSize / 2, pickSize, pickSize);
 
     return getEdge(layoutModel, pickFootprint);
-
-    //    // as a Line has no area, we can't always use edgeshape.contains(point) so we
-    //    // make a small rectangular pickArea around the point and check if the
-    //    // edgeshape.intersects(pickArea)
-    //    Rectangle2D pickArea =
-    //        new Rectangle2D.Float(
-    //            (float) x - pickSize / 2, (float) y - pickSize / 2, pickSize, pickSize);
-    //    E closest = null;
-    //
-    //    Point2D pickPoint = new Point2D.Double(x, y);
-    //
-    //    Spatial<E> edgeSpatial = vv.getEdgeSpatial();
-    //    if (edgeSpatial instanceof SpatialRTree.Edges) {
-    //      return getEdge(
-    //          (SpatialRTree.Edges<E, V>) edgeSpatial, layoutModel, pickPoint.getX(), pickPoint.getY());
-    //    }
-    //    while (true) {
-    //      try {
-    //        // this checks every edge.
-    //        for (E edge : getFilteredEdges()) {
-    //
-    //          Shape edgeShape = getTransformedEdgeShape(edge);
-    //          if (edgeShape == null) {
-    //            continue;
-    //          }
-    //
-    //          Line2D endToEnd = getLineFromShape(edgeShape);
-    //          // for articulated edges, the edge 'shape' is an area bounded by the zig-zag edge and the
-    //          // (invisible) line from source to target vertex. The pick footprint is not inside the shape
-    //          // and is not intersecting the invisible line, but does intersect the zig zag line
-    //          if (!edgeShape.contains(pickArea)
-    //              && edgeShape.intersects(pickArea)
-    //              && !endToEnd.intersects(pickArea)) {
-    //            closest = edge;
-    //            break;
-    //          }
-    //        }
-    //        break;
-    //      } catch (ConcurrentModificationException cme) {
-    //      }
-    //    }
-    //    return closest;
   }
 
   @Override
@@ -878,7 +854,6 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
             .stream()
             .filter(vv.getRenderContext().getEdgeIncludePredicate()::test)
             .collect(Collectors.toSet())
-        //Sets.filter(edges, vv.getRenderContext().getEdgeIncludePredicate()::test)
         : edges;
   }
 
@@ -1001,10 +976,6 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
     float sourcePoint2DY = (float) sourcePoint2D.getY();
     float targetPoint2DX = (float) targetPoint2D.getX();
     float targetPoint2DY = (float) targetPoint2D.getY();
-    //    coords[0] = (int) sourcePoint2DX;
-    //    coords[1] = (int) sourcePoint2DY;
-    //    coords[2] = (int) targetPoint2DX;
-    //    coords[3] = (int) targetPoint2DY;
 
     boolean isLoop = source.equals(target);
     Shape targetShape = renderContext.getVertexShapeFunction().apply(target);
@@ -1012,7 +983,6 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
         vv.getRenderContext()
             .getEdgeShapeFunction()
             .apply(Context.getInstance(layoutModel.getGraph(), e));
-    //            getEdgeShape(renderContext.getEdgeShapeFunction(), e, layoutModel.getGraph());
 
     AffineTransform xform = AffineTransform.getTranslateInstance(sourcePoint2DX, sourcePoint2DY);
 

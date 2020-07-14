@@ -157,7 +157,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     }
 
     public boolean useTransform() {
-      return false;
+      return true;
     }
   }
 
@@ -223,7 +223,14 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
         return;
       }
 
-      this.edge = pickSupport.getEdge(layoutModel, layoutPoint.getX(), layoutPoint.getY());
+      if (pickSupport instanceof ShapePickSupport) {
+        ShapePickSupport<V, E> shapePickSupport = (ShapePickSupport<V, E>) pickSupport;
+        this.edge = shapePickSupport.getEdge(layoutModel, footprintRectangle);
+      } else {
+        this.edge = pickSupport.getEdge(layoutModel, layoutPoint.getX(), layoutPoint.getY());
+      }
+
+      //      this.edge = pickSupport.getEdge(layoutModel, layoutPoint.getX(), layoutPoint.getY());
 
       if (edge != null) {
 
@@ -434,16 +441,9 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
       MultiLayerTransformer multiLayerTransformer,
       Point2D down,
       Point2D out) {
-    log.trace("updatePickingTargets with {} to {}", down, out);
 
     multiSelectionStrategy.updateShape(down, down);
-
     layoutTargetShape = multiLayerTransformer.inverseTransform(viewRectangle);
-
-    if (log.isTraceEnabled()) {
-      log.trace("viewRectangle {}", viewRectangle);
-      log.trace("layoutTargetShape bounds {}", layoutTargetShape.getBounds());
-    }
   }
 
   /**

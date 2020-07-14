@@ -96,6 +96,7 @@ public class HyperbolicShapeTransformer extends HyperbolicTransformer
   }
 
   public Shape transform(Shape shape, float flatness) {
+    //    shape = super.transform(shape);
     if (log.isTraceEnabled()) {
       log.trace("transforming {}", shape);
     }
@@ -187,6 +188,8 @@ public class HyperbolicShapeTransformer extends HyperbolicTransformer
           break;
       }
     }
+    log.info("hyperbolic shape bounds: {}", newPath.getBounds());
+
     return newPath;
   }
   /** override base class transform to project the fisheye effect */
