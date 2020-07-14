@@ -25,6 +25,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.MultiLayerTransformer;
+import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -484,48 +485,129 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
     return visible;
   }
 
-  /**
-   * Returns an edge whose shape intersects the 'pickArea' footprint of the passed x,y, coordinates.
-   *
-   * @param x the x coordinate of the location (layout coordinate system)
-   * @param y the y coordinate of the location (layout coordinate system)
-   * @return an edge whose shape intersects the pick area centered on the location {@code (x,y)}
-   */
-  @Override
-  public E getEdge(LayoutModel<V> layoutModel, double x, double y) {
 
+
+
+  //// Edge selection
+
+  protected E getEdge(SpatialRTree.Edges<E, V> spatial, LayoutModel<V> layoutModel, Rectangle2D pickingFootprint) {
+    MultiLayerTransformer mlt = vv.getRenderContext().getMultiLayerTransformer();
+
+    // find the leaf vertex that would contain a point at x,y
+    Point2D pickingCenter =
+            new Point2D.Double(pickingFootprint.getCenterX(), pickingFootprint.getCenterY());
+
+    // transform the pickingCenter to the layout coordinates
+    pickingCenter = mlt.inverseTransform(pickingCenter);
+
+    // find the leaf vertices that would contain a point at x,y
+    Collection<LeafNode<E>> containingLeafs = spatial.getContainingLeafs(pickingCenter);
+
+//    if (log.isTraceEnabled()) {
+//      log.trace("leaf for {},{} is {}", x, y, containingLeafs);
+//    }
+    if (containingLeafs == null || containingLeafs.size() == 0) return null;
+    // make a target circle the same size as the leaf vertex area union
+    // leaf vertices are small when vertices are close and large when they are sparse
+    // union up all the leafs then make a target
+    Rectangle2D union = null;
+    for (LeafNode<E> r : containingLeafs) {
+      if (union == null) {
+        union = r.getBounds();
+      } else {
+        union = union.createUnion(r.getBounds());
+      }
+    }
+    double width = union.getWidth();
+    double height = union.getHeight();
+    double radiusx = width / 2;
+    double radiusy = height / 2;
+    Ellipse2D target =         new Ellipse2D.Double(
+            pickingCenter.getX() - radiusx, pickingCenter.getY() - radiusy, width, height);
+
+    if (log.isTraceEnabled()) {
+      log.trace("target is {}", target);
+    }
+
+    // will be the selected edge
+    E closest = null;
+
+    // get the all vertices from any leafs that intersect the target
+    Collection<E> edges = spatial.getVisibleElements(target);
+    if (log.isTraceEnabled()) {
+      log.trace(
+              "instead of checking all {} edges: {}", getFilteredEdges().size(), getFilteredEdges());
+      log.trace("out of these {} candidates: {}...", edges.size(), edges);
+    }
+
+//    Rectangle2D pickArea =
+//            new Rectangle2D.Float(
+//                    (float) x - pickSize / 2, (float) y - pickSize / 2, pickSize, pickSize);
+
+    // Check the (smaller) set of eligible edges
+    // to return the one that contains the (x,y)
+    for (E edge : edges) {
+
+      // make sure that edgeShape is in view coordinates
+      Shape edgeShape = getTransformedEdgeShape(edge);
+      if (edgeShape == null) {
+        continue;
+      }
+      Line2D endToEnd = getLineFromShape(edgeShape);
+      // for articulated edges, the edge 'shape' is an area bounded by the zig-zag edge and the
+      // (invisible) line from source to target vertex. The pick footprint is not inside the shape
+      // and is not intersecting the invisible line, but does intersect the zig zag line
+      if (!edgeShape.contains(pickingFootprint)
+              && edgeShape.intersects(pickingFootprint)
+              && !endToEnd.intersects(pickingFootprint)) {
+        closest = edge;
+        break;
+      }
+    }
+    return closest;
+  }
+
+
+    public E getEdge(LayoutModel<V> layoutModel, Rectangle2D pickFootprint) {
     // as a Line has no area, we can't always use edgeshape.contains(point) so we
     // make a small rectangular pickArea around the point and check if the
     // edgeshape.intersects(pickArea)
-    Rectangle2D pickArea =
-        new Rectangle2D.Float(
-            (float) x - pickSize / 2, (float) y - pickSize / 2, pickSize, pickSize);
+//    Rectangle2D pickArea =
+//            new Rectangle2D.Float(
+//                    (float) x - pickSize / 2, (float) y - pickSize / 2, pickSize, pickSize);
     E closest = null;
+      MultiLayerTransformer mlt = vv.getRenderContext().getMultiLayerTransformer();
 
-    Point2D pickPoint = new Point2D.Double(x, y);
+//    Point2D pickPoint = new Point2D.Double(x, y);
 
     Spatial<E> edgeSpatial = vv.getEdgeSpatial();
     if (edgeSpatial instanceof SpatialRTree.Edges) {
       return getEdge(
-          (SpatialRTree.Edges<E, V>) edgeSpatial, layoutModel, pickPoint.getX(), pickPoint.getY());
+              (SpatialRTree.Edges<E, V>) edgeSpatial, layoutModel, pickFootprint);
     }
     while (true) {
       try {
         // this checks every edge.
         for (E edge : getFilteredEdges()) {
 
-          Shape edgeShape = getTransformedEdgeShape(edge);
+          Shape edgeShape = prepareFinalEdgeShape(
+                  vv.getRenderContext(), layoutModel, edge);
           if (edgeShape == null) {
             continue;
           }
+
+
+          edgeShape = mlt.transform(edgeShape);
+
+          vv.addPreRenderPaintable(new FootprintPaintable(Color.red, edgeShape));
 
           Line2D endToEnd = getLineFromShape(edgeShape);
           // for articulated edges, the edge 'shape' is an area bounded by the zig-zag edge and the
           // (invisible) line from source to target vertex. The pick footprint is not inside the shape
           // and is not intersecting the invisible line, but does intersect the zig zag line
-          if (!edgeShape.contains(pickArea)
-              && edgeShape.intersects(pickArea)
-              && !endToEnd.intersects(pickArea)) {
+          if (!edgeShape.contains(pickFootprint)
+                  && edgeShape.intersects(pickFootprint)
+                  && !endToEnd.intersects(pickFootprint)) {
             closest = edge;
             break;
           }
@@ -535,6 +617,69 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
       }
     }
     return closest;
+  }
+
+  /**
+     * Returns an edge whose shape intersects the 'pickArea' footprint of the passed x,y, coordinates.
+     *
+     * @param x the x coordinate of the location (layout coordinate system)
+     * @param y the y coordinate of the location (layout coordinate system)
+     * @return an edge whose shape intersects the pick area centered on the location {@code (x,y)}
+     */
+  @Override
+  public E getEdge(LayoutModel<V> layoutModel, double x, double y) {
+    MultiLayerTransformer mlt = vv.getRenderContext().getMultiLayerTransformer();
+
+    // x and y anre in layout coordinates. Translate to view and make a footprint
+    Point2D layoutPoint = new Point2D.Double(x, y);
+    Point2D viewPoint = mlt.transform(layoutPoint);
+    Rectangle2D pickFootprint =
+            new Rectangle2D.Double(
+                    viewPoint.getX() - pickSize / 2, viewPoint.getY() - pickSize / 2, pickSize, pickSize);
+
+    return getEdge(layoutModel, pickFootprint);
+
+//    // as a Line has no area, we can't always use edgeshape.contains(point) so we
+//    // make a small rectangular pickArea around the point and check if the
+//    // edgeshape.intersects(pickArea)
+//    Rectangle2D pickArea =
+//        new Rectangle2D.Float(
+//            (float) x - pickSize / 2, (float) y - pickSize / 2, pickSize, pickSize);
+//    E closest = null;
+//
+//    Point2D pickPoint = new Point2D.Double(x, y);
+//
+//    Spatial<E> edgeSpatial = vv.getEdgeSpatial();
+//    if (edgeSpatial instanceof SpatialRTree.Edges) {
+//      return getEdge(
+//          (SpatialRTree.Edges<E, V>) edgeSpatial, layoutModel, pickPoint.getX(), pickPoint.getY());
+//    }
+//    while (true) {
+//      try {
+//        // this checks every edge.
+//        for (E edge : getFilteredEdges()) {
+//
+//          Shape edgeShape = getTransformedEdgeShape(edge);
+//          if (edgeShape == null) {
+//            continue;
+//          }
+//
+//          Line2D endToEnd = getLineFromShape(edgeShape);
+//          // for articulated edges, the edge 'shape' is an area bounded by the zig-zag edge and the
+//          // (invisible) line from source to target vertex. The pick footprint is not inside the shape
+//          // and is not intersecting the invisible line, but does intersect the zig zag line
+//          if (!edgeShape.contains(pickArea)
+//              && edgeShape.intersects(pickArea)
+//              && !endToEnd.intersects(pickArea)) {
+//            closest = edge;
+//            break;
+//          }
+//        }
+//        break;
+//      } catch (ConcurrentModificationException cme) {
+//      }
+//    }
+//    return closest;
   }
 
   @Override
@@ -838,4 +983,71 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
       return false;
     }
   }
+
+  protected Shape prepareFinalEdgeShape(
+          RenderContext<V, E> renderContext,
+          LayoutModel<V> layoutModel,
+          E e) {
+    V source = layoutModel.getGraph().getEdgeSource(e);
+    V target = layoutModel.getGraph().getEdgeTarget(e);
+
+    Point sourcePoint = layoutModel.apply(source);
+    Point targetPoint = layoutModel.apply(target);
+    Point2D sourcePoint2D =
+            renderContext
+                    .getMultiLayerTransformer()
+                    .transform(
+                            MultiLayerTransformer.Layer.LAYOUT,
+                            new Point2D.Double(sourcePoint.x, sourcePoint.y));
+    Point2D targetPoint2D =
+            renderContext
+                    .getMultiLayerTransformer()
+                    .transform(
+                            MultiLayerTransformer.Layer.LAYOUT,
+                            new Point2D.Double(targetPoint.x, targetPoint.y));
+    float sourcePoint2DX = (float) sourcePoint2D.getX();
+    float sourcePoint2DY = (float) sourcePoint2D.getY();
+    float targetPoint2DX = (float) targetPoint2D.getX();
+    float targetPoint2DY = (float) targetPoint2D.getY();
+//    coords[0] = (int) sourcePoint2DX;
+//    coords[1] = (int) sourcePoint2DY;
+//    coords[2] = (int) targetPoint2DX;
+//    coords[3] = (int) targetPoint2DY;
+
+    boolean isLoop = source.equals(target);
+    Shape targetShape = renderContext.getVertexShapeFunction().apply(target);
+    Shape edgeShape =
+            vv.getRenderContext().getEdgeShapeFunction().apply(
+                    Context.getInstance(layoutModel.getGraph(), e));
+//            getEdgeShape(renderContext.getEdgeShapeFunction(), e, layoutModel.getGraph());
+
+    AffineTransform xform = AffineTransform.getTranslateInstance(sourcePoint2DX, sourcePoint2DY);
+
+    if (isLoop) {
+      // this is a self-loop. scale it is larger than the vertex
+      // it decorates and translate it so that its nadir is
+      // at the center of the vertex.
+      Rectangle2D targetShapeBounds2D = targetShape.getBounds2D();
+      xform.scale(targetShapeBounds2D.getWidth(), targetShapeBounds2D.getHeight());
+      xform.translate(0, -edgeShape.getBounds2D().getWidth() / 2);
+    } else {
+      // this is a normal edge. Rotate it to the angle between
+      // vertex endpoints, then scale it to the distance between
+      // the vertices
+      float dx = targetPoint2DX - sourcePoint2DX;
+      float dy = targetPoint2DY - sourcePoint2DY;
+      float thetaRadians = (float) Math.atan2(dy, dx);
+      xform.rotate(thetaRadians);
+      double dist = Math.sqrt(dx * dx + dy * dy);
+      if (edgeShape instanceof Path2D) {
+        xform.scale(dist, dist);
+      } else {
+        xform.scale(dist, 1.0);
+      }
+    }
+    edgeShape = xform.createTransformedShape(edgeShape);
+
+    return edgeShape;
+  }
+
 }
