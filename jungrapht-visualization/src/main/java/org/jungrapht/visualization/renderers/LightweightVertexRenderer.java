@@ -34,7 +34,8 @@ public class LightweightVertexRenderer<V, E> extends AbstractVertexRenderer<V, E
   }
 
   protected Shape getVertexShape(RenderContext<V, E> renderContext, V vertex) {
-    return simpleVertexShapeFunction.apply(vertex);
+    return renderContext.getVertexShapeFunction().apply(vertex);
+    //simpleVertexShapeFunction.apply(vertex);
   }
 
   /**

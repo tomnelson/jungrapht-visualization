@@ -84,6 +84,7 @@ public class DefaultSatelliteVisualizationViewer<V, E> extends DefaultVisualizat
     setSelectedEdgeState(master.getSelectedEdgeState());
     setVertexSpatial(new Spatial.NoOp.Vertex(visualizationModel.getLayoutModel()));
     setEdgeSpatial(new Spatial.NoOp.Edge(visualizationModel));
+    getRenderContext().setVertexShapeFunction(master.getRenderContext().getVertexShapeFunction());
   }
 
   /**
