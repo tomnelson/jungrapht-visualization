@@ -3,7 +3,6 @@ package org.jungrapht.visualization.renderers;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -12,13 +11,10 @@ import java.util.function.Predicate;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
-import org.jungrapht.visualization.decorators.EdgeShape;
-import org.jungrapht.visualization.decorators.ParallelEdgeShapeFunction;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.util.Context;
-import org.jungrapht.visualization.util.EdgeIndexFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,49 +100,6 @@ public abstract class AbstractEdgeRenderer<V, E> implements Renderer.Edge<V, E> 
       Rectangle2D targetShapeBounds2D = targetShape.getBounds2D();
       xform.scale(targetShapeBounds2D.getWidth(), targetShapeBounds2D.getHeight());
       xform.translate(0, -edgeShape.getBounds2D().getWidth() / 2);
-    } else if (renderContext.getEdgeShapeFunction() instanceof EdgeShape.Orthogonal) {
-      float dx = targetPoint2DX - sourcePoint2DX;
-      float dy = targetPoint2DY - sourcePoint2DY;
-      int index = 0;
-      if (renderContext.getEdgeShapeFunction() instanceof ParallelEdgeShapeFunction) {
-        EdgeIndexFunction<V, E> peif =
-            ((ParallelEdgeShapeFunction<V, E>) renderContext.getEdgeShapeFunction())
-                .getEdgeIndexFunction();
-        index = peif.apply(Context.getInstance(layoutModel.getGraph(), e));
-        index *= 20;
-      }
-      GeneralPath gp = new GeneralPath();
-      gp.moveTo(0, 0); // the xform will do the translation to x1,y1
-      if (sourcePoint2DX > targetPoint2DX) {
-        if (sourcePoint2DY > targetPoint2DY) {
-          gp.lineTo(0, index);
-          gp.lineTo(dx - index, index);
-          gp.lineTo(dx - index, dy);
-          gp.lineTo(dx, dy);
-        } else {
-          gp.lineTo(0, -index);
-          gp.lineTo(dx - index, -index);
-          gp.lineTo(dx - index, dy);
-          gp.lineTo(dx, dy);
-        }
-
-      } else {
-        if (sourcePoint2DY > targetPoint2DY) {
-          gp.lineTo(0, index);
-          gp.lineTo(dx + index, index);
-          gp.lineTo(dx + index, dy);
-          gp.lineTo(dx, dy);
-
-        } else {
-          gp.lineTo(0, -index);
-          gp.lineTo(dx + index, -index);
-          gp.lineTo(dx + index, dy);
-          gp.lineTo(dx, dy);
-        }
-      }
-
-      edgeShape = gp;
-
     } else {
       // this is a normal edge. Rotate it to the angle between
       // vertex endpoints, then scale it to the distance between
