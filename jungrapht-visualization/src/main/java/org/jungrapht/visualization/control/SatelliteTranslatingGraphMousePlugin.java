@@ -43,28 +43,31 @@ public class SatelliteTranslatingGraphMousePlugin extends TranslatingGraphMouseP
     VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
     VisualizationViewer<?, ?> vvMaster = ((SatelliteVisualizationViewer<?, ?>) vv).getMaster();
 
-    MutableTransformer modelTransformerMaster =
-        vvMaster
-            .getRenderContext()
-            .getMultiLayerTransformer()
-            .getTransformer(MultiLayerTransformer.Layer.LAYOUT);
-    vv.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
-    try {
-      Point2D center = vv.getCenter();
-      Point2D q = center;//vv.getRenderContext().getMultiLayerTransformer().inverseTransform(center);
-      Point2D p = e.getPoint();//vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint());
-      float dx = (float) (p.getX() - q.getX());
-      float dy = (float) (p.getY() - q.getY());
-
-      modelTransformerMaster.translate(-dx, -dy);
-      //        down.x = e.getX();
-      //        down.y = e.getY();
-    } catch (RuntimeException ex) {
-      log.error("down = {}, e = {}", down, e);
-      throw ex;
-    }
-
-    e.consume();
+    //    MutableTransformer modelTransformerMaster =
+    //        vvMaster
+    //            .getRenderContext()
+    //            .getMultiLayerTransformer()
+    //            .getTransformer(MultiLayerTransformer.Layer.LAYOUT);
+    //    vv.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+    //    try {
+    //      Point2D center = vv.getCenter();
+    //      Point2D q =
+    //          center; //vv.getRenderContext().getMultiLayerTransformer().inverseTransform(center);
+    //      Point2D p =
+    //          e
+    //              .getPoint(); //vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint());
+    //      float dx = (float) (p.getX() - q.getX());
+    //      float dy = (float) (p.getY() - q.getY());
+    //
+    //      modelTransformerMaster.translate(-dx, -dy);
+    //      //        down.x = e.getX();
+    //      //        down.y = e.getY();
+    //    } catch (RuntimeException ex) {
+    //      log.error("down = {}, e = {}", down, e);
+    //      throw ex;
+    //    }
+    //
+    //    e.consume();
   }
 
   /**

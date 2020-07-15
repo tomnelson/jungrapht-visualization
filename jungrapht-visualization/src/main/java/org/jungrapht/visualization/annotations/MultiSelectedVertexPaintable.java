@@ -50,6 +50,7 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
     private float selectionStrokeMin =
         Float.parseFloat(System.getProperty(PREFIX + "selectionStrokeMin", "2.f"));
     private boolean useBounds = true;
+    private Function<VisualizationServer<V, E>, Collection<V>> selectedVertexFunction;
 
     protected B self() {
       return (B) this;
@@ -83,6 +84,12 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
 
     public B useBounds(boolean useBounds) {
       this.useBounds = useBounds;
+      return self();
+    }
+
+    public B selectedVertexFunction(
+        Function<VisualizationServer<V, E>, Collection<V>> selectedVertexFunction) {
+      this.selectedVertexFunction = selectedVertexFunction;
       return self();
     }
 
@@ -121,6 +128,8 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
 
   private BiModalSelectionRenderer<V, E> biModalRenderer;
 
+  protected Function<VisualizationServer<V, E>, Collection<V>> selectedVertexFunction;
+
   /**
    * Create an instance of a {@code SelectedVertexPaintable}
    *
@@ -133,7 +142,8 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
         builder.useBounds,
         builder.selectionPaint,
         builder.selectionIcon,
-        builder.selectionStrokeMin);
+        builder.selectionStrokeMin,
+        builder.selectedVertexFunction);
   }
 
   /**
@@ -150,7 +160,8 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
       boolean useBounds,
       Paint selectionPaint,
       Icon selectionIcon,
-      float selectionStrokeMin) {
+      float selectionStrokeMin,
+      Function<VisualizationServer<V, E>, Collection<V>> selectedVertexFunction) {
     this.visualizationServer = visualizationServer;
     this.selectionShape = shape;
     this.useBounds = useBounds;
@@ -166,6 +177,17 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
                 (new SelectionRenderer<>(new HeavyweightVertexSelectionRenderer<>())))
             .modeSourceRenderer((BiModalRenderer<V, E>) visualizationServer.getRenderer())
             .build();
+    this.selectedVertexFunction =
+        selectedVertexFunction != null ? selectedVertexFunction : vs -> getSelectedVertices(vs);
+  }
+
+  protected Collection<V> getSelectedVertices(VisualizationServer<V, E> visualizationServer) {
+    return visualizationServer
+        .getSelectedVertexState()
+        .getSelected()
+        .stream()
+        .filter(visualizationServer.getVisualizationModel().getGraph().vertexSet()::contains)
+        .collect(Collectors.toList());
   }
 
   /**
@@ -183,13 +205,7 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
     // set the new color
     g2d.setPaint(selectionPaint);
 
-    Collection<V> selectedVertices =
-        visualizationServer
-            .getSelectedVertexState()
-            .getSelected()
-            .stream()
-            .filter(visualizationServer.getVisualizationModel().getGraph().vertexSet()::contains)
-            .collect(Collectors.toList());
+    Collection<V> selectedVertices = selectedVertexFunction.apply(visualizationServer);
 
     if (!selectedVertices.isEmpty()) {
 

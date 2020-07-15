@@ -19,8 +19,12 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.event.ItemEvent;
 import java.awt.geom.GeneralPath;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import javax.swing.*;
 import org.jgrapht.Graph;
+import org.jgrapht.Graphs;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.DemoTreeSupplier;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
@@ -117,10 +121,28 @@ public class SatelliteViewTreeDemo extends JPanel {
 
     MultiSelectedVertexPaintable<String, Integer> multiSelectedVertexPaintable =
         MultiSelectedVertexPaintable.builder(mainVisualizationViewer).build();
+
     mainVisualizationViewer.addPostRenderPaintable(multiSelectedVertexPaintable);
 
     SingleSelectedVertexPaintable<String, Integer> singleSelectedVertexPaintable =
-        SingleSelectedVertexPaintable.builder(mainVisualizationViewer).build();
+        SingleSelectedVertexPaintable.builder(mainVisualizationViewer)
+            .selectedVertexFunction(
+                vs -> {
+                  Graph<String, Integer> g = vs.getVisualizationModel().getGraph();
+                  Set<String> selected = vs.getSelectedVertexState().getSelected();
+                  List<String> roots = new ArrayList<>();
+                  for (String v : selected) {
+                    List<String> predecessors = Graphs.predecessorListOf(g, v);
+                    if (predecessors.isEmpty()) {
+                      roots.add(v);
+                    }
+                    if (!selected.containsAll(predecessors)) {
+                      roots.add(v);
+                    }
+                  }
+                  return roots.isEmpty() ? null : roots.get(0);
+                })
+            .build();
     mainVisualizationViewer.addPostRenderPaintable(singleSelectedVertexPaintable);
 
     mainVisualizationViewer
