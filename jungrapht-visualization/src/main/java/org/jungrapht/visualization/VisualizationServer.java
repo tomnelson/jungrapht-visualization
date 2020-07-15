@@ -315,6 +315,8 @@ public interface VisualizationServer<V, E>
   /** scale the graph visualization to fit within the view window */
   void scaleToLayout();
 
+  void resizeToLayout();
+
   /**
    * scale the graph layout to fit withon the view window
    *

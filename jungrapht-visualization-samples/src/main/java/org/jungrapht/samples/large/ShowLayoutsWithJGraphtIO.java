@@ -170,9 +170,9 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
                     layoutAlgorithm = new StaticLayoutAlgorithm();
                   }
                   if (animateLayoutTransition.isSelected()) {
-                    LayoutAlgorithmTransition.animate(vv, layoutAlgorithm, vv::scaleToLayout);
+                    LayoutAlgorithmTransition.animate(vv, layoutAlgorithm, vv::resizeToLayout);
                   } else {
-                    LayoutAlgorithmTransition.apply(vv, layoutAlgorithm, vv::scaleToLayout);
+                    LayoutAlgorithmTransition.apply(vv, layoutAlgorithm, vv::resizeToLayout);
                   }
                   if (layoutAlgorithm instanceof BalloonLayoutAlgorithm) {
                     balloonLayoutRings =

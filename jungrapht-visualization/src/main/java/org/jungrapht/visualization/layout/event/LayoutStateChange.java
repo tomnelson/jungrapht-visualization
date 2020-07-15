@@ -87,6 +87,7 @@ public interface LayoutStateChange {
 
     @Override
     public void fireLayoutStateChanged(LayoutModel layoutModel, boolean state) {
+      log.info("fireLayoutStateChange busy={}", state);
       if (fireEvents && changeListeners.size() > 0) {
         // make an event and fire it
         LayoutStateChange.Event evt = new LayoutStateChange.Event(layoutModel, state);

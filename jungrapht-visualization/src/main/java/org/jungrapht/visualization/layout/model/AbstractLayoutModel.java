@@ -317,7 +317,7 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
 
   /** */
   public void setSize(int width, int height) {
-    log.info("setSize({},{})", width, height);
+    //    log.info("setSize({},{})", width, height);
     if (width <= 0) {
       width = preferredWidth;
     }
@@ -330,7 +330,7 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
   }
 
   public void setPreferredSize(int preferredWidth, int preferredHeight) {
-    log.info("setPreferredSize({},{})", preferredWidth, preferredHeight);
+    log.trace("setPreferredSize({},{})", preferredWidth, preferredHeight);
     if (preferredWidth == 0 || preferredHeight == 0) {
       throw new IllegalArgumentException(
           "Can't be zeros " + preferredWidth + "/" + preferredHeight);
@@ -457,6 +457,7 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
 
   @Override
   public void resizeToSurroundingRectangle() {
+    //    layoutStateChangeSupport.fireLayoutStateChanged(this, true);
     int maxX = Integer.MIN_VALUE;
     int maxY = Integer.MIN_VALUE;
     int minX = Integer.MAX_VALUE;
@@ -498,6 +499,7 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
     int newWidth = maxX + dx;
     int newHeight = maxY + dy;
     setSize(newWidth, newHeight);
+    //    layoutStateChangeSupport.fireLayoutStateChanged(this, false);
   }
 
   @Override
@@ -523,6 +525,7 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
    */
   @Override
   public void appendLayoutModel(LayoutModel<V> layoutModel) {
+    //    layoutStateChangeSupport.fireLayoutStateChanged(this, true);
     if (log.isTraceEnabled()) {
       log.trace(
           "appending layoutModel with width {} to this layoutModel width:{}",
@@ -546,5 +549,6 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
           .stream()
           .forEach(v -> this.set(v, layoutModel.get(v).add(widthDelta, 0)));
     }
+    //    layoutStateChangeSupport.fireLayoutStateChanged(this, false);
   }
 }

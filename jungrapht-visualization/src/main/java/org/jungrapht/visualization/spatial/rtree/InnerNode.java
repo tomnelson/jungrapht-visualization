@@ -67,7 +67,7 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
     node.setParent(this);
     updateBounds(node.getBounds());
     leafChildren = node instanceof LeafNode;
-    children = new ArrayList();
+    children = Collections.synchronizedList(new ArrayList());
     children.add(node);
   }
 

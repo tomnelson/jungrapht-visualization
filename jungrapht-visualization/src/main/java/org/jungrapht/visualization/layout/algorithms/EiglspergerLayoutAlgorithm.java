@@ -201,9 +201,10 @@ public class EiglspergerLayoutAlgorithm<V, E>
   protected Executor executor;
   protected CompletableFuture theFuture;
   protected Runnable after;
-  protected boolean separateCommponents;
+  protected boolean separateComponents;
   protected Map<E, List<Point>> edgePointMap = new HashMap<>();
   protected EdgeShape.ArticulatedLine<V, E> edgeShape = new EdgeShape.ArticulatedLine<>();
+  private int completionCounter = 0;
 
   public EiglspergerLayoutAlgorithm() {
     this(EiglspergerLayoutAlgorithm.edgeAwareBuilder());
@@ -247,12 +248,22 @@ public class EiglspergerLayoutAlgorithm<V, E>
     this.expandLayout = expandLayout;
     this.layering = layering;
     this.after = after;
-    this.separateCommponents = separateComponents;
+    this.separateComponents = separateComponents;
     this.executor = executor;
     this.threaded = threaded;
 
     this.edgeShape.setEdgeArticulationFunction(
         e -> edgePointMap.getOrDefault(e, Collections.emptyList()));
+  }
+
+  private boolean isComplete(int expected) {
+    boolean isComplete = ++completionCounter >= expected;
+    log.info(
+        " completionCounter:{}, expected: {} isComplete:{}",
+        completionCounter,
+        expected,
+        isComplete);
+    return isComplete;
   }
 
   @Override
@@ -294,6 +305,8 @@ public class EiglspergerLayoutAlgorithm<V, E>
 
   @Override
   public void visit(LayoutModel<V> layoutModel) {
+    this.edgePointMap.clear();
+    this.completionCounter = 0;
 
     Graph<V, E> graph = layoutModel.getGraph();
     if (graph == null || graph.vertexSet().isEmpty()) {
@@ -303,7 +316,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
     List<Graph<V, E>> graphs;
     List<LayoutModel<V>> layoutModels = new ArrayList<>();
 
-    if (separateCommponents) {
+    if (separateComponents) {
       // if this is a multicomponent graph, discover components and create a temp
       // LayoutModel for each to visit. Afterwards, append all the layoutModels
       // to the one visited above.
@@ -345,12 +358,14 @@ public class EiglspergerLayoutAlgorithm<V, E>
                         log.trace("Eiglsperger layout done");
                         this.edgePointMap.putAll(runnable.getEdgePointMap());
                         layoutModel.appendLayoutModel(componentLayoutModel);
-                        this.run(); // run the after function
-                        layoutModel.getViewChangeSupport().fireViewChanged();
-                        // fire an event to say that the layout is done
-                        layoutModel
-                            .getLayoutStateChangeSupport()
-                            .fireLayoutStateChanged(layoutModel, false);
+                        if (isComplete(graphs.size())) {
+                          this.run(); // run the after function
+                          layoutModel.getViewChangeSupport().fireViewChanged();
+                          // fire an event to say that the layout is done
+                          layoutModel
+                              .getLayoutStateChangeSupport()
+                              .fireLayoutStateChanged(layoutModel, false);
+                        }
                       });
         } else {
           theFuture =
@@ -360,22 +375,26 @@ public class EiglspergerLayoutAlgorithm<V, E>
                         log.trace("Eiglsperger layout done");
                         this.edgePointMap.putAll(runnable.getEdgePointMap());
                         layoutModel.appendLayoutModel(componentLayoutModel);
-                        this.run(); // run the after function
-                        layoutModel.getViewChangeSupport().fireViewChanged();
-                        // fire an event to say that the layout is done
-                        layoutModel
-                            .getLayoutStateChangeSupport()
-                            .fireLayoutStateChanged(layoutModel, false);
+                        if (isComplete(graphs.size())) {
+                          this.run(); // run the after function
+                          layoutModel.getViewChangeSupport().fireViewChanged();
+                          // fire an event to say that the layout is done
+                          layoutModel
+                              .getLayoutStateChangeSupport()
+                              .fireLayoutStateChanged(layoutModel, false);
+                        }
                       });
         }
       } else {
         runnable.run();
         this.edgePointMap.putAll(runnable.getEdgePointMap());
         layoutModel.appendLayoutModel(componentLayoutModel);
-        after.run();
-        layoutModel.getViewChangeSupport().fireViewChanged();
-        // fire an event to say that the layout is done
-        layoutModel.getLayoutStateChangeSupport().fireLayoutStateChanged(layoutModel, false);
+        if (isComplete(graphs.size())) {
+          after.run();
+          layoutModel.getViewChangeSupport().fireViewChanged();
+          // fire an event to say that the layout is done
+          layoutModel.getLayoutStateChangeSupport().fireLayoutStateChanged(layoutModel, false);
+        }
       }
       edgeShapeConsumer.accept(edgeShape);
     }
@@ -480,6 +499,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
 
   @Override
   public void run() {
+    log.info("running after: {}", after);
     after.run();
   }
 
