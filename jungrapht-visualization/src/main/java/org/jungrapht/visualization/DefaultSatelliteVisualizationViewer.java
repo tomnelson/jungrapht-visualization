@@ -72,6 +72,7 @@ public class DefaultSatelliteVisualizationViewer<V, E> extends DefaultVisualizat
         .setTransformer(
             MultiLayerTransformer.Layer.LAYOUT, new MutableAffineTransformer(modelLayoutTransform));
 
+    this.setVisualizationModel(master.getVisualizationModel());
     // make sure the satellite listens for changes in the master
     master.addChangeListener(this);
     master
@@ -84,7 +85,9 @@ public class DefaultSatelliteVisualizationViewer<V, E> extends DefaultVisualizat
     setSelectedEdgeState(master.getSelectedEdgeState());
     setVertexSpatial(new Spatial.NoOp.Vertex(visualizationModel.getLayoutModel()));
     setEdgeSpatial(new Spatial.NoOp.Edge(visualizationModel));
+    //    setRenderContext(master.getRenderContext());
     getRenderContext().setVertexShapeFunction(master.getRenderContext().getVertexShapeFunction());
+    getRenderContext().setEdgeShapeFunction(master.getRenderContext().getEdgeShapeFunction());
   }
 
   /**
@@ -94,6 +97,8 @@ public class DefaultSatelliteVisualizationViewer<V, E> extends DefaultVisualizat
    */
   @Override
   protected void renderGraph(Graphics2D g2d) {
+    getRenderContext().setVertexShapeFunction(master.getRenderContext().getVertexShapeFunction());
+    getRenderContext().setEdgeShapeFunction(master.getRenderContext().getEdgeShapeFunction());
     if (renderContext.getGraphicsContext() == null) {
       renderContext.setGraphicsContext(new GraphicsDecorator(g2d));
     } else {
