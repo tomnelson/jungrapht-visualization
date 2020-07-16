@@ -2,6 +2,7 @@ package org.jungrapht.visualization.layout.algorithms;
 
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.VisualizationServer;
+import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.IterativeContext;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
@@ -19,7 +20,7 @@ public class AnimationLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorith
       implements LayoutAlgorithm.Builder<V, T, B> {
     protected VisualizationServer<V, ?> visualizationServer;
     protected LayoutAlgorithm<V> endLayoutAlgorithm;
-    protected Runnable after = null;
+    protected Runnable after = () -> {};
 
     public B visualizationServer(VisualizationServer<V, ?> visualizationServer) {
       this.visualizationServer = visualizationServer;
@@ -48,7 +49,7 @@ public class AnimationLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorith
   protected boolean done = false;
   protected int count = 20;
   protected int counter = 0;
-  protected Runnable after;
+  protected Runnable after = () -> {};
 
   LayoutModel<V> transitionLayoutModel;
   VisualizationServer<V, ?> visualizationServer;
@@ -63,7 +64,11 @@ public class AnimationLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorith
     super(builder);
     this.visualizationServer = builder.visualizationServer;
     this.endLayoutAlgorithm = builder.endLayoutAlgorithm;
-    this.after = builder.after;
+    if (endLayoutAlgorithm instanceof AfterRunnable) {
+      ((AfterRunnable)this.endLayoutAlgorithm).setAfter(builder.after);
+    } else {
+      this.after = builder.after;
+    }
   }
 
   public void visit(LayoutModel<V> layoutModel) {
@@ -106,7 +111,7 @@ public class AnimationLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorith
   }
 
   public boolean done() {
-    after.run();
+    if (done) after.run();
     return done;
   }
 }

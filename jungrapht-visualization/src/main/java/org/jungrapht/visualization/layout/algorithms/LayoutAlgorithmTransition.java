@@ -1,6 +1,8 @@
 package org.jungrapht.visualization.layout.algorithms;
 
 import org.jungrapht.visualization.VisualizationServer;
+import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
+import org.jungrapht.visualization.layout.algorithms.util.Threaded;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +42,11 @@ public class LayoutAlgorithmTransition {
       LayoutAlgorithm<V> endLayoutAlgorithm,
       Runnable after) {
     visualizationServer.getVisualizationModel().setLayoutAlgorithm(endLayoutAlgorithm);
-    after.run();
+    if (endLayoutAlgorithm instanceof AfterRunnable) {
+      ((AfterRunnable)endLayoutAlgorithm).setAfter(after);
+    } else {
+      after.run();
+    }
   }
 
   public static <V, E> void apply(

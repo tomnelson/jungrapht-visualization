@@ -86,7 +86,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
       implements LayoutAlgorithm.Builder<V, T, B> {
     protected Executor executor;
     protected Function<V, Shape> vertexShapeFunction = v -> IDENTITY_SHAPE;
-    protected Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer;
+    protected Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeFunctionConsumer = i -> {};
     protected boolean straightenEdges =
         Boolean.parseBoolean(System.getProperty(MINCROSS_STRAIGHTEN_EDGES, "true"));
     protected boolean postStraighten =
@@ -111,9 +111,9 @@ public class SugiyamaLayoutAlgorithm<V, E>
       return self();
     }
 
-    public B edgeShapeConsumer(
-        Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer) {
-      this.edgeShapeConsumer = edgeShapeConsumer;
+    public B edgeShapeFunctionConsumer(
+        Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeFunctionConsumer) {
+      this.edgeShapeFunctionConsumer = edgeShapeFunctionConsumer;
       return self();
     }
 
@@ -192,7 +192,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
   protected List<V> roots;
 
   protected Function<V, Shape> vertexShapeFunction;
-  protected Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer;
+  protected Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeFunctionConsumer;
   protected boolean straightenEdges;
   protected boolean postStraighten;
   protected boolean transpose;
@@ -208,6 +208,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
   protected boolean separateCommponents;
   protected Map<E, List<Point>> edgePointMap = new HashMap<>();
   protected EdgeShape.ArticulatedLine<V, E> edgeShape = new EdgeShape.ArticulatedLine<>();
+  private int completionCounter = 0;
 
   public SugiyamaLayoutAlgorithm() {
     this(SugiyamaLayoutAlgorithm.edgeAwareBuilder());
@@ -216,7 +217,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
   protected SugiyamaLayoutAlgorithm(Builder builder) {
     this(
         builder.vertexShapeFunction,
-        builder.edgeShapeConsumer,
+        builder.edgeShapeFunctionConsumer,
         builder.straightenEdges,
         builder.postStraighten,
         builder.transpose,
@@ -232,7 +233,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
 
   private SugiyamaLayoutAlgorithm(
       Function<V, Shape> vertexShapeFunction,
-      Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer,
+      Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeFunctionConsumer,
       boolean straightenEdges,
       boolean postStraighten,
       boolean transpose,
@@ -245,7 +246,7 @@ public class SugiyamaLayoutAlgorithm<V, E>
       boolean separateComponents,
       Runnable after) {
     this.vertexShapeFunction = vertexShapeFunction;
-    this.edgeShapeConsumer = edgeShapeConsumer;
+    this.edgeShapeFunctionConsumer = edgeShapeFunctionConsumer;
     this.straightenEdges = straightenEdges;
     this.postStraighten = postStraighten;
     this.transpose = transpose;
@@ -268,8 +269,8 @@ public class SugiyamaLayoutAlgorithm<V, E>
 
   @Override
   public void setEdgeShapeFunctionConsumer(
-      Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer) {
-    this.edgeShapeConsumer = edgeShapeConsumer;
+      Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeFunctionConsumer) {
+    this.edgeShapeFunctionConsumer = edgeShapeFunctionConsumer;
   }
 
   @Override
@@ -288,6 +289,17 @@ public class SugiyamaLayoutAlgorithm<V, E>
     this.threaded = threaded;
   }
 
+  protected boolean isComplete(int expected) {
+    boolean isComplete = ++completionCounter >= expected;
+    log.info(
+            " completionCounter:{}, expected: {} isComplete:{}",
+            completionCounter,
+            expected,
+            isComplete);
+    return isComplete;
+  }
+
+
   @Override
   public void setExecutor(Executor executor) {
     this.executor = executor;
@@ -300,6 +312,8 @@ public class SugiyamaLayoutAlgorithm<V, E>
 
   @Override
   public void visit(LayoutModel<V> layoutModel) {
+    this.edgePointMap.clear();
+    this.completionCounter = 0;
 
     Graph<V, E> graph = layoutModel.getGraph();
     if (graph == null || graph.vertexSet().isEmpty()) {
@@ -351,12 +365,14 @@ public class SugiyamaLayoutAlgorithm<V, E>
                         log.trace("Sugiyama layout done");
                         this.edgePointMap.putAll(runnable.getEdgePointMap());
                         layoutModel.appendLayoutModel(componentLayoutModel);
-                        this.run(); // run the after function
-                        layoutModel.getViewChangeSupport().fireViewChanged();
-                        // fire an event to say that the layout is done
-                        layoutModel
-                            .getLayoutStateChangeSupport()
-                            .fireLayoutStateChanged(layoutModel, false);
+                        if (isComplete(graphs.size())) {
+                          this.run(); // run the after function
+                          layoutModel.getViewChangeSupport().fireViewChanged();
+                          // fire an event to say that the layout is done
+                          layoutModel
+                                  .getLayoutStateChangeSupport()
+                                  .fireLayoutStateChanged(layoutModel, false);
+                        }
                       });
         } else {
           theFuture =
@@ -366,24 +382,28 @@ public class SugiyamaLayoutAlgorithm<V, E>
                         log.trace("Sugiyama layout done");
                         this.edgePointMap.putAll(runnable.getEdgePointMap());
                         layoutModel.appendLayoutModel(componentLayoutModel);
-                        this.run(); // run the after function
-                        layoutModel.getViewChangeSupport().fireViewChanged();
-                        // fire an event to say that the layout is done
-                        layoutModel
-                            .getLayoutStateChangeSupport()
-                            .fireLayoutStateChanged(layoutModel, false);
+                        if (isComplete(graphs.size())) {
+                          this.run(); // run the after function
+                          layoutModel.getViewChangeSupport().fireViewChanged();
+                          // fire an event to say that the layout is done
+                          layoutModel
+                                  .getLayoutStateChangeSupport()
+                                  .fireLayoutStateChanged(layoutModel, false);
+                        }
                       });
         }
       } else {
         runnable.run();
         this.edgePointMap.putAll(runnable.getEdgePointMap());
         layoutModel.appendLayoutModel(componentLayoutModel);
-        after.run();
-        layoutModel.getViewChangeSupport().fireViewChanged();
-        // fire an event to say that the layout is done
-        layoutModel.getLayoutStateChangeSupport().fireLayoutStateChanged(layoutModel, false);
+        if (isComplete(graphs.size())) {
+          after.run();
+          layoutModel.getViewChangeSupport().fireViewChanged();
+          // fire an event to say that the layout is done
+          layoutModel.getLayoutStateChangeSupport().fireLayoutStateChanged(layoutModel, false);
+        }
       }
-      edgeShapeConsumer.accept(edgeShape);
+      edgeShapeFunctionConsumer.accept(edgeShape);
     }
   }
 

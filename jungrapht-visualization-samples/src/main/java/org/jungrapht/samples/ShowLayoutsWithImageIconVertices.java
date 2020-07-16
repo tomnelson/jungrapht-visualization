@@ -179,6 +179,8 @@ public class ShowLayoutsWithImageIconVertices extends JPanel {
             .selectionStrokeMin(4.f)
             .build());
 
+    vv.scaleToLayout();
+
     final JRadioButton animateLayoutTransition = new JRadioButton("Animate Layout Transition");
 
     LayoutFunction<String> layoutFunction = new LayoutFunction.FullLayoutFunction<>();
@@ -207,9 +209,9 @@ public class ShowLayoutsWithImageIconVertices extends JPanel {
                     layoutAlgorithm = new StaticLayoutAlgorithm();
                   }
                   if (animateLayoutTransition.isSelected()) {
-                    LayoutAlgorithmTransition.animate(vv, layoutAlgorithm, vv::resizeToLayout);
+                    LayoutAlgorithmTransition.animate(vv, layoutAlgorithm, vv::scaleToLayout);
                   } else {
-                    LayoutAlgorithmTransition.apply(vv, layoutAlgorithm, vv::resizeToLayout);
+                    LayoutAlgorithmTransition.apply(vv, layoutAlgorithm, vv::scaleToLayout);
                   }
                   if (layoutAlgorithm instanceof BalloonLayoutAlgorithm) {
                     balloonLayoutRings =
@@ -244,12 +246,7 @@ public class ShowLayoutsWithImageIconVertices extends JPanel {
                   vv.getVisualizationModel().getLayoutModel().setSize(1200, 1200);
                   vv.reset();
                   vv.getVisualizationModel().setGraph(graphArray[graphIndex]);
-                  vv.getRenderContext()
-                      .setVertexShapeFunction(
-                          v -> {
-                            int size = Math.max(5, 2 * graphArray[graphIndex].degreeOf(v));
-                            return new Ellipse2D.Float(-size / 2.f, -size / 2.f, size, size);
-                          });
+                  vv.scaleToLayout();
                 }));
 
     JButton showRTree = new JButton("Show RTree");

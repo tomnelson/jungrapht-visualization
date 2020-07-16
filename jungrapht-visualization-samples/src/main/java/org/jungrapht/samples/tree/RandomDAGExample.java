@@ -142,7 +142,7 @@ public class RandomDAGExample extends JFrame {
             .initialSelection(2)
             .vertexShapeFunction(vv.getRenderContext().getVertexShapeFunction())
             .alignFavoredEdges(false)
-            .after(vv::scaleToLayout)
+            .after(vv::resizeToLayout)
             .build();
 
     setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

@@ -189,7 +189,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
   protected List<V> roots;
 
   protected Function<V, Shape> vertexShapeFunction;
-  protected Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer;
+  protected Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeFunctionConsumer;
   protected boolean straightenEdges;
   protected boolean postStraighten;
   protected boolean transpose;
@@ -228,7 +228,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
 
   protected EiglspergerLayoutAlgorithm(
       Function<V, Shape> vertexShapeFunction,
-      Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer,
+      Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeFunctionConsumer,
       boolean straightenEdges,
       boolean postStraighten,
       boolean transpose,
@@ -240,7 +240,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
       boolean separateComponents,
       Runnable after) {
     this.vertexShapeFunction = vertexShapeFunction;
-    this.edgeShapeConsumer = edgeShapeConsumer;
+    this.edgeShapeFunctionConsumer = edgeShapeFunctionConsumer;
     this.straightenEdges = straightenEdges;
     this.postStraighten = postStraighten;
     this.transpose = transpose;
@@ -256,7 +256,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
         e -> edgePointMap.getOrDefault(e, Collections.emptyList()));
   }
 
-  private boolean isComplete(int expected) {
+  protected boolean isComplete(int expected) {
     boolean isComplete = ++completionCounter >= expected;
     log.info(
         " completionCounter:{}, expected: {} isComplete:{}",
@@ -283,8 +283,8 @@ public class EiglspergerLayoutAlgorithm<V, E>
 
   @Override
   public void setEdgeShapeFunctionConsumer(
-      Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer) {
-    this.edgeShapeConsumer = edgeShapeConsumer;
+      Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeFunctionConsumer) {
+    this.edgeShapeFunctionConsumer = edgeShapeFunctionConsumer;
   }
 
   @Override
@@ -396,7 +396,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
           layoutModel.getLayoutStateChangeSupport().fireLayoutStateChanged(layoutModel, false);
         }
       }
-      edgeShapeConsumer.accept(edgeShape);
+      edgeShapeFunctionConsumer.accept(edgeShape);
     }
   }
 
