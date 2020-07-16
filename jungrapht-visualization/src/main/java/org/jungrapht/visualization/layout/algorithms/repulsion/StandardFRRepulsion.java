@@ -72,6 +72,11 @@ public class StandardFRRepulsion<
     return new Builder();
   }
 
+  @Deprecated
+  public static Builder standardBuilder() {
+    return builder();
+  }
+
   protected StandardFRRepulsion(Builder<V, R, B> builder) {
     this.layoutModel = builder.layoutModel;
     this.vertexSet = layoutModel.getGraph().vertexSet();

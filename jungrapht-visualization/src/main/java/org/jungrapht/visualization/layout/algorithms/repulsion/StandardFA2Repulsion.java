@@ -113,6 +113,11 @@ public class StandardFA2Repulsion<
     return new Builder();
   }
 
+  @Deprecated
+  public static Builder standardBuilder() {
+    return builder();
+  }
+
   protected StandardFA2Repulsion(Builder<V, R, B> builder) {
     this.frVertexData = builder.frVertexData;
     this.initializer = builder.initializer;

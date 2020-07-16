@@ -52,6 +52,11 @@ public class BarnesHutFA2Repulsion<V>
     return new Builder();
   }
 
+  @Deprecated
+  public static Builder barnesHutBuilder() {
+    return builder();
+  }
+
   private BarnesHutQuadTree<V> tree;
 
   protected BarnesHutFA2Repulsion(Builder<V> builder) {

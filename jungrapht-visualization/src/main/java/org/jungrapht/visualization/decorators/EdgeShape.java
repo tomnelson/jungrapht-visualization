@@ -59,6 +59,11 @@ public interface EdgeShape {
     return new CubicCurve<>();
   }
 
+  @Deprecated
+  static <V, E> Orthogonal<V, E> orthogonal() {
+    return new Orthogonal();
+  }
+
   static <V, E> ArticulatedLine<V, E> articulatedLine() {
     return new ArticulatedLine<>();
   }
@@ -200,11 +205,27 @@ public interface EdgeShape {
    * An edge shape that renders as a diamond with its nadir at the center of the vertex. Parallel
    * instances will not overlap.
    */
+  @Deprecated
   class Box<V, E> extends ParallelEdgeShapeFunction<V, E> {
     public Shape apply(Context<Graph<V, E>, E> context) {
       Graph graph = context.graph;
       E e = context.element;
       return buildFrame(BOX, edgeIndexFunction.apply(context));
+    }
+  }
+
+  /** An edge shape that renders as a bent-line between the vertex endpoints. */
+  class Orthogonal<V, E> extends ParallelEdgeShapeFunction<V, E> {
+    Box box;
+
+    public Orthogonal() {
+      this.box = new Box();
+    }
+
+    public Shape apply(Context<Graph<V, E>, E> context) {
+      Graph graph = context.graph;
+      E e = context.element;
+      return isLoop(graph, e) ? box.apply(context) : LINE;
     }
   }
 }
