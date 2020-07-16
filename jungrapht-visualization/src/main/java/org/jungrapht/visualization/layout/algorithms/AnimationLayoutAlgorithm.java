@@ -65,7 +65,7 @@ public class AnimationLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorith
     this.visualizationServer = builder.visualizationServer;
     this.endLayoutAlgorithm = builder.endLayoutAlgorithm;
     if (endLayoutAlgorithm instanceof AfterRunnable) {
-      ((AfterRunnable)this.endLayoutAlgorithm).setAfter(builder.after);
+      ((AfterRunnable) this.endLayoutAlgorithm).setAfter(builder.after);
     } else {
       this.after = builder.after;
     }
