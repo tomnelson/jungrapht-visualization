@@ -13,7 +13,11 @@ package org.jungrapht.visualization.control;
 
 import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Shape;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -21,7 +25,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
-import javax.swing.*;
+import javax.swing.JComponent;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationServer;
@@ -229,8 +233,6 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
       } else {
         this.edge = pickSupport.getEdge(layoutModel, layoutPoint.getX(), layoutPoint.getY());
       }
-
-      //      this.edge = pickSupport.getEdge(layoutModel, layoutPoint.getX(), layoutPoint.getY());
 
       if (edge != null) {
 

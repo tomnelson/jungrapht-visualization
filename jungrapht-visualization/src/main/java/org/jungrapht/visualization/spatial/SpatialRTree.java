@@ -284,7 +284,6 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
      */
     @Override
     public void update(V element, org.jungrapht.visualization.layout.model.Point location) {
-      //        log.info("updated called from thread {}", Thread.currentThread());
       gridCache = null;
       // do nothing if we are not active
       if (isActive() && rtree.getRoot().isPresent()) {

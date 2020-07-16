@@ -188,7 +188,9 @@ public class HyperbolicShapeTransformer extends HyperbolicTransformer
           break;
       }
     }
-    log.info("hyperbolic shape bounds: {}", newPath.getBounds());
+    if (log.isTraceEnabled()) {
+      log.trace("hyperbolic shape bounds: {}", newPath.getBounds());
+    }
 
     return newPath;
   }

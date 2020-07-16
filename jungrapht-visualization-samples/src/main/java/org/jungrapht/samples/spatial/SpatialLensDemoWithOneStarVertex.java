@@ -10,12 +10,26 @@ package org.jungrapht.samples.spatial;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Insets;
+import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.event.ItemEvent;
 import java.awt.geom.AffineTransform;
 import java.util.Map;
 import java.util.function.Function;
-import javax.swing.*;
+import javax.swing.Box;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.WindowConstants;
 import javax.swing.plaf.basic.BasicLabelUI;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
@@ -186,20 +200,6 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
     JLabel modeLabel = new JLabel("     Mode Menu >>");
     modeLabel.setUI(new VerticalLabelUI(false));
 
-    //    graphMouse.addItemListener(
-    //        ((ModalGraphMouse) hyperbolicLayoutSupport.getGraphMouse()).getModeListener());
-    //    graphMouse.addItemListener(hyperbolicViewSupport.getGraphMouse().getModeListener());
-    //    graphMouse.addItemListener(magnifyLayoutSupport.getGraphMouse().getModeListener());
-    //    graphMouse.addItemListener(magnifyViewSupport.getGraphMouse().getModeListener());
-
-    //    JMenuBar menubar = new JMenuBar();
-    //    menubar.add(graphMouse.getModeMenu());
-    //    visualizationScrollPane.setCorner(menubar);
-
-    //    JComboBox modeBox = graphMouse.getModeComboBox();
-    //    modeBox.addItemListener(
-    //        ((DefaultGraphMouse<Integer, Number>) vv.getGraphMouse()).getModeListener());
-
     JRadioButton showSpatialEffects = new JRadioButton("Spatial Structure");
     showSpatialEffects.addItemListener(
         e -> {
@@ -243,7 +243,6 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
                     "Hyperbolic View", hyperbolicViewSupport,
                     "Magnify Layout", magnifyLayoutSupport,
                     "Magnify View", magnifyViewSupport))
-            //            .containerLayoutManager(new GridLayout(0, 2))
             .title("Lens Controls")
             .build()
             .container());

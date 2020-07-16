@@ -58,13 +58,11 @@ public abstract class AbstractSpatial<T, NT> implements Spatial<T> {
 
   @Override
   public boolean isActive() {
-    //    log.info("isActive {}", active);
     return active;
   }
 
   @Override
   public void setActive(boolean active) {
-    //    log.info("set active to {}", active);
     gridCache = null;
     this.active = active;
   }

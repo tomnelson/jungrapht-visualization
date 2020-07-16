@@ -295,7 +295,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
 
   protected boolean isComplete(int expected) {
     boolean isComplete = ++completionCounter >= expected;
-    log.info(
+    log.trace(
         " completionCounter:{}, expected: {} isComplete:{}",
         completionCounter,
         expected,
@@ -351,17 +351,6 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
     for (LayoutModel<V> componentLayoutModel : layoutModels) {
 
       LayeredRunnable<E> runnable = getRunnable(graphs.size(), componentLayoutModel);
-      //          SugiyamaRunnable.<V, E>builder()
-      //              .layoutModel(componentLayoutModel)
-      //              .vertexShapeFunction(vertexShapeFunction)
-      //              .straightenEdges(straightenEdges)
-      //              .postStraighten(postStraighten)
-      //              .transpose(transpose)
-      //              .transposeLimit(transposeLimit)
-      //              .maxLevelCross(maxLevelCross)
-      //              .layering(layering)
-      //              .multiComponent(graphs.size() > 1)
-      //              .build();
       if (threaded) {
         if (executor != null) {
           theFuture =

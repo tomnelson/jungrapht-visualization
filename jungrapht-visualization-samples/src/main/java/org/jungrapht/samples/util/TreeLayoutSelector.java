@@ -264,7 +264,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
             .postStraighten(true)
             .separateComponents(true)
             .layering(Layering.COFFMAN_GRAHAM)
-            .threaded(false)
+            .threaded(true)
             .after(after)
             .build();
 

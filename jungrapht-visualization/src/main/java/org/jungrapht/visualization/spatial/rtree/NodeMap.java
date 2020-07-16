@@ -1,7 +1,6 @@
 package org.jungrapht.visualization.spatial.rtree;
 
 import java.awt.geom.Rectangle2D;
-import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -76,12 +75,8 @@ public class NodeMap<V> extends HashMap<V, Rectangle2D> implements BoundedMap<V>
   /** iterate over all children and update the bounds Called after removing from the collection */
   public void recalculateBounds() {
     bounds = null;
-    try {
-      for (Rectangle2D r : this.values()) {
-        addBoundsFor(r);
-      }
-    } catch (ConcurrentModificationException ex) {
-      // ignore
+    for (Rectangle2D r : this.values()) {
+      addBoundsFor(r);
     }
   }
 }

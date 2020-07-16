@@ -317,7 +317,7 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
 
   /** */
   public void setSize(int width, int height) {
-    //    log.info("setSize({},{})", width, height);
+    log.trace("setSize({},{})", width, height);
     if (width <= 0) {
       width = preferredWidth;
     }
@@ -525,7 +525,6 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
    */
   @Override
   public void appendLayoutModel(LayoutModel<V> layoutModel) {
-    //    layoutStateChangeSupport.fireLayoutStateChanged(this, true);
     if (log.isTraceEnabled()) {
       log.trace(
           "appending layoutModel with width {} to this layoutModel width:{}",
@@ -549,6 +548,5 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
           .stream()
           .forEach(v -> this.set(v, layoutModel.get(v).add(widthDelta, 0)));
     }
-    //    layoutStateChangeSupport.fireLayoutStateChanged(this, false);
   }
 }

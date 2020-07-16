@@ -426,7 +426,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
 
   @Override
   public void scaleToLayout(ScalingControl scaler, boolean resizeToPoints) {
-    log.info("Thread: {} will scaleToLayout({})", Thread.currentThread(), resizeToPoints);
+    log.trace("Thread: {} will scaleToLayout({})", Thread.currentThread(), resizeToPoints);
     getRenderContext().getMultiLayerTransformer().setToIdentity();
     Dimension vd = getPreferredSize();
     log.trace("pref vd {}", vd);
@@ -474,7 +474,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
           .getTransformer(MultiLayerTransformer.Layer.LAYOUT)
           .translate(deltaX, deltaY);
     }
-    log.info("Thread: {} is done with scaleToLayout({})", Thread.currentThread(), resizeToPoints);
+    log.trace("Thread: {} is done with scaleToLayout({})", Thread.currentThread(), resizeToPoints);
   }
 
   @Override
