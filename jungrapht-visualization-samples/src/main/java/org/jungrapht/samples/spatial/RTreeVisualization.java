@@ -95,7 +95,7 @@ public class RTreeVisualization<V> extends JPanel {
             .layoutSize(new Dimension(2400, 2400))
             .viewSize(new Dimension(600, 600))
             .build();
-    vv.getRenderContext().setEdgeShapeFunction(EdgeShape.orthogonal());
+    vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
     vv.getRenderContext().setVertexShapeFunction(v -> new Rectangle2D.Double(-10, -10, 20, 20));
 
     // add a listener for ToolTips
@@ -157,7 +157,7 @@ public class RTreeVisualization<V> extends JPanel {
     treeLayout.addItemListener(
         e -> {
           if (e.getStateChange() == ItemEvent.SELECTED) {
-            vv.getRenderContext().setEdgeShapeFunction(EdgeShape.orthogonal());
+            vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
             if (animate.isSelected()) {
               LayoutAlgorithmTransition.animate(vv, treeLayoutAlgorithm, () -> {});
             } else {
@@ -177,9 +177,9 @@ public class RTreeVisualization<V> extends JPanel {
           if (e.getStateChange() == ItemEvent.SELECTED) {
             vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
             if (animate.isSelected()) {
-              LayoutAlgorithmTransition.animate(vv, radialLayoutAlgorithm, vv::scaleToLayout);
+              LayoutAlgorithmTransition.animate(vv, radialLayoutAlgorithm, vv::resizeToLayout);
             } else {
-              LayoutAlgorithmTransition.apply(vv, radialLayoutAlgorithm, vv::scaleToLayout);
+              LayoutAlgorithmTransition.apply(vv, radialLayoutAlgorithm, vv::resizeToLayout);
             }
             if (rings == null) {
               rings = new Rings(vv.getVisualizationModel().getLayoutModel());

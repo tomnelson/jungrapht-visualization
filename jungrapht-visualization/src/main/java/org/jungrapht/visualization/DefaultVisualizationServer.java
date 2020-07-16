@@ -405,13 +405,18 @@ class DefaultVisualizationServer<V, E> extends JPanel
   }
 
   @Override
+  public void resizeToLayout() {
+    this.scaleToLayout(true);
+  }
+
+  @Override
   public void scaleToLayout() {
     this.scaleToLayout(false);
   }
 
   @Override
   public void scaleToLayout(boolean resizeToPoints) {
-    SwingUtilities.invokeLater(() -> scaleToLayout(new CrossoverScalingControl(), resizeToPoints));
+    scaleToLayout(new CrossoverScalingControl(), resizeToPoints);
   }
 
   @Override
@@ -421,7 +426,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
 
   @Override
   public void scaleToLayout(ScalingControl scaler, boolean resizeToPoints) {
-    log.trace("scaleToLayout({})", resizeToPoints);
+    log.trace("Thread: {} will scaleToLayout({})", Thread.currentThread(), resizeToPoints);
     getRenderContext().getMultiLayerTransformer().setToIdentity();
     Dimension vd = getPreferredSize();
     log.trace("pref vd {}", vd);
@@ -469,6 +474,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
           .getTransformer(MultiLayerTransformer.Layer.LAYOUT)
           .translate(deltaX, deltaY);
     }
+    log.trace("Thread: {} is done with scaleToLayout({})", Thread.currentThread(), resizeToPoints);
   }
 
   @Override
@@ -551,7 +557,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
       }
     }
 
-    renderer.render(renderContext, visualizationModel, vertexSpatial, edgeSpatial);
+    renderer.render(renderContext, visualizationModel.getLayoutModel(), vertexSpatial, edgeSpatial);
 
     // if there are postRenderers set, do it
     for (Paintable paintable : postRenderers) {

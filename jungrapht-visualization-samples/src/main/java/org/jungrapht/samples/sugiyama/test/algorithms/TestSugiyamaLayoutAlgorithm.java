@@ -136,6 +136,6 @@ public class TestSugiyamaLayoutAlgorithm<V, E> extends SugiyamaLayoutAlgorithm<V
       // fire an event to say that the layout is done
       layoutModel.getLayoutStateChangeSupport().fireLayoutStateChanged(layoutModel, false);
     }
-    edgeShapeConsumer.accept(edgeShape);
+    edgeShapeFunctionConsumer.accept(edgeShape);
   }
 }

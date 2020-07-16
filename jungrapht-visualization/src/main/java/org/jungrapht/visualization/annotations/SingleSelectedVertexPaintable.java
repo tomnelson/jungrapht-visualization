@@ -59,6 +59,7 @@ public class SingleSelectedVertexPaintable<V, E> implements VisualizationServer.
     private Icon selectionIcon;
     private float selectionStrokeMin =
         Float.parseFloat(System.getProperty(PREFIX + "selectionStrokeMin", "2.f"));
+    private Function<VisualizationServer<V, E>, V> selectedVertexFunction;
 
     protected B self() {
       return (B) this;
@@ -89,6 +90,11 @@ public class SingleSelectedVertexPaintable<V, E> implements VisualizationServer.
 
     public B selectionStrokeMin(float selectionStrokeMin) {
       this.selectionStrokeMin = selectionStrokeMin;
+      return self();
+    }
+
+    public B selectedVertexFunction(Function<VisualizationServer<V, E>, V> selectedVertexFunction) {
+      this.selectedVertexFunction = selectedVertexFunction;
       return self();
     }
 
@@ -125,6 +131,8 @@ public class SingleSelectedVertexPaintable<V, E> implements VisualizationServer.
 
   private BiModalSelectionRenderer<V, E> biModalRenderer;
 
+  protected Function<VisualizationServer<V, E>, V> selectedVertexFunction;
+
   /**
    * Create an instance of a {@code SelectedVertexPaintable}
    *
@@ -136,7 +144,8 @@ public class SingleSelectedVertexPaintable<V, E> implements VisualizationServer.
         builder.selectionShape,
         builder.selectionPaint,
         builder.selectionIcon,
-        builder.selectionStrokeMin);
+        builder.selectionStrokeMin,
+        builder.selectedVertexFunction);
   }
 
   /**
@@ -152,7 +161,8 @@ public class SingleSelectedVertexPaintable<V, E> implements VisualizationServer.
       Shape shape,
       Paint selectionPaint,
       Icon selectionIcon,
-      float selectionStrokeMin) {
+      float selectionStrokeMin,
+      Function<VisualizationServer<V, E>, V> selectedVertexFunction) {
     this.visualizationServer = visualizationServer;
     this.selectionShape = shape;
     this.selectionPaint = selectionPaint;
@@ -167,8 +177,21 @@ public class SingleSelectedVertexPaintable<V, E> implements VisualizationServer.
                 (new SelectionRenderer<>(new HeavyweightVertexSelectionRenderer<>())))
             .modeSourceRenderer((BiModalRenderer<V, E>) visualizationServer.getRenderer())
             .build();
+    this.selectedVertexFunction =
+        selectedVertexFunction != null
+            ? selectedVertexFunction
+            : vs -> getSelectedVertex(visualizationServer);
   }
 
+  protected V getSelectedVertex(VisualizationServer<V, E> visualizationServer) {
+    return visualizationServer
+        .getSelectedVertexState()
+        .getSelected()
+        .stream()
+        .filter(visualizationServer.getVisualizationModel().getGraph().vertexSet()::contains)
+        .findFirst()
+        .orElse(null);
+  }
   /**
    * Draw shapes to indicate selected vertices
    *
@@ -184,14 +207,8 @@ public class SingleSelectedVertexPaintable<V, E> implements VisualizationServer.
     // set the new color
     g2d.setPaint(selectionPaint);
 
-    V selectedVertex =
-        visualizationServer
-            .getSelectedVertexState()
-            .getSelected()
-            .stream()
-            .filter(visualizationServer.getVisualizationModel().getGraph().vertexSet()::contains)
-            .findFirst()
-            .orElse(null);
+    V selectedVertex = selectedVertexFunction.apply(visualizationServer);
+
     if (selectedVertex != null) {
 
       GraphicsDecorator graphicsDecorator =
@@ -240,7 +257,7 @@ public class SingleSelectedVertexPaintable<V, E> implements VisualizationServer.
 
     biModalRenderer.renderVertex(
         visualizationServer.getRenderContext(),
-        visualizationServer.getVisualizationModel(),
+        visualizationServer.getVisualizationModel().getLayoutModel(),
         vertex);
 
     visualizationServer.getRenderContext().setVertexShapeFunction(oldShapeFunction);
@@ -251,7 +268,7 @@ public class SingleSelectedVertexPaintable<V, E> implements VisualizationServer.
   protected void paintTransformed(V vertex) {
     biModalRenderer.renderVertex(
         visualizationServer.getRenderContext(),
-        visualizationServer.getVisualizationModel(),
+        visualizationServer.getVisualizationModel().getLayoutModel(),
         vertex);
   }
 

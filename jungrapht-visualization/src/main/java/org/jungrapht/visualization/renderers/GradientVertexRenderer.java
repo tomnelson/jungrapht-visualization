@@ -14,7 +14,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
-import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.selection.MutableSelectedState;
@@ -61,12 +60,10 @@ public class GradientVertexRenderer<V, E> implements Renderer.Vertex<V, E> {
     this.cyclic = cyclic;
   }
 
-  public void paintVertex(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {
+  public void paintVertex(RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, V v) {
     if (renderContext.getVertexIncludePredicate().test(v)) {
       // get the shape to be rendered
       Shape shape = renderContext.getVertexShapeFunction().apply(v);
-      LayoutModel<V> layoutModel = visualizationModel.getLayoutModel();
       Point p = layoutModel.apply(v);
       Point2D p2d =
           renderContext

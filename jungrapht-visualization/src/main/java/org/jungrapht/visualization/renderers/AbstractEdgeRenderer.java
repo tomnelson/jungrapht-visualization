@@ -3,7 +3,6 @@ package org.jungrapht.visualization.renderers;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -12,13 +11,10 @@ import java.util.function.Predicate;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
-import org.jungrapht.visualization.VisualizationModel;
-import org.jungrapht.visualization.decorators.EdgeShape;
-import org.jungrapht.visualization.decorators.ParallelEdgeShapeFunction;
+import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.util.Context;
-import org.jungrapht.visualization.util.EdgeIndexFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,16 +27,15 @@ public abstract class AbstractEdgeRenderer<V, E> implements Renderer.Edge<V, E> 
   private static final Logger log = LoggerFactory.getLogger(AbstractEdgeRenderer.class);
 
   @Override
-  public void paintEdge(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e) {
+  public void paintEdge(RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, E e) {
     GraphicsDecorator g2d = renderContext.getGraphicsContext();
     if (!renderContext.getEdgeIncludePredicate().test(e)) {
       return;
     }
 
     // don't draw edge if either incident vertex is not drawn
-    V u = visualizationModel.getGraph().getEdgeSource(e);
-    V v = visualizationModel.getGraph().getEdgeTarget(e);
+    V u = layoutModel.getGraph().getEdgeSource(e);
+    V v = layoutModel.getGraph().getEdgeTarget(e);
     Predicate<V> vertexIncludePredicate = renderContext.getVertexIncludePredicate();
     if (!vertexIncludePredicate.test(u) || !vertexIncludePredicate.test(v)) {
       return;
@@ -52,7 +47,7 @@ public abstract class AbstractEdgeRenderer<V, E> implements Renderer.Edge<V, E> 
       g2d.setStroke(new_stroke);
     }
 
-    drawSimpleEdge(renderContext, visualizationModel, e);
+    drawSimpleEdge(renderContext, layoutModel, e);
 
     // restore paint and stroke
     if (new_stroke != null) {
@@ -62,15 +57,15 @@ public abstract class AbstractEdgeRenderer<V, E> implements Renderer.Edge<V, E> 
 
   protected Shape prepareFinalEdgeShape(
       RenderContext<V, E> renderContext,
-      VisualizationModel<V, E> visualizationModel,
+      LayoutModel<V> layoutModel,
       E e,
       int[] coords,
       boolean[] loop) {
-    V source = visualizationModel.getGraph().getEdgeSource(e);
-    V target = visualizationModel.getGraph().getEdgeTarget(e);
+    V source = layoutModel.getGraph().getEdgeSource(e);
+    V target = layoutModel.getGraph().getEdgeTarget(e);
 
-    Point sourcePoint = visualizationModel.getLayoutModel().apply(source);
-    Point targetPoint = visualizationModel.getLayoutModel().apply(target);
+    Point sourcePoint = layoutModel.apply(source);
+    Point targetPoint = layoutModel.apply(target);
     Point2D sourcePoint2D =
         renderContext
             .getMultiLayerTransformer()
@@ -94,8 +89,7 @@ public abstract class AbstractEdgeRenderer<V, E> implements Renderer.Edge<V, E> 
 
     boolean isLoop = loop[0] = source.equals(target);
     Shape targetShape = renderContext.getVertexShapeFunction().apply(target);
-    Shape edgeShape =
-        getEdgeShape(renderContext.getEdgeShapeFunction(), e, visualizationModel.getGraph());
+    Shape edgeShape = getEdgeShape(renderContext.getEdgeShapeFunction(), e, layoutModel.getGraph());
 
     AffineTransform xform = AffineTransform.getTranslateInstance(sourcePoint2DX, sourcePoint2DY);
 
@@ -106,49 +100,6 @@ public abstract class AbstractEdgeRenderer<V, E> implements Renderer.Edge<V, E> 
       Rectangle2D targetShapeBounds2D = targetShape.getBounds2D();
       xform.scale(targetShapeBounds2D.getWidth(), targetShapeBounds2D.getHeight());
       xform.translate(0, -edgeShape.getBounds2D().getWidth() / 2);
-    } else if (renderContext.getEdgeShapeFunction() instanceof EdgeShape.Orthogonal) {
-      float dx = targetPoint2DX - sourcePoint2DX;
-      float dy = targetPoint2DY - sourcePoint2DY;
-      int index = 0;
-      if (renderContext.getEdgeShapeFunction() instanceof ParallelEdgeShapeFunction) {
-        EdgeIndexFunction<V, E> peif =
-            ((ParallelEdgeShapeFunction<V, E>) renderContext.getEdgeShapeFunction())
-                .getEdgeIndexFunction();
-        index = peif.apply(Context.getInstance(visualizationModel.getGraph(), e));
-        index *= 20;
-      }
-      GeneralPath gp = new GeneralPath();
-      gp.moveTo(0, 0); // the xform will do the translation to x1,y1
-      if (sourcePoint2DX > targetPoint2DX) {
-        if (sourcePoint2DY > targetPoint2DY) {
-          gp.lineTo(0, index);
-          gp.lineTo(dx - index, index);
-          gp.lineTo(dx - index, dy);
-          gp.lineTo(dx, dy);
-        } else {
-          gp.lineTo(0, -index);
-          gp.lineTo(dx - index, -index);
-          gp.lineTo(dx - index, dy);
-          gp.lineTo(dx, dy);
-        }
-
-      } else {
-        if (sourcePoint2DY > targetPoint2DY) {
-          gp.lineTo(0, index);
-          gp.lineTo(dx + index, index);
-          gp.lineTo(dx + index, dy);
-          gp.lineTo(dx, dy);
-
-        } else {
-          gp.lineTo(0, -index);
-          gp.lineTo(dx + index, -index);
-          gp.lineTo(dx + index, dy);
-          gp.lineTo(dx, dy);
-        }
-      }
-
-      edgeShape = gp;
-
     } else {
       // this is a normal edge. Rotate it to the angle between
       // vertex endpoints, then scale it to the distance between
@@ -184,5 +135,5 @@ public abstract class AbstractEdgeRenderer<V, E> implements Renderer.Edge<V, E> 
       Function<Context<Graph<V, E>, E>, Shape> edgeShapeFunction, E edge, Graph<V, E> graph);
 
   protected abstract void drawSimpleEdge(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e);
+      RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, E e);
 }

@@ -16,7 +16,9 @@ import java.awt.geom.Point2D;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.SatelliteVisualizationViewer;
 import org.jungrapht.visualization.VisualizationViewer;
+import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.transform.MutableTransformer;
+import org.jungrapht.visualization.util.VertexLocationAnimator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +38,18 @@ public class SatelliteTranslatingGraphMousePlugin extends TranslatingGraphMouseP
 
   public SatelliteTranslatingGraphMousePlugin(int modifiers) {
     super(modifiers);
+  }
+
+  public void mouseClicked(MouseEvent e) {
+    super.mouseClicked(e);
+    VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
+    VisualizationViewer<?, ?> vvMaster = ((SatelliteVisualizationViewer<?, ?>) vv).getMaster();
+    // translate the mouse point in the satellite to the layout coords
+    Point2D p = e.getPoint();
+    Point2D layoutPoint = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(p);
+    VertexLocationAnimator.scrollPointToCenter(
+        vvMaster, Point.of(layoutPoint.getX(), layoutPoint.getY()));
+    e.consume();
   }
 
   /**

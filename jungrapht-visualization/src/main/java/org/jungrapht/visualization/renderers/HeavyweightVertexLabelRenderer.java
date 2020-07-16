@@ -9,13 +9,16 @@
  */
 package org.jungrapht.visualization.renderers;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Paint;
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
-import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.transform.BidirectionalTransformer;
@@ -50,14 +53,10 @@ public class HeavyweightVertexLabelRenderer<V, E> implements Renderer.VertexLabe
    * the position of the vertex; otherwise the label is offset slightly.
    */
   public void labelVertex(
-      RenderContext<V, E> renderContext,
-      VisualizationModel<V, E> visualizationModel,
-      V v,
-      String label) {
+      RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, V v, String label) {
     if (!renderContext.getVertexIncludePredicate().test(v)) {
       return;
     }
-    LayoutModel<V> layoutModel = visualizationModel.getLayoutModel();
     org.jungrapht.visualization.layout.model.Point pt = layoutModel.apply(v);
     Point2D pt2d =
         renderContext

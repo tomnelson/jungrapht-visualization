@@ -67,7 +67,8 @@ public class VertexLabelAsShapeDemo extends JPanel {
 
     // this class will provide both label drawing and vertex shapes
     VertexLabelAsShapeRenderer<String, Integer> vlasr =
-        new VertexLabelAsShapeRenderer<>(visualizationModel, vv.getRenderContext());
+        new VertexLabelAsShapeRenderer<>(
+            visualizationModel.getLayoutModel(), vv.getRenderContext());
 
     // customize the render context
     vv.getRenderContext()

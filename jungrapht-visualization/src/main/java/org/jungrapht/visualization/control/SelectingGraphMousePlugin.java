@@ -13,7 +13,11 @@ package org.jungrapht.visualization.control;
 
 import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Shape;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -21,7 +25,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
-import javax.swing.*;
+import javax.swing.JComponent;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationServer;
@@ -30,6 +34,7 @@ import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.selection.MutableSelectedState;
+import org.jungrapht.visualization.selection.ShapePickSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -156,7 +161,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     }
 
     public boolean useTransform() {
-      return false;
+      return true;
     }
   }
 
@@ -185,6 +190,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
 
     MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
 
+    // a rectangle in the view coordinate system.
     this.footprintRectangle =
         new Rectangle2D.Float(
             (float) e.getPoint().x - pickSize / 2,
@@ -203,7 +209,12 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     log.trace("layout coords of mouse click {}", layoutPoint);
     if (e.getModifiersEx() == (modifiers | selectionModifiers)) { // default button1 down and ctrl
 
-      this.vertex = pickSupport.getVertex(layoutModel, layoutPoint.getX(), layoutPoint.getY());
+      if (pickSupport instanceof ShapePickSupport) {
+        ShapePickSupport<V, E> shapePickSupport = (ShapePickSupport<V, E>) pickSupport;
+        this.vertex = shapePickSupport.getVertex(layoutModel, footprintRectangle);
+      } else {
+        this.vertex = pickSupport.getVertex(layoutModel, layoutPoint.getX(), layoutPoint.getY());
+      }
 
       if (vertex != null) {
 
@@ -216,7 +227,12 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
         return;
       }
 
-      this.edge = pickSupport.getEdge(layoutModel, layoutPoint.getX(), layoutPoint.getY());
+      if (pickSupport instanceof ShapePickSupport) {
+        ShapePickSupport<V, E> shapePickSupport = (ShapePickSupport<V, E>) pickSupport;
+        this.edge = shapePickSupport.getEdge(layoutModel, footprintRectangle);
+      } else {
+        this.edge = pickSupport.getEdge(layoutModel, layoutPoint.getX(), layoutPoint.getY());
+      }
 
       if (edge != null) {
 
@@ -427,16 +443,9 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
       MultiLayerTransformer multiLayerTransformer,
       Point2D down,
       Point2D out) {
-    log.trace("updatePickingTargets with {} to {}", down, out);
 
     multiSelectionStrategy.updateShape(down, down);
-
     layoutTargetShape = multiLayerTransformer.inverseTransform(viewRectangle);
-
-    if (log.isTraceEnabled()) {
-      log.trace("viewRectangle {}", viewRectangle);
-      log.trace("layoutTargetShape bounds {}", layoutTargetShape.getBounds());
-    }
   }
 
   /**

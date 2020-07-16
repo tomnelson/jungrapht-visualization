@@ -68,6 +68,11 @@ public class BarnesHutFRRepulsion<V>
     return new Builder();
   }
 
+  @Deprecated
+  public static Builder barnesHutBuilder() {
+    return builder();
+  }
+
   protected BarnesHutFRRepulsion(Builder<V> builder) {
     super(builder);
     this.tree = builder.tree;

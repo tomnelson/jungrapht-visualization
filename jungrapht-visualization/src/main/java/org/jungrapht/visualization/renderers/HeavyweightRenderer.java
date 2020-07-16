@@ -8,7 +8,7 @@
 package org.jungrapht.visualization.renderers;
 
 import org.jungrapht.visualization.RenderContext;
-import org.jungrapht.visualization.VisualizationModel;
+import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.spatial.Spatial;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,42 +34,38 @@ class HeavyweightRenderer<V, E> implements Renderer<V, E> {
   @Override
   public void render(
       RenderContext<V, E> renderContext,
-      VisualizationModel<V, E> visualizationModel,
+      LayoutModel<V> visualizationModel,
       Spatial<V> vertexSpatial,
       Spatial<E> edgeSpatial) {
     // BiModalRenderer handles this
   }
 
   @Override
-  public void render(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel) {
+  public void render(RenderContext<V, E> renderContext, LayoutModel<V> visualizationModel) {
     // BiModalRenderer handles this
   }
 
   @Override
-  public void renderVertex(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {
-    vertexRenderer.paintVertex(renderContext, visualizationModel, v);
+  public void renderVertex(RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, V v) {
+    vertexRenderer.paintVertex(renderContext, layoutModel, v);
   }
 
   @Override
   public void renderVertexLabel(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {
+      RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, V v) {
     vertexLabelRenderer.labelVertex(
-        renderContext, visualizationModel, v, renderContext.getVertexLabelFunction().apply(v));
+        renderContext, layoutModel, v, renderContext.getVertexLabelFunction().apply(v));
   }
 
   @Override
-  public void renderEdge(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e) {
-    edgeRenderer.paintEdge(renderContext, visualizationModel, e);
+  public void renderEdge(RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, E e) {
+    edgeRenderer.paintEdge(renderContext, layoutModel, e);
   }
 
   @Override
-  public void renderEdgeLabel(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e) {
+  public void renderEdgeLabel(RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, E e) {
     edgeLabelRenderer.labelEdge(
-        renderContext, visualizationModel, e, renderContext.getEdgeLabelFunction().apply(e));
+        renderContext, layoutModel, e, renderContext.getEdgeLabelFunction().apply(e));
   }
 
   @Override

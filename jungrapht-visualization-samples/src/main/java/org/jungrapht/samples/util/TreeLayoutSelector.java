@@ -245,6 +245,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
         HierarchicalMinCrossLayoutAlgorithm.<V, E>edgeAwareBuilder()
             .straightenEdges(true)
             .postStraighten(true)
+            .separateComponents(true)
             .layering(Layering.NETWORK_SIMPLEX)
             .after(after)
             .build();
@@ -253,6 +254,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
         SugiyamaLayoutAlgorithm.<V, E>edgeAwareBuilder()
             .straightenEdges(true)
             .postStraighten(true)
+            .separateComponents(true)
             .after(after)
             .build();
 
@@ -260,8 +262,9 @@ public class TreeLayoutSelector<V, E> extends JPanel {
         EiglspergerLayoutAlgorithm.<V, E>edgeAwareBuilder()
             .straightenEdges(true)
             .postStraighten(true)
+            .separateComponents(true)
             .layering(Layering.COFFMAN_GRAHAM)
-            .threaded(false)
+            .threaded(true)
             .after(after)
             .build();
 

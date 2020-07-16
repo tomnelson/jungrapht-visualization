@@ -13,7 +13,7 @@ import java.awt.BasicStroke;
 import java.awt.Shape;
 import java.awt.Stroke;
 import org.jungrapht.visualization.RenderContext;
-import org.jungrapht.visualization.VisualizationModel;
+import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 
 /**
@@ -24,9 +24,9 @@ public class HeavyweightVertexSelectionRenderer<V, E> extends HeavyweightVertexR
     implements Renderer.Vertex<V, E> {
 
   protected void paintIconForVertex(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {
+      RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, V v) {
     int[] coords = new int[2];
-    Shape shape = prepareFinalVertexShape(renderContext, visualizationModel, v, coords);
+    Shape shape = prepareFinalVertexShape(renderContext, layoutModel, v, coords);
     paintShapeForVertex(renderContext, v, shape);
   }
 

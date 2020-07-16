@@ -1,9 +1,9 @@
 package org.jungrapht.visualization.control;
 
-import java.awt.*;
+import java.awt.Shape;
 import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
-import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,8 @@ public class LensSelectingGraphMousePlugin<V, E> extends SelectingGraphMousePlug
     super(
         InputEvent.BUTTON1_DOWN_MASK,
         InputEvent.CTRL_DOWN_MASK,
-        InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK);
+        InputEvent.SHIFT_DOWN_MASK // drag select in non-rectangular shape
+        );
   }
 
   /**
@@ -41,8 +42,12 @@ public class LensSelectingGraphMousePlugin<V, E> extends SelectingGraphMousePlug
     super(modifiers, selectionModifiers, addToSelectionModifiers);
   }
 
+  public void mousePressed(MouseEvent e) {
+    super.mousePressed(e);
+  }
+
   /**
-   * Overriden to apply lens effects to the transformation from view to layout coordinates
+   * Overridden to apply lens effects to the transformation from view to layout coordinates
    *
    * @param vv
    * @param p
@@ -54,7 +59,7 @@ public class LensSelectingGraphMousePlugin<V, E> extends SelectingGraphMousePlug
   }
 
   /**
-   * Overriden to perform lens effects when transforming from Layout to view. Used when projecting
+   * Overridden to perform lens effects when transforming from Layout to view. Used when projecting
    * the selection Lens (the rectangular area drawn with the mouse) back into the view.
    *
    * @param vv
@@ -64,25 +69,5 @@ public class LensSelectingGraphMousePlugin<V, E> extends SelectingGraphMousePlug
   @Override
   protected Shape transform(VisualizationViewer<V, E> vv, Shape shape) {
     return transformSupport.transform(vv, shape);
-  }
-
-  /**
-   * Overriden to perform Lens effects when managing the picking Lens target shape (drawn with the
-   * mouse) in both the layout and view coordinate systems
-   *
-   * @param vv
-   * @param multiLayerTransformer
-   * @param down
-   * @param out
-   */
-  @Override
-  protected void updatePickingTargets(
-      VisualizationViewer vv,
-      MultiLayerTransformer multiLayerTransformer,
-      Point2D down,
-      Point2D out) {
-
-    multiSelectionStrategy.updateShape(down, down);
-    layoutTargetShape = transformSupport.inverseTransform(vv, viewRectangle);
   }
 }

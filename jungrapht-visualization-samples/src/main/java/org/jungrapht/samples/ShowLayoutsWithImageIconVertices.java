@@ -15,7 +15,6 @@ import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Ellipse2D;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
@@ -179,6 +178,8 @@ public class ShowLayoutsWithImageIconVertices extends JPanel {
             .selectionStrokeMin(4.f)
             .build());
 
+    vv.scaleToLayout();
+
     final JRadioButton animateLayoutTransition = new JRadioButton("Animate Layout Transition");
 
     LayoutFunction<String> layoutFunction = new LayoutFunction.FullLayoutFunction<>();
@@ -244,12 +245,7 @@ public class ShowLayoutsWithImageIconVertices extends JPanel {
                   vv.getVisualizationModel().getLayoutModel().setSize(1200, 1200);
                   vv.reset();
                   vv.getVisualizationModel().setGraph(graphArray[graphIndex]);
-                  vv.getRenderContext()
-                      .setVertexShapeFunction(
-                          v -> {
-                            int size = Math.max(5, 2 * graphArray[graphIndex].degreeOf(v));
-                            return new Ellipse2D.Float(-size / 2.f, -size / 2.f, size, size);
-                          });
+                  vv.scaleToLayout();
                 }));
 
     JButton showRTree = new JButton("Show RTree");

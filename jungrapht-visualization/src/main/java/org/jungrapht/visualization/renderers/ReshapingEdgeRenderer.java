@@ -19,7 +19,7 @@ import java.awt.geom.RectangularShape;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
-import org.jungrapht.visualization.VisualizationModel;
+import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.transform.LensTransformer;
 import org.jungrapht.visualization.transform.MutableTransformer;
@@ -44,14 +44,14 @@ public class ReshapingEdgeRenderer<V, E> extends HeavyweightEdgeRenderer<V, E>
    * the distance between <code>(x1,y1)</code> and <code>(x2,y2)</code>.
    */
   protected void drawSimpleEdge(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e) {
+      RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, E e) {
 
     TransformingGraphics g = (TransformingGraphics) renderContext.getGraphicsContext();
-    Graph<V, E> graph = visualizationModel.getGraph();
+    Graph<V, E> graph = layoutModel.getGraph();
     V v1 = graph.getEdgeSource(e);
     V v2 = graph.getEdgeTarget(e);
-    Point p1 = visualizationModel.getLayoutModel().apply(v1);
-    Point p2 = visualizationModel.getLayoutModel().apply(v2);
+    Point p1 = layoutModel.apply(v1);
+    Point p2 = layoutModel.apply(v2);
     Point2D p12d =
         renderContext
             .getMultiLayerTransformer()

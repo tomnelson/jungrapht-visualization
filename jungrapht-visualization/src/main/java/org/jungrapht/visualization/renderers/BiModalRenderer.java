@@ -17,8 +17,8 @@ import javax.swing.event.ChangeListener;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
-import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationServer;
+import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.spatial.Spatial;
 import org.jungrapht.visualization.transform.BidirectionalTransformer;
@@ -236,16 +236,16 @@ public class BiModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeListene
   @Override
   public void render(
       RenderContext<V, E> renderContext,
-      VisualizationModel<V, E> visualizationModel,
+      LayoutModel<V> layoutModel,
       Spatial<V> vertexSpatial,
       Spatial<E> edgeSpatial) {
 
     if (mode == null) {
       setAntialias(renderContext, HEAVYWEIGHT);
-      getInitialRenderer().render(renderContext, visualizationModel, vertexSpatial, edgeSpatial);
+      getInitialRenderer().render(renderContext, layoutModel, vertexSpatial, edgeSpatial);
     } else {
       setAntialias(renderContext, mode);
-      doRender(renderContext, visualizationModel, vertexSpatial, edgeSpatial);
+      doRender(renderContext, layoutModel, vertexSpatial, edgeSpatial);
     }
   }
 
@@ -261,19 +261,18 @@ public class BiModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeListene
   }
 
   @Override
-  public void render(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel) {
+  public void render(RenderContext<V, E> renderContext, LayoutModel<V> layoutModel) {
     setAntialias(renderContext, mode);
-    doRender(renderContext, visualizationModel);
+    doRender(renderContext, layoutModel);
   }
 
   private void doRender(
       RenderContext<V, E> renderContext,
-      VisualizationModel<V, E> visualizationModel,
+      LayoutModel<V> layoutModel,
       Spatial<V> vertexSpatial,
       Spatial<E> edgeSpatial) {
     if (vertexSpatial == null) {
-      render(renderContext, visualizationModel);
+      render(renderContext, layoutModel);
       return;
     }
     Iterable<V> visibleVertices = null;
@@ -289,7 +288,8 @@ public class BiModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeListene
             edgeSpatial.getVisibleElements(
                 ((VisualizationServer) renderContext.getScreenDevice()).viewOnLayout());
       } else {
-        visibleEdges = visualizationModel.getGraph().edgeSet();
+        Graph<V, E> graph = layoutModel.getGraph();
+        visibleEdges = graph.edgeSet();
       }
     } catch (ConcurrentModificationException ex) {
       // skip rendering until graph vertex index is stable,
@@ -298,20 +298,20 @@ public class BiModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeListene
       log.trace("got {} so returning", ex.toString());
       log.trace(
           "layoutMode active: {}, edgeSpatial active {}, vertexSpatial active: {}",
-          visualizationModel.getLayoutModel().isRelaxing(),
+          layoutModel.isRelaxing(),
           edgeSpatial != null && edgeSpatial.isActive(),
           vertexSpatial.isActive());
       return;
     }
 
     try {
-      Graph<V, E> graph = visualizationModel.getGraph();
+      Graph<V, E> graph = layoutModel.getGraph();
       // paint all the edges
       log.trace("the visibleEdges are {}", visibleEdges);
       for (E e : visibleEdges) {
         if (graph.edgeSet().contains(e)) {
-          renderEdge(renderContext, visualizationModel, e);
-          renderEdgeLabel(renderContext, visualizationModel, e);
+          renderEdge(renderContext, layoutModel, e);
+          renderEdgeLabel(renderContext, layoutModel, e);
         }
       }
     } catch (ConcurrentModificationException cme) {
@@ -323,22 +323,21 @@ public class BiModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeListene
       log.trace("the visibleVertices are {}", visibleVertices);
 
       for (V v : visibleVertices) {
-        renderVertex(renderContext, visualizationModel, v);
-        renderVertexLabel(renderContext, visualizationModel, v);
+        renderVertex(renderContext, layoutModel, v);
+        renderVertexLabel(renderContext, layoutModel, v);
       }
     } catch (ConcurrentModificationException cme) {
       renderContext.getScreenDevice().repaint();
     }
   }
 
-  private void doRender(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel) {
-    Graph<V, E> graph = visualizationModel.getGraph();
+  private void doRender(RenderContext<V, E> renderContext, LayoutModel<V> layoutModel) {
+    Graph<V, E> graph = layoutModel.getGraph();
     // paint all the edges
     try {
       for (E e : graph.edgeSet()) {
-        renderEdge(renderContext, visualizationModel, e);
-        renderEdgeLabel(renderContext, visualizationModel, e);
+        renderEdge(renderContext, layoutModel, e);
+        renderEdgeLabel(renderContext, layoutModel, e);
       }
     } catch (ConcurrentModificationException cme) {
       renderContext.getScreenDevice().repaint();
@@ -347,8 +346,8 @@ public class BiModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeListene
     // paint all the vertices
     try {
       for (V v : graph.vertexSet()) {
-        renderVertex(renderContext, visualizationModel, v);
-        renderVertexLabel(renderContext, visualizationModel, v);
+        renderVertex(renderContext, layoutModel, v);
+        renderVertexLabel(renderContext, layoutModel, v);
       }
     } catch (ConcurrentModificationException cme) {
       renderContext.getScreenDevice().repaint();
@@ -356,8 +355,7 @@ public class BiModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeListene
   }
 
   @Override
-  public void renderVertex(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {
+  public void renderVertex(RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, V v) {
 
     GraphicsDecorator graphicsDecorator = renderContext.getGraphicsContext();
     if (graphicsDecorator instanceof MagnifyIconGraphics) {
@@ -367,7 +365,7 @@ public class BiModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeListene
         MagnifyTransformer magnifyTransformer = (MagnifyTransformer) bidirectionalTransformer;
         Lens lens = magnifyTransformer.getLens();
         // layoutLocation
-        Point p = visualizationModel.getLayoutModel().apply(v);
+        Point p = layoutModel.apply(v);
         Point2D layoutPoint = new Point2D.Double(p.x, p.y);
         // transform to view
         Point2D viewPoint =
@@ -380,32 +378,30 @@ public class BiModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeListene
           double product = magnification * magnifyTransformer.getScale();
           // override for the magnifier scale
           Mode mode = getModeFor(() -> product);
-          rendererMap.get(mode).renderVertex(renderContext, visualizationModel, v);
+          rendererMap.get(mode).renderVertex(renderContext, layoutModel, v);
         } else {
-          rendererMap.get(mode).renderVertex(renderContext, visualizationModel, v);
+          rendererMap.get(mode).renderVertex(renderContext, layoutModel, v);
         }
       }
     } else {
-      rendererMap.get(getMode()).renderVertex(renderContext, visualizationModel, v);
+      rendererMap.get(getMode()).renderVertex(renderContext, layoutModel, v);
     }
   }
 
   @Override
   public void renderVertexLabel(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, V v) {
-    rendererMap.get(getMode()).renderVertexLabel(renderContext, visualizationModel, v);
+      RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, V v) {
+    rendererMap.get(getMode()).renderVertexLabel(renderContext, layoutModel, v);
   }
 
   @Override
-  public void renderEdge(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e) {
-    rendererMap.get(getMode()).renderEdge(renderContext, visualizationModel, e);
+  public void renderEdge(RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, E e) {
+    rendererMap.get(getMode()).renderEdge(renderContext, layoutModel, e);
   }
 
   @Override
-  public void renderEdgeLabel(
-      RenderContext<V, E> renderContext, VisualizationModel<V, E> visualizationModel, E e) {
-    rendererMap.get(getMode()).renderEdgeLabel(renderContext, visualizationModel, e);
+  public void renderEdgeLabel(RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, E e) {
+    rendererMap.get(getMode()).renderEdgeLabel(renderContext, layoutModel, e);
   }
 
   @Override

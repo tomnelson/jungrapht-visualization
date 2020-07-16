@@ -10,12 +10,26 @@ package org.jungrapht.samples.spatial;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Insets;
+import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.event.ItemEvent;
 import java.awt.geom.AffineTransform;
 import java.util.Map;
 import java.util.function.Function;
-import javax.swing.*;
+import javax.swing.Box;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.WindowConstants;
 import javax.swing.plaf.basic.BasicLabelUI;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
@@ -26,10 +40,9 @@ import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.DefaultModalGraphMouse;
+import org.jungrapht.visualization.control.DefaultGraphMouse;
+import org.jungrapht.visualization.control.DefaultLensGraphMouse;
 import org.jungrapht.visualization.control.LensMagnificationGraphMousePlugin;
-import org.jungrapht.visualization.control.ModalGraphMouse;
-import org.jungrapht.visualization.control.ModalLensGraphMouse;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -66,14 +79,14 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
   VisualizationViewer<String, Integer> vv;
 
   /** provides a Hyperbolic lens for the view */
-  LensSupport<ModalLensGraphMouse> hyperbolicViewSupport;
+  LensSupport<DefaultLensGraphMouse> hyperbolicViewSupport;
   /** provides a magnification lens for the view */
-  LensSupport<ModalLensGraphMouse> magnifyViewSupport;
+  LensSupport<DefaultLensGraphMouse> magnifyViewSupport;
 
   /** provides a Hyperbolic lens for the model */
-  LensSupport<ModalLensGraphMouse> hyperbolicLayoutSupport;
+  LensSupport<DefaultLensGraphMouse> hyperbolicLayoutSupport;
   /** provides a magnification lens for the model */
-  LensSupport<ModalLensGraphMouse> magnifyLayoutSupport;
+  LensSupport<DefaultLensGraphMouse> magnifyLayoutSupport;
 
   /** create an instance of a simple graph with controls to demo the zoomand hyperbolic features. */
   public SpatialLensDemoWithOneStarVertex() {
@@ -91,7 +104,7 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
             .layoutSize(preferredSize)
             .build();
     // the regular graph mouse for the normal view
-    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
+    final DefaultGraphMouse<String, Integer> graphMouse = new DefaultGraphMouse<>();
 
     vv =
         VisualizationViewer.builder(visualizationModel)
@@ -122,16 +135,16 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
     Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
     Lens lens = new Lens();
     hyperbolicViewSupport =
-        ViewLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
+        ViewLensSupport.<String, Integer, DefaultLensGraphMouse>builder(vv)
             .lensTransformer(
                 HyperbolicShapeTransformer.builder(lens)
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
-            .lensGraphMouse(new ModalLensGraphMouse())
+            .lensGraphMouse(new DefaultLensGraphMouse())
             .build();
     hyperbolicLayoutSupport =
-        LayoutLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
+        LayoutLensSupport.<String, Integer, DefaultLensGraphMouse>builder(vv)
             .lensTransformer(
                 HyperbolicTransformer.builder(lens)
                     .delegate(
@@ -139,7 +152,7 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
                             .getMultiLayerTransformer()
                             .getTransformer(Layer.LAYOUT))
                     .build())
-            .lensGraphMouse(new ModalLensGraphMouse())
+            .lensGraphMouse(new DefaultLensGraphMouse())
             .build();
 
     // the magnification lens uses a different magnification than the hyperbolic lens
@@ -148,18 +161,18 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
     lens.setMagnification(3.f);
 
     magnifyViewSupport =
-        ViewLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
+        ViewLensSupport.<String, Integer, DefaultLensGraphMouse>builder(vv)
             .lensTransformer(
                 MagnifyShapeTransformer.builder(lens)
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
             .lensGraphMouse(
-                new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
+                new DefaultLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
             .build();
 
     magnifyLayoutSupport =
-        LayoutLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
+        LayoutLensSupport.<String, Integer, DefaultLensGraphMouse>builder(vv)
             .lensTransformer(
                 MagnifyTransformer.builder(lens)
                     .delegate(
@@ -168,7 +181,7 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
                             .getTransformer(Layer.LAYOUT))
                     .build())
             .lensGraphMouse(
-                new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
+                new DefaultLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
             .build();
 
     hyperbolicLayoutSupport
@@ -186,20 +199,6 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
 
     JLabel modeLabel = new JLabel("     Mode Menu >>");
     modeLabel.setUI(new VerticalLabelUI(false));
-
-    graphMouse.addItemListener(
-        ((ModalGraphMouse) hyperbolicLayoutSupport.getGraphMouse()).getModeListener());
-    graphMouse.addItemListener(hyperbolicViewSupport.getGraphMouse().getModeListener());
-    graphMouse.addItemListener(magnifyLayoutSupport.getGraphMouse().getModeListener());
-    graphMouse.addItemListener(magnifyViewSupport.getGraphMouse().getModeListener());
-
-    JMenuBar menubar = new JMenuBar();
-    menubar.add(graphMouse.getModeMenu());
-    visualizationScrollPane.setCorner(menubar);
-
-    JComboBox modeBox = graphMouse.getModeComboBox();
-    modeBox.addItemListener(
-        ((DefaultModalGraphMouse<Integer, Number>) vv.getGraphMouse()).getModeListener());
 
     JRadioButton showSpatialEffects = new JRadioButton("Spatial Structure");
     showSpatialEffects.addItemListener(
@@ -244,7 +243,6 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
                     "Hyperbolic View", hyperbolicViewSupport,
                     "Magnify Layout", magnifyLayoutSupport,
                     "Magnify View", magnifyViewSupport))
-            .containerLayoutManager(new GridLayout(0, 2))
             .title("Lens Controls")
             .build()
             .container());

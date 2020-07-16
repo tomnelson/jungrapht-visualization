@@ -3,8 +3,17 @@ package org.jungrapht.samples.tree;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import com.google.common.base.Strings;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.Point;
+import java.awt.Shape;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.ItemEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
@@ -12,7 +21,13 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+import javax.swing.WindowConstants;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.TitledBorder;
@@ -20,7 +35,7 @@ import org.jgrapht.Graph;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.samples.util.TreeLayoutSelector;
-import org.jungrapht.visualization.VisualizationScrollPane;
+import org.jungrapht.visualization.SatelliteVisualizationViewer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.decorators.EllipseShapeFunction;
@@ -31,9 +46,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** @author Tom Nelson */
-public class RandomDAGExample extends JPanel {
+public class RandomDAGExampleWithSatellite extends JPanel {
 
-  private static final Logger log = LoggerFactory.getLogger(RandomDAGExample.class);
+  private static final Logger log = LoggerFactory.getLogger(RandomDAGExampleWithSatellite.class);
 
   static Set<Integer> prioritySet = Set.of(0, 2, 6, 8);
 
@@ -44,7 +59,7 @@ public class RandomDAGExample extends JPanel {
   /** the visual component and renderer for the graph */
   VisualizationViewer<String, Integer> vv;
 
-  public RandomDAGExample() {
+  public RandomDAGExampleWithSatellite() {
 
     setLayout(new BorderLayout());
     // create a simple graph for the demo
@@ -60,8 +75,31 @@ public class RandomDAGExample extends JPanel {
     vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
     vv.getRenderContext().setVertexLabelDrawPaintFunction(c -> Color.white);
 
-    final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
-    this.add(panel);
+    Dimension preferredSatelliteSize = new Dimension(250, 250);
+
+    final SatelliteVisualizationViewer<String, Integer> satelliteVisualizationViewer =
+        SatelliteVisualizationViewer.builder(vv).viewSize(preferredSatelliteSize).build();
+
+    //    Container panel = new JPanel(new BorderLayout());
+    this.add(vv.getComponent());
+
+    vv.getComponent().setLayout(null);
+    vv.add(satelliteVisualizationViewer.getComponent());
+    Dimension sd = satelliteVisualizationViewer.getSize();
+    vv.getComponent()
+        .addComponentListener(
+            new ComponentAdapter() {
+              @Override
+              public void componentResized(ComponentEvent e) {
+                super.componentResized(e);
+                Component vv = e.getComponent();
+                Dimension vvd = vv.getSize();
+                Point p = new Point(vvd.width - sd.width, vvd.height - sd.height);
+                satelliteVisualizationViewer
+                    .getComponent()
+                    .setBounds(p.x, p.y, sd.width, sd.height);
+              }
+            });
 
     IconCache<String> iconCache =
         IconCache.<String>builder(Object::toString)
@@ -241,7 +279,8 @@ public class RandomDAGExample extends JPanel {
     rightControls.add(spatialPanel);
     controls.add(rightControls);
     add(controls, BorderLayout.SOUTH);
-    setVisible(true);
+    //    pack();
+    //    setVisible(true);
   }
 
   private void resetGraph(
@@ -257,7 +296,7 @@ public class RandomDAGExample extends JPanel {
   public static void main(String[] args) {
     JFrame f = new JFrame();
     f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-    f.getContentPane().add(new RandomDAGExample());
+    f.getContentPane().add(new RandomDAGExampleWithSatellite());
     f.pack();
     f.setVisible(true);
   }

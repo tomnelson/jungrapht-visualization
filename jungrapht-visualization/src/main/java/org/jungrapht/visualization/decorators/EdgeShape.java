@@ -59,6 +59,7 @@ public interface EdgeShape {
     return new CubicCurve<>();
   }
 
+  @Deprecated
   static <V, E> Orthogonal<V, E> orthogonal() {
     return new Orthogonal();
   }
@@ -204,6 +205,7 @@ public interface EdgeShape {
    * An edge shape that renders as a diamond with its nadir at the center of the vertex. Parallel
    * instances will not overlap.
    */
+  @Deprecated
   class Box<V, E> extends ParallelEdgeShapeFunction<V, E> {
     public Shape apply(Context<Graph<V, E>, E> context) {
       Graph graph = context.graph;

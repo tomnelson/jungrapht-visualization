@@ -64,6 +64,11 @@ public class StandardSpringRepulsion<
     return new Builder();
   }
 
+  @Deprecated
+  public static Builder standardBuilder() {
+    return builder();
+  }
+
   protected StandardSpringRepulsion(Builder<V, R, B> builder) {
     this.layoutModel = builder.layoutModel;
     this.vertexSet = layoutModel.getGraph().vertexSet();
