@@ -16,7 +16,9 @@ import java.awt.geom.Point2D;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.SatelliteVisualizationViewer;
 import org.jungrapht.visualization.VisualizationViewer;
+import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.transform.MutableTransformer;
+import org.jungrapht.visualization.util.VertexLocationAnimator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,32 +44,12 @@ public class SatelliteTranslatingGraphMousePlugin extends TranslatingGraphMouseP
     super.mouseClicked(e);
     VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
     VisualizationViewer<?, ?> vvMaster = ((SatelliteVisualizationViewer<?, ?>) vv).getMaster();
-
-    //    MutableTransformer modelTransformerMaster =
-    //        vvMaster
-    //            .getRenderContext()
-    //            .getMultiLayerTransformer()
-    //            .getTransformer(MultiLayerTransformer.Layer.LAYOUT);
-    //    vv.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
-    //    try {
-    //      Point2D center = vv.getCenter();
-    //      Point2D q =
-    //          center; //vv.getRenderContext().getMultiLayerTransformer().inverseTransform(center);
-    //      Point2D p =
-    //          e
-    //              .getPoint(); //vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint());
-    //      float dx = (float) (p.getX() - q.getX());
-    //      float dy = (float) (p.getY() - q.getY());
-    //
-    //      modelTransformerMaster.translate(-dx, -dy);
-    //      //        down.x = e.getX();
-    //      //        down.y = e.getY();
-    //    } catch (RuntimeException ex) {
-    //      log.error("down = {}, e = {}", down, e);
-    //      throw ex;
-    //    }
-    //
-    //    e.consume();
+    // translate the mouse point in the satellite to the layout coords
+    Point2D p = e.getPoint();
+    Point2D layoutPoint = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(p);
+    VertexLocationAnimator.scrollPointToCenter(
+        vvMaster, Point.of(layoutPoint.getX(), layoutPoint.getY()));
+    e.consume();
   }
 
   /**
