@@ -114,6 +114,10 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
     setSize(width, height);
   }
 
+  public void setInitialDimensionFunction(Function<Graph<V, ?>, Integer> initialDimensionFunction) {
+    this.initialDimensionFunction = initialDimensionFunction;
+  }
+
   /** stop any running Relaxer */
   public void stopRelaxer() {
     if (this.visRunnable != null) {

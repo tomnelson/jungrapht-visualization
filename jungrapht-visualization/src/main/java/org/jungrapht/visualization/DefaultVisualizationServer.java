@@ -248,6 +248,11 @@ class DefaultVisualizationServer<V, E> extends JPanel
     return this;
   }
 
+  @Override
+  public void setInitialDimensionFunction(Function<Graph<V, ?>, Integer> initialDimensionFunction) {
+    this.visualizationModel.setInitialDimensionFunction(initialDimensionFunction);
+  }
+
   private void createSpatialStuctures(
       VisualizationModel<V, E> visualizationModel, RenderContext<V, E> renderContext) {
     setVertexSpatial(createVertexSpatial(visualizationModel, renderContext));

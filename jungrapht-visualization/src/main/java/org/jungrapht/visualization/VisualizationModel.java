@@ -96,7 +96,7 @@ public interface VisualizationModel<V, E>
 
     public B initialDimensionFunction(Function<Graph<V, ?>, Integer> initialDimensionFunction) {
       this.initialDimensionFunction = initialDimensionFunction;
-      return (B) this;
+      return self();
     }
 
     /**
@@ -186,4 +186,6 @@ public interface VisualizationModel<V, E>
   void setGraph(Graph<V, E> graph, boolean forceUpdate);
 
   Function<Graph<V, ?>, Integer> getInitialDimensionFunction();
+
+  void setInitialDimensionFunction(Function<Graph<V, ?>, Integer> initialDimensionFunction);
 }

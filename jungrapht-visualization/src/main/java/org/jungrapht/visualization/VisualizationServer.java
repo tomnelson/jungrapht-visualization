@@ -326,4 +326,6 @@ public interface VisualizationServer<V, E>
 
   /** scale the graph visualization to fit within the view window */
   void scaleToLayout(boolean resizeToPoints);
+
+  void setInitialDimensionFunction(Function<Graph<V, ?>, Integer> initialDimensionFunction);
 }

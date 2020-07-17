@@ -157,6 +157,11 @@ class DefaultVisualizationModel<V, E> implements VisualizationModel<V, E> {
   }
 
   @Override
+  public void setInitialDimensionFunction(Function<Graph<V, ?>, Integer> initialDimensionFunction) {
+    this.layoutModel.setInitialDimensionFunction(initialDimensionFunction);
+  }
+
+  @Override
   public LayoutAlgorithm<V> getLayoutAlgorithm() {
     return layoutAlgorithm;
   }

@@ -1,7 +1,11 @@
 package org.jungrapht.visualization.layout.algorithms;
 
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +18,7 @@ import org.slf4j.LoggerFactory;
  * @author Tom Nelson
  */
 public abstract class AbstractIterativeLayoutAlgorithm<V> extends AbstractLayoutAlgorithm<V>
-    implements IterativeLayoutAlgorithm<V> {
+    implements IterativeLayoutAlgorithm<V>, Future {
 
   private static final Logger log = LoggerFactory.getLogger(AbstractIterativeLayoutAlgorithm.class);
 
@@ -75,6 +79,8 @@ public abstract class AbstractIterativeLayoutAlgorithm<V> extends AbstractLayout
 
   protected Random random;
 
+  protected Future future;
+
   public void setRandomSeed(long randomSeed) {
     this.random = new Random(randomSeed);
   }
@@ -107,7 +113,76 @@ public abstract class AbstractIterativeLayoutAlgorithm<V> extends AbstractLayout
    * continuously
    */
   public void visit(LayoutModel<V> layoutModel) {
+    this.future = layoutModel.getTheFuture();
     log.trace("visiting " + layoutModel);
     this.layoutModel = layoutModel;
+  }
+
+  /**
+   * Attempts to cancel execution of this task. This attempt will fail if the task has already
+   * completed, has already been cancelled, or could not be cancelled for some other reason. If
+   * successful, and this task has not started when {@code cancel} is called, this task should never
+   * run. If the task has already started, then the {@code mayInterruptIfRunning} parameter
+   * determines whether the thread executing this task should be interrupted in an attempt to stop
+   * the task.
+   *
+   * <p>After this method returns, subsequent calls to {@link #isDone} will always return {@code
+   * true}. Subsequent calls to {@link #isCancelled} will always return {@code true} if this method
+   * returned {@code true}.
+   *
+   * @param mayInterruptIfRunning {@code true} if the thread executing this task should be
+   *     interrupted; otherwise, in-progress tasks are allowed to complete
+   * @return {@code false} if the task could not be cancelled, typically because it has already
+   *     completed normally; {@code true} otherwise
+   */
+  @Override
+  public boolean cancel(boolean mayInterruptIfRunning) {
+    if (this.future != null) {
+      return this.future.cancel(mayInterruptIfRunning);
+    }
+    return false;
+  }
+
+  /**
+   * Returns {@code true} if this task was cancelled before it completed normally.
+   *
+   * @return {@code true} if this task was cancelled before it completed
+   */
+  @Override
+  public boolean isCancelled() {
+    if (this.future != null) {
+      return this.future.isCancelled();
+    }
+    return false;
+  }
+
+  /**
+   * Returns {@code true} if this task completed.
+   *
+   * <p>Completion may be due to normal termination, an exception, or cancellation -- in all of
+   * these cases, this method will return {@code true}.
+   *
+   * @return {@code true} if this task completed
+   */
+  @Override
+  public boolean isDone() {
+    return false;
+  }
+
+  @Override
+  public Object get() throws InterruptedException, ExecutionException {
+    if (this.future != null) {
+      return this.future.get();
+    }
+    return null;
+  }
+
+  @Override
+  public Object get(long timeout, TimeUnit unit)
+      throws InterruptedException, ExecutionException, TimeoutException {
+    if (this.future != null) {
+      return this.future.get(timeout, unit);
+    }
+    return null;
   }
 }

@@ -115,6 +115,8 @@ public interface LayoutModel<V>
         getGraph().vertexSet().stream().collect(Collectors.toMap(v -> v, this::apply)));
   }
 
+  void setInitialDimensionFunction(Function<Graph<V, ?>, Integer> initialDimensionFunction);
+
   /**
    * @param width to set
    * @param helght to set

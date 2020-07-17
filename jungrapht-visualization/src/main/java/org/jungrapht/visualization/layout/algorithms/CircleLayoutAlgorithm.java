@@ -334,6 +334,9 @@ public class CircleLayoutAlgorithm<V>
   @Override
   public Object get(long l, TimeUnit timeUnit)
       throws InterruptedException, ExecutionException, TimeoutException {
+    if (theFuture != null) {
+      return theFuture.get(l, timeUnit);
+    }
     return null;
   }
 

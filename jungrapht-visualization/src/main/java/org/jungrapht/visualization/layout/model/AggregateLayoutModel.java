@@ -100,6 +100,11 @@ public class AggregateLayoutModel<V> implements LayoutModel<V> {
   }
 
   @Override
+  public void setInitialDimensionFunction(Function<Graph<V, ?>, Integer> initialDimensionFunction) {
+    delegate.setInitialDimensionFunction(initialDimensionFunction);
+  }
+
+  @Override
   public void setSize(int width, int height) {
     delegate.setSize(width, height);
   }
