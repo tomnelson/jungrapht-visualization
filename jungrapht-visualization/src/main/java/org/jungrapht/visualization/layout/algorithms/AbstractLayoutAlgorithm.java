@@ -1,13 +1,11 @@
 package org.jungrapht.visualization.layout.algorithms;
 
-import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
-
 /**
  * For Layout algorithms that can run an 'after' function
  *
  * @author Tom Nelson
  */
-public abstract class AbstractLayoutAlgorithm<V> implements LayoutAlgorithm<V>, AfterRunnable {
+public abstract class AbstractLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
 
   public abstract static class Builder<
           V, T extends AbstractLayoutAlgorithm<V>, B extends Builder<V, T, B>>
@@ -27,16 +25,19 @@ public abstract class AbstractLayoutAlgorithm<V> implements LayoutAlgorithm<V>, 
   }
 
   protected AbstractLayoutAlgorithm(Builder builder) {
-    this.after = builder.after;
+
+    //    this.after = builder.after;
   }
 
-  public void setAfter(Runnable after) {
-    this.after = after;
-  }
-
-  public void run() {
-    if (after != null) after.run();
-  }
-
-  protected Runnable after;
+  //  @Override
+  //  public void setAfter(Runnable after) {
+  //    this.after = after;
+  //  }
+  //
+  //  @Override
+  //  public void runAfter() {
+  //    if (after != null) after.run();
+  //  }
+  //
+  //  protected Runnable after;
 }

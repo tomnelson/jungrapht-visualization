@@ -10,6 +10,17 @@ import org.jungrapht.visualization.layout.model.Point;
 
 public class VertexLocationAnimator {
 
+  public static <V, E> void jumpPointToCenter(VisualizationServer<V, E> vv, Point newCenter) {
+    Point2D lvc = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(vv.getCenter());
+    final double dx = (lvc.getX() - newCenter.x);
+    final double dy = (lvc.getY() - newCenter.y);
+
+    vv.getRenderContext()
+        .getMultiLayerTransformer()
+        .getTransformer(MultiLayerTransformer.Layer.LAYOUT)
+        .translate(dx, dy);
+  }
+
   public static <V, E> void scrollPointToCenter(VisualizationServer<V, E> vv, Point newCenter) {
     Point2D lvc = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(vv.getCenter());
     final double dx = (lvc.getX() - newCenter.x) / 10;

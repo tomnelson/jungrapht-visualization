@@ -177,6 +177,8 @@ public class TreeLayoutAlgorithm<V> extends AbstractLayoutAlgorithm<V>
     this.rootComparator = rootComparator;
   }
 
+  Set<V> visitedVertices = new HashSet<>();
+
   @Override
   public void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
     Objects.requireNonNull(vertexShapeFunction);
@@ -212,7 +214,10 @@ public class TreeLayoutAlgorithm<V> extends AbstractLayoutAlgorithm<V>
    */
   @Override
   public void visit(LayoutModel<V> layoutModel) {
+
     buildTree(layoutModel);
+    log.info("treeLayout is complete");
+    //    runAfter();
   }
 
   /**
@@ -314,7 +319,36 @@ public class TreeLayoutAlgorithm<V> extends AbstractLayoutAlgorithm<V>
       x += w / 2 + horizontalVertexSpacing;
     }
     this.rootPredicate = null;
-    after.run();
+    //    if (seen.size() < graph.vertexSet().size()) {
+    //      Set<V> mia = new HashSet<>(graph.vertexSet());
+    //      mia.removeAll(seen);
+    //      Graph<V, Object> miaGraph = (Graph<V, Object>) GraphTypeBuilder.forGraph(graph).buildGraph();
+    //      Graph<V, Object> myGraph = (Graph<V, Object>) graph;
+    //      mia.forEach(miaGraph::addVertex);
+    //      graph
+    //          .edgeSet()
+    //          .stream()
+    //          .filter(
+    //              e -> mia.contains(myGraph.getEdgeSource(e)) && mia.contains(myGraph.getEdgeTarget(e)))
+    //          .forEach(e -> miaGraph.addEdge(myGraph.getEdgeSource(e), myGraph.getEdgeTarget(e), e));
+    //      // get all the components from myGraph and choose one vertex from each to add to roots
+    //      List<Graph<V, Object>> components = ComponentGrouping.getComponentGraphs(miaGraph);
+    //      for (Graph<V, Object> component : components) {
+    //        V volunteerRoot = component.vertexSet().stream().findFirst().orElse(null);
+    //        if (volunteerRoot != null) {
+    //          roots.add(volunteerRoot);
+    //        }
+    //      }
+    //      for (V vertex : roots) {
+    //        int w = (int) this.baseBounds.get(vertex).width;
+    //        log.trace("w is {} and baseWidths.get(vertex) = {}", w, baseBounds.get(vertex).width);
+    //        x += w / 2;
+    //        log.trace("currentX after vertex {} is now {}", vertex, x);
+    //        buildTree(layoutModel, vertex, x, y, seen);
+    //        merge(layoutModel, vertex);
+    //        x += w / 2 + horizontalVertexSpacing;
+    //      }
+    //    }
     return new LinkedHashSet<>(roots);
   }
 

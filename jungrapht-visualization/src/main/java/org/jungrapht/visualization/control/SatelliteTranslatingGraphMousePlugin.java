@@ -47,7 +47,7 @@ public class SatelliteTranslatingGraphMousePlugin extends TranslatingGraphMouseP
     // translate the mouse point in the satellite to the layout coords
     Point2D p = e.getPoint();
     Point2D layoutPoint = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(p);
-    VertexLocationAnimator.scrollPointToCenter(
+    VertexLocationAnimator.jumpPointToCenter(
         vvMaster, Point.of(layoutPoint.getX(), layoutPoint.getY()));
     e.consume();
   }

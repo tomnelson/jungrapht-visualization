@@ -49,6 +49,17 @@ public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
   protected int rowCount = 1;
 
   /**
+   * visit a {@link LayoutModel} to set all of the graph vertex positions according to the
+   * LayoutAlgorithm logic.
+   *
+   * @param layoutModel the mediator between the container for vertices (the Graph) and the mapping
+   */
+  @Override
+  public void visit(LayoutModel<V> layoutModel) {
+    super.visit(layoutModel);
+  }
+
+  /**
    * Build the entire forest, first measuring the width and height, then possibly expanding the
    * layout area, then placing the vertices under rows of tree roots
    *

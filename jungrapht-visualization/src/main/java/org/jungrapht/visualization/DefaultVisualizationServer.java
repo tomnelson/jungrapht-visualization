@@ -431,15 +431,16 @@ class DefaultVisualizationServer<V, E> extends JPanel
 
   @Override
   public void scaleToLayout(ScalingControl scaler, boolean resizeToPoints) {
-    log.trace("Thread: {} will scaleToLayout({})", Thread.currentThread(), resizeToPoints);
+    log.info("Thread: {} will scaleToLayout({})", Thread.currentThread(), resizeToPoints);
     getRenderContext().getMultiLayerTransformer().setToIdentity();
     Dimension vd = getPreferredSize();
-    log.trace("pref vd {}", vd);
+    log.info("preferred view size: {}", vd);
     if (this.isShowing()) {
       vd = getSize();
-      log.trace("actual vd {}", vd);
+      log.info("actual view size: {}", vd);
     }
     if (resizeToPoints) {
+      log.info("resize to points");
       LayoutModel<V> layoutModel = visualizationModel.getLayoutModel();
       // switch off spatial structures
       vertexSpatial.setActive(false);
@@ -447,6 +448,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
       layoutModel.resizeToSurroundingRectangle();
     }
     Dimension ld = visualizationModel.getLayoutSize();
+    log.info("layoutSize {}", ld);
     if (!vd.equals(ld)) {
       double widthRatio = vd.getWidth() / ld.getWidth();
       double heightRatio = vd.getHeight() / ld.getHeight();
@@ -479,7 +481,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
           .getTransformer(MultiLayerTransformer.Layer.LAYOUT)
           .translate(deltaX, deltaY);
     }
-    log.trace("Thread: {} is done with scaleToLayout({})", Thread.currentThread(), resizeToPoints);
+    log.info("Thread: {} is done with scaleToLayout({})", Thread.currentThread(), resizeToPoints);
   }
 
   @Override
@@ -615,6 +617,11 @@ class DefaultVisualizationServer<V, E> extends JPanel
 
   @Override
   public void layoutStateChanged(LayoutStateChange.Event evt) {
+    boolean busy = evt.active;
+    log.info("####################### layoutStateChanged. busy:{}", busy);
+    if (!busy) {
+      scaleToLayout(true);
+    }
     //    repaint();
     //    no op
   }

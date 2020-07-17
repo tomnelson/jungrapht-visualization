@@ -1,5 +1,7 @@
 package org.jungrapht.samples.large;
 
+import static org.jungrapht.visualization.MultiLayerTransformer.*;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -24,7 +26,6 @@ import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.LayoutHelper;
 import org.jungrapht.samples.util.LensControlHelper;
 import org.jungrapht.samples.util.SpanningTreeAdapter;
-import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.LensMagnificationGraphMousePlugin;
@@ -166,6 +167,9 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
                     LayoutModel positionModel =
                         this.getTreeLayoutPositions(
                             tree, layoutAlgorithm, vv.getVisualizationModel().getLayoutModel());
+                    //                    vv.getVisualizationModel()
+                    //                        .getLayoutModel()
+                    //                        .setSize(positionModel.getWidth(), positionModel.getHeight());
                     vv.getVisualizationModel().getLayoutModel().setInitializer(positionModel);
                     layoutAlgorithm = new StaticLayoutAlgorithm();
                   }
@@ -186,6 +190,16 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
                             vv, (RadialTreeLayoutAlgorithm) layoutAlgorithm);
                     vv.addPreRenderPaintable(radialLayoutRings);
                   }
+                  log.info(
+                      "view transform:{}, layoutTransform:{}",
+                      vv.getRenderContext()
+                          .getMultiLayerTransformer()
+                          .getTransformer(Layer.VIEW)
+                          .getTransform(),
+                      vv.getRenderContext()
+                          .getMultiLayerTransformer()
+                          .getTransformer(Layer.LAYOUT)
+                          .getTransform());
                 }));
 
     layoutComboBox.setSelectedItem(LayoutHelper.Layouts.FR_BH_VISITOR);
@@ -199,9 +213,7 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
             .lensTransformer(
                 HyperbolicShapeTransformer.builder(lens)
                     .delegate(
-                        vv.getRenderContext()
-                            .getMultiLayerTransformer()
-                            .getTransformer(MultiLayerTransformer.Layer.VIEW))
+                        vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
             .lensGraphMouse(new ModalLensGraphMouse())
             .build();
@@ -213,7 +225,7 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
                     .delegate(
                         vv.getRenderContext()
                             .getMultiLayerTransformer()
-                            .getTransformer(MultiLayerTransformer.Layer.LAYOUT))
+                            .getTransformer(Layer.LAYOUT))
                     .build())
             .lensGraphMouse(new ModalLensGraphMouse())
             .build();
@@ -227,9 +239,7 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
             .lensTransformer(
                 MagnifyShapeTransformer.builder(lens)
                     .delegate(
-                        vv.getRenderContext()
-                            .getMultiLayerTransformer()
-                            .getTransformer(MultiLayerTransformer.Layer.VIEW))
+                        vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
             .lensGraphMouse(
                 new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
@@ -242,7 +252,7 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
                     .delegate(
                         vv.getRenderContext()
                             .getMultiLayerTransformer()
-                            .getTransformer(MultiLayerTransformer.Layer.LAYOUT))
+                            .getTransformer(Layer.LAYOUT))
                     .build())
             .lensGraphMouse(
                 new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
@@ -328,7 +338,7 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
       Graph tree, LayoutAlgorithm treeLayout, LayoutModel layoutModel) {
     LayoutModel model =
         LayoutModel.builder()
-            .size(layoutModel.getWidth(), layoutModel.getHeight())
+            .size(layoutModel.getPreferredWidth(), layoutModel.getPreferredHeight())
             .graph(tree)
             .build();
     model.accept(treeLayout);

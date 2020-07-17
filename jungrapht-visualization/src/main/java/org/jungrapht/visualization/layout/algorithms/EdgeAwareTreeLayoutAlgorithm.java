@@ -129,44 +129,6 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
     this.alignFavoredEdges = builder.alignFavoredEdges;
   }
 
-  /**
-   * Creates an instance for the specified graph, X distance, and Y distance.
-   *
-   * @param rootPredicate the {@link Predicate} to choose root vertices
-   * @param horizontalVertexSpacing the horizontal spacing between elements
-   * @param verticalVertexSpacing the vertical spacing between elements
-   * @param vertexPredicate a {@link Predicate} to filter vertices
-   * @param edgePredicate a {@link Predicate} to filter edges
-   * @param vertexComparator a {@link Comparator} to sort vertices
-   * @param edgeComparator a {@link Comparator} to sort edges
-   * @param expandLayout whether to expand the layout area to hold the entire forest
-   */
-  //  protected EdgeAwareTreeLayoutAlgorithm(
-  //      Predicate<V> rootPredicate,
-  //      Comparator<V> rootComparator,
-  //      int horizontalVertexSpacing,
-  //      int verticalVertexSpacing,
-  //      Function<V, Shape> vertexShapeFunction,
-  //      Predicate<V> vertexPredicate,
-  //      Predicate<E> edgePredicate,
-  //      Comparator<V> vertexComparator,
-  //      Comparator<E> edgeComparator,
-  //      boolean expandLayout,
-  //      boolean alignFavoredEdges) {
-  //    super(
-  //        rootPredicate,
-  //        rootComparator,
-  //        horizontalVertexSpacing,
-  //        verticalVertexSpacing,
-  //        vertexShapeFunction,
-  //        expandLayout);
-  //    this.vertexPredicate = builder.vertexPredicate;
-  //    this.edgePredicate = builder.edgePredicate;
-  //    this.vertexComparator = builder.vertexComparator;
-  //    this.edgeComparator = builder.edgeComparator;
-  //    this.alignFavoredEdges = builder.alignFavoredEdges;
-  //  }
-
   /** a {@link Predicate} to filter vertices */
   protected Predicate<V> vertexPredicate;
 

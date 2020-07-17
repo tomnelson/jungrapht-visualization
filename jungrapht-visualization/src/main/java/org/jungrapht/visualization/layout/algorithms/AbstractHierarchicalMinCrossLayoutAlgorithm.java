@@ -360,7 +360,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
                         this.edgePointMap.putAll(runnable.getEdgePointMap());
                         layoutModel.appendLayoutModel(componentLayoutModel);
                         if (isComplete(graphs.size())) {
-                          this.run(); // run the after function
+                          //                          this.runAfter(); // run the after function
                           layoutModel.getViewChangeSupport().fireViewChanged();
                           // fire an event to say that the layout is done
                           layoutModel
@@ -377,7 +377,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
                         this.edgePointMap.putAll(runnable.getEdgePointMap());
                         layoutModel.appendLayoutModel(componentLayoutModel);
                         if (isComplete(graphs.size())) {
-                          this.run(); // run the after function
+                          //                          this.runAfter(); // run the after function
                           layoutModel.getViewChangeSupport().fireViewChanged();
                           // fire an event to say that the layout is done
                           layoutModel
@@ -443,8 +443,10 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
   }
 
   @Override
-  public void run() {
-    after.run();
+  public void runAfter() {
+    if (after != null) {
+      after.run();
+    }
   }
 
   @Override

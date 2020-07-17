@@ -656,6 +656,6 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
       np = np.add(xoffset, yoffset);
       layoutModel.set(entry.getKey(), np);
     }
-    after.run();
+    //    after.run();
   }
 }

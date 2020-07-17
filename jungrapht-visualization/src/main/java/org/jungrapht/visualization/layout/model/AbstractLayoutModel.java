@@ -334,7 +334,7 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
   }
 
   public void setPreferredSize(int preferredWidth, int preferredHeight) {
-    log.trace("setPreferredSize({},{})", preferredWidth, preferredHeight);
+    log.info("setPreferredSize({},{})", preferredWidth, preferredHeight);
     if (preferredWidth == 0 || preferredHeight == 0) {
       throw new IllegalArgumentException(
           "Can't be zeros " + preferredWidth + "/" + preferredHeight);

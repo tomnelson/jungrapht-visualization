@@ -193,7 +193,7 @@ public class CircleLayoutAlgorithm<V>
                       () -> {
                         log.trace("ReduceEdgeCrossing done");
                         layoutVertices(layoutModel);
-                        this.run(); // run the after function
+                        runAfter(); // run the after function
                         layoutModel.getViewChangeSupport().fireViewChanged();
                         // fire an event to say that the layout is done
                         layoutModel
@@ -207,7 +207,7 @@ public class CircleLayoutAlgorithm<V>
                       () -> {
                         log.trace("ReduceEdgeCrossing done");
                         layoutVertices(layoutModel);
-                        this.run(); // run the after function
+                        runAfter(); // run the after function
                         layoutModel.getViewChangeSupport().fireViewChanged();
                         // fire an event to say that the layout is done
                         layoutModel
@@ -218,7 +218,7 @@ public class CircleLayoutAlgorithm<V>
       } else {
         reduceCrossingRunnable.run();
         layoutVertices(layoutModel);
-        after.run();
+        runAfter();
         layoutModel.getViewChangeSupport().fireViewChanged();
         // fire an event to say that the layout is done
         layoutModel.getLayoutStateChangeSupport().fireLayoutStateChanged(layoutModel, false);
@@ -341,8 +341,10 @@ public class CircleLayoutAlgorithm<V>
   }
 
   @Override
-  public void run() {
-    after.run();
+  public void runAfter() {
+    if (after != null) {
+      after.run();
+    }
   }
 
   @Override

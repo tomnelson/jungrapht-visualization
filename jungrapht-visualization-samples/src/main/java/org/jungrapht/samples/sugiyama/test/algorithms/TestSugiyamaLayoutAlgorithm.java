@@ -121,7 +121,7 @@ public class TestSugiyamaLayoutAlgorithm<V, E> extends SugiyamaLayoutAlgorithm<V
                   () -> {
                     log.trace("TestSugiyama layout done");
                     this.edgePointMap.putAll(runnable.getEdgePointMap());
-                    this.run(); // run the after function
+                    this.runAfter(); // run the after function
                     layoutModel.getViewChangeSupport().fireViewChanged();
                     // fire an event to say that the layout is done
                     layoutModel
