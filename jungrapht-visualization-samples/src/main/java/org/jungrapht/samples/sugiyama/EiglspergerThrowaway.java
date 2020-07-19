@@ -38,7 +38,7 @@ public class EiglspergerThrowaway extends JFrame {
             .postStraighten(true)
             .threaded(false)
             //            .postStraighten(false)
-            .after(vv3::scaleToLayout)
+            //            .after(vv3::scaleToLayout)
             .build();
     layoutAlgorithm3.setVertexShapeFunction(vv3.getRenderContext().getVertexShapeFunction());
     layoutAlgorithm3.setEdgeShapeFunctionConsumer(vv3.getRenderContext()::setEdgeShapeFunction);

@@ -259,7 +259,11 @@ public class DAGLayoutAlgorithm<V, E> extends SpringLayoutAlgorithm<V, E> {
   /** Override incrementsAreDone so that we can eventually stop. */
   @Override
   public boolean done() {
-    return stoppingIncrements && incrementsLeft == 0;
+    boolean done = stoppingIncrements && incrementsLeft == 0;
+    if (done) {
+      runAfter();
+    }
+    return done;
   }
 
   /**

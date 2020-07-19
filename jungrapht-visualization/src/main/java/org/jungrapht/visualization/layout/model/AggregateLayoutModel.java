@@ -17,6 +17,8 @@ import java.util.concurrent.Future;
 import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.util.Pair;
+import org.jungrapht.visualization.layout.event.LayoutSizeChange;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
 import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
 import org.jungrapht.visualization.layout.event.ModelChange;
@@ -100,7 +102,8 @@ public class AggregateLayoutModel<V> implements LayoutModel<V> {
   }
 
   @Override
-  public void setInitialDimensionFunction(Function<Graph<V, ?>, Integer> initialDimensionFunction) {
+  public void setInitialDimensionFunction(
+      Function<Graph<V, ?>, Pair<Integer>> initialDimensionFunction) {
     delegate.setInitialDimensionFunction(initialDimensionFunction);
   }
 
@@ -251,6 +254,10 @@ public class AggregateLayoutModel<V> implements LayoutModel<V> {
     return delegate.getLayoutStateChangeSupport();
   }
 
+  @Override
+  public LayoutSizeChange.Support<V> getLayoutSizeChangeSupport() {
+    return delegate.getLayoutSizeChangeSupport();
+  }
   /**
    * Returns the location of the vertex. The location is specified first by the sublayouts, and then
    * by the base layout if no sublayouts operate on this vertex.

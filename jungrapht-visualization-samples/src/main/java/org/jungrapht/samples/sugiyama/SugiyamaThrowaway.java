@@ -36,7 +36,7 @@ public class SugiyamaThrowaway extends JFrame {
         SugiyamaLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .threaded(false)
             .layering(Layering.TOP_DOWN)
-            .after(vv3::scaleToLayout)
+            //            .after(vv3::scaleToLayout)
             .build();
     layoutAlgorithm3.setVertexShapeFunction(vv3.getRenderContext().getVertexShapeFunction());
     layoutAlgorithm3.setEdgeShapeFunctionConsumer(vv3.getRenderContext()::setEdgeShapeFunction);

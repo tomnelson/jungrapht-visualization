@@ -125,7 +125,10 @@ public class TreeCollapseDemo extends JPanel {
 
     JPanel controls = new JPanel();
     controls.add(
-        TreeLayoutSelector.builder(vv).initialSelection(0).after(vv::scaleToLayout).build());
+        TreeLayoutSelector.builder(vv)
+            .initialSelection(0)
+            //                .after(vv::scaleToLayout)
+            .build());
 
     controls.add(ControlHelpers.getZoomControls(vv));
     controls.add(collapse);

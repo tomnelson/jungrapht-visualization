@@ -20,4 +20,10 @@ public interface LayoutAlgorithm<V> {
    *     from Vertex to Point
    */
   void visit(LayoutModel<V> layoutModel);
+
+  /**
+   * Marker interface for LayoutAlgorithms that will enlarge the layout area (notably the
+   * TreeLayoutAlgorithms)
+   */
+  interface Unconstrained<V> extends LayoutAlgorithm<V> {}
 }

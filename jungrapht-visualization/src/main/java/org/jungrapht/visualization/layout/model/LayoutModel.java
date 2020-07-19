@@ -16,6 +16,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.util.Pair;
+import org.jungrapht.visualization.layout.event.LayoutSizeChange;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
 import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
 import org.jungrapht.visualization.layout.event.ModelChange;
@@ -33,7 +35,8 @@ public interface LayoutModel<V>
         ViewChange.Producer,
         LayoutVertexPositionChange.Producer<V>,
         LayoutStateChange.Producer,
-        LayoutVertexPositionChange.Listener<V> {
+        LayoutVertexPositionChange.Listener<V>,
+        LayoutSizeChange.Producer<V> {
 
   /**
    * a builder for LayoutModel instances
@@ -115,7 +118,7 @@ public interface LayoutModel<V>
         getGraph().vertexSet().stream().collect(Collectors.toMap(v -> v, this::apply)));
   }
 
-  void setInitialDimensionFunction(Function<Graph<V, ?>, Integer> initialDimensionFunction);
+  void setInitialDimensionFunction(Function<Graph<V, ?>, Pair<Integer>> initialDimensionFunction);
 
   /**
    * @param width to set

@@ -55,6 +55,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
         VertexShapeAware<V>,
         EdgeShapeFunctionSupplier<V, E>,
         Layered,
+        LayoutAlgorithm.Unconstrained<V>,
         AfterRunnable,
         Threaded,
         ExecutorConsumer,

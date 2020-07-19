@@ -51,7 +51,7 @@ public class SugiyamaLayeringOptions extends JFrame {
                     .postStraighten(true)
                     .threaded(false)
                     .layering((Layering) e.getItem())
-                    .after(vv3::scaleToLayout)
+                    //                    .after(vv3::scaleToLayout)
                     .build();
             layoutAlgorithm.setVertexShapeFunction(vv3.getRenderContext().getVertexShapeFunction());
             layoutAlgorithm.setEdgeShapeFunctionConsumer(
@@ -65,7 +65,7 @@ public class SugiyamaLayeringOptions extends JFrame {
             .postStraighten(true)
             .threaded(false)
             .layering(layeringConfiguration.getLayeringPreference())
-            .after(vv3::scaleToLayout)
+            //            .after(vv3::scaleToLayout)
             .build();
     layoutAlgorithm3.setVertexShapeFunction(vv3.getRenderContext().getVertexShapeFunction());
     layoutAlgorithm3.setEdgeShapeFunctionConsumer(vv3.getRenderContext()::setEdgeShapeFunction);

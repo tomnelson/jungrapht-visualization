@@ -27,6 +27,7 @@ import org.jungrapht.visualization.control.GraphMouseListener;
 import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.control.MouseListenerTranslator;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.util.Pair;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 
 /**
@@ -52,7 +53,7 @@ class DefaultVisualizationViewer<V, E> extends DefaultVisualizationServer<V, E>
   protected DefaultVisualizationViewer(
       Graph<V, E> graph,
       VisualizationModel<V, E> visualizationModel,
-      Function<Graph<V, ?>, Integer> initialDimensionFunction,
+      Function<Graph<V, ?>, Pair<Integer>> initialDimensionFunction,
       GraphMouse graphMouse,
       LayoutAlgorithm<V> layoutAlgorithm,
       Dimension layoutSize,

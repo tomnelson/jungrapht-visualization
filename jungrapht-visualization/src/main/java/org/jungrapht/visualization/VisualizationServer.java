@@ -23,6 +23,8 @@ import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.control.TransformSupport;
 import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.util.Pair;
+import org.jungrapht.visualization.layout.event.LayoutSizeChange;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
 import org.jungrapht.visualization.layout.event.ModelChange;
 import org.jungrapht.visualization.layout.event.RenderContextStateChange;
@@ -44,6 +46,7 @@ public interface VisualizationServer<V, E>
         ModelChange.Listener,
         ChangeListener,
         LayoutStateChange.Listener,
+        LayoutSizeChange.Listener,
         RenderContextStateChange.Listener {
 
   String PREFIX = "jungrapht.";
@@ -68,7 +71,7 @@ public interface VisualizationServer<V, E>
     /** the model to hold state for the visualization */
     protected VisualizationModel<V, E> visualizationModel;
 
-    protected Function<Graph<V, ?>, Integer> initialDimensionFunction;
+    protected Function<Graph<V, ?>, Pair<Integer>> initialDimensionFunction;
 
     /** create an instance with no args */
     protected Builder() {}
@@ -124,7 +127,8 @@ public interface VisualizationServer<V, E>
       return self();
     }
 
-    public B initialDimensionFunction(Function<Graph<V, ?>, Integer> initialDimensionFunction) {
+    public B initialDimensionFunction(
+        Function<Graph<V, ?>, Pair<Integer>> initialDimensionFunction) {
       this.initialDimensionFunction = initialDimensionFunction;
       return (B) this;
     }
@@ -327,5 +331,5 @@ public interface VisualizationServer<V, E>
   /** scale the graph visualization to fit within the view window */
   void scaleToLayout(boolean resizeToPoints);
 
-  void setInitialDimensionFunction(Function<Graph<V, ?>, Integer> initialDimensionFunction);
+  void setInitialDimensionFunction(Function<Graph<V, ?>, Pair<Integer>> initialDimensionFunction);
 }

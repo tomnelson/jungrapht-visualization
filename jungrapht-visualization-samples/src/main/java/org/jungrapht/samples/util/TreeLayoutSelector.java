@@ -194,6 +194,8 @@ public class TreeLayoutSelector<V, E> extends JPanel {
 
   Runnable after;
 
+  LayoutPaintable.LayoutBounds paintable;
+
   Set<VisualizationServer.Paintable> paintables = new HashSet<>();
 
   final JRadioButton animateTransition = new JRadioButton("Animate Transition", true);
@@ -528,6 +530,11 @@ public class TreeLayoutSelector<V, E> extends JPanel {
                     vv.getRenderContext().getMultiLayerTransformer()));
           }
         }
+        if (paintable != null) {
+          vv.removePreRenderPaintable(paintable);
+        }
+        paintable = new LayoutPaintable.LayoutBounds(vv);
+        vv.addPreRenderPaintable(paintable);
         if (log.isTraceEnabled()) {
           paintables.add(
               new LayoutPaintable.LayoutBounds(

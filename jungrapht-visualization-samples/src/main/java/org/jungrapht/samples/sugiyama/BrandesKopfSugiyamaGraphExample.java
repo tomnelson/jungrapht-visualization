@@ -34,7 +34,7 @@ public class BrandesKopfSugiyamaGraphExample extends JFrame {
 
     SugiyamaLayoutAlgorithm<Integer, Integer> layoutAlgorithm =
         SugiyamaLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
-            .after(vv::resizeToLayout)
+            //            .after(vv::resizeToLayout)
             .build();
     layoutAlgorithm.setVertexShapeFunction(vv.getRenderContext().getVertexShapeFunction());
     layoutAlgorithm.setEdgeShapeFunctionConsumer(vv.getRenderContext()::setEdgeShapeFunction);

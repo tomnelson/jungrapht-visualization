@@ -11,7 +11,9 @@ import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.IterativeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.util.Pair;
 import org.jungrapht.visualization.layout.algorithms.util.Threaded;
+import org.jungrapht.visualization.layout.event.LayoutSizeChange;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
 import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
 import org.jungrapht.visualization.layout.event.ModelChange;
@@ -36,7 +38,8 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
     protected Graph<V, ?> graph;
     protected int width;
     protected int height;
-    protected Function<Graph<V, ?>, Integer> initialDimensionFunction; // null check later
+    protected Function<Graph<V, ?>, Pair<Integer>> initialDimensionFunction =
+        g -> Pair.of(width, height);
 
     // the model will create a VisRunnable and start it in a new Thread
     protected boolean createVisRunnable = true;
@@ -62,8 +65,12 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
       return (B) this;
     }
 
-    public B initialDimensionFunction(Function<Graph<V, ?>, Integer> initialDimensionFunction) {
-      this.initialDimensionFunction = initialDimensionFunction;
+    public B initialDimensionFunction(
+        Function<Graph<V, ?>, Pair<Integer>> initialDimensionFunction) {
+      // do not set to null
+      if (initialDimensionFunction != null) {
+        this.initialDimensionFunction = initialDimensionFunction;
+      }
       return (B) this;
     }
 
@@ -87,13 +94,22 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
   protected boolean relaxing;
 
   protected Future theFuture;
+  /** Handles events fired when vertex locations are changed */
   protected LayoutVertexPositionChange.Support layoutVertexPositionSupport =
       LayoutVertexPositionChange.Support.create();
+  /** Handles events fired when the LayoutModel is actively being modified by a LayoutAlgorithm */
   protected LayoutStateChange.Support layoutStateChangeSupport = LayoutStateChange.Support.create();
+
+  /** Handles events fired when the Graph is changed */
   protected ModelChange.Support modelChangeSupport = ModelChange.Support.create();
+
   protected ViewChange.Support viewChangeSupport = ViewChange.Support.create();
+
+  protected LayoutSizeChange.Support layoutSizeChangeSupport = LayoutSizeChange.Support.create();
+
   protected int appendageCount;
-  protected Function<Graph<V, ?>, Integer> initialDimensionFunction;
+
+  protected Function<Graph<V, ?>, Pair<Integer>> initialDimensionFunction;
 
   protected AbstractLayoutModel(Builder builder) {
     this.graph = Objects.requireNonNull(builder.graph);
@@ -114,7 +130,8 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
     setSize(width, height);
   }
 
-  public void setInitialDimensionFunction(Function<Graph<V, ?>, Integer> initialDimensionFunction) {
+  public void setInitialDimensionFunction(
+      Function<Graph<V, ?>, Pair<Integer>> initialDimensionFunction) {
     this.initialDimensionFunction = initialDimensionFunction;
   }
 
@@ -151,6 +168,7 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
   @Override
   public void accept(LayoutAlgorithm<V> layoutAlgorithm) {
     this.appendageCount = 0;
+    // stop any running layout algorithm
     if (this.visRunnable != null) {
       if (log.isTraceEnabled()) {
         log.trace("stopping {}", visRunnable);
@@ -160,13 +178,28 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
     if (theFuture != null) {
       theFuture.cancel(true);
     }
-    if (initialDimensionFunction != null) {
-      int dimension = initialDimensionFunction.apply(graph);
-      setSize(dimension, dimension);
+    // if there is an initialDimensionFunction, and if the LayoutAlgorithm
+    // is not an Unconstrained type (not a Tree) then apply the function to
+    // set the layout area constraints
+    if (!(layoutAlgorithm instanceof LayoutAlgorithm.Unconstrained)) {
+      Pair<Integer> dimension = initialDimensionFunction.apply(graph);
+      // setSize will fire an event if the size has changed
+      setSize(dimension.first, dimension.second);
     } else {
+      // setSize will fire an event if the size has changed
       setSize(preferredWidth, preferredHeight);
     }
-    log.trace("reset the model size to {},{}", preferredWidth, preferredHeight);
+    //    if (initialDimensionFunction != null
+    //        && !(layoutAlgorithm instanceof LayoutAlgorithm.Unconstrained)) {
+    //      Pair<Integer> dimension = initialDimensionFunction.apply(graph);
+    //      // setSize will fire an event if the size has changed
+    //      setSize(dimension.first, dimension.second);
+    //    } else {
+    //      // setSize will fire an event if the size has changed
+    //      setSize(preferredWidth, preferredHeight);
+    //    }
+
+    log.trace("reset the model size to {} x {}", preferredWidth, preferredHeight);
     // the layoutMode is active with a new LayoutAlgorithm
     layoutStateChangeSupport.fireLayoutStateChanged(this, true);
     layoutVertexPositionSupport.setFireEvents(true);
@@ -321,15 +354,20 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
 
   /** */
   public void setSize(int width, int height) {
-    log.trace("setSize({},{})", width, height);
+    log.info("setSize({} x {}), old values: {} x {}", width, height, this.width, this.height);
     if (width <= 0) {
       width = preferredWidth;
     }
     if (height <= 0) {
       height = preferredHeight;
     }
+    boolean changed = this.width != width || this.height != height;
     this.width = width;
     this.height = height;
+    if (changed) {
+      log.info("fireLayoutSizeChanged {} x {}", width, height);
+      layoutSizeChangeSupport.fireLayoutSizeChanged(this, width, height);
+    }
     log.trace("setSize to {} by {}", this.width, this.height);
   }
 
@@ -442,6 +480,11 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
     return this.layoutVertexPositionSupport;
   }
 
+  @Override
+  public LayoutSizeChange.Support getLayoutSizeChangeSupport() {
+    return this.layoutSizeChangeSupport;
+  }
+
   public boolean isRelaxing() {
     return relaxing;
   }
@@ -537,14 +580,18 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
     }
     if (appendageCount++ == 0) {
       // first one in
-      this.width = layoutModel.getWidth();
+      int newWidth = layoutModel.getWidth();
+      int newHeight = Math.max(this.height, layoutModel.getHeight());
+      setSize(newWidth, newHeight); // so it will fire the event
       layoutModel.getLocations().keySet().stream().forEach(v -> this.set(v, layoutModel.get(v)));
 
     } else {
       // how much to move over incoming vertex locations
       int widthDelta = this.width;
       // make this wider
-      this.width += layoutModel.getWidth();
+      int newWidth = this.width + layoutModel.getWidth();
+      int newHeight = Math.max(this.height, layoutModel.getHeight());
+      setSize(newWidth, newHeight); // so it will fire the event
       // offset the incoming vertex locations and place them in this layoutModel
       layoutModel
           .getLocations()

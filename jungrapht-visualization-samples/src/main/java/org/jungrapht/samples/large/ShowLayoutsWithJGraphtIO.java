@@ -36,6 +36,7 @@ import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
 import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TreeLayout;
+import org.jungrapht.visualization.layout.algorithms.util.InitialDimensionFunction;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.transform.HyperbolicTransformer;
@@ -96,7 +97,7 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
     final VisualizationViewer<String, DefaultEdge> vv =
         VisualizationViewer.builder(graph)
             .layoutSize(new Dimension(3000, 3000))
-            .viewSize(new Dimension(900, 900))
+            .viewSize(new Dimension(800, 800))
             //            .initialDimensionFunction(
             //                g -> {
             //                  // this is a WAG to try to make the layout area good for the graph size
@@ -107,6 +108,8 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
             .build();
 
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
+    vv.setInitialDimensionFunction(
+        new InitialDimensionFunction<>(vv.getRenderContext().getVertexShapeFunction()));
 
     vv.setVertexToolTipFunction(
         vertex ->
@@ -114,6 +117,7 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
                 + ". with neighbors:"
                 + Graphs.neighborListOf(vv.getVisualizationModel().getGraph(), vertex));
 
+    // for the first layout
     vv.scaleToLayout();
 
     JComboBox modeBox = graphMouse.getModeComboBox();
@@ -174,9 +178,9 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
                     layoutAlgorithm = new StaticLayoutAlgorithm();
                   }
                   if (animateLayoutTransition.isSelected()) {
-                    LayoutAlgorithmTransition.animate(vv, layoutAlgorithm, vv::scaleToLayout);
+                    LayoutAlgorithmTransition.animate(vv, layoutAlgorithm);
                   } else {
-                    LayoutAlgorithmTransition.apply(vv, layoutAlgorithm, vv::scaleToLayout);
+                    LayoutAlgorithmTransition.apply(vv, layoutAlgorithm);
                   }
                   if (layoutAlgorithm instanceof BalloonLayoutAlgorithm) {
                     balloonLayoutRings =
@@ -306,8 +310,8 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
     JComponent bottom =
         ControlHelpers.getContainer(
             Box.createHorizontalBox(),
-            ControlHelpers.getZoomControls("Scale", vv),
-            imageButton,
+            //            ControlHelpers.getZoomControls("Scale", vv),
+            //            imageButton,
             ControlHelpers.getCenteredContainer("Mouse Mode", modeBox),
             lensBox,
             ControlHelpers.getCenteredContainer(

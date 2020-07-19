@@ -2,14 +2,27 @@ package org.jungrapht.visualization.layout.algorithms.util;
 
 import java.awt.Dimension;
 import java.awt.Shape;
+import java.awt.geom.Ellipse2D;
 import java.util.function.Function;
 import org.jgrapht.Graph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class InitialDimensionFunction<V> implements Function<Graph<V, ?>, Integer> {
+public class InitialDimensionFunction<V> implements Function<Graph<V, ?>, Pair<Integer>> {
 
-  Function<V, Shape> vertexShapeFunction;
+  private static final Logger log = LoggerFactory.getLogger(InitialDimensionFunction.class);
+
+  private static final Shape IDENTITY_SHAPE = new Ellipse2D.Double(-5, -5, 10, 10);
+
+  Function<V, Shape> vertexShapeFunction = v -> IDENTITY_SHAPE;
+
+  public InitialDimensionFunction() {}
 
   public InitialDimensionFunction(Function<V, Shape> vertexShapeFunction) {
+    this.vertexShapeFunction = vertexShapeFunction;
+  }
+
+  public void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
     this.vertexShapeFunction = vertexShapeFunction;
   }
 
@@ -20,7 +33,7 @@ public class InitialDimensionFunction<V> implements Function<Graph<V, ?>, Intege
    * @return the function result
    */
   @Override
-  public Integer apply(Graph<V, ?> graph) {
+  public Pair<Integer> apply(Graph<V, ?> graph) {
     DimensionSummaryStatistics dss = new DimensionSummaryStatistics();
     graph
         .vertexSet()
@@ -32,7 +45,8 @@ public class InitialDimensionFunction<V> implements Function<Graph<V, ?>, Intege
     int sqrt = (int) Math.sqrt(count);
     int larger = Math.max(average.width, average.height);
     larger *= sqrt;
-    larger *= 3;
-    return larger;
+    larger *= 10;
+    log.info("returning size {} for graph with {} vertices", larger, graph.vertexSet().size());
+    return Pair.of(larger, larger);
   }
 }

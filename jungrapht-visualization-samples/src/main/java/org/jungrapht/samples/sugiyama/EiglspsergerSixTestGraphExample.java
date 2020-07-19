@@ -51,7 +51,7 @@ public class EiglspsergerSixTestGraphExample extends JFrame {
             .doUpLeft(true)
             .threaded(false)
             .postStraighten(false)
-            .after(vv1::scaleToLayout)
+            //            .after(vv1::scaleToLayout)
             .build();
     layoutAlgorithm1.setVertexShapeFunction(vv1.getRenderContext().getVertexShapeFunction());
     layoutAlgorithm1.setEdgeShapeFunctionConsumer(vv1.getRenderContext()::setEdgeShapeFunction);
@@ -62,7 +62,7 @@ public class EiglspsergerSixTestGraphExample extends JFrame {
             .doUpRight(true)
             .threaded(false)
             .postStraighten(false)
-            .after(vv2::scaleToLayout)
+            //            .after(vv2::scaleToLayout)
             .build();
     layoutAlgorithm2.setVertexShapeFunction(vv2.getRenderContext().getVertexShapeFunction());
     layoutAlgorithm2.setEdgeShapeFunctionConsumer(vv2.getRenderContext()::setEdgeShapeFunction);
@@ -73,7 +73,7 @@ public class EiglspsergerSixTestGraphExample extends JFrame {
             .doDownLeft(true)
             .threaded(false)
             .postStraighten(false)
-            .after(vv3::scaleToLayout)
+            //            .after(vv3::scaleToLayout)
             .build();
     layoutAlgorithm3.setVertexShapeFunction(vv3.getRenderContext().getVertexShapeFunction());
     layoutAlgorithm3.setEdgeShapeFunctionConsumer(vv3.getRenderContext()::setEdgeShapeFunction);
@@ -84,7 +84,7 @@ public class EiglspsergerSixTestGraphExample extends JFrame {
             .doDownRight(true)
             .threaded(false)
             .postStraighten(false)
-            .after(vv4::scaleToLayout)
+            //            .after(vv4::scaleToLayout)
             .build();
     layoutAlgorithm4.setVertexShapeFunction(vv4.getRenderContext().getVertexShapeFunction());
     layoutAlgorithm4.setEdgeShapeFunctionConsumer(vv4.getRenderContext()::setEdgeShapeFunction);
@@ -98,7 +98,7 @@ public class EiglspsergerSixTestGraphExample extends JFrame {
             .doDownRight(true)
             .threaded(false)
             .postStraighten(false)
-            .after(vv5::scaleToLayout)
+            //            .after(vv5::scaleToLayout)
             .build();
     layoutAlgorithm5.setVertexShapeFunction(vv5.getRenderContext().getVertexShapeFunction());
     layoutAlgorithm5.setEdgeShapeFunctionConsumer(vv5.getRenderContext()::setEdgeShapeFunction);
@@ -112,7 +112,7 @@ public class EiglspsergerSixTestGraphExample extends JFrame {
             .doDownRight(false)
             .threaded(false)
             .postStraighten(false)
-            .after(vv6::scaleToLayout)
+            //            .after(vv6::scaleToLayout)
             .build();
     layoutAlgorithm6.setVertexShapeFunction(vv6.getRenderContext().getVertexShapeFunction());
     layoutAlgorithm6.setEdgeShapeFunctionConsumer(vv6.getRenderContext()::setEdgeShapeFunction);

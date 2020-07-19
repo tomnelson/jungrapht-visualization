@@ -15,6 +15,8 @@ import java.util.Objects;
 import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.util.Pair;
+import org.jungrapht.visualization.layout.event.LayoutSizeChange;
 import org.jungrapht.visualization.layout.event.ModelChange;
 import org.jungrapht.visualization.layout.event.ViewChange;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -42,7 +44,7 @@ class DefaultVisualizationModel<V, E> implements VisualizationModel<V, E> {
       Graph<V, E> graph,
       LayoutAlgorithm<V> layoutAlgorithm,
       LayoutModel<V> layoutModel,
-      Function<Graph<V, ?>, Integer> initialDimensionFunction,
+      Function<Graph<V, ?>, Pair<Integer>> initialDimensionFunction,
       Dimension layoutSize,
       Function<V, Point> initializer) {
     if (layoutModel == null) {
@@ -88,11 +90,13 @@ class DefaultVisualizationModel<V, E> implements VisualizationModel<V, E> {
 
   protected LayoutAlgorithm<V> layoutAlgorithm;
 
-  protected Function<Graph<V, ?>, Integer> initialDimensionFunction;
+  protected Function<Graph<V, ?>, Pair<Integer>> initialDimensionFunction;
 
   protected ModelChange.Support modelChangeSupport = ModelChange.Support.create();
 
   protected ViewChange.Support viewChangeSupport = ViewChange.Support.create();
+
+  protected LayoutSizeChange.Support layoutSizeChangeSupport = LayoutSizeChange.Support.create();
 
   @Override
   public LayoutModel<V> getLayoutModel() {
@@ -107,10 +111,12 @@ class DefaultVisualizationModel<V, E> implements VisualizationModel<V, E> {
       this.layoutModel.stopRelaxer();
       this.layoutModel.getModelChangeSupport().getModelChangeListeners().remove(this);
       this.layoutModel.getViewChangeSupport().getViewChangeListeners().remove(this);
+      this.layoutModel.getLayoutStateChangeSupport().getLayoutStateChangeListeners().remove(this);
     }
     this.layoutModel = layoutModel;
     this.layoutModel.getModelChangeSupport().addModelChangeListener(this);
     this.layoutModel.getViewChangeSupport().addViewChangeListener(this);
+    this.layoutModel.getLayoutSizeChangeSupport().addLayoutSizeChangeListener(this);
     if (layoutAlgorithm != null) {
       layoutModel.accept(layoutAlgorithm);
     }
@@ -152,12 +158,13 @@ class DefaultVisualizationModel<V, E> implements VisualizationModel<V, E> {
   }
 
   @Override
-  public Function<Graph<V, ?>, Integer> getInitialDimensionFunction() {
+  public Function<Graph<V, ?>, Pair<Integer>> getInitialDimensionFunction() {
     return this.initialDimensionFunction;
   }
 
   @Override
-  public void setInitialDimensionFunction(Function<Graph<V, ?>, Integer> initialDimensionFunction) {
+  public void setInitialDimensionFunction(
+      Function<Graph<V, ?>, Pair<Integer>> initialDimensionFunction) {
     this.layoutModel.setInitialDimensionFunction(initialDimensionFunction);
   }
 
@@ -172,11 +179,6 @@ class DefaultVisualizationModel<V, E> implements VisualizationModel<V, E> {
   }
 
   @Override
-  public ModelChange.Support getModelChangeSupport() {
-    return this.modelChangeSupport;
-  }
-
-  @Override
   public ViewChange.Support getViewChangeSupport() {
     return this.viewChangeSupport;
   }
@@ -187,7 +189,22 @@ class DefaultVisualizationModel<V, E> implements VisualizationModel<V, E> {
   }
 
   @Override
+  public ModelChange.Support getModelChangeSupport() {
+    return this.modelChangeSupport;
+  }
+
+  @Override
   public void modelChanged() {
     getModelChangeSupport().fireModelChanged();
+  }
+
+  @Override
+  public LayoutSizeChange.Support<V> getLayoutSizeChangeSupport() {
+    return this.layoutSizeChangeSupport;
+  }
+
+  @Override
+  public void layoutSizeChanged(LayoutSizeChange.Event<V> evt) {
+    getLayoutSizeChangeSupport().fireLayoutSizeChanged(evt.layoutModel, evt.width, evt.height);
   }
 }

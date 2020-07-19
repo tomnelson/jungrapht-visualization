@@ -129,7 +129,7 @@ public class SpatialRTreeTest extends JPanel {
 
     JButton recalculate = new JButton("Recalculate");
     recalculate.addActionListener(e -> vv.getVertexSpatial().recalculate());
-    vv.scaleToLayout(scaler);
+    vv.scaleToLayout();
     this.add(vv.getComponent());
     JPanel buttons = new JPanel();
     JButton search = new JButton("Test 1000 Searches");

@@ -228,7 +228,11 @@ public class ISOMLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
    *     otherwise
    */
   public boolean done() {
-    return epoch >= maxEpoch;
+    boolean done = epoch >= maxEpoch;
+    if (done) {
+      runAfter();
+    }
+    return done;
   }
 
   private static class ISOMVertexData {

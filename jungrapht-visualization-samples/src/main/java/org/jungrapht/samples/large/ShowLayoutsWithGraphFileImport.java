@@ -165,9 +165,9 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
                     layoutAlgorithm = new StaticLayoutAlgorithm();
                   }
                   if (animateLayoutTransition.isSelected()) {
-                    LayoutAlgorithmTransition.animate(vv, layoutAlgorithm, vv::resizeToLayout);
+                    LayoutAlgorithmTransition.animate(vv, layoutAlgorithm);
                   } else {
-                    LayoutAlgorithmTransition.apply(vv, layoutAlgorithm, vv::resizeToLayout);
+                    LayoutAlgorithmTransition.apply(vv, layoutAlgorithm);
                   }
                   if (layoutAlgorithm instanceof BalloonLayoutAlgorithm) {
                     balloonLayoutRings =

@@ -208,9 +208,9 @@ public class ShowLayoutsWithImageIconVertices extends JPanel {
                     layoutAlgorithm = new StaticLayoutAlgorithm();
                   }
                   if (animateLayoutTransition.isSelected()) {
-                    LayoutAlgorithmTransition.animate(vv, layoutAlgorithm, vv::scaleToLayout);
+                    LayoutAlgorithmTransition.animate(vv, layoutAlgorithm);
                   } else {
-                    LayoutAlgorithmTransition.apply(vv, layoutAlgorithm, vv::scaleToLayout);
+                    LayoutAlgorithmTransition.apply(vv, layoutAlgorithm);
                   }
                   if (layoutAlgorithm instanceof BalloonLayoutAlgorithm) {
                     balloonLayoutRings =

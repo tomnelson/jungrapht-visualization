@@ -9,6 +9,8 @@
 */
 package org.jungrapht.visualization;
 
+import static org.jungrapht.visualization.MultiLayerTransformer.*;
+
 import java.awt.*;
 import java.awt.RenderingHints.Key;
 import java.awt.event.ComponentAdapter;
@@ -33,7 +35,9 @@ import org.jungrapht.visualization.control.TransformSupport;
 import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.util.EdgeShapeFunctionSupplier;
+import org.jungrapht.visualization.layout.algorithms.util.Pair;
 import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
+import org.jungrapht.visualization.layout.event.LayoutSizeChange;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
 import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
 import org.jungrapht.visualization.layout.event.RenderContextStateChange;
@@ -47,7 +51,11 @@ import org.jungrapht.visualization.spatial.Spatial;
 import org.jungrapht.visualization.spatial.SpatialGrid;
 import org.jungrapht.visualization.spatial.SpatialQuadTree;
 import org.jungrapht.visualization.spatial.SpatialRTree;
-import org.jungrapht.visualization.spatial.rtree.*;
+import org.jungrapht.visualization.spatial.rtree.QuadraticLeafSplitter;
+import org.jungrapht.visualization.spatial.rtree.QuadraticSplitter;
+import org.jungrapht.visualization.spatial.rtree.RStarLeafSplitter;
+import org.jungrapht.visualization.spatial.rtree.RStarSplitter;
+import org.jungrapht.visualization.spatial.rtree.SplitterContext;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.util.BoundingRectangleCollector;
 import org.jungrapht.visualization.util.ChangeEventSupport;
@@ -181,7 +189,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
   protected DefaultVisualizationServer(
       Graph<V, E> graph,
       VisualizationModel<V, E> visualizationModel,
-      Function<Graph<V, ?>, Integer> initialDimensionFunction,
+      Function<Graph<V, ?>, Pair<Integer>> initialDimensionFunction,
       LayoutAlgorithm<V> layoutAlgorithm,
       Dimension layoutSize,
       Dimension viewSize) {
@@ -210,10 +218,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
     renderer = DefaultModalRenderer.<V, E>builder().component(this).build();
     renderer.setCountSupplier(getVisualizationModel().getGraph().vertexSet()::size);
     renderer.setScaleSupplier(
-        getRenderContext()
-                .getMultiLayerTransformer()
-                .getTransformer(MultiLayerTransformer.Layer.VIEW)
-            ::scale);
+        getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW)::scale);
     createSpatialStuctures(this.visualizationModel, renderContext);
     this.addComponentListener(new VisualizationListener(this));
 
@@ -249,7 +254,15 @@ class DefaultVisualizationServer<V, E> extends JPanel
   }
 
   @Override
-  public void setInitialDimensionFunction(Function<Graph<V, ?>, Integer> initialDimensionFunction) {
+  public void layoutSizeChanged(LayoutSizeChange.Event evt) {
+    log.info("layoutSizeChanged to {} x {}", evt.width, evt.height);
+    //    reset();
+    scaleToLayout();
+  }
+
+  @Override
+  public void setInitialDimensionFunction(
+      Function<Graph<V, ?>, Pair<Integer>> initialDimensionFunction) {
     this.visualizationModel.setInitialDimensionFunction(initialDimensionFunction);
   }
 
@@ -388,6 +401,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
           .getLayoutModel()
           .getLayoutStateChangeSupport()
           .removeLayoutStateChangeListener(this);
+      this.visualizationModel.getLayoutSizeChangeSupport().removeLayoutSizeChangeListener(this);
     }
     this.visualizationModel = visualizationModel;
     this.visualizationModel.getModelChangeSupport().addModelChangeListener(this);
@@ -396,6 +410,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
         .getLayoutModel()
         .getLayoutStateChangeSupport()
         .addLayoutStateChangeListener(this);
+    this.visualizationModel.getLayoutSizeChangeSupport().addLayoutSizeChangeListener(this);
   }
 
   @Override
@@ -432,7 +447,12 @@ class DefaultVisualizationServer<V, E> extends JPanel
   @Override
   public void scaleToLayout(ScalingControl scaler, boolean resizeToPoints) {
     log.info("Thread: {} will scaleToLayout({})", Thread.currentThread(), resizeToPoints);
-    getRenderContext().getMultiLayerTransformer().setToIdentity();
+    MultiLayerTransformer mlt = renderContext.getMultiLayerTransformer();
+    log.info("view transform: {}", mlt.getTransformer(Layer.VIEW).getTransform());
+    log.info("layout transform: {}", mlt.getTransformer(Layer.LAYOUT).getTransform());
+    this.reset();
+    log.info("reset view transform: {}", mlt.getTransformer(Layer.VIEW).getTransform());
+    log.info("reset layout transform: {}", mlt.getTransformer(Layer.LAYOUT).getTransform());
     Dimension vd = getPreferredSize();
     log.info("preferred view size: {}", vd);
     if (this.isShowing()) {
@@ -453,21 +473,22 @@ class DefaultVisualizationServer<V, E> extends JPanel
       double widthRatio = vd.getWidth() / ld.getWidth();
       double heightRatio = vd.getHeight() / ld.getHeight();
       double ratio = Math.min(widthRatio, heightRatio);
-      if (log.isTraceEnabled()) {
-        log.trace(
-            "scaling with {} {}", (widthRatio < heightRatio ? "widthRatio" : "heightRatio"), ratio);
-        log.trace("vd.getWidth() {} ld.getWidth() {} ", vd.getWidth(), ld.getWidth());
-        log.trace("vd.getHeight() {} ld.getHeight() {} ", vd.getHeight(), ld.getHeight());
-      }
+      //      if (log.isTraceEnabled()) {
+      log.info(
+          "scaling with {} {}", (widthRatio < heightRatio ? "widthRatio" : "heightRatio"), ratio);
+      log.info("vd.getWidth() {} ld.getWidth() {} ", vd.getWidth(), ld.getWidth());
+      log.info("vd.getHeight() {} ld.getHeight() {} ", vd.getHeight(), ld.getHeight());
+      log.info("ratio: {}", ratio);
+      //      }
       scaler.scale(this, (float) ratio, (float) ratio, new Point2D.Double());
-      if (log.isTraceEnabled()) {
-        log.trace("center of view is " + this.getCenter());
-        log.trace(
-            "center of layout is "
-                + visualizationModel.getLayoutModel().getWidth() / 2
-                + ", "
-                + visualizationModel.getLayoutModel().getHeight() / 2);
-      }
+      //      if (log.isTraceEnabled()) {
+      log.info("center of view is " + this.getCenter());
+      log.info(
+          "center of layout is "
+              + visualizationModel.getLayoutModel().getWidth() / 2
+              + ", "
+              + visualizationModel.getLayoutModel().getHeight() / 2);
+      //      }
       Point2D centerOfView = this.getCenter();
       // transform to layout coords
       Point2D viewCenterOnLayout =
@@ -478,7 +499,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
       double deltaY = viewCenterOnLayout.getY() - layoutCenter.y;
       getRenderContext()
           .getMultiLayerTransformer()
-          .getTransformer(MultiLayerTransformer.Layer.LAYOUT)
+          .getTransformer(Layer.LAYOUT)
           .translate(deltaX, deltaY);
     }
     log.info("Thread: {} is done with scaleToLayout({})", Thread.currentThread(), resizeToPoints);
@@ -537,10 +558,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
     AffineTransform oldXform = g2d.getTransform();
     AffineTransform newXform = new AffineTransform(oldXform);
     newXform.concatenate(
-        renderContext
-            .getMultiLayerTransformer()
-            .getTransformer(MultiLayerTransformer.Layer.VIEW)
-            .getTransform());
+        renderContext.getMultiLayerTransformer().getTransformer(Layer.VIEW).getTransform());
 
     g2d.setTransform(newXform);
 
@@ -620,7 +638,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
     boolean busy = evt.active;
     log.info("####################### layoutStateChanged. busy:{}", busy);
     if (!busy) {
-      scaleToLayout(true);
+      //            scaleToLayout(true);
     }
     //    repaint();
     //    no op
@@ -632,10 +650,9 @@ class DefaultVisualizationServer<V, E> extends JPanel
   }
 
   /**
-   * VisualizationListener reacts to changes in the layoutSize of the VisualizationViewer. When the
-   * layoutSize changes, it ensures that the offscreen image is sized properly. If the layout is
-   * locked to this view layoutSize, then the layout is also resized to be the same as the view
-   * layoutSize.
+   * VisualizationListener reacts to changes in the size of the VisualizationViewer. When the size
+   * changes, it ensures that the offscreen image is sized properly. If the layout is locked to this
+   * view layoutSize, then the layout is also resized to be the same as the view layoutSize.
    */
   protected class VisualizationListener extends ComponentAdapter {
     protected DefaultVisualizationServer<V, E> vv;

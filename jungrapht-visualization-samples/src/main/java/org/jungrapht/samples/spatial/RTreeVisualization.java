@@ -159,9 +159,9 @@ public class RTreeVisualization<V> extends JPanel {
           if (e.getStateChange() == ItemEvent.SELECTED) {
             vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
             if (animate.isSelected()) {
-              LayoutAlgorithmTransition.animate(vv, treeLayoutAlgorithm, () -> {});
+              LayoutAlgorithmTransition.animate(vv, treeLayoutAlgorithm);
             } else {
-              LayoutAlgorithmTransition.apply(vv, treeLayoutAlgorithm, () -> {});
+              LayoutAlgorithmTransition.apply(vv, treeLayoutAlgorithm);
             }
             if (rings != null) {
               vv.removePreRenderPaintable(rings);
@@ -177,9 +177,9 @@ public class RTreeVisualization<V> extends JPanel {
           if (e.getStateChange() == ItemEvent.SELECTED) {
             vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
             if (animate.isSelected()) {
-              LayoutAlgorithmTransition.animate(vv, radialLayoutAlgorithm, vv::resizeToLayout);
+              LayoutAlgorithmTransition.animate(vv, radialLayoutAlgorithm);
             } else {
-              LayoutAlgorithmTransition.apply(vv, radialLayoutAlgorithm, vv::resizeToLayout);
+              LayoutAlgorithmTransition.apply(vv, radialLayoutAlgorithm);
             }
             if (rings == null) {
               rings = new Rings(vv.getVisualizationModel().getLayoutModel());
@@ -196,9 +196,9 @@ public class RTreeVisualization<V> extends JPanel {
           if (e.getStateChange() == ItemEvent.SELECTED) {
             vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
             if (animate.isSelected()) {
-              LayoutAlgorithmTransition.animate(vv, balloonLayoutAlgorithm, vv::scaleToLayout);
+              LayoutAlgorithmTransition.animate(vv, balloonLayoutAlgorithm);
             } else {
-              LayoutAlgorithmTransition.apply(vv, balloonLayoutAlgorithm, vv::scaleToLayout);
+              LayoutAlgorithmTransition.apply(vv, balloonLayoutAlgorithm);
             }
             if (balloonRings == null) {
               balloonRings = new BalloonRings(balloonLayoutAlgorithm);

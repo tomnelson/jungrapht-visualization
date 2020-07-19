@@ -6,6 +6,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,7 @@ import org.slf4j.LoggerFactory;
  * @author Tom Nelson
  */
 public abstract class AbstractIterativeLayoutAlgorithm<V> extends AbstractLayoutAlgorithm<V>
-    implements IterativeLayoutAlgorithm<V>, Future {
+    implements IterativeLayoutAlgorithm<V>, Future, AfterRunnable {
 
   private static final Logger log = LoggerFactory.getLogger(AbstractIterativeLayoutAlgorithm.class);
 
@@ -29,6 +30,7 @@ public abstract class AbstractIterativeLayoutAlgorithm<V> extends AbstractLayout
     protected Random random = new Random();
     protected boolean shouldPrerelax = true;
     protected int preRelaxDurationMs = 500;
+    protected Runnable afterRunnable = () -> {};
 
     public B randomSeed(long randomSeed) {
       this.random = new Random(randomSeed);
@@ -50,6 +52,11 @@ public abstract class AbstractIterativeLayoutAlgorithm<V> extends AbstractLayout
       return self();
     }
 
+    public B afterRunnable(Runnable afterRunnable) {
+      this.afterRunnable = afterRunnable;
+      return self();
+    }
+
     protected B self() {
       return (B) this;
     }
@@ -63,6 +70,7 @@ public abstract class AbstractIterativeLayoutAlgorithm<V> extends AbstractLayout
     this.random = builder.random;
     this.shouldPreRelax = builder.shouldPrerelax;
     this.preRelaxDurationMs = builder.preRelaxDurationMs;
+    this.afterRunnable = builder.afterRunnable;
   }
   /**
    * because the IterativeLayoutAlgorithms use multithreading to continuously update vertex
@@ -80,6 +88,8 @@ public abstract class AbstractIterativeLayoutAlgorithm<V> extends AbstractLayout
   protected Random random;
 
   protected Future future;
+
+  protected Runnable afterRunnable;
 
   public void setRandomSeed(long randomSeed) {
     this.random = new Random(randomSeed);

@@ -44,7 +44,7 @@ public class BrandesKopfTestGraphExample extends JFrame {
     BrandesKopfLayoutAlgorithm<Integer, Integer> layoutAlgorithm1 =
         BrandesKopfLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .doUpLeft(true)
-            .after(vv1::scaleToLayout)
+            //            .after(vv1::scaleToLayout)
             .build();
     layoutAlgorithm1.setVertexShapeFunction(vv1.getRenderContext().getVertexShapeFunction());
     layoutAlgorithm1.setEdgeShapeFunctionConsumer(vv1.getRenderContext()::setEdgeShapeFunction);
@@ -53,7 +53,7 @@ public class BrandesKopfTestGraphExample extends JFrame {
     BrandesKopfLayoutAlgorithm<Integer, Integer> layoutAlgorithm2 =
         BrandesKopfLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .doUpRight(true)
-            .after(vv2::scaleToLayout)
+            //            .after(vv2::scaleToLayout)
             .build();
     layoutAlgorithm2.setVertexShapeFunction(vv2.getRenderContext().getVertexShapeFunction());
     layoutAlgorithm2.setEdgeShapeFunctionConsumer(vv2.getRenderContext()::setEdgeShapeFunction);
@@ -62,7 +62,7 @@ public class BrandesKopfTestGraphExample extends JFrame {
     BrandesKopfLayoutAlgorithm<Integer, Integer> layoutAlgorithm3 =
         BrandesKopfLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .doDownLeft(true)
-            .after(vv3::scaleToLayout)
+            //            .after(vv3::scaleToLayout)
             .build();
     layoutAlgorithm3.setVertexShapeFunction(vv3.getRenderContext().getVertexShapeFunction());
     layoutAlgorithm3.setEdgeShapeFunctionConsumer(vv3.getRenderContext()::setEdgeShapeFunction);
@@ -71,7 +71,7 @@ public class BrandesKopfTestGraphExample extends JFrame {
     BrandesKopfLayoutAlgorithm<Integer, Integer> layoutAlgorithm4 =
         BrandesKopfLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .doDownRight(true)
-            .after(vv4::scaleToLayout)
+            //            .after(vv4::scaleToLayout)
             .build();
     layoutAlgorithm4.setVertexShapeFunction(vv4.getRenderContext().getVertexShapeFunction());
     layoutAlgorithm4.setEdgeShapeFunctionConsumer(vv4.getRenderContext()::setEdgeShapeFunction);
@@ -83,7 +83,7 @@ public class BrandesKopfTestGraphExample extends JFrame {
             .doUpRight(true)
             .doDownLeft(true)
             .doDownRight(true)
-            .after(vv5::scaleToLayout)
+            //            .after(vv5::scaleToLayout)
             .build();
     layoutAlgorithm5.setVertexShapeFunction(vv5.getRenderContext().getVertexShapeFunction());
     layoutAlgorithm5.setEdgeShapeFunctionConsumer(vv5.getRenderContext()::setEdgeShapeFunction);

@@ -31,7 +31,7 @@ public class SugiyamaMulticomponent extends JFrame {
             .postStraighten(true)
             .threaded(false)
             .layering(Layering.COFFMAN_GRAHAM)
-            .after(vv1::scaleToLayout)
+            //            .after(vv1::scaleToLayout)
             .build();
     layoutAlgorithm1.setVertexShapeFunction(vv1.getRenderContext().getVertexShapeFunction());
     layoutAlgorithm1.setEdgeShapeFunctionConsumer(vv1.getRenderContext()::setEdgeShapeFunction);
@@ -44,7 +44,7 @@ public class SugiyamaMulticomponent extends JFrame {
             .postStraighten(true)
             .threaded(false)
             .layering(Layering.COFFMAN_GRAHAM)
-            .after(vv2::scaleToLayout)
+            //            .after(vv2::scaleToLayout)
             .separateComponents(false)
             .build();
     layoutAlgorithm2.setVertexShapeFunction(vv2.getRenderContext().getVertexShapeFunction());

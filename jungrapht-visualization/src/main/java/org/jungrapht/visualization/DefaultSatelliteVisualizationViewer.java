@@ -78,7 +78,7 @@ public class DefaultSatelliteVisualizationViewer<V, E> extends DefaultVisualizat
     master
         .getVisualizationModel()
         .getModelChangeSupport()
-        .addModelChangeListener(this::scaleToLayout);
+        .addModelChangeListener(this::resizeToLayout);
 
     // share the selected state of the master
     setSelectedVertexState(master.getSelectedVertexState());

@@ -39,7 +39,7 @@ public class EiglspergerSmallNetworkSimplexComparison extends JFrame {
             .postStraighten(true)
             .threaded(false)
             .layering(Layering.LONGEST_PATH)
-            .after(vv1::scaleToLayout)
+            //            .after(vv1::scaleToLayout)
             .build();
     layoutAlgorithm1.setVertexShapeFunction(vv1.getRenderContext().getVertexShapeFunction());
     layoutAlgorithm1.setEdgeShapeFunctionConsumer(vv1.getRenderContext()::setEdgeShapeFunction);
@@ -55,7 +55,7 @@ public class EiglspergerSmallNetworkSimplexComparison extends JFrame {
             .postStraighten(true)
             .threaded(false)
             .layering(Layering.NETWORK_SIMPLEX)
-            .after(vv2::scaleToLayout)
+            //            .after(vv2::scaleToLayout)
             .build();
     layoutAlgorithm2.setVertexShapeFunction(vv2.getRenderContext().getVertexShapeFunction());
     layoutAlgorithm2.setEdgeShapeFunctionConsumer(vv2.getRenderContext()::setEdgeShapeFunction);

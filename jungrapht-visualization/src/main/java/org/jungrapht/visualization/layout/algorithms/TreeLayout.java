@@ -11,11 +11,11 @@ import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.model.Rectangle;
 
 /**
- * an interface for {@code LayoutAlgorithm} that place their vertices in a tree inke heirarchy
+ * an interface for {@code LayoutAlgorithm} that place their vertices in a tree like heirarchy
  *
  * @param <V>
  */
-public interface TreeLayout<V> extends LayoutAlgorithm<V> {
+public interface TreeLayout<V> extends LayoutAlgorithm.Unconstrained<V> {
 
   int TREE_LAYOUT_HORIZONTAL_SPACING =
       Integer.getInteger(PREFIX + "treeLayoutHorizontalSpacing", 50);

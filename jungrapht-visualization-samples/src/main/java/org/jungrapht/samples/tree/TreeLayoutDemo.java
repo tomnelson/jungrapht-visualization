@@ -92,7 +92,7 @@ public class TreeLayoutDemo extends JPanel {
     layoutPanel.add(
         TreeLayoutSelector.<String, Integer>builder(vv)
             .vertexShapeFunction(vertexShapeFunction)
-            .after(vv::scaleToLayout)
+            //            .after(vv::scaleToLayout)
             .build());
     JPanel controls = new JPanel();
     controls.add(layoutPanel);

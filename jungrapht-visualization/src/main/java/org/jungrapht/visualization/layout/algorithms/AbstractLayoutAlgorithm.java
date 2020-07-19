@@ -25,19 +25,16 @@ public abstract class AbstractLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
   }
 
   protected AbstractLayoutAlgorithm(Builder builder) {
-
-    //    this.after = builder.after;
+    this.after = builder.after;
   }
 
-  //  @Override
-  //  public void setAfter(Runnable after) {
-  //    this.after = after;
-  //  }
-  //
-  //  @Override
-  //  public void runAfter() {
-  //    if (after != null) after.run();
-  //  }
-  //
-  //  protected Runnable after;
+  public void setAfter(Runnable after) {
+    this.after = after;
+  }
+
+  public void runAfter() {
+    if (after != null) after.run();
+  }
+
+  protected Runnable after;
 }

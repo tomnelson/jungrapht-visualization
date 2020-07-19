@@ -350,7 +350,12 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
 
   @Override
   public boolean done() {
-    return currentIteration >= maxIterations;
+
+    boolean done = currentIteration >= maxIterations;
+    if (done) {
+      runAfter();
+    }
+    return done;
   }
 
   private Point getFRData(V vertex) {

@@ -22,6 +22,7 @@ import org.jungrapht.samples.util.SpanningTreeAdapter;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.layout.algorithms.*;
+import org.jungrapht.visualization.layout.algorithms.util.InitialDimensionFunction;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.util.GraphImage;
@@ -79,6 +80,7 @@ public class ShowLayouts extends JPanel {
 
     final VisualizationViewer<String, Integer> vv =
         VisualizationViewer.builder(initialGraph)
+            .initialDimensionFunction(new InitialDimensionFunction<>())
             .layoutAlgorithm(new KKLayoutAlgorithm<>())
             .build();
 
@@ -96,6 +98,12 @@ public class ShowLayouts extends JPanel {
               int size = Math.max(5, 2 * vv.getVisualizationModel().getGraph().degreeOf(v));
               return new Ellipse2D.Float(-size / 2.f, -size / 2.f, size, size);
             });
+
+    vv.setInitialDimensionFunction(
+        new InitialDimensionFunction<>(vv.getRenderContext().getVertexShapeFunction()));
+
+    // for the initial layout
+    vv.scaleToLayout();
 
     setLayout(new BorderLayout());
     add(vv.getComponent(), BorderLayout.CENTER);
@@ -162,8 +170,8 @@ public class ShowLayouts extends JPanel {
                   graphIndex = graphChooser.getSelectedIndex();
                   vv.getVertexSpatial().clear();
                   vv.getEdgeSpatial().clear();
-                  vv.getVisualizationModel().getLayoutModel().setSize(600, 600);
-                  vv.reset();
+                  //                  vv.getVisualizationModel().getLayoutModel().setSize(600, 600);
+                  //                  vv.reset();
                   vv.getVisualizationModel().setGraph(graphArray[graphIndex]);
                   vv.getRenderContext()
                       .setVertexShapeFunction(
@@ -179,12 +187,15 @@ public class ShowLayouts extends JPanel {
     JButton imageButton = new JButton("Save Image");
     imageButton.addActionListener(e -> GraphImage.capture(vv));
 
+    JButton scaleToLayoutButton = new JButton("ScaleToLayout");
+    scaleToLayoutButton.addActionListener(evt -> vv.scaleToLayout());
+
     topControls.add(jcb);
     topControls.add(graphChooser);
     bottomControls.add(animateLayoutTransition);
     bottomControls.add(ControlHelpers.getZoomControls("Zoom", vv));
     bottomControls.add(showRTree);
-    bottomControls.add(imageButton);
+    bottomControls.add(scaleToLayoutButton);
   }
 
   LayoutModel getTreeLayoutPositions(Graph tree, LayoutAlgorithm treeLayout) {

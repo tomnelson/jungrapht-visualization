@@ -14,6 +14,8 @@ import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.util.Pair;
+import org.jungrapht.visualization.layout.event.LayoutSizeChange;
 import org.jungrapht.visualization.layout.event.ModelChange;
 import org.jungrapht.visualization.layout.event.ViewChange;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -26,7 +28,13 @@ import org.jungrapht.visualization.layout.model.Point;
  * @param <E> the edge type
  */
 public interface VisualizationModel<V, E>
-    extends ViewChange.Listener, ViewChange.Producer, ModelChange.Listener, ModelChange.Producer {
+    extends ViewChange.Listener,
+        ViewChange.Producer,
+        ModelChange.Listener, // to receive events from the LayoutModel
+        ModelChange.Producer, // to pass along to the VisualizationServer
+        LayoutSizeChange.Listener<V>, // to receive events from the LayoutModel
+        LayoutSizeChange.Producer<V> // to pass along to the VisualizationServer
+{
 
   /**
    * A builder for creating instances of a {@code }VisualizationModel} with user defined properties
@@ -49,7 +57,8 @@ public interface VisualizationModel<V, E>
     /** a {@code Function} to set initial vertex locations */
     protected Function<V, Point> initializer;
 
-    protected Function<Graph<V, ?>, Integer> initialDimensionFunction;
+    // defaults to the preferres sizes of the model
+    protected Function<Graph<V, ?>, Pair<Integer>> initialDimensionFunction;
 
     /** @return this builder cast to type B */
     protected B self() {
@@ -94,7 +103,8 @@ public interface VisualizationModel<V, E>
       return self();
     }
 
-    public B initialDimensionFunction(Function<Graph<V, ?>, Integer> initialDimensionFunction) {
+    public B initialDimensionFunction(
+        Function<Graph<V, ?>, Pair<Integer>> initialDimensionFunction) {
       this.initialDimensionFunction = initialDimensionFunction;
       return self();
     }
@@ -185,7 +195,11 @@ public interface VisualizationModel<V, E>
    */
   void setGraph(Graph<V, E> graph, boolean forceUpdate);
 
-  Function<Graph<V, ?>, Integer> getInitialDimensionFunction();
+  Function<Graph<V, ?>, Pair<Integer>> getInitialDimensionFunction();
 
-  void setInitialDimensionFunction(Function<Graph<V, ?>, Integer> initialDimensionFunction);
+  void setInitialDimensionFunction(Function<Graph<V, ?>, Pair<Integer>> initialDimensionFunction);
+
+  default LayoutSizeChange.Listener<V> getLayoutSizeChangeListener() {
+    return this;
+  }
 }

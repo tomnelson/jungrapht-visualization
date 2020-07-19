@@ -25,6 +25,7 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.decorators.IconShapeFunction;
+import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.util.IconCache;
 import org.slf4j.Logger;
@@ -46,6 +47,7 @@ public class RandomDAGExample extends JPanel {
 
   public RandomDAGExample() {
 
+    LayoutPaintable.LayoutBounds paintable;
     setLayout(new BorderLayout());
     // create a simple graph for the demo
     graph = TestGraphs.createDirectedAcyclicGraph(9, 3, .2, 5L);
@@ -59,7 +61,8 @@ public class RandomDAGExample extends JPanel {
 
     vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
     vv.getRenderContext().setVertexLabelDrawPaintFunction(c -> Color.white);
-
+    // for the first layout
+    vv.scaleToLayout();
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     this.add(panel);
 
@@ -142,7 +145,7 @@ public class RandomDAGExample extends JPanel {
             .initialSelection(2)
             .vertexShapeFunction(vv.getRenderContext().getVertexShapeFunction())
             .alignFavoredEdges(false)
-            .after(vv::resizeToLayout)
+            //            .after(vv::resizeToLayout)
             .build();
 
     JRadioButton showSpatialEffects = new JRadioButton("Show Structure");

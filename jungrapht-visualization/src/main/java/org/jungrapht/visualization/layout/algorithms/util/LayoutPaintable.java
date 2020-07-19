@@ -29,6 +29,12 @@ public interface LayoutPaintable {
     private ShapeTransformer transformer;
     Color color;
 
+    public LayoutBounds(VisualizationServer visualizationServer) {
+      this(
+          visualizationServer.getVisualizationModel(),
+          visualizationServer.getRenderContext().getMultiLayerTransformer());
+    }
+
     public LayoutBounds(VisualizationModel visualizationModel, ShapeTransformer transformer) {
       this(visualizationModel, transformer, Color.cyan);
     }

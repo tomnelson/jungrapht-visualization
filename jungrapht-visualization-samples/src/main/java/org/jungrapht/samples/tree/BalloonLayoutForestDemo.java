@@ -131,7 +131,10 @@ public class BalloonLayoutForestDemo extends JPanel {
     controls.add(
         ControlHelpers.getCenteredContainer(
             "Layout Controls",
-            TreeLayoutSelector.builder(vv).initialSelection(6).after(vv::scaleToLayout).build()));
+            TreeLayoutSelector.builder(vv)
+                .initialSelection(6)
+                //                    .after(vv::scaleToLayout)
+                .build()));
     controls.add(ControlHelpers.getCenteredContainer("Lens Controls", lensBox));
     add(controls, BorderLayout.SOUTH);
   }

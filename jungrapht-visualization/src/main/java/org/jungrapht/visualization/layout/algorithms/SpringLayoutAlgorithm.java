@@ -278,6 +278,9 @@ public class SpringLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorith
 
   /** @return false */
   public boolean done() {
+    if (this.done) {
+      runAfter();
+    }
     return this.done;
   }
 }

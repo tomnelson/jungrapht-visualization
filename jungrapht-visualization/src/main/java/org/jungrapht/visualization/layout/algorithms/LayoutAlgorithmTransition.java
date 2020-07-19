@@ -29,11 +29,6 @@ public class LayoutAlgorithmTransition {
 
     if (endLayoutAlgorithm instanceof AfterRunnable) {
       ((AfterRunnable) endLayoutAlgorithm).setAfter(after);
-      log.info("setAfter");
-    }
-
-    if (!(endLayoutAlgorithm instanceof AfterRunnable)) {
-      new RuntimeException(endLayoutAlgorithm + " is not an AfterRunnable");
     }
 
     LayoutAlgorithm<V> transitionLayoutAlgorithm =
@@ -53,26 +48,13 @@ public class LayoutAlgorithmTransition {
 
     if (endLayoutAlgorithm instanceof AfterRunnable) {
       ((AfterRunnable) endLayoutAlgorithm).setAfter(after);
-      log.info("setAfter");
     }
-
     visualizationServer.getVisualizationModel().setLayoutAlgorithm(endLayoutAlgorithm);
-
-    if (!(endLayoutAlgorithm instanceof AfterRunnable)) {
-      new RuntimeException(endLayoutAlgorithm + " is not an AfterRunnable");
-    }
-    //    if (endLayoutAlgorithm instanceof AfterRunnable) {
-    //      ((AfterRunnable) endLayoutAlgorithm).setAfter(after);
-    //      log.info("setAFter");
-    //    } else {
-    //      log.info("should not happen after.run()");
-    //      after.run();
-    //    }
   }
 
   public static <V, E> void apply(
       VisualizationServer<V, E> visualizationServer, LayoutAlgorithm<V> endLayoutAlgorithm) {
-    visualizationServer.getVisualizationModel().setLayoutAlgorithm(endLayoutAlgorithm);
+    apply(visualizationServer, endLayoutAlgorithm, () -> {});
   }
 
   private static void fireLayoutStateChanged(LayoutModel layoutModel, boolean state) {
