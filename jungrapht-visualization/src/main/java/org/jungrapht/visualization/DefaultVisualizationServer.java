@@ -35,6 +35,7 @@ import org.jungrapht.visualization.control.TransformSupport;
 import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.util.EdgeShapeFunctionSupplier;
+import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.layout.algorithms.util.Pair;
 import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
 import org.jungrapht.visualization.layout.event.LayoutSizeChange;
@@ -255,8 +256,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
 
   @Override
   public void layoutSizeChanged(LayoutSizeChange.Event evt) {
-    log.info("layoutSizeChanged to {} x {}", evt.width, evt.height);
-    //    reset();
+    log.trace("layoutSizeChanged to {} x {}", evt.width, evt.height);
     scaleToLayout();
   }
 
@@ -446,21 +446,21 @@ class DefaultVisualizationServer<V, E> extends JPanel
 
   @Override
   public void scaleToLayout(ScalingControl scaler, boolean resizeToPoints) {
-    log.info("Thread: {} will scaleToLayout({})", Thread.currentThread(), resizeToPoints);
+    log.trace("Thread: {} will scaleToLayout({})", Thread.currentThread(), resizeToPoints);
     MultiLayerTransformer mlt = renderContext.getMultiLayerTransformer();
-    log.info("view transform: {}", mlt.getTransformer(Layer.VIEW).getTransform());
-    log.info("layout transform: {}", mlt.getTransformer(Layer.LAYOUT).getTransform());
+    log.trace("view transform: {}", mlt.getTransformer(Layer.VIEW).getTransform());
+    log.trace("layout transform: {}", mlt.getTransformer(Layer.LAYOUT).getTransform());
     this.reset();
-    log.info("reset view transform: {}", mlt.getTransformer(Layer.VIEW).getTransform());
-    log.info("reset layout transform: {}", mlt.getTransformer(Layer.LAYOUT).getTransform());
+    log.trace("reset view transform: {}", mlt.getTransformer(Layer.VIEW).getTransform());
+    log.trace("reset layout transform: {}", mlt.getTransformer(Layer.LAYOUT).getTransform());
     Dimension vd = getPreferredSize();
-    log.info("preferred view size: {}", vd);
+    log.trace("preferred view size: {}", vd);
     if (this.isShowing()) {
       vd = getSize();
-      log.info("actual view size: {}", vd);
+      log.trace("actual view size: {}", vd);
     }
     if (resizeToPoints) {
-      log.info("resize to points");
+      log.warn("resize to points is deprecated");
       LayoutModel<V> layoutModel = visualizationModel.getLayoutModel();
       // switch off spatial structures
       vertexSpatial.setActive(false);
@@ -468,27 +468,27 @@ class DefaultVisualizationServer<V, E> extends JPanel
       layoutModel.resizeToSurroundingRectangle();
     }
     Dimension ld = visualizationModel.getLayoutSize();
-    log.info("layoutSize {}", ld);
+    log.trace("layoutSize {}", ld);
     if (!vd.equals(ld)) {
       double widthRatio = vd.getWidth() / ld.getWidth();
       double heightRatio = vd.getHeight() / ld.getHeight();
       double ratio = Math.min(widthRatio, heightRatio);
-      //      if (log.isTraceEnabled()) {
-      log.info(
-          "scaling with {} {}", (widthRatio < heightRatio ? "widthRatio" : "heightRatio"), ratio);
-      log.info("vd.getWidth() {} ld.getWidth() {} ", vd.getWidth(), ld.getWidth());
-      log.info("vd.getHeight() {} ld.getHeight() {} ", vd.getHeight(), ld.getHeight());
-      log.info("ratio: {}", ratio);
-      //      }
+      if (log.isTraceEnabled()) {
+        log.trace(
+            "scaling with {} {}", (widthRatio < heightRatio ? "widthRatio" : "heightRatio"), ratio);
+        log.trace("vd.getWidth() {} ld.getWidth() {} ", vd.getWidth(), ld.getWidth());
+        log.trace("vd.getHeight() {} ld.getHeight() {} ", vd.getHeight(), ld.getHeight());
+        log.trace("ratio: {}", ratio);
+      }
       scaler.scale(this, (float) ratio, (float) ratio, new Point2D.Double());
-      //      if (log.isTraceEnabled()) {
-      log.info("center of view is " + this.getCenter());
-      log.info(
-          "center of layout is "
-              + visualizationModel.getLayoutModel().getWidth() / 2
-              + ", "
-              + visualizationModel.getLayoutModel().getHeight() / 2);
-      //      }
+      if (log.isTraceEnabled()) {
+        log.trace("center of view is " + this.getCenter());
+        log.trace(
+            "center of layout is "
+                + visualizationModel.getLayoutModel().getWidth() / 2
+                + ", "
+                + visualizationModel.getLayoutModel().getHeight() / 2);
+      }
       Point2D centerOfView = this.getCenter();
       // transform to layout coords
       Point2D viewCenterOnLayout =
@@ -502,7 +502,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
           .getTransformer(Layer.LAYOUT)
           .translate(deltaX, deltaY);
     }
-    log.info("Thread: {} is done with scaleToLayout({})", Thread.currentThread(), resizeToPoints);
+    log.trace("Thread: {} is done with scaleToLayout({})", Thread.currentThread(), resizeToPoints);
   }
 
   @Override
@@ -601,14 +601,21 @@ class DefaultVisualizationServer<V, E> extends JPanel
   /** a ModelChange.Event from the LayoutModel will trigger a repaint of the visualization */
   @Override
   public void modelChanged() {
-    log.trace("modelChanged");
-    if (renderContext instanceof DefaultRenderContext) {
-      ((DefaultRenderContext) renderContext)
-          .setupArrows(visualizationModel.getGraph().getType().isDirected());
-    }
+    renderContext.setupArrows(visualizationModel.getGraph().getType().isDirected());
     applyLayoutAlgorithmConnections();
     renderer.setCountSupplier(visualizationModel.getGraph().vertexSet()::size);
+    //    displayLayoutBounds(); // for debugging
     repaint();
+  }
+
+  private LayoutPaintable.LayoutBounds layoutBounds;
+
+  private void displayLayoutBounds() {
+    if (layoutBounds != null) {
+      removePreRenderPaintable(layoutBounds);
+    }
+    layoutBounds = new LayoutPaintable.LayoutBounds(this);
+    addPreRenderPaintable(layoutBounds);
   }
 
   /**
@@ -635,11 +642,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
 
   @Override
   public void layoutStateChanged(LayoutStateChange.Event evt) {
-    boolean busy = evt.active;
-    log.info("####################### layoutStateChanged. busy:{}", busy);
-    if (!busy) {
-      //            scaleToLayout(true);
-    }
+    log.trace("layoutStateChanged. active:{}", evt.active);
     //    repaint();
     //    no op
   }

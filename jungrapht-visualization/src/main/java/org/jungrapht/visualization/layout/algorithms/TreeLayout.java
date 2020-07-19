@@ -15,7 +15,7 @@ import org.jungrapht.visualization.layout.model.Rectangle;
  *
  * @param <V>
  */
-public interface TreeLayout<V> extends LayoutAlgorithm.Unconstrained<V> {
+public interface TreeLayout<V> extends LayoutAlgorithm<V> {
 
   int TREE_LAYOUT_HORIZONTAL_SPACING =
       Integer.getInteger(PREFIX + "treeLayoutHorizontalSpacing", 50);

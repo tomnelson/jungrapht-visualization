@@ -26,6 +26,8 @@ import org.jungrapht.visualization.layout.algorithms.util.InitialDimensionFuncti
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.util.GraphImage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Demonstrates several of the graph layout algorithms. Allows the user to interactively select one
@@ -36,6 +38,8 @@ import org.jungrapht.visualization.util.GraphImage;
  * @author Tom Nelson - extensive modification
  */
 public class ShowLayouts extends JPanel {
+
+  private static final Logger log = LoggerFactory.getLogger(ShowLayouts.class);
 
   protected static Graph<String, Integer>[] graphArray;
   protected static int graphIndex;
@@ -52,6 +56,7 @@ public class ShowLayouts extends JPanel {
 
   LayoutPaintable.BalloonRings balloonLayoutRings;
   LayoutPaintable.RadialRings radialLayoutRings;
+  LayoutPaintable.LayoutBounds layoutBounds;
 
   public ShowLayouts() {
 
@@ -95,13 +100,19 @@ public class ShowLayouts extends JPanel {
     vv.getRenderContext()
         .setVertexShapeFunction(
             v -> {
-              int size = Math.max(5, 2 * vv.getVisualizationModel().getGraph().degreeOf(v));
+              Graph<String, Integer> g = vv.getVisualizationModel().getGraph();
+              if (!g.vertexSet().contains(v)) {
+                log.error("shapeFunction {} was not in {}", v, g.vertexSet());
+              }
+              int size = Math.max(5, 2 * (g.vertexSet().contains(v) ? g.degreeOf(v) : 20));
               return new Ellipse2D.Float(-size / 2.f, -size / 2.f, size, size);
             });
 
     vv.setInitialDimensionFunction(
         new InitialDimensionFunction<>(vv.getRenderContext().getVertexShapeFunction()));
 
+    layoutBounds = new LayoutPaintable.LayoutBounds(vv);
+    vv.addPreRenderPaintable(layoutBounds);
     // for the initial layout
     vv.scaleToLayout();
 
@@ -126,6 +137,7 @@ public class ShowLayouts extends JPanel {
                   LayoutAlgorithm<String> layoutAlgorithm = builder.build();
                   vv.removePreRenderPaintable(balloonLayoutRings);
                   vv.removePreRenderPaintable(radialLayoutRings);
+                  vv.removePreRenderPaintable(layoutBounds);
                   if ((layoutAlgorithm instanceof TreeLayout)
                       && vv.getVisualizationModel().getGraph().getType().isUndirected()) {
                     Graph<String, Integer> tree =
@@ -151,6 +163,8 @@ public class ShowLayouts extends JPanel {
                         new LayoutPaintable.RadialRings(vv, (RadialTreeLayout) layoutAlgorithm);
                     vv.addPreRenderPaintable(radialLayoutRings);
                   }
+                  layoutBounds = new LayoutPaintable.LayoutBounds(vv);
+                  vv.addPreRenderPaintable(layoutBounds);
                 }));
 
     JPanel control_panel = new JPanel(new GridLayout(2, 1));
@@ -176,7 +190,8 @@ public class ShowLayouts extends JPanel {
                   vv.getRenderContext()
                       .setVertexShapeFunction(
                           v -> {
-                            int size = Math.max(5, 2 * graphArray[graphIndex].degreeOf(v));
+                            int size =
+                                Math.max(5, 2 * vv.getVisualizationModel().getGraph().degreeOf(v));
                             return new Ellipse2D.Float(-size / 2.f, -size / 2.f, size, size);
                           });
                 }));

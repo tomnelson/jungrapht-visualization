@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * An event model to convey that the LayoutModel is either active (busy) or not. Consumers of this
@@ -49,8 +47,6 @@ public interface LayoutStateChange {
   /** implementations for a producer of this event model */
   class SupportImpl implements Support {
 
-    private static final Logger log = LoggerFactory.getLogger(LayoutStateChange.SupportImpl.class);
-
     private SupportImpl() {}
 
     /** to fire or not to fire.... */
@@ -87,7 +83,6 @@ public interface LayoutStateChange {
 
     @Override
     public void fireLayoutStateChanged(LayoutModel layoutModel, boolean state) {
-      log.trace("fireLayoutStateChange busy={}", state);
       if (fireEvents && changeListeners.size() > 0) {
         // make an event and fire it
         LayoutStateChange.Event evt = new LayoutStateChange.Event(layoutModel, state);

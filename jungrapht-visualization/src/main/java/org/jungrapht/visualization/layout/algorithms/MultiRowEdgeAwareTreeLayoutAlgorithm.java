@@ -368,4 +368,9 @@ public class MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> extends MultiRowTreeLayo
     }
     return roots;
   }
+
+  @Override
+  public boolean constrained() {
+    return true;
+  }
 }

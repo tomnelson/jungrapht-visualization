@@ -216,8 +216,6 @@ public class TreeLayoutAlgorithm<V> extends AbstractLayoutAlgorithm<V>
   public void visit(LayoutModel<V> layoutModel) {
 
     buildTree(layoutModel);
-    log.info("treeLayout is complete");
-    //    runAfter();
   }
 
   /**
@@ -578,5 +576,10 @@ public class TreeLayoutAlgorithm<V> extends AbstractLayoutAlgorithm<V>
       newGraph.addEdge(graph.getEdgeSource(edge), graph.getEdgeTarget(edge), edge);
     }
     return newGraph;
+  }
+
+  @Override
+  public boolean constrained() {
+    return false;
   }
 }

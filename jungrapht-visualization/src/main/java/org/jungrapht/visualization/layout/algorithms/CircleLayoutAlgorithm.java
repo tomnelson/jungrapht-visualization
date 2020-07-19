@@ -446,4 +446,9 @@ public class CircleLayoutAlgorithm<V>
     }
     return numberOfCrossings;
   }
+
+  @Override
+  public boolean constrained() {
+    return false;
+  }
 }

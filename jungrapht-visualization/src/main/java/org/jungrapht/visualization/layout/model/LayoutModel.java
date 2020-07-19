@@ -118,6 +118,11 @@ public interface LayoutModel<V>
         getGraph().vertexSet().stream().collect(Collectors.toMap(v -> v, this::apply)));
   }
 
+  /**
+   * The initialDimensionFunction sets the layout area bounds by evaluating the {@link Graph}
+   *
+   * @param initialDimensionFunction
+   */
   void setInitialDimensionFunction(Function<Graph<V, ?>, Pair<Integer>> initialDimensionFunction);
 
   /**

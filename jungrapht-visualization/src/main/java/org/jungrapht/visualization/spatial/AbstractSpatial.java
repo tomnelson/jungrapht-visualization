@@ -100,11 +100,8 @@ public abstract class AbstractSpatial<T, NT> implements Spatial<T> {
   public void layoutStateChanged(LayoutStateChange.Event evt) {
     // if the layoutmodel is not active, then it is safe to activate this
     setActive(!evt.active);
-    log.trace("layoutStateChanged state is:{}, so this active becomes {}", evt.active, isActive());
-
     // if the layout model is finished, then rebuild the spatial data structure
     if (!evt.active) {
-      log.trace("will recalcluate");
       recalculate();
       layoutModel.getModelChangeSupport().fireModelChanged(); // this will cause a repaint
     }

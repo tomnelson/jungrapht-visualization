@@ -55,7 +55,6 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
         VertexShapeAware<V>,
         EdgeShapeFunctionSupplier<V, E>,
         Layered,
-        LayoutAlgorithm.Unconstrained<V>,
         AfterRunnable,
         Threaded,
         ExecutorConsumer,
@@ -453,5 +452,10 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
   @Override
   public void setAfter(Runnable after) {
     this.after = after;
+  }
+
+  @Override
+  public boolean constrained() {
+    return false;
   }
 }

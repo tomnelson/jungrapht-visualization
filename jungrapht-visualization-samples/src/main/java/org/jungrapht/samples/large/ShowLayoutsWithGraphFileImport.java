@@ -1,10 +1,12 @@
 package org.jungrapht.samples.large;
 
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Paint;
+import java.awt.Stroke;
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
@@ -137,6 +139,13 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
     vv.setVertexToolTipFunction(vertex -> vertex + " " + vertexAttributes.get(vertex));
 
     vv.getRenderContext().setVertexFillPaintFunction(vertexFillPaintFunction);
+
+    Function<String, Paint> vertexDrawPaintFunction =
+        v -> vv.getSelectedVertexState().isSelected(v) ? Color.pink : Color.black;
+    Function<String, Stroke> vertexStrokeFunction =
+        v ->
+            vv.getSelectedVertexState().isSelected(v) ? new BasicStroke(8.f) : new BasicStroke(2.f);
+    vv.getRenderContext().setVertexStrokeFunction(vertexStrokeFunction);
 
     vv.scaleToLayout();
 

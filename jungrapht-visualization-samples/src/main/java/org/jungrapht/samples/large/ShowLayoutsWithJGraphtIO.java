@@ -36,7 +36,6 @@ import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
 import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TreeLayout;
-import org.jungrapht.visualization.layout.algorithms.util.InitialDimensionFunction;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.transform.HyperbolicTransformer;
@@ -98,18 +97,12 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
         VisualizationViewer.builder(graph)
             .layoutSize(new Dimension(3000, 3000))
             .viewSize(new Dimension(800, 800))
-            //            .initialDimensionFunction(
-            //                g -> {
-            //                  // this is a WAG to try to make the layout area good for the graph size
-            //                  int vertexCount = g.vertexSet().size();
-            //                  return Math.min(Math.max(600, vertexCount * 2), 10000);
-            //                })
             .graphMouse(graphMouse)
             .build();
 
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
-    vv.setInitialDimensionFunction(
-        new InitialDimensionFunction<>(vv.getRenderContext().getVertexShapeFunction()));
+    //    vv.setInitialDimensionFunction(
+    //        new InitialDimensionFunction<>(vv.getRenderContext().getVertexShapeFunction()));
 
     vv.setVertexToolTipFunction(
         vertex ->

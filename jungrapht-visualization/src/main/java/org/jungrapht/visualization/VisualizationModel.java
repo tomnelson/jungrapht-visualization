@@ -57,7 +57,7 @@ public interface VisualizationModel<V, E>
     /** a {@code Function} to set initial vertex locations */
     protected Function<V, Point> initializer;
 
-    // defaults to the preferres sizes of the model
+    // defaults to the preferred sizes of the model
     protected Function<Graph<V, ?>, Pair<Integer>> initialDimensionFunction;
 
     /** @return this builder cast to type B */

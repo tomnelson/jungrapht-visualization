@@ -67,7 +67,8 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
 
     public B initialDimensionFunction(
         Function<Graph<V, ?>, Pair<Integer>> initialDimensionFunction) {
-      // do not set to null
+      // do not set to null. Default implementation returns the
+      // preferred width and height
       if (initialDimensionFunction != null) {
         this.initialDimensionFunction = initialDimensionFunction;
       }
@@ -179,25 +180,16 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
       theFuture.cancel(true);
     }
     // if there is an initialDimensionFunction, and if the LayoutAlgorithm
-    // is not an Unconstrained type (not a Tree) then apply the function to
+    // is not an Unconstrained type (not a Tree or Circle) then apply the function to
     // set the layout area constraints
-    if (!(layoutAlgorithm instanceof LayoutAlgorithm.Unconstrained)) {
+    if (layoutAlgorithm.constrained()) {
       Pair<Integer> dimension = initialDimensionFunction.apply(graph);
-      // setSize will fire an event if the size has changed
+      // setSize will fire an event with the new size
       setSize(dimension.first, dimension.second);
     } else {
       // setSize will fire an event if the size has changed
       setSize(preferredWidth, preferredHeight);
     }
-    //    if (initialDimensionFunction != null
-    //        && !(layoutAlgorithm instanceof LayoutAlgorithm.Unconstrained)) {
-    //      Pair<Integer> dimension = initialDimensionFunction.apply(graph);
-    //      // setSize will fire an event if the size has changed
-    //      setSize(dimension.first, dimension.second);
-    //    } else {
-    //      // setSize will fire an event if the size has changed
-    //      setSize(preferredWidth, preferredHeight);
-    //    }
 
     log.trace("reset the model size to {} x {}", preferredWidth, preferredHeight);
     // the layoutMode is active with a new LayoutAlgorithm
@@ -354,28 +346,25 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
 
   /** */
   public void setSize(int width, int height) {
-    log.info("setSize({} x {}), old values: {} x {}", width, height, this.width, this.height);
+    log.trace("setSize({} x {}), old values: {} x {}", width, height, this.width, this.height);
     if (width <= 0) {
       width = preferredWidth;
     }
     if (height <= 0) {
       height = preferredHeight;
     }
-    boolean changed = this.width != width || this.height != height;
     this.width = width;
     this.height = height;
-    if (changed) {
-      log.info("fireLayoutSizeChanged {} x {}", width, height);
-      layoutSizeChangeSupport.fireLayoutSizeChanged(this, width, height);
-    }
+    log.trace("fireLayoutSizeChanged {} x {}", width, height);
+    layoutSizeChangeSupport.fireLayoutSizeChanged(this, width, height);
     log.trace("setSize to {} by {}", this.width, this.height);
   }
 
   public void setPreferredSize(int preferredWidth, int preferredHeight) {
-    log.info("setPreferredSize({},{})", preferredWidth, preferredHeight);
-    if (preferredWidth == 0 || preferredHeight == 0) {
+    log.trace("setPreferredSize({},{})", preferredWidth, preferredHeight);
+    if (preferredWidth <= 0 || preferredHeight <= 0) {
       throw new IllegalArgumentException(
-          "Can't be zeros " + preferredWidth + "/" + preferredHeight);
+          "Can't be <= zeros " + preferredWidth + "/" + preferredHeight);
     }
     this.preferredWidth = preferredWidth;
     this.preferredHeight = preferredHeight;

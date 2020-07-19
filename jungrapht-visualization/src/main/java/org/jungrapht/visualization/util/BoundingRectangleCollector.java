@@ -188,7 +188,6 @@ public abstract class BoundingRectangleCollector<T> {
     private static final double NON_EMPTY_DELTA = 0.001;
     protected Function<V, Shape> vertexShapeFunction;
     protected Function<Context<Graph<V, E>, E>, Shape> edgeShapeFunction;
-    protected Graph<V, E> graph;
 
     public Edges(
         Function<V, Shape> vertexShapeFunction,
@@ -197,11 +196,11 @@ public abstract class BoundingRectangleCollector<T> {
       super(layoutModel);
       this.vertexShapeFunction = vertexShapeFunction;
       this.edgeShapeFunction = edgeShapeFunction;
-      this.graph = layoutModel.getGraph();
       compute();
     }
 
     public Rectangle2D getForElement(E edge) {
+      Graph<V, E> graph = layoutModel.getGraph();
       V v1 = graph.getEdgeSource(edge);
       V v2 = graph.getEdgeTarget(edge);
       Point p1 = (Point) layoutModel.apply(v1);
@@ -243,6 +242,7 @@ public abstract class BoundingRectangleCollector<T> {
     }
 
     public Rectangle2D getForElement(E edge, Point p1, Point p2) {
+      Graph<V, E> graph = layoutModel.getGraph();
       V v1 = graph.getEdgeSource(edge);
       V v2 = graph.getEdgeTarget(edge);
       float x1 = (float) p1.x;
@@ -278,6 +278,7 @@ public abstract class BoundingRectangleCollector<T> {
 
     public void compute() {
       super.compute();
+      Graph<V, E> graph = layoutModel.getGraph();
 
       for (E e : graph.edgeSet()) {
         V v1 = graph.getEdgeSource(e);

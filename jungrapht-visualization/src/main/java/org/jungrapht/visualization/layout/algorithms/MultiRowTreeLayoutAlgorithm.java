@@ -221,4 +221,8 @@ public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
     overallHeight += super.calculateHeight(layoutModel, rootsInRow, seenForHeight);
     return overallHeight;
   }
+
+  public boolean constrained() {
+    return false;
+  }
 }

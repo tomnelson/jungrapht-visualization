@@ -46,7 +46,10 @@ public class InitialDimensionFunction<V> implements Function<Graph<V, ?>, Pair<I
     int larger = Math.max(average.width, average.height);
     larger *= sqrt;
     larger *= 10;
-    log.info("returning w, h {} for graph with {} vertices", Pair.of(larger, larger), graph.vertexSet().size());
+    log.info(
+        "returning w, h {} for graph with {} vertices",
+        Pair.of(larger, larger),
+        graph.vertexSet().size());
     return Pair.of(larger, larger);
   }
 }

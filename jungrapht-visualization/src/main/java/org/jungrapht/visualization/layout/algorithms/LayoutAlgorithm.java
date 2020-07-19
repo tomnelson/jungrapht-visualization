@@ -21,9 +21,21 @@ public interface LayoutAlgorithm<V> {
    */
   void visit(LayoutModel<V> layoutModel);
 
-  /**
-   * Marker interface for LayoutAlgorithms that will enlarge the layout area (notably the
-   * TreeLayoutAlgorithms)
-   */
-  interface Unconstrained<V> extends LayoutAlgorithm<V> {}
+  default boolean constrained() {
+    return true;
+  }
+
+  class NoOp<V> implements LayoutAlgorithm<V> {
+
+    /**
+     * visit the passed layoutModel and set its locations
+     *
+     * @param layoutModel the mediator between the container for vertices (the Graph) and the
+     *     mapping from Vertex to Point
+     */
+    @Override
+    public void visit(LayoutModel<V> layoutModel) {
+      // noop
+    }
+  }
 }

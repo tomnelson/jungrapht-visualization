@@ -67,7 +67,8 @@ public interface VisualizationServer<V, E>
     /** the size of the viewer window */
     protected Dimension viewSize = new Dimension(600, 600);
     /** the algorithm to apply to position the vertices */
-    protected LayoutAlgorithm<V> layoutAlgorithm;
+    protected LayoutAlgorithm<V> layoutAlgorithm = new LayoutAlgorithm.NoOp<>();
+
     /** the model to hold state for the visualization */
     protected VisualizationModel<V, E> visualizationModel;
 
@@ -319,6 +320,7 @@ public interface VisualizationServer<V, E>
   /** scale the graph visualization to fit within the view window */
   void scaleToLayout();
 
+  @Deprecated
   void resizeToLayout();
 
   /**
