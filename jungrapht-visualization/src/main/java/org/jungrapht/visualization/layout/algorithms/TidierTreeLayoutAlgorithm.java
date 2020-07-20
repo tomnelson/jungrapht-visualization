@@ -11,13 +11,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jungrapht.visualization.layout.algorithms.util.ComponentGrouping;
-import org.jungrapht.visualization.layout.algorithms.util.DimensionSummaryStatistics;
 import org.jungrapht.visualization.layout.algorithms.util.TreeView;
 import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -35,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * @param <V> vertex type
  * @param <E> edge type
  */
-public class TidierTreeLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
+public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm<V>
     implements LayoutAlgorithm<V>,
         TreeLayout<V>,
         VertexShapeAware<V>,
@@ -59,46 +57,12 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
    */
   public static class Builder<
           V, E, T extends TidierTreeLayoutAlgorithm<V, E>, B extends Builder<V, E, T, B>>
-      extends AbstractLayoutAlgorithm.Builder<V, T, B>
+      extends AbstractTreeLayoutAlgorithm.Builder<V, T, B>
       implements LayoutAlgorithm.Builder<V, T, B>, EdgeAwareLayoutAlgorithm.Builder<V, E, T, B> {
-    protected Predicate<V> rootPredicate;
-    protected Comparator<V> rootComparator = (v1, v2) -> 0;
-    protected Function<V, Shape> vertexShapeFunction = v -> IDENTITY_SHAPE;
-    protected int horizontalVertexSpacing = TREE_LAYOUT_HORIZONTAL_SPACING;
-    protected int verticalVertexSpacing = TREE_LAYOUT_VERTICAL_SPACING;
     protected Predicate<V> vertexPredicate = v -> false;
     protected Predicate<E> edgePredicate = e -> false;
     protected Comparator<V> vertexComparator = (v1, v2) -> 0;
     protected Comparator<E> edgeComparator = (e1, e2) -> 0;
-    protected boolean expandLayout = true;
-
-    /** {@inheritDoc} */
-    protected B self() {
-      return (B) this;
-    }
-
-    public B vertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
-      this.vertexShapeFunction = vertexShapeFunction;
-      return self();
-    }
-    /** {@inheritDoc} */
-    public B rootPredicate(Predicate<V> rootPredicate) {
-      this.rootPredicate = rootPredicate;
-      return self();
-    }
-
-    public B rootComparator(Comparator<V> rootComparator) {
-      this.rootComparator = rootComparator;
-      return self();
-    }
-
-    /** {@inheritDoc} */
-    public B horizontalVertexSpacing(int horizontalVertexSpacing) {
-      if (horizontalVertexSpacing <= 0)
-        throw new IllegalArgumentException("horizontalVertexSpacing must be positive");
-      this.horizontalVertexSpacing = horizontalVertexSpacing;
-      return self();
-    }
 
     /**
      * @param vertexPredicate {@link Predicate} to apply to vertices
@@ -137,20 +101,6 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
     }
 
     /** {@inheritDoc} */
-    public B verticalVertexSpacing(int verticalVertexSpacing) {
-      if (verticalVertexSpacing <= 0)
-        throw new IllegalArgumentException("verticalVertexSpacing must be positive");
-      this.verticalVertexSpacing = verticalVertexSpacing;
-      return self();
-    }
-
-    /** {@inheritDoc} */
-    public B expandLayout(boolean expandLayout) {
-      this.expandLayout = expandLayout;
-      return self();
-    }
-
-    /** {@inheritDoc} */
     public T build() {
       return (T) new TidierTreeLayoutAlgorithm<>(this);
     }
@@ -168,21 +118,13 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
   protected Rectangle bounds = Rectangle.IDENTITY;
   protected List<Integer> heights = new ArrayList<>();
   protected List<V> roots;
-
-  protected Predicate<V> rootPredicate;
-  protected Predicate<V> defaultRootPredicate;
   protected Predicate<V> builderRootPredicate;
-  protected Comparator<V> rootComparator;
-  protected Function<V, Shape> vertexShapeFunction;
-  protected int horizontalVertexSpacing;
-  protected int verticalVertexSpacing;
   protected Predicate<V> vertexPredicate;
   protected Predicate<E> edgePredicate;
   protected Comparator<V> vertexComparator;
   protected Comparator<E> edgeComparator;
-  protected boolean expandLayout;
-
-  Map<V, Rectangle> baseBounds = new HashMap<>();
+  protected Graph<V, E> tree;
+  protected LayoutModel<V> layoutModel;
 
   private static class VertexData<V> {
     private int mod;
@@ -200,16 +142,10 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
 
   protected TidierTreeLayoutAlgorithm(Builder builder) {
     super(builder);
-    this.builderRootPredicate = builder.rootPredicate;
-    this.rootComparator = builder.rootComparator;
-    this.vertexShapeFunction = builder.vertexShapeFunction;
     this.vertexPredicate = builder.vertexPredicate;
     this.vertexComparator = builder.vertexComparator;
     this.edgePredicate = builder.edgePredicate;
     this.edgeComparator = builder.edgeComparator;
-    this.horizontalVertexSpacing = builder.horizontalVertexSpacing;
-    this.verticalVertexSpacing = builder.verticalVertexSpacing;
-    this.expandLayout = builder.expandLayout;
   }
 
   private final Map<V, VertexData<V>> vertexData = new HashMap<>();
@@ -263,24 +199,6 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
   private Rectangle from(java.awt.Rectangle in) {
     return Rectangle.of(in.x, in.y, in.width, in.height);
   }
-
-  @Override
-  public void setRootPredicate(Predicate<V> rootPredicate) {
-    this.rootPredicate = rootPredicate;
-  }
-
-  @Override
-  public void setRootComparator(Comparator<V> rootComparator) {
-    this.rootComparator = rootComparator;
-  }
-
-  @Override
-  public void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
-    this.vertexShapeFunction = vertexShapeFunction;
-  }
-
-  protected Graph<V, E> tree;
-  protected LayoutModel<V> layoutModel;
 
   private VertexData<V> vertexData(V v) {
     if (!vertexData.containsKey(v)) {
@@ -562,17 +480,6 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
     return distance;
   }
 
-  protected Dimension computeAverageVertexDimension(
-      Graph<V, E> graph, Function<V, Shape> shapeFunction) {
-    DimensionSummaryStatistics dss = new DimensionSummaryStatistics();
-    graph
-        .vertexSet()
-        .stream()
-        .map(vertex -> shapeFunction.apply(vertex).getBounds())
-        .forEach(dss::accept);
-    return dss.getAverage();
-  }
-
   @Override
   public void visit(LayoutModel<V> layoutModel) {
     if (layoutModel instanceof Caching) {
@@ -656,6 +563,5 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
       np = np.add(xoffset, yoffset);
       layoutModel.set(entry.getKey(), np);
     }
-    //    after.run();
   }
 }
