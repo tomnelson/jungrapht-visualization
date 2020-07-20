@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jungrapht.visualization.layout.algorithms.util.ComponentGrouping;
+import org.jungrapht.visualization.layout.algorithms.util.PointSummaryStatistics;
 import org.jungrapht.visualization.layout.algorithms.util.TreeView;
 import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -562,6 +563,22 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
       Point np = normalize(p);
       np = np.add(xoffset, yoffset);
       layoutModel.set(entry.getKey(), np);
+    }
+
+    // find the dimensions of the layout
+    PointSummaryStatistics pss = new PointSummaryStatistics();
+    layoutModel.getLocations().values().forEach(pss::accept);
+    Point min = pss.getMin();
+    Point max = pss.getMax();
+    int layoutWidth = (int) (max.x - min.x);
+    int layoutHeight = (int) (max.y - min.y);
+    layoutWidth += horizontalVertexSpacing * 2;
+    layoutHeight += verticalVertexSpacing * 2;
+    int maxDimension = (int) Math.max(layoutWidth, layoutHeight);
+    layoutModel.setSize(maxDimension, maxDimension);
+
+    if (expandLayout) {
+      expandToFill(layoutModel, layoutWidth, layoutHeight);
     }
   }
 }

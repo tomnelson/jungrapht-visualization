@@ -132,8 +132,6 @@ public class TreeLayoutAlgorithm<V> extends AbstractTreeLayoutAlgorithm<V>
             .sorted(Comparator.comparingInt(v -> TreeLayout.vertexIsolationScore(graph, v)))
             .collect(Collectors.toList());
 
-    //    roots = ComponentGrouping.groupByComponents(graph, roots);
-
     if (roots.size() == 0) {
       Graph<V, ?> tree = TreeLayoutAlgorithm.getSpanningTree(graph);
       layoutModel.setGraph(tree);
@@ -160,9 +158,7 @@ public class TreeLayoutAlgorithm<V> extends AbstractTreeLayoutAlgorithm<V>
     int y = getInitialPosition(verticalVertexSpacing, layoutModel.getHeight(), overallHeight);
     log.trace("got initial y of {}", y);
     if (expandLayout && overallHeight < larger) {
-      //      layoutModel.setSize(larger, larger);
       adjustToFill(overallWidth, overallHeight);
-      overallHeight = largerHeight;
       y = verticalVertexSpacing;
     }
 
@@ -177,36 +173,6 @@ public class TreeLayoutAlgorithm<V> extends AbstractTreeLayoutAlgorithm<V>
       x += w / 2 + horizontalVertexSpacing;
     }
     this.rootPredicate = null;
-    //    if (seen.size() < graph.vertexSet().size()) {
-    //      Set<V> mia = new HashSet<>(graph.vertexSet());
-    //      mia.removeAll(seen);
-    //      Graph<V, Object> miaGraph = (Graph<V, Object>) GraphTypeBuilder.forGraph(graph).buildGraph();
-    //      Graph<V, Object> myGraph = (Graph<V, Object>) graph;
-    //      mia.forEach(miaGraph::addVertex);
-    //      graph
-    //          .edgeSet()
-    //          .stream()
-    //          .filter(
-    //              e -> mia.contains(myGraph.getEdgeSource(e)) && mia.contains(myGraph.getEdgeTarget(e)))
-    //          .forEach(e -> miaGraph.addEdge(myGraph.getEdgeSource(e), myGraph.getEdgeTarget(e), e));
-    //      // get all the components from myGraph and choose one vertex from each to add to roots
-    //      List<Graph<V, Object>> components = ComponentGrouping.getComponentGraphs(miaGraph);
-    //      for (Graph<V, Object> component : components) {
-    //        V volunteerRoot = component.vertexSet().stream().findFirst().orElse(null);
-    //        if (volunteerRoot != null) {
-    //          roots.add(volunteerRoot);
-    //        }
-    //      }
-    //      for (V vertex : roots) {
-    //        int w = (int) this.baseBounds.get(vertex).width;
-    //        log.trace("w is {} and baseWidths.get(vertex) = {}", w, baseBounds.get(vertex).width);
-    //        x += w / 2;
-    //        log.trace("currentX after vertex {} is now {}", vertex, x);
-    //        buildTree(layoutModel, vertex, x, y, seen);
-    //        merge(layoutModel, vertex);
-    //        x += w / 2 + horizontalVertexSpacing;
-    //      }
-    //    }
     return new LinkedHashSet<>(roots);
   }
 

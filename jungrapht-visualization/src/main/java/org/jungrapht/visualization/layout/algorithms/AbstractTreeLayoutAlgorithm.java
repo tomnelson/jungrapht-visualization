@@ -239,7 +239,7 @@ public abstract class AbstractTreeLayoutAlgorithm<V> extends AbstractLayoutAlgor
                 p = Point.of(p.x, expansion * p.y);
                 layoutModel.set(v, p);
               });
-      layoutModel.setSize(largerWidth, largerHeight);
+      //      layoutModel.setSize(largerWidth, largerHeight);
     } else if (largerWidth < largerHeight) {
       double expansion = (double) largerHeight / largerWidth;
       Graph<V, ?> graph = layoutModel.getGraph();
@@ -251,7 +251,7 @@ public abstract class AbstractTreeLayoutAlgorithm<V> extends AbstractLayoutAlgor
                 p = Point.of(expansion * p.x, p.y);
                 layoutModel.set(v, p);
               });
-      layoutModel.setSize(largerWidth, largerHeight);
+      //      layoutModel.setSize(largerWidth, largerHeight);
     }
   }
 
