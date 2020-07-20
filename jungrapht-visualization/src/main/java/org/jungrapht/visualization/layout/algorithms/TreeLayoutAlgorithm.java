@@ -293,15 +293,17 @@ public class TreeLayoutAlgorithm<V> extends AbstractLayoutAlgorithm<V>
     log.trace("layoutModel.getWidth() {} overallWidth {}", layoutModel.getWidth(), overallWidth);
     log.trace(
         "layoutModel.getHeight() {} overallHeight {}", layoutModel.getHeight(), overallHeight);
+
     int largerWidth = Math.max(layoutModel.getWidth(), overallWidth);
-    int largerHeight = Math.min(layoutModel.getHeight(), overallHeight);
+    int largerHeight = Math.max(layoutModel.getHeight(), overallHeight);
     int larger = Math.max(largerWidth, largerHeight);
+    layoutModel.setSize(larger, larger);
     int x = getInitialPosition(horizontalVertexSpacing, layoutModel.getWidth(), overallWidth);
     int y = getInitialPosition(verticalVertexSpacing, layoutModel.getHeight(), overallHeight);
     log.trace("got initial y of {}", y);
-    if (expandLayout) {
-      layoutModel.setSize(larger, larger);
-      adjustToFill(largerWidth, largerHeight);
+    if (expandLayout && overallHeight < larger) {
+      //      layoutModel.setSize(larger, larger);
+      adjustToFill(overallWidth, overallHeight);
       overallHeight = largerHeight;
       y = verticalVertexSpacing;
     }

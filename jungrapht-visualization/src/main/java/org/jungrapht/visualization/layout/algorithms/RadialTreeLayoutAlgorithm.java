@@ -58,7 +58,37 @@ public class RadialTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
     Set<V> roots = super.buildTree(layoutModel);
     setRadialLocations(roots, layoutModel);
     putRadialPointsInModel(layoutModel);
+    // set size with the max of the layout rings
+    int diameter = diameter(layoutModel);
+    int offsetDelta = diameter - layoutModel.getWidth();
+    offset(layoutModel, offsetDelta / 2);
+    layoutModel.setSize(diameter, diameter);
     return roots;
+  }
+
+  protected void offset(LayoutModel<V> layoutModel, int delta) {
+    layoutModel
+        .getGraph()
+        .vertexSet()
+        .forEach(
+            v -> {
+              Point p = layoutModel.get(v);
+              p = p.add(delta, delta);
+              layoutModel.set(v, p);
+            });
+  }
+
+  @Override
+  public int diameter(LayoutModel<V> layoutModel) {
+    return layoutModel
+            .getGraph()
+            .vertexSet()
+            .stream()
+            .map(vertex -> polarLocations.get(vertex).radius * 2)
+            .mapToInt(Double::intValue)
+            .max()
+            .orElse(layoutModel.getWidth())
+        + horizontalVertexSpacing;
   }
 
   /**
@@ -122,5 +152,10 @@ public class RadialTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
           PolarPoint.of(p.x * theta, (offset + p.y - this.verticalVertexSpacing) * deltaRadius);
       polarLocations.put(vertex, polarPoint);
     }
+  }
+
+  @Override
+  public boolean constrained() {
+    return true;
   }
 }

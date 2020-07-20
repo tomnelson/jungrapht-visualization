@@ -10,6 +10,8 @@ import org.jungrapht.visualization.layout.model.LayoutModel;
  */
 public class StaticLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
 
+  public StaticLayoutAlgorithm() {}
+
   /**
    * a no-op, as the Vertex locations are unchanged from where they are in the layoutModel
    *
@@ -18,4 +20,9 @@ public class StaticLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
    */
   @Override
   public void visit(LayoutModel<V> layoutModel) {}
+
+  @Override
+  public boolean constrained() {
+    return false;
+  }
 }

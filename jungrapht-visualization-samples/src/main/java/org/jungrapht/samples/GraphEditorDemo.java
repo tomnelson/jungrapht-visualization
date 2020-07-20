@@ -116,7 +116,7 @@ public class GraphEditorDemo extends JPanel implements Printable {
         GraphTypeBuilder.<Number, Number>forGraphType(DefaultGraphType.directedPseudograph())
             .buildGraph();
 
-    this.layoutAlgorithm = new StaticLayoutAlgorithm<>(); //, new Dimension(600, 600));
+    this.layoutAlgorithm = new StaticLayoutAlgorithm<>();
 
     vv =
         VisualizationViewer.builder(graph)

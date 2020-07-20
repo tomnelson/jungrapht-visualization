@@ -18,4 +18,10 @@ public interface RadialTreeLayout<V> extends TreeLayout<V>, Radial {
   Map<V, PolarPoint> getPolarLocations();
 
   Point getCenter(LayoutModel<V> layoutModel);
+
+  default boolean constrained() {
+    return true;
+  }
+
+  int diameter(LayoutModel<V> layoutModel);
 }

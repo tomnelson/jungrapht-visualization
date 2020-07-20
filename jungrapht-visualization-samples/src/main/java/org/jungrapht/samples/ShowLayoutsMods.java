@@ -7,8 +7,8 @@
  */
 package org.jungrapht.samples;
 
-import java.awt.*;
-import java.awt.geom.Ellipse2D;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
@@ -21,7 +21,13 @@ import org.jungrapht.samples.util.LayoutHelper;
 import org.jungrapht.samples.util.SpanningTreeAdapter;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.layout.algorithms.*;
+import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
+import org.jungrapht.visualization.layout.algorithms.RadialTreeLayout;
+import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.TreeLayout;
 import org.jungrapht.visualization.layout.algorithms.util.InitialDimensionFunction;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -37,9 +43,9 @@ import org.slf4j.LoggerFactory;
  * @author Joshua O'Madadhain
  * @author Tom Nelson - extensive modification
  */
-public class ShowLayouts extends JPanel {
+public class ShowLayoutsMods extends JPanel {
 
-  private static final Logger log = LoggerFactory.getLogger(ShowLayouts.class);
+  private static final Logger log = LoggerFactory.getLogger(ShowLayoutsMods.class);
 
   protected static Graph<String, Integer>[] graphArray;
   protected static int graphIndex;
@@ -58,7 +64,7 @@ public class ShowLayouts extends JPanel {
   LayoutPaintable.RadialRings radialLayoutRings;
   LayoutPaintable.LayoutBounds layoutBounds;
 
-  public ShowLayouts() {
+  public ShowLayoutsMods() {
 
     graphArray = new Graph[graphNames.length];
 
@@ -80,12 +86,12 @@ public class ShowLayouts extends JPanel {
 
     graphArray[6] = graph;
     graphArray[7] = TestGraphs.getGeneratedBipartiteGraph();
-
-    Graph<String, Integer> initialGraph = graphArray[3]; // initial graph
+    int initialIndex = 0;
+    Graph<String, Integer> initialGraph = graphArray[initialIndex]; // initial graph
 
     final VisualizationViewer<String, Integer> vv =
         VisualizationViewer.builder(initialGraph)
-            .initialDimensionFunction(new InitialDimensionFunction<>())
+            //            .initialDimensionFunction(new InitialDimensionFunction<>())
             .layoutAlgorithm(new KKLayoutAlgorithm<>())
             .build();
 
@@ -97,16 +103,16 @@ public class ShowLayouts extends JPanel {
                 + ". with neighbors:"
                 + Graphs.neighborListOf(vv.getVisualizationModel().getGraph(), vertex));
 
-    vv.getRenderContext()
-        .setVertexShapeFunction(
-            v -> {
-              Graph<String, Integer> g = vv.getVisualizationModel().getGraph();
-              if (!g.vertexSet().contains(v)) {
-                log.error("shapeFunction {} was not in {}", v, g.vertexSet());
-              }
-              int size = Math.max(5, 2 * (g.vertexSet().contains(v) ? g.degreeOf(v) : 20));
-              return new Ellipse2D.Float(-size / 2.f, -size / 2.f, size, size);
-            });
+    //    vv.getRenderContext()
+    //        .setVertexShapeFunction(
+    //            v -> {
+    //              Graph<String, Integer> g = vv.getVisualizationModel().getGraph();
+    //              if (!g.vertexSet().contains(v)) {
+    //                log.error("shapeFunction {} was not in {}", v, g.vertexSet());
+    //              }
+    //              int size = Math.max(5, 2 * (g.vertexSet().contains(v) ? g.degreeOf(v) : 20));
+    //              return new Ellipse2D.Float(-size / 2.f, -size / 2.f, size, size);
+    //            });
 
     vv.setInitialDimensionFunction(
         InitialDimensionFunction.builder(vv.getRenderContext().getVertexShapeFunction()).build());
@@ -187,13 +193,13 @@ public class ShowLayouts extends JPanel {
                   //                  vv.getVisualizationModel().getLayoutModel().setSize(600, 600);
                   //                  vv.reset();
                   vv.getVisualizationModel().setGraph(graphArray[graphIndex]);
-                  vv.getRenderContext()
-                      .setVertexShapeFunction(
-                          v -> {
-                            int size =
-                                Math.max(5, 2 * vv.getVisualizationModel().getGraph().degreeOf(v));
-                            return new Ellipse2D.Float(-size / 2.f, -size / 2.f, size, size);
-                          });
+                  //                  vv.getRenderContext()
+                  //                      .setVertexShapeFunction(
+                  //                          v -> {
+                  //                            int size =
+                  //                                Math.max(5, 2 * vv.getVisualizationModel().getGraph().degreeOf(v));
+                  //                            return new Ellipse2D.Float(-size / 2.f, -size / 2.f, size, size);
+                  //                          });
                 }));
 
     JButton showRTree = new JButton("Show RTree");
@@ -220,7 +226,7 @@ public class ShowLayouts extends JPanel {
   }
 
   public static void main(String[] args) {
-    JPanel jp = new ShowLayouts();
+    JPanel jp = new ShowLayoutsMods();
 
     JFrame jf = new JFrame();
     jf.setTitle(jp.getClass().getSimpleName());

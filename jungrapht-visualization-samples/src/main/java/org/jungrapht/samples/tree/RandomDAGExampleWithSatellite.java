@@ -156,7 +156,10 @@ public class RandomDAGExampleWithSatellite extends JPanel {
 
     vv.getRenderContext().setVertexShapeFunction(vertexImageShapeFunction);
     vv.getRenderContext().setVertexIconFunction(iconCache);
-    vv.setInitialDimensionFunction(new InitialDimensionFunction<>(vertexImageShapeFunction));
+    vv.setInitialDimensionFunction(
+        InitialDimensionFunction.<String>builder()
+            .vertexShapeFunction(vertexImageShapeFunction)
+            .build());
 
     vv.getRenderContext()
         .getSelectedVertexState()

@@ -36,7 +36,7 @@ public interface LayoutPaintable {
     }
 
     public LayoutBounds(VisualizationModel visualizationModel, ShapeTransformer transformer) {
-      this(visualizationModel, transformer, Color.cyan);
+      this(visualizationModel, transformer, Color.blue);
     }
 
     public LayoutBounds(
@@ -57,8 +57,11 @@ public interface LayoutPaintable {
               0,
               visualizationModel.getLayoutSize().width,
               visualizationModel.getLayoutSize().height);
+      int width = layoutRectangle.getBounds().width;
+      int height = layoutRectangle.getBounds().height;
       layoutRectangle = transformer.transform(layoutRectangle);
       g2d.draw(layoutRectangle);
+      g2d.drawString(width + " x " + height, 20, 20);
     }
 
     @Override

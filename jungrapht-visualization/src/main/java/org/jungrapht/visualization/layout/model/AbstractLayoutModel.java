@@ -182,6 +182,7 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
     // if there is an initialDimensionFunction, and if the LayoutAlgorithm
     // is not an Unconstrained type (not a Tree or Circle) then apply the function to
     // set the layout area constraints
+    log.info("{} is constrained: {}", layoutAlgorithm, layoutAlgorithm.constrained());
     if (layoutAlgorithm.constrained()) {
       Pair<Integer> dimension = initialDimensionFunction.apply(graph);
       // setSize will fire an event with the new size

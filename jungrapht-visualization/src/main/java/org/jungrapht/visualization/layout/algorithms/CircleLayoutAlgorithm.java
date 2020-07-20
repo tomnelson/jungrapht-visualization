@@ -281,7 +281,8 @@ public class CircleLayoutAlgorithm<V>
     double width = layoutModel.getWidth();
 
     if (radius <= 0) {
-      radius = 0.45 * (Math.min(height, width));
+      radius = 0.35 * Math.max(width, height);
+      //              0.45 * (Math.min(height, width));
     }
 
     int i = 0;
