@@ -55,19 +55,20 @@ public class TidierRadialTreeLayoutAlgorithm<V, E> extends TidierTreeLayoutAlgor
     putRadialPointsInModel(layoutModel);
     // set size with the max of the layout rings
     int diameter = diameter(layoutModel);
-    int offsetDelta = diameter - layoutModel.getWidth();
-    //    offset(layoutModel, offsetDelta/2);
+    int offsetDeltaX = diameter - layoutModel.getWidth();
+    int offsetDeltaY = diameter - layoutModel.getHeight();
+    offset(layoutModel, offsetDeltaX / 2, offsetDeltaY / 2);
     layoutModel.setSize(diameter, diameter);
   }
 
-  protected void offset(LayoutModel<V> layoutModel, int delta) {
+  protected void offset(LayoutModel<V> layoutModel, int deltax, int deltay) {
     layoutModel
         .getGraph()
         .vertexSet()
         .forEach(
             v -> {
               Point p = layoutModel.get(v);
-              p = p.add(delta, delta);
+              p = p.add(deltax, deltay);
               layoutModel.set(v, p);
             });
   }
