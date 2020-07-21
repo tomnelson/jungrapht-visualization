@@ -10,7 +10,6 @@
 
 package org.jungrapht.visualization.layout.algorithms;
 
-import java.awt.Dimension;
 import java.awt.Shape;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -20,11 +19,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import org.jgrapht.Graph;
 import org.jungrapht.visualization.DefaultRenderContext;
-import org.jungrapht.visualization.layout.algorithms.util.DimensionSummaryStatistics;
 import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -204,17 +200,6 @@ public abstract class AbstractTreeLayoutAlgorithm<V> extends AbstractLayoutAlgor
     return baseBounds;
   }
 
-  protected <E> Dimension computeAverageVertexDimension(
-      Graph<V, E> graph, Function<V, Shape> shapeFunction) {
-    DimensionSummaryStatistics dss = new DimensionSummaryStatistics();
-    graph
-        .vertexSet()
-        .stream()
-        .map(vertex -> shapeFunction.apply(vertex).getBounds())
-        .forEach(dss::accept);
-    return dss.getAverage();
-  }
-
   protected void adjustToFill(int largerWidth, int largerHeight) {
     if (largerWidth > largerHeight) {
       double expansion = (double) largerWidth / largerHeight;
@@ -225,34 +210,23 @@ public abstract class AbstractTreeLayoutAlgorithm<V> extends AbstractLayoutAlgor
     }
   }
 
-  protected void expandToFill(LayoutModel<V> layoutModel, int largerWidth, int largerHeight) {
-    // lets make it square
+  /** @param layoutModel */
+  protected void expandToFill(LayoutModel<V> layoutModel) {
 
-    if (largerWidth > largerHeight) {
-      double expansion = (double) largerWidth / largerHeight;
-      Graph<V, ?> graph = layoutModel.getGraph();
-      graph
-          .vertexSet()
-          .forEach(
-              v -> {
-                Point p = layoutModel.get(v);
-                p = Point.of(p.x, expansion * p.y);
-                layoutModel.set(v, p);
-              });
-      //      layoutModel.setSize(largerWidth, largerHeight);
-    } else if (largerWidth < largerHeight) {
-      double expansion = (double) largerHeight / largerWidth;
-      Graph<V, ?> graph = layoutModel.getGraph();
-      graph
-          .vertexSet()
-          .forEach(
-              v -> {
-                Point p = layoutModel.get(v);
-                p = Point.of(expansion * p.x, p.y);
-                layoutModel.set(v, p);
-              });
-      //      layoutModel.setSize(largerWidth, largerHeight);
-    }
+    // find the dimensions of the layout's occupied area
+    Rectangle vertexContainingRectangle = computeLayoutExtent(layoutModel);
+
+    // add the padding
+    vertexContainingRectangle =
+        Rectangle.from(
+            vertexContainingRectangle.min().add(-horizontalVertexSpacing, -verticalVertexSpacing),
+            vertexContainingRectangle.max().add(horizontalVertexSpacing, verticalVertexSpacing));
+
+    int maxDimension =
+        Math.max((int) vertexContainingRectangle.width, (int) vertexContainingRectangle.height);
+    layoutModel.setSize(maxDimension, maxDimension);
+
+    super.expandToFill(layoutModel, vertexContainingRectangle);
   }
 
   @Override

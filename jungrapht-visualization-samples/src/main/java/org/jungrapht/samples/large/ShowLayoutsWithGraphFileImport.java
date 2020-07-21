@@ -84,6 +84,7 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
 
   LayoutPaintable.BalloonRings balloonLayoutRings;
   LayoutPaintable.RadialRings radialLayoutRings;
+  LayoutPaintable.LayoutBounds layoutBounds;
   JFileChooser fileChooser;
   Map<String, Map<String, Attribute>> vertexAttributes = new HashMap<>();
   VisualizationViewer<String, DefaultEdge> vv;
@@ -190,6 +191,10 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
                             vv, (RadialTreeLayoutAlgorithm) layoutAlgorithm);
                     vv.addPreRenderPaintable(radialLayoutRings);
                   }
+                  if (layoutBounds != null) {
+                    vv.removePreRenderPaintable(layoutBounds);
+                  }
+                  vv.addPreRenderPaintable(new LayoutPaintable.LayoutBounds(vv));
                 }));
 
     layoutComboBox.setSelectedItem(LayoutHelper.Layouts.FR_BH_VISITOR);

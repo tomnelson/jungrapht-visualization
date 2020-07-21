@@ -47,6 +47,10 @@ public class Rectangle {
     return new Rectangle(x, y, width, height);
   }
 
+  public static Rectangle from(Point min, Point max) {
+    return new Rectangle(min.x, min.y, max.x - min.x, max.y - min.y);
+  }
+
   /**
    * @param x left most x location
    * @param y top most y location
@@ -90,6 +94,14 @@ public class Rectangle {
    */
   public boolean contains(Point p) {
     return contains(p.x, p.y);
+  }
+
+  public Point min() {
+    return Point.of(x, y);
+  }
+
+  public Point max() {
+    return Point.of(x, y).add(width, height);
   }
 
   /**
