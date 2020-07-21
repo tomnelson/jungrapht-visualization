@@ -136,33 +136,11 @@ public class TreeLayoutAlgorithm<V> extends AbstractTreeLayoutAlgorithm<V>
       Graph<V, ?> tree = TreeLayoutAlgorithm.getSpanningTree(graph);
       layoutModel.setGraph(tree);
       Set<V> treeRoots = buildTree(layoutModel);
-      layoutModel.setGraph(graph);
       return treeRoots;
     }
 
-    //    // the width of the tree under 'roots'. Includes one 'horizontalVertexSpacing' per child vertex
-    int overallWidth = calculateWidth(layoutModel, roots, new HashSet<>());
-    //    // add one additional 'horizontalVertexSpacing' for each tree (each root) + 1
-    //    overallWidth += (roots.size() + 1) * horizontalVertexSpacing;
-    int overallHeight = calculateHeight(layoutModel, roots, new HashSet<>());
-    //    overallHeight += 2 * verticalVertexSpacing;
-    //
-    //    log.trace("layoutModel.getWidth() {} overallWidth {}", layoutModel.getWidth(), overallWidth);
-    //    log.trace(
-    //        "layoutModel.getHeight() {} overallHeight {}", layoutModel.getHeight(), overallHeight);
-    //
-    //    int largerWidth = Math.max(layoutModel.getWidth(), overallWidth);
-    //    int largerHeight = Math.max(layoutModel.getHeight(), overallHeight);
-    //    int larger = Math.max(largerWidth, largerHeight);
-    //    layoutModel.setSize(larger, larger);
-    //    int x = getInitialPosition(horizontalVertexSpacing, layoutModel.getWidth(), overallWidth);
-    //    int y = getInitialPosition(verticalVertexSpacing, layoutModel.getHeight(), overallHeight);
-    //    log.trace("got initial y of {}", y);
-    //    if (expandLayout && overallHeight < larger) {
-    //      adjustToFill(overallWidth, overallHeight);
-    //      y = verticalVertexSpacing;
-    //    }
-
+    calculateWidth(layoutModel, roots, new HashSet<>());
+    calculateHeight(layoutModel, roots, new HashSet<>());
     int x = horizontalVertexSpacing;
     int y = 0; //verticalVertexSpacing;
 

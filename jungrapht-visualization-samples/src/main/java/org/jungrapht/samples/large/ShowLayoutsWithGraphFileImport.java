@@ -46,7 +46,6 @@ import org.jungrapht.samples.util.Colors;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.LayoutHelper;
 import org.jungrapht.samples.util.LensControlHelper;
-import org.jungrapht.samples.util.SpanningTreeAdapter;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultGraphMouse;
@@ -56,8 +55,6 @@ import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
 import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.TreeLayout;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.transform.HyperbolicTransformer;
@@ -164,16 +161,6 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
                   LayoutAlgorithm layoutAlgorithm = layoutType.getLayoutAlgorithm();
                   vv.removePreRenderPaintable(balloonLayoutRings);
                   vv.removePreRenderPaintable(radialLayoutRings);
-                  if ((layoutAlgorithm instanceof TreeLayout)
-                      && vv.getVisualizationModel().getGraph().getType().isUndirected()) {
-                    Graph tree =
-                        SpanningTreeAdapter.getSpanningTree(vv.getVisualizationModel().getGraph());
-                    LayoutModel positionModel =
-                        this.getTreeLayoutPositions(
-                            tree, layoutAlgorithm, vv.getVisualizationModel().getLayoutModel());
-                    vv.getVisualizationModel().getLayoutModel().setInitializer(positionModel);
-                    layoutAlgorithm = new StaticLayoutAlgorithm();
-                  }
                   if (animateLayoutTransition.isSelected()) {
                     LayoutAlgorithmTransition.animate(vv, layoutAlgorithm);
                   } else {
@@ -446,16 +433,31 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
     vertices.forEach(graph::removeVertex);
   }
 
-  LayoutModel getTreeLayoutPositions(
-      Graph tree, LayoutAlgorithm treeLayout, LayoutModel layoutModel) {
-    LayoutModel model =
-        LayoutModel.builder()
-            .size(layoutModel.getWidth(), layoutModel.getHeight())
-            .graph(tree)
-            .build();
-    model.accept(treeLayout);
-    return model;
-  }
+  //  LayoutModel getTreeLayoutPositions(
+  //      Graph tree, LayoutAlgorithm treeLayout, LayoutModel layoutModel) {
+  //    LayoutModel model =
+  //        LayoutModel.builder()
+  //            .size(layoutModel.getWidth(), layoutModel.getHeight())
+  //            .graph(tree)
+  //            .build();
+  ////    // connect any listeners from the layoutModel to the newly created model
+  ////    model
+  ////        .getLayoutStateChangeSupport()
+  ////        .getLayoutStateChangeListeners()
+  ////        .forEach(l -> model.getLayoutStateChangeSupport().addLayoutStateChangeListener(l));
+  ////    model
+  ////        .getLayoutSizeChangeSupport()
+  ////        .getLayoutSizeChangeListeners()
+  ////        .forEach(
+  ////            l ->
+  ////                model
+  ////                    .getLayoutSizeChangeSupport()
+  ////                    .addLayoutSizeChangeListener((LayoutSizeChange.Listener) l));
+  ////    //    layoutModel
+  ////    //    model.getLayoutStateChangeSupport().addLayoutStateChangeListener();
+  //    model.accept(treeLayout);
+  //    return model;
+  //  }
 
   private Collection getRoots(Graph graph) {
     Set roots = new HashSet<>();

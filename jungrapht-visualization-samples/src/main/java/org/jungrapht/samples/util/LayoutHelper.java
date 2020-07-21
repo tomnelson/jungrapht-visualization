@@ -13,6 +13,8 @@ import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.MultiRowTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.SpringLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.TidierRadialTreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.TidierTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFA2Repulsion;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFRRepulsion;
@@ -65,6 +67,8 @@ public class LayoutHelper {
     GEM("GEM", GEMLayoutAlgorithm.edgeAwareBuilder().build()),
     TREE("Tree", new TreeLayoutAlgorithm<>()),
     MULTI_ROW_TREE("Multirow Tree", new MultiRowTreeLayoutAlgorithm<>()),
+    TIDY_TREE("Tidy Tree", new TidierTreeLayoutAlgorithm<>()),
+    TIDY_RADIAL_TREE("Tidy Radial Tree", new TidierRadialTreeLayoutAlgorithm<>()),
     BALLOON("Balloon", new BalloonLayoutAlgorithm<>()),
     RADIAL("Radial", new RadialTreeLayoutAlgorithm<>());
 

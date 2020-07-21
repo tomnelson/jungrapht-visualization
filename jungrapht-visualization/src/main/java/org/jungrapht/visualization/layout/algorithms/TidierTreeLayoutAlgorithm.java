@@ -554,16 +554,21 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
 
     // normalize all the layoutModel points
     // and center in the layout area
-    layoutModel.setSize((int) bounds.width + 2 * horizontalVertexSpacing, (int) bounds.height);
-    int xoffset = (int) (layoutModel.getWidth() - this.bounds.width) / 2;
-    int yoffset = (int) (layoutModel.getHeight() - this.bounds.height) / 2;
+    Rectangle extent = computeLayoutExtent(layoutModel);
+    log.info("extent is {}", extent);
+    log.info("bounds is {}", bounds);
+    log.info("layoutModel bounds: {} {}", layoutModel.getWidth(), layoutModel.getHeight());
+    int xoffset = horizontalVertexSpacing;
+
+    int yoffset = (int) -extent.min().y + verticalVertexSpacing;
+
     for (Map.Entry<V, Point> entry : layoutModel.getLocations().entrySet()) {
       Point p = entry.getValue();
       Point np = normalize(p);
       np = np.add(xoffset, yoffset);
       layoutModel.set(entry.getKey(), np);
     }
-
+    layoutModel.setSize((int) extent.width, (int) extent.height);
     if (expandLayout) {
       expandToFill(layoutModel);
     }
