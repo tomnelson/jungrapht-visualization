@@ -18,7 +18,6 @@ import org.jungrapht.samples.spatial.RTreeVisualization;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.LayoutFunction;
 import org.jungrapht.samples.util.LayoutHelper;
-import org.jungrapht.samples.util.SpanningTreeAdapter;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.layout.algorithms.*;
@@ -138,15 +137,6 @@ public class ShowLayouts extends JPanel {
                   vv.removePreRenderPaintable(balloonLayoutRings);
                   vv.removePreRenderPaintable(radialLayoutRings);
                   vv.removePreRenderPaintable(layoutBounds);
-                  if ((layoutAlgorithm instanceof TreeLayout)
-                      && vv.getVisualizationModel().getGraph().getType().isUndirected()) {
-                    Graph<String, Integer> tree =
-                        SpanningTreeAdapter.getSpanningTree(vv.getVisualizationModel().getGraph());
-                    LayoutModel<String> positionModel =
-                        this.getTreeLayoutPositions(tree, layoutAlgorithm);
-                    vv.getVisualizationModel().getLayoutModel().setInitializer(positionModel);
-                    layoutAlgorithm = new StaticLayoutAlgorithm<>();
-                  }
                   if (animateLayoutTransition.isSelected()) {
                     LayoutAlgorithmTransition.animate(vv, layoutAlgorithm);
                   } else {

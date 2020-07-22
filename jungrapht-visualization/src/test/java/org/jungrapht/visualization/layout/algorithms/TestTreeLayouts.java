@@ -63,10 +63,13 @@ public class TestTreeLayouts {
               graph.addEdge("A" + i, "C" + i);
             });
 
-    MultiRowTreeLayoutAlgorithm<String> treeLayoutAlgorithm = new MultiRowTreeLayoutAlgorithm<>();
+    MultiRowTreeLayoutAlgorithm<String> treeLayoutAlgorithm =
+        MultiRowTreeLayoutAlgorithm.<String>builder().expandLayout(false).build();
 
     MultiRowEdgeAwareTreeLayoutAlgorithm<String, Integer> multiRowEdgeAwareTreeLayoutAlgorithm =
-        new MultiRowEdgeAwareTreeLayoutAlgorithm<>();
+        MultiRowEdgeAwareTreeLayoutAlgorithm.<String, Integer>edgeAwareBuilder()
+            .expandLayout(false)
+            .build();
 
     testEdgeAwareTrees(graph, treeLayoutAlgorithm, multiRowEdgeAwareTreeLayoutAlgorithm);
   }

@@ -125,43 +125,6 @@ public class MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> extends MultiRowTreeLayo
     this.alignFavoredEdges = builder.alignFavoredEdges;
   }
 
-  /**
-   * Creates an instance for the specified graph, X distance, and Y distance.
-   *
-   * @param rootPredicate the {@link Predicate} to determine root vertices
-   * @param horizontalVertexSpacing the horizontal spacing between adjacent siblings
-   * @param verticalVertexSpacing the vertical spacing between adjacent siblings
-   * @param vertexPredicate a {@link Predicate} to filter vertices
-   * @param edgePredicate a {@link Predicate} to filter edges
-   * @param vertexComparator a {@link Comparator} to sort vertices
-   * @param edgeComparator a {@link Comparator} to sort edges
-   */
-  //  protected MultiRowEdgeAwareTreeLayoutAlgorithm(
-  //      Predicate<V> rootPredicate,
-  //      Comparator<V> rootComparator,
-  //      int horizontalVertexSpacing,
-  //      int verticalVertexSpacing,
-  //      Function<V, Shape> vertexShapeFunction,
-  //      Predicate<V> vertexPredicate,
-  //      Predicate<E> edgePredicate,
-  //      Comparator<V> vertexComparator,
-  //      Comparator<E> edgeComparator,
-  //      boolean expandLayout,
-  //      boolean alignFavoredEdges) {
-  //    super(
-  //        rootPredicate,
-  //        rootComparator,
-  //        horizontalVertexSpacing,
-  //        verticalVertexSpacing,
-  //        vertexShapeFunction,
-  //        expandLayout);
-  //    this.vertexPredicate = builder.vertexPredicate;
-  //    this.edgePredicate = builder.edgePredicate;
-  //    this.vertexComparator = builder.vertexComparator;
-  //    this.edgeComparator = builder.edgeComparator;
-  //    this.alignFavoredEdges = builder.alignFavoredEdges;
-  //  }
-
   /** a {@link Predicate} to filter vertices */
   protected Predicate<V> vertexPredicate;
 

@@ -21,7 +21,6 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.samples.util.LayoutHelper;
-import org.jungrapht.samples.util.SpanningTreeAdapter;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -152,14 +151,6 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
                   LayoutHelper.Layouts layoutType = (LayoutHelper.Layouts) jcb.getSelectedItem();
                   LayoutAlgorithm layoutAlgorithm = layoutType.getLayoutAlgorithm();
                   log.trace("got a {}", layoutAlgorithm);
-                  if ((layoutAlgorithm instanceof TreeLayout)
-                      && vv.getVisualizationModel().getGraph().getType().isUndirected()) {
-                    Graph tree =
-                        SpanningTreeAdapter.getSpanningTree(vv.getVisualizationModel().getGraph());
-                    LayoutModel positionModel = getTreeLayoutPositions(tree, layoutAlgorithm);
-                    vv.getVisualizationModel().getLayoutModel().setInitializer(positionModel);
-                    layoutAlgorithm = new StaticLayoutAlgorithm();
-                  }
                   if (animateLayoutTransition.isSelected()) {
                     LayoutAlgorithmTransition.animate(vv, layoutAlgorithm);
                   } else {

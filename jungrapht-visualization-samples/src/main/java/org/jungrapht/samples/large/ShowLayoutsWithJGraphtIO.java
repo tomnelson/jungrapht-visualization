@@ -1,6 +1,6 @@
 package org.jungrapht.samples.large;
 
-import static org.jungrapht.visualization.MultiLayerTransformer.*;
+import static org.jungrapht.visualization.MultiLayerTransformer.Layer;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -25,7 +25,6 @@ import org.jungrapht.samples.spatial.RTreeVisualization;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.LayoutHelper;
 import org.jungrapht.samples.util.LensControlHelper;
-import org.jungrapht.samples.util.SpanningTreeAdapter;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.LensMagnificationGraphMousePlugin;
@@ -34,8 +33,6 @@ import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
 import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.TreeLayout;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.transform.HyperbolicTransformer;
@@ -157,19 +154,6 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
                   LayoutAlgorithm layoutAlgorithm = layoutType.getLayoutAlgorithm();
                   vv.removePreRenderPaintable(balloonLayoutRings);
                   vv.removePreRenderPaintable(radialLayoutRings);
-                  if ((layoutAlgorithm instanceof TreeLayout)
-                      && vv.getVisualizationModel().getGraph().getType().isUndirected()) {
-                    Graph tree =
-                        SpanningTreeAdapter.getSpanningTree(vv.getVisualizationModel().getGraph());
-                    LayoutModel positionModel =
-                        this.getTreeLayoutPositions(
-                            tree, layoutAlgorithm, vv.getVisualizationModel().getLayoutModel());
-                    //                    vv.getVisualizationModel()
-                    //                        .getLayoutModel()
-                    //                        .setSize(positionModel.getWidth(), positionModel.getHeight());
-                    vv.getVisualizationModel().getLayoutModel().setInitializer(positionModel);
-                    layoutAlgorithm = new StaticLayoutAlgorithm();
-                  }
                   if (animateLayoutTransition.isSelected()) {
                     LayoutAlgorithmTransition.animate(vv, layoutAlgorithm);
                   } else {

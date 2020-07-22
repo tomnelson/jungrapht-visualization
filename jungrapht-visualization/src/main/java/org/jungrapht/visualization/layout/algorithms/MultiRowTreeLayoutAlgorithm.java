@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.model.LayoutModel;
+import org.jungrapht.visualization.layout.util.Caching;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,6 +74,10 @@ public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
     if (graph == null || graph.vertexSet().isEmpty()) {
       return Collections.emptySet();
     }
+    if (layoutModel instanceof Caching) {
+      ((Caching) layoutModel).clear();
+    }
+
     this.defaultRootPredicate =
         v -> graph.incomingEdgesOf(v).isEmpty() || TreeLayout.isIsolatedVertex(graph, v);
     if (vertexShapeFunction != null) {
@@ -97,32 +102,15 @@ public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
       Graph<V, ?> tree = TreeLayoutAlgorithm.getSpanningTree(graph);
       layoutModel.setGraph(tree);
       Set<V> treeRoots = buildTree(layoutModel);
-      layoutModel.setGraph(graph);
       return treeRoots;
     }
-    //    if (roots.size() == 0) throw new IllegalArgumentException("graph has no root vertices");
-    // the width of the tree under 'roots'. Includes one 'horizontalVertexSpacing' per child vertex
     int overallWidth = calculateWidth(layoutModel, roots, new HashSet<>());
     int overallHeight = calculateOverallHeight(layoutModel, roots, overallWidth);
-    //   if the overall height is more that twice the size of the overall width, then
-    // widen the layout area and recompute
-    if (overallHeight > overallWidth * 2) {
-      int factor = overallHeight / overallWidth / 2;
-      layoutModel.setSize(layoutModel.getWidth() * factor, layoutModel.getHeight());
-      overallWidth = calculateWidth(layoutModel, roots, new HashSet<>());
-      overallHeight = calculateOverallHeight(layoutModel, roots, overallWidth);
-    }
-    overallHeight += verticalVertexSpacing;
 
-    int largerHeight = Math.max(layoutModel.getHeight(), overallHeight);
-    int largerWidth = Math.max(layoutModel.getWidth(), overallWidth);
-    if (expandLayout) {
-      layoutModel.setSize(largerWidth, largerHeight);
-    }
+    int cursor =
+        horizontalVertexSpacing; //(horizontalVertexSpacing, layoutModel.getWidth(), overallWidth);
 
-    int cursor = getInitialPosition(horizontalVertexSpacing, layoutModel.getWidth(), overallWidth);
-
-    int y = getInitialPosition(0, layoutModel.getHeight(), overallHeight);
+    int y = 0; //getInitialPosition(0, layoutModel.getHeight(), overallHeight);
 
     Set<V> rootsInRow = new HashSet<>();
     Set<V> seen = new HashSet<>();
@@ -150,6 +138,9 @@ public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
     }
     // last row
     int rowHeight = calculateHeight(layoutModel, rootsInRow, seenForHeight);
+    if (expandLayout) {
+      expandToFill(layoutModel);
+    }
     return roots;
   }
 

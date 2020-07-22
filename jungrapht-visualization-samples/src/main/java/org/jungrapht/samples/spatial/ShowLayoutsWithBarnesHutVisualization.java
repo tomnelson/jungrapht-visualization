@@ -25,7 +25,6 @@ import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.LayoutHelper;
-import org.jungrapht.samples.util.SpanningTreeAdapter;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.AbstractVisualizationViewer;
 import org.jungrapht.visualization.VisualizationComponent;
@@ -36,8 +35,6 @@ import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
-import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.TreeLayout;
 import org.jungrapht.visualization.layout.algorithms.repulsion.StandardRepulsion;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
@@ -128,15 +125,6 @@ public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
                   if (e.getStateChange() == ItemEvent.SELECTED) {
                     LayoutHelper.Layouts layoutType = (LayoutHelper.Layouts) e.getItem();
                     LayoutAlgorithm layoutAlgorithm = layoutType.getLayoutAlgorithm();
-                    if (layoutAlgorithm instanceof TreeLayout) {
-                      LayoutModel positionModel =
-                          this.getTreeLayoutPositions(
-                              SpanningTreeAdapter.getSpanningTree(
-                                  vv.getVisualizationModel().getGraph()),
-                              layoutAlgorithm);
-                      vv.getVisualizationModel().getLayoutModel().setInitializer(positionModel);
-                      layoutAlgorithm = new StaticLayoutAlgorithm();
-                    }
                     if (animateLayoutTransition.isSelected()) {
                       LayoutAlgorithmTransition.animate(vv, layoutAlgorithm);
                     } else {

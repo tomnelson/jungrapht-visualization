@@ -19,7 +19,6 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.samples.util.ControlHelpers;
-import org.jungrapht.samples.util.SpanningTreeAdapter;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -30,8 +29,6 @@ import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.CircleLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.TreeLayout;
 import org.jungrapht.visualization.layout.model.AggregateLayoutModel;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
@@ -321,16 +318,6 @@ public class SubLayoutDemo extends JPanel {
                   .initializer(
                       new RandomLocationTransformer<>(subLayoutSize.width, subLayoutSize.height, 0))
                   .build();
-
-          if (subLayoutAlgorithm instanceof TreeLayout) {
-            LayoutModel positionModel =
-                this.getTreeLayoutPositions(
-                    SpanningTreeAdapter.getSpanningTree(vv.getVisualizationModel().getGraph()),
-                    subLayoutAlgorithm);
-            newLayoutModel.setInitializer(positionModel);
-            subLayoutAlgorithm = new StaticLayoutAlgorithm();
-          }
-
           clusteringLayoutModel.put(newLayoutModel, Point.of(center.getX(), center.getY()));
           newLayoutModel.accept(subLayoutAlgorithm);
           vv.repaint();
