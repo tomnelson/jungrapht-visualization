@@ -37,7 +37,6 @@ public class EiglspergerSmallGraphWithGraph extends JFrame {
             .postStraighten(true)
             .threaded(false)
             //            .useLongestPathLayering(false)
-            //            .after(vv3::scaleToLayout)
             .build();
     layoutAlgorithm3.setVertexShapeFunction(vv3.getRenderContext().getVertexShapeFunction());
     layoutAlgorithm3.setEdgeShapeFunctionConsumer(vv3.getRenderContext()::setEdgeShapeFunction);

@@ -44,7 +44,6 @@ public class EiglspergerNetworkSimplex extends JFrame {
             .postStraighten(true)
             .threaded(false)
             .layering(Layering.NETWORK_SIMPLEX)
-            //            .after(vv3::scaleToLayout)
             .build();
     layoutAlgorithm3.setVertexShapeFunction(vv3.getRenderContext().getVertexShapeFunction());
     layoutAlgorithm3.setEdgeShapeFunctionConsumer(vv3.getRenderContext()::setEdgeShapeFunction);

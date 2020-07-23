@@ -1,11 +1,11 @@
-VisualizationViewer adds mouse gestures by extending
-VisualizationServer
+LayoutAlgorithm computes vertex locations.
 
-VisualizationServer contains code to draw graphs (transforms, renderers)
+LayoutModel accepts a LayoutAlgorithm and contains a Map of vertex to Point locations
 
-VisualizationServer contains a VisualizationModel
+VisualizationModel contains a LayoutModel and adds awt classes and event support.
 
-VisualizationModel contains a LayoutModel
+VisualizationServer contains a VisualizationModel and contains affine transforms and
+renderers to draw a graph.
 
-LayoutModel contains a location Map of vertex to Point
-LayoutModel accepts a LayoutAlgorithm to mutate the location Map values
+VisualizationViewer extends VisualizationServer and adds mouse-driven event handling
+

@@ -129,7 +129,6 @@ public class GhidraModuleDependencyGraphDemo extends JPanel {
                 v ->
                     graph.incomingEdgesOf((ModuleVertex) v).stream().anyMatch(edgePredicate)
                         | graph.outgoingEdgesOf((ModuleVertex) v).stream().anyMatch(edgePredicate))
-            //            .after(vv::scaleToLayout)
             .initialSelection(12)
             .build();
 

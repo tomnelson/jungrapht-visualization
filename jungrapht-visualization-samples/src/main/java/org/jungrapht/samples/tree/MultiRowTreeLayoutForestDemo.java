@@ -130,7 +130,6 @@ public class MultiRowTreeLayoutForestDemo extends JPanel {
                 v ->
                     graph.incomingEdgesOf((String) v).stream().anyMatch(edgePredicate)
                         | graph.outgoingEdgesOf((String) v).stream().anyMatch(edgePredicate))
-            //            .after(vv::scaleToLayout)
             .build();
 
     controls.add(ControlHelpers.getCenteredContainer("Layout Controls", treeLayoutSelector));

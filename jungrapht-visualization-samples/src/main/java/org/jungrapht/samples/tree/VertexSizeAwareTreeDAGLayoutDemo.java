@@ -149,7 +149,6 @@ public class VertexSizeAwareTreeDAGLayoutDemo extends JFrame {
             .edgePredicate(edgePredicate)
             .vertexShapeFunction(vv.getRenderContext().getVertexShapeFunction())
             .alignFavoredEdges(false)
-            //            .after(vv::scaleToLayout)
             .build();
 
     setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

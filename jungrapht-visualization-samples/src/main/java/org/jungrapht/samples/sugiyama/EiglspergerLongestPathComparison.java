@@ -38,7 +38,6 @@ public class EiglspergerLongestPathComparison extends JFrame {
             .postStraighten(true)
             .threaded(false)
             .layering(Layering.TOP_DOWN)
-            //            .after(vv1::scaleToLayout)
             .build();
     layoutAlgorithm1.setVertexShapeFunction(vv1.getRenderContext().getVertexShapeFunction());
     layoutAlgorithm1.setEdgeShapeFunctionConsumer(vv1.getRenderContext()::setEdgeShapeFunction);
@@ -54,7 +53,6 @@ public class EiglspergerLongestPathComparison extends JFrame {
             .postStraighten(true)
             .threaded(false)
             .layering(Layering.COFFMAN_GRAHAM)
-            //            .after(vv2::scaleToLayout)
             .build();
     layoutAlgorithm2.setVertexShapeFunction(vv2.getRenderContext().getVertexShapeFunction());
     layoutAlgorithm2.setEdgeShapeFunctionConsumer(vv2.getRenderContext()::setEdgeShapeFunction);

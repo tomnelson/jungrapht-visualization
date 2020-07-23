@@ -113,11 +113,7 @@ public class BalloonLayoutDemo extends JPanel {
     Box controls = Box.createHorizontalBox();
     controls.add(
         ControlHelpers.getCenteredContainer(
-            "Layout Controls",
-            TreeLayoutSelector.builder(vv)
-                .initialSelection(6)
-                //                    .after(vv::scaleToLayout)
-                .build()));
+            "Layout Controls", TreeLayoutSelector.builder(vv).initialSelection(6).build()));
     controls.add(ControlHelpers.getCenteredContainer("Lens Controls", lensBox));
     add(controls, BorderLayout.SOUTH);
   }
