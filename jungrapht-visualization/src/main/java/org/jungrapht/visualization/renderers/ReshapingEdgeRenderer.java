@@ -24,7 +24,6 @@ import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.transform.LensTransformer;
 import org.jungrapht.visualization.transform.MutableTransformer;
 import org.jungrapht.visualization.transform.shape.TransformingGraphics;
-import org.jungrapht.visualization.util.Context;
 
 /**
  * uses a flatness argument to break edges into smaller segments. This produces a more detailed
@@ -78,7 +77,7 @@ public class ReshapingEdgeRenderer<V, E> extends HeavyweightEdgeRenderer<V, E>
 
     boolean isLoop = v1.equals(v2);
     Shape s2 = renderContext.getVertexShapeFunction().apply(v2);
-    Shape edgeShape = renderContext.getEdgeShapeFunction().apply(Context.getInstance(graph, e));
+    Shape edgeShape = renderContext.getEdgeShapeFunction().apply(graph, e);
 
     AffineTransform xform = AffineTransform.getTranslateInstance(x1, y1);
 

@@ -15,6 +15,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import org.jgrapht.Graph;
@@ -31,7 +32,6 @@ import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
-import org.jungrapht.visualization.util.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,8 +87,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
       implements LayoutAlgorithm.Builder<V, T, B> {
     protected Executor executor;
     protected Function<V, Shape> vertexShapeFunction = v -> IDENTITY_SHAPE;
-    protected Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeFunctionConsumer =
-        i -> {};
+    protected Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeFunctionConsumer = i -> {};
     protected boolean straightenEdges =
         Boolean.parseBoolean(System.getProperty(MINCROSS_STRAIGHTEN_EDGES, "true"));
     protected boolean postStraighten =
@@ -114,7 +113,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
     }
 
     public B edgeShapeFunctionConsumer(
-        Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeFunctionConsumer) {
+        Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeFunctionConsumer) {
       this.edgeShapeFunctionConsumer = edgeShapeFunctionConsumer;
       return self();
     }
@@ -195,7 +194,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
   protected List<V> roots;
 
   protected Function<V, Shape> vertexShapeFunction;
-  protected Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeFunctionConsumer;
+  protected Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeFunctionConsumer;
   protected boolean straightenEdges;
   protected boolean postStraighten;
   protected boolean transpose;
@@ -236,7 +235,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
 
   protected AbstractHierarchicalMinCrossLayoutAlgorithm(
       Function<V, Shape> vertexShapeFunction,
-      Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeFunctionConsumer,
+      Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeFunctionConsumer,
       boolean straightenEdges,
       boolean postStraighten,
       boolean transpose,
@@ -272,7 +271,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
 
   @Override
   public void setEdgeShapeFunctionConsumer(
-      Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeFunctionConsumer) {
+      Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeFunctionConsumer) {
     this.edgeShapeFunctionConsumer = edgeShapeFunctionConsumer;
   }
 

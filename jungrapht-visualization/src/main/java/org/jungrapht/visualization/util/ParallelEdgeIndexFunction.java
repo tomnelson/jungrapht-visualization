@@ -31,9 +31,7 @@ public class ParallelEdgeIndexFunction<V, E> implements EdgeIndexFunction<V, E> 
   protected Map<E, Integer> edgeIndex = new HashMap<>();
 
   @Override
-  public Integer apply(Context<Graph<V, E>, E> context) {
-    Graph<V, E> graph = context.graph;
-    E edge = context.element;
+  public Integer apply(Graph<V, E> graph, E edge) {
     Integer index = edgeIndex.get(edge);
     if (index == null) {
       V u = graph.getEdgeSource(edge);
@@ -47,8 +45,8 @@ public class ParallelEdgeIndexFunction<V, E> implements EdgeIndexFunction<V, E> 
     return index;
   }
 
-  public void reset(Context<Graph<V, E>, E> context) {
-    edgeIndex.remove(context.element);
+  public void reset(Graph<V, E> graph, E edge) {
+    edgeIndex.remove(edge);
   }
 
   public void reset() {

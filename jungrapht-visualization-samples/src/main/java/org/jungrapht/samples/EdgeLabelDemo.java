@@ -10,6 +10,7 @@ package org.jungrapht.samples;
 
 import java.awt.*;
 import java.awt.event.ItemEvent;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 import javax.swing.*;
@@ -29,7 +30,6 @@ import org.jungrapht.visualization.layout.algorithms.CircleLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.renderers.EdgeLabelRenderer;
 import org.jungrapht.visualization.renderers.VertexLabelRenderer;
-import org.jungrapht.visualization.util.Context;
 
 /**
  * Demonstrates jungrapht support for drawing edge labels that can be positioned at any point along
@@ -158,7 +158,7 @@ public class EdgeLabelDemo extends JPanel {
     edgeOffsetSlider.addChangeListener(
         e -> {
           JSlider s = (JSlider) e.getSource();
-          Function<Context<Graph<Integer, Number>, Number>, Shape> edgeShapeFunction =
+          BiFunction<Graph<Integer, Number>, Number, Shape> edgeShapeFunction =
               vv.getRenderContext().getEdgeShapeFunction();
           if (edgeShapeFunction instanceof ParallelEdgeShapeFunction) {
             ((ParallelEdgeShapeFunction) edgeShapeFunction).setControlOffsetIncrement(s.getValue());

@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -36,7 +37,6 @@ import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
 import org.jungrapht.visualization.layout.util.synthetics.Synthetic;
-import org.jungrapht.visualization.util.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +68,7 @@ public class LayeredLayoutAlgorithm<V, E>
           B extends Builder<V, E, T, B>>
       implements LayoutAlgorithm.Builder<V, T, B> {
     protected Function<V, Shape> vertexShapeFunction = v -> IDENTITY_SHAPE;
-    protected Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer;
+    protected Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeConsumer;
 
     protected boolean expandLayout = true;
     protected Runnable after = () -> {};
@@ -83,8 +83,7 @@ public class LayeredLayoutAlgorithm<V, E>
       return self();
     }
 
-    public B edgeShapeConsumer(
-        Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer) {
+    public B edgeShapeConsumer(Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeConsumer) {
       this.edgeShapeConsumer = edgeShapeConsumer;
       return self();
     }
@@ -119,7 +118,7 @@ public class LayeredLayoutAlgorithm<V, E>
   protected List<V> roots;
 
   protected Function<V, Shape> vertexShapeFunction;
-  Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer;
+  Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeConsumer;
   protected boolean expandLayout;
   CompletableFuture theFuture;
   Runnable after;
@@ -148,7 +147,7 @@ public class LayeredLayoutAlgorithm<V, E>
 
   @Override
   public void setEdgeShapeFunctionConsumer(
-      Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer) {
+      Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeConsumer) {
     this.edgeShapeConsumer = edgeShapeConsumer;
   }
 

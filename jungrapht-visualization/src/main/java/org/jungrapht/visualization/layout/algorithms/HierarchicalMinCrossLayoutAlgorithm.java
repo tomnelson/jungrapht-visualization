@@ -5,6 +5,7 @@ import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 import java.awt.Shape;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import org.jgrapht.Graph;
@@ -18,7 +19,6 @@ import org.jungrapht.visualization.layout.algorithms.util.LayeredRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.Threaded;
 import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
 import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.jungrapht.visualization.util.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -128,7 +128,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
 
   protected HierarchicalMinCrossLayoutAlgorithm(
       Function<V, Shape> vertexShapeFunction,
-      Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeFunctionConsumer,
+      Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeFunctionConsumer,
       int eiglspergerThreshold,
       boolean straightenEdges,
       boolean postStraighten,

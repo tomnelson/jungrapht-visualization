@@ -1,6 +1,7 @@
 package org.jungrapht.visualization;
 
 import java.awt.*;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import javax.swing.CellRendererPane;
@@ -14,7 +15,6 @@ import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.renderers.VertexLabelRenderer;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
-import org.jungrapht.visualization.util.Context;
 import org.jungrapht.visualization.util.EdgeIndexFunction;
 
 /**
@@ -86,9 +86,9 @@ public interface RenderContext<V, E> extends RenderContextStateChange.Producer {
 
   void setArrowFillPaintFunction(Function<E, Paint> arrowFillPaintFunction);
 
-  Function<Context<Graph<V, E>, E>, Shape> getEdgeShapeFunction();
+  BiFunction<Graph<V, E>, E, Shape> getEdgeShapeFunction();
 
-  void setEdgeShapeFunction(Function<Context<Graph<V, E>, E>, Shape> edgeShapeFunction);
+  void setEdgeShapeFunction(BiFunction<Graph<V, E>, E, Shape> edgeShapeFunction);
 
   Function<E, String> getEdgeLabelFunction();
 

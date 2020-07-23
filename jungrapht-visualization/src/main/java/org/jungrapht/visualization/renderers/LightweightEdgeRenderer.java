@@ -11,14 +11,17 @@ package org.jungrapht.visualization.renderers;
 
 import static org.jungrapht.visualization.DefaultRenderContext.EDGE_WIDTH;
 
-import java.awt.*;
-import java.util.function.Function;
+import java.awt.BasicStroke;
+import java.awt.Graphics2D;
+import java.awt.Paint;
+import java.awt.Shape;
+import java.awt.Stroke;
+import java.util.function.BiFunction;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
-import org.jungrapht.visualization.util.Context;
 
 /**
  * @param <V> vertex type
@@ -38,11 +41,11 @@ public class LightweightEdgeRenderer<V, E> extends AbstractEdgeRenderer<V, E>
    */
   @Override
   protected Shape getEdgeShape(
-      Function<Context<Graph<V, E>, E>, Shape> edgeShapeFunction, E edge, Graph<V, E> graph) {
+      BiFunction<Graph<V, E>, E, Shape> edgeShapeFunction, E edge, Graph<V, E> graph) {
     if (edgeShapeFunction instanceof EdgeShape.ArticulatedLine) {
-      return edgeShapeFunction.apply(Context.getInstance(graph, edge));
+      return edgeShapeFunction.apply(graph, edge);
     } else {
-      return EdgeShape.<V, E>line().apply(Context.getInstance(graph, edge));
+      return EdgeShape.<V, E>line().apply(graph, edge);
     }
   }
 

@@ -7,6 +7,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -187,11 +188,11 @@ public abstract class BoundingRectangleCollector<T> {
 
     private static final double NON_EMPTY_DELTA = 0.001;
     protected Function<V, Shape> vertexShapeFunction;
-    protected Function<Context<Graph<V, E>, E>, Shape> edgeShapeFunction;
+    protected BiFunction<Graph<V, E>, E, Shape> edgeShapeFunction;
 
     public Edges(
         Function<V, Shape> vertexShapeFunction,
-        Function<Context<Graph<V, E>, E>, Shape> edgeShapeFunction,
+        BiFunction<Graph<V, E>, E, Shape> edgeShapeFunction,
         LayoutModel<V> layoutModel) {
       super(layoutModel);
       this.vertexShapeFunction = vertexShapeFunction;
@@ -212,7 +213,7 @@ public abstract class BoundingRectangleCollector<T> {
 
       boolean isLoop = v1.equals(v2);
       Shape s2 = vertexShapeFunction.apply(v2);
-      Shape edgeShape = edgeShapeFunction.apply(Context.getInstance(layoutModel.getGraph(), edge));
+      Shape edgeShape = edgeShapeFunction.apply(layoutModel.getGraph(), edge);
 
       AffineTransform xform = AffineTransform.getTranslateInstance(x1, y1);
 
@@ -252,7 +253,7 @@ public abstract class BoundingRectangleCollector<T> {
 
       boolean isLoop = v1.equals(v2);
       Shape s2 = vertexShapeFunction.apply(v2);
-      Shape edgeShape = edgeShapeFunction.apply(Context.getInstance(layoutModel.getGraph(), edge));
+      Shape edgeShape = edgeShapeFunction.apply(layoutModel.getGraph(), edge);
 
       AffineTransform xform = AffineTransform.getTranslateInstance(x1, y1);
 
@@ -292,7 +293,7 @@ public abstract class BoundingRectangleCollector<T> {
 
         boolean isLoop = v1.equals(v2);
         Shape s2 = vertexShapeFunction.apply(v2);
-        Shape edgeShape = edgeShapeFunction.apply(Context.getInstance(layoutModel.getGraph(), e));
+        Shape edgeShape = edgeShapeFunction.apply(layoutModel.getGraph(), e);
 
         AffineTransform xform = AffineTransform.getTranslateInstance(x1, y1);
 

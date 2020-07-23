@@ -18,6 +18,7 @@ import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -35,7 +36,6 @@ import org.jungrapht.visualization.renderers.VertexLabelRenderer;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.util.ArrowFactory;
-import org.jungrapht.visualization.util.Context;
 import org.jungrapht.visualization.util.EdgeIndexFunction;
 import org.jungrapht.visualization.util.ParallelEdgeIndexFunction;
 
@@ -237,7 +237,7 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
   private float edgeLabelCloseness =
       Float.parseFloat(System.getProperty(EDGE_LABEL_CLOSENESS, "0.65f"));
 
-  protected Function<Context<Graph<V, E>, E>, Shape> edgeShapeFunction;
+  protected BiFunction<Graph<V, E>, E, Shape> edgeShapeFunction;
 
   protected EdgeIndexFunction<V, E> parallelEdgeIndexFunction;
 
@@ -423,11 +423,11 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
     this.edgeFillPaintFunction = edgeFillPaintFunction;
   }
 
-  public Function<Context<Graph<V, E>, E>, Shape> getEdgeShapeFunction() {
+  public BiFunction<Graph<V, E>, E, Shape> getEdgeShapeFunction() {
     return edgeShapeFunction;
   }
 
-  public void setEdgeShapeFunction(Function<Context<Graph<V, E>, E>, Shape> edgeShapeFunction) {
+  public void setEdgeShapeFunction(BiFunction<Graph<V, E>, E, Shape> edgeShapeFunction) {
     this.edgeShapeFunction = edgeShapeFunction;
     if (edgeShapeFunction instanceof ParallelEdgeShapeFunction) {
       ParallelEdgeShapeFunction<V, E> function =

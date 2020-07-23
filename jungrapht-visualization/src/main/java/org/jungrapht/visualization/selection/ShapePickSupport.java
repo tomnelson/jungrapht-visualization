@@ -45,7 +45,6 @@ import org.jungrapht.visualization.spatial.rtree.LeafNode;
 import org.jungrapht.visualization.spatial.rtree.TreeNode;
 import org.jungrapht.visualization.transform.LensTransformer;
 import org.jungrapht.visualization.transform.MutableTransformer;
-import org.jungrapht.visualization.util.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -808,7 +807,7 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
     Shape edgeShape =
         vv.getRenderContext()
             .getEdgeShapeFunction()
-            .apply(Context.getInstance(vv.getVisualizationModel().getGraph(), e));
+            .apply(vv.getVisualizationModel().getGraph(), e);
     if (isLoop) {
       // make the loops proportional to the layoutSize of the vertex
       Shape s2 = vv.getRenderContext().getVertexShapeFunction().apply(v2);
@@ -979,10 +978,7 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
 
     boolean isLoop = source.equals(target);
     Shape targetShape = renderContext.getVertexShapeFunction().apply(target);
-    Shape edgeShape =
-        vv.getRenderContext()
-            .getEdgeShapeFunction()
-            .apply(Context.getInstance(layoutModel.getGraph(), e));
+    Shape edgeShape = vv.getRenderContext().getEdgeShapeFunction().apply(layoutModel.getGraph(), e);
 
     AffineTransform xform = AffineTransform.getTranslateInstance(sourcePoint2DX, sourcePoint2DY);
 

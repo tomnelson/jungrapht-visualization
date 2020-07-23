@@ -9,13 +9,13 @@
  */
 package org.jungrapht.visualization.decorators;
 
-import java.awt.*;
+import java.awt.Shape;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.model.Point;
-import org.jungrapht.visualization.util.Context;
 
 /**
  * An abstract class for edge-to-Shape functions that work with passed articulation points.
@@ -25,7 +25,7 @@ import org.jungrapht.visualization.util.Context;
  * @param <E> edge type
  */
 public abstract class ArticulatedEdgeShapeFunction<V, E>
-    implements Function<Context<Graph<V, E>, E>, Shape> {
+    implements BiFunction<Graph<V, E>, E, Shape> {
 
   protected Function<E, List<Point>> edgeArticulationFunction = e -> Collections.emptyList();
 

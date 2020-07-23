@@ -15,10 +15,10 @@ import java.awt.geom.*;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.model.Point;
-import org.jungrapht.visualization.util.Context;
 import org.jungrapht.visualization.util.EdgeIndexFunction;
 
 /**
@@ -69,17 +69,15 @@ public interface EdgeShape {
   }
 
   /** An edge shape that renders as a straight line between the vertex endpoints. */
-  class Line<V, E> implements Function<Context<Graph<V, E>, E>, Shape> {
+  class Line<V, E> implements BiFunction<Graph<V, E>, E, Shape> {
 
-    public Shape apply(Context<Graph<V, E>, E> context) {
-      Graph graph = context.graph;
-      E e = context.element;
-      return isLoop(graph, e) ? ELLIPSE : LINE;
+    public Shape apply(Graph<V, E> graph, E edge) {
+      return isLoop(graph, edge) ? ELLIPSE : LINE;
     }
   }
 
   class ArticulatedLine<V, E> extends ArticulatedEdgeShapeFunction<V, E>
-      implements Function<Context<Graph<V, E>, E>, Shape> {
+      implements BiFunction<Graph<V, E>, E, Shape> {
 
     /**
      * feedback edges (that would cause cycles) were reversed before the graph layering stage. They
@@ -95,11 +93,10 @@ public interface EdgeShape {
       this(Collections.emptySet());
     }
 
-    public Shape apply(Context<Graph<V, E>, E> context) {
-      E e = context.element;
+    public Shape apply(Graph<V, E> graph, E e) {
       List<Point> points = edgeArticulationFunction.apply(e);
       if (points.isEmpty()) {
-        return isLoop(context.graph, e) ? ELLIPSE : LINE;
+        return isLoop(graph, e) ? ELLIPSE : LINE;
       } else if (reversedEdges.contains(e)) {
         return ArticulatedEdgeShapeFunctions.makeReverseUnitShape(points);
       } else {
@@ -120,14 +117,12 @@ public interface EdgeShape {
      * Get the shape for this edge, returning either the shared instance or, in the case of
      * self-loop edges, the Loop shared instance.
      */
-    public Shape apply(Context<Graph<V, E>, E> context) {
-      Graph graph = context.graph;
-      E e = context.element;
+    public Shape apply(Graph<V, E> graph, E e) {
       if (isLoop(graph, e)) {
-        return loop.apply(context);
+        return loop.apply(graph, e);
       }
 
-      int index = edgeIndexFunction.apply(context);
+      int index = edgeIndexFunction.apply(graph, e);
 
       float controlY = controlOffsetIncrement + controlOffsetIncrement * index;
       QUAD_CURVE.setCurve(0.0f, 0.0f, 0.5f, controlY, 1.0f, 0.0f);
@@ -149,14 +144,12 @@ public interface EdgeShape {
      * Get the shape for this edge, returning either the shared instance or, in the case of
      * self-loop edges, the Loop shared instance.
      */
-    public Shape apply(Context<Graph<V, E>, E> context) {
-      Graph graph = context.graph;
-      E e = context.element;
+    public Shape apply(Graph<V, E> graph, E e) {
       if (isLoop(graph, e)) {
-        return loop.apply(context);
+        return loop.apply(graph, e);
       }
 
-      int index = edgeIndexFunction.apply(context);
+      int index = edgeIndexFunction.apply(graph, e);
 
       float controlY = controlOffsetIncrement + controlOffsetIncrement * index;
       CUBIC_CURVE.setCurve(0.0f, 0.0f, 0.33f, 2 * controlY, .66f, -controlY, 1.0f, 0.0f);
@@ -194,10 +187,8 @@ public interface EdgeShape {
    * instances will not overlap.
    */
   class Loop<V, E> extends ParallelEdgeShapeFunction<V, E> {
-    public Shape apply(Context<Graph<V, E>, E> context) {
-      Graph graph = context.graph;
-      E e = context.element;
-      return buildFrame(ELLIPSE, edgeIndexFunction.apply(context));
+    public Shape apply(Graph<V, E> graph, E e) {
+      return buildFrame(ELLIPSE, edgeIndexFunction.apply(graph, e));
     }
   }
 
@@ -207,10 +198,8 @@ public interface EdgeShape {
    */
   @Deprecated
   class Box<V, E> extends ParallelEdgeShapeFunction<V, E> {
-    public Shape apply(Context<Graph<V, E>, E> context) {
-      Graph graph = context.graph;
-      E e = context.element;
-      return buildFrame(BOX, edgeIndexFunction.apply(context));
+    public Shape apply(Graph<V, E> graph, E e) {
+      return buildFrame(BOX, edgeIndexFunction.apply(graph, e));
     }
   }
 
@@ -222,10 +211,8 @@ public interface EdgeShape {
       this.box = new Box();
     }
 
-    public Shape apply(Context<Graph<V, E>, E> context) {
-      Graph graph = context.graph;
-      E e = context.element;
-      return isLoop(graph, e) ? box.apply(context) : LINE;
+    public Shape apply(Graph<V, E> graph, E e) {
+      return isLoop(graph, e) ? box.apply(graph, e) : LINE;
     }
   }
 }

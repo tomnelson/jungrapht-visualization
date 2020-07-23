@@ -10,9 +10,8 @@
 package org.jungrapht.visualization.decorators;
 
 import java.awt.Shape;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import org.jgrapht.Graph;
-import org.jungrapht.visualization.util.Context;
 
 /**
  * An interface for decorators that return a <code>Shape</code> for a specified edge.
@@ -21,8 +20,7 @@ import org.jungrapht.visualization.util.Context;
  * @param <V> vertex type
  * @param <E> edge type
  */
-public abstract class AbstractEdgeShapeFunction<V, E>
-    implements Function<Context<Graph<V, E>, E>, Shape> {
+public abstract class AbstractEdgeShapeFunction<V, E> implements BiFunction<Graph<V, E>, E, Shape> {
 
   /** Specifies how far apart to place the control points for edges being drawn in parallel. */
   protected float controlOffsetIncrement = 20.f;

@@ -6,7 +6,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.MultiLayerTransformer;
@@ -14,7 +14,6 @@ import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
-import org.jungrapht.visualization.util.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,7 +131,7 @@ public abstract class AbstractEdgeRenderer<V, E> implements Renderer.Edge<V, E> 
    * @return the edge shape, heavyweight (anything) or lightweight (line or articulated line)
    */
   protected abstract Shape getEdgeShape(
-      Function<Context<Graph<V, E>, E>, Shape> edgeShapeFunction, E edge, Graph<V, E> graph);
+      BiFunction<Graph<V, E>, E, Shape> edgeShapeFunction, E edge, Graph<V, E> graph);
 
   protected abstract void drawSimpleEdge(
       RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, E e);

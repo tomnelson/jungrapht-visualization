@@ -18,6 +18,7 @@ import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import org.jgrapht.Graph;
@@ -28,7 +29,6 @@ import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
-import org.jungrapht.visualization.util.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,8 +73,7 @@ public class HeayweightEdgeLabelRenderer<V, E> implements Renderer.EdgeLabel<V, 
     // if this in an articulated edge, use only the first segment for label positioning
     // get the edge shape, move it into position (layout coords), get the first articulation point
     // and use that for p2
-    Function<Context<Graph<V, E>, E>, Shape> edgeShapeFunction =
-        renderContext.getEdgeShapeFunction();
+    BiFunction<Graph<V, E>, E, Shape> edgeShapeFunction = renderContext.getEdgeShapeFunction();
     if (edgeShapeFunction instanceof ArticulatedEdgeShapeFunction) {
       ArticulatedEdgeShapeFunction<V, E> articulatedEdgeShapeFunction =
           (ArticulatedEdgeShapeFunction<V, E>) edgeShapeFunction;
@@ -134,15 +133,11 @@ public class HeayweightEdgeLabelRenderer<V, E> implements Renderer.EdgeLabel<V, 
 
     Dimension d = component.getPreferredSize();
 
-    Shape edgeShape =
-        renderContext.getEdgeShapeFunction().apply(Context.getInstance(layoutModel.getGraph(), e));
+    Shape edgeShape = renderContext.getEdgeShapeFunction().apply(layoutModel.getGraph(), e);
 
     double parallelOffset = 1;
 
-    parallelOffset +=
-        renderContext
-            .getParallelEdgeIndexFunction()
-            .apply(Context.getInstance(layoutModel.getGraph(), e));
+    parallelOffset += renderContext.getParallelEdgeIndexFunction().apply(layoutModel.getGraph(), e);
 
     parallelOffset *= d.height;
     if (edgeShape instanceof Ellipse2D) {
@@ -195,15 +190,11 @@ public class HeayweightEdgeLabelRenderer<V, E> implements Renderer.EdgeLabel<V, 
     Shape s2 = renderContext.getVertexShapeFunction().apply(v2);
     // use LINE or ArticulatedLine for lightweight edges
     Shape edgeShape;
-    Function<Context<Graph<V, E>, E>, Shape> edgeShapeFunction =
-        renderContext.getEdgeShapeFunction();
+    BiFunction<Graph<V, E>, E, Shape> edgeShapeFunction = renderContext.getEdgeShapeFunction();
     if (edgeShapeFunction instanceof EdgeShape.ArticulatedLine) {
-      edgeShape =
-          renderContext
-              .getEdgeShapeFunction()
-              .apply(Context.getInstance(layoutModel.getGraph(), e));
+      edgeShape = renderContext.getEdgeShapeFunction().apply(layoutModel.getGraph(), e);
     } else {
-      edgeShape = EdgeShape.<V, E>line().apply(Context.getInstance(layoutModel.getGraph(), e));
+      edgeShape = EdgeShape.<V, E>line().apply(layoutModel.getGraph(), e);
     }
 
     AffineTransform xform = AffineTransform.getTranslateInstance(x1, y1);

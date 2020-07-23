@@ -173,8 +173,8 @@ public class SatelliteViewTreeDemo extends JPanel {
     mainVisualizationViewer
         .getRenderContext()
         .setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
-    mainVisualizationViewer.getRenderContext().setEdgeShapeFunction(e -> EdgeShape.LINE);
-    satelliteVisualizationViewer.getRenderContext().setEdgeShapeFunction(e -> EdgeShape.LINE);
+    mainVisualizationViewer.getRenderContext().setEdgeShapeFunction((g, e) -> EdgeShape.LINE);
+    satelliteVisualizationViewer.getRenderContext().setEdgeShapeFunction((g, e) -> EdgeShape.LINE);
 
     mainVisualizationViewer.scaleToLayout();
     satelliteVisualizationViewer.scaleToLayout();

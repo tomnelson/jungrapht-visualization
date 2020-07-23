@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import org.jgrapht.Graph;
@@ -31,7 +32,6 @@ import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
 import org.jungrapht.visualization.layout.util.synthetics.Synthetic;
-import org.jungrapht.visualization.util.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +63,7 @@ public class BrandesKopfLayoutAlgorithm<V, E>
           B extends Builder<V, E, T, B>>
       implements LayoutAlgorithm.Builder<V, T, B> {
     protected Function<V, Shape> vertexShapeFunction = v -> IDENTITY_SHAPE;
-    protected Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer;
+    protected Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeConsumer;
     protected boolean expandLayout = true;
     protected Runnable after = () -> {};
     boolean doUpLeft = false;
@@ -81,8 +81,7 @@ public class BrandesKopfLayoutAlgorithm<V, E>
       return self();
     }
 
-    public B edgeShapeConsumer(
-        Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer) {
+    public B edgeShapeConsumer(Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeConsumer) {
       this.edgeShapeConsumer = edgeShapeConsumer;
       return self();
     }
@@ -137,7 +136,7 @@ public class BrandesKopfLayoutAlgorithm<V, E>
   protected List<V> roots;
 
   protected Function<V, Shape> vertexShapeFunction;
-  Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer;
+  Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeConsumer;
   protected boolean expandLayout;
   protected Runnable after;
   protected int horizontalOffset = Integer.getInteger(PREFIX + "mincross.horizontalOffset", 50);
@@ -165,7 +164,7 @@ public class BrandesKopfLayoutAlgorithm<V, E>
 
   private BrandesKopfLayoutAlgorithm(
       Function<V, Shape> vertexShapeFunction,
-      Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer,
+      Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeConsumer,
       boolean expandLayout,
       Runnable after,
       boolean doUpLeft,
@@ -189,7 +188,7 @@ public class BrandesKopfLayoutAlgorithm<V, E>
 
   @Override
   public void setEdgeShapeFunctionConsumer(
-      Consumer<Function<Context<Graph<V, E>, E>, Shape>> edgeShapeConsumer) {
+      Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeConsumer) {
     this.edgeShapeConsumer = edgeShapeConsumer;
   }
 

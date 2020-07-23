@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import javax.swing.*;
@@ -47,7 +48,6 @@ import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFRRepuls
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.layout.algorithms.util.EdgeShapeFunctionSupplier;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
-import org.jungrapht.visualization.util.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -200,7 +200,7 @@ public class MultipleLayoutSelector<V, E> extends JPanel {
 
   final JRadioButton animateTransition = new JRadioButton("Animate Transition", true);
 
-  Function<Context<Graph<V, E>, E>, Shape> originalEdgeShapeFunction;
+  BiFunction<Graph<V, E>, E, Shape> originalEdgeShapeFunction;
 
   JComboBox<Layering> layeringComboBox =
       new JComboBox<>(
