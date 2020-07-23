@@ -1,6 +1,7 @@
 package org.jungrapht.samples.util;
 
 import java.awt.*;
+import java.awt.event.ItemEvent;
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -24,7 +25,7 @@ public class LensControlHelper {
     private JComponent container = Box.createHorizontalBox();
 
     /** supplier for activation control buttons (typically {@link JButton} or {@link JMenuItem}) */
-    private Supplier<AbstractButton> buttonSupplier = JButton::new;
+    private Supplier<AbstractButton> buttonSupplier = JToggleButton::new;
 
     /**
      * create a Builder with required {@code Map} of String button names to {@code LensSupport}
@@ -100,6 +101,19 @@ public class LensControlHelper {
   /** optional title for the button group container */
   private String title;
 
+  private ButtonGroup radio =
+      new ButtonGroup() {
+
+        @Override
+        public void setSelected(ButtonModel model, boolean selected) {
+          if (selected) {
+            super.setSelected(model, selected);
+          } else {
+            clearSelection();
+          }
+        }
+      };
+
   /**
    * @param <T> the container type
    * @return the original container, possible with a title
@@ -132,11 +146,7 @@ public class LensControlHelper {
     this.container = container;
     this.title = title;
     this.buttonSupplier = buttonSupplier;
-    AbstractButton none = buttonSupplier.get();
-    none.setText("None");
-    none.addActionListener(e -> map.values().forEach(LensSupport::deactivate));
     map.entrySet().forEach(entry -> addControls(entry, map.values(), this.container));
-    container.add(none);
   }
 
   /**
@@ -152,12 +162,24 @@ public class LensControlHelper {
   private void addControls(
       Map.Entry<String, LensSupport> entry, Collection<LensSupport> lenses, JComponent container) {
     AbstractButton button = buttonSupplier.get();
+    radio.add(button);
     button.setText(entry.getKey());
-    button.addActionListener(
+    button.addItemListener(
         e -> {
-          lenses.forEach(LensSupport::deactivate);
-          entry.getValue().activate();
+          if (e.getStateChange() == ItemEvent.SELECTED) {
+            entry.getValue().activate();
+          } else {
+            entry.getValue().deactivate();
+          }
         });
+    entry
+        .getValue()
+        .addItemListener(
+            e -> {
+              if (e.getStateChange() == ItemEvent.DESELECTED) {
+                radio.clearSelection();
+              }
+            });
     container.add(button);
   }
 }

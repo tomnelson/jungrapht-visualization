@@ -79,6 +79,7 @@ public class LayoutLensSupport<V, E, M extends LensGraphMouse> extends AbstractL
   }
 
   public void activate() {
+    super.activate();
     if (allowed()) {
       if (lensPaintable == null) {
         lensPaintable = new LensPaintable(lensTransformer, useGradient);
@@ -116,6 +117,7 @@ public class LayoutLensSupport<V, E, M extends LensGraphMouse> extends AbstractL
   }
 
   public void deactivate() {
+    super.deactivate();
     if (lensTransformer != null) {
       vv.removePreRenderPaintable(lensPaintable);
       vv.removePostRenderPaintable(lensControls);

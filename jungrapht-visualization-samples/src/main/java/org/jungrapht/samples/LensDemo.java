@@ -185,7 +185,7 @@ public class LensDemo extends JPanel {
                 new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
             .build();
 
-    JLabel modeLabel = new JLabel("     Mode Menu >>");
+    JLabel modeLabel = new JLabel("Mode >>");
     modeLabel.setUI(new VerticalLabelUI(false));
 
     graphMouse.addItemListener(hyperbolicLayoutSupport.getGraphMouse().getModeListener());

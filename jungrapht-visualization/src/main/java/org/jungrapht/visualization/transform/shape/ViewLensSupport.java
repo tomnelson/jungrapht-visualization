@@ -84,6 +84,7 @@ public class ViewLensSupport<V, E, M extends LensGraphMouse> extends AbstractLen
 
   public void activate() {
     if (allowed()) {
+      super.activate();
       lensTransformer.setDelegate(
           vv.getRenderContext()
               .getMultiLayerTransformer()
@@ -124,6 +125,7 @@ public class ViewLensSupport<V, E, M extends LensGraphMouse> extends AbstractLen
   }
 
   public void deactivate() {
+    super.deactivate();
     vv.getRenderContext()
         .getMultiLayerTransformer()
         .setTransformer(MultiLayerTransformer.Layer.VIEW, lensTransformer.getDelegate());

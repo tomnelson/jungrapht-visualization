@@ -97,7 +97,7 @@ public class MagnifyImageLensSupport<V, E, M extends LensGraphMouse>
 
   public void activate() {
     if (allowed()) {
-
+      super.activate();
       lensTransformer.setDelegate(
           vv.getRenderContext()
               .getMultiLayerTransformer()
@@ -142,6 +142,7 @@ public class MagnifyImageLensSupport<V, E, M extends LensGraphMouse>
   }
 
   public void deactivate() {
+    super.deactivate();
     renderContext.setPickSupport(pickSupport);
     vv.getRenderContext()
         .getMultiLayerTransformer()

@@ -10,6 +10,7 @@
 
 package org.jungrapht.visualization.transform;
 
+import java.awt.event.ItemListener;
 import org.jungrapht.visualization.control.LensGraphMouse;
 
 /**
@@ -35,4 +36,6 @@ public interface LensSupport<M extends LensGraphMouse> {
   LensTransformer getLensTransformer();
 
   M getGraphMouse();
+
+  void addItemListener(ItemListener itemListener);
 }

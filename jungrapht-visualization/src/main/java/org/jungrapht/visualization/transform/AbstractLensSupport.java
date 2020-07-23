@@ -13,15 +13,19 @@ package org.jungrapht.visualization.transform;
 import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 
 import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.geom.*;
 import java.util.Arrays;
 import java.util.Optional;
+import javax.swing.*;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.LensGraphMouse;
 import org.jungrapht.visualization.control.LensTransformSupport;
 import org.jungrapht.visualization.control.ModalLensGraphMouse;
 import org.jungrapht.visualization.layout.GraphElementAccessor;
+import org.jungrapht.visualization.util.ItemSupport;
 
 /**
  * A class to make it easy to add an examining lens to a jungrapht graph application. See
@@ -32,7 +36,7 @@ import org.jungrapht.visualization.layout.GraphElementAccessor;
  * @param <E> edge type
  * @param <M> LensGraphMouse type
  */
-public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse>
+public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse> extends ItemSupport
     implements LensSupport<M> {
 
   private static final String LENS_STROKE_WIDTH = PREFIX + "lensStrokeWidth";
@@ -53,6 +57,7 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse>
     protected LensTransformer lensTransformer;
     protected GraphElementAccessor<V, E> pickSupport;
     protected boolean useGradient;
+    protected ItemListener itemListener;
 
     public B self() {
       return (B) this;
@@ -97,6 +102,11 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse>
       return self();
     }
 
+    public B itemListener(ItemListener itemListener) {
+      this.itemListener = itemListener;
+      return self();
+    }
+
     public abstract T build();
   }
 
@@ -129,6 +139,7 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse>
     this.lensTransformer = builder.lensTransformer;
     this.pickSupport = Optional.ofNullable(builder.pickSupport).orElse(vv.getPickSupport());
     this.useGradient = builder.useGradient;
+    this.addItemListener(builder.itemListener);
   }
   /**
    * create the base class, setting common members and creating a custom GraphMouse
@@ -159,6 +170,20 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse>
       //      manager.run();
     } else {
       deactivate();
+    }
+  }
+
+  @Override
+  public void activate() {
+    if (listenerList.getListenerCount() > 0) {
+      fireItemStateChanged(new ItemEvent(this, ItemEvent.ITEM_FIRST, this, ItemEvent.SELECTED));
+    }
+  }
+
+  @Override
+  public void deactivate() {
+    if (listenerList.getListenerCount() > 0) {
+      fireItemStateChanged(new ItemEvent(this, ItemEvent.ITEM_FIRST, this, ItemEvent.DESELECTED));
     }
   }
 
