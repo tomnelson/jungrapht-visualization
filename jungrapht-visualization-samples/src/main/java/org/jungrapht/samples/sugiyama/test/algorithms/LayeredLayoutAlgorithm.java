@@ -15,13 +15,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
-import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.EdgeAwareLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.ArticulatedEdge;
@@ -31,7 +27,7 @@ import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Synthetics;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.TransformedGraphSupplier;
-import org.jungrapht.visualization.layout.algorithms.util.EdgeShapeFunctionSupplier;
+import org.jungrapht.visualization.layout.algorithms.util.EdgeArticulationFunctionSupplier;
 import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
@@ -47,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * @param <E>
  */
 public class LayeredLayoutAlgorithm<V, E>
-    implements LayoutAlgorithm<V>, EdgeShapeFunctionSupplier<V, E>, VertexShapeAware<V> {
+    implements LayoutAlgorithm<V>, EdgeArticulationFunctionSupplier<E>, VertexShapeAware<V> {
 
   private static final Logger log = LoggerFactory.getLogger(LayeredLayoutAlgorithm.class);
 
@@ -68,7 +64,7 @@ public class LayeredLayoutAlgorithm<V, E>
           B extends Builder<V, E, T, B>>
       implements LayoutAlgorithm.Builder<V, T, B> {
     protected Function<V, Shape> vertexShapeFunction = v -> IDENTITY_SHAPE;
-    protected Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeConsumer;
+    //    protected Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeConsumer;
 
     protected boolean expandLayout = true;
     protected Runnable after = () -> {};
@@ -83,10 +79,10 @@ public class LayeredLayoutAlgorithm<V, E>
       return self();
     }
 
-    public B edgeShapeConsumer(Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeConsumer) {
-      this.edgeShapeConsumer = edgeShapeConsumer;
-      return self();
-    }
+    //    public B edgeShapeConsumer(Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeConsumer) {
+    //      this.edgeShapeConsumer = edgeShapeConsumer;
+    //      return self();
+    //    }
 
     /** {@inheritDoc} */
     public B expandLayout(boolean expandLayout) {
@@ -118,9 +114,9 @@ public class LayeredLayoutAlgorithm<V, E>
   protected List<V> roots;
 
   protected Function<V, Shape> vertexShapeFunction;
-  Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeConsumer;
+  //  Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeConsumer;
   protected boolean expandLayout;
-  CompletableFuture theFuture;
+  Map<E, List<Point>> edgePointMap = new HashMap<>();
   Runnable after;
   int horizontalOffset = Integer.getInteger(PREFIX + "mincross.horizontalOffset", 50);
   int verticalOffset = Integer.getInteger(PREFIX + "mincross.verticalOffset", 50);
@@ -146,10 +142,15 @@ public class LayeredLayoutAlgorithm<V, E>
   }
 
   @Override
-  public void setEdgeShapeFunctionConsumer(
-      Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeConsumer) {
-    this.edgeShapeConsumer = edgeShapeConsumer;
+  public Function<E, List<Point>> getEdgeArticulationFunction() {
+    return e -> edgePointMap.getOrDefault(e, Collections.emptyList());
   }
+
+  //  @Override
+  //  public void setEdgeShapeFunctionConsumer(
+  //      Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeConsumer) {
+  //    this.edgeShapeConsumer = edgeShapeConsumer;
+  //  }
 
   Graph<V, E> originalGraph;
   List<List<LV<V>>> layers;
@@ -158,6 +159,7 @@ public class LayeredLayoutAlgorithm<V, E>
 
   @Override
   public void visit(LayoutModel<V> layoutModel) {
+    this.edgePointMap.clear();
     this.originalGraph = layoutModel.getGraph();
     this.svGraph = new TransformedGraphSupplier<>(originalGraph).get();
     GreedyCycleRemoval<LV<V>, LE<V, E>> greedyCycleRemoval = new GreedyCycleRemoval(svGraph);
@@ -276,7 +278,6 @@ public class LayeredLayoutAlgorithm<V, E>
       }
     }
 
-    Map<E, List<Point>> edgePointMap = new HashMap<>();
     for (ArticulatedEdge<V, E> ae : articulatedEdges) {
       List<Point> points = new ArrayList<>();
       if (feedbackEdges.contains(ae.edge)) {
@@ -291,11 +292,11 @@ public class LayeredLayoutAlgorithm<V, E>
 
       edgePointMap.put(ae.edge, points);
     }
-    EdgeShape.ArticulatedLine<V, E> edgeShape = new EdgeShape.ArticulatedLine<>();
-    edgeShape.setEdgeArticulationFunction(
-        e -> edgePointMap.getOrDefault(e, Collections.emptyList()));
-
-    edgeShapeConsumer.accept(edgeShape);
+    //    EdgeShape.ArticulatedLine<V, E> edgeShape = new EdgeShape.ArticulatedLine<>();
+    //    edgeShape.setEdgeArticulationFunction(
+    //        e -> edgePointMap.getOrDefault(e, Collections.emptyList()));
+    //
+    //    edgeShapeConsumer.accept(edgeShape);
 
     svGraph.vertexSet().forEach(v -> layoutModel.set(v.getVertex(), v.getPoint()));
   }

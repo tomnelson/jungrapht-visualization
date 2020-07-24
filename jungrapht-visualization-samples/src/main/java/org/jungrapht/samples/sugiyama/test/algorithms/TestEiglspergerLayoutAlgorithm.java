@@ -140,6 +140,5 @@ public class TestEiglspergerLayoutAlgorithm<V, E> extends EiglspergerLayoutAlgor
       // fire an event to say that the layout is done
       layoutModel.getLayoutStateChangeSupport().fireLayoutStateChanged(layoutModel, false);
     }
-    edgeShapeFunctionConsumer.accept(edgeShape);
   }
 }

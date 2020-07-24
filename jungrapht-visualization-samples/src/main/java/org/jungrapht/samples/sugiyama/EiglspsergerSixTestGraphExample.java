@@ -53,7 +53,6 @@ public class EiglspsergerSixTestGraphExample extends JFrame {
             .postStraighten(false)
             .build();
     layoutAlgorithm1.setVertexShapeFunction(vv1.getRenderContext().getVertexShapeFunction());
-    layoutAlgorithm1.setEdgeShapeFunctionConsumer(vv1.getRenderContext()::setEdgeShapeFunction);
     vv1.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm1);
 
     TestEiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm2 =
@@ -63,7 +62,6 @@ public class EiglspsergerSixTestGraphExample extends JFrame {
             .postStraighten(false)
             .build();
     layoutAlgorithm2.setVertexShapeFunction(vv2.getRenderContext().getVertexShapeFunction());
-    layoutAlgorithm2.setEdgeShapeFunctionConsumer(vv2.getRenderContext()::setEdgeShapeFunction);
     vv2.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm2);
 
     TestEiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm3 =
@@ -73,7 +71,6 @@ public class EiglspsergerSixTestGraphExample extends JFrame {
             .postStraighten(false)
             .build();
     layoutAlgorithm3.setVertexShapeFunction(vv3.getRenderContext().getVertexShapeFunction());
-    layoutAlgorithm3.setEdgeShapeFunctionConsumer(vv3.getRenderContext()::setEdgeShapeFunction);
     vv3.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm3);
 
     TestEiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm4 =
@@ -83,7 +80,6 @@ public class EiglspsergerSixTestGraphExample extends JFrame {
             .postStraighten(false)
             .build();
     layoutAlgorithm4.setVertexShapeFunction(vv4.getRenderContext().getVertexShapeFunction());
-    layoutAlgorithm4.setEdgeShapeFunctionConsumer(vv4.getRenderContext()::setEdgeShapeFunction);
     vv4.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm4);
 
     TestEiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm5 =
@@ -96,7 +92,6 @@ public class EiglspsergerSixTestGraphExample extends JFrame {
             .postStraighten(false)
             .build();
     layoutAlgorithm5.setVertexShapeFunction(vv5.getRenderContext().getVertexShapeFunction());
-    layoutAlgorithm5.setEdgeShapeFunctionConsumer(vv5.getRenderContext()::setEdgeShapeFunction);
     vv5.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm5);
 
     TestEiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm6 =
@@ -109,7 +104,6 @@ public class EiglspsergerSixTestGraphExample extends JFrame {
             .postStraighten(false)
             .build();
     layoutAlgorithm6.setVertexShapeFunction(vv6.getRenderContext().getVertexShapeFunction());
-    layoutAlgorithm6.setEdgeShapeFunctionConsumer(vv6.getRenderContext()::setEdgeShapeFunction);
     vv6.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm6);
 
     container.add(vv1.getComponent());

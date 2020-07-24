@@ -5,15 +5,12 @@ import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 import java.awt.Shape;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnable;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
-import org.jungrapht.visualization.layout.algorithms.util.EdgeShapeFunctionSupplier;
 import org.jungrapht.visualization.layout.algorithms.util.ExecutorConsumer;
 import org.jungrapht.visualization.layout.algorithms.util.LayeredRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.Threaded;
@@ -45,7 +42,6 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
     extends AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
     implements LayoutAlgorithm<V>,
         VertexShapeAware<V>,
-        EdgeShapeFunctionSupplier<V, E>,
         Layered,
         AfterRunnable,
         ExecutorConsumer,
@@ -111,7 +107,6 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
   private HierarchicalMinCrossLayoutAlgorithm(Builder builder) {
     this(
         builder.vertexShapeFunction,
-        builder.edgeShapeFunctionConsumer,
         builder.eiglspergerThreshold,
         builder.straightenEdges,
         builder.postStraighten,
@@ -128,7 +123,6 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
 
   protected HierarchicalMinCrossLayoutAlgorithm(
       Function<V, Shape> vertexShapeFunction,
-      Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeFunctionConsumer,
       int eiglspergerThreshold,
       boolean straightenEdges,
       boolean postStraighten,
@@ -143,7 +137,6 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
       Runnable after) {
     super(
         vertexShapeFunction,
-        edgeShapeFunctionConsumer,
         straightenEdges,
         postStraighten,
         transpose,

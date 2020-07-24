@@ -23,6 +23,7 @@ import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.util.*;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import javax.swing.*;
@@ -32,9 +33,10 @@ import org.jgrapht.Graph;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.control.TransformSupport;
+import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.util.EdgeShapeFunctionSupplier;
+import org.jungrapht.visualization.layout.algorithms.util.EdgeArticulationFunctionSupplier;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.layout.algorithms.util.Pair;
 import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
@@ -167,6 +169,8 @@ class DefaultVisualizationServer<V, E> extends JPanel
   protected Spatial<V> vertexSpatial;
 
   protected Spatial<E> edgeSpatial;
+
+  protected BiFunction<Graph<V, E>, E, Shape> savedEdgeShapeFunction;
 
   protected int lightweightRenderingVertexCountThreshold =
       Integer.parseInt(System.getProperty(LIGHTWEIGHT_VERTEX_COUNT_THRESHOLD, "20"));
@@ -604,6 +608,13 @@ class DefaultVisualizationServer<V, E> extends JPanel
     renderContext.setupArrows(visualizationModel.getGraph().getType().isDirected());
     applyLayoutAlgorithmConnections();
     renderer.setCountSupplier(visualizationModel.getGraph().vertexSet()::size);
+    //    if (visualizationModel.getLayoutAlgorithm() instanceof EdgeArticulationFunctionSupplier) {
+    //      EdgeShape.ArticulatedLine articulatedLineShape = EdgeShape.articulatedLine();
+    //      articulatedLineShape.setEdgeArticulationFunction(
+    //              ((EdgeArticulationFunctionSupplier)visualizationModel.getLayoutAlgorithm()).getEdgeArticulationFunction()
+    //      );
+    //      renderContext.setEdgeShapeFunction(EdgeShape.articulatedLine());
+    //    }
     //    displayLayoutBounds(); // for debugging
     repaint();
   }
@@ -625,10 +636,19 @@ class DefaultVisualizationServer<V, E> extends JPanel
    */
   protected void applyLayoutAlgorithmConnections() {
     LayoutAlgorithm<V> layoutAlgorithm = visualizationModel.getLayoutAlgorithm();
-    if (layoutAlgorithm instanceof EdgeShapeFunctionSupplier) {
-      ((EdgeShapeFunctionSupplier<V, E>) layoutAlgorithm)
-          .setEdgeShapeFunctionConsumer(renderContext::setEdgeShapeFunction);
+    if (layoutAlgorithm instanceof EdgeArticulationFunctionSupplier) {
+      // save off whatever the edge shape was before
+      this.savedEdgeShapeFunction = renderContext.getEdgeShapeFunction();
+      EdgeShape.ArticulatedLine articulatedLineShape = EdgeShape.articulatedLine();
+      articulatedLineShape.setEdgeArticulationFunction(
+          ((EdgeArticulationFunctionSupplier) visualizationModel.getLayoutAlgorithm())
+              .getEdgeArticulationFunction());
+      renderContext.setEdgeShapeFunction(articulatedLineShape);
+    } else if (savedEdgeShapeFunction != null) {
+      renderContext.setEdgeShapeFunction(savedEdgeShapeFunction);
+      savedEdgeShapeFunction = null;
     }
+
     if (layoutAlgorithm instanceof VertexShapeAware) {
       ((VertexShapeAware) layoutAlgorithm)
           .setVertexShapeFunction(renderContext.getVertexShapeFunction());

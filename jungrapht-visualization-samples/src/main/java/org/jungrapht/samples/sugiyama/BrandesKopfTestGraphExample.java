@@ -44,25 +44,25 @@ public class BrandesKopfTestGraphExample extends JFrame {
     BrandesKopfLayoutAlgorithm<Integer, Integer> layoutAlgorithm1 =
         BrandesKopfLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder().doUpLeft(true).build();
     layoutAlgorithm1.setVertexShapeFunction(vv1.getRenderContext().getVertexShapeFunction());
-    layoutAlgorithm1.setEdgeShapeFunctionConsumer(vv1.getRenderContext()::setEdgeShapeFunction);
+    //    layoutAlgorithm1.setEdgeShapeFunctionConsumer(vv1.getRenderContext()::setEdgeShapeFunction);
     vv1.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm1);
 
     BrandesKopfLayoutAlgorithm<Integer, Integer> layoutAlgorithm2 =
         BrandesKopfLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder().doUpRight(true).build();
     layoutAlgorithm2.setVertexShapeFunction(vv2.getRenderContext().getVertexShapeFunction());
-    layoutAlgorithm2.setEdgeShapeFunctionConsumer(vv2.getRenderContext()::setEdgeShapeFunction);
+    //    layoutAlgorithm2.setEdgeShapeFunctionConsumer(vv2.getRenderContext()::setEdgeShapeFunction);
     vv2.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm2);
 
     BrandesKopfLayoutAlgorithm<Integer, Integer> layoutAlgorithm3 =
         BrandesKopfLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder().doDownLeft(true).build();
     layoutAlgorithm3.setVertexShapeFunction(vv3.getRenderContext().getVertexShapeFunction());
-    layoutAlgorithm3.setEdgeShapeFunctionConsumer(vv3.getRenderContext()::setEdgeShapeFunction);
+    //    layoutAlgorithm3.setEdgeShapeFunctionConsumer(vv3.getRenderContext()::setEdgeShapeFunction);
     vv3.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm3);
 
     BrandesKopfLayoutAlgorithm<Integer, Integer> layoutAlgorithm4 =
         BrandesKopfLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder().doDownRight(true).build();
     layoutAlgorithm4.setVertexShapeFunction(vv4.getRenderContext().getVertexShapeFunction());
-    layoutAlgorithm4.setEdgeShapeFunctionConsumer(vv4.getRenderContext()::setEdgeShapeFunction);
+    //    layoutAlgorithm4.setEdgeShapeFunctionConsumer(vv4.getRenderContext()::setEdgeShapeFunction);
     vv4.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm4);
 
     BrandesKopfLayoutAlgorithm<Integer, Integer> layoutAlgorithm5 =
@@ -73,7 +73,7 @@ public class BrandesKopfTestGraphExample extends JFrame {
             .doDownRight(true)
             .build();
     layoutAlgorithm5.setVertexShapeFunction(vv5.getRenderContext().getVertexShapeFunction());
-    layoutAlgorithm5.setEdgeShapeFunctionConsumer(vv5.getRenderContext()::setEdgeShapeFunction);
+    //    layoutAlgorithm5.setEdgeShapeFunctionConsumer(vv5.getRenderContext()::setEdgeShapeFunction);
     vv5.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm5);
 
     container.add(vv1.getComponent());

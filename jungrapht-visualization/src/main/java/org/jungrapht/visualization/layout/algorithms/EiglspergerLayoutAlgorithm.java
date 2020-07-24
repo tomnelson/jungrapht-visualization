@@ -4,14 +4,10 @@ package org.jungrapht.visualization.layout.algorithms;
 import java.awt.Shape;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Function;
-import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnable;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
-import org.jungrapht.visualization.layout.algorithms.util.EdgeShapeFunctionSupplier;
 import org.jungrapht.visualization.layout.algorithms.util.ExecutorConsumer;
 import org.jungrapht.visualization.layout.algorithms.util.LayeredRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.Threaded;
@@ -41,7 +37,6 @@ public class EiglspergerLayoutAlgorithm<V, E>
     extends AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
     implements LayoutAlgorithm<V>,
         VertexShapeAware<V>,
-        EdgeShapeFunctionSupplier<V, E>,
         Layered,
         AfterRunnable,
         Threaded,
@@ -87,7 +82,6 @@ public class EiglspergerLayoutAlgorithm<V, E>
   protected EiglspergerLayoutAlgorithm(Builder builder) {
     this(
         builder.vertexShapeFunction,
-        builder.edgeShapeFunctionConsumer,
         builder.straightenEdges,
         builder.postStraighten,
         builder.transpose,
@@ -102,7 +96,6 @@ public class EiglspergerLayoutAlgorithm<V, E>
 
   protected EiglspergerLayoutAlgorithm(
       Function<V, Shape> vertexShapeFunction,
-      Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeFunctionConsumer,
       boolean straightenEdges,
       boolean postStraighten,
       boolean transpose,
@@ -115,7 +108,6 @@ public class EiglspergerLayoutAlgorithm<V, E>
       Runnable after) {
     super(
         vertexShapeFunction,
-        edgeShapeFunctionConsumer,
         straightenEdges,
         postStraighten,
         transpose,

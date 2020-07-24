@@ -48,8 +48,6 @@ public class EiglspergerLayeringOptions extends JFrame {
                     .layering((Layering) e.getItem())
                     .build();
             layoutAlgorithm.setVertexShapeFunction(vv3.getRenderContext().getVertexShapeFunction());
-            layoutAlgorithm.setEdgeShapeFunctionConsumer(
-                vv3.getRenderContext()::setEdgeShapeFunction);
             vv3.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm);
           }
         });
@@ -61,7 +59,6 @@ public class EiglspergerLayeringOptions extends JFrame {
             .layering(layeringConfiguration.getLayeringPreference())
             .build();
     layoutAlgorithm3.setVertexShapeFunction(vv3.getRenderContext().getVertexShapeFunction());
-    layoutAlgorithm3.setEdgeShapeFunctionConsumer(vv3.getRenderContext()::setEdgeShapeFunction);
     vv3.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm3);
     container.add(vv3.getComponent());
 

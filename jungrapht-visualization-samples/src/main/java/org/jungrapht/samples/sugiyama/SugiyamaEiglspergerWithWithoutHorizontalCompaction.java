@@ -60,7 +60,6 @@ public class SugiyamaEiglspergerWithWithoutHorizontalCompaction extends JFrame {
             .transpose(true)
             .build();
     layoutAlgorithm1.setVertexShapeFunction(vv1.getRenderContext().getVertexShapeFunction());
-    layoutAlgorithm1.setEdgeShapeFunctionConsumer(vv1.getRenderContext()::setEdgeShapeFunction);
     vv1.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm1);
     container.add(vv1.getComponent());
 
@@ -71,7 +70,6 @@ public class SugiyamaEiglspergerWithWithoutHorizontalCompaction extends JFrame {
             .transpose(true)
             .build();
     layoutAlgorithm2.setVertexShapeFunction(vv2.getRenderContext().getVertexShapeFunction());
-    layoutAlgorithm2.setEdgeShapeFunctionConsumer(vv2.getRenderContext()::setEdgeShapeFunction);
     vv2.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm2);
     container.add(vv2.getComponent());
 
@@ -81,7 +79,6 @@ public class SugiyamaEiglspergerWithWithoutHorizontalCompaction extends JFrame {
             .postStraighten(false)
             .build();
     layoutAlgorithm3.setVertexShapeFunction(vv3.getRenderContext().getVertexShapeFunction());
-    layoutAlgorithm3.setEdgeShapeFunctionConsumer(vv3.getRenderContext()::setEdgeShapeFunction);
     vv3.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm3);
     container.add(vv3.getComponent());
 
@@ -91,7 +88,6 @@ public class SugiyamaEiglspergerWithWithoutHorizontalCompaction extends JFrame {
             .postStraighten(false)
             .build();
     layoutAlgorithm4.setVertexShapeFunction(vv4.getRenderContext().getVertexShapeFunction());
-    layoutAlgorithm4.setEdgeShapeFunctionConsumer(vv4.getRenderContext()::setEdgeShapeFunction);
     vv4.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm4);
     container.add(vv4.getComponent());
 
