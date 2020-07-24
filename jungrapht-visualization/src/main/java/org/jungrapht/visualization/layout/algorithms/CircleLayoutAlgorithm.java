@@ -12,7 +12,7 @@
  */
 package org.jungrapht.visualization.layout.algorithms;
 
-import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+import static org.jungrapht.visualization.layout.model.LayoutModel.PREFIX;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,6 +1,5 @@
 package org.jungrapht.visualization.layout.algorithms;
 
-import java.awt.Dimension;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -9,6 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
+import org.jungrapht.visualization.layout.model.Dimension;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.util.Caching;
 import org.slf4j.Logger;

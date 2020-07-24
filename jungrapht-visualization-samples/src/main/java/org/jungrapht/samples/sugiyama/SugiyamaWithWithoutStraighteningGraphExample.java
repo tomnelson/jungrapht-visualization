@@ -13,6 +13,7 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.SugiyamaLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.Renderer;
+import org.jungrapht.visualization.util.RectangleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +42,7 @@ public class SugiyamaWithWithoutStraighteningGraphExample extends JFrame {
             .straightenEdges(false)
             .postStraighten(false)
             .build();
-    layoutAlgorithm1.setVertexShapeFunction(vv1.getRenderContext().getVertexShapeFunction());
+    layoutAlgorithm1.setVertexShapeFunction(vv1.getRenderContext().getVertexShapeFunction().andThen(s -> RectangleUtils.convert(s.getBounds2D())));
     vv1.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm1);
     container.add(vv1.getComponent());
 
@@ -50,13 +51,13 @@ public class SugiyamaWithWithoutStraighteningGraphExample extends JFrame {
             .straightenEdges(true)
             .postStraighten(false)
             .build();
-    layoutAlgorithm2.setVertexShapeFunction(vv2.getRenderContext().getVertexShapeFunction());
+    layoutAlgorithm2.setVertexShapeFunction(vv2.getRenderContext().getVertexShapeFunction().andThen(s -> RectangleUtils.convert(s.getBounds2D())));
     vv2.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm2);
     container.add(vv2.getComponent());
 
     SugiyamaLayoutAlgorithm<String, Integer> layoutAlgorithm3 =
         SugiyamaLayoutAlgorithm.<String, Integer>edgeAwareBuilder().straightenEdges(true).build();
-    layoutAlgorithm3.setVertexShapeFunction(vv3.getRenderContext().getVertexShapeFunction());
+    layoutAlgorithm3.setVertexShapeFunction(vv3.getRenderContext().getVertexShapeFunction().andThen(s -> RectangleUtils.convert(s.getBounds2D())));
     vv3.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm3);
     container.add(vv3.getComponent());
 

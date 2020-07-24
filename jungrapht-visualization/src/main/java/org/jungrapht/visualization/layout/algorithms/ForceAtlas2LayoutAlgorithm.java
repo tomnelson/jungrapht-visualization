@@ -1,7 +1,5 @@
 package org.jungrapht.visualization.layout.algorithms;
 
-import java.awt.Rectangle;
-import java.awt.Shape;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +13,7 @@ import org.jungrapht.visualization.layout.algorithms.util.IterativeContext;
 import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
+import org.jungrapht.visualization.layout.model.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -285,11 +284,11 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
     //    this.tuneToGraphSize = builder.tuneToGraphSize;
   }
 
-  public void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
+  public void setVertexShapeFunction(Function<V, Rectangle> vertexShapeFunction) {
     nodeSizes =
         v -> {
-          Rectangle r = vertexShapeFunction.apply(v).getBounds();
-          return Math.max(r.getWidth(), r.getHeight());
+          Rectangle r = vertexShapeFunction.apply(v);
+          return Math.max(r.width, r.height);
         };
   }
 

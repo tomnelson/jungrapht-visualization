@@ -1,7 +1,7 @@
 package org.jungrapht.visualization.layout.algorithms;
 
-import java.awt.Shape;
 import java.util.function.Function;
+import org.jungrapht.visualization.layout.model.Rectangle;
 
 /**
  * an interface for {@code LayoutAlgorithm} with a settable Shape Function for vertices
@@ -10,5 +10,5 @@ import java.util.function.Function;
  */
 public interface ShapeFunctionAware<V> {
 
-  void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction);
+  void setVertexShapeFunction(Function<V, Rectangle> vertexShapeFunction);
 }

@@ -1,7 +1,7 @@
 package org.jungrapht.visualization.layout.algorithms.util;
 
-import java.awt.*;
 import java.util.Objects;
+import org.jungrapht.visualization.layout.model.Rectangle;
 
 @FunctionalInterface
 public interface RectangleConsumer {

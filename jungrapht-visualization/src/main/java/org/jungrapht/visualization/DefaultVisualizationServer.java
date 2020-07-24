@@ -651,7 +651,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
 
     if (layoutAlgorithm instanceof VertexShapeAware) {
       ((VertexShapeAware) layoutAlgorithm)
-          .setVertexShapeFunction(renderContext.getVertexShapeFunction());
+          .setVertexShapeFunction(renderContext.getVertexBoundsFunction());
     }
   }
 

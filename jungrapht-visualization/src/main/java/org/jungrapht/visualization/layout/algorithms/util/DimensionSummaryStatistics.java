@@ -1,7 +1,8 @@
 package org.jungrapht.visualization.layout.algorithms.util;
 
-import java.awt.*;
 import java.util.IntSummaryStatistics;
+import org.jungrapht.visualization.layout.model.Dimension;
+import org.jungrapht.visualization.layout.model.Rectangle;
 
 public class DimensionSummaryStatistics implements DimensionConsumer, RectangleConsumer {
 
@@ -25,8 +26,8 @@ public class DimensionSummaryStatistics implements DimensionConsumer, RectangleC
   }
 
   public void accept(Rectangle rectangle) {
-    widths.accept(rectangle.width);
-    heights.accept(rectangle.height);
+    widths.accept((int) rectangle.width);
+    heights.accept((int) rectangle.height);
   }
 
   public void combine(DimensionSummaryStatistics other) {
@@ -39,19 +40,19 @@ public class DimensionSummaryStatistics implements DimensionConsumer, RectangleC
   }
 
   public final Dimension getSum() {
-    return new Dimension((int) widths.getSum(), (int) heights.getSum());
+    return Dimension.of((int) widths.getSum(), (int) heights.getSum());
   }
 
   public final Dimension getMin() {
-    return new Dimension(widths.getMin(), heights.getMin());
+    return Dimension.of(widths.getMin(), heights.getMin());
   }
 
   public final Dimension getMax() {
-    return new Dimension(widths.getMax(), heights.getMax());
+    return Dimension.of(widths.getMax(), heights.getMax());
   }
 
   public final Dimension getAverage() {
-    return new Dimension((int) widths.getAverage(), (int) heights.getAverage());
+    return Dimension.of((int) widths.getAverage(), (int) heights.getAverage());
   }
 
   @Override

@@ -1,9 +1,7 @@
 package org.jungrapht.visualization.layout.algorithms;
 
-import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+import static org.jungrapht.visualization.layout.model.LayoutModel.PREFIX;
 
-import java.awt.Shape;
-import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,7 +15,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import org.jgrapht.Graph;
-import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.ComponentGrouping;
@@ -60,7 +57,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
   private static final Logger log =
       LoggerFactory.getLogger(AbstractHierarchicalMinCrossLayoutAlgorithm.class);
 
-  protected static final Shape IDENTITY_SHAPE = new Ellipse2D.Double();
+  protected static final Rectangle IDENTITY_SHAPE = Rectangle.IDENTITY;
   protected static final String MINCROSS_STRAIGHTEN_EDGES = PREFIX + "mincross.straightenEdges";
   protected static final String MINCROSS_POST_STRAIGHTEN = PREFIX + "mincross.postStraighten";
   protected static final String MINCROSS_THREADED = PREFIX + "mincross.threaded";
@@ -83,7 +80,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
           B extends Builder<V, E, T, B>>
       implements LayoutAlgorithm.Builder<V, T, B> {
     protected Executor executor;
-    protected Function<V, Shape> vertexShapeFunction = v -> IDENTITY_SHAPE;
+    protected Function<V, Rectangle> vertexShapeFunction = v -> IDENTITY_SHAPE;
     protected boolean straightenEdges =
         Boolean.parseBoolean(System.getProperty(MINCROSS_STRAIGHTEN_EDGES, "true"));
     protected boolean postStraighten =
@@ -102,7 +99,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
       return (B) this;
     }
 
-    public B vertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
+    public B vertexShapeFunction(Function<V, Rectangle> vertexShapeFunction) {
       this.vertexShapeFunction = vertexShapeFunction;
       return self();
     }
@@ -163,13 +160,12 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
 
   protected List<V> roots;
 
-  protected Function<V, Shape> vertexShapeFunction;
+  protected Function<V, Rectangle> vertexShapeFunction;
   protected boolean straightenEdges;
   protected boolean postStraighten;
   protected boolean transpose;
   protected int maxLevelCross;
   protected boolean expandLayout;
-  protected RenderContext<V, E> renderContext;
   protected boolean threaded;
   protected Layering layering;
   protected Executor executor;
@@ -195,7 +191,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
   }
 
   protected AbstractHierarchicalMinCrossLayoutAlgorithm(
-      Function<V, Shape> vertexShapeFunction,
+      Function<V, Rectangle> vertexShapeFunction,
       boolean straightenEdges,
       boolean postStraighten,
       boolean transpose,
@@ -220,7 +216,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
   }
 
   @Override
-  public void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
+  public void setVertexShapeFunction(Function<V, Rectangle> vertexShapeFunction) {
     this.vertexShapeFunction = vertexShapeFunction;
   }
 

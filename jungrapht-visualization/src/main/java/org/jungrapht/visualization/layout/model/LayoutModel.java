@@ -38,6 +38,8 @@ public interface LayoutModel<V>
         LayoutVertexPositionChange.Listener<V>,
         LayoutSizeChange.Producer<V> {
 
+  String PREFIX = "jungrapht.";
+
   /**
    * a builder for LayoutModel instances
    *

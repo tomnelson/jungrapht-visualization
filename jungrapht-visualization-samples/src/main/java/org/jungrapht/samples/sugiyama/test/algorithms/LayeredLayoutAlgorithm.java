@@ -113,7 +113,7 @@ public class LayeredLayoutAlgorithm<V, E>
   protected Rectangle bounds = Rectangle.IDENTITY;
   protected List<V> roots;
 
-  protected Function<V, Shape> vertexShapeFunction;
+  protected Function<V, Rectangle> vertexShapeFunction;
   //  Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeConsumer;
   protected boolean expandLayout;
   Map<E, List<Point>> edgePointMap = new HashMap<>();
@@ -130,14 +130,14 @@ public class LayeredLayoutAlgorithm<V, E>
   }
 
   private LayeredLayoutAlgorithm(
-      Function<V, Shape> vertexShapeFunction, boolean expandLayout, Runnable after) {
+      Function<V, Rectangle> vertexShapeFunction, boolean expandLayout, Runnable after) {
     this.vertexShapeFunction = vertexShapeFunction;
     this.expandLayout = expandLayout;
     this.after = after;
   }
 
   @Override
-  public void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
+  public void setVertexShapeFunction(Function<V, Rectangle> vertexShapeFunction) {
     this.vertexShapeFunction = vertexShapeFunction;
   }
 
@@ -209,7 +209,7 @@ public class LayeredLayoutAlgorithm<V, E>
       x = 0;
       for (int j = 0; j < list.size(); j++) {
         LV<V> v = list.get(j);
-        x += horizontalOffset + vertexShapeFunction.apply(v.getVertex()).getBounds().width;
+        x += horizontalOffset + vertexShapeFunction.apply(v.getVertex()).width;
         v.setPoint(Point.of(x, y));
       }
     }
@@ -225,9 +225,9 @@ public class LayeredLayoutAlgorithm<V, E>
       int maxHeight = 0;
       for (LV<V> LV : layer) {
         if (!(LV instanceof Synthetic)) {
-          java.awt.Rectangle bounds = vertexShapeFunction.apply(LV.getVertex()).getBounds();
+          Rectangle bounds = vertexShapeFunction.apply(LV.getVertex());
           width += bounds.width + horizontalOffset;
-          maxHeight = Math.max(maxHeight, bounds.height);
+          maxHeight = (int) Math.max(maxHeight, bounds.height);
         } else {
           width += horizontalOffset;
         }

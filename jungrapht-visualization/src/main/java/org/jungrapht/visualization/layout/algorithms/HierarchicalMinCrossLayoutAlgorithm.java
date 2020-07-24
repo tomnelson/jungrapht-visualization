@@ -1,8 +1,7 @@
 package org.jungrapht.visualization.layout.algorithms;
 
-import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+import static org.jungrapht.visualization.layout.model.LayoutModel.PREFIX;
 
-import java.awt.Shape;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.function.Function;
@@ -16,6 +15,7 @@ import org.jungrapht.visualization.layout.algorithms.util.LayeredRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.Threaded;
 import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
 import org.jungrapht.visualization.layout.model.LayoutModel;
+import org.jungrapht.visualization.layout.model.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,7 +122,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
   }
 
   protected HierarchicalMinCrossLayoutAlgorithm(
-      Function<V, Shape> vertexShapeFunction,
+      Function<V, Rectangle> vertexShapeFunction,
       int eiglspergerThreshold,
       boolean straightenEdges,
       boolean postStraighten,

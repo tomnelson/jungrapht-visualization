@@ -18,6 +18,7 @@ import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.renderers.Renderer;
+import org.jungrapht.visualization.util.RectangleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +40,7 @@ public class EiglspergerWithWithoutTransposeSwapping extends JFrame {
             .threaded(false)
             .layering(Layering.TOP_DOWN)
             .build();
-    layoutAlgorithm1.setVertexShapeFunction(vv1.getRenderContext().getVertexShapeFunction());
+    layoutAlgorithm1.setVertexShapeFunction(vv1.getRenderContext().getVertexShapeFunction().andThen(s -> RectangleUtils.convert(s.getBounds2D())));
     vv1.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm1);
     container.add(vv1.getComponent());
 
@@ -53,7 +54,7 @@ public class EiglspergerWithWithoutTransposeSwapping extends JFrame {
             .transpose(false)
             .layering(Layering.TOP_DOWN)
             .build();
-    layoutAlgorithm2.setVertexShapeFunction(vv2.getRenderContext().getVertexShapeFunction());
+    layoutAlgorithm2.setVertexShapeFunction(vv2.getRenderContext().getVertexShapeFunction().andThen(s -> RectangleUtils.convert(s.getBounds2D())));
     vv2.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm2);
     container.add(vv2.getComponent());
 

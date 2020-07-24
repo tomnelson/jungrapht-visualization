@@ -1,9 +1,7 @@
 package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
-import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+import static org.jungrapht.visualization.layout.model.LayoutModel.PREFIX;
 
-import java.awt.Rectangle;
-import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,6 +23,7 @@ import org.jungrapht.visualization.layout.algorithms.util.InsertionSortCounter;
 import org.jungrapht.visualization.layout.algorithms.util.LayeredRunnable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
+import org.jungrapht.visualization.layout.model.Rectangle;
 import org.jungrapht.visualization.layout.util.synthetics.Synthetic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +59,7 @@ public class SugiyamaRunnable<V, E> implements LayeredRunnable<E> {
   public static class Builder<
       V, E, T extends SugiyamaRunnable<V, E>, B extends Builder<V, E, T, B>> {
     protected LayoutModel<V> layoutModel;
-    protected Function<V, Shape> vertexShapeFunction;
+    protected Function<V, Rectangle> vertexShapeFunction;
     protected Predicate<V> vertexPredicate; // can be null
     protected Predicate<E> edgePredicate; // can be null
     protected Comparator<V> vertexComparator = (v1, v2) -> 0;
@@ -119,7 +118,7 @@ public class SugiyamaRunnable<V, E> implements LayeredRunnable<E> {
       return self();
     }
 
-    public B vertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
+    public B vertexShapeFunction(Function<V, Rectangle> vertexShapeFunction) {
       this.vertexShapeFunction = vertexShapeFunction;
       return self();
     }
@@ -175,7 +174,7 @@ public class SugiyamaRunnable<V, E> implements LayeredRunnable<E> {
   }
 
   protected final LayoutModel<V> layoutModel;
-  protected Function<V, Shape> vertexShapeFunction;
+  protected Function<V, Rectangle> vertexShapeFunction;
   protected Graph<V, E> graph;
   protected Graph<LV<V>, LE<V, E>> svGraph;
   protected NeighborCache<LV<V>, LE<V, E>> neighborCache;
@@ -213,7 +212,7 @@ public class SugiyamaRunnable<V, E> implements LayeredRunnable<E> {
 
   private SugiyamaRunnable(
       LayoutModel<V> layoutModel,
-      Function<V, Shape> vertexShapeFunction,
+      Function<V, Rectangle> vertexShapeFunction,
       Predicate<V> vertexPredicate,
       Predicate<E> edgePredicate,
       Comparator<V> vertexComparator,
@@ -398,11 +397,14 @@ public class SugiyamaRunnable<V, E> implements LayeredRunnable<E> {
     Rectangle avgVertexBounds = avgVertexBounds(layersArray, vertexShapeFunction);
 
     int horizontalOffset =
-        Math.max(
-            avgVertexBounds.width, Integer.getInteger(PREFIX + "mincross.horizontalOffset", 50));
+        (int)
+            Math.max(
+                avgVertexBounds.width,
+                Integer.getInteger(PREFIX + "mincross.horizontalOffset", 50));
     int verticalOffset =
-        Math.max(
-            avgVertexBounds.height, Integer.getInteger(PREFIX + "mincross.verticalOffset", 50));
+        (int)
+            Math.max(
+                avgVertexBounds.height, Integer.getInteger(PREFIX + "mincross.verticalOffset", 50));
     GraphLayers.checkLayers(layersArray);
     Map<LV<V>, Point> vertexPointMap = new HashMap<>();
 
@@ -442,9 +444,9 @@ public class SugiyamaRunnable<V, E> implements LayeredRunnable<E> {
       for (int j = 0; j < layersArray[i].length; j++) {
         LV<V> v = layersArray[i][j];
         if (!(v instanceof Synthetic)) {
-          Rectangle bounds = vertexShapeFunction.apply(v.getVertex()).getBounds();
+          Rectangle bounds = vertexShapeFunction.apply(v.getVertex());
           width += bounds.width + horizontalOffset;
-          maxHeight = Math.max(maxHeight, bounds.height);
+          maxHeight = Math.max(maxHeight, (int) bounds.height);
         } else {
           width += horizontalOffset;
         }
@@ -474,7 +476,7 @@ public class SugiyamaRunnable<V, E> implements LayeredRunnable<E> {
         LV<V> LV = layersArray[i][j];
         int vertexWidth = 0;
         if (!(LV instanceof Synthetic)) {
-          vertexWidth = vertexShapeFunction.apply(LV.getVertex()).getBounds().width;
+          vertexWidth = (int) vertexShapeFunction.apply(LV.getVertex()).width;
         }
 
         x += previousVertexWidth / 2 + vertexWidth / 2 + horizontalOffset;
@@ -860,17 +862,17 @@ public class SugiyamaRunnable<V, E> implements LayeredRunnable<E> {
   }
 
   private static <V> Rectangle maxVertexBounds(
-      List<List<LV<V>>> layers, Function<V, Shape> vertexShapeFunction) {
+      List<List<LV<V>>> layers, Function<V, Rectangle> vertexShapeFunction) {
     // figure out the largest rendered vertex
-    Rectangle maxVertexBounds = new Rectangle();
+    Rectangle maxVertexBounds = Rectangle.IDENTITY;
 
     for (List<LV<V>> list : layers) {
       for (LV<V> v : list) {
         if (!(v instanceof Synthetic)) {
-          Rectangle bounds = vertexShapeFunction.apply(v.getVertex()).getBounds();
-          int width = Math.max(bounds.width, maxVertexBounds.width);
-          int height = Math.max(bounds.height, maxVertexBounds.height);
-          maxVertexBounds = new Rectangle(width, height);
+          Rectangle bounds = vertexShapeFunction.apply(v.getVertex());
+          int width = (int) Math.max(bounds.width, maxVertexBounds.width);
+          int height = (int) Math.max(bounds.height, maxVertexBounds.height);
+          maxVertexBounds = Rectangle.of(0, 0, width, height);
         }
       }
     }
@@ -878,19 +880,19 @@ public class SugiyamaRunnable<V, E> implements LayeredRunnable<E> {
   }
 
   private static <V> Rectangle avgVertexBounds(
-      LV<V>[][] layers, Function<V, Shape> vertexShapeFunction) {
+      LV<V>[][] layers, Function<V, Rectangle> vertexShapeFunction) {
 
     LongSummaryStatistics w = new LongSummaryStatistics();
     LongSummaryStatistics h = new LongSummaryStatistics();
     for (int i = 0; i < layers.length; i++) {
       for (int j = 0; j < layers[i].length; j++) {
         if (!(layers[i][j] instanceof Synthetic)) {
-          Rectangle bounds = vertexShapeFunction.apply(layers[i][j].getVertex()).getBounds();
-          w.accept(bounds.width);
-          h.accept(bounds.height);
+          Rectangle bounds = vertexShapeFunction.apply(layers[i][j].getVertex());
+          w.accept((int) bounds.width);
+          h.accept((int) bounds.height);
         }
       }
     }
-    return new Rectangle((int) w.getAverage(), (int) h.getAverage());
+    return Rectangle.of(0, 0, (int) w.getAverage(), (int) h.getAverage());
   }
 }

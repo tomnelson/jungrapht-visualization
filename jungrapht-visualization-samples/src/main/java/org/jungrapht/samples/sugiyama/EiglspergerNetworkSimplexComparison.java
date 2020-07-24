@@ -40,7 +40,7 @@ public class EiglspergerNetworkSimplexComparison extends JFrame {
             .threaded(false)
             .layering(Layering.LONGEST_PATH)
             .build();
-    layoutAlgorithm1.setVertexShapeFunction(vv1.getRenderContext().getVertexShapeFunction());
+    layoutAlgorithm1.setVertexShapeFunction(vv1.getRenderContext().getVertexBoundsFunction());
     vv1.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm1);
     container.add(vv1.getComponent());
 
@@ -54,7 +54,7 @@ public class EiglspergerNetworkSimplexComparison extends JFrame {
             .threaded(false)
             .layering(Layering.NETWORK_SIMPLEX)
             .build();
-    layoutAlgorithm2.setVertexShapeFunction(vv2.getRenderContext().getVertexShapeFunction());
+    layoutAlgorithm2.setVertexShapeFunction(vv2.getRenderContext().getVertexBoundsFunction());
     vv2.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm2);
     container.add(vv2.getComponent());
 

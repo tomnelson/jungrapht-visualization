@@ -43,7 +43,7 @@ public class BrandesKopfSugiyamaGraphExampleWithLayouts extends JFrame {
             //                .postStraighten(false)
             //            .after(vv::resizeToLayout)
             .build();
-    layoutAlgorithm.setVertexShapeFunction(vv.getRenderContext().getVertexShapeFunction());
+    layoutAlgorithm.setVertexShapeFunction(vv.getRenderContext().getVertexBoundsFunction());
     vv.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm);
 
     container.add(vv.getComponent());

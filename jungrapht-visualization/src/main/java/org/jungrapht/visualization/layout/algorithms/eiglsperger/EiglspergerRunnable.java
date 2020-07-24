@@ -1,9 +1,7 @@
 package org.jungrapht.visualization.layout.algorithms.eiglsperger;
 
-import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+import static org.jungrapht.visualization.layout.model.LayoutModel.PREFIX;
 
-import java.awt.Rectangle;
-import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -34,6 +32,7 @@ import org.jungrapht.visualization.layout.algorithms.util.Attributed;
 import org.jungrapht.visualization.layout.algorithms.util.LayeredRunnable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
+import org.jungrapht.visualization.layout.model.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +66,7 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
   public static class Builder<
       V, E, T extends EiglspergerRunnable<V, E>, B extends Builder<V, E, T, B>> {
     protected LayoutModel<V> layoutModel;
-    protected Function<V, Shape> vertexShapeFunction;
+    protected Function<V, Rectangle> vertexShapeFunction;
     protected boolean straightenEdges;
     protected boolean postStraighten;
     protected boolean transpose;
@@ -87,7 +86,7 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
       return self();
     }
 
-    public B vertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
+    public B vertexShapeFunction(Function<V, Rectangle> vertexShapeFunction) {
       this.vertexShapeFunction = vertexShapeFunction;
       return self();
     }
@@ -143,7 +142,7 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
   }
 
   protected final LayoutModel<V> layoutModel;
-  protected Function<V, Shape> vertexShapeFunction;
+  protected Function<V, Rectangle> vertexShapeFunction;
   protected Graph<V, E> graph;
   protected Graph<LV<V>, LE<V, E>> svGraph;
   boolean stopit = false;
@@ -177,7 +176,7 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
 
   protected EiglspergerRunnable(
       LayoutModel<V> layoutModel,
-      Function<V, Shape> vertexShapeFunction,
+      Function<V, Rectangle> vertexShapeFunction,
       boolean straightenEdges,
       boolean postStraighten,
       boolean transpose,
@@ -323,11 +322,14 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
     Rectangle avgVertexBounds = maxVertexBounds(layersArray, vertexShapeFunction);
 
     int horizontalOffset =
-        Math.max(
-            avgVertexBounds.width, Integer.getInteger(PREFIX + "mincross.horizontalOffset", 50));
+        (int)
+            Math.max(
+                avgVertexBounds.width,
+                Integer.getInteger(PREFIX + "mincross.horizontalOffset", 50));
     int verticalOffset =
-        Math.max(
-            avgVertexBounds.height, Integer.getInteger(PREFIX + "mincross.verticalOffset", 50));
+        (int)
+            Math.max(
+                avgVertexBounds.height, Integer.getInteger(PREFIX + "mincross.verticalOffset", 50));
     GraphLayers.checkLayers(layersArray);
     Map<LV<V>, Point> vertexPointMap = new HashMap<>();
 
@@ -378,9 +380,9 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
       int maxHeight = 0;
       for (LV<V> v : lvs) {
         if (!(v instanceof SyntheticLV)) {
-          Rectangle bounds = vertexShapeFunction.apply(v.getVertex()).getBounds();
+          Rectangle bounds = vertexShapeFunction.apply(v.getVertex());
           width += bounds.width + horizontalOffset;
-          maxHeight = Math.max(maxHeight, bounds.height);
+          maxHeight = Math.max(maxHeight, (int) bounds.height);
         } else {
           width += horizontalOffset;
         }
@@ -411,7 +413,7 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
       for (LV<V> EiglspergerVertex : lvs) {
         int vertexWidth = 0;
         if (!(EiglspergerVertex instanceof SyntheticLV)) {
-          vertexWidth = vertexShapeFunction.apply(EiglspergerVertex.getVertex()).getBounds().width;
+          vertexWidth = (int) vertexShapeFunction.apply(EiglspergerVertex.getVertex()).width;
         }
 
         x += previousVertexWidth / 2 + vertexWidth / 2 + horizontalOffset;
@@ -559,17 +561,17 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
   }
 
   private static <V> Rectangle maxVertexBounds(
-      LV<V>[][] layers, Function<V, Shape> vertexShapeFunction) {
+      LV<V>[][] layers, Function<V, Rectangle> vertexShapeFunction) {
     // figure out the largest rendered vertex
-    Rectangle maxVertexBounds = new Rectangle();
+    Rectangle maxVertexBounds = Rectangle.IDENTITY;
 
     for (LV<V>[] layer : layers) {
       for (LV<V> vlv : layer) {
         if (!(vlv instanceof SyntheticLV)) {
-          Rectangle bounds = vertexShapeFunction.apply(vlv.getVertex()).getBounds();
-          int width = Math.max(bounds.width, maxVertexBounds.width);
-          int height = Math.max(bounds.height, maxVertexBounds.height);
-          maxVertexBounds = new Rectangle(width, height);
+          Rectangle bounds = vertexShapeFunction.apply(vlv.getVertex());
+          int width = (int) Math.max(bounds.width, maxVertexBounds.width);
+          int height = (int) Math.max(bounds.height, maxVertexBounds.height);
+          maxVertexBounds = Rectangle.of(0, 0, width, height);
         }
       }
     }
@@ -577,20 +579,20 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
   }
 
   private static <V> Rectangle avgVertexBounds(
-      LV<V>[][] layers, Function<V, Shape> vertexShapeFunction) {
+      LV<V>[][] layers, Function<V, Rectangle> vertexShapeFunction) {
 
     LongSummaryStatistics w = new LongSummaryStatistics();
     LongSummaryStatistics h = new LongSummaryStatistics();
     for (LV<V>[] layer : layers) {
       for (LV<V> vlv : layer) {
         if (!(vlv instanceof SyntheticLV)) {
-          Rectangle bounds = vertexShapeFunction.apply(vlv.getVertex()).getBounds();
-          w.accept(bounds.width);
-          h.accept(bounds.height);
+          Rectangle bounds = vertexShapeFunction.apply(vlv.getVertex());
+          w.accept((int) bounds.width);
+          h.accept((int) bounds.height);
         }
       }
     }
-    return new Rectangle((int) w.getAverage(), (int) h.getAverage());
+    return Rectangle.of((int) w.getAverage(), (int) h.getAverage());
   }
 
   private Graph<LV<V>, Integer> copy(Graph<LV<V>, Integer> graph) {

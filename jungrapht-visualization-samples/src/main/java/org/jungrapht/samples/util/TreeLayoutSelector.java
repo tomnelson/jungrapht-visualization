@@ -45,6 +45,7 @@ import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFA2Repulsion;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
+import org.jungrapht.visualization.util.RectangleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +68,8 @@ public class TreeLayoutSelector<V, E> extends JPanel {
   public static class Builder<V, E> {
     VisualizationServer<V, E> visualizationServer;
     int intialialSelection;
-    Function<V, Shape> vertexShapeFunction = new DefaultRenderContext.ShapeFunctionSupplier().get();
+    Function<V, Shape> vertexShapeFunction =
+            new DefaultRenderContext.ShapeFunctionSupplier().get();
     Runnable after = () -> {};
     Predicate<E> edgePredicate = e -> false;
     Comparator<E> edgeComparator = (e1, e2) -> 0;
@@ -231,7 +233,8 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     this.originalEdgeShapeFunction = vv.getRenderContext().getEdgeShapeFunction();
 
     TreeLayoutAlgorithm<V> treeLayoutAlgorithm =
-        TreeLayoutAlgorithm.<V>builder().vertexShapeFunction(vertexShapeFunction).build();
+        TreeLayoutAlgorithm.<V>builder().vertexShapeFunction(
+                vertexShapeFunction.andThen(s -> RectangleUtils.convert(s.getBounds2D()))).build();
 
     TidierTreeLayoutAlgorithm<V, E> tidierTreeLayoutAlgorithm =
         TidierTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()
@@ -239,7 +242,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
             .edgePredicate(edgePredicate)
             .vertexComparator(vertexComparator)
             .vertexPredicate(vertexPredicate)
-            .vertexShapeFunction(vertexShapeFunction)
+            .vertexShapeFunction(vertexShapeFunction.andThen(s -> RectangleUtils.convert(s.getBounds2D())))
             .build();
 
     HierarchicalMinCrossLayoutAlgorithm<V, E> minCrossLayoutAlgorithm =
@@ -270,7 +273,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
             .build();
 
     MultiRowTreeLayoutAlgorithm<V> multiRowTreeLayoutAlgorithm =
-        MultiRowTreeLayoutAlgorithm.<V>builder().vertexShapeFunction(vertexShapeFunction).build();
+        MultiRowTreeLayoutAlgorithm.<V>builder().vertexShapeFunction(vertexShapeFunction.andThen(s -> RectangleUtils.convert(s.getBounds2D()))).build();
 
     int layoutNumber = 0;
 
@@ -280,7 +283,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
         RadialTreeLayoutAlgorithm.<V>builder()
             .horizontalVertexSpacing(100)
             .verticalVertexSpacing(100)
-            .vertexShapeFunction(vertexShapeFunction)
+            .vertexShapeFunction(vertexShapeFunction.andThen(s -> RectangleUtils.convert(s.getBounds2D())))
             .expandLayout(false)
             .build();
 
@@ -288,7 +291,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
         RadialEdgeAwareTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()
             .horizontalVertexSpacing(100)
             .verticalVertexSpacing(100)
-            .vertexShapeFunction(vertexShapeFunction)
+            .vertexShapeFunction(vertexShapeFunction.andThen(s -> RectangleUtils.convert(s.getBounds2D())))
             .edgePredicate(edgePredicate)
             .vertexPredicate(vertexPredicate)
             .expandLayout(false)
@@ -300,12 +303,12 @@ public class TreeLayoutSelector<V, E> extends JPanel {
             .edgePredicate(edgePredicate)
             .vertexComparator(vertexComparator)
             .vertexPredicate(vertexPredicate)
-            .vertexShapeFunction(vertexShapeFunction)
+            .vertexShapeFunction(vertexShapeFunction.andThen(s -> RectangleUtils.convert(s.getBounds2D())))
             .build();
 
     EdgeAwareTreeLayoutAlgorithm<V, E> edgeAwareTreeLayoutAlgorithm =
         EdgeAwareTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()
-            .vertexShapeFunction(vertexShapeFunction)
+            .vertexShapeFunction(vertexShapeFunction.andThen(s -> RectangleUtils.convert(s.getBounds2D())))
             .edgePredicate(edgePredicate)
             .vertexPredicate(vertexPredicate)
             .alignFavoredEdges(alignFavoredEdges)
@@ -313,7 +316,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
 
     MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> multiRowEdgeAwareTreeLayoutAlgorithm =
         MultiRowEdgeAwareTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()
-            .vertexShapeFunction(vertexShapeFunction)
+            .vertexShapeFunction(vertexShapeFunction.andThen(s -> RectangleUtils.convert(s.getBounds2D())))
             .edgePredicate(edgePredicate)
             .vertexPredicate(vertexPredicate)
             .alignFavoredEdges(alignFavoredEdges)

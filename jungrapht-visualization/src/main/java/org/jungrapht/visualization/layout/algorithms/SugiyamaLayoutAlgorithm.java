@@ -1,6 +1,5 @@
 package org.jungrapht.visualization.layout.algorithms;
 
-import java.awt.Shape;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.function.Function;
@@ -12,6 +11,7 @@ import org.jungrapht.visualization.layout.algorithms.util.LayeredRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.Threaded;
 import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
 import org.jungrapht.visualization.layout.model.LayoutModel;
+import org.jungrapht.visualization.layout.model.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,7 +101,7 @@ public class SugiyamaLayoutAlgorithm<V, E> extends AbstractHierarchicalMinCrossL
   }
 
   private SugiyamaLayoutAlgorithm(
-      Function<V, Shape> vertexShapeFunction,
+      Function<V, Rectangle> vertexShapeFunction,
       boolean straightenEdges,
       boolean postStraighten,
       boolean transpose,

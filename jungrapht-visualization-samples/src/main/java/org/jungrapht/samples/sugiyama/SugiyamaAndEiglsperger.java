@@ -47,7 +47,7 @@ public class SugiyamaAndEiglsperger extends JFrame {
             .postStraighten(false)
             .transpose(true)
             .build();
-    layoutAlgorithm1.setVertexShapeFunction(vv1.getRenderContext().getVertexShapeFunction());
+    layoutAlgorithm1.setVertexShapeFunction(vv1.getRenderContext().getVertexBoundsFunction());
     vv1.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm1);
     container.add(vv1.getComponent());
 
@@ -55,7 +55,7 @@ public class SugiyamaAndEiglsperger extends JFrame {
         EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .straightenEdges(true)
             .build();
-    layoutAlgorithm4.setVertexShapeFunction(vv2.getRenderContext().getVertexShapeFunction());
+    layoutAlgorithm4.setVertexShapeFunction(vv2.getRenderContext().getVertexBoundsFunction());
     vv2.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm4);
     container.add(vv2.getComponent());
 

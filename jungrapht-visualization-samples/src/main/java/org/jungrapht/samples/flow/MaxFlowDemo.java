@@ -29,7 +29,7 @@ public class MaxFlowDemo {
         SugiyamaLayoutAlgorithm.<MyNode, MyLink>edgeAwareBuilder().build();
 
     // the SugiyamaLayoutAlgorithm needs the Vertex sizes
-    layoutAlgorithm.setVertexShapeFunction(vv.getRenderContext().getVertexShapeFunction());
+    layoutAlgorithm.setVertexShapeFunction(vv.getRenderContext().getVertexBoundsFunction());
     // The SugiyamaLayoutAlgorithm needs to be able to set the EdgeShape Function for Articulated edges.
     vv.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm);
 

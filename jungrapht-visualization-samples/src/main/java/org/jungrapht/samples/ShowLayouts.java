@@ -25,6 +25,7 @@ import org.jungrapht.visualization.layout.algorithms.util.InitialDimensionFuncti
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.util.GraphImage;
+import org.jungrapht.visualization.util.RectangleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,7 +109,9 @@ public class ShowLayouts extends JPanel {
             });
 
     vv.setInitialDimensionFunction(
-        InitialDimensionFunction.builder(vv.getRenderContext().getVertexShapeFunction()).build());
+        InitialDimensionFunction.builder(
+                vv.getRenderContext().getVertexShapeFunction().andThen(s -> RectangleUtils.convert(s.getBounds2D()))
+        ).build());
 
     layoutBounds = new LayoutPaintable.LayoutBounds(vv);
     vv.addPreRenderPaintable(layoutBounds);

@@ -1,6 +1,9 @@
 package org.jungrapht.visualization;
 
-import java.awt.*;
+import java.awt.Font;
+import java.awt.Paint;
+import java.awt.Shape;
+import java.awt.Stroke;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -10,12 +13,14 @@ import javax.swing.JComponent;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.event.RenderContextStateChange;
+import org.jungrapht.visualization.layout.model.Rectangle;
 import org.jungrapht.visualization.renderers.EdgeLabelRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.renderers.VertexLabelRenderer;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.util.EdgeIndexFunction;
+import org.jungrapht.visualization.util.RectangleUtils;
 
 /**
  * Holds the {@link Function}s and state for rendering a graph
@@ -163,6 +168,10 @@ public interface RenderContext<V, E> extends RenderContextStateChange.Producer {
   void setVertexDrawPaintFunction(Function<V, Paint> vertexDrawPaintFunction);
 
   Function<V, Shape> getVertexShapeFunction();
+
+  default Function<V, Rectangle> getVertexBoundsFunction() {
+    return getVertexShapeFunction().andThen(s -> RectangleUtils.convert(s.getBounds2D()));
+  }
 
   void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction);
 

@@ -28,6 +28,7 @@ import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.renderers.Renderer;
+import org.jungrapht.visualization.util.RectangleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,7 +61,7 @@ public class TreeLayoutDemo extends JPanel {
         VisualizationViewer.builder(graph)
             .layoutAlgorithm(
                 TreeLayoutAlgorithm.<String>builder()
-                    .vertexShapeFunction(vertexShapeFunction)
+                    .vertexShapeFunction(vertexShapeFunction.andThen(s -> RectangleUtils.convert(s.getBounds2D())))
                     .build())
             .viewSize(new Dimension(600, 600))
             .graphMouse(graphMouse)

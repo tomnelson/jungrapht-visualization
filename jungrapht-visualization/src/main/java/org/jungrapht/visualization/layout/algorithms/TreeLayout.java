@@ -1,8 +1,7 @@
 package org.jungrapht.visualization.layout.algorithms;
 
-import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+import static org.jungrapht.visualization.layout.model.LayoutModel.PREFIX;
 
-import java.awt.Shape;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.function.Function;
@@ -27,7 +26,7 @@ public interface TreeLayout<V> extends LayoutAlgorithm<V> {
 
   void setRootComparator(Comparator<V> rootComparator);
 
-  void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction);
+  void setVertexShapeFunction(Function<V, Rectangle> vertexShapeFunction);
 
   static <V, E> boolean isLoopVertex(Graph<V, E> graph, V v) {
     return false; //graph.outgoingEdgesOf(v).equals(graph.incomingEdgesOf(v));
