@@ -8,7 +8,7 @@
  *
  * Created on Apr 12, 2005
  */
-package org.jungrapht.visualization.layout;
+package org.jungrapht.visualization.control;
 
 import java.awt.Shape;
 import java.util.Collection;

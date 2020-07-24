@@ -64,7 +64,6 @@ public class LayeredLayoutAlgorithm<V, E>
           B extends Builder<V, E, T, B>>
       implements LayoutAlgorithm.Builder<V, T, B> {
     protected Function<V, Shape> vertexShapeFunction = v -> IDENTITY_SHAPE;
-    //    protected Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeConsumer;
 
     protected boolean expandLayout = true;
     protected Runnable after = () -> {};
@@ -78,11 +77,6 @@ public class LayeredLayoutAlgorithm<V, E>
       this.vertexShapeFunction = vertexShapeFunction;
       return self();
     }
-
-    //    public B edgeShapeConsumer(Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeConsumer) {
-    //      this.edgeShapeConsumer = edgeShapeConsumer;
-    //      return self();
-    //    }
 
     /** {@inheritDoc} */
     public B expandLayout(boolean expandLayout) {
@@ -114,7 +108,6 @@ public class LayeredLayoutAlgorithm<V, E>
   protected List<V> roots;
 
   protected Function<V, Rectangle> vertexShapeFunction;
-  //  Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeConsumer;
   protected boolean expandLayout;
   Map<E, List<Point>> edgePointMap = new HashMap<>();
   Runnable after;
@@ -145,12 +138,6 @@ public class LayeredLayoutAlgorithm<V, E>
   public Function<E, List<Point>> getEdgeArticulationFunction() {
     return e -> edgePointMap.getOrDefault(e, Collections.emptyList());
   }
-
-  //  @Override
-  //  public void setEdgeShapeFunctionConsumer(
-  //      Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeConsumer) {
-  //    this.edgeShapeConsumer = edgeShapeConsumer;
-  //  }
 
   Graph<V, E> originalGraph;
   List<List<LV<V>>> layers;
@@ -292,11 +279,6 @@ public class LayeredLayoutAlgorithm<V, E>
 
       edgePointMap.put(ae.edge, points);
     }
-    //    EdgeShape.ArticulatedLine<V, E> edgeShape = new EdgeShape.ArticulatedLine<>();
-    //    edgeShape.setEdgeArticulationFunction(
-    //        e -> edgePointMap.getOrDefault(e, Collections.emptyList()));
-    //
-    //    edgeShapeConsumer.accept(edgeShape);
 
     svGraph.vertexSet().forEach(v -> layoutModel.set(v.getVertex(), v.getPoint()));
   }

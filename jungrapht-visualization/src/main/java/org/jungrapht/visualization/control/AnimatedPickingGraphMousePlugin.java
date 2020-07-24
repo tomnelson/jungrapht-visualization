@@ -19,7 +19,6 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
 import javax.swing.JComponent;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 import org.jungrapht.visualization.util.VertexLocationAnimator;

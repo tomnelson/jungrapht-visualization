@@ -15,7 +15,6 @@ import org.jungrapht.samples.sugiyama.test.algorithms.TestSugiyamaLayoutAlgorith
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.renderers.Renderer;
-import org.jungrapht.visualization.util.RectangleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,7 +65,7 @@ public class SugiyamaSixTestGraphExample extends JFrame {
             .doUpRight(true)
             .threaded(false)
             .build();
-    layoutAlgorithm2.setVertexShapeFunction(vv2.getRenderContext().getVertexShapeFunction().andThen(s -> RectangleUtils.convert(s.getBounds2D())));
+    layoutAlgorithm2.setVertexShapeFunction(vv2.getRenderContext().getVertexBoundsFunction());
     vv2.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm2);
 
     TestSugiyamaLayoutAlgorithm<Integer, Integer> layoutAlgorithm3 =
@@ -82,7 +81,7 @@ public class SugiyamaSixTestGraphExample extends JFrame {
             .doDownRight(true)
             .threaded(false)
             .build();
-    layoutAlgorithm4.setVertexShapeFunction(vv4.getRenderContext().getVertexShapeFunction().andThen(s -> RectangleUtils.convert(s.getBounds2D())));
+    layoutAlgorithm4.setVertexShapeFunction(vv4.getRenderContext().getVertexBoundsFunction());
     vv4.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm4);
 
     TestSugiyamaLayoutAlgorithm<Integer, Integer> layoutAlgorithm5 =
@@ -92,7 +91,7 @@ public class SugiyamaSixTestGraphExample extends JFrame {
             .doDownLeft(true)
             .doDownRight(true)
             .build();
-    layoutAlgorithm5.setVertexShapeFunction(vv5.getRenderContext().getVertexShapeFunction().andThen(s -> RectangleUtils.convert(s.getBounds2D())));
+    layoutAlgorithm5.setVertexShapeFunction(vv5.getRenderContext().getVertexBoundsFunction());
     vv5.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm5);
 
     TestSugiyamaLayoutAlgorithm<Integer, Integer> layoutAlgorithm6 =

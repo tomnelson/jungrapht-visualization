@@ -10,7 +10,6 @@ import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 

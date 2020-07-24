@@ -27,8 +27,8 @@ import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
 import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
+import org.jungrapht.visualization.util.LayoutPaintable;
 
 /**
  * Demo that visualizes {@link com.google.common.graph.Network}s. Demonstrates several of the graph

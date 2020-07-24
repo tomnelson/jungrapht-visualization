@@ -39,7 +39,6 @@ import org.jungrapht.visualization.layout.algorithms.TidierTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.PolarPoint;
-import org.jungrapht.visualization.util.RectangleUtils;
 
 /**
  * A variant of TidierTreeLayoutDemo that rotates the view by 90 degrees from the default
@@ -80,8 +79,8 @@ public class TidierL2RTreeLayoutDemo extends JPanel {
             .layoutSize(new Dimension(600, 600))
             .graphMouse(graphMouse)
             .build();
-    treeLayoutAlgorithm.setVertexShapeFunction(vv.getRenderContext().getVertexShapeFunction().andThen(s -> RectangleUtils.convert(s.getBounds2D())));
-    radialLayoutAlgorithm.setVertexShapeFunction(vv.getRenderContext().getVertexShapeFunction().andThen(s -> RectangleUtils.convert(s.getBounds2D())));
+    treeLayoutAlgorithm.setVertexShapeFunction(vv.getRenderContext().getVertexBoundsFunction());
+    radialLayoutAlgorithm.setVertexShapeFunction(vv.getRenderContext().getVertexBoundsFunction());
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.setVertexToolTipFunction(Object::toString);

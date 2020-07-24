@@ -36,7 +36,7 @@ import org.jgrapht.Graph;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationServer;
-import org.jungrapht.visualization.layout.GraphElementAccessor;
+import org.jungrapht.visualization.control.GraphElementAccessor;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.spatial.Spatial;

@@ -45,8 +45,8 @@ import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFA2Repulsion;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFRRepulsion;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
-import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.layout.model.Rectangle;
+import org.jungrapht.visualization.util.LayoutPaintable;
 import org.jungrapht.visualization.util.RectangleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -501,9 +501,9 @@ public class MultipleLayoutSelector<V, E> extends JPanel {
     @Override
     public void itemStateChanged(ItemEvent e) {
       if (e.getStateChange() == ItemEvent.SELECTED) {
-        //        if (!(layoutAlgorithm instanceof EdgeShapeFunctionSupplier)) {
-        //          vv.getRenderContext().setEdgeShapeFunction(originalEdgeShapeFunction);
-        //        }
+        //                if (!(layoutAlgorithm instanceof EdgeArticulationFunctionSupplier)) {
+        //                  vv.getRenderContext().setEdgeShapeFunction(originalEdgeShapeFunction);
+        //                }
         if (layoutAlgorithm instanceof Layered) {
           ((Layered) layoutAlgorithm)
               .setLayering(layeringComboBox.getItemAt(layeringComboBox.getSelectedIndex()));

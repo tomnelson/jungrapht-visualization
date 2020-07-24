@@ -18,13 +18,12 @@ import java.awt.event.ItemListener;
 import java.awt.geom.*;
 import java.util.Arrays;
 import java.util.Optional;
-import javax.swing.*;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
+import org.jungrapht.visualization.control.GraphElementAccessor;
 import org.jungrapht.visualization.control.LensGraphMouse;
 import org.jungrapht.visualization.control.LensTransformSupport;
 import org.jungrapht.visualization.control.ModalLensGraphMouse;
-import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.util.ItemSupport;
 
 /**

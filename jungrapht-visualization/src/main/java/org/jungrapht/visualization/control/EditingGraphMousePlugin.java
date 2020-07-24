@@ -8,7 +8,6 @@ import java.awt.geom.Point2D;
 import java.util.function.Supplier;
 import javax.swing.JComponent;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

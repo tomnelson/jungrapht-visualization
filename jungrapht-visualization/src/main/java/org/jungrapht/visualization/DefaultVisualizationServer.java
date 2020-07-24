@@ -31,13 +31,12 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
+import org.jungrapht.visualization.control.GraphElementAccessor;
 import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.control.TransformSupport;
 import org.jungrapht.visualization.decorators.EdgeShape;
-import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.util.EdgeArticulationFunctionSupplier;
-import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.layout.algorithms.util.Pair;
 import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
 import org.jungrapht.visualization.layout.event.LayoutSizeChange;
@@ -63,6 +62,7 @@ import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.util.BoundingRectangleCollector;
 import org.jungrapht.visualization.util.ChangeEventSupport;
 import org.jungrapht.visualization.util.DefaultChangeEventSupport;
+import org.jungrapht.visualization.util.LayoutPaintable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -636,17 +636,26 @@ class DefaultVisualizationServer<V, E> extends JPanel
    */
   protected void applyLayoutAlgorithmConnections() {
     LayoutAlgorithm<V> layoutAlgorithm = visualizationModel.getLayoutAlgorithm();
+    BiFunction<Graph<V, E>, E, Shape> edgeShapeFunction = renderContext.getEdgeShapeFunction();
     if (layoutAlgorithm instanceof EdgeArticulationFunctionSupplier) {
-      // save off whatever the edge shape was before
-      this.savedEdgeShapeFunction = renderContext.getEdgeShapeFunction();
-      EdgeShape.ArticulatedLine articulatedLineShape = EdgeShape.articulatedLine();
-      articulatedLineShape.setEdgeArticulationFunction(
-          ((EdgeArticulationFunctionSupplier) visualizationModel.getLayoutAlgorithm())
-              .getEdgeArticulationFunction());
-      renderContext.setEdgeShapeFunction(articulatedLineShape);
+      if (savedEdgeShapeFunction == null) {
+        savedEdgeShapeFunction = edgeShapeFunction;
+      }
+      edgeShapeFunction = EdgeShape.articulatedLine();
+
+      ((EdgeShape.ArticulatedLine) edgeShapeFunction)
+          .setEdgeArticulationFunction(
+              ((EdgeArticulationFunctionSupplier) visualizationModel.getLayoutAlgorithm())
+                  .getEdgeArticulationFunction());
+      renderContext.setEdgeShapeFunction(edgeShapeFunction);
     } else if (savedEdgeShapeFunction != null) {
-      renderContext.setEdgeShapeFunction(savedEdgeShapeFunction);
-      savedEdgeShapeFunction = null;
+      edgeShapeFunction = savedEdgeShapeFunction;
+      // if the edgeShapeFunction is articulated, unset the articulations
+      if (edgeShapeFunction instanceof EdgeShape.ArticulatedLine) {
+        ((EdgeShape.ArticulatedLine) edgeShapeFunction)
+            .setEdgeArticulationFunction(e -> Collections.emptyList());
+      }
+      renderContext.setEdgeShapeFunction(edgeShapeFunction);
     }
 
     if (layoutAlgorithm instanceof VertexShapeAware) {

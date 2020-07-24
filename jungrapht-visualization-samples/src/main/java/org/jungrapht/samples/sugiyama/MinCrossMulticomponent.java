@@ -12,7 +12,6 @@ import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.HierarchicalMinCrossLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.renderers.Renderer;
-import org.jungrapht.visualization.util.RectangleUtils;
 
 /**
  * Demo that uses the EiglspergerLayoutAlgorithm to display a directed graph that has several
@@ -33,7 +32,7 @@ public class MinCrossMulticomponent extends JFrame {
             .threaded(false)
             .layering(Layering.COFFMAN_GRAHAM)
             .build();
-    layoutAlgorithm1.setVertexShapeFunction(vv1.getRenderContext().getVertexShapeFunction().andThen(s -> RectangleUtils.convert(s.getBounds2D())));
+    layoutAlgorithm1.setVertexShapeFunction(vv1.getRenderContext().getVertexBoundsFunction());
     vv1.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm1);
     container.add(vv1.getComponent());
 
@@ -45,7 +44,7 @@ public class MinCrossMulticomponent extends JFrame {
             .layering(Layering.COFFMAN_GRAHAM)
             .separateComponents(false)
             .build();
-    layoutAlgorithm2.setVertexShapeFunction(vv2.getRenderContext().getVertexShapeFunction().andThen(s -> RectangleUtils.convert(s.getBounds2D())));
+    layoutAlgorithm2.setVertexShapeFunction(vv2.getRenderContext().getVertexBoundsFunction());
     vv2.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm2);
     container.add(vv2.getComponent());
 

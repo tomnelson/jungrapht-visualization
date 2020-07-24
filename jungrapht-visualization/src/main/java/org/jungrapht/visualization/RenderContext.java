@@ -11,7 +11,8 @@ import javax.swing.CellRendererPane;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import org.jgrapht.Graph;
-import org.jungrapht.visualization.layout.GraphElementAccessor;
+import org.jungrapht.visualization.control.GraphElementAccessor;
+import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.event.RenderContextStateChange;
 import org.jungrapht.visualization.layout.model.Rectangle;
 import org.jungrapht.visualization.renderers.EdgeLabelRenderer;
@@ -92,6 +93,14 @@ public interface RenderContext<V, E> extends RenderContextStateChange.Producer {
   void setArrowFillPaintFunction(Function<E, Paint> arrowFillPaintFunction);
 
   BiFunction<Graph<V, E>, E, Shape> getEdgeShapeFunction();
+
+  default BiFunction<Graph<V, E>, E, Shape> getUnarticulatedEdgeShapeFunction() {
+    BiFunction<Graph<V, E>, E, Shape> edgeShapeFunction = getEdgeShapeFunction();
+    if (edgeShapeFunction instanceof EdgeShape.ArticulatedLine) {
+      return EdgeShape.line();
+    }
+    return edgeShapeFunction;
+  }
 
   void setEdgeShapeFunction(BiFunction<Graph<V, E>, E, Shape> edgeShapeFunction);
 

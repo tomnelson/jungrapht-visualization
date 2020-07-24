@@ -229,10 +229,13 @@ public class TestSugiyamaRunnable<V, E> extends SugiyamaRunnable<V, E> implement
     Rectangle avgVertexBounds = avgVertexBounds(layersArray, vertexShapeFunction);
 
     int horizontalOffset =
-            (int) Math.max(
-                avgVertexBounds.width, Integer.getInteger(PREFIX + "mincross.horizontalOffset", 50));
+        (int)
+            Math.max(
+                avgVertexBounds.width,
+                Integer.getInteger(PREFIX + "mincross.horizontalOffset", 50));
     int verticalOffset =
-            (int) Math.max(
+        (int)
+            Math.max(
                 avgVertexBounds.height, Integer.getInteger(PREFIX + "mincross.verticalOffset", 50));
     GraphLayers.checkLayers(layersArray);
     Map<LV<V>, Point> vertexPointMap = new HashMap<>();
@@ -405,11 +408,6 @@ public class TestSugiyamaRunnable<V, E> extends SugiyamaRunnable<V, E> implement
 
       edgePointMap.put(ae.edge, points);
     }
-    //    EdgeShape.ArticulatedLine<V, E> edgeShape = new EdgeShape.ArticulatedLine<>();
-    //    edgeShape.setEdgeArticulationFunction(
-    //        e -> edgePointMap.getOrDefault(e, Collections.emptyList()));
-
-    //    edgeShapeConsumer.accept(edgeShape);
 
     long articulatedEdgeTime = System.currentTimeMillis();
     log.trace("articulated edges took {}", (articulatedEdgeTime - pointsSetTime));

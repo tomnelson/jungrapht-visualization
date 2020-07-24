@@ -21,7 +21,6 @@ import java.util.function.Function;
 import javax.swing.JOptionPane;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 
 /**

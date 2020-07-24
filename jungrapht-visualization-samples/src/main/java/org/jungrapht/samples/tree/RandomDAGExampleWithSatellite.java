@@ -159,7 +159,8 @@ public class RandomDAGExampleWithSatellite extends JPanel {
     vv.getRenderContext().setVertexIconFunction(iconCache);
     vv.setInitialDimensionFunction(
         InitialDimensionFunction.<String>builder()
-            .vertexShapeFunction(vertexImageShapeFunction.andThen(s -> RectangleUtils.convert(s.getBounds2D())))
+            .vertexShapeFunction(
+                vertexImageShapeFunction.andThen(s -> RectangleUtils.convert(s.getBounds2D())))
             .build());
 
     vv.getRenderContext()
@@ -186,7 +187,6 @@ public class RandomDAGExampleWithSatellite extends JPanel {
             .initialSelection(2)
             .vertexShapeFunction(vv.getRenderContext().getVertexShapeFunction())
             .alignFavoredEdges(false)
-            //            .after(vv::resizeToLayout)
             .build();
 
     JRadioButton showSpatialEffects = new JRadioButton("Show Structure");

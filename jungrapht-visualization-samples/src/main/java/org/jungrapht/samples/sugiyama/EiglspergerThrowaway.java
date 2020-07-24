@@ -15,7 +15,6 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.Renderer;
-import org.jungrapht.visualization.util.RectangleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +39,7 @@ public class EiglspergerThrowaway extends JFrame {
             .threaded(false)
             //            .postStraighten(false)
             .build();
-    layoutAlgorithm3.setVertexShapeFunction(vv3.getRenderContext().getVertexShapeFunction().andThen(s -> RectangleUtils.convert(s.getBounds2D())));
+    layoutAlgorithm3.setVertexShapeFunction(vv3.getRenderContext().getVertexBoundsFunction());
     vv3.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm3);
     container.add(vv3.getComponent());
 

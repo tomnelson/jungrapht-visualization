@@ -34,15 +34,10 @@ public class BrandesKopfSugiyamaGraphExampleWithLayouts extends JFrame {
             .initialSelection(2)
             .vertexShapeFunction(vv.getRenderContext().getVertexShapeFunction())
             .alignFavoredEdges(false)
-            //            .after(vv::resizeToLayout)
             .build();
 
     SugiyamaLayoutAlgorithm<Integer, Integer> layoutAlgorithm =
-        SugiyamaLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
-            //                .straightenEdges(false)
-            //                .postStraighten(false)
-            //            .after(vv::resizeToLayout)
-            .build();
+        SugiyamaLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder().build();
     layoutAlgorithm.setVertexShapeFunction(vv.getRenderContext().getVertexBoundsFunction());
     vv.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm);
 

@@ -77,10 +77,7 @@ public class ForceAtlas2WithJGraphtIO extends JFrame {
             .build();
 
     ForceAtlas2LayoutAlgorithm layoutAlgorithm =
-        builder
-            .repulsionContractBuilder(repulsion)
-            //                .after(vv::resizeToLayout)
-            .build();
+        builder.repulsionContractBuilder(repulsion).build();
     vv.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm);
 
     final JComboBox graphComboBox = new JComboBox(getCombos());

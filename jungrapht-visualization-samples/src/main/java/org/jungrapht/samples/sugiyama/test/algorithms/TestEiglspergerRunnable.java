@@ -30,7 +30,6 @@ import org.jungrapht.visualization.layout.algorithms.sugiyama.VertexMetadata;
 import org.jungrapht.visualization.layout.algorithms.util.Attributed;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
-import org.jungrapht.visualization.util.RectangleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -216,11 +215,14 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
     Rectangle avgVertexBounds = maxVertexBounds(layersArray, vertexShapeFunction);
 
     int horizontalOffset =
-            (int)Math.max(
-            avgVertexBounds.width, Integer.getInteger(PREFIX + "mincross.horizontalOffset", 50));
+        (int)
+            Math.max(
+                avgVertexBounds.width,
+                Integer.getInteger(PREFIX + "mincross.horizontalOffset", 50));
     int verticalOffset =
-            (int)Math.max(
-            avgVertexBounds.height, Integer.getInteger(PREFIX + "mincross.verticalOffset", 50));
+        (int)
+            Math.max(
+                avgVertexBounds.height, Integer.getInteger(PREFIX + "mincross.verticalOffset", 50));
     GraphLayers.checkLayers(layersArray);
     Map<LV<V>, Point> vertexPointMap = new HashMap<>();
 
@@ -271,7 +273,7 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
         if (!(v instanceof SyntheticLV)) {
           Rectangle bounds = vertexShapeFunction.apply(v.getVertex());
           width += bounds.width + horizontalOffset;
-          maxHeight = Math.max(maxHeight, (int)bounds.height);
+          maxHeight = Math.max(maxHeight, (int) bounds.height);
         } else {
           width += horizontalOffset;
         }
@@ -302,7 +304,7 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
       for (LV<V> EiglspergerVertex : lvs) {
         int vertexWidth = 0;
         if (!(EiglspergerVertex instanceof SyntheticLV)) {
-          vertexWidth = (int)vertexShapeFunction.apply(EiglspergerVertex.getVertex()).width;
+          vertexWidth = (int) vertexShapeFunction.apply(EiglspergerVertex.getVertex()).width;
         }
 
         x += previousVertexWidth / 2 + vertexWidth / 2 + horizontalOffset;

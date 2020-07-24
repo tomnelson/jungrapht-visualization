@@ -1,5 +1,16 @@
 package org.jungrapht.samples.sugiyama.test.algorithms;
 
+import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.EdgeAwareLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -18,18 +29,6 @@ import org.jungrapht.visualization.layout.model.Rectangle;
 import org.jungrapht.visualization.layout.util.synthetics.Synthetic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-
-import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 
 /**
  * Test only, as this class is hard-coded for a specific test graph
@@ -174,7 +173,6 @@ public class BrandesKopfLayoutAlgorithm<V, E>
   }
 
   Graph<V, E> originalGraph;
-  //  List<List<SugiyamaVertex<V>>> layers;
   Graph<LV<V>, LE<V, E>> svGraph;
   Set<LE<V, E>> markedSegments = new HashSet<>();
 
@@ -223,7 +221,6 @@ public class BrandesKopfLayoutAlgorithm<V, E>
 
     // check the metadata
     GraphLayers.checkLayers(layers);
-    //      GraphLayers.checkLayers(layersArray);
 
     //    justSetThePoints();
     SelectiveSugiyamaHorizontalCoordinateAssignment selectiveHorizontalCoordinateAssignment =
@@ -272,7 +269,6 @@ public class BrandesKopfLayoutAlgorithm<V, E>
     totalWidth = widestRowWidth + horizontalOffset;
     totalHeight = layers.size() * verticalOffset + 2 * verticalOffset;
 
-    //    layoutModel.setSize(totalWidth + horizontalOffset, totalHeight);
     // now all the vertices in layers (best) have points associated with them
     // every vertex in vertexMap has a point value
 
@@ -323,10 +319,7 @@ public class BrandesKopfLayoutAlgorithm<V, E>
 
       edgePointMap.put(ae.edge, points);
     }
-    //    EdgeShape.ArticulatedLine<V, E> edgeShape = new EdgeShape.ArticulatedLine<>();
-    //    edgeShape.setEdgeArticulationFunction(
-    //        e -> edgePointMap.getOrDefault(e, Collections.emptyList()));
-    //
+
     svGraph.vertexSet().forEach(v -> layoutModel.set(v.getVertex(), v.getPoint()));
     after.run();
   }

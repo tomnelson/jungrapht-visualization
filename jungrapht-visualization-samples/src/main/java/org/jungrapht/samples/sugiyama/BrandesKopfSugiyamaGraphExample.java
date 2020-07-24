@@ -33,9 +33,7 @@ public class BrandesKopfSugiyamaGraphExample extends JFrame {
     VisualizationViewer<Integer, Integer> vv = configureVisualizationViewer(graph);
 
     SugiyamaLayoutAlgorithm<Integer, Integer> layoutAlgorithm =
-        SugiyamaLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
-            //            .after(vv::resizeToLayout)
-            .build();
+        SugiyamaLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder().build();
     layoutAlgorithm.setVertexShapeFunction(vv.getRenderContext().getVertexBoundsFunction());
     vv.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm);
 

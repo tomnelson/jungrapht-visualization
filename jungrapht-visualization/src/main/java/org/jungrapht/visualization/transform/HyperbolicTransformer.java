@@ -14,7 +14,6 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Optional;
-import org.jungrapht.visualization.layout.model.Intersections;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.PolarPoint;
 import org.slf4j.Logger;

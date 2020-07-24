@@ -22,10 +22,9 @@ import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.layout.algorithms.*;
 import org.jungrapht.visualization.layout.algorithms.util.InitialDimensionFunction;
-import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.util.GraphImage;
-import org.jungrapht.visualization.util.RectangleUtils;
+import org.jungrapht.visualization.util.LayoutPaintable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,9 +108,7 @@ public class ShowLayouts extends JPanel {
             });
 
     vv.setInitialDimensionFunction(
-        InitialDimensionFunction.builder(
-                vv.getRenderContext().getVertexShapeFunction().andThen(s -> RectangleUtils.convert(s.getBounds2D()))
-        ).build());
+        InitialDimensionFunction.builder(vv.getRenderContext().getVertexBoundsFunction()).build());
 
     layoutBounds = new LayoutPaintable.LayoutBounds(vv);
     vv.addPreRenderPaintable(layoutBounds);

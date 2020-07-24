@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.List;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.VisualizationModel;
-import org.jungrapht.visualization.layout.GraphElementAccessor;
+import org.jungrapht.visualization.control.GraphElementAccessor;
 import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
