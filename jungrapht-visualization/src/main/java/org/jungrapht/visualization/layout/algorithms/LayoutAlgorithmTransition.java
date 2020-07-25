@@ -1,5 +1,6 @@
 package org.jungrapht.visualization.layout.algorithms;
 
+import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.slf4j.Logger;
@@ -16,15 +17,15 @@ public class LayoutAlgorithmTransition {
   private static Logger log = LoggerFactory.getLogger(LayoutAlgorithmTransition.class);
 
   public static <V, E> void animate(
-      LayoutModel<V> layoutModel, LayoutAlgorithm<V> endLayoutAlgorithm) {
-    animate(layoutModel, endLayoutAlgorithm, () -> {});
+      VisualizationServer<V, E> visualizationServer, LayoutAlgorithm<V> endLayoutAlgorithm) {
+    animate(visualizationServer, endLayoutAlgorithm, () -> {});
   }
 
   public static <V, E> void animate(
-      LayoutModel<V> layoutModel,
+      VisualizationServer<V, E> visualizationServer,
       LayoutAlgorithm<V> endLayoutAlgorithm,
       Runnable after) {
-    fireLayoutStateChanged(layoutModel, true);
+    fireLayoutStateChanged(visualizationServer.getVisualizationModel().getLayoutModel(), true);
 
     if (endLayoutAlgorithm instanceof AfterRunnable) {
       ((AfterRunnable) endLayoutAlgorithm).setAfter(after);
@@ -33,27 +34,27 @@ public class LayoutAlgorithmTransition {
     LayoutAlgorithm<V> transitionLayoutAlgorithm =
         AnimationLayoutAlgorithm.<V>builder()
             .after(after)
-            .layoutModel(layoutModel)
+            .visualizationServer(visualizationServer)
             .endLayoutAlgorithm(endLayoutAlgorithm)
             .prerelax(false)
             .build();
-    layoutModel.accept(transitionLayoutAlgorithm);
+    visualizationServer.getVisualizationModel().setLayoutAlgorithm(transitionLayoutAlgorithm);
   }
 
   public static <V, E> void apply(
-          LayoutModel<V> layoutModel,
+      VisualizationServer<V, E> visualizationServer,
       LayoutAlgorithm<V> endLayoutAlgorithm,
       Runnable after) {
 
     if (endLayoutAlgorithm instanceof AfterRunnable) {
       ((AfterRunnable) endLayoutAlgorithm).setAfter(after);
     }
-    layoutModel.accept(endLayoutAlgorithm);
+    visualizationServer.getVisualizationModel().setLayoutAlgorithm(endLayoutAlgorithm);
   }
 
   public static <V, E> void apply(
-      LayoutModel<V> layoutModel, LayoutAlgorithm<V> endLayoutAlgorithm) {
-    apply(layoutModel, endLayoutAlgorithm, () -> {});
+      VisualizationServer<V, E> visualizationServer, LayoutAlgorithm<V> endLayoutAlgorithm) {
+    apply(visualizationServer, endLayoutAlgorithm, () -> {});
   }
 
   private static void fireLayoutStateChanged(LayoutModel layoutModel, boolean state) {

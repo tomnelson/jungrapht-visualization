@@ -1,6 +1,7 @@
 package org.jungrapht.visualization.layout.algorithms;
 
 import org.jgrapht.Graph;
+import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.IterativeContext;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -17,12 +18,12 @@ public class AnimationLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorith
   public static class Builder<V, T extends AnimationLayoutAlgorithm<V>, B extends Builder<V, T, B>>
       extends AbstractIterativeLayoutAlgorithm.Builder<V, T, B>
       implements LayoutAlgorithm.Builder<V, T, B> {
-    protected LayoutModel<V> layoutModel;
+    protected VisualizationServer<V, ?> visualizationServer;
     protected LayoutAlgorithm<V> endLayoutAlgorithm;
     protected Runnable after = () -> {};
 
-    public B layoutModel(LayoutModel<V> layoutModel) {
-      this.layoutModel = layoutModel;
+    public B visualizationServer(VisualizationServer<V, ?> visualizationServer) {
+      this.visualizationServer = visualizationServer;
       return self();
     }
 
@@ -51,6 +52,7 @@ public class AnimationLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorith
   protected Runnable after = () -> {};
 
   LayoutModel<V> transitionLayoutModel;
+  VisualizationServer<V, ?> visualizationServer;
   LayoutAlgorithm<V> endLayoutAlgorithm;
   LayoutModel<V> layoutModel;
 
@@ -60,7 +62,7 @@ public class AnimationLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorith
 
   protected AnimationLayoutAlgorithm(Builder<V, ?, ?> builder) {
     super(builder);
-    this.layoutModel = builder.layoutModel;
+    this.visualizationServer = builder.visualizationServer;
     this.endLayoutAlgorithm = builder.endLayoutAlgorithm;
     if (endLayoutAlgorithm instanceof AfterRunnable) {
       ((AfterRunnable) this.endLayoutAlgorithm).setAfter(builder.after);
@@ -79,7 +81,7 @@ public class AnimationLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorith
     // create a LayoutModel to hold points for the transition
     this.transitionLayoutModel =
         LayoutModel.<V>builder()
-            .graph(layoutModel.getGraph())
+            .graph(visualizationServer.getVisualizationModel().getGraph())
             .layoutModel(layoutModel)
             .initializer(layoutModel)
             .build();
@@ -104,7 +106,7 @@ public class AnimationLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorith
     if (counter >= count) {
       done = true;
       this.transitionLayoutModel.stopRelaxer();
-      this.layoutModel.accept(endLayoutAlgorithm);
+      this.visualizationServer.getVisualizationModel().setLayoutAlgorithm(endLayoutAlgorithm);
     }
   }
 
