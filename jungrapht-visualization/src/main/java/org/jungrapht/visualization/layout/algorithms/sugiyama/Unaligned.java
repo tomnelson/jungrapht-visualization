@@ -1,11 +1,11 @@
 package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
-import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import org.jungrapht.visualization.layout.model.Point;
+import org.jungrapht.visualization.layout.model.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +16,7 @@ public class Unaligned {
 
   public static <V> void centerPoints(
       LV<V>[][] layers,
-      Function<V, Shape> vertexShapeFunction,
+      Function<V, Rectangle> vertexShapeFunction,
       int horizontalOffset,
       int verticalOffset,
       Map<LV<V>, Point> vertexPointMap) {
@@ -29,9 +29,9 @@ public class Unaligned {
       int maxHeight = 0;
       for (LV<V> sugiyamaVertex : layer) {
         if (!(sugiyamaVertex instanceof SyntheticLV)) {
-          Rectangle bounds = vertexShapeFunction.apply(sugiyamaVertex.getVertex()).getBounds();
+          Rectangle bounds = vertexShapeFunction.apply(sugiyamaVertex.getVertex());
           width += bounds.width + horizontalOffset;
-          maxHeight = Math.max(maxHeight, bounds.height);
+          maxHeight = Math.max(maxHeight, (int) bounds.height);
         } else {
           width += horizontalOffset;
         }
@@ -60,7 +60,7 @@ public class Unaligned {
       for (LV<V> sugiyamaVertex : layer) {
         int vertexWidth = 0;
         if (!(sugiyamaVertex instanceof SyntheticLV)) {
-          vertexWidth = vertexShapeFunction.apply(sugiyamaVertex.getVertex()).getBounds().width;
+          vertexWidth = (int) vertexShapeFunction.apply(sugiyamaVertex.getVertex()).width;
         }
 
         x += previousVertexWidth / 2 + vertexWidth / 2 + horizontalOffset;
@@ -88,7 +88,7 @@ public class Unaligned {
 
   public static <V> void setPoints(
       LV<V>[][] layers,
-      Function<V, Shape> vertexShapeFunction,
+      Function<V, Rectangle> vertexShapeFunction,
       int horizontalOffset,
       int verticalOffset,
       Map<LV<V>, Point> vertexPointMap) {
@@ -101,11 +101,6 @@ public class Unaligned {
     for (LV<V>[] layer : layers) {
 
       for (LV<V> sugiyamaVertex : layer) {
-        //        int vertexWidth = 0;
-        //        if (!(sugiyamaVertex instanceof SyntheticLV)) {
-        //          vertexWidth = vertexShapeFunction.apply(sugiyamaVertex.getVertex()).getBounds().width;
-        //        }
-
         x += horizontalOffset;
 
         log.trace("layerIndex {} y is {}", layerIndex, y);
@@ -130,7 +125,7 @@ public class Unaligned {
 
   public static <V> void setPoints(
       List<List<LV<V>>> layers,
-      Function<V, Shape> vertexShapeFunction,
+      Function<V, Rectangle> vertexShapeFunction,
       int horizontalOffset,
       int verticalOffset,
       Map<LV<V>, Point> vertexPointMap) {
@@ -143,9 +138,9 @@ public class Unaligned {
       int maxHeight = 0;
       for (LV<V> sugiyamaVertex : layer) {
         if (!(sugiyamaVertex instanceof SyntheticLV)) {
-          Rectangle bounds = vertexShapeFunction.apply(sugiyamaVertex.getVertex()).getBounds();
+          Rectangle bounds = vertexShapeFunction.apply(sugiyamaVertex.getVertex());
           width += bounds.width + horizontalOffset;
-          maxHeight = Math.max(maxHeight, bounds.height);
+          maxHeight = Math.max(maxHeight, (int) bounds.height);
         } else {
           width += horizontalOffset;
         }
@@ -174,7 +169,7 @@ public class Unaligned {
       for (LV<V> sugiyamaVertex : layer) {
         int vertexWidth = 0;
         if (!(sugiyamaVertex instanceof SyntheticLV)) {
-          vertexWidth = vertexShapeFunction.apply(sugiyamaVertex.getVertex()).getBounds().width;
+          vertexWidth = (int) vertexShapeFunction.apply(sugiyamaVertex.getVertex()).width;
         }
 
         x += previousVertexWidth / 2 + vertexWidth / 2 + horizontalOffset;

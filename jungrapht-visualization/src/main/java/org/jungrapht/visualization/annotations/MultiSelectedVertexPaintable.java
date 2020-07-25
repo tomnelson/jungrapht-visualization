@@ -17,7 +17,6 @@ import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.renderers.*;
-import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.transform.shape.TransformingGraphics;
 import org.jungrapht.visualization.util.ArrowFactory;
@@ -306,17 +305,9 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
     Shape shape;
     if (visualizationServer.getRenderer() instanceof BiModalRenderer) {
       BiModalRenderer<V, ?> biModalRenderer = (BiModalRenderer) visualizationServer.getRenderer();
-      Renderer.Vertex<V, ?> vertexRenderer = biModalRenderer.getVertexRenderer();
-      if (vertexRenderer instanceof LightweightVertexRenderer) {
-        LightweightVertexRenderer<V, ?> lightweightVertexRenderer =
-            (LightweightVertexRenderer) vertexRenderer;
-        shape = lightweightVertexRenderer.getVertexShapeFunction().apply(v);
-      } else {
-        // heavyweight
-        shape = visualizationServer.getRenderContext().getVertexShapeFunction().apply(v);
-        if (useBounds) {
-          shape = shape.getBounds();
-        }
+      shape = visualizationServer.getRenderContext().getVertexShapeFunction().apply(v);
+      if (useBounds) {
+        shape = shape.getBounds();
       }
     } else {
       shape = renderContext.getVertexShapeFunction().apply(v);

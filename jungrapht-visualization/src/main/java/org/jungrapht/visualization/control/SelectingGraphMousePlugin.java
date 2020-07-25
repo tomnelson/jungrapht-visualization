@@ -30,9 +30,7 @@ import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 import org.jungrapht.visualization.selection.ShapePickSupport;
 import org.slf4j.Logger;
@@ -332,7 +330,8 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
 
       for (V v : ps.getSelected()) {
         org.jungrapht.visualization.layout.model.Point vp = layoutModel.apply(v);
-        vp = org.jungrapht.visualization.layout.model.Point.of(vp.x + dx, vp.y + dy);
+        vp = vp.add(dx, dy);
+        //                org.jungrapht.visualization.layout.model.Point.of(vp.x + dx, vp.y + dy);
         layoutModel.set(v, vp);
       }
       deltaDown = out;
@@ -376,7 +375,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
 
         for (V v : ps.getSelected()) {
           org.jungrapht.visualization.layout.model.Point vp = layoutModel.apply(v);
-          vp = Point.of(vp.x + dx, vp.y + dy);
+          vp = vp.add(dx, dy); //Point.of(vp.x + dx, vp.y + dy);
           layoutModel.set(v, vp);
         }
         deltaDown = p;

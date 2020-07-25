@@ -1,7 +1,5 @@
 package org.jungrapht.visualization.layout.algorithms;
 
-import java.awt.Rectangle;
-import java.awt.Shape;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,9 +10,10 @@ import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFA2Repulsion;
 import org.jungrapht.visualization.layout.algorithms.repulsion.StandardFA2Repulsion;
 import org.jungrapht.visualization.layout.algorithms.util.IterativeContext;
-import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
+import org.jungrapht.visualization.layout.algorithms.util.VertexBoundsFunctionConsumer;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
+import org.jungrapht.visualization.layout.model.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +26,7 @@ import org.slf4j.LoggerFactory;
  * @param <V>
  */
 public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
-    implements VertexShapeAware<V>, IterativeContext {
+    implements VertexBoundsFunctionConsumer<V>, IterativeContext {
   private static final Logger log = LoggerFactory.getLogger(ForceAtlas2LayoutAlgorithm.class);
 
   // Initializer
@@ -282,14 +281,14 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
     this.tolerance = builder.tolerance;
     this.initializer = builder.initializer;
     this.repulsionContractBuilder = builder.repulsionContractBuilder;
-    //    this.tuneToGraphSize = builder.tuneToGraphSize;
   }
 
-  public void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
+  @Override
+  public void setVertexBoundsFunction(Function<V, Rectangle> vertexBoundsFunction) {
     nodeSizes =
         v -> {
-          Rectangle r = vertexShapeFunction.apply(v).getBounds();
-          return Math.max(r.getWidth(), r.getHeight());
+          Rectangle r = vertexBoundsFunction.apply(v);
+          return Math.max(r.width, r.height);
         };
   }
 

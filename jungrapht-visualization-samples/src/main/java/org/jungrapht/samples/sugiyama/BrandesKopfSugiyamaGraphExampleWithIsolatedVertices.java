@@ -28,11 +28,8 @@ public class BrandesKopfSugiyamaGraphExampleWithIsolatedVertices extends JFrame 
     VisualizationViewer<Integer, Integer> vv = configureVisualizationViewer(graph);
 
     HierarchicalMinCrossLayoutAlgorithm<Integer, Integer> layoutAlgorithm =
-        HierarchicalMinCrossLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
-            //            .after(vv::resizeToLayout)
-            .build();
-    layoutAlgorithm.setVertexShapeFunction(vv.getRenderContext().getVertexShapeFunction());
-    layoutAlgorithm.setEdgeShapeFunctionConsumer(vv.getRenderContext()::setEdgeShapeFunction);
+        HierarchicalMinCrossLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder().build();
+    layoutAlgorithm.setVertexBoundsFunction(vv.getRenderContext().getVertexBoundsFunction());
     vv.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm);
 
     container.add(vv.getComponent());

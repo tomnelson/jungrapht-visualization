@@ -102,7 +102,7 @@ public class TestSugiyamaLayoutAlgorithm<V, E> extends SugiyamaLayoutAlgorithm<V
     TestSugiyamaRunnable runnable =
         TestSugiyamaRunnable.<V, E>builder()
             .layoutModel(layoutModel)
-            .vertexShapeFunction(vertexShapeFunction)
+            .vertexShapeFunction(vertexBoundsFunction)
             .straightenEdges(straightenEdges)
             .postStraighten(postStraighten)
             .maxLevelCross(maxLevelCross)
@@ -136,6 +136,5 @@ public class TestSugiyamaLayoutAlgorithm<V, E> extends SugiyamaLayoutAlgorithm<V
       // fire an event to say that the layout is done
       layoutModel.getLayoutStateChangeSupport().fireLayoutStateChanged(layoutModel, false);
     }
-    edgeShapeFunctionConsumer.accept(edgeShape);
   }
 }

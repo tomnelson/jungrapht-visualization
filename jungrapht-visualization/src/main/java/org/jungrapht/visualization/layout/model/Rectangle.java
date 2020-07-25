@@ -36,6 +36,10 @@ public class Rectangle {
     return new Rectangle(x, y, width, height);
   }
 
+  public static Rectangle of(int width, int height) {
+    return new Rectangle(0, 0, width, height);
+  }
+
   /**
    * @param x location of upper left corner
    * @param y location of upper left corner

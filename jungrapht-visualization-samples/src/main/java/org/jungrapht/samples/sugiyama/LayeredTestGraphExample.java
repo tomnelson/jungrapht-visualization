@@ -48,8 +48,7 @@ public class LayeredTestGraphExample extends JFrame {
 
     LayeredLayoutAlgorithm<Integer, Integer> layoutAlgorithm =
         LayeredLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder().build();
-    layoutAlgorithm.setVertexShapeFunction(vv.getRenderContext().getVertexShapeFunction());
-    layoutAlgorithm.setEdgeShapeFunctionConsumer(vv.getRenderContext()::setEdgeShapeFunction);
+    layoutAlgorithm.setVertexBoundsFunction(vv.getRenderContext().getVertexBoundsFunction());
 
     vv.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm);
 

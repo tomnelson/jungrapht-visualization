@@ -1,11 +1,10 @@
 package org.jungrapht.visualization.layout.algorithms;
 
-import java.awt.Dimension;
-import java.awt.Shape;
 import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.util.DimensionSummaryStatistics;
 import org.jungrapht.visualization.layout.algorithms.util.PointSummaryStatistics;
+import org.jungrapht.visualization.layout.model.Dimension;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
@@ -49,13 +48,9 @@ public abstract class AbstractLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
   protected Runnable after;
 
   protected <E> Dimension computeAverageVertexDimension(
-      Graph<V, E> graph, Function<V, Shape> shapeFunction) {
+      Graph<V, E> graph, Function<V, Rectangle> shapeFunction) {
     DimensionSummaryStatistics dss = new DimensionSummaryStatistics();
-    graph
-        .vertexSet()
-        .stream()
-        .map(vertex -> shapeFunction.apply(vertex).getBounds())
-        .forEach(dss::accept);
+    graph.vertexSet().stream().map(vertex -> shapeFunction.apply(vertex)).forEach(dss::accept);
     return dss.getAverage();
   }
 

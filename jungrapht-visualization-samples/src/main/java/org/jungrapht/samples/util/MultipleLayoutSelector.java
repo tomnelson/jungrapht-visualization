@@ -2,7 +2,6 @@ package org.jungrapht.samples.util;
 
 import java.awt.Color;
 import java.awt.GridLayout;
-import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -46,8 +45,9 @@ import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFA2Repulsion;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFRRepulsion;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
-import org.jungrapht.visualization.layout.algorithms.util.EdgeShapeFunctionSupplier;
-import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
+import org.jungrapht.visualization.layout.model.Rectangle;
+import org.jungrapht.visualization.util.AWT;
+import org.jungrapht.visualization.util.LayoutPaintable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -170,7 +170,7 @@ public class MultipleLayoutSelector<V, E> extends JPanel {
   private MultipleLayoutSelector(Builder<V, E> builder) {
     this(
         builder.visualizationServer,
-        builder.vertexShapeFunction,
+        builder.vertexShapeFunction.andThen(s -> AWT.convert(s.getBounds2D())),
         builder.intialialSelection,
         builder.vertexPredicate,
         builder.edgePredicate,
@@ -190,7 +190,7 @@ public class MultipleLayoutSelector<V, E> extends JPanel {
 
   Comparator<E> edgeComparator;
 
-  Function<V, Shape> vertexShapeFunction;
+  Function<V, Rectangle> vertexShapeFunction;
 
   boolean alignFavoredEdgess;
 
@@ -211,7 +211,7 @@ public class MultipleLayoutSelector<V, E> extends JPanel {
 
   private MultipleLayoutSelector(
       VisualizationServer<V, E> vv,
-      Function<V, Shape> vertexShapeFunction,
+      Function<V, Rectangle> vertexShapeFunction,
       int initialSelection,
       Predicate<V> vertexPredicate,
       Predicate<E> edgePredicate,
@@ -234,7 +234,7 @@ public class MultipleLayoutSelector<V, E> extends JPanel {
     int layoutNumber = 0;
 
     TreeLayoutAlgorithm<V> treeLayoutAlgorithm =
-        TreeLayoutAlgorithm.<V>builder().vertexShapeFunction(vertexShapeFunction).build();
+        TreeLayoutAlgorithm.<V>builder().vertexShapeFunction(this.vertexShapeFunction).build();
 
     TidierTreeLayoutAlgorithm<V, E> tidierTreeLayoutAlgorithm =
         TidierTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()
@@ -501,9 +501,9 @@ public class MultipleLayoutSelector<V, E> extends JPanel {
     @Override
     public void itemStateChanged(ItemEvent e) {
       if (e.getStateChange() == ItemEvent.SELECTED) {
-        if (!(layoutAlgorithm instanceof EdgeShapeFunctionSupplier)) {
-          vv.getRenderContext().setEdgeShapeFunction(originalEdgeShapeFunction);
-        }
+        //                if (!(layoutAlgorithm instanceof EdgeArticulationFunctionSupplier)) {
+        //                  vv.getRenderContext().setEdgeShapeFunction(originalEdgeShapeFunction);
+        //                }
         if (layoutAlgorithm instanceof Layered) {
           ((Layered) layoutAlgorithm)
               .setLayering(layeringComboBox.getItemAt(layeringComboBox.getSelectedIndex()));

@@ -1,6 +1,9 @@
 package org.jungrapht.visualization;
 
-import java.awt.*;
+import java.awt.Font;
+import java.awt.Paint;
+import java.awt.Shape;
+import java.awt.Stroke;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -8,13 +11,16 @@ import javax.swing.CellRendererPane;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import org.jgrapht.Graph;
-import org.jungrapht.visualization.layout.GraphElementAccessor;
+import org.jungrapht.visualization.control.GraphElementAccessor;
+import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.event.RenderContextStateChange;
+import org.jungrapht.visualization.layout.model.Rectangle;
 import org.jungrapht.visualization.renderers.EdgeLabelRenderer;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.renderers.VertexLabelRenderer;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
+import org.jungrapht.visualization.util.AWT;
 import org.jungrapht.visualization.util.EdgeIndexFunction;
 
 /**
@@ -87,6 +93,14 @@ public interface RenderContext<V, E> extends RenderContextStateChange.Producer {
   void setArrowFillPaintFunction(Function<E, Paint> arrowFillPaintFunction);
 
   BiFunction<Graph<V, E>, E, Shape> getEdgeShapeFunction();
+
+  default BiFunction<Graph<V, E>, E, Shape> getUnarticulatedEdgeShapeFunction() {
+    BiFunction<Graph<V, E>, E, Shape> edgeShapeFunction = getEdgeShapeFunction();
+    if (edgeShapeFunction instanceof EdgeShape.ArticulatedLine) {
+      return EdgeShape.line();
+    }
+    return edgeShapeFunction;
+  }
 
   void setEdgeShapeFunction(BiFunction<Graph<V, E>, E, Shape> edgeShapeFunction);
 
@@ -163,6 +177,10 @@ public interface RenderContext<V, E> extends RenderContextStateChange.Producer {
   void setVertexDrawPaintFunction(Function<V, Paint> vertexDrawPaintFunction);
 
   Function<V, Shape> getVertexShapeFunction();
+
+  default Function<V, Rectangle> getVertexBoundsFunction() {
+    return getVertexShapeFunction().andThen(s -> AWT.convert(s.getBounds2D()));
+  }
 
   void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction);
 

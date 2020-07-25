@@ -10,7 +10,6 @@
  */
 package org.jungrapht.visualization.layout.model;
 
-import java.awt.geom.AffineTransform;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Future;
@@ -272,14 +271,17 @@ public class AggregateLayoutModel<V> implements LayoutModel<V> {
         // center of the sublayout
         int width = layoutModel.getWidth();
         int height = layoutModel.getHeight();
-        AffineTransform at =
-            AffineTransform.getTranslateInstance(center.x - width / 2, center.y - height / 2);
+        double deltaX = center.x - width / 2;
+        double deltaY = center.y - height / 2;
+        //        AffineTransform at =
+        //            AffineTransform.getTranslateInstance(center.x - width / 2, center.y - height / 2);
         Point vertexCenter = layoutModel.apply(vertex);
         log.trace("sublayout center is {}", vertexCenter);
         double[] srcPoints = new double[] {vertexCenter.x, vertexCenter.y};
         double[] destPoints = new double[2];
-        at.transform(srcPoints, 0, destPoints, 0, 1);
-        return Point.of(destPoints[0], destPoints[1]);
+        Point translatedCenter = vertexCenter.add(deltaX, deltaY);
+        //        at.transform(srcPoints, 0, destPoints, 0, 1);
+        return translatedCenter;
       }
     }
     return delegate.apply(vertex);

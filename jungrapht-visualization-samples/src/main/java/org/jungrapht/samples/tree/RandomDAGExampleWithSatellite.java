@@ -42,6 +42,7 @@ import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.decorators.IconShapeFunction;
 import org.jungrapht.visualization.layout.algorithms.util.InitialDimensionFunction;
 import org.jungrapht.visualization.renderers.Renderer;
+import org.jungrapht.visualization.util.AWT;
 import org.jungrapht.visualization.util.IconCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -158,7 +159,8 @@ public class RandomDAGExampleWithSatellite extends JPanel {
     vv.getRenderContext().setVertexIconFunction(iconCache);
     vv.setInitialDimensionFunction(
         InitialDimensionFunction.<String>builder()
-            .vertexShapeFunction(vertexImageShapeFunction)
+            .vertexShapeFunction(
+                vertexImageShapeFunction.andThen(s -> AWT.convert(s.getBounds2D())))
             .build());
 
     vv.getRenderContext()
@@ -185,7 +187,6 @@ public class RandomDAGExampleWithSatellite extends JPanel {
             .initialSelection(2)
             .vertexShapeFunction(vv.getRenderContext().getVertexShapeFunction())
             .alignFavoredEdges(false)
-            //            .after(vv::resizeToLayout)
             .build();
 
     JRadioButton showSpatialEffects = new JRadioButton("Show Structure");

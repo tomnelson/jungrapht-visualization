@@ -13,10 +13,10 @@ package org.jungrapht.visualization.transform;
 import java.awt.geom.Point2D;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationViewer;
+import org.jungrapht.visualization.control.GraphElementAccessor;
 import org.jungrapht.visualization.control.LensGraphMouse;
 import org.jungrapht.visualization.control.LensTransformSupport;
 import org.jungrapht.visualization.control.TransformSupport;
-import org.jungrapht.visualization.layout.GraphElementAccessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

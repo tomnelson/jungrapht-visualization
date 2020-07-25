@@ -10,7 +10,6 @@
 
 package org.jungrapht.visualization.layout.algorithms;
 
-import java.awt.Shape;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,7 +18,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import org.jungrapht.visualization.DefaultRenderContext;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Rectangle;
 import org.slf4j.Logger;
@@ -50,8 +48,7 @@ public abstract class AbstractTreeLayoutAlgorithm<V> extends AbstractLayoutAlgor
     protected int horizontalVertexSpacing = TREE_LAYOUT_HORIZONTAL_SPACING;
     protected int verticalVertexSpacing = TREE_LAYOUT_VERTICAL_SPACING;
     protected boolean expandLayout = true;
-    protected Function<V, Shape> vertexShapeFunction =
-        new DefaultRenderContext.ShapeFunctionSupplier().get();
+    protected Function<V, Rectangle> vertexShapeFunction = v -> Rectangle.of(-5, -5, 10, 10);
 
     /** @return this builder cast to type B */
     protected B self() {
@@ -106,7 +103,7 @@ public abstract class AbstractTreeLayoutAlgorithm<V> extends AbstractLayoutAlgor
      * @param vertexShapeFunction source of vertex shapes
      * @return this builder
      */
-    public B vertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
+    public B vertexShapeFunction(Function<V, Rectangle> vertexShapeFunction) {
       this.vertexShapeFunction = vertexShapeFunction;
       return self();
     }
@@ -156,7 +153,7 @@ public abstract class AbstractTreeLayoutAlgorithm<V> extends AbstractLayoutAlgor
   protected Set<V> visitedVertices = new HashSet<>();
 
   @Override
-  public void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
+  public void setVertexBoundsFunction(Function<V, Rectangle> vertexShapeFunction) {
     Objects.requireNonNull(vertexShapeFunction);
     this.vertexShapeFunction = vertexShapeFunction;
   }
@@ -177,7 +174,7 @@ public abstract class AbstractTreeLayoutAlgorithm<V> extends AbstractLayoutAlgor
    * if provided (non-null) then the horizontalVertexSpacing and verticalVertexSpacing values will
    * be replaced by 2 times the average width and height of all vertex shapes
    */
-  protected Function<V, Shape> vertexShapeFunction;
+  protected Function<V, Rectangle> vertexShapeFunction;
 
   /** if {@code true} then expand the layout size to accomodate the entire tree. */
   protected boolean expandLayout;

@@ -10,7 +10,6 @@
 
 package org.jungrapht.visualization.layout.algorithms;
 
-import java.awt.Dimension;
 import java.util.*;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
@@ -20,6 +19,7 @@ import org.jgrapht.alg.spanning.PrimMinimumSpanningTree;
 import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jungrapht.visualization.layout.model.Dimension;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;

@@ -15,7 +15,7 @@ import java.util.ConcurrentModificationException;
 import java.util.HashSet;
 import java.util.Set;
 import org.jgrapht.Graph;
-import org.jungrapht.visualization.layout.GraphElementAccessor;
+import org.jungrapht.visualization.control.GraphElementAccessor;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.util.RadiusVertexAccessor;
@@ -66,12 +66,11 @@ public class RadiusGraphElementAccessor<V, E> extends RadiusVertexAccessor<V>
    * {@code maxDistance}. Iterates through all visible vertices and checks their distance from the
    * location. Override this method to provide a more efficient implementation.
    *
-   * <p>// * @param layout the context in which the location is defined
-   *
+   * @param layoutModel the context in which the location is defined
    * @param x the x coordinate of the location
-   * @param y the y coordinate of the location // * @param maxDistance the maximum distance at which
-   *     any element can be from a specified location and still be returned
-   * @return an edge which is associated with the location {@code (x,y)} as given by {@code layout}
+   * @param y the y coordinate of the location
+   * @return an edge which is associated with the location {@code (x,y)} as given by {@code
+   *     layoutModel}
    */
   @Override
   public E getEdge(LayoutModel<V> layoutModel, double x, double y) {

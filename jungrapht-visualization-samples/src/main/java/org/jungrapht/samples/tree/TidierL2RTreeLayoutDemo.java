@@ -79,8 +79,8 @@ public class TidierL2RTreeLayoutDemo extends JPanel {
             .layoutSize(new Dimension(600, 600))
             .graphMouse(graphMouse)
             .build();
-    treeLayoutAlgorithm.setVertexShapeFunction(vv.getRenderContext().getVertexShapeFunction());
-    radialLayoutAlgorithm.setVertexShapeFunction(vv.getRenderContext().getVertexShapeFunction());
+    treeLayoutAlgorithm.setVertexBoundsFunction(vv.getRenderContext().getVertexBoundsFunction());
+    radialLayoutAlgorithm.setVertexBoundsFunction(vv.getRenderContext().getVertexBoundsFunction());
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.setVertexToolTipFunction(Object::toString);

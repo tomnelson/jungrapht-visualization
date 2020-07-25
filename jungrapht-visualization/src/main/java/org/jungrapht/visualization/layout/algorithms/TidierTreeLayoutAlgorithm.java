@@ -1,8 +1,5 @@
 package org.jungrapht.visualization.layout.algorithms;
 
-import java.awt.Dimension;
-import java.awt.Shape;
-import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,7 +14,8 @@ import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jungrapht.visualization.layout.algorithms.util.ComponentGrouping;
 import org.jungrapht.visualization.layout.algorithms.util.TreeView;
-import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
+import org.jungrapht.visualization.layout.algorithms.util.VertexBoundsFunctionConsumer;
+import org.jungrapht.visualization.layout.model.Dimension;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
@@ -36,7 +34,7 @@ import org.slf4j.LoggerFactory;
 public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm<V>
     implements LayoutAlgorithm<V>,
         TreeLayout<V>,
-        VertexShapeAware<V>,
+        VertexBoundsFunctionConsumer<V>,
         EdgeAwareLayoutAlgorithm<V, E>,
         EdgeSorting<E>,
         EdgePredicated<E>,
@@ -45,7 +43,7 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
 
   private static final Logger log = LoggerFactory.getLogger(TidierTreeLayoutAlgorithm.class);
 
-  private static final Shape IDENTITY_SHAPE = new Ellipse2D.Double(-5, -5, 10, 10);
+  private static final Rectangle IDENTITY_SHAPE = Rectangle.of(-5, -5, 10, 10);
 
   /**
    * a Builder to create a configured instance of an AnotherTreeLayoutAlgorithm
@@ -176,7 +174,7 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
       for (V root : roots) {
         Point p = layoutModel.apply(root);
         // get the union of all kids
-        Rectangle r = from(vertexShapeFunction.apply(root).getBounds());
+        Rectangle r = vertexShapeFunction.apply(root);
         r = Rectangle.of(r.x - r.width / 2 + p.x, r.y - r.height / 2 + p.y, r.width, r.height);
         baseBounds.put(root, union(r, Graphs.successorListOf(tree, root)));
       }
@@ -187,7 +185,7 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
   private Rectangle union(Rectangle r, Collection<V> in) {
     for (V v : in) {
       Point p = layoutModel.apply(v);
-      Rectangle vr = from(vertexShapeFunction.apply(v).getBounds());
+      Rectangle vr = vertexShapeFunction.apply(v);
       r = Rectangle.of(vr.x - vr.width / 2 + p.x, vr.y - vr.height / 2 + p.y, vr.width, vr.height);
       r = r.union(vr);
       r = union(r, successors(v));
@@ -259,7 +257,7 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
     }
   }
 
-  private Shape shape(Object in) {
+  private Rectangle shape(Object in) {
     if (in == null) {
       // special case for forest where 'in' is null so size is 0
       return IDENTITY_SHAPE;
@@ -269,9 +267,9 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
 
   private void updateBounds(V vertex, int centerX, int centerY) {
     log.trace("updateBounds({}, {}, {})", vertex, centerX, centerY);
-    Shape shape = shape(vertex);
-    int width = shape.getBounds().width;
-    int height = shape.getBounds().height;
+    Rectangle shape = shape(vertex);
+    int width = (int) shape.width;
+    int height = (int) shape.height;
     int left = centerX - width / 2;
     int right = centerX + width / 2;
     int top = centerY - height / 2;
@@ -301,7 +299,7 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
       heights.add(0);
       previous = 0;
     }
-    int height = shape(vertex).getBounds().height;
+    int height = (int) shape(vertex).height;
     heights.set(depth, Math.max(height, previous));
 
     successors(vertex).forEach(v -> computeMaxHeights(v, depth + 1));
@@ -473,7 +471,7 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
 
   private int getDistance(V v, V w) {
     log.trace("getDistance({}, {})", v, w);
-    int sizeOfNodes = shape(v).getBounds().width + shape(w).getBounds().width;
+    int sizeOfNodes = (int) shape(v).width + (int) shape(w).width;
 
     int distance = sizeOfNodes / 2 + horizontalVertexSpacing;
     log.trace("getDistance({}, {}) = {}", v, w, distance);

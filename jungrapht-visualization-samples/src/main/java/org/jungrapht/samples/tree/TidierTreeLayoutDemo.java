@@ -25,8 +25,9 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.TidierTreeLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.renderers.Renderer;
+import org.jungrapht.visualization.util.AWT;
+import org.jungrapht.visualization.util.LayoutPaintable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +55,7 @@ public class TidierTreeLayoutDemo extends JPanel {
     Function<String, Shape> vertexShapeFunction = vv.getRenderContext().getVertexShapeFunction();
     TidierTreeLayoutAlgorithm<String, Integer> layoutAlgorithm =
         TidierTreeLayoutAlgorithm.<String, Integer>edgeAwareBuilder()
-            .vertexShapeFunction(vertexShapeFunction)
+            .vertexShapeFunction(vertexShapeFunction.andThen(s -> AWT.convert(s.getBounds2D())))
             .build();
 
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());

@@ -2,8 +2,6 @@ package org.jungrapht.samples.sugiyama.test.algorithms;
 
 import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 
-import java.awt.Shape;
-import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -12,11 +10,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import org.jgrapht.Graph;
-import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.EdgeAwareLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.ArticulatedEdge;
@@ -26,8 +21,8 @@ import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Synthetics;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.TransformedGraphSupplier;
-import org.jungrapht.visualization.layout.algorithms.util.EdgeShapeFunctionSupplier;
-import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
+import org.jungrapht.visualization.layout.algorithms.util.EdgeArticulationFunctionSupplier;
+import org.jungrapht.visualization.layout.algorithms.util.VertexBoundsFunctionConsumer;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
@@ -42,11 +37,13 @@ import org.slf4j.LoggerFactory;
  * @param <E>
  */
 public class BrandesKopfLayoutAlgorithm<V, E>
-    implements LayoutAlgorithm<V>, EdgeShapeFunctionSupplier<V, E>, VertexShapeAware<V> {
+    implements LayoutAlgorithm<V>,
+        EdgeArticulationFunctionSupplier<E>,
+        VertexBoundsFunctionConsumer<V> {
 
   private static final Logger log = LoggerFactory.getLogger(BrandesKopfLayoutAlgorithm.class);
 
-  private static final Shape IDENTITY_SHAPE = new Ellipse2D.Double();
+  private static final Rectangle IDENTITY_SHAPE = Rectangle.IDENTITY;
 
   /**
    * a Builder to create a configured instance
@@ -62,8 +59,7 @@ public class BrandesKopfLayoutAlgorithm<V, E>
           T extends BrandesKopfLayoutAlgorithm<V, E> & EdgeAwareLayoutAlgorithm<V, E>,
           B extends Builder<V, E, T, B>>
       implements LayoutAlgorithm.Builder<V, T, B> {
-    protected Function<V, Shape> vertexShapeFunction = v -> IDENTITY_SHAPE;
-    protected Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeConsumer;
+    protected Function<V, Rectangle> vertexBoundsFunction = v -> IDENTITY_SHAPE;
     protected boolean expandLayout = true;
     protected Runnable after = () -> {};
     boolean doUpLeft = false;
@@ -76,13 +72,8 @@ public class BrandesKopfLayoutAlgorithm<V, E>
       return (B) this;
     }
 
-    public B vertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
-      this.vertexShapeFunction = vertexShapeFunction;
-      return self();
-    }
-
-    public B edgeShapeConsumer(Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeConsumer) {
-      this.edgeShapeConsumer = edgeShapeConsumer;
+    public B vertexBoundsFunction(Function<V, Rectangle> vertexBoundsFunction) {
+      this.vertexBoundsFunction = vertexBoundsFunction;
       return self();
     }
 
@@ -135,8 +126,7 @@ public class BrandesKopfLayoutAlgorithm<V, E>
   protected Rectangle bounds = Rectangle.IDENTITY;
   protected List<V> roots;
 
-  protected Function<V, Shape> vertexShapeFunction;
-  Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeConsumer;
+  protected Function<V, Rectangle> vertexBoundsFunction;
   protected boolean expandLayout;
   protected Runnable after;
   protected int horizontalOffset = Integer.getInteger(PREFIX + "mincross.horizontalOffset", 50);
@@ -145,6 +135,7 @@ public class BrandesKopfLayoutAlgorithm<V, E>
   boolean doDownLeft;
   boolean doUpRight;
   boolean doDownRight;
+  Map<E, List<Point>> edgePointMap = new HashMap<>();
 
   public BrandesKopfLayoutAlgorithm() {
     this(BrandesKopfLayoutAlgorithm.edgeAwareBuilder());
@@ -152,8 +143,7 @@ public class BrandesKopfLayoutAlgorithm<V, E>
 
   private BrandesKopfLayoutAlgorithm(Builder builder) {
     this(
-        builder.vertexShapeFunction,
-        builder.edgeShapeConsumer,
+        builder.vertexBoundsFunction,
         builder.expandLayout,
         builder.after,
         builder.doUpLeft,
@@ -163,16 +153,14 @@ public class BrandesKopfLayoutAlgorithm<V, E>
   }
 
   private BrandesKopfLayoutAlgorithm(
-      Function<V, Shape> vertexShapeFunction,
-      Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeConsumer,
+      Function<V, Rectangle> vertexBoundsFunction,
       boolean expandLayout,
       Runnable after,
       boolean doUpLeft,
       boolean doUpRight,
       boolean doDownLeft,
       boolean doDownRight) {
-    this.vertexShapeFunction = vertexShapeFunction;
-    this.edgeShapeConsumer = edgeShapeConsumer;
+    this.vertexBoundsFunction = vertexBoundsFunction;
     this.expandLayout = expandLayout;
     this.after = after;
     this.doUpLeft = doUpLeft;
@@ -182,23 +170,22 @@ public class BrandesKopfLayoutAlgorithm<V, E>
   }
 
   @Override
-  public void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
-    this.vertexShapeFunction = vertexShapeFunction;
-  }
-
-  @Override
-  public void setEdgeShapeFunctionConsumer(
-      Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeConsumer) {
-    this.edgeShapeConsumer = edgeShapeConsumer;
+  public void setVertexBoundsFunction(Function<V, Rectangle> vertexBoundsFunction) {
+    this.vertexBoundsFunction = vertexBoundsFunction;
   }
 
   Graph<V, E> originalGraph;
-  //  List<List<SugiyamaVertex<V>>> layers;
   Graph<LV<V>, LE<V, E>> svGraph;
   Set<LE<V, E>> markedSegments = new HashSet<>();
 
   @Override
+  public Function<E, List<Point>> getEdgeArticulationFunction() {
+    return e -> edgePointMap.getOrDefault(e, Collections.emptyList());
+  }
+
+  @Override
   public void visit(LayoutModel<V> layoutModel) {
+    this.edgePointMap.clear();
     this.originalGraph = layoutModel.getGraph();
     // transform the graph to the svGraph delegate
     this.svGraph = new TransformedGraphSupplier<>(originalGraph).get();
@@ -236,7 +223,6 @@ public class BrandesKopfLayoutAlgorithm<V, E>
 
     // check the metadata
     GraphLayers.checkLayers(layers);
-    //      GraphLayers.checkLayers(layersArray);
 
     //    justSetThePoints();
     SelectiveSugiyamaHorizontalCoordinateAssignment selectiveHorizontalCoordinateAssignment =
@@ -262,7 +248,6 @@ public class BrandesKopfLayoutAlgorithm<V, E>
     Map<Integer, Integer> rowWidthMap = new HashMap<>();
     Map<Integer, Integer> rowMaxHeightMap = new HashMap<>();
     int layerIndex = 0;
-    //    Function<V, Shape> vertexShapeFunction = renderContext.getVertexShapeFunction();
     int totalHeight = 0;
     int totalWidth = 0;
     for (List<LV<V>> layer : layers) {
@@ -270,9 +255,10 @@ public class BrandesKopfLayoutAlgorithm<V, E>
       int maxHeight = 0;
       for (LV<V> LV : layer) {
         if (!(LV instanceof Synthetic)) {
-          java.awt.Rectangle bounds = vertexShapeFunction.apply(LV.getVertex()).getBounds();
+          Object wtfisthis = vertexBoundsFunction.apply(LV.getVertex());
+          Rectangle bounds = vertexBoundsFunction.apply(LV.getVertex());
           width += bounds.width + horizontalOffset;
-          maxHeight = Math.max(maxHeight, bounds.height);
+          maxHeight = (int) Math.max(maxHeight, bounds.height);
         } else {
           width += horizontalOffset;
         }
@@ -285,7 +271,6 @@ public class BrandesKopfLayoutAlgorithm<V, E>
     totalWidth = widestRowWidth + horizontalOffset;
     totalHeight = layers.size() * verticalOffset + 2 * verticalOffset;
 
-    //    layoutModel.setSize(totalWidth + horizontalOffset, totalHeight);
     // now all the vertices in layers (best) have points associated with them
     // every vertex in vertexMap has a point value
 
@@ -322,7 +307,6 @@ public class BrandesKopfLayoutAlgorithm<V, E>
       }
     }
 
-    Map<E, List<Point>> edgePointMap = new HashMap<>();
     for (ArticulatedEdge<V, E> ae : articulatedEdges) {
       List<Point> points = new ArrayList<>();
       if (feedbackEdges.contains(ae.edge)) {
@@ -337,11 +321,6 @@ public class BrandesKopfLayoutAlgorithm<V, E>
 
       edgePointMap.put(ae.edge, points);
     }
-    EdgeShape.ArticulatedLine<V, E> edgeShape = new EdgeShape.ArticulatedLine<>();
-    edgeShape.setEdgeArticulationFunction(
-        e -> edgePointMap.getOrDefault(e, Collections.emptyList()));
-
-    edgeShapeConsumer.accept(edgeShape);
 
     svGraph.vertexSet().forEach(v -> layoutModel.set(v.getVertex(), v.getPoint()));
     after.run();
@@ -356,7 +335,7 @@ public class BrandesKopfLayoutAlgorithm<V, E>
       x = 0;
       for (int j = 0; j < list.size(); j++) {
         LV<V> v = list.get(j);
-        x += horizontalOffset + vertexShapeFunction.apply(v.getVertex()).getBounds().width;
+        x += horizontalOffset + vertexBoundsFunction.apply(v.getVertex()).width;
         v.setPoint(Point.of(x, y));
       }
     }

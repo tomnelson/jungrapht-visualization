@@ -1,22 +1,18 @@
 
 package org.jungrapht.visualization.layout.algorithms;
 
-import java.awt.Shape;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Function;
-import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnable;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
-import org.jungrapht.visualization.layout.algorithms.util.EdgeShapeFunctionSupplier;
 import org.jungrapht.visualization.layout.algorithms.util.ExecutorConsumer;
 import org.jungrapht.visualization.layout.algorithms.util.LayeredRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.Threaded;
-import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
+import org.jungrapht.visualization.layout.algorithms.util.VertexBoundsFunctionConsumer;
 import org.jungrapht.visualization.layout.model.LayoutModel;
+import org.jungrapht.visualization.layout.model.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,8 +36,7 @@ import org.slf4j.LoggerFactory;
 public class EiglspergerLayoutAlgorithm<V, E>
     extends AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
     implements LayoutAlgorithm<V>,
-        VertexShapeAware<V>,
-        EdgeShapeFunctionSupplier<V, E>,
+        VertexBoundsFunctionConsumer<V>,
         Layered,
         AfterRunnable,
         Threaded,
@@ -80,14 +75,17 @@ public class EiglspergerLayoutAlgorithm<V, E>
     return new Builder<>();
   }
 
+  public static <V, E> Builder<V, E, ?, ?> builder() {
+    return new Builder<>();
+  }
+
   public EiglspergerLayoutAlgorithm() {
     this(EiglspergerLayoutAlgorithm.edgeAwareBuilder());
   }
 
   protected EiglspergerLayoutAlgorithm(Builder builder) {
     this(
-        builder.vertexShapeFunction,
-        builder.edgeShapeFunctionConsumer,
+        builder.vertexBoundsFunction,
         builder.straightenEdges,
         builder.postStraighten,
         builder.transpose,
@@ -101,8 +99,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
   }
 
   protected EiglspergerLayoutAlgorithm(
-      Function<V, Shape> vertexShapeFunction,
-      Consumer<BiFunction<Graph<V, E>, E, Shape>> edgeShapeFunctionConsumer,
+      Function<V, Rectangle> vertexShapeFunction,
       boolean straightenEdges,
       boolean postStraighten,
       boolean transpose,
@@ -115,7 +112,6 @@ public class EiglspergerLayoutAlgorithm<V, E>
       Runnable after) {
     super(
         vertexShapeFunction,
-        edgeShapeFunctionConsumer,
         straightenEdges,
         postStraighten,
         transpose,
@@ -133,7 +129,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
       int componentCount, LayoutModel<V> componentLayoutModel) {
     return EiglspergerRunnable.<V, E>builder()
         .layoutModel(componentLayoutModel)
-        .vertexShapeFunction(vertexShapeFunction)
+        .vertexShapeFunction(vertexBoundsFunction)
         .straightenEdges(straightenEdges)
         .postStraighten(postStraighten)
         .transpose(transpose)

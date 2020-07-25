@@ -29,9 +29,9 @@ import org.jungrapht.visualization.layout.algorithms.RadialTreeLayout;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TreeLayout;
 import org.jungrapht.visualization.layout.algorithms.util.InitialDimensionFunction;
-import org.jungrapht.visualization.layout.algorithms.util.LayoutPaintable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.util.GraphImage;
+import org.jungrapht.visualization.util.LayoutPaintable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,7 +115,7 @@ public class ShowLayoutsMods extends JPanel {
     //            });
 
     vv.setInitialDimensionFunction(
-        InitialDimensionFunction.builder(vv.getRenderContext().getVertexShapeFunction()).build());
+        InitialDimensionFunction.builder(vv.getRenderContext().getVertexBoundsFunction()).build());
 
     layoutBounds = new LayoutPaintable.LayoutBounds(vv);
     vv.addPreRenderPaintable(layoutBounds);

@@ -1,13 +1,12 @@
 package org.jungrapht.visualization.layout.algorithms;
 
-import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+import static org.jungrapht.visualization.layout.model.LayoutModel.PREFIX;
 
-import java.awt.Shape;
 import java.util.Comparator;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import org.jgrapht.Graph;
+import org.jungrapht.visualization.layout.algorithms.util.VertexBoundsFunctionConsumer;
 import org.jungrapht.visualization.layout.model.Rectangle;
 
 /**
@@ -15,7 +14,7 @@ import org.jungrapht.visualization.layout.model.Rectangle;
  *
  * @param <V>
  */
-public interface TreeLayout<V> extends LayoutAlgorithm<V> {
+public interface TreeLayout<V> extends LayoutAlgorithm<V>, VertexBoundsFunctionConsumer<V> {
 
   int TREE_LAYOUT_HORIZONTAL_SPACING =
       Integer.getInteger(PREFIX + "treeLayoutHorizontalSpacing", 50);
@@ -26,8 +25,6 @@ public interface TreeLayout<V> extends LayoutAlgorithm<V> {
   void setRootPredicate(Predicate<V> rootPredicate);
 
   void setRootComparator(Comparator<V> rootComparator);
-
-  void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction);
 
   static <V, E> boolean isLoopVertex(Graph<V, E> graph, V v) {
     return false; //graph.outgoingEdgesOf(v).equals(graph.incomingEdgesOf(v));
