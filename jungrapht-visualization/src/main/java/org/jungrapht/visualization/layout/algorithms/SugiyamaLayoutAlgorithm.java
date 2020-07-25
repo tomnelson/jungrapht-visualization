@@ -9,7 +9,7 @@ import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.ExecutorConsumer;
 import org.jungrapht.visualization.layout.algorithms.util.LayeredRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.Threaded;
-import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
+import org.jungrapht.visualization.layout.algorithms.util.VertexBoundsFunctionConsumer;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Rectangle;
 import org.slf4j.Logger;
@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SugiyamaLayoutAlgorithm<V, E> extends AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
     implements LayoutAlgorithm<V>,
-        VertexShapeAware<V>,
+        VertexBoundsFunctionConsumer<V>,
         Layered,
         AfterRunnable,
         Threaded,
@@ -78,6 +78,10 @@ public class SugiyamaLayoutAlgorithm<V, E> extends AbstractHierarchicalMinCrossL
     return new Builder<>();
   }
 
+  public static <V, E> Builder<V, E, ?, ?> builder() {
+    return new Builder<>();
+  }
+
   protected int transposeLimit;
 
   public SugiyamaLayoutAlgorithm() {
@@ -86,7 +90,7 @@ public class SugiyamaLayoutAlgorithm<V, E> extends AbstractHierarchicalMinCrossL
 
   protected SugiyamaLayoutAlgorithm(Builder builder) {
     this(
-        builder.vertexShapeFunction,
+        builder.vertexBoundsFunction,
         builder.straightenEdges,
         builder.postStraighten,
         builder.transpose,
@@ -133,7 +137,7 @@ public class SugiyamaLayoutAlgorithm<V, E> extends AbstractHierarchicalMinCrossL
       int componentCount, LayoutModel<V> componentLayoutModel) {
     return SugiyamaRunnable.<V, E>builder()
         .layoutModel(componentLayoutModel)
-        .vertexShapeFunction(vertexShapeFunction)
+        .vertexShapeFunction(vertexBoundsFunction)
         .straightenEdges(straightenEdges)
         .postStraighten(postStraighten)
         .transpose(transpose)

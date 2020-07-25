@@ -28,7 +28,7 @@ import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Synthetics;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.TransformedGraphSupplier;
 import org.jungrapht.visualization.layout.algorithms.util.EdgeArticulationFunctionSupplier;
-import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
+import org.jungrapht.visualization.layout.algorithms.util.VertexBoundsFunctionConsumer;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
@@ -43,7 +43,9 @@ import org.slf4j.LoggerFactory;
  * @param <E>
  */
 public class LayeredLayoutAlgorithm<V, E>
-    implements LayoutAlgorithm<V>, EdgeArticulationFunctionSupplier<E>, VertexShapeAware<V> {
+    implements LayoutAlgorithm<V>,
+        EdgeArticulationFunctionSupplier<E>,
+        VertexBoundsFunctionConsumer<V> {
 
   private static final Logger log = LoggerFactory.getLogger(LayeredLayoutAlgorithm.class);
 
@@ -63,7 +65,7 @@ public class LayeredLayoutAlgorithm<V, E>
           T extends LayeredLayoutAlgorithm<V, E> & EdgeAwareLayoutAlgorithm<V, E>,
           B extends Builder<V, E, T, B>>
       implements LayoutAlgorithm.Builder<V, T, B> {
-    protected Function<V, Shape> vertexShapeFunction = v -> IDENTITY_SHAPE;
+    protected Function<V, Rectangle> vertexBoundsFunction = v -> Rectangle.IDENTITY;
 
     protected boolean expandLayout = true;
     protected Runnable after = () -> {};
@@ -73,8 +75,8 @@ public class LayeredLayoutAlgorithm<V, E>
       return (B) this;
     }
 
-    public B vertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
-      this.vertexShapeFunction = vertexShapeFunction;
+    public B vertexBoundsFunction(Function<V, Rectangle> vertexBoundsFunction) {
+      this.vertexBoundsFunction = vertexBoundsFunction;
       return self();
     }
 
@@ -107,7 +109,7 @@ public class LayeredLayoutAlgorithm<V, E>
   protected Rectangle bounds = Rectangle.IDENTITY;
   protected List<V> roots;
 
-  protected Function<V, Rectangle> vertexShapeFunction;
+  protected Function<V, Rectangle> vertexBoundsFunction;
   protected boolean expandLayout;
   Map<E, List<Point>> edgePointMap = new HashMap<>();
   Runnable after;
@@ -119,19 +121,19 @@ public class LayeredLayoutAlgorithm<V, E>
   }
 
   private LayeredLayoutAlgorithm(Builder builder) {
-    this(builder.vertexShapeFunction, builder.expandLayout, builder.after);
+    this(builder.vertexBoundsFunction, builder.expandLayout, builder.after);
   }
 
   private LayeredLayoutAlgorithm(
-      Function<V, Rectangle> vertexShapeFunction, boolean expandLayout, Runnable after) {
-    this.vertexShapeFunction = vertexShapeFunction;
+      Function<V, Rectangle> vertexBoundsFunction, boolean expandLayout, Runnable after) {
+    this.vertexBoundsFunction = vertexBoundsFunction;
     this.expandLayout = expandLayout;
     this.after = after;
   }
 
   @Override
-  public void setVertexShapeFunction(Function<V, Rectangle> vertexShapeFunction) {
-    this.vertexShapeFunction = vertexShapeFunction;
+  public void setVertexBoundsFunction(Function<V, Rectangle> vertexBoundsFunction) {
+    this.vertexBoundsFunction = vertexBoundsFunction;
   }
 
   @Override
@@ -196,7 +198,7 @@ public class LayeredLayoutAlgorithm<V, E>
       x = 0;
       for (int j = 0; j < list.size(); j++) {
         LV<V> v = list.get(j);
-        x += horizontalOffset + vertexShapeFunction.apply(v.getVertex()).width;
+        x += horizontalOffset + vertexBoundsFunction.apply(v.getVertex()).width;
         v.setPoint(Point.of(x, y));
       }
     }
@@ -212,7 +214,7 @@ public class LayeredLayoutAlgorithm<V, E>
       int maxHeight = 0;
       for (LV<V> LV : layer) {
         if (!(LV instanceof Synthetic)) {
-          Rectangle bounds = vertexShapeFunction.apply(LV.getVertex());
+          Rectangle bounds = vertexBoundsFunction.apply(LV.getVertex());
           width += bounds.width + horizontalOffset;
           maxHeight = (int) Math.max(maxHeight, bounds.height);
         } else {

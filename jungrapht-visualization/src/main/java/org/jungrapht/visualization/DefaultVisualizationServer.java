@@ -38,7 +38,7 @@ import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.util.EdgeArticulationFunctionSupplier;
 import org.jungrapht.visualization.layout.algorithms.util.Pair;
-import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
+import org.jungrapht.visualization.layout.algorithms.util.VertexBoundsFunctionConsumer;
 import org.jungrapht.visualization.layout.event.LayoutSizeChange;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
 import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
@@ -658,9 +658,9 @@ class DefaultVisualizationServer<V, E> extends JPanel
       renderContext.setEdgeShapeFunction(edgeShapeFunction);
     }
 
-    if (layoutAlgorithm instanceof VertexShapeAware) {
-      ((VertexShapeAware) layoutAlgorithm)
-          .setVertexShapeFunction(renderContext.getVertexBoundsFunction());
+    if (layoutAlgorithm instanceof VertexBoundsFunctionConsumer) {
+      ((VertexBoundsFunctionConsumer) layoutAlgorithm)
+          .accept(renderContext.getVertexBoundsFunction());
     }
   }
 

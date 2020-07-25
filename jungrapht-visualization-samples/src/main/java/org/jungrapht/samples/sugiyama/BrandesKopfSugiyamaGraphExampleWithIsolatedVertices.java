@@ -29,7 +29,7 @@ public class BrandesKopfSugiyamaGraphExampleWithIsolatedVertices extends JFrame 
 
     HierarchicalMinCrossLayoutAlgorithm<Integer, Integer> layoutAlgorithm =
         HierarchicalMinCrossLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder().build();
-    layoutAlgorithm.setVertexShapeFunction(vv.getRenderContext().getVertexBoundsFunction());
+    layoutAlgorithm.setVertexBoundsFunction(vv.getRenderContext().getVertexBoundsFunction());
     vv.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm);
 
     container.add(vv.getComponent());

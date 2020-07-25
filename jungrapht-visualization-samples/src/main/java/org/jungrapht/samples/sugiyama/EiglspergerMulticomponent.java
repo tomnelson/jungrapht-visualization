@@ -31,7 +31,7 @@ public class EiglspergerMulticomponent extends JFrame {
             .threaded(false)
             .layering(Layering.COFFMAN_GRAHAM)
             .build();
-    layoutAlgorithm.setVertexShapeFunction(vv.getRenderContext().getVertexBoundsFunction());
+    layoutAlgorithm.setVertexBoundsFunction(vv.getRenderContext().getVertexBoundsFunction());
     vv.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm);
     container.add(vv.getComponent());
 

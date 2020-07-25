@@ -106,7 +106,7 @@ public class TestEiglspergerLayoutAlgorithm<V, E> extends EiglspergerLayoutAlgor
     TestEiglspergerRunnable runnable =
         TestEiglspergerRunnable.<V, E>builder()
             .layoutModel(layoutModel)
-            .vertexShapeFunction(vertexShapeFunction)
+            .vertexShapeFunction(vertexBoundsFunction)
             .straightenEdges(straightenEdges)
             .transpose(transpose)
             .postStraighten(postStraighten)

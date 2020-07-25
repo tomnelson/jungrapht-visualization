@@ -153,7 +153,7 @@ public abstract class AbstractTreeLayoutAlgorithm<V> extends AbstractLayoutAlgor
   protected Set<V> visitedVertices = new HashSet<>();
 
   @Override
-  public void setVertexShapeFunction(Function<V, Rectangle> vertexShapeFunction) {
+  public void setVertexBoundsFunction(Function<V, Rectangle> vertexShapeFunction) {
     Objects.requireNonNull(vertexShapeFunction);
     this.vertexShapeFunction = vertexShapeFunction;
   }

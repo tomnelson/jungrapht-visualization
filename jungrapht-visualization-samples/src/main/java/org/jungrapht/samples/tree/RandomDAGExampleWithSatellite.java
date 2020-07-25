@@ -42,8 +42,8 @@ import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.decorators.IconShapeFunction;
 import org.jungrapht.visualization.layout.algorithms.util.InitialDimensionFunction;
 import org.jungrapht.visualization.renderers.Renderer;
+import org.jungrapht.visualization.util.AWT;
 import org.jungrapht.visualization.util.IconCache;
-import org.jungrapht.visualization.util.RectangleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -160,7 +160,7 @@ public class RandomDAGExampleWithSatellite extends JPanel {
     vv.setInitialDimensionFunction(
         InitialDimensionFunction.<String>builder()
             .vertexShapeFunction(
-                vertexImageShapeFunction.andThen(s -> RectangleUtils.convert(s.getBounds2D())))
+                vertexImageShapeFunction.andThen(s -> AWT.convert(s.getBounds2D())))
             .build());
 
     vv.getRenderContext()

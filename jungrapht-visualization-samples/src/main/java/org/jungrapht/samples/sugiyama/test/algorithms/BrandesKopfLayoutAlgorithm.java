@@ -22,7 +22,7 @@ import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Synthetics;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.TransformedGraphSupplier;
 import org.jungrapht.visualization.layout.algorithms.util.EdgeArticulationFunctionSupplier;
-import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
+import org.jungrapht.visualization.layout.algorithms.util.VertexBoundsFunctionConsumer;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
@@ -37,7 +37,9 @@ import org.slf4j.LoggerFactory;
  * @param <E>
  */
 public class BrandesKopfLayoutAlgorithm<V, E>
-    implements LayoutAlgorithm<V>, EdgeArticulationFunctionSupplier<E>, VertexShapeAware<V> {
+    implements LayoutAlgorithm<V>,
+        EdgeArticulationFunctionSupplier<E>,
+        VertexBoundsFunctionConsumer<V> {
 
   private static final Logger log = LoggerFactory.getLogger(BrandesKopfLayoutAlgorithm.class);
 
@@ -57,7 +59,7 @@ public class BrandesKopfLayoutAlgorithm<V, E>
           T extends BrandesKopfLayoutAlgorithm<V, E> & EdgeAwareLayoutAlgorithm<V, E>,
           B extends Builder<V, E, T, B>>
       implements LayoutAlgorithm.Builder<V, T, B> {
-    protected Function<V, Rectangle> vertexShapeFunction = v -> IDENTITY_SHAPE;
+    protected Function<V, Rectangle> vertexBoundsFunction = v -> IDENTITY_SHAPE;
     protected boolean expandLayout = true;
     protected Runnable after = () -> {};
     boolean doUpLeft = false;
@@ -70,8 +72,8 @@ public class BrandesKopfLayoutAlgorithm<V, E>
       return (B) this;
     }
 
-    public B vertexShapeFunction(Function<V, Rectangle> vertexShapeFunction) {
-      this.vertexShapeFunction = vertexShapeFunction;
+    public B vertexBoundsFunction(Function<V, Rectangle> vertexBoundsFunction) {
+      this.vertexBoundsFunction = vertexBoundsFunction;
       return self();
     }
 
@@ -124,7 +126,7 @@ public class BrandesKopfLayoutAlgorithm<V, E>
   protected Rectangle bounds = Rectangle.IDENTITY;
   protected List<V> roots;
 
-  protected Function<V, Rectangle> vertexShapeFunction;
+  protected Function<V, Rectangle> vertexBoundsFunction;
   protected boolean expandLayout;
   protected Runnable after;
   protected int horizontalOffset = Integer.getInteger(PREFIX + "mincross.horizontalOffset", 50);
@@ -141,7 +143,7 @@ public class BrandesKopfLayoutAlgorithm<V, E>
 
   private BrandesKopfLayoutAlgorithm(Builder builder) {
     this(
-        builder.vertexShapeFunction,
+        builder.vertexBoundsFunction,
         builder.expandLayout,
         builder.after,
         builder.doUpLeft,
@@ -151,14 +153,14 @@ public class BrandesKopfLayoutAlgorithm<V, E>
   }
 
   private BrandesKopfLayoutAlgorithm(
-      Function<V, Rectangle> vertexShapeFunction,
+      Function<V, Rectangle> vertexBoundsFunction,
       boolean expandLayout,
       Runnable after,
       boolean doUpLeft,
       boolean doUpRight,
       boolean doDownLeft,
       boolean doDownRight) {
-    this.vertexShapeFunction = vertexShapeFunction;
+    this.vertexBoundsFunction = vertexBoundsFunction;
     this.expandLayout = expandLayout;
     this.after = after;
     this.doUpLeft = doUpLeft;
@@ -168,8 +170,8 @@ public class BrandesKopfLayoutAlgorithm<V, E>
   }
 
   @Override
-  public void setVertexShapeFunction(Function<V, Rectangle> vertexShapeFunction) {
-    this.vertexShapeFunction = vertexShapeFunction;
+  public void setVertexBoundsFunction(Function<V, Rectangle> vertexBoundsFunction) {
+    this.vertexBoundsFunction = vertexBoundsFunction;
   }
 
   Graph<V, E> originalGraph;
@@ -253,8 +255,8 @@ public class BrandesKopfLayoutAlgorithm<V, E>
       int maxHeight = 0;
       for (LV<V> LV : layer) {
         if (!(LV instanceof Synthetic)) {
-          Object wtfisthis = vertexShapeFunction.apply(LV.getVertex());
-          Rectangle bounds = vertexShapeFunction.apply(LV.getVertex());
+          Object wtfisthis = vertexBoundsFunction.apply(LV.getVertex());
+          Rectangle bounds = vertexBoundsFunction.apply(LV.getVertex());
           width += bounds.width + horizontalOffset;
           maxHeight = (int) Math.max(maxHeight, bounds.height);
         } else {
@@ -333,7 +335,7 @@ public class BrandesKopfLayoutAlgorithm<V, E>
       x = 0;
       for (int j = 0; j < list.size(); j++) {
         LV<V> v = list.get(j);
-        x += horizontalOffset + vertexShapeFunction.apply(v.getVertex()).width;
+        x += horizontalOffset + vertexBoundsFunction.apply(v.getVertex()).width;
         v.setPoint(Point.of(x, y));
       }
     }

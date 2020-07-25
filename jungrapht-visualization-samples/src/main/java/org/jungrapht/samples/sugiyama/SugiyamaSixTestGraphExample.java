@@ -57,7 +57,7 @@ public class SugiyamaSixTestGraphExample extends JFrame {
             .doUpLeft(true)
             .threaded(false)
             .build();
-    layoutAlgorithm1.setVertexShapeFunction(vv1.getRenderContext().getVertexBoundsFunction());
+    layoutAlgorithm1.accept(vv1.getRenderContext().getVertexBoundsFunction());
     vv1.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm1);
 
     TestSugiyamaLayoutAlgorithm<Integer, Integer> layoutAlgorithm2 =
@@ -65,7 +65,7 @@ public class SugiyamaSixTestGraphExample extends JFrame {
             .doUpRight(true)
             .threaded(false)
             .build();
-    layoutAlgorithm2.setVertexShapeFunction(vv2.getRenderContext().getVertexBoundsFunction());
+    layoutAlgorithm2.accept(vv2.getRenderContext().getVertexBoundsFunction());
     vv2.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm2);
 
     TestSugiyamaLayoutAlgorithm<Integer, Integer> layoutAlgorithm3 =
@@ -73,7 +73,7 @@ public class SugiyamaSixTestGraphExample extends JFrame {
             .doDownLeft(true)
             .threaded(false)
             .build();
-    layoutAlgorithm3.setVertexShapeFunction(vv3.getRenderContext().getVertexBoundsFunction());
+    layoutAlgorithm3.accept(vv3.getRenderContext().getVertexBoundsFunction());
     vv3.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm3);
 
     TestSugiyamaLayoutAlgorithm<Integer, Integer> layoutAlgorithm4 =
@@ -81,7 +81,7 @@ public class SugiyamaSixTestGraphExample extends JFrame {
             .doDownRight(true)
             .threaded(false)
             .build();
-    layoutAlgorithm4.setVertexShapeFunction(vv4.getRenderContext().getVertexBoundsFunction());
+    layoutAlgorithm4.accept(vv4.getRenderContext().getVertexBoundsFunction());
     vv4.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm4);
 
     TestSugiyamaLayoutAlgorithm<Integer, Integer> layoutAlgorithm5 =
@@ -91,7 +91,7 @@ public class SugiyamaSixTestGraphExample extends JFrame {
             .doDownLeft(true)
             .doDownRight(true)
             .build();
-    layoutAlgorithm5.setVertexShapeFunction(vv5.getRenderContext().getVertexBoundsFunction());
+    layoutAlgorithm5.accept(vv5.getRenderContext().getVertexBoundsFunction());
     vv5.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm5);
 
     TestSugiyamaLayoutAlgorithm<Integer, Integer> layoutAlgorithm6 =
@@ -101,7 +101,7 @@ public class SugiyamaSixTestGraphExample extends JFrame {
             .doDownLeft(true)
             .doDownRight(false)
             .build();
-    layoutAlgorithm6.setVertexShapeFunction(vv6.getRenderContext().getVertexBoundsFunction());
+    layoutAlgorithm6.accept(vv6.getRenderContext().getVertexBoundsFunction());
     vv6.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm6);
 
     container.add(vv1.getComponent());

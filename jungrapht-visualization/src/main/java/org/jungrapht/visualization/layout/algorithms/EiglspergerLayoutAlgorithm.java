@@ -10,7 +10,7 @@ import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.ExecutorConsumer;
 import org.jungrapht.visualization.layout.algorithms.util.LayeredRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.Threaded;
-import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
+import org.jungrapht.visualization.layout.algorithms.util.VertexBoundsFunctionConsumer;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Rectangle;
 import org.slf4j.Logger;
@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 public class EiglspergerLayoutAlgorithm<V, E>
     extends AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
     implements LayoutAlgorithm<V>,
-        VertexShapeAware<V>,
+        VertexBoundsFunctionConsumer<V>,
         Layered,
         AfterRunnable,
         Threaded,
@@ -75,13 +75,17 @@ public class EiglspergerLayoutAlgorithm<V, E>
     return new Builder<>();
   }
 
+  public static <V, E> Builder<V, E, ?, ?> builder() {
+    return new Builder<>();
+  }
+
   public EiglspergerLayoutAlgorithm() {
     this(EiglspergerLayoutAlgorithm.edgeAwareBuilder());
   }
 
   protected EiglspergerLayoutAlgorithm(Builder builder) {
     this(
-        builder.vertexShapeFunction,
+        builder.vertexBoundsFunction,
         builder.straightenEdges,
         builder.postStraighten,
         builder.transpose,
@@ -125,7 +129,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
       int componentCount, LayoutModel<V> componentLayoutModel) {
     return EiglspergerRunnable.<V, E>builder()
         .layoutModel(componentLayoutModel)
-        .vertexShapeFunction(vertexShapeFunction)
+        .vertexShapeFunction(vertexBoundsFunction)
         .straightenEdges(straightenEdges)
         .postStraighten(postStraighten)
         .transpose(transpose)

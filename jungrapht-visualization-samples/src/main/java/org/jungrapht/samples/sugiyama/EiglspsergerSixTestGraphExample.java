@@ -52,7 +52,7 @@ public class EiglspsergerSixTestGraphExample extends JFrame {
             .threaded(false)
             .postStraighten(false)
             .build();
-    layoutAlgorithm1.setVertexShapeFunction(vv1.getRenderContext().getVertexBoundsFunction());
+    layoutAlgorithm1.setVertexBoundsFunction(vv1.getRenderContext().getVertexBoundsFunction());
     vv1.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm1);
 
     TestEiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm2 =
@@ -61,7 +61,7 @@ public class EiglspsergerSixTestGraphExample extends JFrame {
             .threaded(false)
             .postStraighten(false)
             .build();
-    layoutAlgorithm2.setVertexShapeFunction(vv2.getRenderContext().getVertexBoundsFunction());
+    layoutAlgorithm2.setVertexBoundsFunction(vv2.getRenderContext().getVertexBoundsFunction());
     vv2.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm2);
 
     TestEiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm3 =
@@ -70,7 +70,7 @@ public class EiglspsergerSixTestGraphExample extends JFrame {
             .threaded(false)
             .postStraighten(false)
             .build();
-    layoutAlgorithm3.setVertexShapeFunction(vv3.getRenderContext().getVertexBoundsFunction());
+    layoutAlgorithm3.setVertexBoundsFunction(vv3.getRenderContext().getVertexBoundsFunction());
     vv3.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm3);
 
     TestEiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm4 =
@@ -79,7 +79,7 @@ public class EiglspsergerSixTestGraphExample extends JFrame {
             .threaded(false)
             .postStraighten(false)
             .build();
-    layoutAlgorithm4.setVertexShapeFunction(vv4.getRenderContext().getVertexBoundsFunction());
+    layoutAlgorithm4.setVertexBoundsFunction(vv4.getRenderContext().getVertexBoundsFunction());
     vv4.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm4);
 
     TestEiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm5 =
@@ -91,7 +91,7 @@ public class EiglspsergerSixTestGraphExample extends JFrame {
             .threaded(false)
             .postStraighten(false)
             .build();
-    layoutAlgorithm5.setVertexShapeFunction(vv5.getRenderContext().getVertexBoundsFunction());
+    layoutAlgorithm5.setVertexBoundsFunction(vv5.getRenderContext().getVertexBoundsFunction());
     vv5.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm5);
 
     TestEiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm6 =
@@ -103,7 +103,7 @@ public class EiglspsergerSixTestGraphExample extends JFrame {
             .threaded(false)
             .postStraighten(false)
             .build();
-    layoutAlgorithm6.setVertexShapeFunction(vv6.getRenderContext().getVertexBoundsFunction());
+    layoutAlgorithm6.setVertexBoundsFunction(vv6.getRenderContext().getVertexBoundsFunction());
     vv6.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm6);
 
     container.add(vv1.getComponent());

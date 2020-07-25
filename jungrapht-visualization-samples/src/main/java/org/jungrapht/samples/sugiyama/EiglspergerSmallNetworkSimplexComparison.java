@@ -16,7 +16,7 @@ import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.renderers.Renderer;
-import org.jungrapht.visualization.util.RectangleUtils;
+import org.jungrapht.visualization.util.AWT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,10 +41,8 @@ public class EiglspergerSmallNetworkSimplexComparison extends JFrame {
             .threaded(false)
             .layering(Layering.LONGEST_PATH)
             .build();
-    layoutAlgorithm1.setVertexShapeFunction(
-        vv1.getRenderContext()
-            .getVertexShapeFunction()
-            .andThen(s -> RectangleUtils.convert(s.getBounds2D())));
+    layoutAlgorithm1.setVertexBoundsFunction(
+        vv1.getRenderContext().getVertexShapeFunction().andThen(s -> AWT.convert(s.getBounds2D())));
     vv1.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm1);
     container.add(vv1.getComponent());
 
@@ -58,7 +56,7 @@ public class EiglspergerSmallNetworkSimplexComparison extends JFrame {
             .threaded(false)
             .layering(Layering.NETWORK_SIMPLEX)
             .build();
-    layoutAlgorithm2.setVertexShapeFunction(vv2.getRenderContext().getVertexBoundsFunction());
+    layoutAlgorithm2.setVertexBoundsFunction(vv2.getRenderContext().getVertexBoundsFunction());
     vv2.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm2);
     container.add(vv2.getComponent());
 

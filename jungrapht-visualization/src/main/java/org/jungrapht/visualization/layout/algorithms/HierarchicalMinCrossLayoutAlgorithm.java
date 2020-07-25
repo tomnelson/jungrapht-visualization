@@ -13,7 +13,7 @@ import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.ExecutorConsumer;
 import org.jungrapht.visualization.layout.algorithms.util.LayeredRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.Threaded;
-import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
+import org.jungrapht.visualization.layout.algorithms.util.VertexBoundsFunctionConsumer;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Rectangle;
 import org.slf4j.Logger;
@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 public class HierarchicalMinCrossLayoutAlgorithm<V, E>
     extends AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
     implements LayoutAlgorithm<V>,
-        VertexShapeAware<V>,
+        VertexBoundsFunctionConsumer<V>,
         Layered,
         AfterRunnable,
         ExecutorConsumer,
@@ -96,6 +96,10 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
     return new Builder<>();
   }
 
+  public static <V, E> Builder<V, E, ?, ?> builder() {
+    return new Builder<>();
+  }
+
   protected int eiglspergerThreshold;
 
   protected int transposeLimit;
@@ -106,7 +110,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
 
   private HierarchicalMinCrossLayoutAlgorithm(Builder builder) {
     this(
-        builder.vertexShapeFunction,
+        builder.vertexBoundsFunction,
         builder.eiglspergerThreshold,
         builder.straightenEdges,
         builder.postStraighten,
@@ -160,7 +164,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
 
       return EiglspergerRunnable.<V, E>builder()
           .layoutModel(componentLayoutModel)
-          .vertexShapeFunction(vertexShapeFunction)
+          .vertexShapeFunction(vertexBoundsFunction)
           .straightenEdges(straightenEdges)
           .postStraighten(postStraighten)
           .transpose(transpose)
@@ -171,7 +175,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
     } else {
       return SugiyamaRunnable.<V, E>builder()
           .layoutModel(componentLayoutModel)
-          .vertexShapeFunction(vertexShapeFunction)
+          .vertexShapeFunction(vertexBoundsFunction)
           .straightenEdges(straightenEdges)
           .postStraighten(postStraighten)
           .transpose(transpose)

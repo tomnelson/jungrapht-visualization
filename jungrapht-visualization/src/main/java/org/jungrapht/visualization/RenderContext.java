@@ -20,8 +20,8 @@ import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.renderers.VertexLabelRenderer;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
+import org.jungrapht.visualization.util.AWT;
 import org.jungrapht.visualization.util.EdgeIndexFunction;
-import org.jungrapht.visualization.util.RectangleUtils;
 
 /**
  * Holds the {@link Function}s and state for rendering a graph
@@ -179,7 +179,7 @@ public interface RenderContext<V, E> extends RenderContextStateChange.Producer {
   Function<V, Shape> getVertexShapeFunction();
 
   default Function<V, Rectangle> getVertexBoundsFunction() {
-    return getVertexShapeFunction().andThen(s -> RectangleUtils.convert(s.getBounds2D()));
+    return getVertexShapeFunction().andThen(s -> AWT.convert(s.getBounds2D()));
   }
 
   void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction);

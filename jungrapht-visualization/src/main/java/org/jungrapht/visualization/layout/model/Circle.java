@@ -15,6 +15,10 @@ public class Circle {
   /** a Circle at the origin (0,0) with radius 1 */
   public static final Circle UNIT = new Circle(Point.ORIGIN, 1);
 
+  public static Circle of(Point center, double radius) {
+    return new Circle(center, radius);
+  }
+
   /**
    * Create an instance with passed parameters
    *

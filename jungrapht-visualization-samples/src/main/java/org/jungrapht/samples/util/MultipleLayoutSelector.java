@@ -46,8 +46,8 @@ import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFA2Repul
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFRRepulsion;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.layout.model.Rectangle;
+import org.jungrapht.visualization.util.AWT;
 import org.jungrapht.visualization.util.LayoutPaintable;
-import org.jungrapht.visualization.util.RectangleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -170,7 +170,7 @@ public class MultipleLayoutSelector<V, E> extends JPanel {
   private MultipleLayoutSelector(Builder<V, E> builder) {
     this(
         builder.visualizationServer,
-        builder.vertexShapeFunction.andThen(s -> RectangleUtils.convert(s.getBounds2D())),
+        builder.vertexShapeFunction.andThen(s -> AWT.convert(s.getBounds2D())),
         builder.intialialSelection,
         builder.vertexPredicate,
         builder.edgePredicate,

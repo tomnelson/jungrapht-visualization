@@ -14,7 +14,7 @@ import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jungrapht.visualization.layout.algorithms.util.ComponentGrouping;
 import org.jungrapht.visualization.layout.algorithms.util.TreeView;
-import org.jungrapht.visualization.layout.algorithms.util.VertexShapeAware;
+import org.jungrapht.visualization.layout.algorithms.util.VertexBoundsFunctionConsumer;
 import org.jungrapht.visualization.layout.model.Dimension;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm<V>
     implements LayoutAlgorithm<V>,
         TreeLayout<V>,
-        VertexShapeAware<V>,
+        VertexBoundsFunctionConsumer<V>,
         EdgeAwareLayoutAlgorithm<V, E>,
         EdgeSorting<E>,
         EdgePredicated<E>,

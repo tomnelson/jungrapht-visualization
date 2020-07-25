@@ -45,6 +45,7 @@ import org.jungrapht.visualization.spatial.rtree.LeafNode;
 import org.jungrapht.visualization.spatial.rtree.TreeNode;
 import org.jungrapht.visualization.transform.LensTransformer;
 import org.jungrapht.visualization.transform.MutableTransformer;
+import org.jungrapht.visualization.util.AWT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -962,15 +963,11 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
     Point2D sourcePoint2D =
         renderContext
             .getMultiLayerTransformer()
-            .transform(
-                MultiLayerTransformer.Layer.LAYOUT,
-                new Point2D.Double(sourcePoint.x, sourcePoint.y));
+            .transform(MultiLayerTransformer.Layer.LAYOUT, AWT.convert(sourcePoint));
     Point2D targetPoint2D =
         renderContext
             .getMultiLayerTransformer()
-            .transform(
-                MultiLayerTransformer.Layer.LAYOUT,
-                new Point2D.Double(targetPoint.x, targetPoint.y));
+            .transform(MultiLayerTransformer.Layer.LAYOUT, AWT.convert(targetPoint));
     float sourcePoint2DX = (float) sourcePoint2D.getX();
     float sourcePoint2DY = (float) sourcePoint2D.getY();
     float targetPoint2DX = (float) targetPoint2D.getX();
