@@ -1,4 +1,4 @@
-package org.jungrapht.visualization.layout.spatial;
+package org.jungrapht.visualization.spatial;
 
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;

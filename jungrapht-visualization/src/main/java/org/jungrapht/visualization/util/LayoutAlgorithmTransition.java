@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Manages the transition to a new LayoutAlgorithm. The transition can me animated or immediate. The
+ * Manages tshahe transition to a new LayoutAlgorithm. The transition can me animated or immediate. The
  * view side has a reference to the VisualizationServer so that it can manage activity of the
  * Spatial structures during the transition. Typically, they are turned off until the transition is
  * complete to minimize unnecessary work.
