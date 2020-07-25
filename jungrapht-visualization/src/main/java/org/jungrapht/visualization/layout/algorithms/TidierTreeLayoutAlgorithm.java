@@ -194,10 +194,6 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
     return r;
   }
 
-  private Rectangle from(java.awt.Rectangle in) {
-    return Rectangle.of(in.x, in.y, in.width, in.height);
-  }
-
   private VertexData<V> vertexData(V v) {
     if (!vertexData.containsKey(v)) {
       vertexData.put(v, new VertexData<>());
