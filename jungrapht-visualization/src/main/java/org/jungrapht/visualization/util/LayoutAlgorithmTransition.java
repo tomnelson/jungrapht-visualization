@@ -1,6 +1,7 @@
-package org.jungrapht.visualization.layout.algorithms;
+package org.jungrapht.visualization.util;
 
 import org.jungrapht.visualization.VisualizationServer;
+import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.slf4j.Logger;

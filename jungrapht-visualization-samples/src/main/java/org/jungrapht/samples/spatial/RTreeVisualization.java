@@ -32,7 +32,6 @@ import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithmTransition;
 import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -45,6 +44,7 @@ import org.jungrapht.visualization.spatial.rtree.InnerNode;
 import org.jungrapht.visualization.spatial.rtree.LeafNode;
 import org.jungrapht.visualization.spatial.rtree.Node;
 import org.jungrapht.visualization.spatial.rtree.RTree;
+import org.jungrapht.visualization.util.LayoutAlgorithmTransition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

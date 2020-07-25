@@ -1,7 +1,9 @@
-package org.jungrapht.visualization.layout.algorithms;
+package org.jungrapht.visualization.util;
 
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.VisualizationServer;
+import org.jungrapht.visualization.layout.algorithms.AbstractIterativeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.IterativeContext;
 import org.jungrapht.visualization.layout.model.LayoutModel;
