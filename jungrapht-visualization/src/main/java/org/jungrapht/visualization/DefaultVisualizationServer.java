@@ -607,14 +607,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
     renderContext.setupArrows(visualizationModel.getGraph().getType().isDirected());
     applyLayoutAlgorithmConnections();
     renderer.setCountSupplier(visualizationModel.getGraph().vertexSet()::size);
-    //    if (visualizationModel.getLayoutAlgorithm() instanceof EdgeArticulationFunctionSupplier) {
-    //      EdgeShape.ArticulatedLine articulatedLineShape = EdgeShape.articulatedLine();
-    //      articulatedLineShape.setEdgeArticulationFunction(
-    //              ((EdgeArticulationFunctionSupplier)visualizationModel.getLayoutAlgorithm()).getEdgeArticulationFunction()
-    //      );
-    //      renderContext.setEdgeShapeFunction(EdgeShape.articulatedLine());
-    //    }
-    //    displayLayoutBounds(); // for debugging
+    displayLayoutBounds(); // for debugging
     repaint();
   }
 
