@@ -42,7 +42,6 @@ import org.jungrapht.visualization.layout.algorithms.util.VertexBoundsFunctionCo
 import org.jungrapht.visualization.layout.event.LayoutSizeChange;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
 import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
-import org.jungrapht.visualization.layout.event.RenderContextStateChange;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.renderers.DefaultModalRenderer;
 import org.jungrapht.visualization.renderers.ModalRenderer;

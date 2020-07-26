@@ -27,7 +27,6 @@ import org.jungrapht.visualization.layout.algorithms.util.Pair;
 import org.jungrapht.visualization.layout.event.LayoutSizeChange;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
 import org.jungrapht.visualization.layout.event.ModelChange;
-import org.jungrapht.visualization.layout.event.RenderContextStateChange;
 import org.jungrapht.visualization.layout.event.ViewChange;
 import org.jungrapht.visualization.renderers.ModalRenderer;
 import org.jungrapht.visualization.selection.MutableSelectedState;

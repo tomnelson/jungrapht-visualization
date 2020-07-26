@@ -13,7 +13,6 @@ import javax.swing.JComponent;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.control.GraphElementAccessor;
 import org.jungrapht.visualization.decorators.EdgeShape;
-import org.jungrapht.visualization.layout.event.RenderContextStateChange;
 import org.jungrapht.visualization.layout.model.Rectangle;
 import org.jungrapht.visualization.renderers.EdgeLabelRenderer;
 import org.jungrapht.visualization.renderers.Renderer;

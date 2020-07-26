@@ -1,9 +1,8 @@
-package org.jungrapht.visualization.layout.event;
+package org.jungrapht.visualization;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.jungrapht.visualization.RenderContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
