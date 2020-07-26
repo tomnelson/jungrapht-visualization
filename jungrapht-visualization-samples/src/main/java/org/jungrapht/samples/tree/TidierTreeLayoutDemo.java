@@ -55,7 +55,7 @@ public class TidierTreeLayoutDemo extends JPanel {
     Function<String, Shape> vertexShapeFunction = vv.getRenderContext().getVertexShapeFunction();
     TidierTreeLayoutAlgorithm<String, Integer> layoutAlgorithm =
         TidierTreeLayoutAlgorithm.<String, Integer>edgeAwareBuilder()
-            .vertexShapeFunction(vertexShapeFunction.andThen(s -> AWT.convert(s.getBounds2D())))
+            .vertexBoundsFunction(vertexShapeFunction.andThen(s -> AWT.convert(s.getBounds2D())))
             .build();
 
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());

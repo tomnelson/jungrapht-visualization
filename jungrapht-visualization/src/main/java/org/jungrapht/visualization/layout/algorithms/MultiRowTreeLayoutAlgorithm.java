@@ -80,8 +80,8 @@ public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
 
     this.defaultRootPredicate =
         v -> graph.incomingEdgesOf(v).isEmpty() || TreeLayout.isIsolatedVertex(graph, v);
-    if (vertexShapeFunction != null) {
-      Dimension averageVertexSize = computeAverageVertexDimension(graph, vertexShapeFunction);
+    if (vertexBoundsFunction != null) {
+      Dimension averageVertexSize = computeAverageVertexDimension(graph, vertexBoundsFunction);
       this.horizontalVertexSpacing = averageVertexSize.width * 2;
       this.verticalVertexSpacing = averageVertexSize.height * 2;
     }

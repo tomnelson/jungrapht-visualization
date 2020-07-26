@@ -20,6 +20,7 @@ import org.jungrapht.visualization.layout.algorithms.MultiRowTreeLayoutAlgorithm
 import org.jungrapht.visualization.layout.algorithms.RadialEdgeAwareTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.SpringLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.TidierRadialTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TidierTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFA2Repulsion;
@@ -73,8 +74,9 @@ public class LayoutFunction<V>
           Layout.of("GEM", GEMLayoutAlgorithm.<V, E>edgeAwareBuilder()),
           Layout.of("DAG", DAGLayoutAlgorithm.<V, E>builder()),
           Layout.of("Tree", TreeLayoutAlgorithm.<V>builder()),
-          Layout.of("TidierTree", TidierTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()),
-          Layout.of("EdgeAwareTree", EdgeAwareTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()),
+          Layout.of("Tidier Tree", TidierTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()),
+          Layout.of("Tidier Radial Tree", TidierRadialTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()),
+          Layout.of("EdgeAware Tree", EdgeAwareTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()),
           Layout.of("Multirow Tree", MultiRowTreeLayoutAlgorithm.<V>builder()),
           Layout.of(
               "EdgeAwareMultirow Tree",

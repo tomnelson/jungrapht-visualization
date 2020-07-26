@@ -188,7 +188,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
 
   Comparator<E> edgeComparator;
 
-  Function<V, Rectangle> vertexShapeFunction;
+  Function<V, Rectangle> vertexBoundsFunction;
 
   boolean alignFavoredEdgess;
 
@@ -211,7 +211,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
 
   private TreeLayoutSelector(
       VisualizationServer<V, E> vv,
-      Function<V, Rectangle> vertexShapeFunction,
+      Function<V, Rectangle> vertexBoundsFunction,
       int initialSelection,
       Predicate<V> vertexPredicate,
       Predicate<E> edgePredicate,
@@ -221,7 +221,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
       Runnable after) {
     super(new GridLayout(0, 2));
     this.vv = vv;
-    this.vertexShapeFunction = vertexShapeFunction;
+    this.vertexBoundsFunction = vertexBoundsFunction;
     this.vertexPredicate = vertexPredicate;
     this.edgePredicate = edgePredicate;
     this.vertexComparator = vertexComparator;
@@ -232,7 +232,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     this.originalEdgeShapeFunction = vv.getRenderContext().getEdgeShapeFunction();
 
     TreeLayoutAlgorithm<V> treeLayoutAlgorithm =
-        TreeLayoutAlgorithm.<V>builder().vertexShapeFunction(vertexShapeFunction).build();
+        TreeLayoutAlgorithm.<V>builder().vertexBoundsFunction(vertexBoundsFunction).build();
 
     TidierTreeLayoutAlgorithm<V, E> tidierTreeLayoutAlgorithm =
         TidierTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()
@@ -240,7 +240,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
             .edgePredicate(edgePredicate)
             .vertexComparator(vertexComparator)
             .vertexPredicate(vertexPredicate)
-            .vertexShapeFunction(vertexShapeFunction)
+            .vertexBoundsFunction(vertexBoundsFunction)
             .build();
 
     HierarchicalMinCrossLayoutAlgorithm<V, E> minCrossLayoutAlgorithm =
@@ -271,7 +271,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
             .build();
 
     MultiRowTreeLayoutAlgorithm<V> multiRowTreeLayoutAlgorithm =
-        MultiRowTreeLayoutAlgorithm.<V>builder().vertexShapeFunction(vertexShapeFunction).build();
+        MultiRowTreeLayoutAlgorithm.<V>builder().vertexBoundsFunction(vertexBoundsFunction).build();
 
     int layoutNumber = 0;
 
@@ -281,7 +281,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
         RadialTreeLayoutAlgorithm.<V>builder()
             .horizontalVertexSpacing(100)
             .verticalVertexSpacing(100)
-            .vertexShapeFunction(vertexShapeFunction)
+            .vertexBoundsFunction(vertexBoundsFunction)
             .expandLayout(false)
             .build();
 
@@ -289,7 +289,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
         RadialEdgeAwareTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()
             .horizontalVertexSpacing(100)
             .verticalVertexSpacing(100)
-            .vertexShapeFunction(vertexShapeFunction)
+            .vertexBoundsFunction(vertexBoundsFunction)
             .edgePredicate(edgePredicate)
             .vertexPredicate(vertexPredicate)
             .expandLayout(false)
@@ -301,12 +301,12 @@ public class TreeLayoutSelector<V, E> extends JPanel {
             .edgePredicate(edgePredicate)
             .vertexComparator(vertexComparator)
             .vertexPredicate(vertexPredicate)
-            .vertexShapeFunction(vertexShapeFunction)
+            .vertexBoundsFunction(vertexBoundsFunction)
             .build();
 
     EdgeAwareTreeLayoutAlgorithm<V, E> edgeAwareTreeLayoutAlgorithm =
         EdgeAwareTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()
-            .vertexShapeFunction(vertexShapeFunction)
+            .vertexBoundsFunction(vertexBoundsFunction)
             .edgePredicate(edgePredicate)
             .vertexPredicate(vertexPredicate)
             .alignFavoredEdges(alignFavoredEdges)
@@ -314,7 +314,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
 
     MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> multiRowEdgeAwareTreeLayoutAlgorithm =
         MultiRowEdgeAwareTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()
-            .vertexShapeFunction(vertexShapeFunction)
+            .vertexBoundsFunction(vertexBoundsFunction)
             .edgePredicate(edgePredicate)
             .vertexPredicate(vertexPredicate)
             .alignFavoredEdges(alignFavoredEdges)

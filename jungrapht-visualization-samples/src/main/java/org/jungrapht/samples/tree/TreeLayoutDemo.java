@@ -61,7 +61,7 @@ public class TreeLayoutDemo extends JPanel {
         VisualizationViewer.builder(graph)
             .layoutAlgorithm(
                 TreeLayoutAlgorithm.<String>builder()
-                    .vertexShapeFunction(
+                    .vertexBoundsFunction(
                         vertexShapeFunction.andThen(s -> AWT.convert(s.getBounds2D())))
                     .build())
             .viewSize(new Dimension(600, 600))
