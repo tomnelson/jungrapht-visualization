@@ -35,6 +35,7 @@
     </prerequisites>
     <modules>
         <module>jungrapht-visualization</module>
+        <module>jungrapht-layout</module>
         <module>jungrapht-visualization-samples</module>
     </modules>
     <scm>
