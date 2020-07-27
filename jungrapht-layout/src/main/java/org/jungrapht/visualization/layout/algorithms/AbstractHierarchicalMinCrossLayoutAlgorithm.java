@@ -13,6 +13,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
@@ -173,7 +174,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
   protected Runnable after;
   protected boolean separateComponents;
   protected Map<E, List<Point>> edgePointMap = new HashMap<>();
-  protected int completionCounter = 0;
+  protected AtomicInteger completionCounter = new AtomicInteger();
 
   protected AbstractHierarchicalMinCrossLayoutAlgorithm(Builder builder) {
     this(
@@ -242,12 +243,14 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
   }
 
   protected boolean isComplete(int expected) {
-    boolean isComplete = ++completionCounter >= expected;
-    log.trace(
-        " completionCounter:{}, expected: {} isComplete:{}",
-        completionCounter,
-        expected,
-        isComplete);
+    boolean isComplete = completionCounter.incrementAndGet() >= expected;
+    if (log.isTraceEnabled()) {
+      log.trace(
+          " completionCounter:{}, expected: {} isComplete:{}",
+          completionCounter.get(),
+          expected,
+          isComplete);
+    }
     return isComplete;
   }
 
@@ -266,8 +269,8 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
 
   @Override
   public void visit(LayoutModel<V> layoutModel) {
+    this.completionCounter.set(0);
     this.edgePointMap.clear();
-    this.completionCounter = 0;
 
     Graph<V, E> graph = layoutModel.getGraph();
     if (graph == null || graph.vertexSet().isEmpty()) {
@@ -309,7 +312,6 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
                         this.edgePointMap.putAll(runnable.getEdgePointMap());
                         layoutModel.appendLayoutModel(componentLayoutModel);
                         if (isComplete(graphs.size())) {
-                          //                          this.runAfter(); // run the after function
                           layoutModel.getViewChangeSupport().fireViewChanged();
                           // fire an event to say that the layout is done
                           layoutModel

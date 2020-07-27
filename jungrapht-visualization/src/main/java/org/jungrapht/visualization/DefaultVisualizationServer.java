@@ -627,13 +627,17 @@ class DefaultVisualizationServer<V, E> extends JPanel
    * vertex Shape during layout need to access the vertexShapeFunction
    */
   protected void applyLayoutAlgorithmConnections() {
+    log.trace("applyLayoutAlgorithmConnections on model change");
     LayoutAlgorithm<V> layoutAlgorithm = visualizationModel.getLayoutAlgorithm();
     BiFunction<Graph<V, E>, E, Shape> edgeShapeFunction = renderContext.getEdgeShapeFunction();
     if (layoutAlgorithm instanceof EdgeArticulationFunctionSupplier) {
       if (savedEdgeShapeFunction == null) {
         savedEdgeShapeFunction = edgeShapeFunction;
+        log.trace("savedEdgeShapeFunction gets {}", edgeShapeFunction);
       }
       edgeShapeFunction = EdgeShape.articulatedLine();
+
+      log.trace("edgeShapeFunction gets {}", edgeShapeFunction);
 
       ((EdgeShape.ArticulatedLine) edgeShapeFunction)
           .setEdgeArticulationFunction(
@@ -642,10 +646,12 @@ class DefaultVisualizationServer<V, E> extends JPanel
       renderContext.setEdgeShapeFunction(edgeShapeFunction);
     } else if (savedEdgeShapeFunction != null) {
       edgeShapeFunction = savedEdgeShapeFunction;
+      log.trace("edgeShapeFunction got savedEdgeShapeFunction: {}", edgeShapeFunction);
       // if the edgeShapeFunction is articulated, unset the articulations
       if (edgeShapeFunction instanceof EdgeShape.ArticulatedLine) {
         ((EdgeShape.ArticulatedLine) edgeShapeFunction)
             .setEdgeArticulationFunction(e -> Collections.emptyList());
+        log.trace("unset the edge articulations in edgeShapeFunction : {}", edgeShapeFunction);
       }
       renderContext.setEdgeShapeFunction(edgeShapeFunction);
     }
