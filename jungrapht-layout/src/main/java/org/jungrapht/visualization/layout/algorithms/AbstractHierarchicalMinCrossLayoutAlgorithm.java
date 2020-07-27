@@ -191,7 +191,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
   }
 
   protected AbstractHierarchicalMinCrossLayoutAlgorithm(
-      Function<V, Rectangle> vertexShapeFunction,
+      Function<V, Rectangle> vertexBoundsFunction,
       boolean straightenEdges,
       boolean postStraighten,
       boolean transpose,
