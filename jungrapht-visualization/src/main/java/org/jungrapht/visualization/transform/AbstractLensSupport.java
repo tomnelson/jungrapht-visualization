@@ -242,6 +242,7 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse> extend
 
     public void paint(Graphics g) {
       Graphics2D g2d = (Graphics2D) g;
+      Paint oldPaint = g2d.getPaint();
       if (useGradient) {
         Paint gradientPaint =
             new RadialGradientPaint(
@@ -251,9 +252,10 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse> extend
                 colors);
         g2d.setPaint(gradientPaint);
       } else {
-        setPaint(paint);
+        g2d.setPaint(paint);
       }
       g2d.fill(lensShape);
+      g2d.setPaint(oldPaint);
     }
 
     public boolean useTransform() {
