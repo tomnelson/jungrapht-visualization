@@ -187,9 +187,12 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
    * @return the roots vertices of the tree
    */
   protected Set<V> buildTree(LayoutModel<V> layoutModel) {
-    Set<V> roots = super.buildTree(layoutModel);
+    Set<V> roots;
     if (alignFavoredEdges) {
-      roots.addAll(afterBuildTree(layoutModel));
+      // builds without expanding
+      roots = alignBuildTree(layoutModel);
+    } else {
+      roots = super.buildTree(layoutModel);
     }
     return roots;
   }
@@ -342,8 +345,11 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
    * @param layoutModel the source of the graph and its vertices
    * @return the Set of root vertices
    */
-  protected Set<V> afterBuildTree(LayoutModel<V> layoutModel) {
+  protected Set<V> alignBuildTree(LayoutModel<V> layoutModel) {
+    boolean expandLayoutRequested = this.expandLayout;
+    this.expandLayout = false;
     Set<V> roots = super.buildTree(layoutModel);
+    this.expandLayout = expandLayoutRequested;
     Graph<V, E> graph = layoutModel.getGraph();
     // move all the predicated vertices or vertices with adjacent predicated edges
     for (V vertex : layoutModel.getGraph().vertexSet()) {
@@ -353,6 +359,9 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
         Rectangle vertexRectangle = baseBounds.getOrDefault(vertex, Rectangle.IDENTITY);
         layoutModel.set(vertex, vertexRectangle.x, vertexRectangle.y);
       }
+    }
+    if (expandLayout) {
+      expandToFill(layoutModel);
     }
     return roots;
   }
