@@ -209,4 +209,13 @@ public interface LayoutModel<V>
   void resizeToSurroundingRectangle();
 
   void appendLayoutModel(LayoutModel<V> layoutModel);
+
+  default void setFireEvents(boolean fireEvents) {
+    if (getModelChangeSupport() != null) getModelChangeSupport().setFireEvents(fireEvents);
+    if (getViewChangeSupport() != null) getViewChangeSupport().setFireEvents(fireEvents);
+    if (getLayoutStateChangeSupport() != null)
+      getLayoutStateChangeSupport().setFireEvents(fireEvents);
+    if (getLayoutSizeChangeSupport() != null)
+      getLayoutSizeChangeSupport().setFireEvents(fireEvents);
+  }
 }

@@ -310,13 +310,14 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
                       () -> {
                         log.trace("Sugiyama layout done");
                         this.edgePointMap.putAll(runnable.getEdgePointMap());
-                        layoutModel.appendLayoutModel(componentLayoutModel);
                         if (isComplete(graphs.size())) {
-                          layoutModel.getViewChangeSupport().fireViewChanged();
-                          // fire an event to say that the layout is done
-                          layoutModel
-                              .getLayoutStateChangeSupport()
-                              .fireLayoutStateChanged(layoutModel, false);
+                          layoutModel.setFireEvents(false);
+                          for (int i = 0; i < layoutModels.size() - 1; i++) {
+                            layoutModel.appendLayoutModel(layoutModels.get(i));
+                          }
+                          // last one fires events
+                          layoutModel.setFireEvents(true);
+                          layoutModel.appendLayoutModel(layoutModels.get(layoutModels.size() - 1));
                         }
                       });
         } else {
@@ -326,26 +327,29 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
                       () -> {
                         log.trace("Sugiyama layout done");
                         this.edgePointMap.putAll(runnable.getEdgePointMap());
-                        layoutModel.appendLayoutModel(componentLayoutModel);
                         if (isComplete(graphs.size())) {
-                          //                          this.runAfter(); // run the after function
-                          layoutModel.getViewChangeSupport().fireViewChanged();
-                          // fire an event to say that the layout is done
-                          layoutModel
-                              .getLayoutStateChangeSupport()
-                              .fireLayoutStateChanged(layoutModel, false);
+                          layoutModel.setFireEvents(false);
+                          for (int i = 0; i < layoutModels.size() - 1; i++) {
+                            layoutModel.appendLayoutModel(layoutModels.get(i));
+                          }
+                          // last one fires events
+                          layoutModel.setFireEvents(true);
+                          layoutModel.appendLayoutModel(layoutModels.get(layoutModels.size() - 1));
                         }
                       });
         }
       } else {
         runnable.run();
         this.edgePointMap.putAll(runnable.getEdgePointMap());
-        layoutModel.appendLayoutModel(componentLayoutModel);
         if (isComplete(graphs.size())) {
           after.run();
-          layoutModel.getViewChangeSupport().fireViewChanged();
-          // fire an event to say that the layout is done
-          layoutModel.getLayoutStateChangeSupport().fireLayoutStateChanged(layoutModel, false);
+          layoutModel.setFireEvents(false);
+          for (int i = 0; i < layoutModels.size() - 1; i++) {
+            layoutModel.appendLayoutModel(layoutModels.get(i));
+          }
+          // last one fires events
+          layoutModel.setFireEvents(true);
+          layoutModel.appendLayoutModel(layoutModels.get(layoutModels.size() - 1));
         }
       }
     }
