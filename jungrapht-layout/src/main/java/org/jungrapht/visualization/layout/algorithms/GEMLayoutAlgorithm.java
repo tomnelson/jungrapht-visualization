@@ -277,6 +277,12 @@ public class GEMLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorithm<V
     if (adjustToFit) {
       adjustToFit();
     }
+    Rectangle range = computeLayoutExtent(layoutModel);
+    // add the padding
+    range = Rectangle.from(range.min().add(-50, -50), range.max().add(50, 50));
+
+    int maxDimension = Math.max((int) range.width, (int) range.height);
+    layoutModel.setSize(maxDimension, maxDimension);
   }
 
   private Rectangle getMaxBounds() {
