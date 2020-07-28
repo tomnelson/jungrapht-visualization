@@ -67,6 +67,7 @@ public interface LayoutSizeChange {
 
     @Override
     public void setFireEvents(boolean fireEvents) {
+      log.trace("setFireEvents({})", fireEvents);
       this.fireEvents = fireEvents;
     }
 
@@ -87,8 +88,8 @@ public interface LayoutSizeChange {
 
     @Override
     public void fireLayoutSizeChanged(LayoutModel<V> layoutModel, int width, int height) {
-      log.trace("fireLayoutSizeChange width:{}, height:{}", width, height);
       if (fireEvents && changeListeners.size() > 0) {
+        log.trace("fireLayoutSizeChange width:{}, height:{}", width, height);
         // make an event and fire it
         LayoutSizeChange.Event<V> evt = new LayoutSizeChange.Event<>(layoutModel, width, height);
         for (int i = changeListeners.size() - 1; i >= 0; i--) {

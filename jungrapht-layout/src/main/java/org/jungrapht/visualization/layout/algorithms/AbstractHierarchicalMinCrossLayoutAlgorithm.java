@@ -3,6 +3,7 @@ package org.jungrapht.visualization.layout.algorithms;
 import static org.jungrapht.visualization.layout.model.LayoutModel.PREFIX;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -284,6 +285,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
       // LayoutModel for each to visit. Afterwards, append all the layoutModels
       // to the one visited above.
       graphs = ComponentGrouping.getComponentGraphs(graph);
+      layoutModel.setFireEvents(false);
 
       for (int i = 0; i < graphs.size(); i++) {
         LayoutModel<V> componentLayoutModel =
@@ -308,16 +310,12 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
               CompletableFuture.runAsync(runnable, executor)
                   .thenRun(
                       () -> {
-                        log.trace("Sugiyama layout done");
+                        log.trace("MinCross layout done");
                         this.edgePointMap.putAll(runnable.getEdgePointMap());
                         if (isComplete(graphs.size())) {
-                          layoutModel.setFireEvents(false);
-                          for (int i = 0; i < layoutModels.size() - 1; i++) {
-                            layoutModel.appendLayoutModel(layoutModels.get(i));
-                          }
-                          // last one fires events
+                          after.run();
                           layoutModel.setFireEvents(true);
-                          layoutModel.appendLayoutModel(layoutModels.get(layoutModels.size() - 1));
+                          appendAll(layoutModel, layoutModels);
                         }
                       });
         } else {
@@ -325,34 +323,34 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
               CompletableFuture.runAsync(runnable)
                   .thenRun(
                       () -> {
-                        log.trace("Sugiyama layout done");
+                        log.info("MinCross layout done");
                         this.edgePointMap.putAll(runnable.getEdgePointMap());
                         if (isComplete(graphs.size())) {
-                          layoutModel.setFireEvents(false);
-                          for (int i = 0; i < layoutModels.size() - 1; i++) {
-                            layoutModel.appendLayoutModel(layoutModels.get(i));
-                          }
-                          // last one fires events
+                          after.run();
                           layoutModel.setFireEvents(true);
-                          layoutModel.appendLayoutModel(layoutModels.get(layoutModels.size() - 1));
+                          appendAll(layoutModel, layoutModels);
                         }
                       });
         }
       } else {
         runnable.run();
+        log.info("MinCross layout done");
         this.edgePointMap.putAll(runnable.getEdgePointMap());
         if (isComplete(graphs.size())) {
           after.run();
-          layoutModel.setFireEvents(false);
-          for (int i = 0; i < layoutModels.size() - 1; i++) {
-            layoutModel.appendLayoutModel(layoutModels.get(i));
-          }
-          // last one fires events
           layoutModel.setFireEvents(true);
-          layoutModel.appendLayoutModel(layoutModels.get(layoutModels.size() - 1));
+          appendAll(layoutModel, layoutModels);
         }
       }
     }
+  }
+
+  private void appendAll(
+      LayoutModel<V> parentLayoutModel, Collection<LayoutModel<V>> childLayoutModels) {
+    childLayoutModels.forEach(parentLayoutModel::appendLayoutModel);
+    parentLayoutModel
+        .getLayoutStateChangeSupport()
+        .fireLayoutStateChanged(parentLayoutModel, false);
   }
 
   @Override

@@ -3,6 +3,8 @@ package org.jungrapht.visualization.layout.event;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * For the most general change to a LayoutModel. There is no Event payload, only an indication that
@@ -43,6 +45,8 @@ public interface ModelChange {
   /** implementation of support. Manages a List of listeners */
   class SupportImpl implements Support {
 
+    Logger log = LoggerFactory.getLogger(ModelChange.SupportImpl.class);
+
     private SupportImpl() {}
 
     /** to fire or not to fire.... */
@@ -61,6 +65,7 @@ public interface ModelChange {
       this.fireEvents = fireEvents;
       // fire an event in case anything was missed while inactive
       if (fireEvents) {
+        log.trace("fireModelChanged");
         this.fireModelChanged();
       }
     }

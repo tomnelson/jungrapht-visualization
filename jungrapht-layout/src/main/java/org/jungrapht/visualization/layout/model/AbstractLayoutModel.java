@@ -356,7 +356,6 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
     }
     this.width = width;
     this.height = height;
-    log.trace("fireLayoutSizeChanged {} x {}", width, height);
     layoutSizeChangeSupport.fireLayoutSizeChanged(this, width, height);
     log.trace("setSize to {} by {}", this.width, this.height);
   }
