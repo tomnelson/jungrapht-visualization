@@ -493,11 +493,6 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     @Override
     public void itemStateChanged(ItemEvent e) {
       if (e.getStateChange() == ItemEvent.SELECTED) {
-        //                if (!(layoutAlgorithm instanceof EdgeArticulationFunctionSupplier)) {
-        //                  vv.getRenderContext().setEdgeShapeFunction(originalEdgeShapeFunction);
-        //                } else {
-        //
-        //                }
         if (layoutAlgorithm instanceof Layered) {
           ((Layered) layoutAlgorithm)
               .setLayering(layeringComboBox.getItemAt(layeringComboBox.getSelectedIndex()));

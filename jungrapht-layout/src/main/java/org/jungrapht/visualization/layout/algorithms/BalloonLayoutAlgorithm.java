@@ -194,4 +194,9 @@ public class BalloonLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
   public Map<V, Double> getRadii() {
     return radii;
   }
+
+  @Override
+  public boolean constrained() {
+    return true;
+  }
 }
