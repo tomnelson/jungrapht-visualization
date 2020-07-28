@@ -192,6 +192,7 @@ public class SugiyamaRunnable<V, E> implements LayeredRunnable<E> {
   protected Map<LV<V>, VertexMetadata<V>> vertexMetadataMap = new HashMap<>();
   protected Map<E, List<Point>> edgePointMap = new HashMap<>();
   protected boolean multiComponent;
+  protected boolean cancelled;
 
   protected SugiyamaRunnable(Builder<V, E, ?, ?> builder) {
     this(
@@ -243,6 +244,11 @@ public class SugiyamaRunnable<V, E> implements LayeredRunnable<E> {
   }
 
   @Override
+  public void cancel() {
+    this.cancelled = true;
+  }
+
+  @Override
   public void run() {
     this.graph = layoutModel.getGraph();
 
@@ -276,7 +282,7 @@ public class SugiyamaRunnable<V, E> implements LayeredRunnable<E> {
     log.trace("remove cycles took {}", (cycles - transformTime));
 
     // check for interrupted before layering
-    if (Thread.currentThread().isInterrupted()) {
+    if (cancelled || Thread.currentThread().isInterrupted()) {
       log.info("interrupted before layering");
       return;
     }
@@ -341,7 +347,7 @@ public class SugiyamaRunnable<V, E> implements LayeredRunnable<E> {
     int lowestCrossCount = Integer.MAX_VALUE;
     // order the ranks
     for (int i = 0; i < maxLevelCross; i++) {
-      if (Thread.currentThread().isInterrupted()) {
+      if (cancelled || Thread.currentThread().isInterrupted()) {
         log.info("interrupted in level cross");
         return;
       }
@@ -408,7 +414,7 @@ public class SugiyamaRunnable<V, E> implements LayeredRunnable<E> {
     GraphLayers.checkLayers(layersArray);
     Map<LV<V>, Point> vertexPointMap = new HashMap<>();
 
-    if (Thread.currentThread().isInterrupted()) {
+    if (cancelled || Thread.currentThread().isInterrupted()) {
       log.info("interrupted before compaction");
       return;
     }
@@ -572,6 +578,9 @@ public class SugiyamaRunnable<V, E> implements LayeredRunnable<E> {
     long articulatedEdgeTime = System.currentTimeMillis();
     log.trace("articulated edges took {}", (articulatedEdgeTime - pointsSetTime));
 
+    if (cancelled) {
+      return;
+    }
     svGraph.vertexSet().forEach(v -> layoutModel.set(v.getVertex(), v.getPoint()));
   }
 

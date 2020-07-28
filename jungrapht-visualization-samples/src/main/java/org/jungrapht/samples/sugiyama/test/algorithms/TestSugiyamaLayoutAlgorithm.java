@@ -115,7 +115,7 @@ public class TestSugiyamaLayoutAlgorithm<V, E> extends SugiyamaLayoutAlgorithm<V
             .build();
     if (threaded) {
 
-      theFuture =
+      theFutures.add(
           CompletableFuture.runAsync(runnable)
               .thenRun(
                   () -> {
@@ -127,7 +127,7 @@ public class TestSugiyamaLayoutAlgorithm<V, E> extends SugiyamaLayoutAlgorithm<V
                     layoutModel
                         .getLayoutStateChangeSupport()
                         .fireLayoutStateChanged(layoutModel, false);
-                  });
+                  }));
     } else {
       runnable.run();
       this.edgePointMap.putAll(runnable.getEdgePointMap());

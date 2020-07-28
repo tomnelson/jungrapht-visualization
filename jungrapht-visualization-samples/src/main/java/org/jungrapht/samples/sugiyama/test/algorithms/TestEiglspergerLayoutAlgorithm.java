@@ -119,7 +119,7 @@ public class TestEiglspergerLayoutAlgorithm<V, E> extends EiglspergerLayoutAlgor
             .build();
     if (threaded) {
 
-      theFuture =
+      theFutures.add(
           CompletableFuture.runAsync(runnable)
               .thenRun(
                   () -> {
@@ -131,7 +131,7 @@ public class TestEiglspergerLayoutAlgorithm<V, E> extends EiglspergerLayoutAlgor
                     layoutModel
                         .getLayoutStateChangeSupport()
                         .fireLayoutStateChanged(layoutModel, false);
-                  });
+                  }));
     } else {
       runnable.run();
       this.edgePointMap.putAll(runnable.getEdgePointMap());

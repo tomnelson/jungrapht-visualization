@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
@@ -171,11 +173,12 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
   protected boolean threaded;
   protected Layering layering;
   protected Executor executor;
-  protected CompletableFuture theFuture;
+  protected Set<CompletableFuture> theFutures = new HashSet<>();
   protected Runnable after;
   protected boolean separateComponents;
   protected Map<E, List<Point>> edgePointMap = new HashMap<>();
   protected AtomicInteger completionCounter = new AtomicInteger();
+  protected Set<LayeredRunnable<E>> runnables = new HashSet<>();
 
   protected AbstractHierarchicalMinCrossLayoutAlgorithm(Builder builder) {
     this(
@@ -304,9 +307,10 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
     for (LayoutModel<V> componentLayoutModel : layoutModels) {
 
       LayeredRunnable<E> runnable = getRunnable(graphs.size(), componentLayoutModel);
+      runnables.add(runnable);
       if (threaded) {
         if (executor != null) {
-          theFuture =
+          theFutures.add(
               CompletableFuture.runAsync(runnable, executor)
                   .thenRun(
                       () -> {
@@ -317,9 +321,9 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
                           layoutModel.setFireEvents(true);
                           appendAll(layoutModel, layoutModels);
                         }
-                      });
+                      }));
         } else {
-          theFuture =
+          theFutures.add(
               CompletableFuture.runAsync(runnable)
                   .thenRun(
                       () -> {
@@ -330,7 +334,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
                           layoutModel.setFireEvents(true);
                           appendAll(layoutModel, layoutModels);
                         }
-                      });
+                      }));
         }
       } else {
         runnable.run();
@@ -355,42 +359,28 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
 
   @Override
   public boolean cancel(boolean mayInterruptIfRunning) {
-    if (theFuture != null) {
-      return theFuture.cancel(mayInterruptIfRunning);
-    }
-    return false;
+    runnables.forEach(LayeredRunnable::cancel);
+    return theFutures.stream().map(f -> f.cancel(true)).allMatch(b -> b);
   }
 
   @Override
   public boolean isCancelled() {
-    if (theFuture != null) {
-      return theFuture.isCancelled();
-    }
-    return false;
+    return theFutures.stream().map(CompletableFuture::isCancelled).allMatch(b -> b);
   }
 
   @Override
   public boolean isDone() {
-    if (theFuture != null) {
-      return theFuture.isDone();
-    }
-    return false;
+    return theFutures.stream().map(CompletableFuture::isDone).allMatch(b -> b);
   }
 
   @Override
   public Object get() throws InterruptedException, ExecutionException {
-    if (theFuture != null) {
-      return theFuture.get();
-    }
     return null;
   }
 
   @Override
   public Object get(long timeout, TimeUnit unit)
       throws InterruptedException, ExecutionException, TimeoutException {
-    if (theFuture != null) {
-      return theFuture.get(timeout, unit);
-    }
     return null;
   }
 

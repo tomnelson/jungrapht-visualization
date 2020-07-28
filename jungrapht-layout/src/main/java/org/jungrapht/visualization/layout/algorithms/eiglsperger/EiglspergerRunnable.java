@@ -160,6 +160,7 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
   protected EiglspergerStepsBackward<V, E> stepsBackward;
   protected EiglspergerSteps<V, E> steps = null;
   protected boolean multiComponent;
+  protected boolean cancelled;
 
   protected EiglspergerRunnable(Builder<V, E, ?, ?> builder) {
     this(
@@ -199,6 +200,11 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
   }
 
   @Override
+  public void cancel() {
+    this.cancelled = true;
+  }
+
+  @Override
   public void run() {
     this.graph = layoutModel.getGraph();
 
@@ -231,7 +237,7 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
     long cycles = System.currentTimeMillis();
     log.trace("remove cycles took {}", (cycles - transformTime));
 
-    if (Thread.currentThread().isInterrupted()) {
+    if (cancelled || Thread.currentThread().isInterrupted()) {
       log.info("interrupted before layering");
       return;
     }
@@ -280,7 +286,7 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
     int bestCrossCount = Integer.MAX_VALUE;
     Graph<LV<V>, Integer> bestCompactionGraph = null;
     for (int i = 0; i < maxLevelCross; i++) {
-      if (Thread.currentThread().isInterrupted()) {
+      if (cancelled || Thread.currentThread().isInterrupted()) {
         log.info("interrupted in level cross");
         return;
       }
@@ -339,7 +345,7 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
         value[j].setIndex(j);
       }
     }
-    if (Thread.currentThread().isInterrupted()) {
+    if (cancelled || Thread.currentThread().isInterrupted()) {
       log.info("interrupted before compaction");
       return;
     }
