@@ -323,7 +323,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
               CompletableFuture.runAsync(runnable)
                   .thenRun(
                       () -> {
-                        log.info("MinCross layout done");
+                        log.trace("MinCross layout done");
                         this.edgePointMap.putAll(runnable.getEdgePointMap());
                         if (isComplete(graphs.size())) {
                           after.run();
@@ -334,7 +334,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
         }
       } else {
         runnable.run();
-        log.info("MinCross layout done");
+        log.trace("MinCross layout done");
         this.edgePointMap.putAll(runnable.getEdgePointMap());
         if (isComplete(graphs.size())) {
           after.run();

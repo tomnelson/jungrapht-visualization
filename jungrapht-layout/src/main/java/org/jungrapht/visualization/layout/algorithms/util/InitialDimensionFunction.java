@@ -102,10 +102,12 @@ public class InitialDimensionFunction<V> implements Function<Graph<V, ?>, Pair<I
     if (density > 0) {
       larger /= density;
     }
-    log.info(
-        "returning {} for graph with {} vertices",
-        Pair.of(larger, larger),
-        graph.vertexSet().size());
+    if (log.isTraceEnabled()) {
+      log.trace(
+          "returning {} for graph with {} vertices",
+          Pair.of(larger, larger),
+          graph.vertexSet().size());
+    }
     return Pair.of(larger, larger);
   }
 }

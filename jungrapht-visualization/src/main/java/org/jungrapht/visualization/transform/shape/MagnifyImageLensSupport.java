@@ -80,7 +80,7 @@ public class MagnifyImageLensSupport<V, E, M extends LensGraphMouse>
   static final String instructions =
       "<html><center>Mouse-Drag the Lens center to move it<p>"
           + "Mouse-Drag the Lens edge to resize it<p>"
-          + "Ctrl+MouseWheel to change magnification</center></html>";
+          + "MouseWheel inside lens changes magnification</center></html>";
 
   protected MagnifyImageLensSupport(
       VisualizationViewer<V, E> vv, LensTransformer lensTransformer, M lensGraphMouse) {

@@ -124,7 +124,7 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse> extend
   protected static final String instructions =
       "<html><center>Mouse-Drag the Lens center to move it<p>"
           + "Mouse-Drag the Lens edge or handles to resize it<p>"
-          + "Ctrl+MouseWheel to change magnification</center></html>";
+          + "MouseWheel inside lens changes magnification</center></html>";
 
   protected AbstractLensSupport(Builder<V, E, M, ?, ?> builder) {
     this.vv = builder.vv;
