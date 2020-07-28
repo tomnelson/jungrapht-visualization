@@ -189,7 +189,7 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
       setSize(dimension.first, dimension.second);
     } else {
       // setSize will fire an event if the size has changed
-      setSize(preferredWidth, preferredHeight);
+      //      setSize(preferredWidth, preferredHeight);
     }
 
     log.trace("reset the model size to {} x {}", preferredWidth, preferredHeight);

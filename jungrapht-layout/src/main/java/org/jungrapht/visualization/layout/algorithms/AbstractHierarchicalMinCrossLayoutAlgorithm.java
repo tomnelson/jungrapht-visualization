@@ -179,6 +179,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
   protected Map<E, List<Point>> edgePointMap = new HashMap<>();
   protected AtomicInteger completionCounter = new AtomicInteger();
   protected Set<LayeredRunnable<E>> runnables = new HashSet<>();
+  protected boolean cancelled;
 
   protected AbstractHierarchicalMinCrossLayoutAlgorithm(Builder builder) {
     this(
@@ -244,6 +245,10 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
   @Override
   public void setThreaded(boolean threaded) {
     this.threaded = threaded;
+  }
+
+  public void cancel() {
+    this.cancelled = true;
   }
 
   protected boolean isComplete(int expected) {
@@ -316,7 +321,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
                       () -> {
                         log.trace("MinCross layout done");
                         this.edgePointMap.putAll(runnable.getEdgePointMap());
-                        if (isComplete(graphs.size())) {
+                        if (!cancelled && isComplete(graphs.size())) {
                           after.run();
                           layoutModel.setFireEvents(true);
                           appendAll(layoutModel, layoutModels);
@@ -329,7 +334,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
                       () -> {
                         log.trace("MinCross layout done");
                         this.edgePointMap.putAll(runnable.getEdgePointMap());
-                        if (isComplete(graphs.size())) {
+                        if (!cancelled && isComplete(graphs.size())) {
                           after.run();
                           layoutModel.setFireEvents(true);
                           appendAll(layoutModel, layoutModels);
@@ -340,7 +345,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
         runnable.run();
         log.trace("MinCross layout done");
         this.edgePointMap.putAll(runnable.getEdgePointMap());
-        if (isComplete(graphs.size())) {
+        if (!cancelled && isComplete(graphs.size())) {
           after.run();
           layoutModel.setFireEvents(true);
           appendAll(layoutModel, layoutModels);
@@ -359,6 +364,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
 
   @Override
   public boolean cancel(boolean mayInterruptIfRunning) {
+    this.cancel();
     runnables.forEach(LayeredRunnable::cancel);
     return theFutures.stream().map(f -> f.cancel(true)).allMatch(b -> b);
   }
