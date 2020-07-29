@@ -340,10 +340,9 @@ public class GEMLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorithm<V
   }
 
   public synchronized void step() {
-    if (temperature > stop_temperature && iteration < stop_iteration) {
+    if (temperature > stop_temperature && iteration < stop_iteration && !cancelled) {
       log.trace("iteration: {}", iteration);
       a_round();
-      if (cancelled) return;
     } else {
       this.done = true;
     }
@@ -711,7 +710,7 @@ public class GEMLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorithm<V
       runNormal(getGraph());
 
       // set location of nodes in graph
-      for (int i = 0; i < nodeCount; i++) {
+      for (int i = 0; i < nodeCount && !cancelled; i++) {
         Properties p = gemProp[i];
         V n = invmap[i];
         layoutModel.set(n, p.x, p.y);

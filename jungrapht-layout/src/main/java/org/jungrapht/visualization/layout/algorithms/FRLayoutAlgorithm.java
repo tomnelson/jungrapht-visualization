@@ -197,6 +197,9 @@ public class FRLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
           if (layoutModel.isLocked(vertex)) {
             continue;
           }
+          if (cancelled) {
+            return;
+          }
           calcPositions(vertex);
         }
         break;

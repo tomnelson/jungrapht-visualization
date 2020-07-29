@@ -211,6 +211,9 @@ public class SpringLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorith
           if (layoutModel.isLocked(vertex)) {
             continue;
           }
+          if (cancelled) {
+            return;
+          }
           SpringVertexData vd =
               springVertexData.computeIfAbsent(vertex, v -> new SpringVertexData());
           if (vd == null) {

@@ -557,6 +557,9 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
           if (layoutModel.isLocked(vertex)) {
             continue;
           }
+          if (cancelled) {
+            return;
+          }
           calcPositions(vertex);
         }
         break;

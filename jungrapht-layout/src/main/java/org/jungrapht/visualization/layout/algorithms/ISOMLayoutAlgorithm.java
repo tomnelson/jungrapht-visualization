@@ -184,7 +184,7 @@ public class ISOMLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
     queue.add(vertex);
     V current;
 
-    while (!queue.isEmpty()) {
+    while (!queue.isEmpty() && !cancelled) {
       current = queue.remove(0);
       ISOMVertexData currData = getISOMVertexData(current);
       Point currXYData = layoutModel.apply(current);

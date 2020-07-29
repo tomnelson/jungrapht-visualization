@@ -246,6 +246,9 @@ public class KKLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
 
   @Override
   public void step() {
+    if (cancelled) {
+      return;
+    }
     Graph<V, ?> graph = layoutModel.getGraph();
     currentIteration++;
     double energy;
@@ -321,7 +324,7 @@ public class KKLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
     gy /= xydata.length;
     double diffx = width / 2 - gx;
     double diffy = height / 2 - gy;
-    for (int i = 0; i < xydata.length; i++) {
+    for (int i = 0; i < xydata.length && !cancelled; i++) {
       xydata[i] = xydata[i].add(diffx, diffy);
       layoutModel.set(vertices[i], xydata[i]);
     }

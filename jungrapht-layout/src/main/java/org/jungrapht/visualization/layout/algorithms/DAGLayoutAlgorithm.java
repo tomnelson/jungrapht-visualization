@@ -198,6 +198,9 @@ public class DAGLayoutAlgorithm<V, E> extends SpringLayoutAlgorithm<V, E> {
         if (layoutModel.isLocked(vertex)) {
           continue;
         }
+        if (cancelled) {
+          return;
+        }
         SpringVertexData vd = springVertexData.computeIfAbsent(vertex, v -> new SpringVertexData());
         Point xyd = layoutModel.apply(vertex);
 
