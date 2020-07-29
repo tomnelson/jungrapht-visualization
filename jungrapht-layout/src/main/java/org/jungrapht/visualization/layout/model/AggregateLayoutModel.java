@@ -12,7 +12,6 @@ package org.jungrapht.visualization.layout.model;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Future;
 import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -117,10 +116,10 @@ public class AggregateLayoutModel<V> implements LayoutModel<V> {
   }
 
   @Override
-  public void stopRelaxer() {
-    delegate.stopRelaxer();
+  public void stop() {
+    delegate.stop();
     for (LayoutModel<V> childLayoutModel : layouts.keySet()) {
-      childLayoutModel.stopRelaxer();
+      childLayoutModel.stop();
     }
   }
 
@@ -134,10 +133,10 @@ public class AggregateLayoutModel<V> implements LayoutModel<V> {
     return delegate.isRelaxing();
   }
 
-  @Override
-  public Future getTheFuture() {
-    return delegate.getTheFuture();
-  }
+  //  @Override
+  //  public Future getTheFuture() {
+  //    return delegate.getTheFuture();
+  //  }
 
   @Override
   public void set(V vertex, Point location) {

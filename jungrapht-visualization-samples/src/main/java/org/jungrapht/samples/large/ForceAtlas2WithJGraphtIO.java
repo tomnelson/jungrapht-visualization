@@ -84,7 +84,7 @@ public class ForceAtlas2WithJGraphtIO extends JFrame {
     graphComboBox.addActionListener(
         e -> {
           LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
-          layoutModel.stopRelaxer();
+          layoutModel.stop();
           SwingUtilities.invokeLater(
               () -> {
                 clear(graph);

@@ -108,7 +108,7 @@ class DefaultVisualizationModel<V, E> implements VisualizationModel<V, E> {
   public void setLayoutModel(LayoutModel<V> layoutModel) {
     // stop any Relaxer threads before abandoning the previous LayoutModel
     if (this.layoutModel != null) {
-      this.layoutModel.stopRelaxer();
+      this.layoutModel.stop();
       this.layoutModel.getModelChangeSupport().getModelChangeListeners().remove(this);
       this.layoutModel.getViewChangeSupport().getViewChangeListeners().remove(this);
       this.layoutModel.getLayoutStateChangeSupport().getLayoutStateChangeListeners().remove(this);

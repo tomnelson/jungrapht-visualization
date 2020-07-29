@@ -107,7 +107,7 @@ public class AnimationLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorith
     counter++;
     if (counter >= count) {
       done = true;
-      this.transitionLayoutModel.stopRelaxer();
+      this.transitionLayoutModel.stop();
       this.visualizationServer.getVisualizationModel().setLayoutAlgorithm(endLayoutAlgorithm);
     }
   }

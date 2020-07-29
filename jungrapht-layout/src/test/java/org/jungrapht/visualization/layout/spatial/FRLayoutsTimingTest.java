@@ -1,12 +1,12 @@
 package org.jungrapht.visualization.layout.spatial;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.IntStream;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFRRepulsion;
+import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.util.RandomLocationTransformer;
 import org.junit.Before;
@@ -73,16 +73,25 @@ public class FRLayoutsTimingTest {
 
   private void doTest(FRLayoutAlgorithm<String> layoutAlgorithm) {
     long startTime = System.currentTimeMillis();
-    layoutModel.accept(layoutAlgorithm);
-    if (layoutModel.getTheFuture() instanceof CompletableFuture) {
-      ((CompletableFuture) layoutModel.getTheFuture())
-          .thenRun(
+    if (layoutAlgorithm instanceof AfterRunnable) {
+      ((AfterRunnable) layoutAlgorithm)
+          .setAfter(
               () ->
                   log.info(
                       "elapsed time for {} was {}",
                       layoutAlgorithm,
-                      System.currentTimeMillis() - startTime))
-          .join();
+                      System.currentTimeMillis() - startTime));
     }
+    layoutModel.accept(layoutAlgorithm);
+    //    if (layoutModel.getTheFuture() instanceof CompletableFuture) {
+    //      ((CompletableFuture) layoutModel.getTheFuture())
+    //          .thenRun(
+    //              () ->
+    //                  log.info(
+    //                      "elapsed time for {} was {}",
+    //                      layoutAlgorithm,
+    //                      System.currentTimeMillis() - startTime))
+    //          .join();
+    //    }
   }
 }

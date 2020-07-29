@@ -11,7 +11,6 @@ package org.jungrapht.visualization.layout.model;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
@@ -140,7 +139,7 @@ public interface LayoutModel<V>
   void setPreferredSize(int width, int helght);
 
   /** stop a relaxer Thread from continuing to operate */
-  void stopRelaxer();
+  void stop();
 
   /**
    * indicates that there is a relaxer thread operating on this LayoutModel
@@ -156,12 +155,12 @@ public interface LayoutModel<V>
    */
   boolean isRelaxing();
 
-  /**
-   * a handle to the relaxer thread; may be used to attach a process to run after relax is complete
-   *
-   * @return the Future
-   */
-  Future getTheFuture();
+  //  /**
+  //   * a handle to the relaxer thread; may be used to attach a process to run after relax is complete
+  //   *
+  //   * @return the Future
+  //   */
+  //  Future getTheFuture();
 
   /**
    * @param vertex the vertex whose locked state is being queried
