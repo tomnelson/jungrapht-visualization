@@ -151,4 +151,9 @@ public class TidierRadialTreeLayoutAlgorithm<V, E> extends TidierTreeLayoutAlgor
   public Point getCenter(LayoutModel<V> layoutModel) {
     return Point.of(layoutModel.getWidth() / 2, layoutModel.getHeight() / 2);
   }
+
+  @Override
+  public boolean constrained() {
+    return true;
+  }
 }

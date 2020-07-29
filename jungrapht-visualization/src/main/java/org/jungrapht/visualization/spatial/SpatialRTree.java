@@ -284,35 +284,39 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
      */
     @Override
     public void update(V element, org.jungrapht.visualization.layout.model.Point location) {
-      gridCache = null;
-      // do nothing if we are not active
-      if (isActive() && rtree.getRoot().isPresent()) {
-        //        TreeNode root = rtree.getRoot().get();
+      try {
+        gridCache = null;
+        // do nothing if we are not active
+        if (isActive() && rtree.getRoot().isPresent()) {
+          //        TreeNode root = rtree.getRoot().get();
 
-        LeafNode<V> containingLeaf = getContainingLeaf(element);
-        Rectangle2D itsShape = boundingRectangleCollector.getForElement(element, location);
-        // if the shape does not enlarge the containingRTree, then only update what is in elements
-        // otherwise, remove this node and re-insert it
-        if (containingLeaf != null) {
-          if (containingLeaf.getBounds().contains(itsShape)) {
-            // the element did not move out of its LeafVertex
-            // no RTree update required, just re-add the element to the map
-            // with the new Bounds value
-            // remove it from the map (so there is no overflow when it is added
-            containingLeaf.remove(element);
-            containingLeaf.add(splitterContext, element, itsShape);
+          LeafNode<V> containingLeaf = getContainingLeaf(element);
+          Rectangle2D itsShape = boundingRectangleCollector.getForElement(element, location);
+          // if the shape does not enlarge the containingRTree, then only update what is in elements
+          // otherwise, remove this node and re-insert it
+          if (containingLeaf != null) {
+            if (containingLeaf.getBounds().contains(itsShape)) {
+              // the element did not move out of its LeafVertex
+              // no RTree update required, just re-add the element to the map
+              // with the new Bounds value
+              // remove it from the map (so there is no overflow when it is added
+              containingLeaf.remove(element);
+              containingLeaf.add(splitterContext, element, itsShape);
+            } else {
+              // the element is outside of the previous containing LeafVertex
+              // remmove the element from the tree and add it again so it will
+              // go to the correct LeafVertex
+              rtree = RTree.remove(rtree, element);
+              rtree = RTree.add(rtree, splitterContext, element, itsShape);
+            }
           } else {
-            // the element is outside of the previous containing LeafVertex
-            // remmove the element from the tree and add it again so it will
-            // go to the correct LeafVertex
-            rtree = RTree.remove(rtree, element);
+            // the element is new to the RTree
+            // just add it
             rtree = RTree.add(rtree, splitterContext, element, itsShape);
           }
-        } else {
-          // the element is new to the RTree
-          // just add it
-          rtree = RTree.add(rtree, splitterContext, element, itsShape);
         }
+      } catch (ConcurrentModificationException cme) {
+        log.debug("ignoring CME");
       }
     }
 
@@ -477,44 +481,48 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
      */
     @Override
     public void update(E element, org.jungrapht.visualization.layout.model.Point location) {
-      gridCache = null;
-      if (isActive()) {
+      try {
+        gridCache = null;
+        if (isActive()) {
 
-        // get the endpoints for this edge
-        // there should be 2
-        V n1 = visualizationModel.getGraph().getEdgeSource(element);
-        V n2 = visualizationModel.getGraph().getEdgeTarget(element);
+          // get the endpoints for this edge
+          // there should be 2
+          V n1 = visualizationModel.getGraph().getEdgeSource(element);
+          V n2 = visualizationModel.getGraph().getEdgeTarget(element);
 
-        if (n2 == null) {
-          n2 = n1;
-        }
-        if (n1 != null && n2 != null) {
-          Rectangle2D itsShape =
-              boundingRectangleCollector.getForElement(
-                  element, layoutModel.apply(n1), layoutModel.apply(n2));
-          LeafNode<E> containingLeaf = getContainingLeaf(element);
-          // if the shape does not enlarge the containingRTree, then only update what is in elements map
-          // otherwise, remove this node and re-insert it
-          if (containingLeaf != null) {
-            if (containingLeaf.getBounds().contains(itsShape)) {
-              containingLeaf.remove(element);
-              containingLeaf.add(splitterContext, element, itsShape);
-              log.trace("{} changed in place", element);
+          if (n2 == null) {
+            n2 = n1;
+          }
+          if (n1 != null && n2 != null) {
+            Rectangle2D itsShape =
+                boundingRectangleCollector.getForElement(
+                    element, layoutModel.apply(n1), layoutModel.apply(n2));
+            LeafNode<E> containingLeaf = getContainingLeaf(element);
+            // if the shape does not enlarge the containingRTree, then only update what is in elements map
+            // otherwise, remove this node and re-insert it
+            if (containingLeaf != null) {
+              if (containingLeaf.getBounds().contains(itsShape)) {
+                containingLeaf.remove(element);
+                containingLeaf.add(splitterContext, element, itsShape);
+                log.trace("{} changed in place", element);
+              } else {
+                containingLeaf.remove(element);
+                if (log.isTraceEnabled()) {
+                  log.trace("rtree now size {}", rtree.count());
+                }
+                rtree = RTree.add(rtree, splitterContext, element, itsShape);
+                if (log.isTraceEnabled()) {
+                  log.trace(
+                      "added back {} with {} into rtree size {}", element, itsShape, rtree.count());
+                }
+              }
             } else {
-              containingLeaf.remove(element);
-              if (log.isTraceEnabled()) {
-                log.trace("rtree now size {}", rtree.count());
-              }
               rtree = RTree.add(rtree, splitterContext, element, itsShape);
-              if (log.isTraceEnabled()) {
-                log.trace(
-                    "added back {} with {} into rtree size {}", element, itsShape, rtree.count());
-              }
             }
-          } else {
-            rtree = RTree.add(rtree, splitterContext, element, itsShape);
           }
         }
+      } catch (ConcurrentModificationException cme) {
+        log.debug("ignoring CME");
       }
     }
 

@@ -174,7 +174,7 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
       for (V root : roots) {
         Point p = layoutModel.apply(root);
         // get the union of all kids
-        Rectangle r = vertexShapeFunction.apply(root);
+        Rectangle r = vertexBoundsFunction.apply(root);
         r = Rectangle.of(r.x - r.width / 2 + p.x, r.y - r.height / 2 + p.y, r.width, r.height);
         baseBounds.put(root, union(r, Graphs.successorListOf(tree, root)));
       }
@@ -185,7 +185,7 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
   private Rectangle union(Rectangle r, Collection<V> in) {
     for (V v : in) {
       Point p = layoutModel.apply(v);
-      Rectangle vr = vertexShapeFunction.apply(v);
+      Rectangle vr = vertexBoundsFunction.apply(v);
       r = Rectangle.of(vr.x - vr.width / 2 + p.x, vr.y - vr.height / 2 + p.y, vr.width, vr.height);
       r = r.union(vr);
       r = union(r, successors(v));
@@ -258,7 +258,7 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
       // special case for forest where 'in' is null so size is 0
       return IDENTITY_SHAPE;
     }
-    return vertexShapeFunction.apply((V) in);
+    return vertexBoundsFunction.apply((V) in);
   }
 
   private void updateBounds(V vertex, int centerX, int centerY) {
@@ -496,8 +496,8 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
     } else {
       this.rootPredicate = this.rootPredicate.or(this.defaultRootPredicate);
     }
-    if (vertexShapeFunction != null) {
-      Dimension averageVertexSize = computeAverageVertexDimension(graph, vertexShapeFunction);
+    if (vertexBoundsFunction != null) {
+      Dimension averageVertexSize = computeAverageVertexDimension(graph, vertexBoundsFunction);
       this.horizontalVertexSpacing = averageVertexSize.width * 2;
       this.verticalVertexSpacing = averageVertexSize.height * 2;
     }

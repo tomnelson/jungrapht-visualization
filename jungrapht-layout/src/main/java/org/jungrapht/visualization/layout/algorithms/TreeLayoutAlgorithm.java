@@ -113,8 +113,8 @@ public class TreeLayoutAlgorithm<V> extends AbstractTreeLayoutAlgorithm<V>
         v -> graph.incomingEdgesOf(v).isEmpty() || TreeLayout.isIsolatedVertex(graph, v);
     // when provided, replace the horizontal and vertical spacing with twice the average
     // width and height of the Shapes returned by the function
-    if (vertexShapeFunction != null) {
-      Dimension averageVertexSize = computeAverageVertexDimension(graph, vertexShapeFunction);
+    if (vertexBoundsFunction != null) {
+      Dimension averageVertexSize = computeAverageVertexDimension(graph, vertexBoundsFunction);
       this.horizontalVertexSpacing = averageVertexSize.width * 2;
       this.verticalVertexSpacing = averageVertexSize.height * 2;
     }
