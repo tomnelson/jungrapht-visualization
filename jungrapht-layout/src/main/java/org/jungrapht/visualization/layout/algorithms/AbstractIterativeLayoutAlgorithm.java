@@ -3,6 +3,7 @@ package org.jungrapht.visualization.layout.algorithms;
 import java.util.Random;
 import java.util.concurrent.Executor;
 import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
+import org.jungrapht.visualization.layout.algorithms.util.Threaded;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * @author Tom Nelson
  */
 public abstract class AbstractIterativeLayoutAlgorithm<V> extends AbstractLayoutAlgorithm<V>
-    implements IterativeLayoutAlgorithm<V>, AfterRunnable {
+    implements IterativeLayoutAlgorithm<V>, AfterRunnable, Threaded {
 
   private static final Logger log = LoggerFactory.getLogger(AbstractIterativeLayoutAlgorithm.class);
 
@@ -27,6 +28,7 @@ public abstract class AbstractIterativeLayoutAlgorithm<V> extends AbstractLayout
     protected boolean shouldPrerelax = true;
     protected int preRelaxDurationMs = 500;
     protected Runnable afterRunnable = () -> {};
+    protected boolean threaded = true;
 
     public B randomSeed(long randomSeed) {
       this.random = new Random(randomSeed);
@@ -53,6 +55,11 @@ public abstract class AbstractIterativeLayoutAlgorithm<V> extends AbstractLayout
       return self();
     }
 
+    public B threaded(boolean threaded) {
+      this.threaded = threaded;
+      return self();
+    }
+
     protected B self() {
       return (B) this;
     }
@@ -67,6 +74,7 @@ public abstract class AbstractIterativeLayoutAlgorithm<V> extends AbstractLayout
     this.shouldPreRelax = builder.shouldPrerelax;
     this.preRelaxDurationMs = builder.preRelaxDurationMs;
     this.afterRunnable = builder.afterRunnable;
+    this.threaded = builder.threaded;
   }
   /**
    * because the IterativeLayoutAlgorithms use multithreading to continuously update vertex
@@ -84,6 +92,10 @@ public abstract class AbstractIterativeLayoutAlgorithm<V> extends AbstractLayout
   protected Random random;
 
   protected Runnable afterRunnable;
+
+  protected boolean threaded;
+
+  protected boolean cancelled;
 
   public void setRandomSeed(long randomSeed) {
     this.random = new Random(randomSeed);
@@ -119,5 +131,20 @@ public abstract class AbstractIterativeLayoutAlgorithm<V> extends AbstractLayout
   public void visit(LayoutModel<V> layoutModel) {
     log.trace("visiting " + layoutModel);
     this.layoutModel = layoutModel;
+  }
+
+  @Override
+  public boolean isThreaded() {
+    return this.threaded;
+  }
+
+  @Override
+  public void setThreaded(boolean threaded) {
+    this.threaded = threaded;
+  }
+
+  @Override
+  public void cancel() {
+    cancelled = true;
   }
 }

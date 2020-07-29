@@ -123,8 +123,6 @@ public class KKLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
     if (graph == null || graph.vertexSet().isEmpty()) {
       return;
     }
-    //    super.visit(layoutModel);
-
     if (graph != null) {
       this.distance = getDistances(graph);
     }
@@ -175,6 +173,7 @@ public class KKLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
 
   /** @return true if the current iteration has passed the maximum count. */
   public boolean done() {
+    if (cancelled) return true;
     boolean done = currentIteration > maxIterations;
     if (done) {
       runAfter();

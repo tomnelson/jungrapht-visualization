@@ -3,7 +3,6 @@ package org.jungrapht.visualization.layout.algorithms;
 import static org.jungrapht.visualization.layout.model.LayoutModel.PREFIX;
 
 import java.util.concurrent.Executor;
-import java.util.concurrent.Future;
 import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnable;
@@ -45,8 +44,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
         Layered,
         AfterRunnable,
         ExecutorConsumer,
-        Threaded,
-        Future {
+        Threaded {
 
   private static final Logger log =
       LoggerFactory.getLogger(HierarchicalMinCrossLayoutAlgorithm.class);

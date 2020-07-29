@@ -22,11 +22,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.stream.IntStream;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
@@ -47,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * @author Tom Nelson - adapted to an algorithm
  */
 public class CircleLayoutAlgorithm<V>
-    implements LayoutAlgorithm<V>, AfterRunnable, Threaded, ExecutorConsumer, Future {
+    implements LayoutAlgorithm<V>, AfterRunnable, Threaded, ExecutorConsumer {
 
   private static final Logger log = LoggerFactory.getLogger(CircleLayoutAlgorithm.class);
 
@@ -66,6 +62,7 @@ public class CircleLayoutAlgorithm<V>
   CompletableFuture theFuture;
   protected int reduceEdgeCrossingMaxEdges;
   int crossingCount = -1;
+  protected boolean cancelled;
 
   public static class Builder<V, T extends CircleLayoutAlgorithm<V>, B extends Builder<V, T, B>>
       implements LayoutAlgorithm.Builder<V, T, B> {
@@ -301,44 +298,8 @@ public class CircleLayoutAlgorithm<V>
   }
 
   @Override
-  public boolean cancel(boolean mayInterruptIfRunning) {
-    if (theFuture != null) {
-      return theFuture.cancel(mayInterruptIfRunning);
-    }
-    return false;
-  }
-
-  @Override
-  public boolean isCancelled() {
-    if (theFuture != null) {
-      return theFuture.isCancelled();
-    }
-    return false;
-  }
-
-  @Override
-  public boolean isDone() {
-    if (theFuture != null) {
-      return theFuture.isDone();
-    }
-    return false;
-  }
-
-  @Override
-  public Object get() throws InterruptedException, ExecutionException {
-    if (theFuture != null) {
-      return theFuture.get();
-    }
-    return null;
-  }
-
-  @Override
-  public Object get(long l, TimeUnit timeUnit)
-      throws InterruptedException, ExecutionException, TimeoutException {
-    if (theFuture != null) {
-      return theFuture.get(l, timeUnit);
-    }
-    return null;
+  public void cancel() {
+    this.cancelled = true;
   }
 
   @Override

@@ -113,6 +113,7 @@ public class AnimationLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorith
   }
 
   public boolean done() {
+    if (cancelled) return true;
     if (done) after.run();
     return done;
   }

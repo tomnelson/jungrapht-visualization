@@ -11,11 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import org.jgrapht.Graph;
@@ -55,8 +51,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
         Layered,
         AfterRunnable,
         Threaded,
-        ExecutorConsumer,
-        Future {
+        ExecutorConsumer {
 
   private static final Logger log =
       LoggerFactory.getLogger(AbstractHierarchicalMinCrossLayoutAlgorithm.class);
@@ -247,6 +242,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
     this.threaded = threaded;
   }
 
+  @Override
   public void cancel() {
     this.cancelled = true;
   }
@@ -362,33 +358,33 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
         .fireLayoutStateChanged(parentLayoutModel, false);
   }
 
-  @Override
-  public boolean cancel(boolean mayInterruptIfRunning) {
-    this.cancel();
-    runnables.forEach(LayeredRunnable::cancel);
-    return theFutures.stream().map(f -> f.cancel(true)).allMatch(b -> b);
-  }
+  //  @Override
+  //  public boolean cancel(boolean mayInterruptIfRunning) {
+  //    this.cancel();
+  //    runnables.forEach(LayeredRunnable::cancel);
+  //    return theFutures.stream().map(f -> f.cancel(true)).allMatch(b -> b);
+  //  }
+  //
+  //  @Override
+  //  public boolean isCancelled() {
+  //    return theFutures.stream().map(CompletableFuture::isCancelled).allMatch(b -> b);
+  //  }
 
-  @Override
-  public boolean isCancelled() {
-    return theFutures.stream().map(CompletableFuture::isCancelled).allMatch(b -> b);
-  }
-
-  @Override
-  public boolean isDone() {
-    return theFutures.stream().map(CompletableFuture::isDone).allMatch(b -> b);
-  }
-
-  @Override
-  public Object get() throws InterruptedException, ExecutionException {
-    return null;
-  }
-
-  @Override
-  public Object get(long timeout, TimeUnit unit)
-      throws InterruptedException, ExecutionException, TimeoutException {
-    return null;
-  }
+  //  @Override
+  //  public boolean isDone() {
+  //    return theFutures.stream().map(CompletableFuture::isDone).allMatch(b -> b);
+  //  }
+  //
+  //  @Override
+  //  public Object get() throws InterruptedException, ExecutionException {
+  //    return null;
+  //  }
+  //
+  //  @Override
+  //  public Object get(long timeout, TimeUnit unit)
+  //      throws InterruptedException, ExecutionException, TimeoutException {
+  //    return null;
+  //  }
 
   @Override
   public void runAfter() {

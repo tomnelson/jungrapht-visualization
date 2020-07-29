@@ -351,6 +351,7 @@ public class GEMLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorithm<V
 
   @Override
   public boolean done() {
+    if (cancelled) return true;
     if (done) {
       runAfter();
     }

@@ -2,7 +2,6 @@
 package org.jungrapht.visualization.layout.algorithms;
 
 import java.util.concurrent.Executor;
-import java.util.concurrent.Future;
 import java.util.function.Function;
 import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnable;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
@@ -40,8 +39,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
         Layered,
         AfterRunnable,
         Threaded,
-        ExecutorConsumer,
-        Future {
+        ExecutorConsumer {
 
   private static final Logger log = LoggerFactory.getLogger(EiglspergerLayoutAlgorithm.class);
 

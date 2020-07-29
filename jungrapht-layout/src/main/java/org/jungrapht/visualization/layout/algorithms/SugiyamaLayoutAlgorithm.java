@@ -1,7 +1,6 @@
 package org.jungrapht.visualization.layout.algorithms;
 
 import java.util.concurrent.Executor;
-import java.util.concurrent.Future;
 import java.util.function.Function;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaRunnable;
@@ -36,8 +35,7 @@ public class SugiyamaLayoutAlgorithm<V, E> extends AbstractHierarchicalMinCrossL
         Layered,
         AfterRunnable,
         Threaded,
-        ExecutorConsumer,
-        Future {
+        ExecutorConsumer {
 
   private static final Logger log = LoggerFactory.getLogger(SugiyamaLayoutAlgorithm.class);
 

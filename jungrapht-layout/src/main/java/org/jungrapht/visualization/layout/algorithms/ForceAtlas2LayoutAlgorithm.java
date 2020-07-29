@@ -349,7 +349,7 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
 
   @Override
   public boolean done() {
-
+    if (cancelled) return true;
     boolean done = currentIteration >= maxIterations;
     if (done) {
       runAfter();

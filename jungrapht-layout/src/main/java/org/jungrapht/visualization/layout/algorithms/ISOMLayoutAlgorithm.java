@@ -228,6 +228,7 @@ public class ISOMLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
    *     otherwise
    */
   public boolean done() {
+    if (cancelled) return true;
     boolean done = epoch >= maxEpoch;
     if (done) {
       runAfter();

@@ -5,4 +5,6 @@ public interface Threaded {
   boolean isThreaded();
 
   void setThreaded(boolean threaded);
+
+  void cancel();
 }
