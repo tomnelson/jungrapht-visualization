@@ -173,6 +173,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
   protected Map<E, List<Point>> edgePointMap = new HashMap<>();
   protected AtomicInteger completionCounter = new AtomicInteger();
   protected Set<LayeredRunnable<E>> runnables = new HashSet<>();
+  protected LayoutModel<V> layoutModel; // ref used to switch events back on after cancel
   protected boolean cancelled;
 
   protected AbstractHierarchicalMinCrossLayoutAlgorithm(Builder builder) {
@@ -243,7 +244,11 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
 
   @Override
   public void cancel() {
+    cancelled = true;
     runnables.forEach(LayeredRunnable::cancel);
+    if (layoutModel != null) {
+      layoutModel.setFireEvents(true);
+    }
   }
 
   protected boolean isComplete(int expected) {
@@ -273,6 +278,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
 
   @Override
   public void visit(LayoutModel<V> layoutModel) {
+    this.layoutModel = layoutModel;
     this.completionCounter.set(0);
     this.edgePointMap.clear();
 
@@ -349,7 +355,9 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
 
   private void appendAll(
       LayoutModel<V> parentLayoutModel, Collection<LayoutModel<V>> childLayoutModels) {
+    log.trace("appendAll, cancelled: {}", cancelled);
     if (!cancelled) {
+      log.trace("appending: {} child layout models", childLayoutModels.size());
       childLayoutModels.forEach(parentLayoutModel::appendLayoutModel);
       parentLayoutModel
           .getLayoutStateChangeSupport()

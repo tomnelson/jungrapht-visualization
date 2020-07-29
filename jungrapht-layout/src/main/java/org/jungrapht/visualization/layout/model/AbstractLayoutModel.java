@@ -142,11 +142,6 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
     setRelaxing(false);
   }
 
-  //  @Override
-  //  public Future getTheFuture() {
-  //    return theFuture;
-  //  }
-
   /**
    * accept the visit of a LayoutAlgorithm. If it is an IterativeContext, create a VisRunner to run
    * its relaxer in a new Thread. If there is a current VisRunner, stop it first.
@@ -163,6 +158,7 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
    */
   @Override
   public void accept(LayoutAlgorithm<V> layoutAlgorithm) {
+    log.trace("accept {}", layoutAlgorithm);
     this.appendageCount = 0;
     // stop any running layout algorithm
     if (this.visRunnable != null) {
@@ -175,13 +171,18 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
     // is not an Unconstrained type (not a Tree or Circle) then apply the function to
     // set the layout area constraints
     log.trace("{} is constrained: {}", layoutAlgorithm, layoutAlgorithm.constrained());
+
     if (layoutAlgorithm.constrained()) {
+      log.trace("{} constrained: {}", layoutAlgorithm, true);
       Pair<Integer> dimension = initialDimensionFunction.apply(graph);
       // setSize will fire an event with the new size
       setSize(dimension.first, dimension.second);
     } else {
-      // setSize will fire an event if the size has changed
-      //      setSize(preferredWidth, preferredHeight);
+      //      log.trace("{} constrained: {}", layoutAlgorithm, false);
+      //       setSize will fire an event if the size has changed
+      //            setSize(preferredWidth, preferredHeight);
+      // leave the size the same but fire an event for the transforms
+      //      getLayoutSizeChangeSupport().fireLayoutSizeChanged(this, width, height);
     }
 
     log.trace("reset the model size to {} x {}", preferredWidth, preferredHeight);
@@ -197,7 +198,7 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
           createVisRunnable
           && layoutAlgorithm instanceof IterativeLayoutAlgorithm) {
         setRelaxing(true);
-        // don't start a visRunner if the called has set threaded tp false
+        // don't start a visRunner if the called has set threaded to false
         setupVisRunner((IterativeLayoutAlgorithm) layoutAlgorithm);
         // ...the visRunner will fire the layoutStateChanged event when it finishes
 
