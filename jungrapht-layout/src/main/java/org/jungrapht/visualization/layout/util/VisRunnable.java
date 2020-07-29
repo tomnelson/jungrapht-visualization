@@ -17,6 +17,12 @@ public class VisRunnable implements Runnable {
   private long sleepTime = 10;
   private boolean stop = false;
 
+  public static VisRunnable noop() {
+    return new VisRunnable(null) {
+      public void run() {}
+    };
+  }
+
   public VisRunnable(IterativeContext iterativeContext) {
     log.trace("created a VisRunnable {} for {}", hashCode(), iterativeContext);
     this.iterativeContext = iterativeContext;

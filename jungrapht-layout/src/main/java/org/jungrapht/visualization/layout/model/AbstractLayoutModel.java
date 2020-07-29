@@ -89,11 +89,11 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
   protected boolean createVisRunnable;
 
   protected Graph<V, ?> graph;
-  protected VisRunnable visRunnable;
+  protected VisRunnable visRunnable = VisRunnable.noop();
   /** @value relaxing true is this layout model is being accessed by a running relaxer */
   protected boolean relaxing;
 
-  protected Threaded threadedLayoutAlgoritihm;
+  protected Threaded threadedLayoutAlgoritihm = Threaded.noop();
 
   /** Handles events fired when vertex locations are changed */
   protected LayoutVertexPositionChange.Support layoutVertexPositionSupport =
@@ -245,9 +245,9 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
     if (visRunnable != null) {
       visRunnable.stop();
     }
-    if (threadedLayoutAlgoritihm != null) {
-      threadedLayoutAlgoritihm.cancel();
-    }
+    //    if (threadedLayoutAlgoritihm != null) {
+    threadedLayoutAlgoritihm.cancel();
+    //    }
 
     // layout becomes active
     layoutStateChangeSupport.fireLayoutStateChanged(this, true);
