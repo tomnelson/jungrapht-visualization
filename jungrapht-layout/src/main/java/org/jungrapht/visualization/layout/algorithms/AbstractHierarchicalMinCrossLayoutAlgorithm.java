@@ -168,7 +168,6 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
   protected boolean threaded;
   protected Layering layering;
   protected Executor executor;
-  protected Set<CompletableFuture> theFutures = new HashSet<>();
   protected Runnable after;
   protected boolean separateComponents;
   protected Map<E, List<Point>> edgePointMap = new HashMap<>();
@@ -244,7 +243,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
 
   @Override
   public void cancel() {
-    this.cancelled = true;
+    runnables.forEach(LayeredRunnable::cancel);
   }
 
   protected boolean isComplete(int expected) {
@@ -311,31 +310,29 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
       runnables.add(runnable);
       if (threaded) {
         if (executor != null) {
-          theFutures.add(
-              CompletableFuture.runAsync(runnable, executor)
-                  .thenRun(
-                      () -> {
-                        log.trace("MinCross layout done");
-                        this.edgePointMap.putAll(runnable.getEdgePointMap());
-                        if (!cancelled && isComplete(graphs.size())) {
-                          after.run();
-                          layoutModel.setFireEvents(true);
-                          appendAll(layoutModel, layoutModels);
-                        }
-                      }));
+          CompletableFuture.runAsync(runnable, executor)
+              .thenRun(
+                  () -> {
+                    log.trace("MinCross layout done");
+                    this.edgePointMap.putAll(runnable.getEdgePointMap());
+                    if (!cancelled && isComplete(graphs.size())) {
+                      after.run();
+                      layoutModel.setFireEvents(true);
+                      appendAll(layoutModel, layoutModels);
+                    }
+                  });
         } else {
-          theFutures.add(
-              CompletableFuture.runAsync(runnable)
-                  .thenRun(
-                      () -> {
-                        log.trace("MinCross layout done");
-                        this.edgePointMap.putAll(runnable.getEdgePointMap());
-                        if (!cancelled && isComplete(graphs.size())) {
-                          after.run();
-                          layoutModel.setFireEvents(true);
-                          appendAll(layoutModel, layoutModels);
-                        }
-                      }));
+          CompletableFuture.runAsync(runnable)
+              .thenRun(
+                  () -> {
+                    log.trace("MinCross layout done");
+                    this.edgePointMap.putAll(runnable.getEdgePointMap());
+                    if (!cancelled && isComplete(graphs.size())) {
+                      after.run();
+                      layoutModel.setFireEvents(true);
+                      appendAll(layoutModel, layoutModels);
+                    }
+                  });
         }
       } else {
         runnable.run();
@@ -357,34 +354,6 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
         .getLayoutStateChangeSupport()
         .fireLayoutStateChanged(parentLayoutModel, false);
   }
-
-  //  @Override
-  //  public boolean cancel(boolean mayInterruptIfRunning) {
-  //    this.cancel();
-  //    runnables.forEach(LayeredRunnable::cancel);
-  //    return theFutures.stream().map(f -> f.cancel(true)).allMatch(b -> b);
-  //  }
-  //
-  //  @Override
-  //  public boolean isCancelled() {
-  //    return theFutures.stream().map(CompletableFuture::isCancelled).allMatch(b -> b);
-  //  }
-
-  //  @Override
-  //  public boolean isDone() {
-  //    return theFutures.stream().map(CompletableFuture::isDone).allMatch(b -> b);
-  //  }
-  //
-  //  @Override
-  //  public Object get() throws InterruptedException, ExecutionException {
-  //    return null;
-  //  }
-  //
-  //  @Override
-  //  public Object get(long timeout, TimeUnit unit)
-  //      throws InterruptedException, ExecutionException, TimeoutException {
-  //    return null;
-  //  }
 
   @Override
   public void runAfter() {

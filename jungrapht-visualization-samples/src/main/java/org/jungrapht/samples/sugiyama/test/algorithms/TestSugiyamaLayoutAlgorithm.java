@@ -114,20 +114,18 @@ public class TestSugiyamaLayoutAlgorithm<V, E> extends SugiyamaLayoutAlgorithm<V
             .doDownRight(doDownRight)
             .build();
     if (threaded) {
-
-      theFutures.add(
-          CompletableFuture.runAsync(runnable)
-              .thenRun(
-                  () -> {
-                    log.trace("TestSugiyama layout done");
-                    this.edgePointMap.putAll(runnable.getEdgePointMap());
-                    this.runAfter(); // run the after function
-                    layoutModel.getViewChangeSupport().fireViewChanged();
-                    // fire an event to say that the layout is done
-                    layoutModel
-                        .getLayoutStateChangeSupport()
-                        .fireLayoutStateChanged(layoutModel, false);
-                  }));
+      CompletableFuture.runAsync(runnable)
+          .thenRun(
+              () -> {
+                log.trace("TestSugiyama layout done");
+                this.edgePointMap.putAll(runnable.getEdgePointMap());
+                this.runAfter(); // run the after function
+                layoutModel.getViewChangeSupport().fireViewChanged();
+                // fire an event to say that the layout is done
+                layoutModel
+                    .getLayoutStateChangeSupport()
+                    .fireLayoutStateChanged(layoutModel, false);
+              });
     } else {
       runnable.run();
       this.edgePointMap.putAll(runnable.getEdgePointMap());
