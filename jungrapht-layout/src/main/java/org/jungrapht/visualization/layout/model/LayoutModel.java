@@ -139,7 +139,9 @@ public interface LayoutModel<V>
   void setPreferredSize(int width, int helght);
 
   /** stop a relaxer Thread from continuing to operate */
-  void stop();
+  default void stop() {
+    // noop
+  }
 
   /**
    * indicates that there is a relaxer thread operating on this LayoutModel

@@ -349,10 +349,12 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
 
   private void appendAll(
       LayoutModel<V> parentLayoutModel, Collection<LayoutModel<V>> childLayoutModels) {
-    childLayoutModels.forEach(parentLayoutModel::appendLayoutModel);
-    parentLayoutModel
-        .getLayoutStateChangeSupport()
-        .fireLayoutStateChanged(parentLayoutModel, false);
+    if (!cancelled) {
+      childLayoutModels.forEach(parentLayoutModel::appendLayoutModel);
+      parentLayoutModel
+          .getLayoutStateChangeSupport()
+          .fireLayoutStateChanged(parentLayoutModel, false);
+    }
   }
 
   @Override

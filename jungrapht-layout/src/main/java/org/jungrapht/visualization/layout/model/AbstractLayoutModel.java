@@ -93,8 +93,6 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
   /** @value relaxing true is this layout model is being accessed by a running relaxer */
   protected boolean relaxing;
 
-  protected Threaded threadedLayoutAlgoritihm = Threaded.noop();
-
   /** Handles events fired when vertex locations are changed */
   protected LayoutVertexPositionChange.Support layoutVertexPositionSupport =
       LayoutVertexPositionChange.Support.create();
@@ -141,9 +139,6 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
     if (this.visRunnable != null) {
       this.visRunnable.stop();
     }
-    if (threadedLayoutAlgoritihm != null) {
-      threadedLayoutAlgoritihm.cancel();
-    }
     setRelaxing(false);
   }
 
@@ -176,9 +171,6 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
       }
       this.visRunnable.stop();
     }
-    if (threadedLayoutAlgoritihm != null) {
-      threadedLayoutAlgoritihm.cancel();
-    }
     // if there is an initialDimensionFunction, and if the LayoutAlgorithm
     // is not an Unconstrained type (not a Tree or Circle) then apply the function to
     // set the layout area constraints
@@ -200,10 +192,6 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
     if (layoutAlgorithm != null) {
       layoutAlgorithm.visit(this);
 
-      // e.g. the SugiyamaLayoutAlgorithm
-      if (layoutAlgorithm instanceof Threaded) {
-        this.threadedLayoutAlgoritihm = (Threaded) layoutAlgorithm;
-      }
       if (graph.vertexSet().size() > 0
           && // don't create thread for empty graph
           createVisRunnable
@@ -245,9 +233,6 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
     if (visRunnable != null) {
       visRunnable.stop();
     }
-    //    if (threadedLayoutAlgoritihm != null) {
-    threadedLayoutAlgoritihm.cancel();
-    //    }
 
     // layout becomes active
     layoutStateChangeSupport.fireLayoutStateChanged(this, true);

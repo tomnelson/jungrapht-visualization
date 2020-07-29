@@ -146,5 +146,8 @@ public abstract class AbstractIterativeLayoutAlgorithm<V> extends AbstractLayout
   @Override
   public void cancel() {
     cancelled = true;
+    if (layoutModel != null) {
+      layoutModel.stop();
+    }
   }
 }

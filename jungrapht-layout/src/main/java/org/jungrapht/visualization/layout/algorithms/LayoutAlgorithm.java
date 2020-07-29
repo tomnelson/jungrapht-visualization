@@ -21,6 +21,10 @@ public interface LayoutAlgorithm<V> {
    */
   void visit(LayoutModel<V> layoutModel);
 
+  default void cancel() {
+    // no op
+  }
+
   default boolean constrained() {
     return true;
   }

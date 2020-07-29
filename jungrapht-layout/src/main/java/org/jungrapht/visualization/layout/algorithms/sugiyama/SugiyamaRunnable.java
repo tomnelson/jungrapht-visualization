@@ -283,7 +283,7 @@ public class SugiyamaRunnable<V, E> implements LayeredRunnable<E> {
 
     // check for interrupted before layering
     if (cancelled || Thread.currentThread().isInterrupted()) {
-      log.info("interrupted before layering");
+      log.info("interrupted before layering, cancelled: {}", cancelled);
       return;
     }
     List<List<LV<V>>> layers;
@@ -348,7 +348,7 @@ public class SugiyamaRunnable<V, E> implements LayeredRunnable<E> {
     // order the ranks
     for (int i = 0; i < maxLevelCross; i++) {
       if (cancelled || Thread.currentThread().isInterrupted()) {
-        log.info("interrupted in level cross");
+        log.info("interrupted in level cross, cancelled: {}", cancelled);
         return;
       }
       if (i % 2 == 0) {
@@ -415,7 +415,7 @@ public class SugiyamaRunnable<V, E> implements LayeredRunnable<E> {
     Map<LV<V>, Point> vertexPointMap = new HashMap<>();
 
     if (cancelled || Thread.currentThread().isInterrupted()) {
-      log.info("interrupted before compaction");
+      log.info("interrupted before compaction, cancelled: {}", cancelled);
       return;
     }
     if (straightenEdges) {
@@ -579,6 +579,7 @@ public class SugiyamaRunnable<V, E> implements LayeredRunnable<E> {
     log.trace("articulated edges took {}", (articulatedEdgeTime - pointsSetTime));
 
     if (cancelled) {
+      log.info("interrupted before setting layoutModel from svGraph, cancelled: {}", cancelled);
       return;
     }
     svGraph.vertexSet().forEach(v -> layoutModel.set(v.getVertex(), v.getPoint()));
