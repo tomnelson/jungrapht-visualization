@@ -177,31 +177,38 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
   }
 
   protected void recalculate(Collection<T> elements) {
-    log.trace("start recalculate");
-    clear();
-    if (boundingRectangleCollector != null) {
-      for (T element : elements) {
-        rtree =
-            RTree.add(
-                rtree, splitterContext, element, boundingRectangleCollector.getForElement(element));
-        if (log.isTraceEnabled()) {
-          log.trace("added {} got {} nodes in {}", element, rtree.count(), rtree);
+    try {
+      log.trace("start recalculate");
+      clear();
+      if (boundingRectangleCollector != null) {
+        for (T element : elements) {
+          rtree =
+              RTree.add(
+                  rtree,
+                  splitterContext,
+                  element,
+                  boundingRectangleCollector.getForElement(element));
+          if (log.isTraceEnabled()) {
+            log.trace("added {} got {} nodes in {}", element, rtree.count(), rtree);
+          }
         }
-      }
-      if (reinsert) {
-        if (log.isTraceEnabled()) {
-          log.trace("before reinsert node count: {}", rtree.count());
-        }
+        if (reinsert) {
+          if (log.isTraceEnabled()) {
+            log.trace("before reinsert node count: {}", rtree.count());
+          }
 
-        rtree = RTree.reinsert(rtree, splitterContext);
-        if (log.isTraceEnabled()) {
-          log.trace("after reinsert node count: {}", rtree.count());
+          rtree = RTree.reinsert(rtree, splitterContext);
+          if (log.isTraceEnabled()) {
+            log.trace("after reinsert node count: {}", rtree.count());
+          }
         }
+      } else {
+        log.trace("got no rectangles");
       }
-    } else {
-      log.trace("got no rectangles");
+      log.trace("end recalculate");
+    } catch (Exception ex) {
+      log.debug("unstable RTree got exception: {}", ex);
     }
-    log.trace("end recalculate");
   }
 
   protected void bulkInsert(Collection<T> elements) {

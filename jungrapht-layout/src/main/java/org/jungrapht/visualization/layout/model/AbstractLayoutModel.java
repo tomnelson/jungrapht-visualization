@@ -158,6 +158,9 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
    */
   @Override
   public void accept(LayoutAlgorithm<V> layoutAlgorithm) {
+    if (graph.vertexSet().isEmpty()) {
+      return;
+    }
     log.trace("accept {}", layoutAlgorithm);
     this.appendageCount = 0;
     // stop any running layout algorithm

@@ -90,6 +90,11 @@ public class DefaultSatelliteVisualizationViewer<V, E> extends DefaultVisualizat
     getRenderContext().setEdgeShapeFunction(master.getRenderContext().getEdgeShapeFunction());
   }
 
+  @Override
+  public void renderContextStateChanged(RenderContextStateChange.Event evt) {
+    // don't create the spatial data structures
+  }
+
   /**
    * override to not use the spatial data structure, as this view will always show the entire graph
    *

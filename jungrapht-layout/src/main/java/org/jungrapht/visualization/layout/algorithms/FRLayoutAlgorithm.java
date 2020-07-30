@@ -142,7 +142,10 @@ public class FRLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
 
   private void doInit() {
     Graph<V, ?> graph = layoutModel.getGraph();
-    if (graph != null && graph.vertexSet().size() > 0) {
+    if (graph != null
+        && graph.vertexSet().size() > 0
+        && layoutModel.getWidth() > 0
+        && layoutModel.getHeight() > 0) {
       currentIteration = 0;
       temperature = layoutModel.getWidth() / 10;
 

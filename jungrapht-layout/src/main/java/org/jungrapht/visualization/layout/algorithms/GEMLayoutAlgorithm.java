@@ -278,8 +278,18 @@ public class GEMLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorithm<V
       adjustToFit();
     }
     Rectangle range = computeLayoutExtent(layoutModel);
-    // add the padding
-    range = Rectangle.from(range.min().add(-50, -50), range.max().add(50, 50));
+    // add padding of 5% of width and height
+    int widthPadding = (int) (range.width * 0.05);
+    int heightPadding = (int) (range.height * 0.05);
+    range =
+        Rectangle.from(
+            range.min().add(-widthPadding, -heightPadding),
+            range.max().add(widthPadding, heightPadding));
+
+    // offset all the vertex points by widthPadding and heightPadding
+    graph
+        .vertexSet()
+        .forEach(v -> layoutModel.set(v, layoutModel.apply(v).add(widthPadding, heightPadding)));
 
     int maxDimension = Math.max((int) range.width, (int) range.height);
     layoutModel.setSize(maxDimension, maxDimension);
