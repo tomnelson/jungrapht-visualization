@@ -607,7 +607,9 @@ class DefaultVisualizationServer<V, E> extends JPanel
     renderContext.setupArrows(visualizationModel.getGraph().getType().isDirected());
     applyLayoutAlgorithmConnections();
     renderer.setCountSupplier(visualizationModel.getGraph().vertexSet()::size);
-    SwingUtilities.invokeLater(() -> displayLayoutBounds()); // for debugging
+    if (log.isDebugEnabled()) {
+      SwingUtilities.invokeLater(() -> displayLayoutBounds()); // for debugging
+    }
     repaint();
   }
 
