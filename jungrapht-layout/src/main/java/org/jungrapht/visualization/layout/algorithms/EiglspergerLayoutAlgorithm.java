@@ -81,7 +81,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
     this(EiglspergerLayoutAlgorithm.edgeAwareBuilder());
   }
 
-  protected EiglspergerLayoutAlgorithm(Builder builder) {
+  protected EiglspergerLayoutAlgorithm(Builder<V, E, ?, ?> builder) {
     this(
         builder.vertexBoundsFunction,
         builder.straightenEdges,

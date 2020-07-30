@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Paint;
 import java.awt.Stroke;
+import java.awt.geom.Ellipse2D;
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
@@ -33,6 +34,8 @@ import org.jgrapht.alg.util.Pair;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.nio.Attribute;
+import org.jgrapht.nio.AttributeType;
+import org.jgrapht.nio.DefaultAttribute;
 import org.jgrapht.nio.GraphImporter;
 import org.jgrapht.nio.csv.CSVImporter;
 import org.jgrapht.nio.dimacs.DIMACSImporter;
@@ -72,6 +75,9 @@ import org.slf4j.LoggerFactory;
  * Demonstrates several of the graph layout algorithms. Allows the user to interactively select one
  * of several graphs, loaded from files using JGrapht io, and one of several layouts, and visualizes
  * the combination.
+ *
+ * <p>This application has been tested with the graphml sample files in
+ * https://github.com/melaniewalsh/sample-social-network-datasets
  *
  * @author Tom Nelson
  */
@@ -135,9 +141,28 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
             .build();
 
     vv.setVertexToolTipFunction(vertex -> vertex + " " + vertexAttributes.get(vertex));
+    vv.getRenderContext()
+        .setVertexLabelFunction(
+            vertex -> {
+              Map<String, Attribute> map = vertexAttributes.get(vertex);
+              return map.getOrDefault(
+                      "label",
+                      map.getOrDefault("ID", new DefaultAttribute(vertex, AttributeType.STRING)))
+                  .getValue();
+            });
 
     vv.getRenderContext().setVertexFillPaintFunction(vertexFillPaintFunction);
 
+    vv.getRenderContext()
+        .setVertexShapeFunction(
+            v -> {
+              Graph<String, DefaultEdge> g = vv.getVisualizationModel().getGraph();
+              if (!g.vertexSet().contains(v)) {
+                log.error("shapeFunction {} was not in {}", v, g.vertexSet());
+              }
+              int size = Math.max(5, 2 * (g.vertexSet().contains(v) ? g.degreeOf(v) : 20));
+              return new Ellipse2D.Float(-size / 2.f, -size / 2.f, size, size);
+            });
     Function<String, Paint> vertexDrawPaintFunction =
         v -> vv.getSelectedVertexState().isSelected(v) ? Color.pink : Color.black;
     Function<String, Stroke> vertexStrokeFunction =
@@ -287,6 +312,7 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
             switch (suffix) {
               case "graphml":
                 importer = new GraphMLImporter();
+                ((GraphMLImporter) importer).setSchemaValidation(false);
                 GraphMLImporter gmlImporter = (GraphMLImporter) importer;
                 gmlImporter.addVertexAttributeConsumer(
                     (BiConsumer<Pair<String, String>, Attribute>)

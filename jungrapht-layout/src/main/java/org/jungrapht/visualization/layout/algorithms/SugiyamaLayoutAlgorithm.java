@@ -86,7 +86,7 @@ public class SugiyamaLayoutAlgorithm<V, E> extends AbstractHierarchicalMinCrossL
     this(SugiyamaLayoutAlgorithm.edgeAwareBuilder());
   }
 
-  protected SugiyamaLayoutAlgorithm(Builder builder) {
+  protected SugiyamaLayoutAlgorithm(Builder<V, E, ?, ?> builder) {
     this(
         builder.vertexBoundsFunction,
         builder.straightenEdges,

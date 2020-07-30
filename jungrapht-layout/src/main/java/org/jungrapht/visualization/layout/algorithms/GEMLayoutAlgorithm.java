@@ -99,7 +99,7 @@ public class GEMLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorithm<V
     this(GEMLayoutAlgorithm.edgeAwareBuilder());
   }
 
-  protected GEMLayoutAlgorithm(Builder builder) {
+  protected GEMLayoutAlgorithm(Builder<V, E, ?, ?> builder) {
     super(builder);
     this.maxIterations = builder.maxIterations;
     this.multi = builder.multi;

@@ -106,7 +106,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
     this(HierarchicalMinCrossLayoutAlgorithm.edgeAwareBuilder());
   }
 
-  private HierarchicalMinCrossLayoutAlgorithm(Builder builder) {
+  private HierarchicalMinCrossLayoutAlgorithm(Builder<V, E, ?, ?> builder) {
     this(
         builder.vertexBoundsFunction,
         builder.eiglspergerThreshold,

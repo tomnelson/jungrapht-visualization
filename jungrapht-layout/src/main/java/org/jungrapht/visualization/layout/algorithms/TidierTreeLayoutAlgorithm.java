@@ -138,7 +138,7 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
     this(TidierTreeLayoutAlgorithm.edgeAwareBuilder());
   }
 
-  protected TidierTreeLayoutAlgorithm(Builder builder) {
+  protected TidierTreeLayoutAlgorithm(Builder<V, E, ?, ?> builder) {
     super(builder);
     this.vertexPredicate = builder.vertexPredicate;
     this.vertexComparator = builder.vertexComparator;
