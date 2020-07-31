@@ -27,6 +27,7 @@ import java.util.stream.IntStream;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.alg.connectivity.ConnectivityInspector;
+import org.jgrapht.alg.util.NeighborCache;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.CircleLayoutReduceEdgeCrossing;
@@ -319,9 +320,11 @@ public class CircleLayoutAlgorithm<V>
     Graph<V, E> graph;
     private List<V> vertexOrderedList;
     int edgeCrossCount = 0;
+    NeighborCache<V, E> neighborCache;
 
     ReduceCrossingRunnable(Graph<V, E> graph, List<V> vertexOrderList) {
       this.graph = graph;
+      this.neighborCache = new NeighborCache<>(graph);
       this.vertexOrderedList = vertexOrderList;
     }
 
@@ -338,9 +341,9 @@ public class CircleLayoutAlgorithm<V>
           vertexSet.forEach(subGraph::addVertex);
           for (V v : vertexSet) {
             // get neighbors
-            Graphs.successorListOf(graph, v)
-                .forEach(s -> subGraph.addEdge(v, s, graph.getEdge(v, s)));
-            Graphs.predecessorListOf(graph, v)
+            neighborCache.successorsOf(v).forEach(s -> subGraph.addEdge(v, s, graph.getEdge(v, s)));
+            neighborCache
+                .predecessorsOf(v)
                 .forEach(p -> subGraph.addEdge(p, v, graph.getEdge(p, v)));
           }
           CircleLayoutReduceEdgeCrossing<V, E> rec = new CircleLayoutReduceEdgeCrossing<>(subGraph);

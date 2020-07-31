@@ -18,6 +18,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import org.jgrapht.alg.util.NeighborCache;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Rectangle;
 import org.slf4j.Logger;
@@ -152,6 +153,8 @@ public abstract class AbstractTreeLayoutAlgorithm<V> extends AbstractLayoutAlgor
 
   protected Set<V> visitedVertices = new HashSet<>();
 
+  protected NeighborCache<V, ?> neighborCache;
+
   @Override
   public void setVertexBoundsFunction(Function<V, Rectangle> vertexBoundsFunction) {
     Objects.requireNonNull(vertexBoundsFunction);
@@ -186,7 +189,9 @@ public abstract class AbstractTreeLayoutAlgorithm<V> extends AbstractLayoutAlgor
    * @param layoutModel the mediator between the container for vertices (the Graph) and the mapping
    */
   @Override
-  public abstract void visit(LayoutModel<V> layoutModel);
+  public void visit(LayoutModel<V> layoutModel) {
+    this.neighborCache = new NeighborCache<>(layoutModel.getGraph());
+  }
 
   /**
    * @return the {@link Map} of vertex to {@link Rectangle} that will hold all of the subtree rooted

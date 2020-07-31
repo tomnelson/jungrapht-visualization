@@ -13,7 +13,6 @@ package org.jungrapht.visualization.layout.algorithms;
 import java.util.*;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
-import org.jgrapht.Graphs;
 import org.jgrapht.alg.interfaces.SpanningTreeAlgorithm;
 import org.jgrapht.alg.spanning.PrimMinimumSpanningTree;
 import org.jgrapht.graph.AsUndirectedGraph;
@@ -84,7 +83,11 @@ public class TreeLayoutAlgorithm<V> extends AbstractTreeLayoutAlgorithm<V>
    */
   @Override
   public void visit(LayoutModel<V> layoutModel) {
-    buildTree(layoutModel);
+    if (!layoutModel.getGraph().vertexSet().isEmpty()) {
+      super.visit(layoutModel);
+      //    this.neighborCache = new NeighborCache<>(layoutModel.getGraph());
+      buildTree(layoutModel);
+    }
   }
 
   /**
@@ -198,7 +201,7 @@ public class TreeLayoutAlgorithm<V> extends AbstractTreeLayoutAlgorithm<V>
       double sizeXofCurrent = baseBounds.get(vertex).width;
       x -= sizeXofCurrent / 2;
 
-      for (V element : Graphs.successorListOf(layoutModel.getGraph(), vertex)) {
+      for (V element : neighborCache.successorsOf(vertex)) {
         if (!rootPredicate.test(element) && !seen.contains(element)) {
           log.trace("get base position of {} from {}", element, baseBounds);
           double sizeXofChild = this.baseBounds.get(element).width;
@@ -240,7 +243,8 @@ public class TreeLayoutAlgorithm<V> extends AbstractTreeLayoutAlgorithm<V>
       int width =
           Math.max(
               0,
-              Graphs.successorListOf(graph, vertex)
+              neighborCache
+                      .successorsOf(vertex)
                       .stream()
                       .filter(v -> !rootPredicate.test(v) && !seen.contains(v))
                       .mapToInt(
@@ -291,9 +295,9 @@ public class TreeLayoutAlgorithm<V> extends AbstractTreeLayoutAlgorithm<V>
       Graph<V, ?> graph = layoutModel.getGraph();
 
       int height =
-          Graphs.successorListOf(graph, vertex)
+          neighborCache
+              .successorsOf(vertex)
               .stream()
-              //              .filter(v -> !seen.contains(v))
               .filter(v -> !rootPredicate.test(v) && !seen.contains(v))
               .mapToInt(
                   element -> calculateHeight(layoutModel, element, seen) + verticalVertexSpacing)

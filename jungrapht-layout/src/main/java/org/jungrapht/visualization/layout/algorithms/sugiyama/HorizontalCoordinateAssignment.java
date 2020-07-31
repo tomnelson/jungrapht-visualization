@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
-import org.jgrapht.Graphs;
+import org.jgrapht.alg.util.NeighborCache;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.util.synthetics.Synthetic;
 import org.slf4j.Logger;
@@ -21,6 +21,7 @@ public class HorizontalCoordinateAssignment<V, E> {
   private static Logger log = LoggerFactory.getLogger(HorizontalCoordinateAssignment.class);
 
   protected Graph<LV<V>, LE<V, E>> svGraph;
+  protected NeighborCache<LV<V>, LE<V, E>> neighborCache;
   protected Set<LE<V, E>> markedSegments;
   protected LV<V>[][] layers;
   protected int horizontalOffset;
@@ -34,6 +35,7 @@ public class HorizontalCoordinateAssignment<V, E> {
       int horizontalOffset,
       int verticalOffset) {
     this.svGraph = svGraph;
+    this.neighborCache = new NeighborCache<>(svGraph);
     this.markedSegments = markedSegments;
     this.layers = layers;
     this.horizontalOffset = horizontalOffset;
@@ -173,14 +175,9 @@ public class HorizontalCoordinateAssignment<V, E> {
     return v.getIndex();
   }
 
-  protected int upperNeighborIndexFor(SyntheticLV<V> v) {
-    // any Synthetic vertex must have one upper and one lower neighbor
-    return Graphs.predecessorListOf(svGraph, v).get(0).getIndex();
-  }
-
   protected LV<V> upperNeighborFor(LV<V> v) {
     // any Synthetic vertex must have one upper and one lower neighbor
-    return Graphs.predecessorListOf(svGraph, v).get(0);
+    return neighborCache.predecessorsOf(v).stream().findFirst().get();
   }
 
   /**
@@ -189,9 +186,9 @@ public class HorizontalCoordinateAssignment<V, E> {
    */
   protected boolean incidentToInnerSegment(LV<V> v) {
     if (v instanceof Synthetic) { // then there is one and only one predecessor
-      List<LV<V>> predecessors = Graphs.predecessorListOf(svGraph, v);
+      Collection<LV<V>> predecessors = neighborCache.predecessorsOf(v);
       if (predecessors.size() > 0) {
-        LV<V> pv = predecessors.get(0);
+        LV<V> pv = predecessors.stream().findFirst().get();
         return pv instanceof Synthetic; // both are synthetic so edge between them is an inner edge
       }
     }
@@ -243,7 +240,8 @@ public class HorizontalCoordinateAssignment<V, E> {
    * @return a list of the upper neighbors for the supplied vertex, sorted in index order
    */
   protected List<LV<V>> getUpperNeighbors(LV<V> v) {
-    return Graphs.predecessorListOf(svGraph, v)
+    return neighborCache
+        .predecessorsOf(v)
         .stream()
         .sorted(Comparator.comparingInt(LV::getIndex))
         .collect(Collectors.toList());

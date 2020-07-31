@@ -152,8 +152,6 @@ public class CircleLayoutReduceEdgeCrossing<V, E> {
     Map<SV<V>, List<SV<V>>> otherMap = new HashMap<>();
     for (SV<V> v : svGraph.vertexSet()) {
       tableList.add(v);
-      log.info("neighbors of {} from Graphs: {}", v, Graphs.neighborSetOf(svGraph, v));
-      log.info("neighbors of {} from cache: {}", v, neighborCache.neighborsOf(v));
       tableMap.put(
           v,
           neighborCache

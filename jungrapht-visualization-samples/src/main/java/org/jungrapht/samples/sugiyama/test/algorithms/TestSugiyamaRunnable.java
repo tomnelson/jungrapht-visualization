@@ -254,10 +254,6 @@ public class TestSugiyamaRunnable<V, E> extends SugiyamaRunnable<V, E> implement
               doDownRight);
       horizontalCoordinateAssignment.horizontalCoordinateAssignment();
 
-      //      HorizontalCoordinateAssignment<V, E> horizontalCoordinateAssignment = new HorizontalCoordinateAssignment<>(
-      //              layersArray, svGraph, new HashSet<>(), horizontalOffset, verticalOffset);
-      //      horizontalCoordinateAssignment.horizontalCoordinateAssignment();
-
       GraphLayers.checkLayers(layersArray);
 
       for (int i = 0; i < layersArray.length; i++) {
@@ -275,7 +271,6 @@ public class TestSugiyamaRunnable<V, E> extends SugiyamaRunnable<V, E> implement
     Map<Integer, Integer> rowWidthMap = new HashMap<>(); // all the row widths
     Map<Integer, Integer> rowMaxHeightMap = new HashMap<>(); // all the row heights
     int layerIndex = 0;
-    //    Function<V, Shape> vertexShapeFunction = vertexShapeFunction;
     int totalHeight = 0;
     int totalWidth = 0;
     for (int i = 0; i < layersArray.length; i++) {
@@ -393,7 +388,6 @@ public class TestSugiyamaRunnable<V, E> extends SugiyamaRunnable<V, E> implement
               svGraph.addEdge(reversed.getSource(), reversed.getTarget(), reversed);
             });
 
-    Map<E, List<Point>> edgePointMap = new HashMap<>();
     for (ArticulatedEdge<V, E> ae : articulatedEdges) {
       List<Point> points = new ArrayList<>();
       if (feedbackEdges.contains(ae.edge)) {

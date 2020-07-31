@@ -14,14 +14,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
-import org.jgrapht.Graphs;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.PolarPoint;
@@ -85,7 +83,7 @@ public class BalloonLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
         graph
             .vertexSet()
             .stream()
-            .filter(vertex -> Graphs.predecessorListOf(graph, vertex).isEmpty())
+            .filter(vertex -> neighborCache.predecessorsOf(vertex).isEmpty())
             .collect(Collectors.toCollection(LinkedHashSet::new));
     log.trace("roots: {}", roots);
     int width = layoutModel.getWidth();
@@ -95,7 +93,7 @@ public class BalloonLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
       setRootPolar(layoutModel, root);
       setPolars(
           layoutModel,
-          Graphs.successorListOf(graph, root),
+          neighborCache.successorsOf(root),
           getCenter(layoutModel),
           0,
           width / 2,
@@ -160,7 +158,7 @@ public class BalloonLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
       // compute the angle from p to the parent and pass to function
       // so that sub tree vertex positions can be bisected by it.
       double newAngleToParent = Math.atan2(p.y - parentLocation.y, parentLocation.x - p.x);
-      List<V> successors = Graphs.successorListOf(layoutModel.getGraph(), child);
+      Set<V> successors = new HashSet<>(neighborCache.successorsOf(child));
       successors.removeIf(seen::contains);
       seen.addAll(successors);
       setPolars(layoutModel, successors, p, newAngleToParent, childRadius, seen);
@@ -174,7 +172,7 @@ public class BalloonLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
    */
   public Point getCenter(LayoutModel<V> layoutModel, V vertex) {
     Graph<V, ?> graph = layoutModel.getGraph();
-    V parent = Graphs.predecessorListOf(graph, vertex).stream().findFirst().orElse(null);
+    V parent = neighborCache.predecessorsOf(vertex).stream().findFirst().orElse(null);
     if (parent == null) {
       return getCenter(layoutModel);
     }

@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
-import org.jgrapht.Graphs;
+import org.jgrapht.alg.util.NeighborCache;
 import org.jungrapht.visualization.layout.algorithms.util.ComponentGrouping;
 import org.jungrapht.visualization.layout.algorithms.util.TreeView;
 import org.jungrapht.visualization.layout.algorithms.util.VertexBoundsFunctionConsumer;
@@ -122,6 +122,7 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
   protected Comparator<V> vertexComparator;
   protected Comparator<E> edgeComparator;
   protected Graph<V, E> tree;
+  protected NeighborCache<V, E> neighborCache;
   protected LayoutModel<V> layoutModel;
 
   private static class VertexData<V> {
@@ -176,7 +177,7 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
         // get the union of all kids
         Rectangle r = vertexBoundsFunction.apply(root);
         r = Rectangle.of(r.x - r.width / 2 + p.x, r.y - r.height / 2 + p.y, r.width, r.height);
-        baseBounds.put(root, union(r, Graphs.successorListOf(tree, root)));
+        baseBounds.put(root, union(r, neighborCache.successorsOf(root)));
       }
     }
     return baseBounds;
@@ -189,7 +190,7 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
       r = Rectangle.of(vr.x - vr.width / 2 + p.x, vr.y - vr.height / 2 + p.y, vr.width, vr.height);
       r = r.union(vr);
       r = union(r, successors(v));
-      baseBounds.put(v, union(r, Graphs.successorListOf(tree, v)));
+      baseBounds.put(v, union(r, neighborCache.successorsOf(v)));
     }
     return r;
   }
@@ -361,7 +362,7 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
     V vor = v;
     V vir = v;
     V vil = leftSibling;
-    V vol = successors(parentOfV).get(0);
+    V vol = successors(parentOfV).stream().findFirst().get();
 
     int innerRight = vertexData(vir).mod;
     int outerRight = vertexData(vor).mod;
@@ -414,7 +415,7 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
     log.trace("shift({})", v);
     int shift = 0;
     int change = 0;
-    List<V> children = successors(v);
+    List<V> children = new ArrayList<>(successors(v));
     Collections.reverse(children);
 
     for (V w : children) {
@@ -425,24 +426,28 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
     }
   }
 
-  private List<V> successors(V v) {
+  private Collection<V> successors(V v) {
     if (v == null) {
       // if v is null, then its successors are the forest roots
       log.trace("successors({}) = {}", v, roots);
       return roots;
     }
-    log.trace("successors({}) = {}", v, Graphs.successorListOf(tree, v));
-    return Graphs.successorListOf(tree, v);
+    if (log.isTraceEnabled()) {
+      log.trace("successors({}) = {}", v, neighborCache.successorsOf(v));
+    }
+    return neighborCache.successorsOf(v);
   }
 
-  private List<V> predecessors(V v) {
+  private Collection<V> predecessors(V v) {
     if (roots.contains(v)) {
       // if v is one of the roots, then its predecessor is null (not empty collection)
       log.trace("predecessors({}) = {}", v, Collections.singletonList(null));
       return ((List<V>) Collections.singletonList(null));
     }
-    log.trace("predecessors({}) = {}", v, Graphs.predecessorListOf(tree, v));
-    return Graphs.predecessorListOf(tree, v);
+    if (log.isTraceEnabled()) {
+      log.trace("predecessors({}) = {}", v, neighborCache.predecessorsOf(v));
+    }
+    return neighborCache.predecessorsOf(v);
   }
 
   private V leftChild(V v) {
@@ -536,6 +541,7 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
             .vertexPredicate(vertexPredicate)
             .build();
     this.tree = treeView.buildTree(graph);
+    this.neighborCache = new NeighborCache<>(this.tree);
     V root = null;
     if (roots.size() == 1) {
       // this is a tree, otherwise it is a forest (and root stays null)
