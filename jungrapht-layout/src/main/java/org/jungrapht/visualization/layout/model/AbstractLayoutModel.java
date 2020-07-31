@@ -161,7 +161,7 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
     if (graph.vertexSet().isEmpty()) {
       return;
     }
-    log.trace("accept {}", layoutAlgorithm);
+    log.debug("accept {}", layoutAlgorithm);
     this.appendageCount = 0;
     // stop any running layout algorithm
     if (this.visRunnable != null) {
@@ -173,7 +173,7 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
     // if there is an initialDimensionFunction, and if the LayoutAlgorithm
     // is not an Unconstrained type (not a Tree or Circle) then apply the function to
     // set the layout area constraints
-    log.trace("{} is constrained: {}", layoutAlgorithm, layoutAlgorithm.constrained());
+    log.debug("{} is constrained: {}", layoutAlgorithm, layoutAlgorithm.constrained());
 
     if (layoutAlgorithm.constrained()) {
       log.trace("{} constrained: {}", layoutAlgorithm, true);
@@ -254,20 +254,22 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
 
     if (executor != null) {
       // use the Executor provided with the LayoutAlgorithm
+      log.debug("start visRunner thread");
       CompletableFuture.runAsync(visRunnable, executor)
           .thenRun(
               () -> {
-                log.trace("We're done");
+                log.debug("We're done");
                 setRelaxing(false);
                 this.viewChangeSupport.fireViewChanged();
                 // fire an event to say that the layout relax is done
                 this.layoutStateChangeSupport.fireLayoutStateChanged(this, false);
               });
     } else {
+      log.debug("start visRunner thread");
       CompletableFuture.runAsync(visRunnable)
           .thenRun(
               () -> {
-                log.trace("We're done");
+                log.debug("We're done");
                 setRelaxing(false);
                 this.viewChangeSupport.fireViewChanged();
                 // fire an event to say that the layout relax is done

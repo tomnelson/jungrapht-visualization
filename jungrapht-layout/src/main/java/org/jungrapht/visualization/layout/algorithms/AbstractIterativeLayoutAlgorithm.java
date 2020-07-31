@@ -129,7 +129,7 @@ public abstract class AbstractIterativeLayoutAlgorithm<V> extends AbstractLayout
    * continuously
    */
   public void visit(LayoutModel<V> layoutModel) {
-    log.trace("visiting " + layoutModel);
+    log.debug("visiting " + layoutModel);
     this.layoutModel = layoutModel;
   }
 

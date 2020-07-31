@@ -267,12 +267,15 @@ public class GEMLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorithm<V
   private Graph<V, E> graph;
 
   public void visit(LayoutModel<V> layoutModel) {
+    log.debug("visit");
     super.visit(layoutModel);
     this.graph = layoutModel.getGraph();
     if (graph == null || graph.vertexSet().isEmpty()) {
       return;
     }
+    log.debug("initialize");
     this.initialize();
+    log.debug("arrange");
     this.arrange();
     if (adjustToFit) {
       adjustToFit();
@@ -286,12 +289,14 @@ public class GEMLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorithm<V
             range.min().add(-widthPadding, -heightPadding),
             range.max().add(widthPadding, heightPadding));
 
+    log.debug("offset");
     // offset all the vertex points by widthPadding and heightPadding
     graph
         .vertexSet()
         .forEach(v -> layoutModel.set(v, layoutModel.apply(v).add(widthPadding, heightPadding)));
 
     int maxDimension = Math.max((int) range.width, (int) range.height);
+    log.debug("layoutModel.setSize({}, {}", maxDimension, maxDimension);
     layoutModel.setSize(maxDimension, maxDimension);
   }
 
