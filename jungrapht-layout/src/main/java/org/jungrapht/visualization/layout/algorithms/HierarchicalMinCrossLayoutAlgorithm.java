@@ -41,7 +41,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
     extends AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
     implements LayoutAlgorithm<V>,
         VertexBoundsFunctionConsumer<V>,
-        Layered,
+        Layered<V, E>,
         AfterRunnable,
         ExecutorConsumer,
         Threaded {
@@ -115,6 +115,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
         builder.transpose,
         builder.transposeLimit,
         builder.maxLevelCross,
+        builder.maxLevelCrossFunction,
         builder.expandLayout,
         builder.layering,
         builder.threaded,
@@ -131,6 +132,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
       boolean transpose,
       int transposeLimit,
       int maxLevelCross,
+      Function<Graph<V, E>, Integer> maxLevelCrossFunction,
       boolean expandLayout,
       Layering layering,
       boolean threaded,
@@ -143,6 +145,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
         postStraighten,
         transpose,
         maxLevelCross,
+        maxLevelCrossFunction,
         expandLayout,
         layering,
         threaded,

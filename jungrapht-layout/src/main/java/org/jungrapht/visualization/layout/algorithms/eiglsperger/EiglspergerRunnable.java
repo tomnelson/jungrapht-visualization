@@ -15,7 +15,6 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import org.jgrapht.Graph;
-import org.jgrapht.Graphs;
 import org.jgrapht.alg.util.NeighborCache;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
@@ -145,7 +144,7 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
   protected Function<V, Rectangle> vertexShapeFunction;
   protected Graph<V, E> graph;
   protected Graph<LV<V>, LE<V, E>> svGraph;
-  boolean stopit = false;
+  protected NeighborCache<LV<V>, LE<V, E>> neighborCache;
   protected Predicate<V> vertexPredicate;
   protected Predicate<E> edgePredicate;
   protected boolean straightenEdges;
@@ -221,6 +220,7 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
     long startTime = System.currentTimeMillis();
     TransformedGraphSupplier<V, E> transformedGraphSupplier = new TransformedGraphSupplier<>(graph);
     this.svGraph = transformedGraphSupplier.get();
+    neighborCache = new NeighborCache<>(svGraph);
     long transformTime = System.currentTimeMillis();
     log.trace("transform Graph took {}", (transformTime - startTime));
 
@@ -244,10 +244,10 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
     List<List<LV<V>>> layers;
     switch (layering) {
       case LONGEST_PATH:
-        layers = GraphLayers.longestPath(svGraph);
+        layers = GraphLayers.longestPath(svGraph, neighborCache);
         break;
       case COFFMAN_GRAHAM:
-        layers = GraphLayers.coffmanGraham(svGraph, 0);
+        layers = GraphLayers.coffmanGraham(svGraph, neighborCache, 0);
         break;
       case NETWORK_SIMPLEX:
         layers = GraphLayers.networkSimplex(svGraph);
@@ -279,7 +279,6 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
     if (svGraph.edgeSet().size() > 200) {
       maxLevelCross = 2;
     }
-    NeighborCache<LV<V>, LE<V, E>> neighborCache = new NeighborCache<>(svGraph);
     stepsForward = new EiglspergerStepsForward<>(svGraph, neighborCache, layersArray, transpose);
     stepsBackward = new EiglspergerStepsBackward<>(svGraph, neighborCache, layersArray, transpose);
 
@@ -630,12 +629,12 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
 
   int distanceToRoot(Graph<LV<V>, Integer> compactionGraph, LV<V> v) {
     int distance = 0;
-    List<LV<V>> preds = Graphs.predecessorListOf(compactionGraph, v);
+    Set<LV<V>> preds = neighborCache.predecessorsOf(v);
     while (!preds.isEmpty()) {
       distance++;
       // pick one
-      LV<V> pred = preds.get(0);
-      preds = Graphs.predecessorListOf(compactionGraph, pred);
+      LV<V> pred = preds.stream().findFirst().get();
+      preds = neighborCache.predecessorsOf(pred);
     }
     return distance;
   }

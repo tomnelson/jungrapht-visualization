@@ -3,7 +3,7 @@ package org.jungrapht.visualization.layout.algorithms.sugiyama;
 import java.util.*;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
-import org.jgrapht.Graphs;
+import org.jgrapht.alg.util.NeighborCache;
 import org.jungrapht.visualization.layout.algorithms.util.ComponentGrouping;
 import org.jungrapht.visualization.layout.algorithms.util.NetworkSimplex;
 import org.jungrapht.visualization.layout.algorithms.util.NetworkSimplexDevelopment;
@@ -95,6 +95,11 @@ public class GraphLayers {
   }
 
   public static <V, E> List<List<LV<V>>> longestPath(Graph<LV<V>, LE<V, E>> dag) {
+    return longestPath(dag, new NeighborCache<>(dag));
+  }
+
+  public static <V, E> List<List<LV<V>>> longestPath(
+      Graph<LV<V>, LE<V, E>> dag, NeighborCache<LV<V>, LE<V, E>> neighborCache) {
     List<List<LV<V>>> list = new ArrayList<>();
 
     Set<LV<V>> U = new HashSet<>();
@@ -106,7 +111,7 @@ public class GraphLayers {
       Optional<LV<V>> optional =
           V.stream()
               .filter(v -> !U.contains(v))
-              .filter(v -> Z.containsAll(Graphs.successorListOf(dag, v)))
+              .filter(v -> Z.containsAll(neighborCache.successorsOf(v)))
               .findFirst();
       if (optional.isPresent()) {
         LV<V> got = optional.get();
@@ -134,6 +139,11 @@ public class GraphLayers {
   }
 
   public static <V, E> List<List<LV<V>>> longestPathReverse(Graph<LV<V>, LE<V, E>> dag) {
+    return longestPathReverse(dag, new NeighborCache<>(dag));
+  }
+
+  public static <V, E> List<List<LV<V>>> longestPathReverse(
+      Graph<LV<V>, LE<V, E>> dag, NeighborCache<LV<V>, LE<V, E>> neighborCache) {
     List<List<LV<V>>> list = new ArrayList<>();
 
     Set<LV<V>> U = new HashSet<>();
@@ -145,7 +155,7 @@ public class GraphLayers {
       Optional<LV<V>> optional =
           V.stream()
               .filter(v -> !U.contains(v))
-              .filter(v -> Z.containsAll(Graphs.successorListOf(dag, v)))
+              .filter(v -> Z.containsAll(neighborCache.successorsOf(v)))
               .findFirst();
       if (optional.isPresent()) {
         LV<V> got = optional.get();
@@ -204,6 +214,11 @@ public class GraphLayers {
   }
 
   public static <V, E> List<List<LV<V>>> coffmanGraham(Graph<LV<V>, LE<V, E>> dag, int width) {
+    return coffmanGraham(dag, new NeighborCache<>(dag), width);
+  }
+
+  public static <V, E> List<List<LV<V>>> coffmanGraham(
+      Graph<LV<V>, LE<V, E>> dag, NeighborCache<LV<V>, LE<V, E>> neighborCache, int width) {
     if (width == 0) {
       width = dag.vertexSet().size() / 10;
     }
@@ -228,10 +243,10 @@ public class GraphLayers {
       LV<V> got =
           V.stream()
               .filter(v -> !U.contains(v))
-              .filter(v -> U.containsAll(Graphs.successorListOf(dag, v)))
+              .filter(v -> U.containsAll(neighborCache.successorsOf(v)))
               .max(Comparator.comparingInt(lambda::get))
               .get();
-      if (list.get(k).size() < width && Z.containsAll(Graphs.successorListOf(dag, got))) {
+      if (list.get(k).size() < width && Z.containsAll(neighborCache.successorsOf(got))) {
         list.get(k).add(got);
       } else {
         Z.addAll(list.get(k));

@@ -48,7 +48,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
     implements LayoutAlgorithm<V>,
         VertexBoundsFunctionConsumer<V>,
         EdgeArticulationFunctionSupplier<E>,
-        Layered,
+        Layered<V, E>,
         AfterRunnable,
         Threaded,
         ExecutorConsumer {
@@ -86,6 +86,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
         Boolean.parseBoolean(System.getProperty(MINCROSS_POST_STRAIGHTEN, "true"));;
     protected boolean transpose = true;
     protected int maxLevelCross = Integer.getInteger(MAX_LEVEL_CROSS, 23);
+    protected Function<Graph<V, E>, Integer> maxLevelCrossFunction = g -> maxLevelCross;
     protected boolean expandLayout = true;
     protected Layering layering = Layering.TOP_DOWN;
     protected Runnable after = () -> {};
@@ -120,6 +121,11 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
 
     public B maxLevelCross(int maxLevelCross) {
       this.maxLevelCross = maxLevelCross;
+      return self();
+    }
+
+    public B maxLevelCrossFunction(Function<Graph<V, E>, Integer> maxLevelCrossFunction) {
+      this.maxLevelCrossFunction = maxLevelCrossFunction;
       return self();
     }
 
@@ -164,6 +170,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
   protected boolean postStraighten;
   protected boolean transpose;
   protected int maxLevelCross;
+  protected Function<Graph<V, E>, Integer> maxLevelCrossFunction;
   protected boolean expandLayout;
   protected boolean threaded;
   protected Layering layering;
@@ -183,6 +190,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
         builder.postStraighten,
         builder.transpose,
         builder.maxLevelCross,
+        builder.maxLevelCrossFunction,
         builder.expandLayout,
         builder.layering,
         builder.threaded,
@@ -197,6 +205,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
       boolean postStraighten,
       boolean transpose,
       int maxLevelCross,
+      Function<Graph<V, E>, Integer> maxLevelCrossFunction,
       boolean expandLayout,
       Layering layering,
       boolean threaded,
@@ -208,6 +217,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
     this.postStraighten = postStraighten;
     this.transpose = transpose;
     this.maxLevelCross = maxLevelCross;
+    this.maxLevelCrossFunction = maxLevelCrossFunction;
     this.expandLayout = expandLayout;
     this.layering = layering;
     this.threaded = threaded;
@@ -230,6 +240,11 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
   public void setLayering(Layering layering) {
     this.edgePointMap.clear();
     this.layering = layering;
+  }
+
+  @Override
+  public void setMaxLevelCrossFunction(Function<Graph<V, E>, Integer> maxLevelCrossFunction) {
+    this.maxLevelCrossFunction = maxLevelCrossFunction;
   }
 
   @Override

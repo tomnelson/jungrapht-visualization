@@ -57,7 +57,9 @@ public class HorizontalCompaction<V, E>
           .forEach(v -> log.trace("v:{}, root(v):{} equal: {}", v, root(v), (v == root(v))));
     }
 
-    log.trace("compactionGraph vertices: {}", compactionGraph.vertexSet());
+    if (log.isTraceEnabled()) {
+      log.trace("compactionGraph vertices: {}", compactionGraph.vertexSet());
+    }
 
     Set<LV<V>> verticesInCompactionGraphAndSegmentEnds = new HashSet<>();
     for (LV<V> v : compactionGraph.vertexSet()) {
@@ -79,26 +81,34 @@ public class HorizontalCompaction<V, E>
         }
       }
     }
-    log.trace(
-        "verticesInCompactionGraphAndSegmentEnds = {}", verticesInCompactionGraphAndSegmentEnds);
+    if (log.isTraceEnabled()) {
+      log.trace(
+          "verticesInCompactionGraphAndSegmentEnds = {}", verticesInCompactionGraphAndSegmentEnds);
+    }
     for (LV<V> v : compactionGraph.vertexSet()) {
       if (v instanceof Segment) {
         Segment<V> segment = (Segment<V>) v;
         PVertex<V> pVertex = segment.pVertex;
         if (root(pVertex) == pVertex) {
-          log.trace("(p) will placeBlock({})", pVertex);
+          if (log.isTraceEnabled()) {
+            log.trace("(p) will placeBlock({})", pVertex);
+          }
           placeBlock(pVertex);
         }
         QVertex<V> qVertex = segment.qVertex;
         if (root(qVertex) == qVertex) {
-          log.trace("(q) will placeBlock({})", qVertex);
+          if (log.isTraceEnabled()) {
+            log.trace("(q) will placeBlock({})", qVertex);
+          }
           placeBlock(qVertex);
         }
 
       } else {
         LV<V> root = root(v);
         if (root == v) {
-          log.trace("(v) will placeBlock({})", v);
+          if (log.isTraceEnabled()) {
+            log.trace("(v) will placeBlock({})", v);
+          }
           placeBlock(v);
         }
       }
@@ -128,7 +138,9 @@ public class HorizontalCompaction<V, E>
       LV<V> w = v;
       do {
 
-        log.trace("look for predecessor of {}", w);
+        if (log.isTraceEnabled()) {
+          log.trace("look for predecessor of {}", w);
+        }
         LV<V> cw;
         if (w instanceof SegmentVertex) {
           SegmentVertex<V> sv = (SegmentVertex<V>) w;
@@ -137,9 +149,10 @@ public class HorizontalCompaction<V, E>
           cw = w;
         }
         if (compactionGraph.containsVertex(cw)) {
-          log.trace("inDegree of {} is {}", cw, compactionGraph.inDegreeOf(cw));
-          log.trace("outDegree of {} is {}", cw, compactionGraph.outDegreeOf(cw));
-
+          if (log.isTraceEnabled()) {
+            log.trace("inDegree of {} is {}", cw, compactionGraph.inDegreeOf(cw));
+            log.trace("outDegree of {} is {}", cw, compactionGraph.outDegreeOf(cw));
+          }
           if ((hDirection == LtoR && compactionGraph.inDegreeOf(cw) > 0)
               || (hDirection == RtoL && compactionGraph.outDegreeOf(cw) > 0)) {
             var edges =
@@ -160,7 +173,9 @@ public class HorizontalCompaction<V, E>
               } else {
                 u = root(pred);
               }
-              log.trace("(u) will placeBlock({})", u);
+              if (log.isTraceEnabled()) {
+                log.trace("(u) will placeBlock({})", u);
+              }
               placeBlock(u);
               if (sink(v) == v) {
                 sink(v, sink(u));
@@ -208,7 +223,9 @@ public class HorizontalCompaction<V, E>
       for (LV<V> v : layer) {
         int x = x(v);
         if (xValuesThisLayer.containsKey(x)) {
-          log.trace("already seen {} in this layer {}", x, layer);
+          if (log.isTraceEnabled()) {
+            log.trace("already seen {} in this layer {}", x, layer);
+          }
         } else {
           xValuesThisLayer.put(x, v);
         }

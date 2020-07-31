@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
-import org.jgrapht.Graphs;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.slf4j.Logger;
@@ -67,9 +66,9 @@ public abstract class VerticalAlignment<V, E>
   protected int alignSegmentVertexMoveCursor(SegmentVertex<V> segmentVertex) {
     SegmentVertex<V> neighborSegmentVertex;
     if (segmentVertex instanceof PVertex) {
-      neighborSegmentVertex = ((PVertex<V>) segmentVertex).segment.qVertex;
+      neighborSegmentVertex = segmentVertex.segment.qVertex;
     } else {
-      neighborSegmentVertex = ((QVertex<V>) segmentVertex).segment.pVertex;
+      neighborSegmentVertex = segmentVertex.segment.pVertex;
     }
     //    align(neighbor, vertex);
     root(segmentVertex, root(neighborSegmentVertex));
@@ -103,7 +102,8 @@ public abstract class VerticalAlignment<V, E>
         for (int k = 0; k <= currentLayer.length - 1; k++) {
           LV<V> vkofi = currentLayer[k];
           List<LV<V>> neighbors =
-              Graphs.predecessorListOf(svGraph, vkofi)
+              neighborCache
+                  .predecessorsOf(vkofi)
                   .stream()
                   .sorted(Comparator.comparingInt(LV::getIndex))
                   .collect(Collectors.toList());
@@ -157,7 +157,8 @@ public abstract class VerticalAlignment<V, E>
         for (int k = currentLayer.length - 1; k >= 0; k--) {
           LV<V> vkofi = currentLayer[k];
           List<LV<V>> neighbors =
-              Graphs.predecessorListOf(svGraph, vkofi)
+              neighborCache
+                  .predecessorsOf(vkofi)
                   .stream()
                   .sorted(Comparator.comparingInt(LV::getIndex))
                   .collect(Collectors.toList());
@@ -215,7 +216,8 @@ public abstract class VerticalAlignment<V, E>
         for (int k = 0; k < currentLayer.length; k++) {
           LV<V> vkofi = currentLayer[k];
           List<LV<V>> neighbors =
-              Graphs.successorListOf(svGraph, vkofi)
+              neighborCache
+                  .successorsOf(vkofi)
                   .stream()
                   .sorted(Comparator.comparingInt(LV::getIndex))
                   .collect(Collectors.toList());
@@ -276,7 +278,8 @@ public abstract class VerticalAlignment<V, E>
         for (int k = currentLayer.length - 1; k >= 0; k--) {
           LV<V> vkofi = currentLayer[k];
           List<LV<V>> neighbors =
-              Graphs.successorListOf(svGraph, vkofi)
+              neighborCache
+                  .successorsOf(vkofi)
                   .stream()
                   .sorted(Comparator.comparingInt(LV::getIndex))
                   .collect(Collectors.toList());

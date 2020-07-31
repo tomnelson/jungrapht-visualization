@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
+import org.jgrapht.alg.util.NeighborCache;
 import org.jgrapht.traverse.DepthFirstIterator;
 import org.jungrapht.visualization.layout.util.synthetics.SE;
 import org.jungrapht.visualization.layout.util.synthetics.SV;
@@ -35,12 +36,14 @@ public class CircleLayoutReduceEdgeCrossing<V, E> {
   private List<SV<V>> tableList = new LinkedList<>();
   private Map<SV<V>, List<SV<V>>> tableMap = new HashMap<>();
   private V[] vertices;
+  NeighborCache<SV<V>, SE<E>> neighborCache;
 
   public CircleLayoutReduceEdgeCrossing(Graph<V, E> originalGraph) {
     this.originalGraph = originalGraph;
     SVTransformedGraphSupplier<V, E> transformedGraphSupplier =
         new SVTransformedGraphSupplier(originalGraph);
     this.svGraph = transformedGraphSupplier.get();
+    this.neighborCache = new NeighborCache<>(svGraph);
   }
 
   public List<V> getVertexOrderedList() {
@@ -85,6 +88,7 @@ public class CircleLayoutReduceEdgeCrossing<V, E> {
       svGraph.removeAllEdges(losers);
       svGraph.removeVertex(currentNode);
       //      nodes.remove(currentNode);
+      neighborCache = new NeighborCache<>(svGraph);
       waveCenterNodes.clear();
       waveCenterNodes.addAll(waveFrontNodes);
       waveCenterNodes.sort(ascendingDegreeComparator);
@@ -98,14 +102,14 @@ public class CircleLayoutReduceEdgeCrossing<V, E> {
     if (log.isTraceEnabled()) {
       log.trace("removed losers to get {}", svGraph);
     }
+    neighborCache = new NeighborCache<>(svGraph);
     DepthFirstIterator<SV<V>, SE<E>> dfi = new DepthFirstIterator<>(svGraph);
     while (dfi.hasNext()) {
       vertexList.add(dfi.next().getVertex());
     }
     for (SV<V> v : svGraph.vertexSet()) {
       if (!vertexList.contains(v.getVertex())) {
-        List<SV<V>> neighbors = Graphs.neighborListOf(svGraph, v);
-
+        List<SV<V>> neighbors = neighborCache.neighborListOf(v);
         List<V> inList =
             neighbors
                 .stream()
@@ -145,14 +149,19 @@ public class CircleLayoutReduceEdgeCrossing<V, E> {
   private void buildTable() {
     tableList.clear();
     tableMap.clear();
+    Map<SV<V>, List<SV<V>>> otherMap = new HashMap<>();
     for (SV<V> v : svGraph.vertexSet()) {
       tableList.add(v);
+      log.info("neighbors of {} from Graphs: {}", v, Graphs.neighborSetOf(svGraph, v));
+      log.info("neighbors of {} from cache: {}", v, neighborCache.neighborsOf(v));
       tableMap.put(
           v,
-          Graphs.neighborSetOf(svGraph, v)
+          neighborCache
+              .neighborsOf(v)
               .stream()
               .sorted(ascendingDegreeComparator)
               .collect(Collectors.toCollection(LinkedList::new)));
+
       tableList.sort(ascendingDegreeComparator);
     }
   }
