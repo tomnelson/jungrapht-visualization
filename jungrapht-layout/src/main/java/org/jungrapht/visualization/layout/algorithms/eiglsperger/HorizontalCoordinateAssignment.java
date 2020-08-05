@@ -72,7 +72,7 @@ public class HorizontalCoordinateAssignment<V, E>
             horizontalOffset,
             verticalOffset);
     upLeftCompaction.horizontalCompaction();
-    upLeftCompaction.checkValuesInLayersForSameX(layers);
+    //    upLeftCompaction.checkValuesInLayersForSameX(layers);
 
     if (log.isTraceEnabled()) {
       log.trace("upLeft");

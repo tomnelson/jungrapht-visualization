@@ -30,7 +30,6 @@ public class EditingPopupGraphMousePlugin<V, E> extends AbstractPopupGraphMouseP
     this.edgeFactory = edgeFactory;
   }
 
-  @SuppressWarnings({"unchecked", "serial"})
   protected void handlePopup(MouseEvent e) {
     final VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
     final LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();

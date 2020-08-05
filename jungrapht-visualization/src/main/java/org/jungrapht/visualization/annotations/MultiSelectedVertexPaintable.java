@@ -231,18 +231,22 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
             Math.max(
                 selectionStrokeMin, (int) (selectionStrokeMin / g2d.getTransform().getScaleX()));
         g2d.setStroke(new BasicStroke(strokeWidth));
-        for (V vertex : selectedVertices) {
-          paintTransformed(vertex);
-        }
+        selectedVertices
+            .stream()
+            .filter(visualizationServer.getRenderContext().getVertexIncludePredicate()::test)
+            .forEach(vertex -> paintTransformed(vertex));
         g2d.setStroke(savedStroke);
 
       } else {
-        for (V vertex : selectedVertices) {
-          paintIconForVertex(
-              visualizationServer.getRenderContext(),
-              visualizationServer.getVisualizationModel(),
-              vertex);
-        }
+        selectedVertices
+            .stream()
+            .filter(visualizationServer.getRenderContext().getVertexIncludePredicate()::test)
+            .forEach(
+                vertex ->
+                    paintIconForVertex(
+                        visualizationServer.getRenderContext(),
+                        visualizationServer.getVisualizationModel(),
+                        vertex));
       }
       // put back the old values
       g2d.setPaint(oldPaint);

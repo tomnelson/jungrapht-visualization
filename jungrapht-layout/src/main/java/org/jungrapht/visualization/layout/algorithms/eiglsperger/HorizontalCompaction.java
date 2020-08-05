@@ -137,7 +137,6 @@ public class HorizontalCompaction<V, E>
       x(v, 0);
       LV<V> w = v;
       do {
-
         if (log.isTraceEnabled()) {
           log.trace("look for predecessor of {}", w);
         }

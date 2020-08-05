@@ -275,16 +275,16 @@ public class EiglspergerSteps<V, E> {
     if (log.isTraceEnabled()) {
       log.trace("listS measures: {}", listS);
     }
-    if (listS.size() > 0
-        && listS.stream().mapToDouble(Container::getMeasure).min().getAsDouble() < 0) {
-      log.debug("something missing");
-    }
+    //    if (listS.size() > 0
+    //        && listS.stream().mapToDouble(Container::getMeasure).min().getAsDouble() < 0) {
+    //      log.debug("something missing");
+    //    }
     if (log.isTraceEnabled()) {
       log.trace("listV measures: {}", listV);
     }
-    if (listV.size() > 0 && listV.stream().mapToDouble(LV::getMeasure).min().getAsDouble() < 0) {
-      log.debug("something missing");
-    }
+    //    if (listV.size() > 0 && listV.stream().mapToDouble(LV::getMeasure).min().getAsDouble() < 0) {
+    //      log.debug("something missing");
+    //    }
     try {
       listS.sort(Comparator.comparingDouble(Container::getMeasure));
       listV.sort(Comparator.comparingDouble(LV::getMeasure));
@@ -348,9 +348,9 @@ public class EiglspergerSteps<V, E> {
       mergedList.addAll(listS);
     }
     mergedList.addAll(segmentVertexList);
-    StringBuilder builder = new StringBuilder("S3 mergedList:\n");
-    mergedList.forEach(v -> builder.append(v.toString()).append("\n"));
     if (log.isTraceEnabled()) {
+      StringBuilder builder = new StringBuilder("S3 mergedList:\n");
+      mergedList.forEach(v -> builder.append(v.toString()).append("\n"));
       log.trace(builder.toString());
     }
 
@@ -417,13 +417,14 @@ public class EiglspergerSteps<V, E> {
 
         Pair<Container<V>> containerPair = Container.split(container, segment);
 
-        if (log.isTraceEnabled())
+        if (log.isTraceEnabled()) {
           log.trace(
               "splitFound container into {} and {}", containerPair.first, containerPair.second);
-        log.trace(
-            "container pair is now {} and {}",
-            containerPair.first.printTree("\n"),
-            containerPair.second.printTree("\n"));
+          log.trace(
+              "container pair is now {} and {}",
+              containerPair.first.printTree("\n"),
+              containerPair.second.printTree("\n"));
+        }
 
         downstreamLayer.remove(q);
         if (log.isTraceEnabled()) {
@@ -498,7 +499,6 @@ public class EiglspergerSteps<V, E> {
         Container<V> container = (Container<V>) v;
         if (container.size() > 0) {
           virtualEdges.add(VirtualEdge.of(container, container));
-          //          biLayerEdges.add(VirtualEdge.of(container, container));
         }
       } else if (splitVertexPredicate.test(v)) {
         // downwards, this is a QVertex, upwards its a PVertex
@@ -507,7 +507,6 @@ public class EiglspergerSteps<V, E> {
         qvSource.setIndex(qv.getIndex());
         qvSource.setPos(qv.getPos());
         virtualEdges.add(VirtualEdge.of(qvSource, qv));
-        //        biLayerEdges.add(VirtualEdge.of(qvSource, qv));
       }
     }
 
@@ -537,7 +536,9 @@ public class EiglspergerSteps<V, E> {
     biLayerEdges.addAll(virtualEdges);
 
     // downwards, the function is a no-op, upwards the biLayerEdges endpoints are swapped
-    log.trace("for ranks {} and {} ....", currentRank, downstreamRank);
+    if (log.isTraceEnabled()) {
+      log.trace("for ranks {} and {} ....", currentRank, downstreamRank);
+    }
     return processRanks(downstreamLayer, edgeEndpointSwapOrNot.apply(biLayerEdges));
   }
 
@@ -566,14 +567,12 @@ public class EiglspergerSteps<V, E> {
         // these values should match and should both be <= to the crossingWeight
         int vw2 = crossingCount(biLayerEdges);
         int vw3 = AccumulatorTreeUtil.crossingCount(biLayerEdges);
-        log.trace("IS count:{}, AC count:{}", vw2, vw3);
+        if (log.isTraceEnabled()) {
+          log.trace("IS count:{}, AC count:{}", vw2, vw3);
+        }
       }
       int vw = AccumulatorTreeUtil.crossingWeight(biLayerEdges, f);
       crossCount = Math.min(vw, crossCount);
-      //      if (downstreamLayer.get(j) instanceof Container
-      //              || downstreamLayer.get(j + 1) instanceof Container) {
-      //        continue;
-      //      }
       if (log.isTraceEnabled()) {
         log.trace("crossingWeight:{}", vw);
       }
@@ -608,8 +607,6 @@ public class EiglspergerSteps<V, E> {
         if (wv == 0) {
           break;
         }
-        //      } else {
-        //        crossCount = Math.min(crossCount, vw);
       }
     }
     log.trace("crossCount  {}", crossCount);

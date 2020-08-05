@@ -730,13 +730,16 @@ public class SugiyamaRunnable<V, E> implements LayeredRunnable<E> {
     return InsertionSortCounter.insertionSortCounter(targetIndices);
   }
 
+  Function<LV<V>, int[]> upperNeighborIndicesMethod = this::upperNeighborIndices;
+  Function<LV<V>, int[]> lowerNeighborIndicesMethod = this::lowerNeighborIndices;
+
   //http://www.graphviz.org/Documentation/TSE93.pdf p 15
   void median(LV<V>[][] layers, int i, Graph<LV<V>, LE<V, E>> svGraph) {
 
     if (i % 2 == 0) {
       for (int r = 0; r < layers.length; r++) {
         for (LV<V> v : layers[r]) {
-          double median = medianValue(v, this::upperNeighborIndices, svGraph);
+          double median = medianValue(v, upperNeighborIndicesMethod, svGraph);
           v.setMeasure(median);
         }
         medianSortAndFixMetadata(layers[r]);
@@ -745,7 +748,7 @@ public class SugiyamaRunnable<V, E> implements LayeredRunnable<E> {
     } else {
       for (int r = layers.length - 1; r >= 0; r--) {
         for (LV<V> v : layers[r]) {
-          double median = medianValue(v, this::lowerNeighborIndices, svGraph);
+          double median = medianValue(v, lowerNeighborIndicesMethod, svGraph);
           v.setMeasure(median);
         }
         medianSortAndFixMetadata(layers[r]);
@@ -758,7 +761,7 @@ public class SugiyamaRunnable<V, E> implements LayeredRunnable<E> {
 
     for (int r = 0; r < layers.length; r++) {
       for (LV<V> v : layers[r]) {
-        double median = medianValue(v, this::upperNeighborIndices, svGraph);
+        double median = medianValue(v, upperNeighborIndicesMethod, svGraph);
         v.setMeasure(median);
       }
       medianSortAndFixMetadata(layers[r]);
@@ -770,7 +773,7 @@ public class SugiyamaRunnable<V, E> implements LayeredRunnable<E> {
 
     for (int r = layers.length - 1; r >= 0; r--) {
       for (LV<V> v : layers[r]) {
-        double median = medianValue(v, this::lowerNeighborIndices, svGraph);
+        double median = medianValue(v, lowerNeighborIndicesMethod, svGraph);
         v.setMeasure(median);
       }
       medianSortAndFixMetadata(layers[r]);

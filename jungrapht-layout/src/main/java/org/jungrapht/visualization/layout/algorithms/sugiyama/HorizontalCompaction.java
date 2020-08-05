@@ -3,6 +3,7 @@ package org.jungrapht.visualization.layout.algorithms.sugiyama;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 import org.jungrapht.visualization.layout.model.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,11 +51,13 @@ public class HorizontalCompaction<V> {
     return Point.of(x.get(v), y.get(v));
   }
 
+  Consumer<LV<V>> methodReference = this::placeBlock;
+
   public void horizontalCompaction() {
     Arrays.stream(layers)
         .flatMap(Arrays::stream)
         .filter(v -> root(v) == v)
-        .forEach(this::placeBlock);
+        .forEach(methodReference);
 
     for (int i = 0; i < layers.length; i++) {
       LV<V>[] list = layers[i];

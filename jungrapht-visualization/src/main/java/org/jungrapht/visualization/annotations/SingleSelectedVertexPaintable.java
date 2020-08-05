@@ -209,7 +209,11 @@ public class SingleSelectedVertexPaintable<V, E> implements VisualizationServer.
 
     V selectedVertex = selectedVertexFunction.apply(visualizationServer);
 
-    if (selectedVertex != null) {
+    if (selectedVertex != null
+        && visualizationServer
+            .getRenderContext()
+            .getVertexIncludePredicate()
+            .test(selectedVertex)) {
 
       GraphicsDecorator graphicsDecorator =
           visualizationServer.getRenderContext().getGraphicsContext();
