@@ -22,7 +22,7 @@ public class ModalSatelliteGraphMouse extends DefaultModalGraphMouse implements 
     super(in, out);
   }
 
-  protected void loadPlugins() {
+  public void loadPlugins() {
     pickingPlugin = new SelectingGraphMousePlugin();
     animatedPickingPlugin = new SatelliteAnimatedPickingGraphMousePlugin();
     translatingPlugin = new SatelliteTranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);

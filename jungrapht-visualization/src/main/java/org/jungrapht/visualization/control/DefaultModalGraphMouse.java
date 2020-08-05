@@ -49,13 +49,12 @@ public class DefaultModalGraphMouse<V, E> extends AbstractModalGraphMouse
    */
   public DefaultModalGraphMouse(float in, float out) {
     super(in, out);
-    loadPlugins();
     setModeKeyListener(new ModeKeyAdapter(this));
   }
 
   /** create the plugins, and load the plugins for TRANSFORMING mode */
   @Override
-  protected void loadPlugins() {
+  public void loadPlugins() {
     pickingPlugin =
         new SelectingGraphMousePlugin<>(
             InputEvent.BUTTON1_DOWN_MASK, 0, InputEvent.SHIFT_DOWN_MASK);

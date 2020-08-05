@@ -99,7 +99,7 @@ public class EditingModalGraphMouse<V, E> extends AbstractModalGraphMouse
 
   /** create the plugins, and load the plugins for TRANSFORMING mode */
   @Override
-  protected void loadPlugins() {
+  public void loadPlugins() {
     pickingPlugin =
         new SelectingGraphMousePlugin<V, E>(
             InputEvent.BUTTON1_DOWN_MASK, 0, InputEvent.SHIFT_DOWN_MASK);

@@ -63,7 +63,7 @@ public abstract class AbstractModalGraphMouse extends AbstractGraphMouse
   }
 
   /** create the plugins, and load the plugins for TRANSFORMING mode */
-  protected abstract void loadPlugins();
+  public abstract void loadPlugins();
 
   /** setter for the Mode. */
   public void setMode(Mode mode) {

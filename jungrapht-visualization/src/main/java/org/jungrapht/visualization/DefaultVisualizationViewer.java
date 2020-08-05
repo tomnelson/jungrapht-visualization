@@ -89,6 +89,7 @@ class DefaultVisualizationViewer<V, E> extends DefaultVisualizationServer<V, E>
    */
   public void setGraphMouse(GraphMouse graphMouse) {
     this.graphMouse = graphMouse;
+    this.graphMouse.loadPlugins();
     MouseListener[] ml = getMouseListeners();
     for (MouseListener aMl : ml) {
       if (aMl instanceof GraphMouse) {

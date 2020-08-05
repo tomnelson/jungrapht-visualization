@@ -192,7 +192,7 @@ public class MultiViewDemoModal extends JPanel {
     // each one has a different scaling plugin
     DefaultModalGraphMouse<String, Integer> gm1 =
         new DefaultModalGraphMouse<>() {
-          protected void loadPlugins() {
+          public void loadPlugins() {
             pickingPlugin = new SelectingGraphMousePlugin<String, Integer>();
             animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<String, Integer>();
             translatingPlugin = new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
@@ -207,7 +207,7 @@ public class MultiViewDemoModal extends JPanel {
 
     DefaultModalGraphMouse<String, Integer> gm2 =
         new DefaultModalGraphMouse<>() {
-          protected void loadPlugins() {
+          public void loadPlugins() {
             pickingPlugin = new SelectingGraphMousePlugin<String, Integer>();
             animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<String, Integer>();
             translatingPlugin = new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);

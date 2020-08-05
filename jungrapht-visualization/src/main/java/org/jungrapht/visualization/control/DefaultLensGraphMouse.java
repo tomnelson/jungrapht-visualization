@@ -44,7 +44,7 @@ public class DefaultLensGraphMouse<V, E> extends AbstractGraphMouse implements L
     this.lensKillingGraphMousePlugin.setKillSwitch(killSwitch);
   }
 
-  protected void loadPlugins() {
+  public void loadPlugins() {
     add(lensKillingGraphMousePlugin);
     add(new LensTranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK));
     add(lensSelectingGraphMousePlugin);

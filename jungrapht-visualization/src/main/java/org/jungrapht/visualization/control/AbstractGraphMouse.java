@@ -42,7 +42,7 @@ public abstract class AbstractGraphMouse extends PluggableGraphMouse {
   }
 
   /** create the plugins, and load the plugins for TRANSFORMING mode */
-  protected abstract void loadPlugins();
+  public abstract void loadPlugins();
 
   /** @param zoomAtMouse The zoomAtMouse to set. */
   public void setZoomAtMouse(boolean zoomAtMouse) {

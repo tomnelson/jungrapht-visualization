@@ -61,7 +61,7 @@ public class ModalLensGraphMouse extends AbstractModalGraphMouse
     this.lensKillingGraphMousePlugin.setKillSwitch(killSwitch);
   }
 
-  protected void loadPlugins() {
+  public void loadPlugins() {
     add(lensKillingGraphMousePlugin);
     pickingPlugin = lensSelectingGraphMousePlugin;
     //    animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<>();

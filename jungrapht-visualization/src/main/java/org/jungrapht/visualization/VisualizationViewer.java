@@ -132,5 +132,7 @@ public interface VisualizationViewer<V, E> extends VisualizationServer<V, E> {
   /**
    * a convenience type to represent a class that processes all types of mouse events for the graph
    */
-  interface GraphMouse extends MouseListener, MouseMotionListener, MouseWheelListener {}
+  interface GraphMouse extends MouseListener, MouseMotionListener, MouseWheelListener {
+    default void loadPlugins() {}
+  }
 }
