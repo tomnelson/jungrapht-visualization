@@ -18,6 +18,7 @@ import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.control.GraphMouseListener;
+import org.jungrapht.visualization.control.MultiSelectionStrategy;
 
 /**
  * Adds mouse behaviors and tooltips to the graph VisualizationServer base class
@@ -133,6 +134,8 @@ public interface VisualizationViewer<V, E> extends VisualizationServer<V, E> {
    * a convenience type to represent a class that processes all types of mouse events for the graph
    */
   interface GraphMouse extends MouseListener, MouseMotionListener, MouseWheelListener {
+    default void setMultiSelectionStrategy(MultiSelectionStrategy multiSelectionStrategy) {}
+
     default void loadPlugins() {}
   }
 }
