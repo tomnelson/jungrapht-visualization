@@ -16,8 +16,6 @@ import java.util.Set;
 import java.util.function.Function;
 import javax.swing.*;
 import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultGraphType;
-import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationModel;
@@ -89,17 +87,7 @@ public class VertexCollapseDemo extends JPanel {
     // make a pseudograph with Collapsable vertex types
     // the graph has to allow self loops and parallel edges in order to
     // be collapsed and expanded without losing edges
-    this.graph =
-        GraphTypeBuilder.<Collapsable<?>, Integer>forGraphType(DefaultGraphType.pseudograph())
-            .buildGraph();
-    // add vertices and edges to the new graph
-    for (Integer edge : generatedGraph.edgeSet()) {
-      Collapsable<?> source = Collapsable.of(generatedGraph.getEdgeSource(edge));
-      Collapsable<?> target = Collapsable.of(generatedGraph.getEdgeTarget(edge));
-      this.graph.addVertex(source);
-      this.graph.addVertex(target);
-      this.graph.addEdge(source, target, edge);
-    }
+    this.graph = GraphCollapser.makeCollapsableGraph(generatedGraph);
 
     collapser = new GraphCollapser<>(graph);
 

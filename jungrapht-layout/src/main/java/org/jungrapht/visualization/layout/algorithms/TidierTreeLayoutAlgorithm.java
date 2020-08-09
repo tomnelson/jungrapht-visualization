@@ -484,7 +484,6 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
     if (layoutModel instanceof Caching) {
       ((Caching) layoutModel).clear();
     }
-    this.rootPredicate = this.builderRootPredicate;
     this.layoutModel = layoutModel;
     Graph<V, E> graph = layoutModel.getGraph();
     if (graph == null || graph.vertexSet().isEmpty()) {
@@ -492,7 +491,7 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
     }
     this.defaultRootPredicate =
         v ->
-            layoutModel.getGraph().incomingEdgesOf(v).isEmpty()
+            graph.incomingEdgesOf(v).isEmpty()
                 || TreeLayout.isIsolatedVertex(layoutModel.getGraph(), v);
     this.vertexData.clear();
     this.heights.clear();

@@ -31,6 +31,32 @@ public class GraphCollapser<E> {
     this.graphBuilder = GraphTypeBuilder.forGraphType(DefaultGraphType.pseudograph());
   }
 
+  /**
+   * make a pseudograph with Collapsable vertex types the graph has to allow self loops and parallel
+   * edges in order to be collapsed and expanded without losing edges
+   *
+   * @param graph input graph
+   * @param <V> vertex type
+   * @param <E> edge type
+   * @return a collapsable verson of the input graph
+   */
+  public static <V, E> Graph<Collapsable<?>, E> makeCollapsableGraph(Graph<V, E> graph) {
+    Graph<Collapsable<?>, E> collapsableGraph =
+        GraphTypeBuilder.<Collapsable<?>, E>forGraphType(graph.getType())
+            .allowingMultipleEdges(true)
+            .allowingSelfLoops(true)
+            .buildGraph();
+    // add vertices and edges to the new graph
+    for (E edge : graph.edgeSet()) {
+      Collapsable<?> source = Collapsable.of(graph.getEdgeSource(edge));
+      Collapsable<?> target = Collapsable.of(graph.getEdgeTarget(edge));
+      collapsableGraph.addVertex(source);
+      collapsableGraph.addVertex(target);
+      collapsableGraph.addEdge(source, target, edge);
+    }
+    return collapsableGraph;
+  }
+
   public Graph<Collapsable<?>, E> collapse(
       Graph<Collapsable<?>, E> inGraph, Graph<Collapsable<?>, E> clusterGraph) {
 
