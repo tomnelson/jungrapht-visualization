@@ -9,14 +9,20 @@ import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ComponentGrouping {
+
+  private static final Logger log = LoggerFactory.getLogger(ComponentGrouping.class);
 
   public static <V, E> List<V> groupByComponents(Graph<V, E> graph, List<V> vertices) {
     // if there are multiple components, arrange the first row order to group their roots
     ConnectivityInspector<V, E> connectivityInspector = new ConnectivityInspector<>(graph);
     List<Set<V>> componentVertices = connectivityInspector.connectedSets();
-
+    if (log.isTraceEnabled()) {
+      log.trace("there are {} components", componentVertices.size());
+    }
     if (componentVertices.size() > 1) {
       vertices = groupByComponentMembership(componentVertices, vertices);
     }

@@ -191,7 +191,6 @@ public interface LayoutPaintable {
       this.vv = vv;
       this.layoutModel = vv.getVisualizationModel().getLayoutModel();
       this.radialTreeLayoutAlgorithm = radialTreeLayoutAlgorithm;
-      depths = getDepths();
     }
 
     private Collection<Double> getDepths() {
@@ -205,6 +204,9 @@ public interface LayoutPaintable {
     }
 
     public void paint(Graphics g) {
+      if (this.depths == null) {
+        this.depths = getDepths();
+      }
       g.setColor(Color.lightGray);
 
       Graphics2D g2d = (Graphics2D) g;

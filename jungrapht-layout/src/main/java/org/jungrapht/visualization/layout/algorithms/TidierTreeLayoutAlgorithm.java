@@ -5,9 +5,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
@@ -124,6 +126,7 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
   protected Graph<V, E> tree;
   protected NeighborCache<V, E> neighborCache;
   protected LayoutModel<V> layoutModel;
+  private Set<V> visitedVertices = new HashSet<>(); // used only in Trace debug mode
 
   private static class VertexData<V> {
     private int mod;
@@ -203,6 +206,9 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
   }
 
   private void firstWalk(V v, V leftSibling) {
+    if (log.isTraceEnabled()) {
+      visitedVertices.add(v);
+    }
     log.trace("firstWalk({}, {})", v, leftSibling);
     if (this.successors(v).isEmpty()) {
 
@@ -234,6 +240,9 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
   }
 
   private void secondWalk(V v, int m, int depth, int yOffset) {
+    if (log.isTraceEnabled()) {
+      visitedVertices.add(v);
+    }
 
     log.trace("secondWalk({}, {}, {}, {})", v, m, depth, yOffset);
     int levelHeight = this.heights.get(depth);
@@ -489,6 +498,9 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
     if (graph == null || graph.vertexSet().isEmpty()) {
       return;
     }
+    if (log.isTraceEnabled()) {
+      log.trace("this graph has {} vertices", graph.vertexSet().size());
+    }
     this.defaultRootPredicate =
         v ->
             graph.incomingEdgesOf(v).isEmpty()
@@ -569,6 +581,16 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
     layoutModel.setSize((int) extent.width, (int) extent.height);
     if (expandLayout) {
       expandToFill(layoutModel);
+    }
+    if (log.isTraceEnabled()) {
+      log.trace("visited {} vertices", visitedVertices.size());
+      log.trace(
+          "vertices that were not visited: {}",
+          graph
+              .vertexSet()
+              .stream()
+              .filter(v -> !visitedVertices.contains(v))
+              .collect(Collectors.toSet()));
     }
   }
 }
