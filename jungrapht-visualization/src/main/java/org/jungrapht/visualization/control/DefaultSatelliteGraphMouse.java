@@ -32,7 +32,9 @@ public class DefaultSatelliteGraphMouse<V, E> extends AbstractGraphMouse {
   public void loadPlugins() {
     scalingPlugin = new SatelliteScalingGraphMousePlugin(new CrossoverScalingControl(), 0, in, out);
     add(new SatelliteTranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK));
-    add(new SelectingGraphMousePlugin<V, E>());
+    pickingPlugin = new SelectingGraphMousePlugin<>();
+    pickingPlugin.setMultiSelectionStrategySupplier(multiSelectionStrategySupplier);
+    add(pickingPlugin);
     add(scalingPlugin);
   }
 

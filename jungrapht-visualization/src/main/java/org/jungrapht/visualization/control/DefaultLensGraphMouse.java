@@ -36,6 +36,8 @@ public class DefaultLensGraphMouse<V, E> extends AbstractGraphMouse implements L
     this.magnificationPlugin = magnificationPlugin;
     this.scalingPlugin = new ScalingGraphMousePlugin(new CrossoverScalingControl(), 0, in, out);
     this.lensSelectingGraphMousePlugin = new LensSelectingGraphMousePlugin<>();
+    this.lensSelectingGraphMousePlugin.setMultiSelectionStrategySupplier(
+        multiSelectionStrategySupplier);
     this.lensKillingGraphMousePlugin = new LensKillingGraphMousePlugin();
     loadPlugins();
   }

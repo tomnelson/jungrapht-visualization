@@ -25,6 +25,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
+import java.util.function.Supplier;
 import javax.swing.JComponent;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationModel;
@@ -86,18 +87,16 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
 
   protected Point2D deltaDown; // what's that flower you have on...
 
-  protected MultiSelectionStrategy multiSelectionStrategy =
-      Boolean.parseBoolean(System.getProperty(ARBITRARY_SHAPE_SELECTION, "false"))
-          ? MultiSelectionStrategy.arbitrary()
-          : MultiSelectionStrategy.rectangular();
+  protected MultiSelectionStrategy multiSelectionStrategy;
 
+  protected Supplier<MultiSelectionStrategy> multiSelectionStrategySupplier =
+      () -> MultiSelectionStrategy.rectangular();
   /** create an instance with default settings */
   public SelectingGraphMousePlugin() {
     this(
         InputEvent.BUTTON1_DOWN_MASK,
         InputEvent.CTRL_DOWN_MASK, // select or drag select in rectangle
-        InputEvent.SHIFT_DOWN_MASK // drag select in non-rectangular shape
-        );
+        InputEvent.SHIFT_DOWN_MASK);
   }
 
   /**
@@ -116,8 +115,9 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     this.cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
   }
 
-  public void setMultiSelectionStrategy(MultiSelectionStrategy multiSelectionStrategy) {
-    this.multiSelectionStrategy = multiSelectionStrategy;
+  public void setMultiSelectionStrategySupplier(
+      Supplier<MultiSelectionStrategy> multiSelectionStrategySupplier) {
+    this.multiSelectionStrategySupplier = multiSelectionStrategySupplier;
   }
 
   /** @return Returns the lensColor. */
@@ -175,6 +175,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    * @param e the event
    */
   public void mousePressed(MouseEvent e) {
+    multiSelectionStrategy = multiSelectionStrategySupplier.get();
     down = e.getPoint();
     log.trace("mouse pick at screen coords {}", e.getPoint());
     deltaDown = down;

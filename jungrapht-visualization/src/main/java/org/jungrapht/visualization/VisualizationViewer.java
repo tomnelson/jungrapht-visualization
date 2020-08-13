@@ -15,6 +15,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelListener;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.control.GraphMouseListener;
@@ -39,11 +40,21 @@ public interface VisualizationViewer<V, E> extends VisualizationServer<V, E> {
       extends DefaultVisualizationServer.Builder<V, E, T, B> {
 
     protected GraphMouse graphMouse = new DefaultGraphMouse();
+
+    protected Supplier<MultiSelectionStrategy> multiSelectionStrategySupplier =
+        () -> MultiSelectionStrategy.rectangular();
+
     /** create an instance with no initial args */
     protected Builder() {}
 
     public B graphMouse(GraphMouse graphMouse) {
       this.graphMouse = graphMouse;
+      return self();
+    }
+
+    public B multiSelectionStrategySupplier(
+        Supplier<MultiSelectionStrategy> multiSelectionStrategySupplier) {
+      this.multiSelectionStrategySupplier = multiSelectionStrategySupplier;
       return self();
     }
 
@@ -98,6 +109,9 @@ public interface VisualizationViewer<V, E> extends VisualizationServer<V, E> {
    */
   void setGraphMouse(GraphMouse graphMouse);
 
+  void setMultiSelectionStrategySupplier(
+      Supplier<MultiSelectionStrategy> multiSelectionStrategySupplier);
+
   /** @return the current <code>GraphMouse</code> */
   GraphMouse getGraphMouse();
 
@@ -134,7 +148,8 @@ public interface VisualizationViewer<V, E> extends VisualizationServer<V, E> {
    * a convenience type to represent a class that processes all types of mouse events for the graph
    */
   interface GraphMouse extends MouseListener, MouseMotionListener, MouseWheelListener {
-    default void setMultiSelectionStrategy(MultiSelectionStrategy multiSelectionStrategy) {}
+    default void setMultiSelectionStrategySupplier(
+        Supplier<MultiSelectionStrategy> multiSelectionStrategySupplier) {}
 
     default void loadPlugins() {}
   }

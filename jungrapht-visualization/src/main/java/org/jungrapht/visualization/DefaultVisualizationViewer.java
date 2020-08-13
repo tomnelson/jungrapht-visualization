@@ -21,11 +21,13 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.control.GraphMouseListener;
 import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.control.MouseListenerTranslator;
+import org.jungrapht.visualization.control.MultiSelectionStrategy;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.util.Pair;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -45,6 +47,7 @@ class DefaultVisualizationViewer<V, E> extends DefaultVisualizationServer<V, E>
         builder.visualizationModel,
         builder.initialDimensionFunction,
         builder.graphMouse,
+        builder.multiSelectionStrategySupplier,
         builder.layoutAlgorithm,
         builder.layoutSize,
         builder.viewSize);
@@ -55,12 +58,15 @@ class DefaultVisualizationViewer<V, E> extends DefaultVisualizationServer<V, E>
       VisualizationModel<V, E> visualizationModel,
       Function<Graph<V, ?>, Pair<Integer>> initialDimensionFunction,
       GraphMouse graphMouse,
+      Supplier<MultiSelectionStrategy> multiSelectionStrategySupplier,
       LayoutAlgorithm<V> layoutAlgorithm,
       Dimension layoutSize,
       Dimension viewSize) {
     super(
         graph, visualizationModel, initialDimensionFunction, layoutAlgorithm, layoutSize, viewSize);
     addMouseListener(requestFocusListener);
+    this.multiSelectionStrategySupplier = multiSelectionStrategySupplier;
+    graphMouse.setMultiSelectionStrategySupplier(multiSelectionStrategySupplier);
     setGraphMouse(graphMouse);
     if (graphMouse instanceof ModalGraphMouse) {
       addKeyListener(((ModalGraphMouse) graphMouse).getModeKeyListener());
@@ -74,12 +80,19 @@ class DefaultVisualizationViewer<V, E> extends DefaultVisualizationServer<V, E>
   /** provides MouseListener, MouseMotionListener, and MouseWheelListener events to the graph */
   protected GraphMouse graphMouse;
 
+  protected Supplier<MultiSelectionStrategy> multiSelectionStrategySupplier;
+
   protected MouseListener requestFocusListener =
       new MouseAdapter() {
         public void mouseClicked(MouseEvent e) {
           requestFocusInWindow();
         }
       };
+
+  public void setMultiSelectionStrategySupplier(
+      Supplier<MultiSelectionStrategy> multiSelectionStrategySupplier) {
+    this.multiSelectionStrategySupplier = multiSelectionStrategySupplier;
+  }
 
   /**
    * a setter for the GraphMouse. This will remove any previous GraphMouse (including the one that
@@ -90,6 +103,7 @@ class DefaultVisualizationViewer<V, E> extends DefaultVisualizationServer<V, E>
   public void setGraphMouse(GraphMouse graphMouse) {
     this.graphMouse = graphMouse;
     this.graphMouse.loadPlugins();
+    this.graphMouse.setMultiSelectionStrategySupplier(multiSelectionStrategySupplier);
     MouseListener[] ml = getMouseListeners();
     for (MouseListener aMl : ml) {
       if (aMl instanceof GraphMouse) {

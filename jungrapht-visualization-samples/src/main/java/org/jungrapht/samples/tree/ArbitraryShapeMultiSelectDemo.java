@@ -43,15 +43,14 @@ public class ArbitraryShapeMultiSelectDemo extends JPanel {
     Graph<String, Integer> graph = createTreeTwo();
 
     final DefaultGraphMouse<String, Integer> graphMouse = new DefaultGraphMouse<>();
-    graphMouse.setMultiSelectionStrategy(MultiSelectionStrategy.arbitrary());
 
     VisualizationViewer<String, Integer> vv =
         VisualizationViewer.builder(graph)
             .layoutAlgorithm(new StaticLayoutAlgorithm<>())
+            .multiSelectionStrategySupplier(() -> MultiSelectionStrategy.arbitrary())
             .viewSize(new Dimension(600, 600))
             .graphMouse(graphMouse)
             .build();
-
     vv.addPreRenderPaintable(
         new TitlePaintable(
             "Ctrl-MouseButton 1\nand drag to draw\nselection area", vv.getPreferredSize()));
