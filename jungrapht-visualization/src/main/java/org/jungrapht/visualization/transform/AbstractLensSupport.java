@@ -174,6 +174,9 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse> extend
 
   @Override
   public void activate() {
+    this.graphMouse =
+        vv
+            .getGraphMouse(); // save off the previous GraphMouse so we can get it back when we deactivate
     if (listenerList.getListenerCount() > 0) {
       fireItemStateChanged(new ItemEvent(this, ItemEvent.ITEM_FIRST, this, ItemEvent.SELECTED));
     }
@@ -181,6 +184,7 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse> extend
 
   @Override
   public void deactivate() {
+    vv.setGraphMouse(this.graphMouse);
     if (listenerList.getListenerCount() > 0) {
       fireItemStateChanged(new ItemEvent(this, ItemEvent.ITEM_FIRST, this, ItemEvent.DESELECTED));
     }

@@ -126,7 +126,7 @@ public class LayoutLensSupport<V, E, M extends LensGraphMouse> extends AbstractL
           .setTransformer(MultiLayerTransformer.Layer.LAYOUT, lensTransformer.getDelegate());
     }
     vv.setToolTipText(defaultToolTipText);
-    vv.setGraphMouse(graphMouse);
+    //    vv.setGraphMouse(graphMouse);
     vv.setTransformSupport(new TransformSupport<>());
     vv.repaint();
   }
