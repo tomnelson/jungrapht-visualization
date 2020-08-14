@@ -79,12 +79,12 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
         FRLayoutAlgorithm.<String>builder().maxIterations(100).build();
 
     final DefaultGraphMouse<String, Integer> graphMouse = new DefaultGraphMouse();
-    graphMouse.setMultiSelectionStrategySupplier(() -> MultiSelectionStrategy.arbitrary());
 
     vv =
         VisualizationViewer.builder(graph)
             .graphMouse(graphMouse)
             .layoutAlgorithm(layoutAlgorithm)
+            .multiSelectionStrategySupplier(() -> MultiSelectionStrategy.arbitrary())
             .layoutSize(layoutSize)
             .viewSize(viewSize)
             .build();

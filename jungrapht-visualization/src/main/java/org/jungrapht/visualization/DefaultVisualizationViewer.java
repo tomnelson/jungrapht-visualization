@@ -65,8 +65,7 @@ class DefaultVisualizationViewer<V, E> extends DefaultVisualizationServer<V, E>
     super(
         graph, visualizationModel, initialDimensionFunction, layoutAlgorithm, layoutSize, viewSize);
     addMouseListener(requestFocusListener);
-    this.multiSelectionStrategySupplier = multiSelectionStrategySupplier;
-    graphMouse.setMultiSelectionStrategySupplier(multiSelectionStrategySupplier);
+    setMultiSelectionStrategySupplier(multiSelectionStrategySupplier);
     setGraphMouse(graphMouse);
     if (graphMouse instanceof ModalGraphMouse) {
       addKeyListener(((ModalGraphMouse) graphMouse).getModeKeyListener());
@@ -94,6 +93,10 @@ class DefaultVisualizationViewer<V, E> extends DefaultVisualizationServer<V, E>
     this.multiSelectionStrategySupplier = multiSelectionStrategySupplier;
   }
 
+  public Supplier<MultiSelectionStrategy> getMultiSelectionStrategySupplier() {
+    return this.multiSelectionStrategySupplier;
+  }
+
   /**
    * a setter for the GraphMouse. This will remove any previous GraphMouse (including the one that
    * is added in the initMouseClicker method.
@@ -103,7 +106,6 @@ class DefaultVisualizationViewer<V, E> extends DefaultVisualizationServer<V, E>
   public void setGraphMouse(GraphMouse graphMouse) {
     this.graphMouse = graphMouse;
     this.graphMouse.loadPlugins();
-    this.graphMouse.setMultiSelectionStrategySupplier(multiSelectionStrategySupplier);
     MouseListener[] ml = getMouseListeners();
     for (MouseListener aMl : ml) {
       if (aMl instanceof GraphMouse) {

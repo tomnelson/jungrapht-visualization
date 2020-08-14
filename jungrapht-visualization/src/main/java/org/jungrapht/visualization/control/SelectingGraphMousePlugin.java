@@ -25,7 +25,6 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
-import java.util.function.Supplier;
 import javax.swing.JComponent;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationModel;
@@ -89,8 +88,6 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
 
   protected MultiSelectionStrategy multiSelectionStrategy;
 
-  protected Supplier<MultiSelectionStrategy> multiSelectionStrategySupplier =
-      () -> MultiSelectionStrategy.rectangular();
   /** create an instance with default settings */
   public SelectingGraphMousePlugin() {
     this(
@@ -113,11 +110,6 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     this.lensPaintable = new LensPaintable();
     this.pickFootprintPaintable = new FootprintPaintable();
     this.cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
-  }
-
-  public void setMultiSelectionStrategySupplier(
-      Supplier<MultiSelectionStrategy> multiSelectionStrategySupplier) {
-    this.multiSelectionStrategySupplier = multiSelectionStrategySupplier;
   }
 
   /** @return Returns the lensColor. */
@@ -175,11 +167,11 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    * @param e the event
    */
   public void mousePressed(MouseEvent e) {
-    multiSelectionStrategy = multiSelectionStrategySupplier.get();
     down = e.getPoint();
     log.trace("mouse pick at screen coords {}", e.getPoint());
     deltaDown = down;
     VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
+    multiSelectionStrategy = vv.getMultiSelectionStrategySupplier().get();
     TransformSupport<V, E> transformSupport = vv.getTransformSupport();
     LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
     GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();

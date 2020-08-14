@@ -87,7 +87,6 @@ public class AnnotatingModalGraphMouse<V, E> extends AbstractModalGraphMouse
     this.pickingPlugin =
         new SelectingGraphMousePlugin<>(
             InputEvent.BUTTON1_DOWN_MASK, 0, InputEvent.SHIFT_DOWN_MASK);
-    pickingPlugin.setMultiSelectionStrategySupplier(multiSelectionStrategySupplier);
     this.animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<V, E>();
     this.translatingPlugin = new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
     this.scalingPlugin = new ScalingGraphMousePlugin(new CrossoverScalingControl(), 0, in, out);

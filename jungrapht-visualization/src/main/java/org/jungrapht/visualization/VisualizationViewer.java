@@ -109,9 +109,6 @@ public interface VisualizationViewer<V, E> extends VisualizationServer<V, E> {
    */
   void setGraphMouse(GraphMouse graphMouse);
 
-  void setMultiSelectionStrategySupplier(
-      Supplier<MultiSelectionStrategy> multiSelectionStrategySupplier);
-
   /** @return the current <code>GraphMouse</code> */
   GraphMouse getGraphMouse();
 
@@ -144,13 +141,15 @@ public interface VisualizationViewer<V, E> extends VisualizationServer<V, E> {
 
   void setToolTipText(String toolTipText);
 
+  Supplier<MultiSelectionStrategy> getMultiSelectionStrategySupplier();
+
+  void setMultiSelectionStrategySupplier(
+      Supplier<MultiSelectionStrategy> multiSelectionStrategySupplier);
+
   /**
    * a convenience type to represent a class that processes all types of mouse events for the graph
    */
   interface GraphMouse extends MouseListener, MouseMotionListener, MouseWheelListener {
-    default void setMultiSelectionStrategySupplier(
-        Supplier<MultiSelectionStrategy> multiSelectionStrategySupplier) {}
-
     default void loadPlugins() {}
   }
 }

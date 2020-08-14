@@ -11,8 +11,6 @@
  */
 package org.jungrapht.visualization.control;
 
-import java.util.function.Supplier;
-
 /**
  * AbstractGraphMouse is a PluggableGraphMouse class that manages a collection of plugins for
  * picking and transforming the graph.
@@ -34,18 +32,9 @@ public abstract class AbstractGraphMouse extends PluggableGraphMouse {
 
   protected SelectingGraphMousePlugin pickingPlugin;
 
-  protected Supplier<MultiSelectionStrategy> multiSelectionStrategySupplier =
-      () -> MultiSelectionStrategy.rectangular();
-
   protected AbstractGraphMouse(float in, float out) {
     this.in = in;
     this.out = out;
-  }
-
-  @Override
-  public void setMultiSelectionStrategySupplier(
-      Supplier<MultiSelectionStrategy> multiSelectionStrategySupplier) {
-    this.multiSelectionStrategySupplier = multiSelectionStrategySupplier;
   }
 
   /** create the plugins, and load the plugins for TRANSFORMING mode */
