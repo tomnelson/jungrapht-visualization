@@ -134,7 +134,7 @@ public class ViewLensSupport<V, E, M extends LensGraphMouse> extends AbstractLen
     this.renderContext.setGraphicsContext(savedGraphicsDecorator);
     vv.setRenderContext(renderContext);
     vv.setToolTipText(defaultToolTipText);
-    vv.setGraphMouse(graphMouse);
+    //    vv.setGraphMouse(graphMouse);
     vv.setTransformSupport(new TransformSupport());
     vv.repaint();
   }
