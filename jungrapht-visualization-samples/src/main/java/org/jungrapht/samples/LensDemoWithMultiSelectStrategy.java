@@ -36,9 +36,10 @@ import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.DefaultModalGraphMouse;
+import org.jungrapht.visualization.control.DefaultGraphMouse;
+import org.jungrapht.visualization.control.DefaultLensGraphMouse;
+import org.jungrapht.visualization.control.LensGraphMouse;
 import org.jungrapht.visualization.control.LensMagnificationGraphMousePlugin;
-import org.jungrapht.visualization.control.ModalLensGraphMouse;
 import org.jungrapht.visualization.control.MultiSelectionStrategy;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
@@ -81,14 +82,14 @@ public class LensDemoWithMultiSelectStrategy extends JPanel {
   VisualizationViewer<String, Integer> vv;
 
   /** provides a Hyperbolic lens for the view */
-  LensSupport<ModalLensGraphMouse> hyperbolicViewSupport;
+  LensSupport<LensGraphMouse> hyperbolicViewSupport;
   /** provides a magnification lens for the view */
-  LensSupport<ModalLensGraphMouse> magnifyViewSupport;
+  LensSupport<LensGraphMouse> magnifyViewSupport;
 
   /** provides a Hyperbolic lens for the model */
-  LensSupport<ModalLensGraphMouse> hyperbolicLayoutSupport;
+  LensSupport<LensGraphMouse> hyperbolicLayoutSupport;
   /** provides a magnification lens for the model */
-  LensSupport<ModalLensGraphMouse> magnifyLayoutSupport;
+  LensSupport<LensGraphMouse> magnifyLayoutSupport;
 
   /** create an instance of a simple graph with controls to demo the zoomand hyperbolic features. */
   public LensDemoWithMultiSelectStrategy() {
@@ -107,7 +108,7 @@ public class LensDemoWithMultiSelectStrategy extends JPanel {
     gridLayoutAlgorithm = new StaticLayoutAlgorithm<>();
 
     // the regular graph mouse for the normal view
-    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
+    final DefaultGraphMouse<String, Integer> graphMouse = new DefaultGraphMouse<>();
 
     final VisualizationModel<String, Integer> visualizationModel =
         VisualizationModel.builder(graph)
@@ -144,19 +145,19 @@ public class LensDemoWithMultiSelectStrategy extends JPanel {
     Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
 
     hyperbolicViewSupport =
-        ViewLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
+        ViewLensSupport.<String, Integer, LensGraphMouse>builder(vv)
             .lensTransformer(
                 HyperbolicShapeTransformer.builder(
                         Lens.builder().lensShape(Lens.Shape.ELLIPSE).build())
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
-            .lensGraphMouse(new ModalLensGraphMouse())
+            .lensGraphMouse(new DefaultLensGraphMouse())
             .useGradient(true)
             .build();
 
     hyperbolicLayoutSupport =
-        LayoutLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
+        LayoutLensSupport.<String, Integer, LensGraphMouse>builder(vv)
             .lensTransformer(
                 HyperbolicTransformer.builder(Lens.builder().lensShape(Lens.Shape.ELLIPSE).build())
                     .delegate(
@@ -164,13 +165,13 @@ public class LensDemoWithMultiSelectStrategy extends JPanel {
                             .getMultiLayerTransformer()
                             .getTransformer(Layer.LAYOUT))
                     .build())
-            .lensGraphMouse(new ModalLensGraphMouse())
+            .lensGraphMouse(new DefaultLensGraphMouse())
             .useGradient(true)
             .build();
 
     // the magnification lens uses a different magnification than the hyperbolic lens
     magnifyViewSupport =
-        ViewLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
+        ViewLensSupport.<String, Integer, LensGraphMouse>builder(vv)
             .lensTransformer(
                 MagnifyShapeTransformer.builder(
                         Lens.builder().lensShape(Lens.Shape.ELLIPSE).magnification(3.f).build())
@@ -178,11 +179,11 @@ public class LensDemoWithMultiSelectStrategy extends JPanel {
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
             .lensGraphMouse(
-                new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
+                new DefaultLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
             .build();
 
     magnifyLayoutSupport =
-        LayoutLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
+        LayoutLensSupport.<String, Integer, LensGraphMouse>builder(vv)
             .lensTransformer(
                 MagnifyTransformer.builder(
                         Lens.builder().lensShape(Lens.Shape.ELLIPSE).magnification(3.f).build())
@@ -192,16 +193,11 @@ public class LensDemoWithMultiSelectStrategy extends JPanel {
                             .getTransformer(Layer.LAYOUT))
                     .build())
             .lensGraphMouse(
-                new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
+                new DefaultLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
             .build();
 
     JLabel modeLabel = new JLabel("Mode >>");
     modeLabel.setUI(new VerticalLabelUI(false));
-
-    graphMouse.addItemListener(hyperbolicLayoutSupport.getGraphMouse().getModeListener());
-    graphMouse.addItemListener(hyperbolicViewSupport.getGraphMouse().getModeListener());
-    graphMouse.addItemListener(magnifyLayoutSupport.getGraphMouse().getModeListener());
-    graphMouse.addItemListener(magnifyViewSupport.getGraphMouse().getModeListener());
 
     ButtonGroup graphRadio = new ButtonGroup();
     JRadioButton graphButton = new JRadioButton("Graph");
@@ -240,10 +236,6 @@ public class LensDemoWithMultiSelectStrategy extends JPanel {
     modePanel.setBorder(BorderFactory.createTitledBorder("Display"));
     modePanel.add(graphButton);
     modePanel.add(gridButton);
-
-    JMenuBar menubar = new JMenuBar();
-    menubar.add(graphMouse.getModeMenu());
-    visualizationScrollPane.setCorner(menubar);
 
     JToggleButton multiSelectToggleButton = new JToggleButton("Free-form multiselect");
     vv.setMultiSelectionStrategySupplier(

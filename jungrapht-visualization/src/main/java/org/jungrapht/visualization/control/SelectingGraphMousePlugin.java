@@ -51,8 +51,9 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
 
   private static final Logger log = LoggerFactory.getLogger(SelectingGraphMousePlugin.class);
 
+  private static final int TOO_CLOSE_LIMIT = 5;
+
   private static final String PICK_AREA_SIZE = PREFIX + "pickAreaSize";
-  private static final String ARBITRARY_SHAPE_SELECTION = PREFIX + "arbitraryShapeSelection";
 
   protected int pickSize = Integer.getInteger(PICK_AREA_SIZE, 4);
 
@@ -294,13 +295,13 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     // mouse is not down, check only for the addToSelectionModifiers (defaults to SHIFT_DOWN_MASK)
     if (e.getModifiersEx() == (selectionModifiers | addToSelectionModifiers)) {
       if (down != null) {
-        if (vertex == null && !heyThatsTooClose(down, out, 5)) {
+        if (vertex == null && multiSelectionMayProceed(down, out)) {
           pickContainedVertices(vv, layoutTargetShape, false);
         }
       }
     } else if (e.getModifiersEx() == selectionModifiers) {
       if (down != null) {
-        if (vertex == null && !heyThatsTooClose(down, out, 5)) {
+        if (vertex == null && multiSelectionMayProceed(down, out)) {
           pickContainedVertices(vv, layoutTargetShape, true);
         }
       }
@@ -391,11 +392,23 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    *
    * @param p
    * @param q
-   * @param min
    * @return
    */
-  private boolean heyThatsTooClose(Point2D p, Point2D q, double min) {
-    return Math.abs(p.getX() - q.getX()) < min && Math.abs(p.getY() - q.getY()) < min;
+  private boolean tooClose(Point2D p, Point2D q) {
+    return Math.abs(p.getX() - q.getX()) < TOO_CLOSE_LIMIT
+        && Math.abs(p.getY() - q.getY()) < TOO_CLOSE_LIMIT;
+  }
+
+  /**
+   * for rectangular shape selection, ensure that the rectangle is not too small and proceed for
+   * arbitrary shape selection, proceed
+   *
+   * @param p
+   * @param q
+   * @return whether the multiselection may proceed
+   */
+  private boolean multiSelectionMayProceed(Point2D p, Point2D q) {
+    return multiSelectionStrategy == MultiSelectionStrategy.arbitrary() || !tooClose(p, q);
   }
 
   /**

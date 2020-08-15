@@ -39,10 +39,15 @@ public interface VisualizationViewer<V, E> extends VisualizationServer<V, E> {
   class Builder<V, E, T extends DefaultVisualizationViewer<V, E>, B extends Builder<V, E, T, B>>
       extends DefaultVisualizationServer.Builder<V, E, T, B> {
 
+    private static final String ARBITRARY_SHAPE_SELECTION = PREFIX + "arbitraryShapeSelection";
+
     protected GraphMouse graphMouse = new DefaultGraphMouse();
 
     protected Supplier<MultiSelectionStrategy> multiSelectionStrategySupplier =
-        () -> MultiSelectionStrategy.rectangular();
+        () ->
+            Boolean.parseBoolean(System.getProperty(ARBITRARY_SHAPE_SELECTION, "false"))
+                ? MultiSelectionStrategy.arbitrary()
+                : MultiSelectionStrategy.rectangular();
 
     /** create an instance with no initial args */
     protected Builder() {}
