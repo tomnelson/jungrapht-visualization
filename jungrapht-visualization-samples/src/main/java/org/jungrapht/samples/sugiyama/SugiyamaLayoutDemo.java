@@ -3,9 +3,6 @@ package org.jungrapht.samples.sugiyama;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
 import java.util.stream.IntStream;
 import javax.swing.*;
 import org.jgrapht.Graph;
@@ -19,11 +16,11 @@ import org.jungrapht.visualization.renderers.Renderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SugiyamaThrowaway extends JFrame {
+public class SugiyamaLayoutDemo extends JFrame {
 
-  private static final Logger log = LoggerFactory.getLogger(SugiyamaThrowaway.class);
+  private static final Logger log = LoggerFactory.getLogger(SugiyamaLayoutDemo.class);
 
-  public SugiyamaThrowaway() {
+  public SugiyamaLayoutDemo() {
 
     JPanel container = new JPanel(new BorderLayout());
 
@@ -65,43 +62,6 @@ public class SugiyamaThrowaway extends JFrame {
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
     return vv;
-  }
-
-  static class TitlePaintable implements VisualizationViewer.Paintable {
-    int x;
-    int y;
-    Font font;
-    FontMetrics metrics;
-    int swidth;
-    int sheight;
-    String str;
-    Dimension overallSize;
-
-    TitlePaintable(String title, Dimension overallSize) {
-      this.str = title;
-      this.overallSize = overallSize;
-    }
-
-    public void paint(Graphics g) {
-      Dimension d = overallSize;
-      if (font == null) {
-        font = new Font(g.getFont().getName(), Font.BOLD, 30);
-        metrics = g.getFontMetrics(font);
-        swidth = metrics.stringWidth(str);
-        sheight = metrics.getMaxAscent() + metrics.getMaxDescent();
-        x = (d.width - swidth) / 2;
-        y = (int) (d.height - sheight * 1.5);
-      }
-      g.setFont(font);
-      Color oldColor = g.getColor();
-      g.setColor(Color.lightGray);
-      g.drawString(str, x, y);
-      g.setColor(oldColor);
-    }
-
-    public boolean useTransform() {
-      return false;
-    }
   }
 
   /**
@@ -175,6 +135,6 @@ public class SugiyamaThrowaway extends JFrame {
   }
 
   public static void main(String[] args) {
-    new SugiyamaThrowaway();
+    new SugiyamaLayoutDemo();
   }
 }

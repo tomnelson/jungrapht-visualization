@@ -40,7 +40,6 @@ import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.control.DefaultLensGraphMouse;
 import org.jungrapht.visualization.control.LensGraphMouse;
 import org.jungrapht.visualization.control.LensMagnificationGraphMousePlugin;
-import org.jungrapht.visualization.control.MultiSelectionStrategy;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -61,8 +60,10 @@ import org.jungrapht.visualization.util.LayoutAlgorithmTransition;
 
 /**
  * Demonstrates the use of <code>HyperbolicTransform</code> and <code>MagnifyTransform</code>
- * applied to either the model (graph layout) or the view (VisualizationViewer) The hyperbolic
- * transform is applied in an elliptical lens that affects that part of the visualization.
+ * applied to either the model (graph layout) or the view (VisualizationViewer). The
+ * DefaultGraphMouse is used (CTRL-click to select) and there is a toggle to switch between
+ * rectangular area multiselect and free-form multiselect. The purpose of this sample was to ensure
+ * that the multiselection works properly in all the lenses
  *
  * @author Tom Nelson
  */
@@ -237,17 +238,9 @@ public class LensDemoWithMultiSelectStrategy extends JPanel {
     modePanel.add(graphButton);
     modePanel.add(gridButton);
 
-    JToggleButton multiSelectToggleButton = new JToggleButton("Free-form multiselect");
-    vv.setMultiSelectionStrategySupplier(
-        () ->
-            multiSelectToggleButton.isSelected()
-                ? MultiSelectionStrategy.arbitrary()
-                : MultiSelectionStrategy.rectangular());
-
     Box controls = Box.createHorizontalBox();
-    //    controls.add(ControlHelpers.getZoomControls("Zoom", vv));
-    controls.add(
-        ControlHelpers.getCenteredContainer("MultiSelectionStrategy", multiSelectToggleButton));
+
+    controls.add(ControlHelpers.getMultiselectPanel("MultiSelectionStrategy", vv));
     controls.add(
         LensControlHelper.builder(
                 Map.of(

@@ -10,6 +10,7 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.ModalGraphMouse;
+import org.jungrapht.visualization.control.MultiSelectionStrategy;
 import org.jungrapht.visualization.control.ScalingControl;
 
 /**
@@ -58,6 +59,23 @@ public class ControlHelpers {
     zoomPanel.add(minus);
 
     return zoomPanel;
+  }
+
+  /**
+   * Demo helper to make a titled toggle button to choose free-form multiselection
+   *
+   * @param title
+   * @param vv
+   * @return
+   */
+  public static JComponent getMultiselectPanel(String title, VisualizationViewer vv) {
+    JToggleButton toggle = new JToggleButton("FreeForm Select");
+    vv.setMultiSelectionStrategySupplier(
+        () ->
+            toggle.isSelected()
+                ? MultiSelectionStrategy.arbitrary()
+                : MultiSelectionStrategy.rectangular());
+    return getCenteredContainer(title, toggle);
   }
 
   public static JComponent getModeControls(String title, VisualizationViewer vv) {

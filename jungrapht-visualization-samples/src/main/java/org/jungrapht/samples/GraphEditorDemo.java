@@ -36,8 +36,8 @@ import org.jungrapht.visualization.util.ParallelEdgeIndexFunction;
 
 /**
  * Shows how to create a graph editor with JUNG. Mouse modes and actions are explained in the help
- * text. The application version of GraphEditorDemo provides a File menu with an option to save the
- * visible graph as a jpeg file.
+ * text. GraphEditorDemo provides a File menu with an option to save the visible graph as a jpeg
+ * file.
  *
  * @author Tom Nelson
  */
