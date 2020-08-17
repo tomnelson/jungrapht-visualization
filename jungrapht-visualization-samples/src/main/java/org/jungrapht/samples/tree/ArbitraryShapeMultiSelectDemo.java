@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Demonstrates mulit-selection with arbitrary containing shape instead of a rectangle.<br>
+ * Demonstrates multi-selection with arbitrary containing shape instead of a rectangle.<br>
  * CTRL-click and drag to trace a shape containing vertices to select.
  *
  * @author Tom Nelson

@@ -99,12 +99,10 @@ public class L2RTreeLayoutDemo extends JPanel {
             }
             vv.addPreRenderPaintable(rings);
           } else {
-            LayoutAlgorithmTransition.animate(vv, treeLayoutAlgorithm);
+            LayoutAlgorithmTransition.animate(vv, treeLayoutAlgorithm, () -> setLtoR(vv));
             vv.getRenderContext().getMultiLayerTransformer().setToIdentity();
-            setLtoR(vv);
             vv.removePreRenderPaintable(rings);
           }
-
           vv.repaint();
         });
 

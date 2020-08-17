@@ -14,9 +14,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Builds a test graph from the BrandesKopf paper, layers the graph, then manually sets all the
- * synthetic vertices and edges to make a good starting point for the BrandesKopf Horizontal
- * Coordinate Assignment algorithm
+ * Builds a test graph from the Brandes-Kopf paper, layers the graph, then manually sets all the
+ * synthetic vertices and edges to make a good starting point for the Brandes-Kopf Horizontal
+ * Coordinate Assignment algorithm. The visual result should look like the figures presented in the
+ * paper.
  *
  * @author Tom Nelson
  */

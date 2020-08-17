@@ -22,6 +22,10 @@ import org.jungrapht.visualization.renderers.Renderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * shows the 4 layering options for the Eiglsperger optimized version of the Sugiyama layout
+ * algorithm
+ */
 public class EiglspergerLayeringOptions extends JFrame {
 
   private static final Logger log = LoggerFactory.getLogger(EiglspergerLayeringOptions.class);

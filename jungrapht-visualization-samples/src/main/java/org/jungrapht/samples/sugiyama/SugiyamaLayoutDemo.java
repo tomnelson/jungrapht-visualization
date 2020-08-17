@@ -16,6 +16,7 @@ import org.jungrapht.visualization.renderers.Renderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** sample program using the SugiyamaLayoutAlgorithm */
 public class SugiyamaLayoutDemo extends JFrame {
 
   private static final Logger log = LoggerFactory.getLogger(SugiyamaLayoutDemo.class);

@@ -46,9 +46,6 @@ public class VisRunnable implements Runnable {
         ex.printStackTrace();
       }
     }
-    if (iterativeContext.done()) {
-      log.trace("done here because {} is done", hashCode());
-    }
     if (stop) {
       log.trace("done here because {} stop = {}", hashCode(), stop);
     }

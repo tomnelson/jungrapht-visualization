@@ -19,6 +19,7 @@ import org.jungrapht.visualization.renderers.Renderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** compares top-down and longest-path layering */
 public class EiglspergerLongestPathComparison extends JFrame {
 
   private static final Logger log = LoggerFactory.getLogger(EiglspergerLongestPathComparison.class);
@@ -34,7 +35,6 @@ public class EiglspergerLongestPathComparison extends JFrame {
 
     EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm1 =
         EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
-            //                        .straightenEdges(false)
             .postStraighten(true)
             .threaded(false)
             .layering(Layering.TOP_DOWN)
@@ -48,10 +48,9 @@ public class EiglspergerLongestPathComparison extends JFrame {
 
     EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm2 =
         EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
-            //                        .straightenEdges(false)
             .postStraighten(true)
             .threaded(false)
-            .layering(Layering.COFFMAN_GRAHAM)
+            .layering(Layering.LONGEST_PATH)
             .build();
     layoutAlgorithm2.setVertexBoundsFunction(vv2.getRenderContext().getVertexBoundsFunction());
     vv2.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm2);
