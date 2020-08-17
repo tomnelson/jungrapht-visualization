@@ -295,13 +295,13 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     // mouse is not down, check only for the addToSelectionModifiers (defaults to SHIFT_DOWN_MASK)
     if (e.getModifiersEx() == (selectionModifiers | addToSelectionModifiers)) {
       if (down != null) {
-        if (vertex == null && multiSelectionMayProceed(down, out)) {
+        if (vertex == null && multiSelectionMayProceed(layoutTargetShape.getBounds2D())) {
           pickContainedVertices(vv, layoutTargetShape, false);
         }
       }
     } else if (e.getModifiersEx() == selectionModifiers) {
       if (down != null) {
-        if (vertex == null && multiSelectionMayProceed(down, out)) {
+        if (vertex == null && multiSelectionMayProceed(layoutTargetShape.getBounds2D())) {
           pickContainedVertices(vv, layoutTargetShape, true);
         }
       }
@@ -403,12 +403,11 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    * for rectangular shape selection, ensure that the rectangle is not too small and proceed for
    * arbitrary shape selection, proceed
    *
-   * @param p
-   * @param q
+   * @param targetShape test for empty shape
    * @return whether the multiselection may proceed
    */
-  private boolean multiSelectionMayProceed(Point2D p, Point2D q) {
-    return multiSelectionStrategy == MultiSelectionStrategy.arbitrary() || !tooClose(p, q);
+  private boolean multiSelectionMayProceed(Rectangle2D targetShape) {
+    return !targetShape.isEmpty();
   }
 
   /**
