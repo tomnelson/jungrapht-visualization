@@ -30,7 +30,7 @@ public abstract class AbstractGraphMouse extends PluggableGraphMouse {
 
   protected GraphMousePlugin scalingPlugin;
 
-  protected SelectingGraphMousePlugin pickingPlugin;
+  protected AbstractGraphMousePlugin pickingPlugin;
 
   protected AbstractGraphMouse(float in, float out) {
     this.in = in;

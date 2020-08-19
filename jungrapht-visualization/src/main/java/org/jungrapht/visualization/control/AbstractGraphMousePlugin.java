@@ -21,6 +21,18 @@ import java.awt.event.MouseEvent;
  */
 public abstract class AbstractGraphMousePlugin implements GraphMousePlugin {
 
+  public abstract static class Selecting extends AbstractGraphMousePlugin {
+
+    /**
+     * Creates an instance with the specified mouse event modifiers.
+     *
+     * @param modifiers the mouse event modifiers to use
+     */
+    public Selecting(int modifiers) {
+      super(modifiers);
+    }
+  }
+
   /** modifiers to compare against mouse event modifiers */
   protected int modifiers;
 

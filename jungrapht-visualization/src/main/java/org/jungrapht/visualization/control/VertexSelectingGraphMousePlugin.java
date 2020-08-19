@@ -25,7 +25,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
-import javax.swing.JComponent;
+import javax.swing.*;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationServer;
@@ -37,19 +37,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * SelectingGraphMousePlugin supports the selecting of graph elements with the mouse. MouseButtonOne
- * selects a single vertex or edge, and MouseButtonTwo adds to the set of selected Vertices or
- * EdgeType. If a Vertex is selected and the mouse is dragged while on the selected Vertex, then
- * that Vertex will be repositioned to follow the mouse until the button is released.
+ * VertexSelectingGraphMousePlugin supports the selecting of graph vertices with the mouse.
+ * MouseButtonOne selects a single vertex, and MouseButtonTwo adds to the set of selected Vertices.
+ * If a Vertex is selected and the mouse is dragged while on the selected Vertex, then that Vertex
+ * will be repositioned to follow the mouse until the button is released.
  *
  * @author Tom Nelson
  * @param <V> vertex type
  * @param <E> edge type
  */
-public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin.Selecting
+public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin.Selecting
     implements MouseListener, MouseMotionListener {
 
-  private static final Logger log = LoggerFactory.getLogger(SelectingGraphMousePlugin.class);
+  private static final Logger log = LoggerFactory.getLogger(VertexSelectingGraphMousePlugin.class);
 
   private static final int TOO_CLOSE_LIMIT = 5;
 
@@ -59,9 +59,6 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin.Se
 
   /** the selected Vertex, if any */
   protected V vertex;
-
-  /** the selected Edge, if any */
-  protected E edge;
 
   /** controls whether the Vertices may be moved with the mouse */
   protected boolean locked;
@@ -90,7 +87,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin.Se
   protected MultiSelectionStrategy multiSelectionStrategy;
 
   /** create an instance with default settings */
-  public SelectingGraphMousePlugin() {
+  public VertexSelectingGraphMousePlugin() {
     this(
         InputEvent.BUTTON1_DOWN_MASK,
         InputEvent.CTRL_DOWN_MASK, // select or drag select in rectangle
@@ -103,7 +100,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin.Se
    * @param selectionModifiers for primary selection
    * @param addToSelectionModifiers for additional selection
    */
-  public SelectingGraphMousePlugin(
+  public VertexSelectingGraphMousePlugin(
       int modifiers, int selectionModifiers, int addToSelectionModifiers) {
     super(modifiers);
     this.selectionModifiers = selectionModifiers;
@@ -177,7 +174,6 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin.Se
     LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
     GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
     MutableSelectedState<V> selectedVertexState = vv.getSelectedVertexState();
-    MutableSelectedState<E> selectedEdgeState = vv.getSelectedEdgeState();
     viewRectangle = multiSelectionStrategy.getInitialShape(e.getPoint());
 
     MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
@@ -218,27 +214,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin.Se
         e.consume();
         return;
       }
-
-      if (pickSupport instanceof ShapePickSupport) {
-        ShapePickSupport<V, E> shapePickSupport = (ShapePickSupport<V, E>) pickSupport;
-        this.edge = shapePickSupport.getEdge(layoutModel, footprintRectangle);
-      } else {
-        this.edge = pickSupport.getEdge(layoutModel, layoutPoint.getX(), layoutPoint.getY());
-      }
-
-      if (edge != null) {
-
-        log.trace("mousePressed set the edge to {}", edge);
-        if (!selectedEdgeState.isSelected(edge)) {
-          selectedEdgeState.clear();
-          selectedEdgeState.select(edge);
-        }
-        e.consume();
-        return;
-      }
-
-      // got no vertex and no edge, clear all selections
-      selectedEdgeState.clear();
+      // got no vertex, clear all selections
       selectedVertexState.clear();
       vv.addPostRenderPaintable(lensPaintable);
       return;
@@ -255,19 +231,6 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin.Se
           selectedVertexState.deselect(vertex);
         } else {
           selectedVertexState.select(vertex);
-        }
-        e.consume();
-        return;
-      }
-
-      this.edge = pickSupport.getEdge(layoutModel, layoutPoint.getX(), layoutPoint.getY());
-
-      if (edge != null) {
-        log.trace("mousePressed set the edge to {}", edge);
-        if (selectedEdgeState.isSelected(edge)) {
-          selectedEdgeState.deselect(edge);
-        } else {
-          selectedEdgeState.select(edge);
         }
         e.consume();
         return;
@@ -333,7 +296,6 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin.Se
 
     down = null;
     vertex = null;
-    edge = null;
     layoutTargetShape = multiLayerTransformer.inverseTransform(viewRectangle);
     vv.removePostRenderPaintable(lensPaintable);
     vv.removePostRenderPaintable(pickFootprintPaintable);
