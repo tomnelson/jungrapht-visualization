@@ -41,6 +41,11 @@ public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
       return self();
     }
 
+    public B vertexSelectionOnly(boolean vertexSelectionOnly) {
+      this.vertexSelectionOnly = vertexSelectionOnly;
+      return self();
+    }
+
     public T build() {
       return (T) new DefaultGraphMouse(in, out, vertexSelectionOnly);
     }
@@ -53,7 +58,7 @@ public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
   private boolean vertexSelectionOnly;
 
   /** create an instance with default values */
-  DefaultGraphMouse(Builder<V, E, ?, ?> builder) {
+  protected DefaultGraphMouse(Builder<V, E, ?, ?> builder) {
     this(builder.in, builder.out, builder.vertexSelectionOnly);
   }
 
