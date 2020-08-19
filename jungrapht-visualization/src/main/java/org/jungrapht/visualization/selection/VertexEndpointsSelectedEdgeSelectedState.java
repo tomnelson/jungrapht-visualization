@@ -3,9 +3,9 @@ package org.jungrapht.visualization.selection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
-import org.jungrapht.visualization.VisualizationServer;
 
 /**
  * Maintains the state of what edges have been 'selected' in the graph based on whether both
@@ -13,22 +13,20 @@ import org.jungrapht.visualization.VisualizationServer;
  *
  * @author Tom Nelson
  */
-public class VertexEndpointsSelectedEdgeSelectedState<V, E>
-    //        extends AbstractMutableSelectedState<E>
-    implements SelectedState<E> {
+public class VertexEndpointsSelectedEdgeSelectedState<V, E> implements SelectedState<E> {
 
   /** the 'selected' items */
   protected Set<E> selected = new LinkedHashSet<>();
 
-  protected VisualizationServer<V, E> visualizationServer;
+  protected Supplier<Graph<V, E>> graphSupplier;
 
-  public VertexEndpointsSelectedEdgeSelectedState(VisualizationServer<V, E> visualizationServer) {
-    this.visualizationServer = visualizationServer;
-    MutableSelectedState<V> selectedVertexState = visualizationServer.getSelectedVertexState();
+  public VertexEndpointsSelectedEdgeSelectedState(
+      Supplier<Graph<V, E>> graphSupplier, MutableSelectedState<V> selectedVertexState) {
+    this.graphSupplier = graphSupplier;
     selectedVertexState.addItemListener(
         evt -> {
           // a vertex selection changed. Recompute the edge selections
-          Graph<V, E> graph = visualizationServer.getVisualizationModel().getGraph();
+          Graph<V, E> graph = graphSupplier.get();
           selected =
               graph
                   .edgeSet()
