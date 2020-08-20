@@ -17,9 +17,8 @@ import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.DefaultGraphMouse;
+import org.jungrapht.visualization.control.VertexSelectingGraphMousePlugin;
 import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
-import org.jungrapht.visualization.selection.VertexEndpointsSelectedEdgeSelectedState;
 
 /**
  * A demo that shows a minimal visualization configuration
@@ -39,10 +38,8 @@ public class MinimalVisualizationWithVertexSelectionOnly {
             .layoutAlgorithm(new KKLayoutAlgorithm<>())
             .build();
 
-    vv.setSelectedEdgeState(
-        new VertexEndpointsSelectedEdgeSelectedState<>(
-            vv.getVisualizationModel()::getGraph, vv.getSelectedVertexState()));
-    vv.setGraphMouse(DefaultGraphMouse.builder().vertexSelectionOnly(true).build());
+    VertexSelectingGraphMousePlugin.configure(vv);
+
     // create a frame to hold the graph visualization
     final JFrame frame = new JFrame();
     frame.getContentPane().add(vv.getComponent());

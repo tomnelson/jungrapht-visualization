@@ -33,6 +33,7 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 import org.jungrapht.visualization.selection.ShapePickSupport;
+import org.jungrapht.visualization.selection.VertexEndpointsSelectedEdgeSelectedState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,6 +109,23 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
     this.lensPaintable = new LensPaintable();
     this.pickFootprintPaintable = new FootprintPaintable();
     this.cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+  }
+
+  /**
+   * Configure the passed VisualizationViewer to use vertex selection only. No edge selection with
+   * the mouse. Edges will be 'selected' only when both endpoint vertices are selected.
+   *
+   * @param visualizationViewer to configure
+   * @param <V> vertex type
+   * @param <E> edge type
+   */
+  public static <V, E> void configure(VisualizationViewer<V, E> visualizationViewer) {
+    visualizationViewer.setSelectedEdgeState(
+        new VertexEndpointsSelectedEdgeSelectedState<>(
+            visualizationViewer.getVisualizationModel()::getGraph,
+            visualizationViewer.getSelectedVertexState()));
+    visualizationViewer.setGraphMouse(
+        DefaultGraphMouse.builder().vertexSelectionOnly(true).build());
   }
 
   /** @return Returns the lensColor. */
