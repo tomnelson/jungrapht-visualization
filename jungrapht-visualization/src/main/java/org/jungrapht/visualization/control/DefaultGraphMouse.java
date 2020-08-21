@@ -25,7 +25,7 @@ public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
     private boolean vertexSelectionOnly =
         Boolean.parseBoolean(System.getProperty(VERTEX_SELECTION_ONLY, "false"));
     private float in = 1.1f;
-    private float out = 1.1f;
+    private float out = 1 / 1.1f;
 
     public B self() {
       return (B) this;
