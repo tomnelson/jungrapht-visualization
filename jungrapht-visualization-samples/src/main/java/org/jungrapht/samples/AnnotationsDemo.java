@@ -99,7 +99,10 @@ public class AnnotationsDemo extends JPanel {
         new AnnotatingGraphMousePlugin<>(rc);
 
     final AnnotatingModalGraphMouse<String, Integer> graphMouse =
-        new AnnotatingModalGraphMouse<>(rc, annotatingPlugin);
+        AnnotatingModalGraphMouse.<String, Integer>builder()
+            .multiLayerTransformerSupplier(rc::getMultiLayerTransformer)
+            .annotatingPlugin(annotatingPlugin)
+            .build();
     vv.setGraphMouse(graphMouse);
     vv.addKeyListener(graphMouse.getModeKeyListener());
 

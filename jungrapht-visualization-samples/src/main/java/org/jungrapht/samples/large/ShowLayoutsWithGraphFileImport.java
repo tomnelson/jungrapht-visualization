@@ -224,7 +224,7 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
                             .getMultiLayerTransformer()
                             .getTransformer(MultiLayerTransformer.Layer.VIEW))
                     .build())
-            .lensGraphMouse(new DefaultLensGraphMouse())
+            .lensGraphMouse(new DefaultLensGraphMouse<>())
             .build();
 
     LensSupport<DefaultLensGraphMouse> hyperbolicLayoutSupport =
@@ -236,7 +236,7 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
                             .getMultiLayerTransformer()
                             .getTransformer(MultiLayerTransformer.Layer.LAYOUT))
                     .build())
-            .lensGraphMouse(new DefaultLensGraphMouse())
+            .lensGraphMouse(new DefaultLensGraphMouse<>())
             .build();
 
     // the magnification lens uses a different magnification than the hyperbolic lens
@@ -253,7 +253,8 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
                             .getTransformer(MultiLayerTransformer.Layer.VIEW))
                     .build())
             .lensGraphMouse(
-                new DefaultLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
+                DefaultLensGraphMouse.builder(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f))
+                    .build())
             .build();
 
     LensSupport<DefaultLensGraphMouse> magnifyLayoutSupport =
@@ -266,7 +267,8 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
                             .getTransformer(MultiLayerTransformer.Layer.LAYOUT))
                     .build())
             .lensGraphMouse(
-                new DefaultLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
+                DefaultLensGraphMouse.builder(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f))
+                    .build())
             .build();
 
     hyperbolicLayoutSupport

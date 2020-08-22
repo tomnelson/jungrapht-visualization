@@ -12,17 +12,48 @@ package org.jungrapht.visualization.control;
 
 import java.awt.event.InputEvent;
 /** @author Tom Nelson */
-public class ModalSatelliteGraphMouse extends DefaultModalGraphMouse implements ModalGraphMouse {
+public class ModalSatelliteGraphMouse<V, E> extends DefaultModalGraphMouse<V, E>
+    implements ModalGraphMouse {
 
-  public ModalSatelliteGraphMouse() {
-    this(1.1f, 1 / 1.1f);
+  /**
+   * Build an instance of a DefaultGraphMouse
+   *
+   * @param <V>
+   * @param <E>
+   * @param <T>
+   * @param <B>
+   */
+  public static class Builder<
+          V, E, T extends ModalSatelliteGraphMouse<V, E>, B extends Builder<V, E, T, B>>
+      extends DefaultModalGraphMouse.Builder<V, E, T, B> {
+
+    public T build() {
+      return (T) new ModalSatelliteGraphMouse(in, out, vertexSelectionOnly);
+    }
   }
 
-  public ModalSatelliteGraphMouse(float in, float out) {
+  public static <V, E> Builder<V, E, ?, ?> builder() {
+    return new Builder<>();
+  }
+
+  public ModalSatelliteGraphMouse() {
+    this(new Builder<>());
+  }
+
+  ModalSatelliteGraphMouse(Builder<V, E, ?, ?> builder) {
+    this(builder.in, builder.out, builder.vertexSelectionOnly);
+  }
+
+  ModalSatelliteGraphMouse(float in, float out) {
     super(in, out);
   }
 
+  ModalSatelliteGraphMouse(float in, float out, boolean vertexSelectionOnly) {
+    super(in, out, vertexSelectionOnly);
+  }
+
   public void loadPlugins() {
+    super.loadPlugins();
     pickingPlugin = new SelectingGraphMousePlugin();
     animatedPickingPlugin = new SatelliteAnimatedPickingGraphMousePlugin();
     translatingPlugin = new SatelliteTranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);

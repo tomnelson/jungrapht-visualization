@@ -41,6 +41,18 @@ import javax.swing.plaf.basic.BasicIconFactory;
 public abstract class AbstractModalGraphMouse extends AbstractGraphMouse
     implements ModalGraphMouse, ItemSelectable {
 
+  /**
+   * Configure an instance of an AbstractModalGraphMouse
+   *
+   * @param <T>
+   * @param <B>
+   */
+  public abstract static class Builder<T extends AbstractModalGraphMouse, B extends Builder<T, B>>
+      extends AbstractGraphMouse.Builder<T, B> {
+
+    public abstract T build();
+  }
+
   /** a listener for mode changes */
   protected ItemListener modeListener;
   /** a JComboBox control available to set the mode */
@@ -58,12 +70,13 @@ public abstract class AbstractModalGraphMouse extends AbstractGraphMouse
   protected GraphMousePlugin shearingPlugin;
   protected KeyListener modeKeyListener;
 
-  protected AbstractModalGraphMouse(float in, float out) {
-    super(in, out);
+  protected AbstractModalGraphMouse(Builder<?, ?> builder) {
+    this(builder.in, builder.out, builder.vertexSelectionOnly);
   }
 
-  /** create the plugins, and load the plugins for TRANSFORMING mode */
-  public abstract void loadPlugins();
+  protected AbstractModalGraphMouse(float in, float out, boolean vertexSelectionOnly) {
+    super(in, out, vertexSelectionOnly);
+  }
 
   /** setter for the Mode. */
   public void setMode(Mode mode) {

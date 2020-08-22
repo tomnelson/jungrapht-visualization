@@ -7,14 +7,25 @@ import java.awt.event.InputEvent;
  * graph visualization
  *
  * @author Tom Nelson
- * @param <V> vertex type
- * @param <E> edge type
  */
-public class DefaultSatelliteGraphMouse<V, E> extends AbstractGraphMouse {
+public class DefaultSatelliteGraphMouse extends AbstractGraphMouse {
+
+  public static class Builder<
+          V, E, T extends DefaultSatelliteGraphMouse, B extends Builder<V, E, T, B>>
+      extends AbstractGraphMouse.Builder<T, B> {
+
+    public T build() {
+      return (T) new DefaultSatelliteGraphMouse(in, out, vertexSelectionOnly);
+    }
+  }
+
+  public static <V, E> Builder<V, E, ?, ?> builder() {
+    return new Builder<>();
+  }
 
   /** create an instance with default values */
   public DefaultSatelliteGraphMouse() {
-    this(1.1f, 1 / 1.1f);
+    this(1.1f, 1 / 1.1f, false);
   }
 
   /**
@@ -23,13 +34,13 @@ public class DefaultSatelliteGraphMouse<V, E> extends AbstractGraphMouse {
    * @param in override value for scale in
    * @param out override value for scale out
    */
-  public DefaultSatelliteGraphMouse(float in, float out) {
-    super(in, out);
-    loadPlugins();
+  public DefaultSatelliteGraphMouse(float in, float out, boolean vertexSelectionOnly) {
+    super(in, out, vertexSelectionOnly);
   }
 
   /** create the plugins, and load them */
   public void loadPlugins() {
+    super.loadPlugins();
     scalingPlugin = new SatelliteScalingGraphMousePlugin(new CrossoverScalingControl(), 0, in, out);
     add(new SatelliteTranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK));
     pickingPlugin = new SelectingGraphMousePlugin<>();

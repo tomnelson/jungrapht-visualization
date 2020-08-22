@@ -20,6 +20,8 @@ import javax.swing.plaf.basic.BasicIconFactory;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.annotations.AnnotatingGraphMousePlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @param <V> vertex type
@@ -28,8 +30,68 @@ import org.jungrapht.visualization.annotations.AnnotatingGraphMousePlugin;
 public class EditingModalGraphMouse<V, E> extends AbstractModalGraphMouse
     implements ModalGraphMouse, ItemSelectable {
 
+  private static final Logger log = LoggerFactory.getLogger(EditingModalGraphMouse.class);
+  /**
+   * Build an instance of a EditingModalGraphMouse
+   *
+   * @param <V>
+   * @param <E>
+   * @param <T>
+   * @param <B>
+   */
+  public static class Builder<V, E, T extends EditingModalGraphMouse, B extends Builder<V, E, T, B>>
+      extends AbstractModalGraphMouse.Builder<T, B> {
+
+    protected Supplier<V> vertexFactory;
+    protected Supplier<E> edgeFactory;
+    protected Supplier<Map<V, String>> vertexLabelMapSupplier;
+    protected Supplier<Map<E, String>> edgeLabelMapSupplier;
+    protected Supplier<MultiLayerTransformer> multiLayerTransformerSupplier;
+    protected Supplier<RenderContext<V, E>> renderContextSupplier;
+
+    public B vertexFactory(Supplier<V> vertexFactory) {
+      this.vertexFactory = vertexFactory;
+      return self();
+    }
+
+    public B edgeFactory(Supplier<E> edgeFactory) {
+      this.edgeFactory = edgeFactory;
+      return self();
+    }
+
+    public B vertexLabelMapSupplier(Supplier<Map<V, String>> vertexLabelMapSupplier) {
+      this.vertexLabelMapSupplier = vertexLabelMapSupplier;
+      return self();
+    }
+
+    public B edgeLabelMapSupplier(Supplier<Map<E, String>> edgeLabelMapSupplier) {
+      this.edgeLabelMapSupplier = edgeLabelMapSupplier;
+      return self();
+    }
+
+    public B multiLayerTransformerSupplier(
+        Supplier<MultiLayerTransformer> multiLayerTransformerSupplier) {
+      this.multiLayerTransformerSupplier = multiLayerTransformerSupplier;
+      return self();
+    }
+
+    public B renderContextSupplier(Supplier<RenderContext<V, E>> renderContextSupplier) {
+      this.renderContextSupplier = renderContextSupplier;
+      return self();
+    }
+
+    public T build() {
+      return (T) new EditingModalGraphMouse(this);
+    }
+  }
+
+  public static <V, E> Builder<V, E, ?, ?> builder() {
+    return new Builder<>();
+  }
+
   protected Supplier<V> vertexFactory;
   protected Supplier<E> edgeFactory;
+  protected Supplier<MultiLayerTransformer> multiLayerTransformerSupplier;
   protected Map<V, String> vertexLabelMap;
   protected Map<E, String> edgeLabelMap;
   protected EditingGraphMousePlugin<V, E> editingPlugin;
@@ -39,67 +101,101 @@ public class EditingModalGraphMouse<V, E> extends AbstractModalGraphMouse
   protected MultiLayerTransformer basicTransformer;
   protected RenderContext<V, E> rc;
 
+  EditingModalGraphMouse(Builder<V, E, ?, ?> builder) {
+    this(
+        builder.renderContextSupplier.get(),
+        builder.multiLayerTransformerSupplier,
+        builder.vertexFactory,
+        builder.edgeFactory,
+        HashMap::new,
+        HashMap::new,
+        .1f,
+        1 / 1.1f,
+        false);
+  }
+
   /**
    * Creates an instance with the specified rendering context and vertex/edge factories, and with
    * default zoom in/out values of 1.1 and 1/1.1.
    *
-   * @param rc the rendering context
    * @param vertexFactory used to construct vertices
    * @param edgeFactory used to construct edges
    */
-  public EditingModalGraphMouse(
-      RenderContext<V, E> rc, Supplier<V> vertexFactory, Supplier<E> edgeFactory) {
-    this(rc, vertexFactory, edgeFactory, new HashMap<>(), new HashMap<>(), .1f, 1 / 1.1f);
+  EditingModalGraphMouse(
+      RenderContext<V, E> rc,
+      Supplier<MultiLayerTransformer> multiLayerTransformerSupplier,
+      Supplier<V> vertexFactory,
+      Supplier<E> edgeFactory) {
+    this(
+        rc,
+        multiLayerTransformerSupplier,
+        vertexFactory,
+        edgeFactory,
+        HashMap::new,
+        HashMap::new,
+        .1f,
+        1 / 1.1f,
+        false);
   }
   /**
    * Creates an instance with the specified rendering context and vertex/edge factories, and with
    * default zoom in/out values of 1.1 and 1/1.1.
    *
-   * @param rc the rendering context
    * @param vertexFactory used to construct vertices
    * @param edgeFactory used to construct edges
    */
-  public EditingModalGraphMouse(
+  EditingModalGraphMouse(
       RenderContext<V, E> rc,
+      Supplier<MultiLayerTransformer> multiLayerTransformerSupplier,
       Supplier<V> vertexFactory,
       Supplier<E> edgeFactory,
-      Map<V, String> vertexLabelMap,
-      Map<E, String> edgeLabelMap) {
-    this(rc, vertexFactory, edgeFactory, vertexLabelMap, edgeLabelMap, .1f, 1 / 1.1f);
+      Supplier<Map<V, String>> vertexLabelMapSupplier,
+      Supplier<Map<E, String>> edgeLabelMapSupplier) {
+    this(
+        rc,
+        multiLayerTransformerSupplier,
+        vertexFactory,
+        edgeFactory,
+        vertexLabelMapSupplier,
+        edgeLabelMapSupplier,
+        1.1f,
+        1 / 1.1f,
+        false);
   }
 
   /**
    * Creates an instance with the specified rendering context and vertex/edge factories, and with
    * the specified zoom in/out values.
    *
-   * @param rc the rendering context
    * @param vertexFactory used to construct vertices
    * @param edgeFactory used to construct edges
    * @param in amount to zoom in by for each action
    * @param out amount to zoom out by for each action
    */
-  public EditingModalGraphMouse(
+  EditingModalGraphMouse(
       RenderContext<V, E> rc,
+      Supplier<MultiLayerTransformer> multiLayerTransformerSupplier,
       Supplier<V> vertexFactory,
       Supplier<E> edgeFactory,
-      Map<V, String> vertexLabelMap,
-      Map<E, String> edgeLabelMap,
+      Supplier<Map<V, String>> vertexLabelMapSupplier,
+      Supplier<Map<E, String>> edgeLabelMapSupplier,
       float in,
-      float out) {
-    super(in, out);
+      float out,
+      boolean vertexSelectionOnly) {
+    super(in, out, vertexSelectionOnly);
+    this.rc = rc;
     this.vertexFactory = vertexFactory;
     this.edgeFactory = edgeFactory;
-    this.vertexLabelMap = vertexLabelMap;
-    this.edgeLabelMap = edgeLabelMap;
-    this.rc = rc;
-    this.basicTransformer = rc.getMultiLayerTransformer();
-    loadPlugins();
+    this.vertexLabelMap = vertexLabelMapSupplier.get();
+    this.edgeLabelMap = edgeLabelMapSupplier.get();
+    this.basicTransformer = multiLayerTransformerSupplier.get();
     setModeKeyListener(new ModeKeyAdapter(this));
   }
 
   /** create the plugins, and load the plugins for TRANSFORMING mode */
   @Override
   public void loadPlugins() {
+    super.loadPlugins();
     pickingPlugin =
         new SelectingGraphMousePlugin<V, E>(
             InputEvent.BUTTON1_DOWN_MASK, 0, InputEvent.SHIFT_DOWN_MASK);

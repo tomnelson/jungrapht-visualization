@@ -105,7 +105,7 @@ public class RadialTreeLensDemo extends JPanel {
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
-            .lensGraphMouse(new DefaultLensGraphMouse())
+            .lensGraphMouse(new DefaultLensGraphMouse<>())
             .useGradient(true)
             .build();
 
@@ -118,7 +118,7 @@ public class RadialTreeLensDemo extends JPanel {
                             .getMultiLayerTransformer()
                             .getTransformer(Layer.LAYOUT))
                     .build())
-            .lensGraphMouse(new DefaultLensGraphMouse())
+            .lensGraphMouse(new DefaultLensGraphMouse<>())
             .useGradient(true)
             .build();
 

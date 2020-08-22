@@ -153,7 +153,7 @@ public class LensDemoWithMultiSelectStrategy extends JPanel {
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
-            .lensGraphMouse(new DefaultLensGraphMouse())
+            .lensGraphMouse(new DefaultLensGraphMouse<>())
             .useGradient(true)
             .build();
 
@@ -166,7 +166,7 @@ public class LensDemoWithMultiSelectStrategy extends JPanel {
                             .getMultiLayerTransformer()
                             .getTransformer(Layer.LAYOUT))
                     .build())
-            .lensGraphMouse(new DefaultLensGraphMouse())
+            .lensGraphMouse(new DefaultLensGraphMouse<>())
             .useGradient(true)
             .build();
 
@@ -180,7 +180,8 @@ public class LensDemoWithMultiSelectStrategy extends JPanel {
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
             .lensGraphMouse(
-                new DefaultLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
+                DefaultLensGraphMouse.builder(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f))
+                    .build())
             .build();
 
     magnifyLayoutSupport =
@@ -194,7 +195,8 @@ public class LensDemoWithMultiSelectStrategy extends JPanel {
                             .getTransformer(Layer.LAYOUT))
                     .build())
             .lensGraphMouse(
-                new DefaultLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
+                DefaultLensGraphMouse.builder(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f))
+                    .build())
             .build();
 
     JLabel modeLabel = new JLabel("Mode >>");

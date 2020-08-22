@@ -84,7 +84,11 @@ public class SpatialRTreeTest extends JPanel {
     Supplier<Integer> edgeFactory = SupplierUtil.createIntegerSupplier();
 
     final EditingModalGraphMouse<String, Integer> graphMouse =
-        new EditingModalGraphMouse<>(vv.getRenderContext(), vertexFactory, edgeFactory);
+        EditingModalGraphMouse.<String, Integer>builder()
+            .multiLayerTransformerSupplier(vv.getRenderContext()::getMultiLayerTransformer)
+            .vertexFactory(vertexFactory)
+            .edgeFactory(edgeFactory)
+            .build();
 
     // the EditingGraphMouse will pass mouse event coordinates to the
     // vertexLocations function to set the locations of the vertices as

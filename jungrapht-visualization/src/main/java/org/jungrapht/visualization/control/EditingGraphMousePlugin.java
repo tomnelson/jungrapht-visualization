@@ -77,6 +77,7 @@ public class EditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    */
   @SuppressWarnings("unchecked")
   public void mousePressed(MouseEvent e) {
+    log.info("in {}, mouse pressed at {}", this.hashCode(), e.getPoint());
     if (checkModifiers(e)) {
       final VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
       //      vv.getVertexSpatial().setActive(true);

@@ -143,9 +143,14 @@ public class GraphEditorDemo extends JPanel implements Printable {
     Supplier<Number> edgeFactory = new EdgeFactory();
 
     final EditingModalGraphMouse<Number, Number> graphMouse =
-        new EditingModalGraphMouse<>(
-            vv.getRenderContext(), vertexFactory, edgeFactory, vertexLabelMap, edgeLabelMap);
-    graphMouse.getLabelEditingPlugin();
+        EditingModalGraphMouse.<Number, Number>builder()
+            .renderContextSupplier(vv::getRenderContext)
+            .multiLayerTransformerSupplier(vv.getRenderContext()::getMultiLayerTransformer)
+            .vertexFactory(vertexFactory)
+            .edgeFactory(edgeFactory)
+            .vertexLabelMapSupplier(this::getVertexLabelMap)
+            .edgeLabelMapSupplier(this::getEdgeLabelMap)
+            .build();
 
     // the EditingGraphMouse will pass mouse event coordinates to the
     // vertexLocations function to set the locations of the vertices as
@@ -227,6 +232,14 @@ public class GraphEditorDemo extends JPanel implements Printable {
     public Number get() {
       return i++;
     }
+  }
+
+  public Map<Number, String> getVertexLabelMap() {
+    return vertexLabelMap;
+  }
+
+  public Map<Number, String> getEdgeLabelMap() {
+    return edgeLabelMap;
   }
 
   @SuppressWarnings("serial")

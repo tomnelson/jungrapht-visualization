@@ -1,7 +1,5 @@
 package org.jungrapht.visualization.control;
 
-import static org.jungrapht.visualization.VisualizationServer.PREFIX;
-
 import java.awt.event.InputEvent;
 
 /**
@@ -19,32 +17,16 @@ import java.awt.event.InputEvent;
  */
 public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
 
-  private static final String VERTEX_SELECTION_ONLY = PREFIX + "vertexSelectionOnly";
-
-  public static class Builder<V, E, T extends DefaultGraphMouse, B extends Builder<V, E, T, B>> {
-    private boolean vertexSelectionOnly =
-        Boolean.parseBoolean(System.getProperty(VERTEX_SELECTION_ONLY, "false"));
-    private float in = 1.1f;
-    private float out = 1 / 1.1f;
-
-    public B self() {
-      return (B) this;
-    }
-
-    public B in(float in) {
-      this.in = in;
-      return self();
-    }
-
-    public B out(float out) {
-      this.out = out;
-      return self();
-    }
-
-    public B vertexSelectionOnly(boolean vertexSelectionOnly) {
-      this.vertexSelectionOnly = vertexSelectionOnly;
-      return self();
-    }
+  /**
+   * Build an instance of a DefaultGraphMouse
+   *
+   * @param <V>
+   * @param <E>
+   * @param <T>
+   * @param <B>
+   */
+  public static class Builder<V, E, T extends DefaultGraphMouse, B extends Builder<V, E, T, B>>
+      extends AbstractGraphMouse.Builder<T, B> {
 
     public T build() {
       return (T) new DefaultGraphMouse(in, out, vertexSelectionOnly);
@@ -54,8 +36,6 @@ public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
   public static <V, E> Builder<V, E, ?, ?> builder() {
     return new Builder<>();
   }
-
-  private boolean vertexSelectionOnly;
 
   /** create an instance with default values */
   protected DefaultGraphMouse(Builder<V, E, ?, ?> builder) {
@@ -74,13 +54,13 @@ public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
    * @param out override value for scale out
    */
   DefaultGraphMouse(float in, float out, boolean vertexSelectionOnly) {
-    super(in, out);
-    this.vertexSelectionOnly = vertexSelectionOnly;
+    super(in, out, vertexSelectionOnly);
   }
 
   /** create the plugins, and load them */
   @Override
   public void loadPlugins() {
+    super.loadPlugins();
     scalingPlugin = new ScalingGraphMousePlugin(new CrossoverScalingControl(), 0, in, out);
     add(new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK));
     pickingPlugin =

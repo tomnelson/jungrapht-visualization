@@ -106,7 +106,7 @@ public class MultiRowTreeLayoutForestDemo extends JPanel {
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
-            .lensGraphMouse(new DefaultLensGraphMouse())
+            .lensGraphMouse(new DefaultLensGraphMouse<>())
             .build();
     hyperbolicSupport =
         LayoutLensSupport.builder(vv)
@@ -117,7 +117,7 @@ public class MultiRowTreeLayoutForestDemo extends JPanel {
                             .getMultiLayerTransformer()
                             .getTransformer(Layer.LAYOUT))
                     .build())
-            .lensGraphMouse(new DefaultLensGraphMouse())
+            .lensGraphMouse(new DefaultLensGraphMouse<>())
             .build();
 
     vv.scaleToLayout();

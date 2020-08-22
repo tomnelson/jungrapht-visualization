@@ -17,6 +17,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.function.Supplier;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JComboBox;
@@ -24,7 +25,6 @@ import javax.swing.JMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.plaf.basic.BasicIconFactory;
 import org.jungrapht.visualization.MultiLayerTransformer;
-import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.control.AbstractModalGraphMouse;
 import org.jungrapht.visualization.control.AnimatedPickingGraphMousePlugin;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
@@ -45,45 +45,84 @@ import org.jungrapht.visualization.control.TranslatingGraphMousePlugin;
 public class AnnotatingModalGraphMouse<V, E> extends AbstractModalGraphMouse
     implements ModalGraphMouse, ItemSelectable {
 
+  /**
+   * Build an instance of a EditingModalGraphMouse
+   *
+   * @param <V>
+   * @param <E>
+   * @param <T>
+   * @param <B>
+   */
+  public static class Builder<
+          V, E, T extends AnnotatingModalGraphMouse, B extends Builder<V, E, T, B>>
+      extends AbstractModalGraphMouse.Builder<T, B> {
+
+    protected Supplier<MultiLayerTransformer> multiLayerTransformerSupplier;
+    protected AnnotatingGraphMousePlugin<V, E> annotatingPlugin;
+
+    public B multiLayerTransformerSupplier(
+        Supplier<MultiLayerTransformer> multiLayerTransformerSupplier) {
+      this.multiLayerTransformerSupplier = multiLayerTransformerSupplier;
+      return self();
+    }
+
+    public B annotatingPlugin(AnnotatingGraphMousePlugin annotatingGraphMousePlugin) {
+      this.annotatingPlugin = annotatingGraphMousePlugin;
+      return self();
+    }
+
+    public T build() {
+      return (T) new AnnotatingModalGraphMouse(this);
+    }
+  }
+
+  public static <V, E> Builder<V, E, ?, ?> builder() {
+    return new Builder<>();
+  }
+
   protected AnnotatingGraphMousePlugin<V, E> annotatingPlugin;
   protected MultiLayerTransformer basicTransformer;
-  protected RenderContext<V, E> rc;
+
+  AnnotatingModalGraphMouse(Builder<V, E, ?, ?> builder) {
+    super(builder);
+    this.basicTransformer = builder.multiLayerTransformerSupplier.get();
+    this.annotatingPlugin = builder.annotatingPlugin;
+  }
 
   /**
    * Create an instance with default values for scale in (1.1) and scale out (1/1.1).
    *
-   * @param rc the RenderContext for which this class will be used
    * @param annotatingPlugin the plugin used by this class for annotating
    */
-  public AnnotatingModalGraphMouse(
-      RenderContext<V, E> rc, AnnotatingGraphMousePlugin<V, E> annotatingPlugin) {
-    this(rc, annotatingPlugin, 1.1f, 1 / 1.1f);
+  AnnotatingModalGraphMouse(
+      Supplier<MultiLayerTransformer> multiLayerTransformerSupplier,
+      AnnotatingGraphMousePlugin<V, E> annotatingPlugin) {
+    this(multiLayerTransformerSupplier, annotatingPlugin, 1.1f, 1 / 1.1f, false);
   }
 
   /**
    * Create an instance with the specified scale in and scale out values.
    *
-   * @param rc the RenderContext for which this class will be used
    * @param annotatingPlugin the plugin used by this class for annotating
    * @param in override value for scale in
    * @param out override value for scale out
    */
-  public AnnotatingModalGraphMouse(
-      RenderContext<V, E> rc,
+  AnnotatingModalGraphMouse(
+      Supplier<MultiLayerTransformer> multiLayerTransformerSupplier,
       AnnotatingGraphMousePlugin<V, E> annotatingPlugin,
       float in,
-      float out) {
-    super(in, out);
-    this.rc = rc;
-    this.basicTransformer = rc.getMultiLayerTransformer();
+      float out,
+      boolean vertexSelectionOnly) {
+    super(in, out, vertexSelectionOnly);
+    this.basicTransformer = multiLayerTransformerSupplier.get();
     this.annotatingPlugin = annotatingPlugin;
-    loadPlugins();
     setModeKeyListener(new ModeKeyAdapter(this));
   }
 
   /** create the plugins, and load the plugins for TRANSFORMING mode */
   @Override
   public void loadPlugins() {
+    super.loadPlugins();
     this.pickingPlugin =
         new SelectingGraphMousePlugin<>(
             InputEvent.BUTTON1_DOWN_MASK, 0, InputEvent.SHIFT_DOWN_MASK);

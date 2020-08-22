@@ -36,9 +36,29 @@ import java.awt.event.KeyEvent;
 public class DefaultModalGraphMouse<V, E> extends AbstractModalGraphMouse
     implements ModalGraphMouse, ItemSelectable {
 
+  /**
+   * Build an instance of a DefaultGraphMouse
+   *
+   * @param <V>
+   * @param <E>
+   * @param <T>
+   * @param <B>
+   */
+  public static class Builder<V, E, T extends DefaultModalGraphMouse, B extends Builder<V, E, T, B>>
+      extends AbstractModalGraphMouse.Builder<T, B> {
+
+    public T build() {
+      return (T) new DefaultModalGraphMouse(in, out, vertexSelectionOnly);
+    }
+  }
+
+  public static <V, E> Builder<V, E, ?, ?> builder() {
+    return new Builder<>();
+  }
+
   /** create an instance with default values */
   public DefaultModalGraphMouse() {
-    this(1.1f, 1 / 1.1f);
+    this(new Builder<>());
   }
 
   /**
@@ -47,14 +67,30 @@ public class DefaultModalGraphMouse<V, E> extends AbstractModalGraphMouse
    * @param in override value for scale in
    * @param out override value for scale out
    */
-  public DefaultModalGraphMouse(float in, float out) {
-    super(in, out);
+  DefaultModalGraphMouse(float in, float out, boolean vertexSelectionOnly) {
+    super(in, out, vertexSelectionOnly);
     setModeKeyListener(new ModeKeyAdapter(this));
+  }
+
+  /** create an instance with default values */
+  protected DefaultModalGraphMouse(Builder<V, E, ?, ?> builder) {
+    this(builder.in, builder.out, builder.vertexSelectionOnly);
+  }
+
+  /**
+   * create an instance with passed values
+   *
+   * @param in override value for scale in
+   * @param out override value for scale out
+   */
+  protected DefaultModalGraphMouse(float in, float out) {
+    this(in, out, false);
   }
 
   /** create the plugins, and load the plugins for TRANSFORMING mode */
   @Override
   public void loadPlugins() {
+    super.loadPlugins();
     pickingPlugin =
         new SelectingGraphMousePlugin<>(
             InputEvent.BUTTON1_DOWN_MASK, 0, InputEvent.SHIFT_DOWN_MASK);

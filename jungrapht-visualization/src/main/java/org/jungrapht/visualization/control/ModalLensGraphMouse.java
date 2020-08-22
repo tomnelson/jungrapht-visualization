@@ -25,6 +25,31 @@ import java.awt.event.KeyEvent;
 public class ModalLensGraphMouse extends AbstractModalGraphMouse
     implements ModalGraphMouse, LensGraphMouse {
 
+  /**
+   * Build an instance of a DefaultGraphMouse
+   *
+   * @param <T>
+   * @param <B>
+   */
+  public static class Builder<T extends ModalLensGraphMouse, B extends Builder<T, B>>
+      extends AbstractModalGraphMouse.Builder<T, B> {
+
+    protected LensMagnificationGraphMousePlugin magnificationPlugin;
+
+    public B magnificationPlugin(LensMagnificationGraphMousePlugin magnificationPlugin) {
+      this.magnificationPlugin = magnificationPlugin;
+      return self();
+    }
+
+    public T build() {
+      return (T) new ModalLensGraphMouse(in, out, vertexSelectionOnly, magnificationPlugin);
+    }
+  }
+
+  public static <V, E> Builder<?, ?> builder() {
+    return new Builder<>();
+  }
+
   /** not included in the base class */
   protected LensMagnificationGraphMousePlugin magnificationPlugin;
 
@@ -36,16 +61,19 @@ public class ModalLensGraphMouse extends AbstractModalGraphMouse
   }
 
   public ModalLensGraphMouse(float in, float out) {
-    this(in, out, new LensMagnificationGraphMousePlugin());
+    this(in, out, false, new LensMagnificationGraphMousePlugin());
   }
 
   public ModalLensGraphMouse(LensMagnificationGraphMousePlugin magnificationPlugin) {
-    this(1.1f, 1 / 1.1f, magnificationPlugin);
+    this(1.1f, 1 / 1.1f, false, magnificationPlugin);
   }
 
   public ModalLensGraphMouse(
-      float in, float out, LensMagnificationGraphMousePlugin magnificationPlugin) {
-    super(in, out);
+      float in,
+      float out,
+      boolean vertexSelectionOnly,
+      LensMagnificationGraphMousePlugin magnificationPlugin) {
+    super(in, out, vertexSelectionOnly);
     this.in = in;
     this.out = out;
     this.magnificationPlugin = magnificationPlugin;
@@ -53,7 +81,6 @@ public class ModalLensGraphMouse extends AbstractModalGraphMouse
         new LensSelectingGraphMousePlugin<>(
             InputEvent.BUTTON1_DOWN_MASK, 0, InputEvent.SHIFT_DOWN_MASK);
     this.lensKillingGraphMousePlugin = new LensKillingGraphMousePlugin();
-    loadPlugins();
     setModeKeyListener(new ModeKeyAdapter(this));
   }
 
@@ -62,6 +89,7 @@ public class ModalLensGraphMouse extends AbstractModalGraphMouse
   }
 
   public void loadPlugins() {
+    super.loadPlugins();
     add(lensKillingGraphMousePlugin);
     pickingPlugin = lensSelectingGraphMousePlugin;
     //    animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<>();
