@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.function.Function;
 import javax.swing.Box;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.WindowConstants;
@@ -46,7 +45,6 @@ import org.jungrapht.visualization.transform.shape.HyperbolicShapeTransformer;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
 import org.jungrapht.visualization.transform.shape.ViewLensSupport;
 import org.jungrapht.visualization.util.ShapeFactory;
-import org.jungrapht.visualization.util.VerticalLabelUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -191,9 +189,6 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
         .getLens()
         .setLensShape(magnifyViewSupport.getLensTransformer().getLens().getLensShape());
 
-    JLabel modeLabel = new JLabel("     Mode Menu >>");
-    modeLabel.setUI(new VerticalLabelUI(false));
-
     JRadioButton showSpatialEffects = new JRadioButton("Spatial Structure");
     showSpatialEffects.addItemListener(
         e -> {
@@ -240,7 +235,6 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
             .title("Lens Controls")
             .build()
             .container());
-    controls.add(modeLabel);
     add(controls, BorderLayout.SOUTH);
   }
 

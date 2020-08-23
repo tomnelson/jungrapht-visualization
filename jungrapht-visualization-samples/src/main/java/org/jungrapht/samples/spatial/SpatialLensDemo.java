@@ -18,6 +18,7 @@ import org.jgrapht.Graph;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.LensControlHelper;
 import org.jungrapht.samples.util.TestGraphs;
+import org.jungrapht.samples.util.VerticalLabelUI;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -36,7 +37,6 @@ import org.jungrapht.visualization.transform.MagnifyTransformer;
 import org.jungrapht.visualization.transform.shape.HyperbolicShapeTransformer;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
 import org.jungrapht.visualization.transform.shape.ViewLensSupport;
-import org.jungrapht.visualization.util.VerticalLabelUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

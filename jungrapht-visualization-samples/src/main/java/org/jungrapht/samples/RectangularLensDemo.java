@@ -21,6 +21,7 @@ import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.LensControlHelper;
 import org.jungrapht.samples.util.TestGraphs;
+import org.jungrapht.samples.util.VerticalLabelUI;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -41,7 +42,6 @@ import org.jungrapht.visualization.transform.shape.HyperbolicShapeTransformer;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
 import org.jungrapht.visualization.transform.shape.ViewLensSupport;
 import org.jungrapht.visualization.util.LayoutAlgorithmTransition;
-import org.jungrapht.visualization.util.VerticalLabelUI;
 
 /**
  * Demonstrates the use of <code>HyperbolicTransform</code> and <code>MagnifyTransform</code>
