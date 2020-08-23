@@ -19,9 +19,10 @@ In the **ShowLayoutsWithJGraptIO** demonstration program, the lightweight render
 
 Many rendering features may be set via java properties (see [sample.jungrapht.properties](https://github.com/tomnelson/jungrapht-visualization/blob/master/jungrapht-visualization/src/main/resources/sample.jungrapht.properties) for keys and default values). 
 
-JUNGRAPHT-VISUALIZATION includes improved layout algorithms for directed graphs and Trees, including the 
+JUNGRAPHT-VISUALIZATION includes the jungrapht-layout module, which is independent of any java.awt imports (so that it may be more easily used by JavaFX or other rendering systems). Jungrapht-layout includes improved layout algorithms for directed graphs and Trees, including the 
 TidierTreeLayoutAlgorithm and the SugiyamaLayoutAlgorithm. All TreeLayoutAlgorithms will make a best attempt to draw any directed graph 
 (by ignoring cycles and reversing feedback edges) for which one or more Root vertices can be determined. 
+Any TreeLayoutAlgorithm, when given an undirected graph, will create a SpanningTree in order to use the TreeLayoutAlgorithm.
 There are Vertex/Edge Predicates and Vertex/Edge Comparators that are used to coerce out the desired tree structure based on a user-defined procedure to find roots and follow the desired path. 
 All TreeLayoutAlgorithms, including the TidierTreeLayoutAlgorithm, will draw either single or multiple rooted 'forest' graphs. CircleLayout has been improved with an option to reduce edge crossing.
 
@@ -54,11 +55,12 @@ Same graph using CircleLayoutAlgorithm with reduced edge crossing
 ### Latest Release
 
 
-The most recent version of JUNGRAPHT-VISUALIZATION is [version 1.0-RC8](https://github.com/tomnelson/jungrapht-visualization/releases/tag/v1.0_RC8), released 15 May 2020.
+The most recent version of JUNGRAPHT-VISUALIZATION is [version 1.0-RC9](https://github.com/tomnelson/jungrapht-visualization/releases/tag/v1.0_RC9), released 23 August 2020.
 *   [Javadoc](http://tomnelson.github.io/jungrapht-visualization/javadoc/index.html)
-*   [Maven Search Repository](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.tomnelson%22%20AND%20v%3A%221.0-RC8%22%20AND%20(a%3A%22jungrapht-visualization%22%20OR%20a%3A%22jungrapht-visualization-samples%22))
-    *   `jungrapht-visualization`: [jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization/1.0-RC8/jungrapht-visualization-1.0-RC8.jar), [source jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization/1.0-RC8/jungrapht-visualization-1.0-RC8-sources.jar), [documentation jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization/1.0-RC8/jungrapht-visualization-1.0-RC8-javadoc.jar)
-    *   `jungrapht-visualization-samples`: [jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization-samples/1.0-RC8/jungrapht-visualization-samples-1.0-RC8.jar), [source jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization-samples/1.0-RC8/jungrapht-visualization-samples-1.0-RC8-sources.jar), [documentation jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization-samples/1.0-RC8/jungrapht-visualization-samples-1.0-RC8-javadoc.jar)
+*   [Maven Search Repository](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.tomnelson%22%20AND%20v%3A%221.0-RC9%22%20AND%20(a%3A%22jungrapht-visualization%22%20OR%20a%3A%22jungrapht-visualization-samples%22))
+    *   `jungrapht-visualization`: [jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization/1.0-RC9/jungrapht-visualization-1.0-RC9.jar), [source jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization/1.0-RC9/jungrapht-visualization-1.0-RC9-sources.jar), [documentation jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization/1.0-RC9/jungrapht-visualization-1.0-RC9-javadoc.jar)
+    *   `jungrapht-layout`: [jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-layout/1.0-RC9/jungrapht-layout-1.0-RC9.jar), [source jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-layout/1.0-RC9/jungrapht-layout-1.0-RC9-sources.jar), [documentation jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-layout/1.0-RC9/jungrapht-layout-1.0-RC9-javadoc.jar)
+    *   `jungrapht-visualization-samples`: [jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization-samples/1.0-RC9/jungrapht-visualization-samples-1.0-RC9.jar), [source jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization-samples/1.0-RC9/jungrapht-visualization-samples-1.0-RC9-sources.jar), [documentation jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization-samples/1.0-RC9/jungrapht-visualization-samples-1.0-RC9-javadoc.jar)
 
 To add a dependency on this release of JUNGRAPHT-VISUALIZATION using Maven, use the following:
 
@@ -66,7 +68,7 @@ To add a dependency on this release of JUNGRAPHT-VISUALIZATION using Maven, use 
 <dependency>
   <groupId>com.github.tomnelson</groupId>
   <artifactId>jungrapht-visualization</artifactId>
-  <version>1.0-RC8</version>
+  <version>1.0-RC9</version>
 </dependency>
 ```
 
