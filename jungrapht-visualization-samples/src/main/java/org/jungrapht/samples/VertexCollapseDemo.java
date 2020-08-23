@@ -165,7 +165,7 @@ public class VertexCollapseDemo extends JPanel {
                     vv.getRenderContext().getParallelEdgeIndexFunction().reset();
                     layoutModel.accept(vv.getVisualizationModel().getLayoutAlgorithm());
                     vv.getSelectedVertexState().clear();
-
+                    vv.getSelectedVertexState().select(Collapsable.of(clusterGraph));
                     vv.repaint();
                   }
                 }));

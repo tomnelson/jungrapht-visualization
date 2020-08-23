@@ -9,8 +9,6 @@ import java.util.function.Supplier;
 import javax.swing.JComponent;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A plugin that can create vertices, undirected edges, and directed edges using mouse gestures.
@@ -25,7 +23,6 @@ import org.slf4j.LoggerFactory;
 public class EditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     implements MouseListener, MouseMotionListener {
 
-  private static Logger log = LoggerFactory.getLogger(EditingGraphMousePlugin.class);
   protected VertexSupport<V, E> vertexSupport;
   protected EdgeSupport<V, E> edgeSupport;
   private Creating createMode = Creating.UNDETERMINED;
@@ -77,7 +74,6 @@ public class EditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    */
   @SuppressWarnings("unchecked")
   public void mousePressed(MouseEvent e) {
-    log.info("in {}, mouse pressed at {}", this.hashCode(), e.getPoint());
     if (checkModifiers(e)) {
       final VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
       //      vv.getVertexSpatial().setActive(true);
