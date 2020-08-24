@@ -83,7 +83,7 @@ public abstract class AbstractGraphMouse extends PluggableGraphMouse {
 
   /** create the plugins, and load the plugins for TRANSFORMING mode */
   @Override
-  public void loadPlugins() {
+  public void setPluginsLoaded() {
     this.pluginsLoaded = true;
   }
 

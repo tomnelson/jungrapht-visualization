@@ -60,7 +60,6 @@ public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
   /** create the plugins, and load them */
   @Override
   public void loadPlugins() {
-    super.loadPlugins();
     scalingPlugin = new ScalingGraphMousePlugin(new CrossoverScalingControl(), 0, in, out);
     add(new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK));
     pickingPlugin =
@@ -69,6 +68,7 @@ public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
             : new SelectingGraphMousePlugin<>();
     add(pickingPlugin);
     add(scalingPlugin);
+    setPluginsLoaded();
   }
 
   /** @param zoomAtMouse The zoomAtMouse to set. */

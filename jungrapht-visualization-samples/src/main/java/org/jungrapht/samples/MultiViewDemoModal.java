@@ -193,7 +193,6 @@ public class MultiViewDemoModal extends JPanel {
     DefaultModalGraphMouse<String, Integer> gm1 =
         new DefaultModalGraphMouse<>() {
           public void loadPlugins() {
-            super.loadPlugins();
             pickingPlugin = new SelectingGraphMousePlugin<String, Integer>();
             animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<String, Integer>();
             translatingPlugin = new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
@@ -203,13 +202,13 @@ public class MultiViewDemoModal extends JPanel {
 
             add(scalingPlugin);
             setMode(Mode.TRANSFORMING);
+            setPluginsLoaded();
           }
         };
 
     DefaultModalGraphMouse<String, Integer> gm2 =
         new DefaultModalGraphMouse<>() {
           public void loadPlugins() {
-            super.loadPlugins();
             pickingPlugin = new SelectingGraphMousePlugin<String, Integer>();
             animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<String, Integer>();
             translatingPlugin = new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
@@ -219,6 +218,7 @@ public class MultiViewDemoModal extends JPanel {
 
             add(scalingPlugin);
             setMode(Mode.TRANSFORMING);
+            setPluginsLoaded();
           }
         };
 

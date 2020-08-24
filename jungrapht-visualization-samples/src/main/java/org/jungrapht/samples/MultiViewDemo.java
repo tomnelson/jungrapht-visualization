@@ -190,24 +190,24 @@ public class MultiViewDemo extends JPanel {
     DefaultGraphMouse<String, Integer> gm1 =
         new DefaultGraphMouse<>() {
           public void loadPlugins() {
-            super.loadPlugins();
             scalingPlugin = new ScalingGraphMousePlugin(new LayoutScalingControl(), 0, in, out);
             add(new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK));
             pickingPlugin = new SelectingGraphMousePlugin<>();
             add(pickingPlugin);
             add(scalingPlugin);
+            setPluginsLoaded();
           }
         };
 
     DefaultGraphMouse<String, Integer> gm2 =
         new DefaultGraphMouse<>() {
           public void loadPlugins() {
-            super.loadPlugins();
             scalingPlugin = new ScalingGraphMousePlugin(new ViewScalingControl(), 0, in, out);
             add(new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK));
             pickingPlugin = new SelectingGraphMousePlugin<>();
             add(pickingPlugin);
             add(scalingPlugin);
+            setPluginsLoaded();
           }
         };
 
