@@ -18,6 +18,7 @@ import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
+import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -93,7 +94,9 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin.Se
   public SelectingGraphMousePlugin() {
     this(
         InputEvent.BUTTON1_DOWN_MASK,
-        InputEvent.CTRL_DOWN_MASK, // select or drag select in rectangle
+        // CTRL down on linux, command down on mac
+        Toolkit.getDefaultToolkit()
+            .getMenuShortcutKeyMaskEx(), // select or drag select in rectangle
         InputEvent.SHIFT_DOWN_MASK);
   }
 

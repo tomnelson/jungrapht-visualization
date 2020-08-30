@@ -1,6 +1,7 @@
 package org.jungrapht.visualization.control;
 
 import java.awt.Shape;
+import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
@@ -24,7 +25,12 @@ public class LensSelectingGraphMousePlugin<V, E> extends SelectingGraphMousePlug
 
   /** create an instance with default settings */
   public LensSelectingGraphMousePlugin() {
-    super(InputEvent.BUTTON1_DOWN_MASK, InputEvent.CTRL_DOWN_MASK, InputEvent.SHIFT_DOWN_MASK);
+    super(
+        InputEvent.BUTTON1_DOWN_MASK,
+        // CTRL down on linux, command down on mac
+        Toolkit.getDefaultToolkit()
+            .getMenuShortcutKeyMaskEx(), // select or drag select in rectangle
+        InputEvent.SHIFT_DOWN_MASK);
   }
 
   /**
