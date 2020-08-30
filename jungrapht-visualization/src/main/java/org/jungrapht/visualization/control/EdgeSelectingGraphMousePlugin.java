@@ -18,6 +18,7 @@ import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
+import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -75,7 +76,7 @@ public class EdgeSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugi
   public EdgeSelectingGraphMousePlugin() {
     this(
         InputEvent.BUTTON1_DOWN_MASK,
-        InputEvent.CTRL_DOWN_MASK, // select or drag select in rectangle
+        Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx(),
         InputEvent.SHIFT_DOWN_MASK);
   }
 
