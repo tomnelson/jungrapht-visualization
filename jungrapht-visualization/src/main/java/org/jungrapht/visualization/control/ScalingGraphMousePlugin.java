@@ -46,6 +46,8 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
   /** controls scaling operations */
   protected ScalingControl scaler;
 
+  protected ScalingControl layoutScalingControl = new LayoutScalingControl();
+
   public ScalingGraphMousePlugin(ScalingControl scaler, int modifiers) {
     this(scaler, modifiers, 1.1f, 1 / 1.1f);
   }
@@ -72,6 +74,7 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
   public void mouseWheelMoved(MouseWheelEvent e) {
     boolean accepted = checkModifiers(e);
     if (accepted) {
+      ScalingControl scalingControl = scaler;
       float xin = in;
       float yin = in;
       float xout = out;
@@ -80,26 +83,28 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
       if ((e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) == InputEvent.CTRL_DOWN_MASK) {
         // only scale x axis,
         yin = yout = 1.0f;
+        scalingControl = layoutScalingControl;
       }
       if ((e.getModifiersEx() & InputEvent.ALT_DOWN_MASK) == InputEvent.ALT_DOWN_MASK) {
         // only scroll y axis
         xin = xout = 1.0f;
+        scalingControl = layoutScalingControl;
       }
       VisualizationViewer vv = (VisualizationViewer) e.getSource();
       Point2D mouse = e.getPoint();
       int amount = e.getWheelRotation();
       if (zoomAtMouse) {
         if (amount < 0) {
-          scaler.scale(vv, xin, yin, mouse);
+          scalingControl.scale(vv, xin, yin, mouse);
         } else if (amount > 0) {
-          scaler.scale(vv, xout, yout, mouse);
+          scalingControl.scale(vv, xout, yout, mouse);
         }
       } else {
         Point2D center = vv.getCenter();
         if (amount < 0) {
-          scaler.scale(vv, xin, yin, center);
+          scalingControl.scale(vv, xin, yin, center);
         } else if (amount > 0) {
-          scaler.scale(vv, xout, yout, center);
+          scalingControl.scale(vv, xout, yout, center);
         }
       }
       e.consume();

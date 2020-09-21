@@ -42,6 +42,7 @@ public class SatelliteScalingGraphMousePlugin extends ScalingGraphMousePlugin {
   public void mouseWheelMoved(MouseWheelEvent e) {
     boolean accepted = checkModifiers(e);
     if (accepted) {
+      ScalingControl scalingControl = scaler;
       float xin = in;
       float yin = in;
       float xout = out;
@@ -50,10 +51,12 @@ public class SatelliteScalingGraphMousePlugin extends ScalingGraphMousePlugin {
       if ((e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) == InputEvent.CTRL_DOWN_MASK) {
         // only scale x axis,
         yin = yout = 1.0f;
+        scalingControl = layoutScalingControl;
       }
       if ((e.getModifiersEx() & InputEvent.ALT_DOWN_MASK) == InputEvent.ALT_DOWN_MASK) {
         // only scroll y axis
         xin = xout = 1.0f;
+        scalingControl = layoutScalingControl;
       }
       VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
 
@@ -63,10 +66,10 @@ public class SatelliteScalingGraphMousePlugin extends ScalingGraphMousePlugin {
         int amount = e.getWheelRotation();
 
         if (amount < 0) {
-          scaler.scale(vvMaster, xin, yin, vvMaster.getCenter());
+          scalingControl.scale(vvMaster, xin, yin, vvMaster.getCenter());
 
         } else if (amount > 0) {
-          scaler.scale(vvMaster, xout, yout, vvMaster.getCenter());
+          scalingControl.scale(vvMaster, xout, yout, vvMaster.getCenter());
         }
         e.consume();
         vv.repaint();
