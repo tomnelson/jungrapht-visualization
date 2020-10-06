@@ -126,7 +126,7 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
             visualizationViewer.getVisualizationModel()::getGraph,
             visualizationViewer.getSelectedVertexState()));
     visualizationViewer.setGraphMouse(
-        DefaultGraphMouse.builder().vertexSelectionOnly(true).build());
+        DefaultGraphMouse.<V, E>builder().vertexSelectionOnly(true).build());
   }
 
   /** @return Returns the lensColor. */

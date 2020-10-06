@@ -13,9 +13,12 @@ package org.jungrapht.samples.util;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphType;
 import org.jgrapht.generate.BarabasiAlbertGraphGenerator;
@@ -200,11 +203,53 @@ public class TestGraphs {
     String current = vertexIt.next();
     while (vertexIt.hasNext()) {
       String next = vertexIt.next();
-      graph.addVertex(current);
-      graph.addVertex(next);
       graph.addEdge(current, next);
     }
 
+    return graph;
+  }
+
+  public static <T> Graph<T, Integer> getOneComponentGraph(Supplier<T> factory) {
+
+    Graph<T, Integer> graph =
+        GraphTypeBuilder.<T, Integer>forGraphType(DefaultGraphType.directedPseudograph())
+            .edgeSupplier(SupplierUtil.createIntegerSupplier())
+            .vertexSupplier(factory)
+            .allowingMultipleEdges(true)
+            .allowingSelfLoops(true)
+            .buildGraph();
+
+    List<T> list = IntStream.range(0, 20).mapToObj(i -> factory.get()).collect(Collectors.toList());
+    // create a clique
+    for (int i = 0; i < 10; i++) {
+      for (int j = i + 1; j < 10; j++) {
+        T i1 = list.get(i);
+        T i2 = list.get(j);
+        graph.addVertex(i1);
+        graph.addVertex(i2);
+        graph.addEdge(i1, i2);
+      }
+    }
+
+    // create a partial clique
+    for (int i = 10; i < 20; i++) {
+      for (int j = i + 1; j < 20; j++) {
+        if (Math.random() > 0.6) {
+          continue;
+        }
+        T i1 = list.get(i);
+        T i2 = list.get(j);
+        graph.addVertex(i1);
+        graph.addVertex(i2);
+        graph.addEdge(i1, i2);
+      }
+    }
+    Iterator<T> vertexIt = graph.vertexSet().iterator();
+    T current = vertexIt.next();
+    while (vertexIt.hasNext()) {
+      T next = vertexIt.next();
+      graph.addEdge(current, next);
+    }
     return graph;
   }
 

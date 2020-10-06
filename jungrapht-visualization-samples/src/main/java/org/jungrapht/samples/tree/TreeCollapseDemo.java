@@ -13,12 +13,12 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Shape;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import javax.swing.*;
 import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultGraphType;
-import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.DemoTreeSupplier;
 import org.jungrapht.samples.util.TreeLayoutSelector;
@@ -29,7 +29,6 @@ import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TreeLayout;
 import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.jungrapht.visualization.subLayout.Collapsable;
 import org.jungrapht.visualization.subLayout.TreeCollapser;
 
 /**
@@ -40,42 +39,33 @@ import org.jungrapht.visualization.subLayout.TreeCollapser;
 public class TreeCollapseDemo extends JPanel {
 
   /** the original graph */
-  Graph<Collapsable<?>, Integer> graph;
+  Graph<String, Integer> graph;
 
   /** the visual component and renderer for the graph */
-  VisualizationViewer<Collapsable<?>, Integer> vv;
+  VisualizationViewer<String, Integer> vv;
+
+  static int counter = 0;
+  Supplier<String> vertexFactory = () -> "COL" + counter++;
 
   @SuppressWarnings("unchecked")
   public TreeCollapseDemo() {
 
     setLayout(new BorderLayout());
     // create a simple graph for the demo
-    Graph<String, Integer> generatedGraph = DemoTreeSupplier.createTreeTwo();
-    // make a pseudograph with Collapsable vertex types
-    // the graph has to allow self loops and parallel edges in order to
-    // be collapsed and expanded without losing edges
-    this.graph =
-        GraphTypeBuilder.<Collapsable<?>, Integer>forGraphType(
-                DefaultGraphType.directedPseudograph())
-            .buildGraph();
-    // add vertices and edges to the new graph
-    for (Integer edge : generatedGraph.edgeSet()) {
-      Collapsable<?> source = Collapsable.of(generatedGraph.getEdgeSource(edge));
-      Collapsable<?> target = Collapsable.of(generatedGraph.getEdgeTarget(edge));
-      this.graph.addVertex(source);
-      this.graph.addVertex(target);
-      this.graph.addEdge(source, target, edge);
-    }
+    this.graph = DemoTreeSupplier.createTreeTwo();
 
     Dimension viewSize = new Dimension(600, 600);
     Dimension layoutSize = new Dimension(600, 600);
 
     vv = VisualizationViewer.builder(graph).layoutSize(layoutSize).viewSize(viewSize).build();
+    TreeCollapser<String, Integer> collapser = new TreeCollapser(graph, vertexFactory);
 
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
-    vv.getRenderContext().setVertexShapeFunction(new ClusterShapeFunction());
+    vv.getRenderContext()
+        .setVertexShapeFunction(new ClusterShapeFunction(collapser.collapsedGraphFunction));
     // add a listener for ToolTips
     vv.setVertexToolTipFunction(Object::toString);
+    vv.setEdgeToolTipFunction(Object::toString);
     vv.getRenderContext().setArrowFillPaintFunction(n -> Color.lightGray);
     vv.scaleToLayout();
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
@@ -84,12 +74,11 @@ public class TreeCollapseDemo extends JPanel {
     JButton collapse = new JButton("Collapse");
     collapse.addActionListener(
         e -> {
-          Set<Collapsable<?>> picked = vv.getSelectedVertexState().getSelected();
-          if (picked.size() == 1) {
-            Collapsable<?> root = picked.iterator().next();
-            Graph<Collapsable<?>, Integer> subTree = TreeCollapser.collapse(graph, root);
-            LayoutModel<Collapsable<?>> layoutModel = vv.getVisualizationModel().getLayoutModel();
-            layoutModel.set(Collapsable.of(subTree), layoutModel.apply(root));
+          Set<String> picked = new HashSet<>(vv.getSelectedVertexState().getSelected());
+          for (String root : picked) {
+            String collapsedVertex = collapser.collapse(root);
+            LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
+            layoutModel.set(collapsedVertex, layoutModel.apply(root));
             // the rootPredicate uses the graph which we have changed.
             // let the layoutAlgorithm create a rootPredicate based on the changed graph
             LayoutAlgorithm layoutAlgorithm = vv.getVisualizationModel().getLayoutAlgorithm();
@@ -105,22 +94,22 @@ public class TreeCollapseDemo extends JPanel {
     JButton expand = new JButton("Expand");
     expand.addActionListener(
         e -> {
-          for (Collapsable<?> v : vv.getSelectedVertexState().getSelected()) {
-            if (v.get() instanceof Graph) {
-              graph = TreeCollapser.expand(graph, (Collapsable<Graph>) v);
-              LayoutModel<Collapsable<?>> layoutModel = vv.getVisualizationModel().getLayoutModel();
-              layoutModel.set(Collapsable.of(graph), layoutModel.apply(v));
-              // the rootPredicate uses the graph which we have changed.
-              // let the layoutAlgorithm create a rootPredicate based on the changed graph
-              LayoutAlgorithm layoutAlgorithm = vv.getVisualizationModel().getLayoutAlgorithm();
-              if (layoutAlgorithm instanceof TreeLayout) {
-                ((TreeLayout) layoutAlgorithm).setRootPredicate(null);
-              }
-              vv.getVisualizationModel().setGraph(graph, true);
+          for (String v : new HashSet<>(vv.getSelectedVertexState().getSelected())) {
+            //            if (v.get() instanceof Graph) {
+            collapser.expand(v);
+            LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
+            layoutModel.set(v, layoutModel.apply(v));
+            // the rootPredicate uses the graph which we have changed.
+            // let the layoutAlgorithm create a rootPredicate based on the changed graph
+            LayoutAlgorithm layoutAlgorithm = vv.getVisualizationModel().getLayoutAlgorithm();
+            if (layoutAlgorithm instanceof TreeLayout) {
+              ((TreeLayout) layoutAlgorithm).setRootPredicate(null);
             }
-            vv.getSelectedVertexState().clear();
-            vv.repaint();
+            vv.getVisualizationModel().setGraph(graph, true);
           }
+          vv.getSelectedVertexState().clear();
+          vv.repaint();
+          //          }
         });
 
     JPanel controls = new JPanel();
@@ -137,17 +126,20 @@ public class TreeCollapseDemo extends JPanel {
    * sides corresponds to the number of vertices that were collapsed into the vertex represented by
    * this shape.
    */
-  static class ClusterShapeFunction extends EllipseShapeFunction<Collapsable<?>> {
+  static class ClusterShapeFunction<V, E> extends EllipseShapeFunction<V> {
 
-    ClusterShapeFunction() {
-      setSizeFunction(new ClusterSizeFunction(20));
+    Function<V, Graph<V, E>> function;
+
+    ClusterShapeFunction(Function<V, Graph<V, E>> function) {
+      this.function = function;
+      setSizeFunction(new ClusterSizeFunction<V, E>(function, 20));
     }
 
     @Override
-    public Shape apply(Collapsable<?> v) {
-      if (v.get() instanceof Graph) {
-        @SuppressWarnings("rawtypes")
-        int size = ((Graph) v.get()).vertexSet().size();
+    public Shape apply(V v) {
+      Graph<V, E> graph = function.apply(v);
+      if (graph != null) {
+        int size = graph.vertexSet().size();
         if (size < 8) {
           int sides = Math.max(size, 3);
           return factory.getRegularPolygon(v, sides);
@@ -163,15 +155,17 @@ public class TreeCollapseDemo extends JPanel {
    * A demo class that will make vertices larger if they represent a collapsed collection of
    * original vertices
    */
-  static class ClusterSizeFunction implements Function<Collapsable<?>, Integer> {
+  static class ClusterSizeFunction<V, E> implements Function<V, Integer> {
     int size;
+    Function<V, Graph<V, E>> function;
 
-    public ClusterSizeFunction(Integer size) {
+    public ClusterSizeFunction(Function<V, Graph<V, E>> function, Integer size) {
+      this.function = function;
       this.size = size;
     }
 
-    public Integer apply(Collapsable<?> v) {
-      if (v.get() instanceof Graph) {
+    public Integer apply(V v) {
+      if (function.apply(v) != null) {
         return 30;
       }
       return size;

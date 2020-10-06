@@ -8,18 +8,21 @@
  */
 package org.jungrapht.samples;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.Shape;
 import java.awt.event.ItemEvent;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import org.jgrapht.Graph;
-import org.jgrapht.graph.builder.GraphTypeBuilder;
-import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.samples.util.LayoutHelper;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationModel;
@@ -28,10 +31,10 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.decorators.EllipseShapeFunction;
-import org.jungrapht.visualization.layout.algorithms.*;
+import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
-import org.jungrapht.visualization.subLayout.Collapsable;
 import org.jungrapht.visualization.subLayout.GraphCollapser;
 import org.jungrapht.visualization.util.LayoutAlgorithmTransition;
 import org.jungrapht.visualization.util.PredicatedParallelEdgeIndexFunction;
@@ -72,50 +75,37 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
           + "<p>You can drag the vertices with the mouse."
           + "<p>Use the 'Picking'/'Transforming' combo-box to switch"
           + "<p>between picking and transforming mode.</html>";
+
+  static int counter = 0;
+  Supplier<String> vertexFactory = () -> "COL" + counter++;
+
   /** the graph */
-  Graph<Collapsable<?>, Integer> graph;
+  Graph<String, Integer> graph = TestGraphs.getOneComponentGraph(vertexFactory);
 
   /** the visual component and renderer for the graph */
-  VisualizationViewer<Collapsable<?>, Integer> vv;
+  VisualizationViewer<String, Integer> vv;
 
-  LayoutAlgorithm<Collapsable<?>> layoutAlgorithm;
-
-  GraphCollapser collapser;
+  LayoutAlgorithm<String> layoutAlgorithm;
+  GraphCollapser<String, Integer> collapser;
 
   @SuppressWarnings({"unchecked", "rawtypes"})
   public VertexCollapseDemoWithLayouts() {
     setLayout(new BorderLayout());
-    // create a simple graph for the demo
-    Graph<String, Integer> generatedGraph = TestGraphs.getOneComponentGraph();
 
-    // make a graph of the same type but with Collapsable vertex types
-    this.graph =
-        GraphTypeBuilder.<Collapsable<?>, Integer>forGraphType(generatedGraph.getType())
-            .edgeSupplier(SupplierUtil.createIntegerSupplier())
-            .buildGraph();
-
-    for (Integer edge : generatedGraph.edgeSet()) {
-      Collapsable<?> source = Collapsable.of(generatedGraph.getEdgeSource(edge));
-      Collapsable<?> target = Collapsable.of(generatedGraph.getEdgeTarget(edge));
-      this.graph.addVertex(source);
-      this.graph.addVertex(target);
-      this.graph.addEdge(source, target, edge);
-    }
-
-    collapser = new GraphCollapser<>(graph);
+    collapser = new GraphCollapser<>(graph, vertexFactory);
 
     layoutAlgorithm = new FRLayoutAlgorithm<>();
 
     Dimension preferredSize = new Dimension(400, 400);
 
-    final VisualizationModel<Collapsable<?>, Integer> visualizationModel =
+    final VisualizationModel<String, Integer> visualizationModel =
         VisualizationModel.builder(graph)
             .layoutAlgorithm(layoutAlgorithm)
             .layoutSize(preferredSize)
             .build();
 
     // the regular graph mouse for the normal view
-    final DefaultModalGraphMouse<Collapsable<?>, Number> graphMouse = new DefaultModalGraphMouse();
+    final DefaultModalGraphMouse<String, Number> graphMouse = new DefaultModalGraphMouse();
 
     vv =
         VisualizationViewer.builder(visualizationModel)
@@ -123,7 +113,8 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
             .viewSize(preferredSize)
             .build();
 
-    vv.getRenderContext().setVertexShapeFunction(new ClusterShapeFunction());
+    vv.getRenderContext()
+        .setVertexShapeFunction(new ClusterShapeFunction(collapser.collapsedGraphFunction));
 
     final Set exclusions = new HashSet();
     final PredicatedParallelEdgeIndexFunction eif =
@@ -170,21 +161,17 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
         e ->
             SwingUtilities.invokeLater(
                 () -> {
-                  Collection<Collapsable<?>> picked =
+                  Collection<String> picked =
                       new HashSet(vv.getSelectedVertexState().getSelected());
                   if (picked.size() > 1) {
-                    Graph<Collapsable<?>, Integer> inGraph = vv.getVisualizationModel().getGraph();
-                    LayoutModel<Collapsable<?>> layoutModel =
-                        vv.getVisualizationModel().getLayoutModel();
-                    Graph<Collapsable<?>, Number> clusterGraph =
-                        collapser.getClusterGraph(inGraph, picked);
+                    LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
+                    Graph<String, Integer> clusterGraph = collapser.getClusterGraph(picked);
                     log.trace("clusterGraph:" + clusterGraph);
-                    Graph<Collapsable<?>, Integer> g = collapser.collapse(inGraph, clusterGraph);
-                    log.trace("g:" + g);
+                    String clusterVertex = collapser.collapse(picked);
 
                     double sumx = 0;
                     double sumy = 0;
-                    for (Collapsable<?> v : picked) {
+                    for (String v : picked) {
                       Point p = layoutModel.apply(v);
                       sumx += p.x;
                       sumy += p.y;
@@ -194,14 +181,13 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
                         .getLayoutStateChangeSupport()
                         .fireLayoutStateChanged(layoutModel, true);
                     layoutModel.lock(false);
-                    layoutModel.set(Collapsable.of(clusterGraph), cp);
+                    layoutModel.set(clusterVertex, cp);
                     log.trace("put the cluster at " + cp);
-                    layoutModel.lock(Collapsable.of(clusterGraph), true);
-                    vv.getVisualizationModel().setGraph(g);
+                    layoutModel.lock(clusterVertex, true);
                     vv.getRenderContext().getParallelEdgeIndexFunction().reset();
                     layoutModel.accept(vv.getVisualizationModel().getLayoutAlgorithm());
                     vv.getSelectedVertexState().clear();
-
+                    vv.getSelectedVertexState().select(clusterVertex);
                     vv.repaint();
                   }
                 }));
@@ -211,20 +197,17 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
         e ->
             SwingUtilities.invokeLater(
                 () -> {
-                  Collection<Collapsable<?>> picked =
+                  Collection<String> picked =
                       new HashSet(vv.getSelectedVertexState().getSelected());
-                  for (Collapsable<?> v : picked) {
-                    if (v.get() instanceof Graph) {
-                      Graph<Collapsable<?>, Integer> inGraph =
-                          vv.getVisualizationModel().getGraph();
-                      LayoutModel<Collapsable<?>> layoutModel =
-                          vv.getVisualizationModel().getLayoutModel();
-                      Graph<Collapsable<?>, Integer> g = collapser.expand(graph, inGraph, v);
+                  for (String v : picked) {
+                    if (collapser.collapsedGraphFunction.apply(v) != null) {
+                      LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
+
+                      collapser.expand(v);
 
                       layoutModel.lock(false);
-                      vv.getVisualizationModel().setGraph(g);
-
                       vv.getRenderContext().getParallelEdgeIndexFunction().reset();
+                      layoutModel.accept(vv.getVisualizationModel().getLayoutAlgorithm());
                     }
                     vv.getSelectedVertexState().clear();
                     vv.repaint();
@@ -278,7 +261,6 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
                 (JComponent) e.getSource(), instructions, "Help", JOptionPane.PLAIN_MESSAGE));
 
     JPanel controls = new JPanel(new FlowLayout());
-    //    controls.add(ControlHelpers.getZoomControls(vv, "Zoom"));
     JPanel collapseControls = new JPanel(new GridLayout(0, 1));
     collapseControls.setBorder(BorderFactory.createTitledBorder("Picked"));
     collapseControls.add(collapse);
@@ -317,16 +299,20 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
    * sides corresponds to the number of vertices that were collapsed into the vertex represented by
    * this shape.
    */
-  static class ClusterShapeFunction extends EllipseShapeFunction<Collapsable<?>> {
+  static class ClusterShapeFunction<V, E> extends EllipseShapeFunction<V> {
 
-    ClusterShapeFunction() {
-      setSizeFunction(new ClusterSizeFunction(20));
+    Function<V, Graph<V, E>> function;
+
+    ClusterShapeFunction(Function<V, Graph<V, E>> function) {
+      this.function = function;
+      setSizeFunction(new ClusterSizeFunction<V, E>(function, 20));
     }
 
     @Override
-    public Shape apply(Collapsable<?> v) {
-      if (v.get() instanceof Graph) {
-        int size = ((Graph) v.get()).vertexSet().size();
+    public Shape apply(V v) {
+      Graph<V, E> graph = function.apply(v);
+      if (graph != null) {
+        int size = graph.vertexSet().size();
         if (size < 8) {
           int sides = Math.max(size, 3);
           return factory.getRegularPolygon(v, sides);
@@ -342,15 +328,17 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
    * A demo class that will make vertices larger if they represent a collapsed collection of
    * original vertices
    */
-  static class ClusterSizeFunction implements Function<Collapsable<?>, Integer> {
+  static class ClusterSizeFunction<V, E> implements Function<V, Integer> {
     int size;
+    Function<V, Graph<V, E>> function;
 
-    public ClusterSizeFunction(Integer size) {
+    public ClusterSizeFunction(Function<V, Graph<V, E>> function, Integer size) {
+      this.function = function;
       this.size = size;
     }
 
-    public Integer apply(Collapsable<?> v) {
-      if (v.get() instanceof Graph) {
+    public Integer apply(V v) {
+      if (function.apply(v) != null) {
         return 30;
       }
       return size;

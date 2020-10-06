@@ -81,8 +81,7 @@ public class TreeUtils {
    * @param subTree the tree instance which is to be populated with the subtree of <code>tree</code>
    * @param root the root of the subtree to be extracted
    */
-  public static <V, E> void growSubTree(
-      Graph<V, E> tree, DirectedPseudograph<V, E> subTree, V root) {
+  public static <V, E> void growSubTree(Graph<V, E> tree, Graph<V, E> subTree, V root) {
     Objects.requireNonNull(tree, "tree");
     Objects.requireNonNull(subTree, "subTree");
     Objects.requireNonNull(root, "root");

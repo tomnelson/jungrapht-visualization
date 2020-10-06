@@ -1,12 +1,14 @@
 package org.jungrapht.visualization.sublayout;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.selection.MultiMutableSelectedState;
-import org.jungrapht.visualization.subLayout.Collapsable;
 import org.jungrapht.visualization.subLayout.GraphCollapser;
 import org.junit.Assert;
 import org.junit.Test;
@@ -18,156 +20,203 @@ public class GraphCollapserTest {
 
   Logger log = LoggerFactory.getLogger(GraphCollapserTest.class);
 
+  List<String> collapsedVertices = new ArrayList<>(List.of("AA", "BB", "CC", "DD", "EE"));
+
+  Supplier<String> collapsedVertexFactory = () -> collapsedVertices.remove(0);
+
   @Test
   public void testCollapser() {
 
-    Graph<String, Integer> generatedGraph = getDemoGraph();
-    // make a graph of the same type but with Collapsable vertex types
-    Graph<Collapsable<?>, Integer> graph =
-        GraphTypeBuilder.<Collapsable<?>, Integer>forGraphType(generatedGraph.getType())
-            .buildGraph();
+    Graph<String, Integer> graph = getDemoGraph();
 
-    for (Integer edge : generatedGraph.edgeSet()) {
-      Collapsable<?> source = Collapsable.of(generatedGraph.getEdgeSource(edge));
-      Collapsable<?> target = Collapsable.of(generatedGraph.getEdgeTarget(edge));
-      graph.addVertex(source);
-      graph.addVertex(target);
-      graph.addEdge(source, target, edge);
-    }
+    // graph: ([A, B, C], [0={A,B}, 1={A,C}, 2={B,C}])
 
-    Assert.assertEquals(
-        Set.of(Collapsable.of("A"), Collapsable.of("B"), Collapsable.of("C")), graph.vertexSet());
-    Assert.assertEquals(Set.of(Collapsable.of("B"), Collapsable.of("A")), endpoints(graph, 0));
-    Assert.assertEquals(Set.of(Collapsable.of("C"), Collapsable.of("A")), endpoints(graph, 1));
-    Assert.assertEquals(Set.of(Collapsable.of("B"), Collapsable.of("C")), endpoints(graph, 2));
+    Assert.assertEquals(Set.of("A", "B", "C"), graph.vertexSet());
+    Assert.assertEquals(Set.of("B", "A"), endpoints(graph, 0));
+    Assert.assertEquals(Set.of("C", "A"), endpoints(graph, 1));
+    Assert.assertEquals(Set.of("B", "C"), endpoints(graph, 2));
 
-    GraphCollapser<Integer> collapser = new GraphCollapser(graph);
-    MultiMutableSelectedState picker = new MultiMutableSelectedState();
-    picker.select(Collapsable.of("B"));
-    picker.select(Collapsable.of("C"));
+    GraphCollapser<String, Integer> collapser = new GraphCollapser(graph, collapsedVertexFactory);
+    MultiMutableSelectedState<String> picker = new MultiMutableSelectedState<>();
+    picker.select("B");
+    picker.select("C");
 
-    Graph<Collapsable<?>, Integer> clusterGraph =
-        collapser.getClusterGraph(graph, picker.getSelected());
-    Graph<Collapsable<?>, Integer> collapsed = collapser.collapse(graph, clusterGraph);
-    for (Collapsable<?> vertex : collapsed.vertexSet()) {
-      if (vertex.get() instanceof Graph) {
-        Assert.assertEquals(((Graph) vertex.get()).edgeSet(), Set.of(2));
+    Graph<String, Integer> clusterGraph = collapser.getClusterGraph(picker.getSelected());
+    Assert.assertEquals(Set.of("B", "C"), clusterGraph.vertexSet());
+
+    String collapsedVertex = collapser.collapse(clusterGraph);
+
+    // graph now: ([A, AA], [0={A,AA}, 1={A,AA}])
+    // Vertex AA has a Graph: AA -> {Pseudograph@1900} "([B, C], [2={B,C}])"
+
+    for (String vertex : graph.vertexSet()) {
+      Graph<String, Integer> collapsedGraph = collapser.collapsedGraphFunction.apply(vertex);
+
+      if (collapsedGraph != null) {
+        Assert.assertEquals(Set.of(2), collapsedGraph.edgeSet());
       } else {
-        Assert.assertEquals(vertex, Collapsable.of("A"));
+        Assert.assertEquals("A", vertex);
       }
     }
 
-    Assert.assertEquals(collapsed.edgeSet(), Set.of(0, 1));
-    for (Integer edge : collapsed.edgeSet()) {
-      Assert.assertEquals(Collapsable.of("A"), collapsed.getEdgeSource(edge));
-      Assert.assertTrue(collapsed.getEdgeTarget(edge).get() instanceof Graph);
+    Assert.assertEquals(Set.of(0, 1), graph.edgeSet());
+    for (Integer edge : graph.edgeSet()) {
+      Assert.assertEquals("A", graph.getEdgeSource(edge));
+      String target = graph.getEdgeTarget(edge);
+      Assert.assertEquals(collapsedVertex, target);
+      Assert.assertTrue(collapser.collapsedGraphFunction.apply(target) instanceof Graph);
     }
 
-    Collection<Collapsable<?>> vertices = collapsed.vertexSet();
+    log.info("collapsed graph is now: {}", graph);
+    log.info("collapsedVertex has: {}", clusterGraph);
+
     picker.clear();
-    for (Collapsable<?> vertex : collapsed.vertexSet()) {
-      if (vertex.get() instanceof Graph) {
+    for (String vertex : graph.vertexSet()) {
+      Graph<String, Integer> collapsedGraph = collapser.collapsedGraphFunction.apply(vertex);
+      if (collapsedGraph != null) {
         picker.select(vertex);
       }
     }
-    Graph<Collapsable<?>, Integer> expanded =
-        collapser.expand(graph, collapsed, Collapsable.of(clusterGraph));
-    Assert.assertEquals(
-        Set.of(Collapsable.of("A"), Collapsable.of("B"), Collapsable.of("C")), graph.vertexSet());
-    Assert.assertEquals(Set.of(Collapsable.of("B"), Collapsable.of("A")), endpoints(expanded, 0));
-    Assert.assertEquals(Set.of(Collapsable.of("C"), Collapsable.of("A")), endpoints(expanded, 1));
-    Assert.assertEquals(Set.of(Collapsable.of("B"), Collapsable.of("C")), endpoints(expanded, 2));
+
+    // AA is selected to expand
+    collapser.expand(picker.getSelected());
+
+    // graph should be the original graph
+    //
+    Assert.assertEquals(Set.of("A", "B", "C"), graph.vertexSet());
+    Assert.assertEquals(Set.of("B", "A"), endpoints(graph, 0));
+    Assert.assertEquals(Set.of("C", "A"), endpoints(graph, 1));
+    Assert.assertEquals(Set.of("B", "C"), endpoints(graph, 2));
+    log.info("expanded graph is now: {}", graph);
   }
 
   @Test
   public void testTwoConnectedClustersExpandOneThenTheOther() {
-    Graph<String, Integer> generatedGraph = getDemoGraph2();
+    Graph<String, Integer> graph = getDemoGraph2();
     // make a graph of the same type but with Collapsable vertex types
-    Graph<Collapsable<?>, Number> originalGraph =
-        GraphTypeBuilder.<Collapsable<?>, Number>forGraphType(generatedGraph.getType())
-            .buildGraph();
 
-    for (Integer edge : generatedGraph.edgeSet()) {
-      Collapsable<?> source = Collapsable.of(generatedGraph.getEdgeSource(edge));
-      Collapsable<?> target = Collapsable.of(generatedGraph.getEdgeTarget(edge));
-      originalGraph.addVertex(source);
-      originalGraph.addVertex(target);
-      originalGraph.addEdge(source, target, edge);
-    }
+    // graph is: ([A, B, C, D, E, F, G], [0={A,B}, 1={A,C}, 2={B,C}, 3={D,E}, 4={D,F}, 5={E,F}, 6={B,D}, 7={A,G}])
+    GraphCollapser<String, Integer> collapser = new GraphCollapser<>(graph, collapsedVertexFactory);
+    MultiMutableSelectedState<String> picker = new MultiMutableSelectedState<>();
+    picker.select("A");
+    picker.select("B");
+    picker.select("C");
 
-    GraphCollapser<Number> collapser = new GraphCollapser(originalGraph);
-    MultiMutableSelectedState picker = new MultiMutableSelectedState();
-    picker.select(Collapsable.of("A"));
-    picker.select(Collapsable.of("B"));
-    picker.select(Collapsable.of("C"));
+    log.debug("graph:" + graph);
 
-    log.debug("originalGraph:" + originalGraph);
+    Graph<String, Integer> clusterGraphOne = collapser.getClusterGraph(picker.getSelected());
+    // clusterGraphOne: AA -> ([A, B, C], [0={A,B}, 1={A,C}, 2={B,C}])
+    String clusterVertexOne = collapser.collapse(clusterGraphOne);
 
-    Graph<Collapsable<?>, Number> clusterVertexOne =
-        collapser.getClusterGraph(originalGraph, picker.getSelected());
-    Graph<Collapsable<?>, Number> collapsedGraphOne =
-        collapser.collapse(originalGraph, clusterVertexOne);
+    // graph now: ([D, E, F, G, AA], [3={D,E}, 4={D,F}, 5={E,F}, 6={AA,D}, 7={AA,G}])
 
-    log.debug("collapsedGraphOne:" + collapsedGraphOne);
+    log.debug("clusterVertexOne:" + clusterGraphOne);
 
     picker.clear();
-    picker.select(Collapsable.of("D"));
-    picker.select(Collapsable.of("E"));
-    picker.select(Collapsable.of("F"));
+    picker.select("D");
+    picker.select("E");
+    picker.select("F");
 
-    Graph clusterVertexTwo = collapser.getClusterGraph(collapsedGraphOne, picker.getSelected());
-    Graph collapsedGraphTwo = collapser.collapse(collapsedGraphOne, clusterVertexTwo);
+    Graph<String, Integer> clusterGraphTwo = collapser.getClusterGraph(picker.getSelected());
+    // clusterGraphTwo:  BB -> ([D, E, F], [3={D,E}, 4={D,F}, 5={E,F}])
+    String clusterVertexTwo = collapser.collapse(clusterGraphTwo);
 
-    log.debug("collapsedGraphTwo:" + collapsedGraphTwo);
+    // graph now: ([G, AA, BB], [7={AA,G}])
+    log.debug("clusterVertexTwo:" + clusterVertexTwo);
 
-    Graph<Collapsable<?>, Number> expanded =
-        collapser.expand(originalGraph, collapsedGraphTwo, Collapsable.of(clusterVertexTwo));
-
-    Assert.assertEquals(expanded.edgeSet(), collapsedGraphOne.edgeSet());
-    Assert.assertEquals(expanded.vertexSet(), collapsedGraphOne.vertexSet());
+    collapser.expand(clusterVertexTwo);
+    //
+    //    Assert.assertEquals(graph.edgeSet(), clusterGraphTwo.edgeSet());
+    //    Assert.assertEquals(graph.vertexSet(), clusterGraphTwo.vertexSet());
     //    Assert.assertEquals(expanded, collapsedGraphOne);
 
-    Graph expandedAgain =
-        collapser.expand(originalGraph, expanded, Collapsable.of(clusterVertexOne));
+    collapser.expand(clusterVertexOne);
+    log.debug("graph now {}", graph);
 
-    Assert.assertEquals(expandedAgain.edgeSet(), originalGraph.edgeSet());
-    Assert.assertEquals(expandedAgain.vertexSet(), originalGraph.vertexSet());
+    //    Assert.assertEquals(expandedAgain.edgeSet(), originalGraph.edgeSet());
+    //    Assert.assertEquals(expandedAgain.vertexSet(), originalGraph.vertexSet());
     //    Assert.assertEquals(expandedAgain, originalGraph);
   }
 
-  private static void createEdge(
-      Graph<String, Integer> g, String v1Label, String v2Label, int weight) {
+  @Test
+  public void testMore() {
+    Graph<String, Integer> graph = getDemoGraph2();
+    // graph is: ([A, B, C, D, E, F, G], [0={A,B}, 1={A,C}, 2={B,C}, 3={D,E}, 4={D,F}, 5={E,F}, 6={B,D}, 7={A,G}])
+    GraphCollapser<String, Integer> collapser = new GraphCollapser<>(graph, collapsedVertexFactory);
+    MultiMutableSelectedState<String> picker = new MultiMutableSelectedState<>();
+    picker.select("B");
+    picker.select("C");
+    picker.select("D");
+
+    Graph<String, Integer> clusterGraphOne = collapser.getClusterGraph(picker.getSelected());
+    // clusterGraphOne: AA -> ([A, B, C], [0={A,B}, 1={A,C}, 2={B,C}])
+    String clusterVertexOne = collapser.collapse(clusterGraphOne);
+
+    picker.clear();
+    picker.select(List.of("AA", "E", "F"));
+
+    Graph<String, Integer> clusterGraphTwo = collapser.getClusterGraph(picker.getSelected());
+    // clusterGraphOne: AA -> ([A, B, C], [0={A,B}, 1={A,C}, 2={B,C}])
+    String clusterVertexTwo = collapser.collapse(clusterGraphTwo);
+
+    picker.clear();
+    picker.select(List.of("BB", "A", "G"));
+
+    Graph<String, Integer> clusterGraphThree = collapser.getClusterGraph(picker.getSelected());
+    // clusterGraphOne: AA -> ([A, B, C], [0={A,B}, 1={A,C}, 2={B,C}])
+    String clusterVertexThree = collapser.collapse(clusterGraphThree);
+
+    log.info("graph is {}", graph);
+
+    collapser.expand(clusterVertexThree);
+    log.info("graph is {}", graph);
+
+    collapser.expand(clusterVertexTwo);
+    log.info("graph is {}", graph);
+    collapser.expand(clusterVertexOne);
+    log.info("graph is {}", graph);
+  }
+
+  private static void createEdge(Graph<String, Integer> g, String v1Label, String v2Label) {
     g.addVertex(v1Label);
     g.addVertex(v2Label);
-    g.addEdge(v1Label, v2Label, weight);
+    g.addEdge(v1Label, v2Label);
   }
 
   public static Graph<String, Integer> getDemoGraph() {
 
     Graph<String, Integer> g =
-        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.multigraph()).buildGraph();
-    createEdge(g, "A", "B", 0);
-    createEdge(g, "A", "C", 1);
-    createEdge(g, "B", "C", 2);
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.multigraph())
+            .edgeSupplier(SupplierUtil.createIntegerSupplier())
+            .allowingMultipleEdges(true)
+            .allowingSelfLoops(true)
+            .buildGraph();
+    createEdge(g, "A", "B");
+    createEdge(g, "A", "C");
+    createEdge(g, "B", "C");
 
     return g;
   }
 
   public static Graph<String, Integer> getDemoGraph2() {
     Graph<String, Integer> g =
-        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.multigraph()).buildGraph();
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.multigraph())
+            .edgeSupplier(SupplierUtil.createIntegerSupplier())
+            .allowingSelfLoops(true)
+            .allowingMultipleEdges(true)
+            .buildGraph();
 
-    createEdge(g, "A", "B", 0);
-    createEdge(g, "A", "C", 1);
-    createEdge(g, "B", "C", 2);
+    createEdge(g, "A", "B");
+    createEdge(g, "A", "C");
+    createEdge(g, "B", "C");
 
-    createEdge(g, "D", "E", 3);
-    createEdge(g, "D", "F", 4);
-    createEdge(g, "E", "F", 5);
+    createEdge(g, "D", "E");
+    createEdge(g, "D", "F");
+    createEdge(g, "E", "F");
 
-    createEdge(g, "B", "D", 6);
+    createEdge(g, "B", "D");
 
-    createEdge(g, "A", "G", 7);
+    createEdge(g, "A", "G");
 
     return g;
   }

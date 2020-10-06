@@ -10,191 +10,368 @@
 package org.jungrapht.visualization.subLayout;
 
 import java.util.Collection;
-import java.util.Objects;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GraphCollapser<E> {
+/**
+ * Will collapse a selected collection of vertices into one vertex. Uses the vertexSupplier to
+ * create the vertex to replace the ones selected.
+ *
+ * @param <V> vertex type
+ * @param <E> edge type
+ */
+public class GraphCollapser<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(GraphCollapser.class);
 
-  private static final Logger logger = LoggerFactory.getLogger(GraphCollapser.class);
-  private Graph<Collapsable<?>, E> originalGraph;
-  private GraphTypeBuilder<Collapsable<?>, E> graphBuilder;
+  protected Graph<V, E> graph;
+  protected Graph<V, E> originalGraph;
+  protected final Supplier<V> vertexSupplier;
+  protected GraphTypeBuilder<V, E> graphTypeBuilder;
 
-  public GraphCollapser(Graph<Collapsable<?>, E> originalGraph) {
-    this.originalGraph = originalGraph;
-    this.graphBuilder = GraphTypeBuilder.forGraphType(DefaultGraphType.pseudograph());
+  protected final Map<V, Graph<V, E>> vertexToClusterMap = new HashMap<>();
+
+  /**
+   * create an istance with a {@code Graph} and a {@code Supplier&lt;V&gt;}
+   *
+   * @param graph the {@code Graph} to operate on.
+   * @param vertexSupplier supplies a new vertex to use in place of the collapsed vertices
+   */
+  public GraphCollapser(Graph<V, E> graph, Supplier<V> vertexSupplier) {
+    this.graph = graph;
+    this.vertexSupplier = vertexSupplier;
+    setGraph(graph);
   }
 
   /**
-   * make a pseudograph with Collapsable vertex types the graph has to allow self loops and parallel
-   * edges in order to be collapsed and expanded without losing edges
+   * set the {@code Graph} to a new value
    *
-   * @param graph input graph
-   * @param <V> vertex type
-   * @param <E> edge type
-   * @return a collapsable verson of the input graph
+   * @param graph the {@code Graph} to set
    */
-  public static <V, E> Graph<Collapsable<?>, E> makeCollapsableGraph(Graph<V, E> graph) {
-    Graph<Collapsable<?>, E> collapsableGraph =
-        GraphTypeBuilder.<Collapsable<?>, E>forGraphType(graph.getType())
+  protected void setGraph(Graph<V, E> graph) {
+    this.graph = graph;
+    this.graphTypeBuilder =
+        GraphTypeBuilder.<V, E>forGraphType(graph.getType())
             .allowingMultipleEdges(true)
-            .allowingSelfLoops(true)
-            .buildGraph();
-    // add vertices and edges to the new graph
-    for (E edge : graph.edgeSet()) {
-      Collapsable<?> source = Collapsable.of(graph.getEdgeSource(edge));
-      Collapsable<?> target = Collapsable.of(graph.getEdgeTarget(edge));
-      collapsableGraph.addVertex(source);
-      collapsableGraph.addVertex(target);
-      collapsableGraph.addEdge(source, target, edge);
-    }
-    return collapsableGraph;
-  }
-
-  public Graph<Collapsable<?>, E> collapse(
-      Graph<Collapsable<?>, E> inGraph, Graph<Collapsable<?>, E> clusterGraph) {
-
-    if (clusterGraph.vertexSet().size() < 2) {
-      return inGraph;
-    }
-    Graph<Collapsable<?>, E> graph = graphBuilder.buildGraph();
-    Collection<Collapsable<?>> cluster = clusterGraph.vertexSet();
-
-    // add all vertices in the delegate, unless the vertex is in the
-    // cluster.
-    inGraph.vertexSet().stream().filter(v -> !cluster.contains(v)).forEach(graph::addVertex);
-    // add the clusterGraph as a vertex
-    graph.addVertex(Collapsable.of(clusterGraph));
-
-    // add all edges from the inGraph, unless both endpoints of
-    // the edge are in the cluster
-    log.trace("edgeSet {}", inGraph.edgeSet());
-    for (E e : inGraph.edgeSet()) {
-
-      Collapsable<?> u = inGraph.getEdgeSource(e);
-      Collapsable<?> v = inGraph.getEdgeTarget(e);
-
-      // only add edges whose endpoints are not both in the cluster
-      if (cluster.contains(u) && cluster.contains(v)) {
-        log.trace("leaving out {} from {} to {}", e, u, v);
-        continue;
-      }
-
-      if (cluster.contains(u)) {
-        graph.addEdge(Collapsable.of(clusterGraph), v, e);
-      } else if (cluster.contains(v)) {
-        graph.addEdge(u, Collapsable.of(clusterGraph), e);
-      } else {
-        graph.addEdge(u, v, e);
-      }
-    }
-    log.trace("collapsed graph is {}", graph);
-    return graph;
-  }
-
-  public Graph<Collapsable<?>, E> expand(
-      Graph<Collapsable<?>, E> originalGraph,
-      Graph<Collapsable<?>, E> graphToExpand,
-      Collapsable<Graph<Collapsable<?>, E>> clusterGraphVertex) {
-
-    GraphTypeBuilder<Collapsable<?>, E> graphBuilder =
-        GraphTypeBuilder.forGraphType(originalGraph.getType());
-    // build a new empty graph
-    Graph<Collapsable<?>, E> newGraph = graphBuilder.buildGraph();
-
-    // add all vertices of graphToExpand to the new graph, excepting the clusterGraphVertex
-    graphToExpand
-        .vertexSet()
-        .stream()
-        .filter(v -> !Objects.equals(v, clusterGraphVertex))
-        .forEach(newGraph::addVertex);
-    log.trace("newGraph: {}", newGraph);
-    // add all the vertices that were in the clusterGraphVertex
-    clusterGraphVertex.get().vertexSet().forEach(newGraph::addVertex);
-    log.trace("newGraph: {}", newGraph);
-
-    // all required vertices should now be in the newGraph
-    for (E edge : originalGraph.edgeSet()) {
-      // if this edge already exists in the depths of newGraph, then it must be wholly contained
-      // inside a collapsed graph vertex. Do not add it to newGraph
-      if (null != findEdge(newGraph, edge)) {
-        continue;
-      }
-      // get the original graph endpoints for edge
-      Collapsable<?> originalSource = originalGraph.getEdgeSource(edge);
-      Collapsable<?> originalTarget = originalGraph.getEdgeTarget(edge);
-      // if both endpoints are in newGraph, just add the edge with the same endpoints
-      if (newGraph.containsVertex(originalSource) && newGraph.containsVertex(originalTarget)) {
-        newGraph.addEdge(originalSource, originalTarget, edge);
-        continue;
-      }
-      // either the originalSource or the originalTarget is inside a collapsed graph vertex in newGraph.
-      // Find them and add this edge with one or both endpoints as collapsed graph vertices in newGraph
-      Collapsable<?> foundSource = findContainerOf(newGraph, originalSource);
-      Collapsable<?> foundTarget = findContainerOf(newGraph, originalTarget);
-      newGraph.addEdge(foundSource, foundTarget, edge);
-    }
-    return newGraph;
-  }
-
-  private E findEdge(Graph<Collapsable<?>, E> graph, E edge) {
-    if (graph.edgeSet().contains(edge)) {
-      return edge;
-    }
-    for (Collapsable<?> vertex : graph.vertexSet()) {
-      if (vertex.get() instanceof Graph) {
-        E found = findEdge((Graph<Collapsable<?>, E>) vertex.get(), edge);
-        if (found != null) {
-          return found;
-        }
-      }
-    }
-    return null;
+            .allowingSelfLoops(true);
+    this.originalGraph = copyGraph(graph);
   }
 
   /**
-   * Look in the vertexSet of the passed graph. Find either the passed vertex, or if any vertices
-   * are {@code Collapsable<Graph>} instances, look inside to see if it includes the passed vertex.
-   * When a {@code Collapsable<Graph>} contains the vertex, return that {@code Collapsable<Graph>}
+   * Create a copy of the passed graph using the GraphTypeBuilder Used to save a copy of the
+   * original graph prior to any collapse/expand actions.
    *
-   * @param graph the graph to seach in
-   * @param vertex the vertex to search for
-   * @return either the vertex itself if in the passed graph, or the outermost Graph vertex that
-   *     contains vertex
+   * @param graph to copy
+   * @return a shallow copy of the graph
    */
-  private Collapsable<?> findContainerOf(Graph<Collapsable<?>, E> graph, Collapsable<?> vertex) {
-    if (graph.vertexSet().contains(vertex)) {
-      return vertex;
+  protected Graph<V, E> copyGraph(Graph<V, E> graph) {
+    Graph<V, E> originalGraphCopy = graphTypeBuilder.buildGraph();
+    graph.vertexSet().forEach(originalGraphCopy::addVertex);
+    graph
+        .edgeSet()
+        .forEach(e -> originalGraphCopy.addEdge(graph.getEdgeSource(e), graph.getEdgeTarget(e), e));
+    return originalGraphCopy;
+  }
+
+  /** accesses the {@code Map} of vertex to {@code Graph} as a {@code Function} */
+  public Function<V, Graph<V, E>> collapsedGraphFunction = v -> vertexToClusterMap.get(v);
+
+  /**
+   * collapse the passed vertices into one
+   *
+   * @param selected the vertices to be part of the collapsed vertex
+   * @return the new vertex that replaces the selected vertices
+   */
+  public V collapse(Collection<V> selected) {
+    return collapse(this.getClusterGraph(selected));
+  }
+
+  /**
+   * Collapse the passed {@code Graph}
+   *
+   * @param clusterGraph the {@code Graph} to collapse
+   * @return the new vertex that replaces the clusterGraph
+   */
+  public V collapse(Graph<V, E> clusterGraph) {
+    // for a cluster of size < 2, do nothing
+    if (clusterGraph.vertexSet().size() < 2) {
+      return null;
     }
-    log.trace("look in {} for {}", graph.vertexSet(), vertex);
-    for (Collapsable<?> v : graph.vertexSet()) {
-      if (v.get() instanceof Graph) {
-        Collapsable<Graph<Collapsable<?>, E>> collapsedGraph =
-            (Collapsable<Graph<Collapsable<?>, E>>) v;
-        Collapsable<?> found = findContainerOf(collapsedGraph.get(), vertex);
-        if (found != null) {
-          return collapsedGraph;
+
+    // create a new vertex for the cluster
+    V clusterVertex = vertexSupplier.get();
+    vertexToClusterMap.put(clusterVertex, clusterGraph);
+
+    // loser vertices
+    Collection<V> clusterVertices = new HashSet<>(clusterGraph.vertexSet());
+    // loser edges
+    Collection<E> clusterEdges = new HashSet<>(clusterGraph.edgeSet());
+
+    // remove all edges that are in the cluster
+    clusterEdges.stream().forEach(graph::removeEdge);
+    // remove all vertices that are in the cluster.
+    clusterVertices.stream().forEach(graph::removeVertex);
+    // add the clusterGraph as a vertex
+    graph.addVertex(clusterVertex);
+
+    // the graph has lost all the clusterEdges, and also any edges that have
+    // an endpoint that is in the clusterVertex
+    Collection<E> edgesToRestore =
+        originalGraph
+            .edgeSet()
+            .stream()
+            .filter(e -> !edgeInCluster(graph, e))
+            .filter(e -> !clusterEdges.contains(e))
+            .filter(e -> !graph.edgeSet().contains(e))
+            .collect(Collectors.toSet());
+
+    if (log.isTraceEnabled()) {
+      log.trace("originalGraph: {}", originalGraph);
+      log.trace("edgesToRestore: {}", edgesToRestore);
+      log.trace(
+          "edges not to restore: {}",
+          originalGraph
+              .edgeSet()
+              .stream()
+              .filter(clusterEdges::contains)
+              .filter(graph.edgeSet()::contains)
+              .collect(Collectors.toSet()));
+    }
+    // for each of the edges to restore, one endpoint is in the graph
+    // add every edge with the other endpoint on the cluster vertex
+    for (E e : edgesToRestore) {
+      V source = originalGraph.getEdgeSource(e);
+      V target = originalGraph.getEdgeTarget(e);
+
+      if (graph.vertexSet().contains(source)) {
+        if (!graph.vertexSet().contains(target)) {
+          target = clusterVertex;
+          graph.addEdge(source, target, e);
+        } else {
+          for (V v : graph.vertexSet()) {
+            if (vertexToClusterMap.containsKey(v)) {
+              Graph<V, E> clusterGrp = vertexToClusterMap.get(v);
+              if (isVertexContainedInClusterGraph(clusterGrp, target)) {
+                target = v;
+                graph.addEdge(source, target, e);
+              }
+            }
+          }
+        }
+      } else if (graph.vertexSet().contains(target)) {
+        if (!graph.vertexSet().contains(source)) {
+          source = clusterVertex;
+          graph.addEdge(source, target, e);
+        } else {
+          for (V v : graph.vertexSet()) {
+            if (vertexToClusterMap.containsKey(v)) {
+              Graph<V, E> clusterGrp = vertexToClusterMap.get(v);
+              if (isVertexContainedInClusterGraph(clusterGrp, source)) {
+                source = v;
+                graph.addEdge(source, target, e);
+              }
+            }
+          }
+        }
+      } else {
+        // source/target not in graph
+        // source and target are not in the graph, find their cluster vertices
+        boolean foundSource = false;
+        boolean foundTarget = false;
+        for (V v : graph.vertexSet()) {
+          if (vertexToClusterMap.containsKey(v)) {
+            clusterGraph = vertexToClusterMap.get(v);
+            if (isVertexContainedInClusterGraph(clusterGraph, source)) {
+              source = v;
+              foundSource = true;
+            }
+            if (isVertexContainedInClusterGraph(clusterGraph, target)) {
+              target = v;
+              foundTarget = true;
+            }
+          }
+        }
+        if (foundSource && foundTarget) {
+          graph.addEdge(source, target, e);
         }
       }
     }
-    return null;
+    return clusterVertex;
   }
 
-  public Graph<Collapsable<?>, E> getClusterGraph(
-      Graph<Collapsable<?>, E> inGraph, Collection<Collapsable<?>> picked) {
-    Graph<Collapsable<?>, E> clusterGraph = graphBuilder.buildGraph();
-    for (Collapsable<?> vertex : picked) {
+  public void expand(V clusterVertices) {
+    expand(Collections.singleton(clusterVertices));
+  }
+
+  public void expand(Collection<V> clusterVertices) {
+
+    for (V clusterVertex : clusterVertices) {
+      if (vertexToClusterMap.containsKey(clusterVertex)) {
+        Graph<V, E> subGraph = vertexToClusterMap.get(clusterVertex);
+
+        // remove the clusterGraphVertex from the graph,
+        // then add the subgraph to the graph
+        graph.removeVertex(clusterVertex);
+        subGraph.vertexSet().forEach(graph::addVertex);
+
+        subGraph
+            .edgeSet()
+            .forEach(e -> graph.addEdge(subGraph.getEdgeSource(e), subGraph.getEdgeTarget(e), e));
+
+        // add all edges from the original graph, unless the edge is in a the graph already
+        Collection<E> edgesIWant =
+            originalGraph
+                .edgeSet()
+                .stream()
+                .filter(e -> !graph.edgeSet().contains(e))
+                .filter(e -> !edgeInCluster(graph, e))
+                .collect(Collectors.toSet());
+
+        for (E e : edgesIWant) {
+          V source = originalGraph.getEdgeSource(e);
+          V target = originalGraph.getEdgeTarget(e);
+
+          if (graph.vertexSet().contains(source) && graph.vertexSet().contains(target)) {
+            graph.addEdge(source, target, e);
+          } else if (graph.vertexSet().contains(source)) {
+            // find the target
+            V originalTarget = originalGraph.getEdgeTarget(e);
+            if (graph.vertexSet().contains(originalTarget)) { // source and target are in the graph
+              graph.addEdge(source, originalTarget, e);
+            } else {
+              // target not in graph
+              for (V v : graph.vertexSet()) {
+                if (vertexToClusterMap.containsKey(v)) {
+                  Graph<V, E> clusterGraph = vertexToClusterMap.get(v);
+                  if (isVertexContainedInClusterGraph(clusterGraph, originalTarget)) {
+                    graph.addEdge(source, v, e);
+                    break;
+                  }
+                }
+              }
+            }
+          } else if (graph.vertexSet().contains(target)) {
+            // find the source
+            V originalSource = originalGraph.getEdgeSource(e);
+            if (graph.vertexSet().contains(originalSource)) { // source and target are in the graph
+              graph.addEdge(source, originalSource, e);
+            } else {
+              // source not in graph
+              for (V v : graph.vertexSet()) {
+                if (vertexToClusterMap.containsKey(v)) {
+                  Graph<V, E> clusterGraph = vertexToClusterMap.get(v);
+                  if (isVertexContainedInClusterGraph(clusterGraph, originalSource)) {
+                    graph.addEdge(v, target, e);
+                    break;
+                  }
+                }
+              }
+            }
+          } else {
+            // source and target are not in the graph, find their cluster vertices
+            boolean foundSource = false;
+            boolean foundTarget = false;
+            for (V v : graph.vertexSet()) {
+              if (vertexToClusterMap.containsKey(v)) {
+                Graph<V, E> clusterGraph = vertexToClusterMap.get(v);
+                if (isVertexContainedInClusterGraph(clusterGraph, source)) {
+                  source = v;
+                  foundSource = true;
+                }
+                if (isVertexContainedInClusterGraph(clusterGraph, target)) {
+                  target = v;
+                  foundTarget = true;
+                }
+              }
+            }
+            if (foundSource && foundTarget) {
+              graph.addEdge(source, target, e);
+            }
+          }
+        }
+      }
+      vertexToClusterMap.remove(clusterVertex);
+    }
+  }
+
+  /**
+   * look for edge in the graph. If a vertex is a cluster vertex, recursively look in that cluster
+   * graph
+   *
+   * @param graph to look in, including any vertices that represent collapsed vertex graphs
+   * @param edge to look for
+   * @return true if the edge is found in a graph or contained cluster
+   */
+  private boolean edgeInCluster(Graph<V, E> graph, E edge) {
+    if (graph.containsEdge(edge)) {
+      return true;
+    }
+    for (V v : graph.vertexSet()) {
+      if (vertexToClusterMap.containsKey(v)) { // this is a cluster vertex
+        Graph<V, E> collapsedGraph = vertexToClusterMap.get(v);
+        if (edgeInCluster(collapsedGraph, edge)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  private String printGraph(StringBuilder buf, Graph<V, E> graph) {
+    buf.append(graph.toString());
+    buf.append("\n");
+    for (V v : graph.vertexSet()) {
+      Graph<V, E> sub = vertexToClusterMap.get(v);
+      if (sub != null) {
+        printGraph(buf, sub);
+      }
+    }
+    return buf.toString();
+  }
+
+  /**
+   * Determine if the passed vertex is contained in the passed clusterGraph If the clusterGraph
+   * contains vertices that are clusterGraphs, check them.
+   *
+   * @param clusterGraph
+   * @param vertex
+   * @return
+   */
+  private boolean isVertexContainedInClusterGraph(Graph<V, E> clusterGraph, V vertex) {
+
+    if (clusterGraph.containsVertex(vertex)) {
+      return true;
+    }
+
+    for (V v : clusterGraph.vertexSet()) {
+      if (vertexToClusterMap.containsKey(v)) {
+        Graph<V, E> subGraph = vertexToClusterMap.get(v);
+        if (isVertexContainedInClusterGraph(subGraph, vertex)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  public Graph<V, E> getClusterGraph(Collection<V> picked) {
+    Graph<V, E> clusterGraph = graphTypeBuilder.buildGraph();
+    for (V vertex : picked) {
       clusterGraph.addVertex(vertex);
-      Set<E> edges = inGraph.edgesOf(vertex);
+      Set<E> edges = graph.edgesOf(vertex);
       for (E edge : edges) {
-        Collapsable<?> u = inGraph.getEdgeSource(edge);
-        Collapsable<?> v = inGraph.getEdgeTarget(edge);
+        V u = graph.getEdgeSource(edge);
+        V v = graph.getEdgeTarget(edge);
         if (picked.contains(u) && picked.contains(v)) {
           clusterGraph.addVertex(u);
           clusterGraph.addVertex(v);
