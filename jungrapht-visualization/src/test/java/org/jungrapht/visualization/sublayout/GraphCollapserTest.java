@@ -46,11 +46,8 @@ public class GraphCollapserTest {
 
     String collapsedVertex = collapser.collapse(clusterGraph);
 
-    // graph now: ([A, AA], [0={A,AA}, 1={A,AA}])
-    // Vertex AA has a Graph: AA -> {Pseudograph@1900} "([B, C], [2={B,C}])"
-
     for (String vertex : graph.vertexSet()) {
-      Graph<String, Integer> collapsedGraph = collapser.collapsedGraphFunction.apply(vertex);
+      Graph<String, Integer> collapsedGraph = collapser.collapsedGraphFunction().apply(vertex);
 
       if (collapsedGraph != null) {
         Assert.assertEquals(Set.of(2), collapsedGraph.edgeSet());
@@ -64,7 +61,7 @@ public class GraphCollapserTest {
       Assert.assertEquals("A", graph.getEdgeSource(edge));
       String target = graph.getEdgeTarget(edge);
       Assert.assertEquals(collapsedVertex, target);
-      Assert.assertTrue(collapser.collapsedGraphFunction.apply(target) instanceof Graph);
+      Assert.assertTrue(collapser.collapsedGraphFunction().apply(target) instanceof Graph);
     }
 
     log.info("collapsed graph is now: {}", graph);
@@ -72,7 +69,7 @@ public class GraphCollapserTest {
 
     picker.clear();
     for (String vertex : graph.vertexSet()) {
-      Graph<String, Integer> collapsedGraph = collapser.collapsedGraphFunction.apply(vertex);
+      Graph<String, Integer> collapsedGraph = collapser.collapsedGraphFunction().apply(vertex);
       if (collapsedGraph != null) {
         picker.select(vertex);
       }
@@ -88,12 +85,13 @@ public class GraphCollapserTest {
     Assert.assertEquals(Set.of("C", "A"), endpoints(graph, 1));
     Assert.assertEquals(Set.of("B", "C"), endpoints(graph, 2));
     log.info("expanded graph is now: {}", graph);
+    Assert.assertEquals(getDemoGraph(), graph);
   }
 
   @Test
   public void testTwoConnectedClustersExpandOneThenTheOther() {
     Graph<String, Integer> graph = getDemoGraph2();
-    // make a graph of the same type but with Collapsable vertex types
+    // make a graph of the same type but with Collapsable vertex type
 
     // graph is: ([A, B, C, D, E, F, G], [0={A,B}, 1={A,C}, 2={B,C}, 3={D,E}, 4={D,F}, 5={E,F}, 6={B,D}, 7={A,G}])
     GraphCollapser<String, Integer> collapser = new GraphCollapser<>(graph, collapsedVertexFactory);
@@ -125,17 +123,11 @@ public class GraphCollapserTest {
     log.debug("clusterVertexTwo:" + clusterVertexTwo);
 
     collapser.expand(clusterVertexTwo);
-    //
-    //    Assert.assertEquals(graph.edgeSet(), clusterGraphTwo.edgeSet());
-    //    Assert.assertEquals(graph.vertexSet(), clusterGraphTwo.vertexSet());
-    //    Assert.assertEquals(expanded, collapsedGraphOne);
 
     collapser.expand(clusterVertexOne);
     log.debug("graph now {}", graph);
 
-    //    Assert.assertEquals(expandedAgain.edgeSet(), originalGraph.edgeSet());
-    //    Assert.assertEquals(expandedAgain.vertexSet(), originalGraph.vertexSet());
-    //    Assert.assertEquals(expandedAgain, originalGraph);
+    Assert.assertEquals(getDemoGraph2(), graph);
   }
 
   @Test
@@ -175,6 +167,8 @@ public class GraphCollapserTest {
     log.info("graph is {}", graph);
     collapser.expand(clusterVertexOne);
     log.info("graph is {}", graph);
+
+    Assert.assertEquals(getDemoGraph2(), graph);
   }
 
   private static void createEdge(Graph<String, Integer> g, String v1Label, String v2Label) {

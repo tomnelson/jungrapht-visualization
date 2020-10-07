@@ -30,8 +30,6 @@ public class VisualGraphCollapser<V, E> extends GraphCollapser<V, E> {
     selected = new HashSet(selected);
     if (selected.size() > 1) {
       LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
-      //      Graph<V, E> clusterGraph = getClusterGraph(selected);
-
       V clusterVertex = super.collapse(selected);
 
       double sumx = 0;

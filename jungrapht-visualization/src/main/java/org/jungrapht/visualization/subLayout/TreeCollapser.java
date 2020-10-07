@@ -9,7 +9,9 @@
  */
 package org.jungrapht.visualization.subLayout;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -34,6 +36,14 @@ public class TreeCollapser<V, E> {
     this.vertexFactory = vertexFactory;
   }
 
+  public Collection<V> collapse(Collection<V> roots) {
+    Set<V> set = new HashSet<>();
+    for (V v : roots) {
+      set.add(collapse(v));
+    }
+    return set;
+  }
+
   /**
    * Replaces the subtree of {@code tree} rooted at {@code subRoot} with a vertex representing that
    * subtree.
@@ -54,7 +64,6 @@ public class TreeCollapser<V, E> {
       for (V parent : Graphs.predecessorListOf(tree, subRoot)) {
         // subRoot has a parent, so attach its parent to subTree in its place
         E parentEdge = tree.incomingEdgesOf(subRoot).stream().findFirst().get();
-        //            Iterables.getOnlyElement(tree.incomingEdgesOf(subRoot)); // THERE CAN BE ONLY ONE
 
         TreeUtils.removeTreeVertex(tree, subRoot);
 
@@ -67,7 +76,6 @@ public class TreeCollapser<V, E> {
     return collapseVertex;
   }
 
-  @SuppressWarnings({"unchecked", "rawtypes"})
   public void expand(V collapseVertex) {
 
     Graph<V, E> subTree = vertexToClusterMap.get(collapseVertex);

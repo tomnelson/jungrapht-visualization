@@ -29,8 +29,7 @@ import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
-import org.jungrapht.visualization.subLayout.GraphCollapser;
-import org.jungrapht.visualization.subLayout.VisualGraphCollapser;
+import org.jungrapht.visualization.subLayout.Collapser;
 import org.jungrapht.visualization.util.PredicatedParallelEdgeIndexFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +76,7 @@ public class VertexCollapseDemo extends JPanel {
 
   LayoutAlgorithm<MyVertex> layoutAlgorithm;
 
-  GraphCollapser<MyVertex, Integer> collapser;
+  Collapser<MyVertex, Integer> collapser;
 
   public VertexCollapseDemo() {
 
@@ -109,10 +108,10 @@ public class VertexCollapseDemo extends JPanel {
             .viewSize(preferredSize)
             .build();
 
-    collapser = new VisualGraphCollapser<>(vv, MyVertex::new);
+    collapser = Collapser.forVisualization(vv, MyVertex::new);
 
     vv.getRenderContext()
-        .setVertexShapeFunction(new ClusterShapeFunction(collapser.collapsedGraphFunction));
+        .setVertexShapeFunction(new ClusterShapeFunction(collapser.collapsedGraphFunction()));
 
     final Set exclusions = new HashSet();
     final PredicatedParallelEdgeIndexFunction eif =

@@ -34,8 +34,7 @@ import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.jungrapht.visualization.layout.model.Point;
-import org.jungrapht.visualization.subLayout.GraphCollapser;
+import org.jungrapht.visualization.subLayout.Collapser;
 import org.jungrapht.visualization.util.LayoutAlgorithmTransition;
 import org.jungrapht.visualization.util.PredicatedParallelEdgeIndexFunction;
 import org.slf4j.Logger;
@@ -86,13 +85,13 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
   VisualizationViewer<String, Integer> vv;
 
   LayoutAlgorithm<String> layoutAlgorithm;
-  GraphCollapser<String, Integer> collapser;
+  Collapser<String, Integer> collapser;
 
   @SuppressWarnings({"unchecked", "rawtypes"})
   public VertexCollapseDemoWithLayouts() {
     setLayout(new BorderLayout());
 
-    collapser = new GraphCollapser<>(graph, vertexFactory);
+    collapser = Collapser.forVisualization(vv, vertexFactory);
 
     layoutAlgorithm = new FRLayoutAlgorithm<>();
 
@@ -114,7 +113,7 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
             .build();
 
     vv.getRenderContext()
-        .setVertexShapeFunction(new ClusterShapeFunction(collapser.collapsedGraphFunction));
+        .setVertexShapeFunction(new ClusterShapeFunction(collapser.collapsedGraphFunction()));
 
     final Set exclusions = new HashSet();
     final PredicatedParallelEdgeIndexFunction eif =
@@ -163,33 +162,34 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
                 () -> {
                   Collection<String> picked =
                       new HashSet(vv.getSelectedVertexState().getSelected());
-                  if (picked.size() > 1) {
-                    LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
-                    Graph<String, Integer> clusterGraph = collapser.getClusterGraph(picked);
-                    log.trace("clusterGraph:" + clusterGraph);
-                    String clusterVertex = collapser.collapse(picked);
-
-                    double sumx = 0;
-                    double sumy = 0;
-                    for (String v : picked) {
-                      Point p = layoutModel.apply(v);
-                      sumx += p.x;
-                      sumy += p.y;
-                    }
-                    Point cp = Point.of(sumx / picked.size(), sumy / picked.size());
-                    layoutModel
-                        .getLayoutStateChangeSupport()
-                        .fireLayoutStateChanged(layoutModel, true);
-                    layoutModel.lock(false);
-                    layoutModel.set(clusterVertex, cp);
-                    log.trace("put the cluster at " + cp);
-                    layoutModel.lock(clusterVertex, true);
-                    vv.getRenderContext().getParallelEdgeIndexFunction().reset();
-                    layoutModel.accept(vv.getVisualizationModel().getLayoutAlgorithm());
-                    vv.getSelectedVertexState().clear();
-                    vv.getSelectedVertexState().select(clusterVertex);
-                    vv.repaint();
-                  }
+                  collapser.collapse(picked);
+                  //                  if (picked.size() > 1) {
+                  //                    LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
+                  //                    Graph<String, Integer> clusterGraph = collapser.getClusterGraph(picked);
+                  //                    log.trace("clusterGraph:" + clusterGraph);
+                  //                    String clusterVertex = collapser.collapse(picked);
+                  //
+                  //                    double sumx = 0;
+                  //                    double sumy = 0;
+                  //                    for (String v : picked) {
+                  //                      Point p = layoutModel.apply(v);
+                  //                      sumx += p.x;
+                  //                      sumy += p.y;
+                  //                    }
+                  //                    Point cp = Point.of(sumx / picked.size(), sumy / picked.size());
+                  //                    layoutModel
+                  //                        .getLayoutStateChangeSupport()
+                  //                        .fireLayoutStateChanged(layoutModel, true);
+                  //                    layoutModel.lock(false);
+                  //                    layoutModel.set(clusterVertex, cp);
+                  //                    log.trace("put the cluster at " + cp);
+                  //                    layoutModel.lock(clusterVertex, true);
+                  //                    vv.getRenderContext().getParallelEdgeIndexFunction().reset();
+                  //                    layoutModel.accept(vv.getVisualizationModel().getLayoutAlgorithm());
+                  //                    vv.getSelectedVertexState().clear();
+                  //                    vv.getSelectedVertexState().select(clusterVertex);
+                  //                    vv.repaint();
+                  //                  }
                 }));
 
     JButton expand = new JButton("Expand");
@@ -199,19 +199,20 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
                 () -> {
                   Collection<String> picked =
                       new HashSet(vv.getSelectedVertexState().getSelected());
-                  for (String v : picked) {
-                    if (collapser.collapsedGraphFunction.apply(v) != null) {
-                      LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
-
-                      collapser.expand(v);
-
-                      layoutModel.lock(false);
-                      vv.getRenderContext().getParallelEdgeIndexFunction().reset();
-                      layoutModel.accept(vv.getVisualizationModel().getLayoutAlgorithm());
-                    }
-                    vv.getSelectedVertexState().clear();
-                    vv.repaint();
-                  }
+                  collapser.expand(picked);
+                  //                  for (String v : picked) {
+                  //                    if (collapser.collapsedGraphFunction().apply(v) != null) {
+                  //                      LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
+                  //
+                  //                      collapser.expand(v);
+                  //
+                  //                      layoutModel.lock(false);
+                  //                      vv.getRenderContext().getParallelEdgeIndexFunction().reset();
+                  //                      layoutModel.accept(vv.getVisualizationModel().getLayoutAlgorithm());
+                  //                    }
+                  //                    vv.getSelectedVertexState().clear();
+                  //                    vv.repaint();
+                  //                  }
                 }));
 
     JButton compressEdges = new JButton("Compress Edges");

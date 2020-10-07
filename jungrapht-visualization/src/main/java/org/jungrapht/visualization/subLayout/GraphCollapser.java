@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * @param <V> vertex type
  * @param <E> edge type
  */
-public class GraphCollapser<V, E> {
+public class GraphCollapser<V, E> implements Collapser<V, E> {
 
   private static final Logger log = LoggerFactory.getLogger(GraphCollapser.class);
 
@@ -84,7 +84,9 @@ public class GraphCollapser<V, E> {
   }
 
   /** accesses the {@code Map} of vertex to {@code Graph} as a {@code Function} */
-  public Function<V, Graph<V, E>> collapsedGraphFunction = v -> vertexToClusterMap.get(v);
+  public Function<V, Graph<V, E>> collapsedGraphFunction() {
+    return vertexToClusterMap::get;
+  }
 
   /**
    * collapse the passed vertices into one
@@ -92,6 +94,7 @@ public class GraphCollapser<V, E> {
    * @param selected the vertices to be part of the collapsed vertex
    * @return the new vertex that replaces the selected vertices
    */
+  @Override
   public V collapse(Collection<V> selected) {
     return collapse(this.getClusterGraph(selected));
   }
@@ -209,10 +212,12 @@ public class GraphCollapser<V, E> {
     return clusterVertex;
   }
 
-  public void expand(V clusterVertices) {
-    expand(Collections.singleton(clusterVertices));
+  @Override
+  public void expand(V clusterVertex) {
+    expand(Collections.singleton(clusterVertex));
   }
 
+  @Override
   public void expand(Collection<V> clusterVertices) {
 
     for (V clusterVertex : clusterVertices) {
