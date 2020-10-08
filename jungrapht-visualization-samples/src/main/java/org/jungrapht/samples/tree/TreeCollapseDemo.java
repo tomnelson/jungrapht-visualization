@@ -13,8 +13,6 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Shape;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import javax.swing.*;
@@ -26,9 +24,6 @@ import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.decorators.EllipseShapeFunction;
-import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.TreeLayout;
-import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.subLayout.TreeCollapser;
 import org.jungrapht.visualization.subLayout.VisualTreeCollapser;
 

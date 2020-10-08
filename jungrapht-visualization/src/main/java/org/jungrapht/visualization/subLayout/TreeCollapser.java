@@ -11,11 +11,11 @@ package org.jungrapht.visualization.subLayout;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jungrapht.visualization.util.TreeUtils;
@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Will collapse and expand a subtree from its root vertex
+ *
  * @param <V> vertex type
  * @param <E> edge type
  */
@@ -45,7 +46,7 @@ public class TreeCollapser<V, E> {
   }
 
   public Collection<V> collapse(Collection<V> roots) {
-    Set<V> set = new HashSet<>();
+    Set<V> set = roots.stream().filter(r -> tree.outDegreeOf(r) != 0).collect(Collectors.toSet());
     for (V v : roots) {
       set.add(collapse(v));
     }
@@ -59,29 +60,32 @@ public class TreeCollapser<V, E> {
    * @param subRoot the root of the subtree to be collapsed
    */
   public V collapse(V subRoot) {
-    // get the subtree rooted at subRoot
-    Graph<V, E> subTree = TreeUtils.getSubTree(tree, subRoot);
-    V collapseVertex = vertexFactory.get();
-    vertexToClusterMap.put(collapseVertex, subTree);
-    log.trace("subTree of {} is {}", subRoot, subTree);
-    if (tree.incomingEdgesOf(subRoot).isEmpty()) {
-      TreeUtils.removeTreeVertex(tree, subRoot);
-      tree.addVertex(collapseVertex);
-    } else {
-      log.trace("collapse at subroot {}", subRoot);
-      for (V parent : Graphs.predecessorListOf(tree, subRoot)) {
-        // subRoot has a parent, so attach its parent to subTree in its place
-        E parentEdge = tree.incomingEdgesOf(subRoot).stream().findFirst().get();
-
+    if (tree.containsVertex(subRoot) && tree.outDegreeOf(subRoot) != 0) {
+      // get the subtree rooted at subRoot
+      Graph<V, E> subTree = TreeUtils.getSubTree(tree, subRoot);
+      V collapseVertex = vertexFactory.get();
+      vertexToClusterMap.put(collapseVertex, subTree);
+      log.trace("subTree of {} is {}", subRoot, subTree);
+      if (tree.incomingEdgesOf(subRoot).isEmpty()) {
         TreeUtils.removeTreeVertex(tree, subRoot);
-
-        tree.addVertex(parent);
         tree.addVertex(collapseVertex);
-        tree.addEdge(parent, collapseVertex, parentEdge);
+      } else {
+        log.trace("collapse at subroot {}", subRoot);
+        for (V parent : Graphs.predecessorListOf(tree, subRoot)) {
+          // subRoot has a parent, so attach its parent to subTree in its place
+          E parentEdge = tree.incomingEdgesOf(subRoot).stream().findFirst().get();
+
+          TreeUtils.removeTreeVertex(tree, subRoot);
+
+          tree.addVertex(parent);
+          tree.addVertex(collapseVertex);
+          tree.addEdge(parent, collapseVertex, parentEdge);
+        }
       }
+      log.trace("made this subtree {}", subTree); // correct
+      return collapseVertex;
     }
-    log.trace("made this subtree {}", subTree); // correct
-    return collapseVertex;
+    return null;
   }
 
   public void expand(Collection<V> collapsedRoots) {
