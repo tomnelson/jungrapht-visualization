@@ -20,7 +20,16 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 import javax.swing.border.TitledBorder;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.LayoutHelper;
@@ -33,7 +42,6 @@ import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
-import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.subLayout.Collapser;
 import org.jungrapht.visualization.util.LayoutAlgorithmTransition;
 import org.jungrapht.visualization.util.PredicatedParallelEdgeIndexFunction;
@@ -140,7 +148,7 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
             SwingUtilities.invokeLater(
                 () -> {
                   LayoutHelper.Layouts layoutType = (LayoutHelper.Layouts) jcb.getSelectedItem();
-                  LayoutAlgorithm layoutAlgorithm = layoutType.getLayoutAlgorithm();
+                  LayoutAlgorithm<String> layoutAlgorithm = layoutType.getLayoutAlgorithm();
                   log.trace("got a {}", layoutAlgorithm);
                   if (animateLayoutTransition.isSelected()) {
                     LayoutAlgorithmTransition.animate(vv, layoutAlgorithm);
@@ -289,11 +297,11 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
     add(controls, BorderLayout.SOUTH);
   }
 
-  LayoutModel getTreeLayoutPositions(Graph tree, LayoutAlgorithm treeLayout) {
-    LayoutModel model = LayoutModel.builder().size(600, 600).graph(tree).build();
-    model.accept(treeLayout);
-    return model;
-  }
+  //  LayoutModel getTreeLayoutPositions(Graph tree, LayoutAlgorithm treeLayout) {
+  //    LayoutModel model = LayoutModel.builder().size(600, 600).graph(tree).build();
+  //    model.accept(treeLayout);
+  //    return model;
+  //  }
 
   /**
    * a demo class that will create a vertex shape that is either a polygon or star. The number of
@@ -306,7 +314,7 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
 
     ClusterShapeFunction(Function<V, Graph<V, E>> function) {
       this.function = function;
-      setSizeFunction(new ClusterSizeFunction<V, E>(function, 20));
+      setSizeFunction(new ClusterSizeFunction<>(function, 20));
     }
 
     @Override

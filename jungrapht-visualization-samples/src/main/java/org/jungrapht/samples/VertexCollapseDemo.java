@@ -17,7 +17,15 @@ import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
-import javax.swing.*;
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.TestGraphs;
@@ -31,8 +39,6 @@ import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.subLayout.Collapser;
 import org.jungrapht.visualization.util.PredicatedParallelEdgeIndexFunction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A demo that shows how collections of vertices can be collapsed into a single vertex. In this
@@ -47,8 +53,6 @@ import org.slf4j.LoggerFactory;
  * @author Tom Nelson
  */
 public class VertexCollapseDemo extends JPanel {
-
-  private static final Logger log = LoggerFactory.getLogger(VertexCollapseDemo.class);
 
   String instructions =
       "<html>Use the mouse to select multiple vertices"
@@ -82,25 +86,23 @@ public class VertexCollapseDemo extends JPanel {
 
     setLayout(new BorderLayout());
 
-    // create a simple graph for the demo
-    Graph<MyVertex, Integer> generatedGraph = TestGraphs.getOneComponentGraph(MyVertex::new);
     // make a pseudograph with Collapsable vertex types
     // the graph has to allow self loops and parallel edges in order to
     // be collapsed and expanded without losing edges
-    this.graph = generatedGraph;
+    this.graph = TestGraphs.getOneComponentGraph(MyVertex::new);
 
     layoutAlgorithm = new FRLayoutAlgorithm<>();
 
     Dimension preferredSize = new Dimension(400, 400);
 
     final VisualizationModel<MyVertex, Integer> visualizationModel =
-        VisualizationModel.builder(graph)
+        VisualizationModel.<MyVertex, Integer>builder(graph)
             .layoutAlgorithm(layoutAlgorithm)
             .layoutSize(preferredSize)
             .build();
 
     // the regular graph mouse for the normal view
-    final DefaultModalGraphMouse<MyVertex, Integer> graphMouse = new DefaultModalGraphMouse();
+    final DefaultModalGraphMouse<MyVertex, Integer> graphMouse = new DefaultModalGraphMouse<>();
 
     vv =
         VisualizationViewer.builder(visualizationModel)
@@ -111,11 +113,11 @@ public class VertexCollapseDemo extends JPanel {
     collapser = Collapser.forVisualization(vv, MyVertex::new);
 
     vv.getRenderContext()
-        .setVertexShapeFunction(new ClusterShapeFunction(collapser.collapsedGraphFunction()));
+        .setVertexShapeFunction(new ClusterShapeFunction<>(collapser.collapsedGraphFunction()));
 
-    final Set exclusions = new HashSet();
-    final PredicatedParallelEdgeIndexFunction eif =
-        new PredicatedParallelEdgeIndexFunction(exclusions::contains);
+    final Set<Integer> exclusions = new HashSet<>();
+    final PredicatedParallelEdgeIndexFunction<MyVertex, Integer> eif =
+        new PredicatedParallelEdgeIndexFunction<>(exclusions::contains);
 
     vv.getRenderContext().setParallelEdgeIndexFunction(eif);
 
@@ -126,7 +128,7 @@ public class VertexCollapseDemo extends JPanel {
     VisualizationScrollPane visualizationScrollPane = new VisualizationScrollPane(vv);
     add(visualizationScrollPane);
 
-    JComboBox modeBox = graphMouse.getModeComboBox();
+    JComboBox<ModalGraphMouse.Mode> modeBox = graphMouse.getModeComboBox();
     modeBox.addItemListener(graphMouse.getModeListener());
     graphMouse.setMode(ModalGraphMouse.Mode.PICKING);
 
@@ -147,13 +149,13 @@ public class VertexCollapseDemo extends JPanel {
     JButton compressEdges = new JButton("Compress Edges");
     compressEdges.addActionListener(
         e -> {
-          Set picked = vv.getSelectedVertexState().getSelected();
+          Set<MyVertex> picked = vv.getSelectedVertexState().getSelected();
           if (picked.size() == 2) {
-            Iterator pickedIter = picked.iterator();
-            Object vertexU = pickedIter.next();
-            Object vertexV = pickedIter.next();
-            Graph graph = vv.getVisualizationModel().getGraph();
-            Collection edges = new HashSet(graph.edgesOf(vertexU));
+            Iterator<MyVertex> pickedIter = picked.iterator();
+            MyVertex vertexU = pickedIter.next();
+            MyVertex vertexV = pickedIter.next();
+            Graph<MyVertex, Integer> graph = vv.getVisualizationModel().getGraph();
+            Collection<Integer> edges = new HashSet<>(graph.edgesOf(vertexU));
             edges.retainAll(graph.edgesOf(vertexV));
             exclusions.addAll(edges);
             vv.repaint();
@@ -163,13 +165,13 @@ public class VertexCollapseDemo extends JPanel {
     JButton expandEdges = new JButton("Expand Edges");
     expandEdges.addActionListener(
         e -> {
-          Set picked = vv.getSelectedVertexState().getSelected();
+          Set<MyVertex> picked = vv.getSelectedVertexState().getSelected();
           if (picked.size() == 2) {
-            Iterator pickedIter = picked.iterator();
-            Object vertexU = pickedIter.next();
-            Object vertexV = pickedIter.next();
-            Graph graph = vv.getVisualizationModel().getGraph();
-            Collection edges = new HashSet(graph.edgesOf(vertexU));
+            Iterator<MyVertex> pickedIter = picked.iterator();
+            MyVertex vertexU = pickedIter.next();
+            MyVertex vertexV = pickedIter.next();
+            Graph<MyVertex, Integer> graph = vv.getVisualizationModel().getGraph();
+            Collection<Integer> edges = new HashSet<>(graph.edgesOf(vertexU));
             edges.retainAll(graph.edgesOf(vertexV));
             exclusions.removeAll(edges);
             vv.repaint();
@@ -217,7 +219,7 @@ public class VertexCollapseDemo extends JPanel {
 
     ClusterShapeFunction(Function<V, Graph<V, E>> function) {
       this.function = function;
-      setSizeFunction(new ClusterSizeFunction<V, E>(function, 20));
+      setSizeFunction(new ClusterSizeFunction<>(function, 20));
     }
 
     @Override

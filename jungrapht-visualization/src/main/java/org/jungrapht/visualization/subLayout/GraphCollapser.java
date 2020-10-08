@@ -350,7 +350,7 @@ public class GraphCollapser<V, E> implements Collapser<V, E> {
    *
    * @param clusterGraph
    * @param vertex
-   * @return
+   * @return true if the vertex is contained in the depths of the clusterGraph
    */
   private boolean isVertexContainedInClusterGraph(Graph<V, E> clusterGraph, V vertex) {
 
