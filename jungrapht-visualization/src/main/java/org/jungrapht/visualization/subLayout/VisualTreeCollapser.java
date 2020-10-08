@@ -28,9 +28,7 @@ public class VisualTreeCollapser<V, E> extends TreeCollapser<V, E> {
   }
 
   @Override
-  public V collapse(V selected) {
-    Set<V> picked = new HashSet<>(vv.getSelectedVertexState().getSelected());
-    for (V root : picked) {
+  public V collapse(V root) {
       V collapsedVertex = super.collapse(root);
       LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
       layoutModel.set(collapsedVertex, layoutModel.apply(root));
@@ -41,19 +39,15 @@ public class VisualTreeCollapser<V, E> extends TreeCollapser<V, E> {
         ((TreeLayout) layoutAlgorithm).setRootPredicate(null);
       }
       vv.getVisualizationModel().setGraph(tree, true);
-      vv.getSelectedVertexState().clear();
       vv.repaint();
-    }
-    return null;
+      return root;
   }
 
   @Override
-  public void expand(V clusterVertices) {
-    for (V v : new HashSet<>(vv.getSelectedVertexState().getSelected())) {
-      //            if (v.get() instanceof Graph) {
-      super.expand(v);
+  public void expand(V clusterRoot) {
+      super.expand(clusterRoot);
       LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
-      layoutModel.set(v, layoutModel.apply(v));
+      layoutModel.set(clusterRoot, layoutModel.apply(clusterRoot));
       // the rootPredicate uses the graph which we have changed.
       // let the layoutAlgorithm create a rootPredicate based on the changed graph
       LayoutAlgorithm layoutAlgorithm = vv.getVisualizationModel().getLayoutAlgorithm();
@@ -61,8 +55,6 @@ public class VisualTreeCollapser<V, E> extends TreeCollapser<V, E> {
         ((TreeLayout) layoutAlgorithm).setRootPredicate(null);
       }
       vv.getVisualizationModel().setGraph(tree, true);
-    }
-    vv.getSelectedVertexState().clear();
     vv.repaint();
   }
 }

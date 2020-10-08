@@ -30,6 +30,7 @@ import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TreeLayout;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.subLayout.TreeCollapser;
+import org.jungrapht.visualization.subLayout.VisualTreeCollapser;
 
 /**
  * Demonstrates "collapsing"/"expanding" of a tree's subtrees.
@@ -47,22 +48,21 @@ public class TreeCollapseDemo extends JPanel {
   static int counter = 0;
   Supplier<String> vertexFactory = () -> "COL" + counter++;
 
-  @SuppressWarnings("unchecked")
   public TreeCollapseDemo() {
 
     setLayout(new BorderLayout());
-    // create a simple graph for the demo
+
     this.graph = DemoTreeSupplier.createTreeTwo();
 
     Dimension viewSize = new Dimension(600, 600);
     Dimension layoutSize = new Dimension(600, 600);
 
     vv = VisualizationViewer.builder(graph).layoutSize(layoutSize).viewSize(viewSize).build();
-    TreeCollapser<String, Integer> collapser = new TreeCollapser(graph, vertexFactory);
+    TreeCollapser<String, Integer> collapser = new VisualTreeCollapser(vv, vertexFactory);
 
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
     vv.getRenderContext()
-        .setVertexShapeFunction(new ClusterShapeFunction(collapser.collapsedGraphFunction));
+        .setVertexShapeFunction(new ClusterShapeFunction(collapser.collapsedGraphFunction()));
     // add a listener for ToolTips
     vv.setVertexToolTipFunction(Object::toString);
     vv.setEdgeToolTipFunction(Object::toString);
@@ -72,45 +72,10 @@ public class TreeCollapseDemo extends JPanel {
     add(panel);
 
     JButton collapse = new JButton("Collapse");
-    collapse.addActionListener(
-        e -> {
-          Set<String> picked = new HashSet<>(vv.getSelectedVertexState().getSelected());
-          for (String root : picked) {
-            String collapsedVertex = collapser.collapse(root);
-            LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
-            layoutModel.set(collapsedVertex, layoutModel.apply(root));
-            // the rootPredicate uses the graph which we have changed.
-            // let the layoutAlgorithm create a rootPredicate based on the changed graph
-            LayoutAlgorithm layoutAlgorithm = vv.getVisualizationModel().getLayoutAlgorithm();
-            if (layoutAlgorithm instanceof TreeLayout) {
-              ((TreeLayout) layoutAlgorithm).setRootPredicate(null);
-            }
-            vv.getVisualizationModel().setGraph(graph, true);
-            vv.getSelectedVertexState().clear();
-            vv.repaint();
-          }
-        });
+    collapse.addActionListener(e -> collapser.collapse(vv.getSelectedVertexState().getSelected()));
 
     JButton expand = new JButton("Expand");
-    expand.addActionListener(
-        e -> {
-          for (String v : new HashSet<>(vv.getSelectedVertexState().getSelected())) {
-            //            if (v.get() instanceof Graph) {
-            collapser.expand(v);
-            LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
-            layoutModel.set(v, layoutModel.apply(v));
-            // the rootPredicate uses the graph which we have changed.
-            // let the layoutAlgorithm create a rootPredicate based on the changed graph
-            LayoutAlgorithm layoutAlgorithm = vv.getVisualizationModel().getLayoutAlgorithm();
-            if (layoutAlgorithm instanceof TreeLayout) {
-              ((TreeLayout) layoutAlgorithm).setRootPredicate(null);
-            }
-            vv.getVisualizationModel().setGraph(graph, true);
-          }
-          vv.getSelectedVertexState().clear();
-          vv.repaint();
-          //          }
-        });
+    expand.addActionListener(e -> collapser.expand(vv.getSelectedVertexState().getSelected()));
 
     JPanel controls = new JPanel();
     controls.add(TreeLayoutSelector.builder(vv).initialSelection(0).build());

@@ -22,6 +22,11 @@ import org.jungrapht.visualization.util.TreeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Will collapse and expand a subtree from its root vertex
+ * @param <V> vertex type
+ * @param <E> edge type
+ */
 public class TreeCollapser<V, E> {
 
   private static Logger log = LoggerFactory.getLogger(TreeCollapser.class);
@@ -29,7 +34,10 @@ public class TreeCollapser<V, E> {
   Graph<V, E> tree;
   Supplier<V> vertexFactory;
   protected final Map<V, Graph<V, E>> vertexToClusterMap = new HashMap<>();
-  public Function<V, Graph<V, E>> collapsedGraphFunction = v -> vertexToClusterMap.get(v);
+
+  public Function<V, Graph<V, E>> collapsedGraphFunction() {
+    return v -> vertexToClusterMap.get(v);
+  }
 
   public TreeCollapser(Graph<V, E> graph, Supplier<V> vertexFactory) {
     this.tree = graph;
@@ -76,8 +84,11 @@ public class TreeCollapser<V, E> {
     return collapseVertex;
   }
 
-  public void expand(V collapseVertex) {
+  public void expand(Collection<V> collapsedRoots) {
+    collapsedRoots.forEach(this::expand);
+  }
 
+  public void expand(V collapseVertex) {
     Graph<V, E> subTree = vertexToClusterMap.get(collapseVertex);
     if (subTree != null) {
       Set<E> incomingEdges = tree.incomingEdgesOf(collapseVertex);
