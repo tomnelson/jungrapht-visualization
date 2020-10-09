@@ -36,13 +36,13 @@ public class GraphCollapser<V, E> implements Collapser<V, E> {
 
   protected Graph<V, E> graph;
   protected Graph<V, E> originalGraph;
-  protected final Supplier<V> vertexSupplier;
+  protected Supplier<V> vertexSupplier;
   protected GraphTypeBuilder<V, E> graphTypeBuilder;
 
   protected final Map<V, Graph<V, E>> vertexToClusterMap = new HashMap<>();
 
   /**
-   * create an istance with a {@code Graph} and a {@code Supplier&lt;V&gt;}
+   * create an instance with a {@code Graph} and a {@code Supplier&lt;V&gt;}
    *
    * @param graph the {@code Graph} to operate on.
    * @param vertexSupplier supplies a new vertex to use in place of the collapsed vertices
@@ -65,6 +65,10 @@ public class GraphCollapser<V, E> implements Collapser<V, E> {
             .allowingMultipleEdges(true)
             .allowingSelfLoops(true);
     this.originalGraph = copyGraph(graph);
+  }
+
+  public void setVertexSupplier(Supplier<V> vertexSupplier) {
+    this.vertexSupplier = vertexSupplier;
   }
 
   /**
