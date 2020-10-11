@@ -10,29 +10,17 @@ package org.jungrapht.samples;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.Shape;
-import java.awt.event.ItemEvent;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.function.Supplier;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
-import javax.swing.border.TitledBorder;
+import java.util.stream.Collectors;
+import javax.swing.*;
 import org.jgrapht.Graph;
-import org.jungrapht.samples.util.LayoutHelper;
+import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
@@ -43,20 +31,22 @@ import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.subLayout.Collapser;
-import org.jungrapht.visualization.util.LayoutAlgorithmTransition;
+import org.jungrapht.visualization.subLayout.VisualGraphCollapser;
 import org.jungrapht.visualization.util.PredicatedParallelEdgeIndexFunction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A demo that shows how collections of vertices can be collapsed into a single vertex. In this
  * demo, the vertices that are collapsed are those mouse-selected by the user.
  *
+ * <p>In this demo, the collapsed vertices have an id that is a comma-separated String of the child
+ * vertex ids.
+ *
+ * <p>The vertex supplier is replaced with each collapse call in order to supply a vertex with the
+ * passed id string.
+ *
  * @author Tom Nelson
  */
-public class VertexCollapseDemoWithLayouts extends JPanel {
-
-  private static final Logger log = LoggerFactory.getLogger(VertexCollapseDemoWithLayouts.class);
+public class VertexCollapseDemoWithCollapseIds extends JPanel {
 
   String instructions =
       "<html>Use the mouse to select multiple vertices"
@@ -76,35 +66,36 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
           + "<p>You can drag the vertices with the mouse."
           + "<p>Use the 'Picking'/'Transforming' combo-box to switch"
           + "<p>between picking and transforming mode.</html>";
-
-  static int counter = 0;
-  Supplier<String> vertexFactory = () -> "COL" + counter++;
-
   /** the graph */
-  Graph<String, Integer> graph = TestGraphs.getOneComponentGraph(vertexFactory);
+  Graph<MyVertex, Integer> graph;
 
   /** the visual component and renderer for the graph */
-  VisualizationViewer<String, Integer> vv;
+  VisualizationViewer<MyVertex, Integer> vv;
 
-  LayoutAlgorithm<String> layoutAlgorithm;
-  Collapser<String, Integer> collapser;
+  LayoutAlgorithm<MyVertex> layoutAlgorithm;
 
-  @SuppressWarnings({"unchecked", "rawtypes"})
-  public VertexCollapseDemoWithLayouts() {
+  Collapser<MyVertex, Integer> collapser;
+
+  public VertexCollapseDemoWithCollapseIds() {
+
     setLayout(new BorderLayout());
+
+    // the graph has to allow self loops and parallel edges in order to
+    // be collapsed and expanded without losing edges
+    this.graph = TestGraphs.getOneComponentGraph(MyVertex::new);
 
     layoutAlgorithm = new FRLayoutAlgorithm<>();
 
     Dimension preferredSize = new Dimension(400, 400);
 
-    final VisualizationModel<String, Integer> visualizationModel =
-        VisualizationModel.builder(graph)
+    final VisualizationModel<MyVertex, Integer> visualizationModel =
+        VisualizationModel.<MyVertex, Integer>builder(graph)
             .layoutAlgorithm(layoutAlgorithm)
             .layoutSize(preferredSize)
             .build();
 
     // the regular graph mouse for the normal view
-    final DefaultModalGraphMouse<String, Number> graphMouse = new DefaultModalGraphMouse();
+    final DefaultModalGraphMouse<MyVertex, Integer> graphMouse = new DefaultModalGraphMouse<>();
 
     vv =
         VisualizationViewer.builder(visualizationModel)
@@ -112,81 +103,74 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
             .viewSize(preferredSize)
             .build();
 
-    collapser = Collapser.forVisualization(vv, vertexFactory);
+    // the passed Supplier<V> is not used because it is replaced with each
+    // overridden call to collapse (below)
+    collapser =
+        new VisualGraphCollapser<>(vv, MyVertex::new) {
+          // Function to change the selected vertices into a comma-separated
+          // String of their ids. The String will be used as the id for the collapsed vertex
+          Function<Collection<MyVertex>, String> vertexFunction =
+              c -> c.stream().map(Object::toString).collect(Collectors.joining(","));
+
+          /**
+           * Overridden to replace the vertexSupplier each time with one that will use the selected
+           * vertices in the CTOR of the new MyVertex
+           *
+           * @param selected
+           * @return
+           */
+          @Override
+          public MyVertex collapse(Collection<MyVertex> selected) {
+            // reset the vertex supplier
+            super.setVertexSupplier(() -> new MyVertex(vertexFunction.apply(selected)));
+            return super.collapse(selected);
+          }
+        };
 
     vv.getRenderContext()
-        .setVertexShapeFunction(new ClusterShapeFunction(collapser.collapsedGraphFunction()));
+        .setVertexShapeFunction(new ClusterShapeFunction<>(collapser.collapsedGraphFunction()));
 
-    final Set exclusions = new HashSet();
-    final PredicatedParallelEdgeIndexFunction eif =
-        new PredicatedParallelEdgeIndexFunction(exclusions::contains);
+    final Set<Integer> exclusions = new HashSet<>();
+    final PredicatedParallelEdgeIndexFunction<MyVertex, Integer> eif =
+        new PredicatedParallelEdgeIndexFunction<>(exclusions::contains);
+
     vv.getRenderContext().setParallelEdgeIndexFunction(eif);
 
     // add a listener for ToolTips
     vv.setVertexToolTipFunction(Object::toString);
+    vv.setEdgeToolTipFunction(Object::toString);
 
     VisualizationScrollPane visualizationScrollPane = new VisualizationScrollPane(vv);
     add(visualizationScrollPane);
 
-    JComboBox modeBox = graphMouse.getModeComboBox();
+    JComboBox<ModalGraphMouse.Mode> modeBox = graphMouse.getModeComboBox();
     modeBox.addItemListener(graphMouse.getModeListener());
     graphMouse.setMode(ModalGraphMouse.Mode.PICKING);
-
-    LayoutHelper.Layouts[] combos = LayoutHelper.getCombos();
-    final JRadioButton animateLayoutTransition = new JRadioButton("Animate Layout Transition");
-
-    final JComboBox jcb = new JComboBox(combos);
-    jcb.addItemListener(
-        e -> {
-          if (e.getStateChange() == ItemEvent.SELECTED) {
-            SwingUtilities.invokeLater(
-                () -> {
-                  LayoutHelper.Layouts layoutType = (LayoutHelper.Layouts) jcb.getSelectedItem();
-                  LayoutAlgorithm<String> layoutAlgorithm = layoutType.getLayoutAlgorithm();
-                  log.trace("got a {}", layoutAlgorithm);
-                  if (animateLayoutTransition.isSelected()) {
-                    LayoutAlgorithmTransition.animate(vv, layoutAlgorithm);
-                  } else {
-                    LayoutAlgorithmTransition.apply(vv, layoutAlgorithm);
-                  }
-                });
-          }
-        });
-
-    jcb.setSelectedItem(LayoutHelper.Layouts.FR);
-
-    jcb.setSelectedItem(LayoutHelper.Layouts.FR);
 
     JButton collapse = new JButton("Collapse");
     collapse.addActionListener(
         e ->
             SwingUtilities.invokeLater(
-                () -> {
-                  Collection<String> picked =
-                      new HashSet(vv.getSelectedVertexState().getSelected());
-                  collapser.collapse(picked);
-                }));
+                () -> collapser.collapse(vv.getSelectedVertexState().getSelected())));
 
     JButton expand = new JButton("Expand");
     expand.addActionListener(
         e ->
             SwingUtilities.invokeLater(
-                () -> {
-                  Collection<String> picked =
-                      new HashSet(vv.getSelectedVertexState().getSelected());
-                  collapser.expand(picked);
-                }));
+                () ->
+                    collapser.expand(
+                        vv.getRenderContext().getSelectedVertexState().getSelected())));
 
     JButton compressEdges = new JButton("Compress Edges");
     compressEdges.addActionListener(
         e -> {
-          Set picked = vv.getSelectedVertexState().getSelected();
+          Set<MyVertex> picked = vv.getSelectedVertexState().getSelected();
           if (picked.size() == 2) {
-            Iterator pickedIter = picked.iterator();
-            Object vertexU = pickedIter.next();
-            Object vertexV = pickedIter.next();
-            Graph graph = vv.getVisualizationModel().getGraph();
-            Collection edges = new HashSet(graph.edgesOf(vertexU));
+            Iterator<MyVertex> pickedIter = picked.iterator();
+            MyVertex vertexU = pickedIter.next();
+            MyVertex vertexV = pickedIter.next();
+            Graph<MyVertex, Integer> graph = vv.getVisualizationModel().getGraph();
+            Collection<Integer> edges = new HashSet<>(graph.edgesOf(vertexU));
             edges.retainAll(graph.edgesOf(vertexV));
             exclusions.addAll(edges);
             vv.repaint();
@@ -196,13 +180,13 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
     JButton expandEdges = new JButton("Expand Edges");
     expandEdges.addActionListener(
         e -> {
-          Set picked = vv.getSelectedVertexState().getSelected();
+          Set<MyVertex> picked = vv.getSelectedVertexState().getSelected();
           if (picked.size() == 2) {
-            Iterator pickedIter = picked.iterator();
-            Object vertexU = pickedIter.next();
-            Object vertexV = pickedIter.next();
-            Graph graph = vv.getVisualizationModel().getGraph();
-            Collection edges = new HashSet(graph.edgesOf(vertexU));
+            Iterator<MyVertex> pickedIter = picked.iterator();
+            MyVertex vertexU = pickedIter.next();
+            MyVertex vertexV = pickedIter.next();
+            Graph<MyVertex, Integer> graph = vv.getVisualizationModel().getGraph();
+            Collection<Integer> edges = new HashSet<>(graph.edgesOf(vertexU));
             edges.retainAll(graph.edgesOf(vertexV));
             exclusions.removeAll(edges);
             vv.repaint();
@@ -212,7 +196,7 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
     JButton reset = new JButton("Reset");
     reset.addActionListener(
         e -> {
-          this.graph = TestGraphs.getOneComponentGraph(vertexFactory);
+          this.graph = TestGraphs.getOneComponentGraph(MyVertex::new);
           vv.getRenderContext().getParallelEdgeIndexFunction().reset();
           vv.getVisualizationModel().setGraph(graph);
           exclusions.clear();
@@ -225,39 +209,21 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
             JOptionPane.showMessageDialog(
                 (JComponent) e.getSource(), instructions, "Help", JOptionPane.PLAIN_MESSAGE));
 
-    JPanel controls = new JPanel(new FlowLayout());
-    JPanel collapseControls = new JPanel(new GridLayout(0, 1));
-    collapseControls.setBorder(BorderFactory.createTitledBorder("Picked"));
-    collapseControls.add(collapse);
-    collapseControls.add(expand);
-    collapseControls.add(compressEdges);
-    collapseControls.add(expandEdges);
-    collapseControls.add(reset);
-    controls.add(collapseControls);
-    JPanel controlPanel = new JPanel(new GridLayout(0, 1));
-    JPanel modePanel = new JPanel();
-    modePanel.setBorder(new TitledBorder("Mouse Mode"));
-    modePanel.add(modeBox);
-
-    controlPanel.add(modePanel);
-
-    JPanel jcbPanel = new JPanel(new GridLayout(0, 1));
-    jcbPanel.setBorder(new TitledBorder("Layouts"));
-    jcbPanel.add(jcb);
-
-    jcbPanel.add(animateLayoutTransition);
-    controlPanel.add(jcbPanel);
-
-    controls.add(controlPanel);
+    Box controls = Box.createHorizontalBox();
+    controls.add(ControlHelpers.getZoomControls("Zoom", vv));
+    controls.add(
+        ControlHelpers.getCenteredContainer(
+            "Picked",
+            Box.createVerticalBox(),
+            collapse,
+            expand,
+            compressEdges,
+            expandEdges,
+            reset));
+    controls.add(ControlHelpers.getCenteredContainer("Mouse Mode", modeBox));
     controls.add(help);
     add(controls, BorderLayout.SOUTH);
   }
-
-  //  LayoutModel getTreeLayoutPositions(Graph tree, LayoutAlgorithm treeLayout) {
-  //    LayoutModel model = LayoutModel.builder().size(600, 600).graph(tree).build();
-  //    model.accept(treeLayout);
-  //    return model;
-  //  }
 
   /**
    * a demo class that will create a vertex shape that is either a polygon or star. The number of
@@ -310,10 +276,46 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
     }
   }
 
+  /**
+   * simple vertex class for demo Any type will work as long as there is a Supplier to provide a new
+   * instance. The noarg constructor is used in this demo {@code }MyVertex::new}
+   */
+  static class MyVertex {
+
+    static int count;
+    String id;
+
+    MyVertex() {
+      this.id = "" + count++;
+    }
+
+    MyVertex(String id) {
+      this.id = id;
+    }
+
+    @Override
+    public String toString() {
+      return id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      MyVertex myVertex = (MyVertex) o;
+      return id.equals(myVertex.id);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(id);
+    }
+  }
+
   public static void main(String[] args) {
     JFrame f = new JFrame();
     f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-    f.getContentPane().add(new VertexCollapseDemoWithLayouts());
+    f.getContentPane().add(new VertexCollapseDemoWithCollapseIds());
     f.pack();
     f.setVisible(true);
   }

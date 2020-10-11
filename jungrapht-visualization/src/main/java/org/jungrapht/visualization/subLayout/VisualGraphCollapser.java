@@ -43,7 +43,6 @@ public class VisualGraphCollapser<V, E> extends GraphCollapser<V, E> {
       layoutModel.getLayoutStateChangeSupport().fireLayoutStateChanged(layoutModel, true);
       layoutModel.lock(false);
       layoutModel.set(clusterVertex, cp);
-      //            log.trace("put the cluster at " + cp);
       layoutModel.lock(clusterVertex, true);
       vv.getRenderContext().getParallelEdgeIndexFunction().reset();
       layoutModel.accept(vv.getVisualizationModel().getLayoutAlgorithm());

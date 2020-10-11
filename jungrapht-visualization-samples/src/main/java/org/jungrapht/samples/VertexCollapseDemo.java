@@ -42,13 +42,7 @@ import org.jungrapht.visualization.util.PredicatedParallelEdgeIndexFunction;
 
 /**
  * A demo that shows how collections of vertices can be collapsed into a single vertex. In this
- * demo, the vertices that are collapsed are those mouse-selected by the user. Any criteria could be
- * used to form the vertex collections to be collapsed, perhaps some common characteristic of those
- * vertex objects.
- *
- * <p>Note that the collection types don't use generics in this demo, because the vertices are of
- * two types: String for plain vertices, and {@code Graph<String,Number>} for the collapsed
- * vertices.
+ * demo, the vertices that are collapsed are those mouse-selected by the user.
  *
  * @author Tom Nelson
  */
@@ -86,7 +80,6 @@ public class VertexCollapseDemo extends JPanel {
 
     setLayout(new BorderLayout());
 
-    // make a pseudograph with Collapsable vertex types
     // the graph has to allow self loops and parallel edges in order to
     // be collapsed and expanded without losing edges
     this.graph = TestGraphs.getOneComponentGraph(MyVertex::new);
@@ -181,6 +174,8 @@ public class VertexCollapseDemo extends JPanel {
     JButton reset = new JButton("Reset");
     reset.addActionListener(
         e -> {
+          this.graph = TestGraphs.getOneComponentGraph(MyVertex::new);
+          vv.getRenderContext().getParallelEdgeIndexFunction().reset();
           vv.getVisualizationModel().setGraph(graph);
           exclusions.clear();
           vv.repaint();

@@ -15,15 +15,6 @@ public class VisualTreeCollapser<V, E> extends TreeCollapser<V, E> {
     this.vv = vv;
   }
 
-  //  @Override
-  //  public Collection<V> collapse(Collection<V> selected) {
-  //    Set<V> set = new HashSet<>();
-  //    for (V v : selected) {
-  //      set.add(collapse(v));
-  //    }
-  //    return set;
-  //  }
-
   @Override
   public V collapse(V root) {
     V collapsedVertex = super.collapse(root);

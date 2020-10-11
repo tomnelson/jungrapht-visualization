@@ -65,12 +65,16 @@ public class TreeCollapser<V, E> {
       Graph<V, E> subTree = TreeUtils.getSubTree(tree, subRoot);
       V collapseVertex = vertexFactory.get();
       vertexToClusterMap.put(collapseVertex, subTree);
-      log.trace("subTree of {} is {}", subRoot, subTree);
+      if (log.isTraceEnabled()) {
+        log.trace("subTree of {} is {}", subRoot, subTree);
+      }
       if (tree.incomingEdgesOf(subRoot).isEmpty()) {
         TreeUtils.removeTreeVertex(tree, subRoot);
         tree.addVertex(collapseVertex);
       } else {
-        log.trace("collapse at subroot {}", subRoot);
+        if (log.isTraceEnabled()) {
+          log.trace("collapse at subroot {}", subRoot);
+        }
         for (V parent : Graphs.predecessorListOf(tree, subRoot)) {
           // subRoot has a parent, so attach its parent to subTree in its place
           E parentEdge = tree.incomingEdgesOf(subRoot).stream().findFirst().get();
@@ -82,7 +86,9 @@ public class TreeCollapser<V, E> {
           tree.addEdge(parent, collapseVertex, parentEdge);
         }
       }
-      log.trace("made this subtree {}", subTree); // correct
+      if (log.isTraceEnabled()) {
+        log.trace("made this subtree {}", subTree); // correct
+      }
       return collapseVertex;
     }
     return null;
@@ -96,7 +102,9 @@ public class TreeCollapser<V, E> {
     Graph<V, E> subTree = vertexToClusterMap.get(collapseVertex);
     if (subTree != null) {
       Set<E> incomingEdges = tree.incomingEdgesOf(collapseVertex);
-      log.trace("incoming edges are {}", incomingEdges);
+      if (log.isTraceEnabled()) {
+        log.trace("incoming edges are {}", incomingEdges);
+      }
 
       vertexToClusterMap.remove(collapseVertex);
       if (incomingEdges.isEmpty()) {
@@ -114,8 +122,10 @@ public class TreeCollapser<V, E> {
       }
       E parentEdge = incomingEdges.stream().findFirst().get();
       V parent = tree.getEdgeSource(parentEdge);
-      log.trace("parentEdge {}", parentEdge);
-      log.trace("tree contains edge {} is {}", parentEdge, tree.containsEdge(parentEdge));
+      if (log.isTraceEnabled()) {
+        log.trace("parentEdge {}", parentEdge);
+        log.trace("tree contains edge {} is {}", parentEdge, tree.containsEdge(parentEdge));
+      }
       if (parent != null) {
         tree.removeVertex(collapseVertex);
         TreeUtils.addSubTree(tree, subTree, parent, parentEdge);

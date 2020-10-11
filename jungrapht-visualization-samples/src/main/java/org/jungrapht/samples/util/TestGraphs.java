@@ -212,11 +212,9 @@ public class TestGraphs {
   public static <T> Graph<T, Integer> getOneComponentGraph(Supplier<T> factory) {
 
     Graph<T, Integer> graph =
-        GraphTypeBuilder.<T, Integer>forGraphType(DefaultGraphType.directedPseudograph())
+        GraphTypeBuilder.<T, Integer>forGraphType(DefaultGraphType.pseudograph())
             .edgeSupplier(SupplierUtil.createIntegerSupplier())
             .vertexSupplier(factory)
-            .allowingMultipleEdges(true)
-            .allowingSelfLoops(true)
             .buildGraph();
 
     List<T> list = IntStream.range(0, 20).mapToObj(i -> factory.get()).collect(Collectors.toList());
