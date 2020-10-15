@@ -54,7 +54,7 @@ public class VertexCollapseDemoWithCollapseIds extends JPanel {
           + "<p>on multiple vertices."
           + "<p>After you select vertices, use the Collapse button"
           + "<p>to combine them into a single vertex."
-          + "<p>Select a 'collapsed' vertex and use the Expand button"
+          + "<p>Select 'collapsed' vertices and use the Expand button"
           + "<p>to restore the collapsed vertices."
           + "<p>The Restore button will restore the original graph."
           + "<p>If you select 2 (and only 2) vertices, then press"
@@ -81,7 +81,7 @@ public class VertexCollapseDemoWithCollapseIds extends JPanel {
     setLayout(new BorderLayout());
 
     // the graph has to allow self loops and parallel edges in order to
-    // be collapsed and expanded without losing edges
+    // be collapsed and expanded without throwing exceptions
     this.graph = TestGraphs.getOneComponentGraph(MyVertex::new);
 
     layoutAlgorithm = new FRLayoutAlgorithm<>();
@@ -122,7 +122,7 @@ public class VertexCollapseDemoWithCollapseIds extends JPanel {
           @Override
           public MyVertex collapse(Collection<MyVertex> selected) {
             // reset the vertex supplier
-            super.setVertexSupplier(() -> new MyVertex(vertexFunction.apply(selected)));
+            super.setVertexSupplier(() -> new MyVertex("{" + vertexFunction.apply(selected) + "}"));
             return super.collapse(selected);
           }
         };

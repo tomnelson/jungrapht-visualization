@@ -12,6 +12,7 @@ import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.function.Function;
 import javax.swing.*;
 import org.jungrapht.visualization.MultiLayerTransformer;
@@ -286,8 +287,19 @@ public class SingleSelectedVertexPaintable<V, E> implements VisualizationServer.
     Point2D viewLocation = multiLayerTransformer.transform(location.x, location.y);
     AffineTransform graphicsTransform = g2d.getTransform();
     // move the shape to the right place in the view
+    Rectangle2D bounds =
+        visualizationServer
+            .getRenderContext()
+            .getMultiLayerTransformer()
+            .transform(
+                MultiLayerTransformer.Layer.VIEW,
+                visualizationServer.getRenderContext().getVertexShapeFunction().apply(vertex))
+            .getBounds2D();
+
     Shape shape =
-        AffineTransform.getTranslateInstance(viewLocation.getX(), viewLocation.getY())
+        AffineTransform.getTranslateInstance(
+                viewLocation.getX() + bounds.getWidth() / 4,
+                viewLocation.getY() - bounds.getHeight() / 2)
             .createTransformedShape(selectionShape);
     g2d.draw(shape);
     g2d.fill(shape);
