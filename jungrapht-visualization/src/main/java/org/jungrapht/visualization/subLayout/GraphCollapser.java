@@ -92,6 +92,10 @@ public class GraphCollapser<V, E> implements Collapser<V, E> {
     return vertexToClusterMap::get;
   }
 
+  public Map<V, Graph<V, E>> getCollapsedGraphMap() {
+    return Collections.unmodifiableMap(vertexToClusterMap);
+  }
+
   /**
    * collapse the passed vertices into one
    *
