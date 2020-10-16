@@ -190,7 +190,7 @@ public class CircleLayoutAlgorithm<V>
                   .thenRun(
                       () -> {
                         log.trace("ReduceEdgeCrossing done");
-                        layoutVertices(layoutModel);
+                        layoutVertices(layoutModel, true);
                         runAfter(); // run the after function
                         layoutModel.getViewChangeSupport().fireViewChanged();
                         // fire an event to say that the layout is done
@@ -204,7 +204,7 @@ public class CircleLayoutAlgorithm<V>
                   .thenRun(
                       () -> {
                         log.trace("ReduceEdgeCrossing done");
-                        layoutVertices(layoutModel);
+                        layoutVertices(layoutModel, true);
                         runAfter(); // run the after function
                         layoutModel.getViewChangeSupport().fireViewChanged();
                         // fire an event to say that the layout is done
@@ -215,7 +215,7 @@ public class CircleLayoutAlgorithm<V>
         }
       } else {
         reduceCrossingRunnable.run();
-        layoutVertices(layoutModel);
+        layoutVertices(layoutModel, true);
         runAfter();
         layoutModel.getViewChangeSupport().fireViewChanged();
         // fire an event to say that the layout is done
@@ -223,7 +223,7 @@ public class CircleLayoutAlgorithm<V>
       }
     } else {
       this.vertexOrderedList = new ArrayList<>(graph.vertexSet());
-      layoutVertices(layoutModel);
+      layoutVertices(layoutModel, false);
       layoutModel.getLayoutStateChangeSupport().fireLayoutStateChanged(layoutModel, false);
     }
     if (log.isTraceEnabled()) {
@@ -274,7 +274,7 @@ public class CircleLayoutAlgorithm<V>
     }
   }
 
-  private void layoutVertices(LayoutModel<V> layoutModel) {
+  private void layoutVertices(LayoutModel<V> layoutModel, boolean countCrossings) {
     double height = layoutModel.getHeight();
     double width = layoutModel.getWidth();
 
@@ -284,18 +284,26 @@ public class CircleLayoutAlgorithm<V>
     }
 
     int i = 0;
+    int listSize = vertexOrderedList.size();
+    double twoPi = 2 * Math.PI;
+    double wOffset = radius + width / 2;
+    double hOffset = radius + height / 2;
     for (V vertex : vertexOrderedList) {
 
-      double angle = (2 * Math.PI * i) / vertexOrderedList.size();
+      double angle = (twoPi * i) / listSize;
 
-      double posX = Math.cos(angle) * radius + width / 2;
-      double posY = Math.sin(angle) * radius + height / 2;
+      double posX = Math.cos(angle) * wOffset;
+      double posY = Math.sin(angle) * hOffset;
       layoutModel.set(vertex, posX, posY);
-      log.trace("set {} to {},{} ", vertex, posX, posY);
+      if (log.isTraceEnabled()) {
+        log.trace("set {} to {},{} ", vertex, posX, posY);
+      }
 
       i++;
     }
-    crossingCount = countCrossings();
+    if (countCrossings) {
+      crossingCount = countCrossings();
+    }
   }
 
   @Override

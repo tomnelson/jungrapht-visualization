@@ -92,6 +92,7 @@ public class GraphCollapser<V, E> implements Collapser<V, E> {
     return vertexToClusterMap::get;
   }
 
+  @Override
   public Map<V, Graph<V, E>> getCollapsedGraphMap() {
     return Collections.unmodifiableMap(vertexToClusterMap);
   }
@@ -375,6 +376,16 @@ public class GraphCollapser<V, E> implements Collapser<V, E> {
       }
     }
     return false;
+  }
+
+  public V findOwnerOf(V vertex) {
+    // look in all the cluster graphs
+    for (Map.Entry<V, Graph<V, E>> entry : vertexToClusterMap.entrySet()) {
+      if (isVertexContainedInClusterGraph(entry.getValue(), vertex)) {
+        return entry.getKey();
+      }
+    }
+    return null;
   }
 
   public Graph<V, E> getClusterGraph(Collection<V> picked) {

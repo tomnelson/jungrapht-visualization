@@ -1,5 +1,7 @@
 package org.jungrapht.visualization.annotations;
 
+import static java.awt.RenderingHints.KEY_ANTIALIASING;
+import static java.awt.RenderingHints.VALUE_ANTIALIAS_ON;
 import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 import static org.jungrapht.visualization.renderers.BiModalRenderer.LIGHTWEIGHT;
 
@@ -362,8 +364,12 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
     float strokeWidth =
         Math.max(selectionStrokeMin, (int) (selectionStrokeMin / g2d.getTransform().getScaleX()));
     Stroke stroke = new BasicStroke(strokeWidth);
+    // anti-alias here??
+    Object hint = g.getRenderingHint(KEY_ANTIALIASING);
+    g.setRenderingHint(KEY_ANTIALIASING, VALUE_ANTIALIAS_ON);
     g.setStroke(stroke);
     g.draw(shape);
+    g.setRenderingHint(KEY_ANTIALIASING, hint);
     g.setPaint(oldPaint);
     g.setStroke(oldStroke);
     g2d.setTransform(savedTransform);
