@@ -178,8 +178,7 @@ public class HorizontalCoordinateAssignment<V, E>
             log.trace("changed {} point ", v);
             log.trace(" from {} ", balancedPoint);
           }
-          balancedPoint =
-              AverageMedian.averagePoint(upLeftPoint, upRightPoint, downLeftPoint, downRightPoint);
+          balancedPoint = balancedPoint.add(horizontalOffset/2, 0);
           if (log.isTraceEnabled()) {
             log.trace("   to {}", balancedPoint);
           }
