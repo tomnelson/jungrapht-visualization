@@ -11,6 +11,7 @@ import static org.jungrapht.visualization.layout.algorithms.eiglsperger.Vertical
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -159,6 +160,7 @@ public class HorizontalCoordinateAssignment<V, E>
           upLeftCompaction, upRightCompaction, downLeftCompaction, downRightCompaction);
     }
 
+    Set<Point> usedPoints = new HashSet<>();
     for (int i = 0; i < layers.length; i++) {
       for (int j = 0; j < layers[i].length; j++) {
         LV<V> v = layers[i][j];
@@ -171,6 +173,19 @@ public class HorizontalCoordinateAssignment<V, E>
         Point balancedPoint =
             AverageMedian.averageMedianPoint(
                 upLeftPoint, upRightPoint, downLeftPoint, downRightPoint);
+        if (usedPoints.contains(balancedPoint)) {
+          if (log.isTraceEnabled()) {
+            log.trace("changed {} point ", v);
+            log.trace(" from {} ", balancedPoint);
+          }
+          balancedPoint =
+              AverageMedian.averagePoint(upLeftPoint, upRightPoint, downLeftPoint, downRightPoint);
+          if (log.isTraceEnabled()) {
+            log.trace("   to {}", balancedPoint);
+          }
+        }
+        usedPoints.add(balancedPoint);
+
         v.setPoint(balancedPoint);
       }
     }

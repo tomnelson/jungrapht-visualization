@@ -224,6 +224,7 @@ public class CircleLayoutAlgorithm<V>
     } else {
       this.vertexOrderedList = new ArrayList<>(graph.vertexSet());
       layoutVertices(layoutModel, false);
+      runAfter();
       layoutModel.getLayoutStateChangeSupport().fireLayoutStateChanged(layoutModel, false);
     }
     if (log.isTraceEnabled()) {
@@ -284,16 +285,12 @@ public class CircleLayoutAlgorithm<V>
     }
 
     int i = 0;
-    int listSize = vertexOrderedList.size();
-    double twoPi = 2 * Math.PI;
-    double wOffset = radius + width / 2;
-    double hOffset = radius + height / 2;
     for (V vertex : vertexOrderedList) {
 
-      double angle = (twoPi * i) / listSize;
+      double angle = (2 * Math.PI * i) / vertexOrderedList.size();
 
-      double posX = Math.cos(angle) * wOffset;
-      double posY = Math.sin(angle) * hOffset;
+      double posX = Math.cos(angle) * radius + width / 2;
+      double posY = Math.sin(angle) * radius + height / 2;
       layoutModel.set(vertex, posX, posY);
       if (log.isTraceEnabled()) {
         log.trace("set {} to {},{} ", vertex, posX, posY);
