@@ -72,15 +72,12 @@ public class FRLayoutsTimingTest {
 
   private void doTest(FRLayoutAlgorithm<String> layoutAlgorithm) {
     long startTime = System.currentTimeMillis();
-    //    if (layoutAlgorithm instanceof AfterRunnable) {
-    //      ((AfterRunnable) layoutAlgorithm)
     layoutAlgorithm.setAfter(
         () ->
             log.info(
                 "elapsed time for {} was {}",
                 layoutAlgorithm,
                 System.currentTimeMillis() - startTime));
-    //    }
     layoutModel.accept(layoutAlgorithm);
     //    if (layoutModel.getTheFuture() instanceof CompletableFuture) {
     //      ((CompletableFuture) layoutModel.getTheFuture())

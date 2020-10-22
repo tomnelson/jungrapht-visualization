@@ -154,9 +154,6 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
                   LayoutAlgorithm layoutAlgorithm = layoutType.getLayoutAlgorithm();
                   vv.removePreRenderPaintable(balloonLayoutRings);
                   vv.removePreRenderPaintable(radialLayoutRings);
-                  //                  if (layoutAlgorithm instanceof AfterRunnable) {
-                  //                    ((AfterRunnable) layoutAlgorithm).setAfter(vv::scaleToLayout);
-                  //                  }
                   layoutAlgorithm.setAfter(vv::scaleToLayout);
                   if (animateLayoutTransition.isSelected()) {
                     LayoutAlgorithmTransition.animate(vv, layoutAlgorithm);
