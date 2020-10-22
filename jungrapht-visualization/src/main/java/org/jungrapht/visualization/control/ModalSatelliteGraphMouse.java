@@ -53,7 +53,7 @@ public class ModalSatelliteGraphMouse<V, E> extends DefaultModalGraphMouse<V, E>
   }
 
   public void loadPlugins() {
-//    super.loadPlugins();
+    //    super.loadPlugins();
     pickingPlugin = new SelectingGraphMousePlugin();
     animatedPickingPlugin = new SatelliteAnimatedPickingGraphMousePlugin();
     translatingPlugin = new SatelliteTranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);

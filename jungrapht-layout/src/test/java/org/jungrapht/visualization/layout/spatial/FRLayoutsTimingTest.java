@@ -6,7 +6,6 @@ import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFRRepulsion;
-import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.util.RandomLocationTransformer;
 import org.junit.Before;
@@ -73,15 +72,15 @@ public class FRLayoutsTimingTest {
 
   private void doTest(FRLayoutAlgorithm<String> layoutAlgorithm) {
     long startTime = System.currentTimeMillis();
-    if (layoutAlgorithm instanceof AfterRunnable) {
-      ((AfterRunnable) layoutAlgorithm)
-          .setAfter(
-              () ->
-                  log.info(
-                      "elapsed time for {} was {}",
-                      layoutAlgorithm,
-                      System.currentTimeMillis() - startTime));
-    }
+    //    if (layoutAlgorithm instanceof AfterRunnable) {
+    //      ((AfterRunnable) layoutAlgorithm)
+    layoutAlgorithm.setAfter(
+        () ->
+            log.info(
+                "elapsed time for {} was {}",
+                layoutAlgorithm,
+                System.currentTimeMillis() - startTime));
+    //    }
     layoutModel.accept(layoutAlgorithm);
     //    if (layoutModel.getTheFuture() instanceof CompletableFuture) {
     //      ((CompletableFuture) layoutModel.getTheFuture())

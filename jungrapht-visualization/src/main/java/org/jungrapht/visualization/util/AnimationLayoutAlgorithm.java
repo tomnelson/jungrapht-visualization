@@ -4,7 +4,6 @@ import org.jgrapht.Graph;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.layout.algorithms.AbstractIterativeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.IterativeContext;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
@@ -66,11 +65,13 @@ public class AnimationLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorith
     super(builder);
     this.visualizationServer = builder.visualizationServer;
     this.endLayoutAlgorithm = builder.endLayoutAlgorithm;
-    if (endLayoutAlgorithm instanceof AfterRunnable) {
-      ((AfterRunnable) this.endLayoutAlgorithm).setAfter(builder.after);
-    } else {
-      this.after = builder.after;
-    }
+    //    if (endLayoutAlgorithm instanceof AfterRunnable) {
+    //      ((AfterRunnable) this.endLayoutAlgorithm).setAfter(builder.after);
+    //    } else {
+    //      this.after = builder.after;
+    //    }
+    this.endLayoutAlgorithm.setAfter(builder.after);
+    this.after = builder.after;
   }
 
   public void visit(LayoutModel<V> layoutModel) {

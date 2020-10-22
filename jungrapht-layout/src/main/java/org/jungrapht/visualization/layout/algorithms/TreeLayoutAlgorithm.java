@@ -162,6 +162,7 @@ public class TreeLayoutAlgorithm<V> extends AbstractTreeLayoutAlgorithm<V>
     if (expandLayout) {
       expandToFill(layoutModel);
     }
+    this.after.run();
     return new LinkedHashSet<>(roots);
   }
 

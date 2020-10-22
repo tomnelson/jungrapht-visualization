@@ -178,7 +178,7 @@ public class HorizontalCoordinateAssignment<V, E>
             log.trace("changed {} point ", v);
             log.trace(" from {} ", balancedPoint);
           }
-          balancedPoint = balancedPoint.add(horizontalOffset/2, 0);
+          balancedPoint = balancedPoint.add(horizontalOffset / 2, 0);
           if (log.isTraceEnabled()) {
             log.trace("   to {}", balancedPoint);
           }

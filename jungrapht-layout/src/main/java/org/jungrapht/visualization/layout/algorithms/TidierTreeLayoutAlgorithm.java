@@ -592,5 +592,6 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
               .filter(v -> !visitedVertices.contains(v))
               .collect(Collectors.toSet()));
     }
+    this.runAfter();
   }
 }

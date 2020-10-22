@@ -2,7 +2,6 @@ package org.jungrapht.visualization.util;
 
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,9 +27,10 @@ public class LayoutAlgorithmTransition {
       Runnable after) {
     fireLayoutStateChanged(visualizationServer.getVisualizationModel().getLayoutModel(), true);
 
-    if (endLayoutAlgorithm instanceof AfterRunnable) {
-      ((AfterRunnable) endLayoutAlgorithm).setAfter(after);
-    }
+    //    if (endLayoutAlgorithm instanceof AfterRunnable) {
+    //      ((AfterRunnable) endLayoutAlgorithm).setAfter(after);
+    //    }
+    endLayoutAlgorithm.setAfter(after);
 
     LayoutAlgorithm<V> transitionLayoutAlgorithm =
         AnimationLayoutAlgorithm.<V>builder()
@@ -47,9 +47,10 @@ public class LayoutAlgorithmTransition {
       LayoutAlgorithm<V> endLayoutAlgorithm,
       Runnable after) {
 
-    if (endLayoutAlgorithm instanceof AfterRunnable) {
-      ((AfterRunnable) endLayoutAlgorithm).setAfter(after);
-    }
+    //    if (endLayoutAlgorithm instanceof AfterRunnable) {
+    //      ((AfterRunnable) endLayoutAlgorithm).setAfter(after);
+    //    }
+    endLayoutAlgorithm.setAfter(after);
     visualizationServer.getVisualizationModel().setLayoutAlgorithm(endLayoutAlgorithm);
   }
 

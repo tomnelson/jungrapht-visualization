@@ -1,5 +1,6 @@
 package org.jungrapht.visualization.layout.algorithms;
 
+import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 
 /**
@@ -8,7 +9,7 @@ import org.jungrapht.visualization.layout.model.LayoutModel;
  *
  * @author Tom Nelson.
  */
-public interface LayoutAlgorithm<V> {
+public interface LayoutAlgorithm<V> extends AfterRunnable {
 
   interface Builder<V, T extends LayoutAlgorithm<V>, B extends Builder<V, T, B>> {
     T build();

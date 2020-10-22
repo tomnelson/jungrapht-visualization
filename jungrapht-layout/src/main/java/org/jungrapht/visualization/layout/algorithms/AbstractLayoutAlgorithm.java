@@ -37,10 +37,12 @@ public abstract class AbstractLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
     this.after = builder.after;
   }
 
+  @Override
   public void setAfter(Runnable after) {
     this.after = after;
   }
 
+  @Override
   public void runAfter() {
     if (after != null) after.run();
   }
