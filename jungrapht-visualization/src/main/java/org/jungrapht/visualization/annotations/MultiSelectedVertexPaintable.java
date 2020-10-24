@@ -187,6 +187,7 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
         .getSelectedVertexState()
         .getSelected()
         .stream()
+        .filter(v -> visualizationServer.getRenderContext().getVertexIncludePredicate().test(v))
         .filter(visualizationServer.getVisualizationModel().getGraph().vertexSet()::contains)
         .collect(Collectors.toList());
   }
