@@ -30,8 +30,52 @@ import org.slf4j.LoggerFactory;
 public class CrossoverScalingControl implements ScalingControl {
 
   private static final Logger log = LoggerFactory.getLogger(CrossoverScalingControl.class);
+
+  public static class Builder {
+    double minScale = Double.parseDouble(System.getProperty(MIN_SCALE, "0.2"));
+    double maxScale = Double.parseDouble(System.getProperty(MAX_SCALE, "5.0"));
+    double crossover = Double.parseDouble(System.getProperty(CROSSOVER, "1.0"));
+
+    public Builder minScale(double minScale) {
+      this.minScale = minScale;
+      return this;
+    }
+
+    public Builder maxScale(double maxScale) {
+      this.maxScale = maxScale;
+      return this;
+    }
+
+    public Builder crossover(double crossover) {
+      this.crossover = crossover;
+      return this;
+    }
+
+    public ScalingControl build() {
+      return new CrossoverScalingControl(this);
+    }
+  }
+
+  public static Builder builder() {
+    return new Builder();
+  }
+
+  CrossoverScalingControl(Builder builder) {
+    this.minScale = builder.minScale;
+    this.maxScale = builder.maxScale;
+    this.crossover = builder.crossover;
+  }
+
+  public CrossoverScalingControl() {
+    this(CrossoverScalingControl.builder());
+  }
+
+  protected double minScale;
+
+  protected double maxScale;
+
   /** Point where scale crosses over from view to layout. */
-  protected double crossover = 1.0;
+  protected double crossover;
 
   /**
    * Sets the crossover point to the specified value.
@@ -73,6 +117,21 @@ public class CrossoverScalingControl implements ScalingControl {
     double inverseViewScaleY = Math.sqrt(crossover) / viewScaleY;
     double scaleX = modelScaleX * viewScaleX;
     double scaleY = modelScaleY * viewScaleY;
+    log.info("h scale is {} horizontalAmount is {}", scaleX, horizontalAmount);
+    log.info("v scale is {} verticalAmount is {}", scaleY, verticalAmount);
+    //    log.info("v scale is "+scaleY);
+    if (scaleX > maxScale && horizontalAmount > 1.0) {
+      return;
+    }
+    if (scaleX < minScale && horizontalAmount < 1.0) {
+      return;
+    }
+    if (scaleY > maxScale && verticalAmount > 1.0) {
+      return;
+    }
+    if (scaleY < minScale && verticalAmount < 1.0) {
+      return;
+    }
 
     Point2D transformedAt =
         vv.getRenderContext()

@@ -8,10 +8,18 @@
  */
 package org.jungrapht.visualization.control;
 
+import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+
 import java.awt.geom.Point2D;
 import org.jungrapht.visualization.VisualizationServer;
 
 public interface ScalingControl {
+
+  String MIN_SCALE = PREFIX + "minScale";
+
+  String MAX_SCALE = PREFIX + "maxScale";
+
+  String CROSSOVER = PREFIX + "crossover";
 
   enum Axis {
     XY,

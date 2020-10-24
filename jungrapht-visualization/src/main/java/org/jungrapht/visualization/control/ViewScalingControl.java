@@ -26,6 +26,42 @@ import org.jungrapht.visualization.transform.MutableTransformer;
  */
 public class ViewScalingControl implements ScalingControl {
 
+  public static class Builder {
+    double minScale = Double.parseDouble(System.getProperty(MIN_SCALE, "0.2"));
+    double maxScale = Double.parseDouble(System.getProperty(MAX_SCALE, "5.0"));
+
+    public Builder minScale(double minScale) {
+      this.minScale = minScale;
+      return this;
+    }
+
+    public Builder maxScale(double maxScale) {
+      this.maxScale = maxScale;
+      return this;
+    }
+
+    public ScalingControl build() {
+      return new ViewScalingControl(this);
+    }
+  }
+
+  public static Builder builder() {
+    return new Builder();
+  }
+
+  ViewScalingControl(Builder builder) {
+    this.minScale = builder.minScale;
+    this.maxScale = builder.maxScale;
+  }
+
+  public ViewScalingControl() {
+    this(ViewScalingControl.builder());
+  }
+
+  protected double minScale;
+
+  protected double maxScale;
+
   /** zoom the display in or out, depending on the direction of the mouse wheel motion. */
   @Override
   public void scale(
