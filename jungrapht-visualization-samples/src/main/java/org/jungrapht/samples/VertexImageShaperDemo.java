@@ -8,7 +8,17 @@
  */
 package org.jungrapht.samples;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Paint;
+import java.awt.Shape;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.geom.AffineTransform;
@@ -109,8 +119,6 @@ public class VertexImageShaperDemo extends JPanel {
     }
 
     LayoutAlgorithm<Number> layoutAlgorithm = new CircleLayoutAlgorithm<>();
-    //    layoutAlgorithm.setMaxIterations(100);
-    //    treeLayoutAlgorithm.setInitializer(new RandomLocationTransformer<>(new Dimension(400, 400), 0));
 
     final DefaultModalGraphMouse<Number, Number> graphMouse = new DefaultModalGraphMouse<>();
 
@@ -119,10 +127,10 @@ public class VertexImageShaperDemo extends JPanel {
                 (VisualizationModel<Number, Number>)
                     VisualizationModel.builder(graph)
                         .layoutAlgorithm(layoutAlgorithm)
-                        .initializer(new RandomLocationTransformer<>(400, 400, 0))
-                        .layoutSize(new Dimension(400, 400))
+                        .initializer(new RandomLocationTransformer<>(600, 600, 0))
+                        .layoutSize(new Dimension(600, 600))
                         .build())
-            .viewSize(new Dimension(400, 400))
+            .viewSize(new Dimension(600, 600))
             .graphMouse(graphMouse)
             .build();
 

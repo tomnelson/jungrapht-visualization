@@ -117,9 +117,6 @@ public class CrossoverScalingControl implements ScalingControl {
     double inverseViewScaleY = Math.sqrt(crossover) / viewScaleY;
     double scaleX = modelScaleX * viewScaleX;
     double scaleY = modelScaleY * viewScaleY;
-    log.info("h scale is {} horizontalAmount is {}", scaleX, horizontalAmount);
-    log.info("v scale is {} verticalAmount is {}", scaleY, verticalAmount);
-    //    log.info("v scale is "+scaleY);
     if (scaleX > maxScale && horizontalAmount > 1.0) {
       return;
     }

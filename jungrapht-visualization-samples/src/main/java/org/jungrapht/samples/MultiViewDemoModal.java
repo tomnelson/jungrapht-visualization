@@ -42,7 +42,7 @@ import org.jungrapht.visualization.selection.ShapePickSupport;
 
 /**
  * Demonstrates 3 views of one graph in one model with one layout. Each view uses a different
- * scaling graph mouse.
+ * scaling graph mouse. This demo uses the ModalGraphMouse
  *
  * @author Tom Nelson
  */
