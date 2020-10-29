@@ -74,7 +74,7 @@ To add a dependency on this release of JUNGRAPHT-VISUALIZATION using Maven, use 
 
 ### Snapshots
 
-Snapshots of JUNGRAPHT-VISUALIZATION built from the `master` branch are available through Maven using version `1.0-SNAPSHOT`.
+Snapshots of JUNGRAPHT-VISUALIZATION built from the `master` branch are available through Maven using version `1.1-SNAPSHOT`.
 
 ### Links
 
