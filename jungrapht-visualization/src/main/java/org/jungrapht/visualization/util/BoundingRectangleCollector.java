@@ -111,15 +111,26 @@ public abstract class BoundingRectangleCollector<T> {
     private static final Logger log = LoggerFactory.getLogger(Vertices.class);
 
     protected Function<V, Shape> vertexShapeFunction;
+    protected AffineTransform layoutTransform;
 
-    public Vertices(Function<V, Shape> vertexShapeFunction, LayoutModel layoutModel) {
+    public Vertices(
+        Function<V, Shape> vertexShapeFunction,
+        LayoutModel layoutModel,
+        AffineTransform layoutTransform) {
       super(layoutModel);
       this.vertexShapeFunction = vertexShapeFunction;
+      AffineTransform at = layoutTransform;
+      //              AffineTransform.getScaleInstance(1/layoutTransform.getScaleX(), 1/layoutTransform.getScaleY());
+      this.layoutTransform = at;
       compute();
     }
 
     public Rectangle2D getForElement(V vertex) {
       Shape shape = vertexShapeFunction.apply(vertex);
+      shape =
+          AffineTransform.getScaleInstance(
+                  1 / layoutTransform.getScaleX(), 1 / layoutTransform.getScaleY())
+              .createTransformedShape(shape);
       Point p = (Point) layoutModel.apply(vertex);
 
       float x = (float) p.x;

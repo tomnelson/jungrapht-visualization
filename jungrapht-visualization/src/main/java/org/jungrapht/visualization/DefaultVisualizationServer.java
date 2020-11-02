@@ -768,6 +768,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
   @Override
   public void fireStateChanged() {
     changeSupport.fireStateChanged();
+    vertexSpatial.recalculate();
   }
 
   @Override
@@ -929,7 +930,12 @@ class DefaultVisualizationServer<V, E> extends JPanel
             .visualizationModel(visualizationModel)
             .boundingRectangleCollector(
                 new BoundingRectangleCollector.Vertices<>(
-                    renderContext.getVertexShapeFunction(), visualizationModel.getLayoutModel()))
+                    renderContext.getVertexShapeFunction(),
+                    visualizationModel.getLayoutModel(),
+                    renderContext
+                        .getMultiLayerTransformer()
+                        .getTransformer(Layer.LAYOUT)
+                        .getTransform()))
             .splitterContext(SplitterContext.of(new RStarLeafSplitter<>(), new RStarSplitter<>()))
             .reinsert(true)
             .build();

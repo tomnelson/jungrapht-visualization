@@ -22,7 +22,12 @@ public class BoundingRectanglePaintable<V> implements VisualizationServer.Painta
     this.layoutModel = layoutModel;
     this.graph = layoutModel.getGraph();
     final BoundingRectangleCollector.Vertices<V> brc =
-        new BoundingRectangleCollector.Vertices<>(rc.getVertexShapeFunction(), layoutModel);
+        new BoundingRectangleCollector.Vertices<>(
+            rc.getVertexShapeFunction(),
+            layoutModel,
+            rc.getMultiLayerTransformer()
+                .getTransformer(MultiLayerTransformer.Layer.LAYOUT)
+                .getTransform());
     this.rectangles = brc.getRectangles();
     if (layoutModel instanceof ChangeEventSupport) {
       ((ChangeEventSupport) layoutModel)
