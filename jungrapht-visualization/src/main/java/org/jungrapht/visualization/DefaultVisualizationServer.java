@@ -930,12 +930,23 @@ class DefaultVisualizationServer<V, E> extends JPanel
             .visualizationModel(visualizationModel)
             .boundingRectangleCollector(
                 new BoundingRectangleCollector.Vertices<>(
-                    renderContext.getVertexShapeFunction(),
-                    visualizationModel.getLayoutModel(),
                     renderContext
-                        .getMultiLayerTransformer()
-                        .getTransformer(Layer.LAYOUT)
-                        .getTransform()))
+                        .getVertexShapeFunction()
+                        .andThen(
+                            shape -> {
+                              // use the inverse of the scales from the layoutTransform to fix the rectangle when
+                              // layout scale has been applied (> 1.0 or when single axis scaling has been applied)
+                              AffineTransform layoutTransform =
+                                  renderContext
+                                      .getMultiLayerTransformer()
+                                      .getTransformer(Layer.LAYOUT)
+                                      .getTransform();
+                              return AffineTransform.getScaleInstance(
+                                      1 / layoutTransform.getScaleX(),
+                                      1 / layoutTransform.getScaleY())
+                                  .createTransformedShape(shape);
+                            }),
+                    visualizationModel.getLayoutModel()))
             .splitterContext(SplitterContext.of(new RStarLeafSplitter<>(), new RStarSplitter<>()))
             .reinsert(true)
             .build();
