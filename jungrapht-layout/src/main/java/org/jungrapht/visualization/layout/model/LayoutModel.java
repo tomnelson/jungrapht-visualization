@@ -157,13 +157,6 @@ public interface LayoutModel<V>
    */
   boolean isRelaxing();
 
-  //  /**
-  //   * a handle to the relaxer thread; may be used to attach a process to run after relax is complete
-  //   *
-  //   * @return the Future
-  //   */
-  //  Future getTheFuture();
-
   /**
    * @param vertex the vertex whose locked state is being queried
    * @return <code>true</code> if the position of vertex <code>v</code> is locked

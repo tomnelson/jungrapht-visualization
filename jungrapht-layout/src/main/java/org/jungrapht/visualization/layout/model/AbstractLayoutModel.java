@@ -173,7 +173,9 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
     // if there is an initialDimensionFunction, and if the LayoutAlgorithm
     // is not an Unconstrained type (not a Tree or Circle) then apply the function to
     // set the layout area constraints
-    log.debug("{} is constrained: {}", layoutAlgorithm, layoutAlgorithm.constrained());
+    if (log.isTraceEnabled()) {
+      log.trace("{} is constrained: {}", layoutAlgorithm, layoutAlgorithm.constrained());
+    }
 
     if (layoutAlgorithm.constrained()) {
       log.trace("{} constrained: {}", layoutAlgorithm, true);

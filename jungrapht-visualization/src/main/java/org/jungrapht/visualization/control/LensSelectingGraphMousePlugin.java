@@ -3,7 +3,6 @@ package org.jungrapht.visualization.control;
 import java.awt.Shape;
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
-import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.slf4j.Logger;
@@ -42,10 +41,6 @@ public class LensSelectingGraphMousePlugin<V, E> extends SelectingGraphMousePlug
   public LensSelectingGraphMousePlugin(
       int modifiers, int selectionModifiers, int addToSelectionModifiers) {
     super(modifiers, selectionModifiers, addToSelectionModifiers);
-  }
-
-  public void mousePressed(MouseEvent e) {
-    super.mousePressed(e);
   }
 
   /**
