@@ -77,6 +77,24 @@ public class DemoTreeSupplier {
     return tree.build();
   }
 
+  public static Graph<String, Integer> createNonTree() {
+    GraphBuilder<String, Integer, Graph<String, Integer>> builder =
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.dag())
+            .edgeSupplier(SupplierUtil.createIntegerSupplier())
+            .buildGraphBuilder();
+
+    builder.addVertex("A");
+    builder.addVertex("B");
+    builder.addVertex("C");
+
+    builder.addEdge("A", "B");
+    builder.addEdge("A", "C");
+    builder.addEdge("B", "C");
+    //    builder.addEdge("C", "B");
+
+    return builder.build();
+  }
+
   /** */
   public static Graph<String, Integer> createTreeTwo() {
     GraphBuilder<String, Integer, Graph<String, Integer>> builder =

@@ -18,8 +18,11 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import org.jgrapht.Graph;
 import org.jgrapht.alg.util.NeighborCache;
 import org.jungrapht.visualization.layout.model.LayoutModel;
+import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -229,6 +232,70 @@ public abstract class AbstractTreeLayoutAlgorithm<V> extends AbstractLayoutAlgor
     layoutModel.setSize(maxDimension, maxDimension);
 
     super.expandToFill(layoutModel, vertexContainingRectangle);
+  }
+
+  // gather all vertical inner edges
+  protected <E> Set<E> getVerticalEdges(LayoutModel<V> layoutModel) {
+
+    Graph<V, E> graph = layoutModel.getGraph();
+    Set<E> verticalEdges =
+        graph
+            .edgeSet()
+            .stream()
+            .filter(
+                e ->
+                    layoutModel.apply(graph.getEdgeSource(e)).x
+                        == layoutModel.apply(graph.getEdgeTarget(e)).x)
+            .collect(Collectors.toSet());
+    return verticalEdges;
+  }
+
+  protected <E> int moveVerticesThatOverlapVerticalEdges(LayoutModel<V> layoutModel, int offset) {
+    int moved = 0;
+    Graph<V, E> graph = layoutModel.getGraph();
+    Set<E> innerEdges = getVerticalEdges(layoutModel);
+
+    Map<Double, Set<E>> innerEdgeMap = new HashMap<>();
+    innerEdges.forEach(
+        e -> {
+          double x = layoutModel.apply(graph.getEdgeSource(e)).x;
+          if (innerEdgeMap.containsKey(x)) {
+            Set<E> set = innerEdgeMap.get(x);
+            set.add(e);
+          } else {
+            Set<E> newSet = new HashSet<>();
+            newSet.add(e);
+            innerEdgeMap.put(x, newSet);
+          }
+        });
+
+    for (V v : graph.vertexSet()) {
+      double x = layoutModel.apply(v).x;
+      if (innerEdgeMap.keySet().contains(x)) {
+        for (E edge : innerEdgeMap.get(x)) {
+          V source = graph.getEdgeSource(edge);
+          V target = graph.getEdgeTarget(edge);
+          if (v.equals(source) || v.equals(target)) {
+            continue;
+          }
+          double lowy = layoutModel.apply(source).y;
+          double hiy = layoutModel.apply(target).y;
+          if (lowy > hiy) {
+            double temp = lowy;
+            lowy = hiy;
+            hiy = temp;
+          }
+          double vy = layoutModel.apply(v).y;
+          if (lowy <= vy && vy <= hiy) {
+            Point p = layoutModel.apply(v);
+            layoutModel.set(v, p.add(offset, 0));
+            log.info("moved {}", v);
+            moved++;
+          }
+        }
+      }
+    }
+    return moved;
   }
 
   @Override
