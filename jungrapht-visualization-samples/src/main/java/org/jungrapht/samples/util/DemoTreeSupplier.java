@@ -90,7 +90,6 @@ public class DemoTreeSupplier {
     builder.addEdge("A", "B");
     builder.addEdge("A", "C");
     builder.addEdge("B", "C");
-    //    builder.addEdge("C", "B");
 
     return builder.build();
   }
