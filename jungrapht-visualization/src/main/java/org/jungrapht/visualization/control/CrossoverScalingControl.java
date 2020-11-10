@@ -30,11 +30,14 @@ import org.slf4j.LoggerFactory;
 public class CrossoverScalingControl implements ScalingControl {
 
   private static final Logger log = LoggerFactory.getLogger(CrossoverScalingControl.class);
+  private static final double RESET_THRESHOLD = 0.002;
 
   public static class Builder {
     double minScale = Double.parseDouble(System.getProperty(MIN_SCALE, "0.2"));
     double maxScale = Double.parseDouble(System.getProperty(MAX_SCALE, "5.0"));
     double crossover = Double.parseDouble(System.getProperty(CROSSOVER, "1.0"));
+    boolean enableSingleAxisScaling =
+        Boolean.parseBoolean(System.getProperty(ENABLE_SINGLE_AXIS_SCALING, "true"));
 
     public Builder minScale(double minScale) {
       this.minScale = minScale;
@@ -51,6 +54,11 @@ public class CrossoverScalingControl implements ScalingControl {
       return this;
     }
 
+    public Builder enableSingleAxisScaling(boolean enableSingleAxisScaling) {
+      this.enableSingleAxisScaling = enableSingleAxisScaling;
+      return this;
+    }
+
     public ScalingControl build() {
       return new CrossoverScalingControl(this);
     }
@@ -64,6 +72,7 @@ public class CrossoverScalingControl implements ScalingControl {
     this.minScale = builder.minScale;
     this.maxScale = builder.maxScale;
     this.crossover = builder.crossover;
+    this.enableSingleAxisScaling = builder.enableSingleAxisScaling;
   }
 
   public CrossoverScalingControl() {
@@ -74,8 +83,14 @@ public class CrossoverScalingControl implements ScalingControl {
 
   protected double maxScale;
 
+  double singleAxisMin = minScale / 200;
+
+  double singleAxisMax = maxScale * 200;
+
   /** Point where scale crosses over from view to layout. */
   protected double crossover;
+
+  protected boolean enableSingleAxisScaling;
 
   /**
    * Sets the crossover point to the specified value.
@@ -91,11 +106,20 @@ public class CrossoverScalingControl implements ScalingControl {
     return crossover;
   }
 
+  public void setEnableSingleAxisScaling(boolean enableSingleAxisScaling) {
+    this.enableSingleAxisScaling = enableSingleAxisScaling;
+  }
+
   @Override
   public void scale(
       VisualizationServer<?, ?> vv, double horizontalAmount, double verticalAmount, Point2D at) {
+    int vertexCount = vv.getVisualizationModel().getGraph().vertexSet().size();
+    double ratio = 1.0 / vertexCount;
+    if (ratio < minScale) {
+      minScale = ratio;
+    }
     Axis axis =
-        horizontalAmount == verticalAmount
+        !enableSingleAxisScaling || horizontalAmount == verticalAmount
             ? Axis.XY
             : verticalAmount == 1.0 ? Axis.X : horizontalAmount == 1.0 ? Axis.Y : Axis.XY;
 
@@ -117,16 +141,14 @@ public class CrossoverScalingControl implements ScalingControl {
     double inverseViewScaleY = Math.sqrt(crossover) / viewScaleY;
     double scaleX = modelScaleX * viewScaleX;
     double scaleY = modelScaleY * viewScaleY;
-    if (scaleX > maxScale && horizontalAmount > 1.0) {
-      return;
-    }
-    if (scaleX < minScale && horizontalAmount < 1.0) {
-      return;
-    }
-    if (scaleY > maxScale && verticalAmount > 1.0) {
-      return;
-    }
-    if (scaleY < minScale && verticalAmount < 1.0) {
+
+    if (!withinScaleBounds(
+        scaleX,
+        scaleY,
+        axis == Axis.XY ? minScale : singleAxisMin,
+        axis == Axis.XY ? maxScale : singleAxisMax,
+        horizontalAmount,
+        verticalAmount)) {
       return;
     }
 
@@ -139,6 +161,14 @@ public class CrossoverScalingControl implements ScalingControl {
     double newY = scaleY * verticalAmount;
     double minX = newX - crossover;
     double minY = newY - crossover;
+
+    log.info("scaleX: {}, scaleY: {}", scaleX, scaleY);
+    boolean reset = false;
+
+    if (scaleX == scaleY && minX * minY < RESET_THRESHOLD) {
+      reset = true;
+    }
+
     switch (axis) {
       case X:
         adjustTransformers(
@@ -152,7 +182,7 @@ public class CrossoverScalingControl implements ScalingControl {
             inverseViewScaleX,
             inverseViewScaleY,
             transformedAt,
-            minX * minX < 0.001,
+            reset,
             newX < crossover);
         break;
       case Y:
@@ -167,7 +197,7 @@ public class CrossoverScalingControl implements ScalingControl {
             inverseViewScaleX,
             inverseViewScaleY,
             transformedAt,
-            minY * minY < 0.001,
+            reset,
             newY < crossover);
         break;
       case XY:
@@ -183,7 +213,7 @@ public class CrossoverScalingControl implements ScalingControl {
             inverseViewScaleX,
             inverseViewScaleY,
             transformedAt,
-            minX * minX < 0.001 || minY * minY < 0.001,
+            reset,
             newX < crossover || newY < crossover);
     }
     vv.repaint();
@@ -200,20 +230,71 @@ public class CrossoverScalingControl implements ScalingControl {
       double inverseViewScaleX,
       double inverseViewScaleY,
       Point2D transformedAt,
-      boolean closeToControlPoint,
+      boolean reset,
       boolean adjustViewTransform) {
-    if (closeToControlPoint) {
+    if (reset) {
+      log.info(
+          "close to control point horizontalAmount:{}, verticalAmount: {}",
+          horizontalAmount,
+          verticalAmount);
       // close to the control point, return both Functions to a scale of sqrt crossover value
       layoutTransformer.scale(inverseModelScaleX, inverseModelScaleY, transformedAt);
       viewTransformer.scale(inverseViewScaleX, inverseViewScaleY, at);
     } else if (adjustViewTransform) {
+      log.info("adjust view");
       viewTransformer.scale(horizontalAmount, verticalAmount, at);
-      //      layoutTransformer.scale(inverseModelScaleX, inverseModelScaleY, transformedAt);
     } else {
-      // scale the layoutTransformer, return the viewTransformer to crossover value
-      log.trace("layout transform scale by {}  {}", horizontalAmount, verticalAmount);
+      log.info("adjust layout");
       layoutTransformer.scale(horizontalAmount, verticalAmount, transformedAt);
-      //      viewTransformer.scale(inverseViewScaleX, inverseViewScaleY, at);
     }
+  }
+
+  public void reset(VisualizationServer<?, ?> vv, Point2D at) {
+    MutableTransformer layoutTransformer =
+        vv.getRenderContext()
+            .getMultiLayerTransformer()
+            .getTransformer(MultiLayerTransformer.Layer.LAYOUT);
+    MutableTransformer viewTransformer =
+        vv.getRenderContext()
+            .getMultiLayerTransformer()
+            .getTransformer(MultiLayerTransformer.Layer.VIEW);
+    double modelScaleX = layoutTransformer.getScaleX();
+    double modelScaleY = layoutTransformer.getScaleY();
+    double viewScaleX = viewTransformer.getScaleX();
+    double viewScaleY = viewTransformer.getScaleY();
+    double inverseModelScaleX = Math.sqrt(crossover) / modelScaleX;
+    double inverseModelScaleY = Math.sqrt(crossover) / modelScaleY;
+    double inverseViewScaleX = Math.sqrt(crossover) / viewScaleX;
+    double inverseViewScaleY = Math.sqrt(crossover) / viewScaleY;
+    Point2D transformedAt =
+        vv.getRenderContext()
+            .getMultiLayerTransformer()
+            .inverseTransform(MultiLayerTransformer.Layer.VIEW, at);
+    //    double scaleX = modelScaleX * viewScaleX;
+    //    double scaleY = modelScaleY * viewScaleY;
+    layoutTransformer.scale(inverseModelScaleX, inverseModelScaleY, transformedAt);
+    viewTransformer.scale(inverseViewScaleX, inverseViewScaleY, at);
+  }
+
+  protected boolean withinScaleBounds(
+      double scaleX,
+      double scaleY,
+      double minScale,
+      double maxScale,
+      double horizontalAmount,
+      double verticalAmount) {
+    if (scaleX > maxScale && horizontalAmount > 1.0) {
+      return false;
+    }
+    if (scaleX < minScale && horizontalAmount < 1.0) {
+      return false;
+    }
+    if (scaleY > maxScale && verticalAmount > 1.0) {
+      return false;
+    }
+    if (scaleY < minScale && verticalAmount < 1.0) {
+      return false;
+    }
+    return true;
   }
 }

@@ -21,6 +21,8 @@ public interface ScalingControl {
 
   String CROSSOVER = PREFIX + "crossover";
 
+  String ENABLE_SINGLE_AXIS_SCALING = PREFIX + "enableSingleAxisScaling";
+
   enum Axis {
     XY,
     X,

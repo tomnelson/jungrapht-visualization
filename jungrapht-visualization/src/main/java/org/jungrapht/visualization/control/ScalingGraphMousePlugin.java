@@ -11,11 +11,15 @@
  */
 package org.jungrapht.visualization.control;
 
+import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
+import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,9 +35,13 @@ import org.slf4j.LoggerFactory;
  * @author Tom Nelson
  */
 public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
-    implements MouseWheelListener {
+    implements MouseWheelListener, MouseListener {
 
   private static final Logger log = LoggerFactory.getLogger(ScalingGraphMousePlugin.class);
+
+  private static String ENABLE_MIDDLE_MOUSE_BUTTON_SCALE_RESET =
+      PREFIX + "enableMiddleMouseButtonScaleReset";
+  private static String ENABLE_DOUBLE_CLICK_SCALE_RESET = PREFIX + "enableDoubleClickScaleReset";
 
   /** the amount to zoom in by */
   protected float in = 1.1f;
@@ -47,6 +55,12 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
   protected ScalingControl scaler;
 
   protected ScalingControl layoutScalingControl = new LayoutScalingControl();
+
+  protected boolean enableMiddleMouseButtonScaleReset =
+      Boolean.parseBoolean(System.getProperty(ENABLE_MIDDLE_MOUSE_BUTTON_SCALE_RESET, "true"));
+
+  protected boolean enableDoubleClickScaleReset =
+      Boolean.parseBoolean(System.getProperty(ENABLE_DOUBLE_CLICK_SCALE_RESET, "true"));
 
   public ScalingGraphMousePlugin(ScalingControl scaler, int modifiers) {
     this(scaler, modifiers, 1.1f, 1 / 1.1f);
@@ -136,4 +150,67 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
   public void setScaler(ScalingControl scaler) {
     this.scaler = scaler;
   }
+
+  /**
+   * Invoked when the mouse button has been clicked (pressed and released) on a component.
+   *
+   * @param e the event to be processed
+   */
+  @Override
+  public void mouseClicked(MouseEvent e) {
+
+    if (enableDoubleClickScaleReset) {
+      if (e.getClickCount() == 2) {
+        // reset transforms
+        if (scaler instanceof CrossoverScalingControl) {
+          CrossoverScalingControl crossoverScalingControl = (CrossoverScalingControl) scaler;
+          crossoverScalingControl.reset((VisualizationServer) e.getSource(), e.getPoint());
+        }
+      }
+    }
+  }
+
+  /**
+   * Invoked when a mouse button has been pressed on a component.
+   *
+   * @param e the event to be processed
+   */
+  @Override
+  public void mousePressed(MouseEvent e) {
+
+    if (enableMiddleMouseButtonScaleReset) {
+      // check for middle mouse button and reset transforms
+      log.info("modifiers: {}", e.getModifiersEx());
+      if (e.getModifiersEx() == InputEvent.BUTTON2_DOWN_MASK) {
+        if (scaler instanceof CrossoverScalingControl) {
+          CrossoverScalingControl crossoverScalingControl = (CrossoverScalingControl) scaler;
+          crossoverScalingControl.reset((VisualizationServer) e.getSource(), e.getPoint());
+        }
+      }
+    }
+  }
+
+  /**
+   * Invoked when a mouse button has been released on a component.
+   *
+   * @param e the event to be processed
+   */
+  @Override
+  public void mouseReleased(MouseEvent e) {}
+
+  /**
+   * Invoked when the mouse enters a component.
+   *
+   * @param e the event to be processed
+   */
+  @Override
+  public void mouseEntered(MouseEvent e) {}
+
+  /**
+   * Invoked when the mouse exits a component.
+   *
+   * @param e the event to be processed
+   */
+  @Override
+  public void mouseExited(MouseEvent e) {}
 }
