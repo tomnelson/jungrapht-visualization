@@ -22,6 +22,8 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 import org.jungrapht.visualization.util.VertexLocationAnimator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * AnimatedPickingGraphMousePlugin supports the picking of one Graph Vertex. When the mouse is
@@ -33,6 +35,7 @@ import org.jungrapht.visualization.util.VertexLocationAnimator;
 public class AnimatedPickingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     implements MouseListener, MouseMotionListener {
 
+  private static final Logger log = LoggerFactory.getLogger(AnimatedPickingGraphMousePlugin.class);
   /** the selected Vertex */
   protected V vertex;
 
@@ -58,6 +61,7 @@ public class AnimatedPickingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
    */
   @SuppressWarnings("unchecked")
   public void mousePressed(MouseEvent e) {
+    log.trace("mousePressed in {}", this.getClass().getName());
     if (e.getModifiersEx() == modifiers) {
       VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
       LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
@@ -83,6 +87,7 @@ public class AnimatedPickingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
    */
   @SuppressWarnings("unchecked")
   public void mouseReleased(MouseEvent e) {
+    log.trace("mouseReleased in {}", this.getClass().getName());
     if (e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK) {
       VertexLocationAnimator.scrollVertexToCenter((VisualizationViewer) e.getSource(), vertex);
     }

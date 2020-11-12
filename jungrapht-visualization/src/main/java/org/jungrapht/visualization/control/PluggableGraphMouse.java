@@ -18,6 +18,8 @@ import java.awt.event.MouseWheelListener;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import org.jungrapht.visualization.VisualizationViewer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * a GraphMouse that accepts plugins for various mouse events.
@@ -26,6 +28,7 @@ import org.jungrapht.visualization.VisualizationViewer;
  */
 public class PluggableGraphMouse implements VisualizationViewer.GraphMouse {
 
+  private static final Logger log = LoggerFactory.getLogger(PluggableGraphMouse.class);
   MouseListener[] mouseListeners;
   MouseMotionListener[] mouseMotionListeners;
   MouseWheelListener[] mouseWheelListeners;
@@ -88,6 +91,7 @@ public class PluggableGraphMouse implements VisualizationViewer.GraphMouse {
   }
 
   public void mouseClicked(MouseEvent e) {
+    log.trace("mouseClicked {} in {}", e.getClickCount(), this.getClass().getName());
     checkMouseListeners();
     for (MouseListener mouseListener : mouseListeners) {
       mouseListener.mouseClicked(e);
@@ -98,6 +102,8 @@ public class PluggableGraphMouse implements VisualizationViewer.GraphMouse {
   }
 
   public void mousePressed(MouseEvent e) {
+    log.trace("mousePressed in {}", this.getClass().getName());
+
     checkMouseListeners();
     for (MouseListener mouseListener : mouseListeners) {
       mouseListener.mousePressed(e);
@@ -108,6 +114,7 @@ public class PluggableGraphMouse implements VisualizationViewer.GraphMouse {
   }
 
   public void mouseReleased(MouseEvent e) {
+    log.trace("mouseReleased in {}", this.getClass().getName());
     checkMouseListeners();
     for (MouseListener mouseListener : mouseListeners) {
       mouseListener.mouseReleased(e);

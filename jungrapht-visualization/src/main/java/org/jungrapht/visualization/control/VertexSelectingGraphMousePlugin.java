@@ -184,6 +184,8 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
    * @param e the event
    */
   public void mousePressed(MouseEvent e) {
+    log.trace("mousePressed in {}", this.getClass().getName());
+
     down = e.getPoint();
     log.trace("mouse pick at screen coords {}", e.getPoint());
     deltaDown = down;
@@ -269,6 +271,7 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
    */
   @SuppressWarnings("unchecked")
   public void mouseReleased(MouseEvent e) {
+    log.trace("mouseReleased in {}", this.getClass().getName());
     Point2D out = e.getPoint();
 
     VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();

@@ -107,9 +107,9 @@ public class EditingModalGraphMouse<V, E> extends AbstractModalGraphMouse
         builder.multiLayerTransformerSupplier,
         builder.vertexFactory,
         builder.edgeFactory,
-        HashMap::new,
-        HashMap::new,
-        .1f,
+        builder.vertexLabelMapSupplier,
+        builder.edgeLabelMapSupplier,
+        1.1f,
         1 / 1.1f,
         false);
   }
@@ -133,7 +133,7 @@ public class EditingModalGraphMouse<V, E> extends AbstractModalGraphMouse
         edgeFactory,
         HashMap::new,
         HashMap::new,
-        .1f,
+        1.1f,
         1 / 1.1f,
         false);
   }
@@ -270,6 +270,7 @@ public class EditingModalGraphMouse<V, E> extends AbstractModalGraphMouse
     remove(shearingPlugin);
     remove(labelEditingPlugin);
     remove(annotatingPlugin);
+    add(labelEditingPlugin);
     add(editingPlugin);
     add(popupEditingPlugin);
   }

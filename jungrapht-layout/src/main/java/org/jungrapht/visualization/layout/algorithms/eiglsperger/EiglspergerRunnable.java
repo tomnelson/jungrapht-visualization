@@ -238,7 +238,7 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
     log.trace("remove cycles took {}", (cycles - transformTime));
 
     if (cancelled || Thread.currentThread().isInterrupted()) {
-      log.info("interrupted before layering, cancelled: {}", cancelled);
+      log.trace("interrupted before layering, cancelled: {}", cancelled);
       return;
     }
     List<List<LV<V>>> layers;
@@ -286,7 +286,7 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
     Graph<LV<V>, Integer> bestCompactionGraph = null;
     for (int i = 0; i < maxLevelCross; i++) {
       if (cancelled || Thread.currentThread().isInterrupted()) {
-        log.info("interrupted in level cross, cancelled: {}", cancelled);
+        log.trace("interrupted in level cross, cancelled: {}", cancelled);
         return;
       }
       if (i % 2 == 0) {
@@ -345,7 +345,7 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
       }
     }
     if (cancelled || Thread.currentThread().isInterrupted()) {
-      log.info("interrupted before compaction, cancelled: {}", cancelled);
+      log.trace("interrupted before compaction, cancelled: {}", cancelled);
       return;
     }
 

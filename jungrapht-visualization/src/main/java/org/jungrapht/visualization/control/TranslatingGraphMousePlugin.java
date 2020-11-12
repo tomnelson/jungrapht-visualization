@@ -56,6 +56,7 @@ public class TranslatingGraphMousePlugin extends AbstractGraphMousePlugin
    * @param e the event
    */
   public void mousePressed(MouseEvent e) {
+    log.trace("mousePressed in {}", this.getClass().getName());
     VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
     boolean accepted = checkModifiers(e);
     down = e.getPoint();
@@ -67,6 +68,7 @@ public class TranslatingGraphMousePlugin extends AbstractGraphMousePlugin
 
   /** unset the 'down' point and change the cursor back to the system default cursor */
   public void mouseReleased(MouseEvent e) {
+    log.trace("mouseReleased in {}", this.getClass().getName());
     VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
     down = null;
     vv.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

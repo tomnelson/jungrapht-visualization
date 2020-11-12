@@ -21,6 +21,8 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.transform.Lens;
 import org.jungrapht.visualization.transform.LensTransformer;
 import org.jungrapht.visualization.transform.MutableTransformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Extends TranslatingGraphMousePlugin and adds the capability to drag and resize the viewing lens
@@ -32,6 +34,7 @@ import org.jungrapht.visualization.transform.MutableTransformer;
 public class LensTranslatingGraphMousePlugin extends TranslatingGraphMousePlugin
     implements MouseListener, MouseMotionListener {
 
+  private static final Logger log = LoggerFactory.getLogger(LensTranslatingGraphMousePlugin.class);
   protected boolean dragOnLens;
   protected boolean dragOnEdge;
   protected double edgeOffset;
@@ -56,6 +59,8 @@ public class LensTranslatingGraphMousePlugin extends TranslatingGraphMousePlugin
    * @param e the event
    */
   public void mousePressed(MouseEvent e) {
+    log.info("mousePressed in {}", this.getClass().getName());
+
     VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
     MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
     MutableTransformer viewTransformer =
@@ -127,6 +132,7 @@ public class LensTranslatingGraphMousePlugin extends TranslatingGraphMousePlugin
 
   /** unset the 'down' point and change the cursoe back to the system default cursor */
   public void mouseReleased(MouseEvent e) {
+    log.info("mouseReleased in {}", this.getClass().getName());
     super.mouseReleased(e);
     dragOnLens = false;
     dragOnEdge = false;

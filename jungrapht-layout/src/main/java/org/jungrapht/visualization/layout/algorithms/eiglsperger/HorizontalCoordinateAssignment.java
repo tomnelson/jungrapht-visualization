@@ -180,13 +180,13 @@ public class HorizontalCoordinateAssignment<V, E>
     int offset = horizontalOffset;
     for (int i = 0; i < 10; i++) {
       int sum = 0;
-      log.info("try {}", i);
+      log.trace("try {}", i);
       sum += correctOverlappedVertices(offset);
       sum += edgeOverlapCorrection(offset);
       sum += moveVerticesThatOverlapInnerEdges(offset);
 
       if (sum == 0) {
-        log.info("done after {} tries ", i);
+        log.trace("done after {} tries ", i);
         break;
       }
       offset *= 0.9;
@@ -221,22 +221,22 @@ public class HorizontalCoordinateAssignment<V, E>
             .collect(Collectors.toList());
     // if any PVertices share the same x value, then the PVertex and QVertex should be offset
     Set<Double> xValues = new HashSet<>();
-    log.info("checking {} pVertices", pVertices.size());
+    log.trace("checking {} pVertices", pVertices.size());
     for (PVertex<V> pVertex : pVertices) {
       if (xValues.contains(pVertex.getPoint().x)) {
         // offset the PVertex and its QVertex
         QVertex<V> qVertex =
             (QVertex<V>) neighborCache.successorsOf(pVertex).stream().findFirst().get();
         // move them both
-        log.info("got q  check {}", qVertex);
+        log.trace("got q  check {}", qVertex);
         pVertex.setPoint(pVertex.getPoint().add(offset, 0));
         qVertex.setPoint(qVertex.getPoint().add(offset, 0));
-        log.info("edge ol moved {} {}for edge overlap", pVertex, qVertex);
+        log.trace("edge ol moved {} {} for edge overlap", pVertex, qVertex);
         moved++;
       }
       xValues.add(pVertex.getPoint().x);
     }
-    log.info("done checking");
+    log.trace("done checking");
     return moved;
   }
 
@@ -265,7 +265,7 @@ public class HorizontalCoordinateAssignment<V, E>
         double vy = v.getPoint().y;
         if (lowy <= vy && vy <= hiy) {
           v.setPoint(v.getPoint().add(offset, 0));
-          log.info("moved {}", v);
+          log.trace("moved {}", v);
           moved++;
         }
       }
@@ -281,10 +281,10 @@ public class HorizontalCoordinateAssignment<V, E>
       if (v instanceof QVertex) continue;
       Point balancedPoint = v.getPoint();
       if (usedPoints.contains(balancedPoint)) {
-        log.info("changed {} point ", v);
-        log.info(" from {} ", balancedPoint);
+        log.trace("changed {} point ", v);
+        log.trace(" from {} ", balancedPoint);
         balancedPoint = balancedPoint.add(offset, 0);
-        log.info("   to {}", balancedPoint);
+        log.trace("   to {}", balancedPoint);
         moved++;
       }
       usedPoints.add(balancedPoint);

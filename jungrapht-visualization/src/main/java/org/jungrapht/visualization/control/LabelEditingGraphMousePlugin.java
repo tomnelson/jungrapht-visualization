@@ -12,7 +12,6 @@
 package org.jungrapht.visualization.control;
 
 import java.awt.Cursor;
-import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Point2D;
@@ -22,6 +21,8 @@ import javax.swing.JOptionPane;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.layout.model.LayoutModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Tom Nelson
@@ -31,6 +32,7 @@ import org.jungrapht.visualization.layout.model.LayoutModel;
 public class LabelEditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     implements MouseListener {
 
+  private static final Logger log = LoggerFactory.getLogger(LabelEditingGraphMousePlugin.class);
   /** the selected Vertex, if any */
   protected V vertex;
 
@@ -43,7 +45,7 @@ public class LabelEditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
 
   /** create an instance with default settings */
   public LabelEditingGraphMousePlugin(Map<V, String> vertexLabelMap, Map<E, String> edgeLabelMap) {
-    this(vertexLabelMap, edgeLabelMap, InputEvent.BUTTON1_DOWN_MASK);
+    this(vertexLabelMap, edgeLabelMap, 0);
   }
 
   /**
@@ -72,7 +74,8 @@ public class LabelEditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    */
   @SuppressWarnings("unchecked")
   public void mouseClicked(MouseEvent e) {
-    if (e.getModifiersEx() == modifiers && e.getClickCount() == 2) {
+    log.trace("mouseClicked  count {} in {}", e.getClickCount(), this.getClass().getName());
+    if (e.getClickCount() == 2) {
       VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
       LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
       GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
@@ -89,10 +92,9 @@ public class LabelEditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
             vertexLabelMap.put(vertex, newLabel);
             vv.repaint();
           }
+          e.consume();
           return;
         }
-        //        }
-        Function<E, String> es = vv.getRenderContext().getEdgeLabelFunction();
         // p is the screen point for the mouse event
         p = e.getPoint();
         // take away the view transform
@@ -106,11 +108,11 @@ public class LabelEditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
           if (newLabel != null) {
             edgeLabelMap.put(edge, newLabel);
             vv.repaint();
+            e.consume();
           }
           return;
         }
       }
-      e.consume();
     }
   }
 

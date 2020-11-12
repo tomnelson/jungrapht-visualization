@@ -28,6 +28,8 @@ import java.util.Collections;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.transform.MutableTransformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * ShearingGraphMousePlugin allows the user to drag with the mouse to shear the transform either in
@@ -39,6 +41,7 @@ import org.jungrapht.visualization.transform.MutableTransformer;
 public class ShearingGraphMousePlugin extends AbstractGraphMousePlugin
     implements MouseListener, MouseMotionListener {
 
+  private static final Logger log = LoggerFactory.getLogger(ShearingGraphMousePlugin.class);
   private static int mask = MouseEvent.CTRL_DOWN_MASK;
 
   static {
@@ -95,6 +98,7 @@ public class ShearingGraphMousePlugin extends AbstractGraphMousePlugin
   }
 
   public void mousePressed(MouseEvent e) {
+    log.trace("mousePressed in {}", this.getClass().getName());
     VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
     boolean accepted = checkModifiers(e);
     down = e.getPoint();
@@ -104,6 +108,7 @@ public class ShearingGraphMousePlugin extends AbstractGraphMousePlugin
   }
 
   public void mouseReleased(MouseEvent e) {
+    log.trace("mouseReleased in {}", this.getClass().getName());
     VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
     down = null;
     vv.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

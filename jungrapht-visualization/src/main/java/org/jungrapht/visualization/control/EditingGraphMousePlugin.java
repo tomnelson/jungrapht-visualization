@@ -9,6 +9,8 @@ import java.util.function.Supplier;
 import javax.swing.JComponent;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.layout.model.LayoutModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A plugin that can create vertices, undirected edges, and directed edges using mouse gestures.
@@ -23,6 +25,7 @@ import org.jungrapht.visualization.layout.model.LayoutModel;
 public class EditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     implements MouseListener, MouseMotionListener {
 
+  private static final Logger log = LoggerFactory.getLogger(EditingGraphMousePlugin.class);
   protected VertexSupport<V, E> vertexSupport;
   protected EdgeSupport<V, E> edgeSupport;
   private Creating createMode = Creating.UNDETERMINED;
@@ -74,14 +77,19 @@ public class EditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    */
   @SuppressWarnings("unchecked")
   public void mousePressed(MouseEvent e) {
+    log.trace("mousePressed in {}", this.getClass().getName());
     if (checkModifiers(e)) {
       final VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
       //      vv.getVertexSpatial().setActive(true);
       final LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
-      final Point2D p = e.getPoint();
+
+      Point2D down = e.getPoint();
+      TransformSupport<V, E> transformSupport = vv.getTransformSupport();
+      Point2D layoutPoint = transformSupport.inverseTransform(vv, down);
+
       GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
       if (pickSupport != null) {
-        final V vertex = pickSupport.getVertex(layoutModel, p.getX(), p.getY());
+        final V vertex = pickSupport.getVertex(layoutModel, layoutPoint.getX(), layoutPoint.getY());
         if (vertex != null) { // get ready to make an edge
           this.createMode = Creating.EDGE;
           edgeSupport.startEdgeCreate(vv, vertex, e.getPoint());
@@ -99,12 +107,17 @@ public class EditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    */
   @SuppressWarnings("unchecked")
   public void mouseReleased(MouseEvent e) {
+    log.trace("mousePressed in {}", this.getClass().getName());
     final VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
     final LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
-    final Point2D p = e.getPoint();
+
+    Point2D down = e.getPoint();
+    TransformSupport<V, E> transformSupport = vv.getTransformSupport();
+    Point2D layoutPoint = transformSupport.inverseTransform(vv, down);
+
     if (createMode == Creating.EDGE) {
       GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
-      V vertex = pickSupport.getVertex(layoutModel, p.getX(), p.getY());
+      V vertex = pickSupport.getVertex(layoutModel, layoutPoint.getX(), layoutPoint.getY());
       if (vertex != null) {
         edgeSupport.endEdgeCreate(vv, vertex);
         vv.getEdgeSpatial().recalculate();

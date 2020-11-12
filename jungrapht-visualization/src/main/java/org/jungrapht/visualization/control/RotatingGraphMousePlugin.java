@@ -28,6 +28,8 @@ import java.util.Collections;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.transform.MutableTransformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * RotatingGraphMouse provides the abiity to rotate the graph using the mouse. By default, it is
@@ -39,6 +41,7 @@ import org.jungrapht.visualization.transform.MutableTransformer;
 public class RotatingGraphMousePlugin extends AbstractGraphMousePlugin
     implements MouseListener, MouseMotionListener {
 
+  private static final Logger log = LoggerFactory.getLogger(RotatingGraphMousePlugin.class);
   /** create an instance with default modifier values */
   public RotatingGraphMousePlugin() {
     this(MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.SHIFT_DOWN_MASK);
@@ -108,6 +111,8 @@ public class RotatingGraphMousePlugin extends AbstractGraphMousePlugin
    * @param e the event
    */
   public void mousePressed(MouseEvent e) {
+    log.trace("mousePressed in {}", this.getClass().getName());
+
     VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
     boolean accepted = checkModifiers(e);
     down = e.getPoint();
@@ -118,6 +123,7 @@ public class RotatingGraphMousePlugin extends AbstractGraphMousePlugin
 
   /** unset the down point and change the cursor back to the default */
   public void mouseReleased(MouseEvent e) {
+    log.trace("mouseReleased in {}", this.getClass().getName());
     VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
     down = null;
     vv.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

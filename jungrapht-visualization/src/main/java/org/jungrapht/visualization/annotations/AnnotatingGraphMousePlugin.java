@@ -29,6 +29,8 @@ import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.AbstractGraphMousePlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * AnnotatingGraphMousePlugin can create Shape and Text annotations in a layer of the graph
@@ -39,6 +41,7 @@ import org.jungrapht.visualization.control.AbstractGraphMousePlugin;
 public class AnnotatingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     implements MouseListener, MouseMotionListener {
 
+  private static final Logger log = LoggerFactory.getLogger(AnnotatingGraphMousePlugin.class);
   /** additional modifiers for the action of adding to an existing selection */
   protected int additionalModifiers;
 
@@ -132,6 +135,7 @@ public class AnnotatingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    */
   @SuppressWarnings("unchecked")
   public void mousePressed(MouseEvent e) {
+    log.trace("mousePressed in {}", this.getClass().getName());
     VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
     down = e.getPoint();
 
@@ -162,6 +166,7 @@ public class AnnotatingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   /** Completes the process of adding a Shape annotation and removed the transient paintable */
   @SuppressWarnings("unchecked")
   public void mouseReleased(MouseEvent e) {
+    log.trace("mouseReleased in {}", this.getClass().getName());
     VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
     if (e.isPopupTrigger()) {
       String annotationString = JOptionPane.showInputDialog(vv, "Annotation:");

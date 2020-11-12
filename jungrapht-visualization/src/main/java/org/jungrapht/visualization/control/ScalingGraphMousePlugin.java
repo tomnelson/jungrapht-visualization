@@ -158,14 +158,13 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
    */
   @Override
   public void mouseClicked(MouseEvent e) {
+    log.trace("mouseClicked {} in {}", e.getClickCount(), this.getClass().getName());
 
     if (enableDoubleClickScaleReset) {
-      if (e.getClickCount() == 2) {
-        // reset transforms
-        if (scaler instanceof CrossoverScalingControl) {
-          CrossoverScalingControl crossoverScalingControl = (CrossoverScalingControl) scaler;
-          crossoverScalingControl.reset((VisualizationServer) e.getSource(), e.getPoint());
-        }
+      if (e.getClickCount() == 2 && scaler instanceof CrossoverScalingControl) {
+        CrossoverScalingControl crossoverScalingControl = (CrossoverScalingControl) scaler;
+        crossoverScalingControl.reset((VisualizationServer) e.getSource(), e.getPoint());
+        e.consume();
       }
     }
   }
@@ -177,15 +176,15 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
    */
   @Override
   public void mousePressed(MouseEvent e) {
+    log.trace("mousePressed in {}", this.getClass().getName());
 
     if (enableMiddleMouseButtonScaleReset) {
       // check for middle mouse button and reset transforms
-      log.info("modifiers: {}", e.getModifiersEx());
-      if (e.getModifiersEx() == InputEvent.BUTTON2_DOWN_MASK) {
-        if (scaler instanceof CrossoverScalingControl) {
-          CrossoverScalingControl crossoverScalingControl = (CrossoverScalingControl) scaler;
-          crossoverScalingControl.reset((VisualizationServer) e.getSource(), e.getPoint());
-        }
+      if (e.getModifiersEx() == InputEvent.BUTTON2_DOWN_MASK
+          && scaler instanceof CrossoverScalingControl) {
+        CrossoverScalingControl crossoverScalingControl = (CrossoverScalingControl) scaler;
+        crossoverScalingControl.reset((VisualizationServer) e.getSource(), e.getPoint());
+        e.consume();
       }
     }
   }

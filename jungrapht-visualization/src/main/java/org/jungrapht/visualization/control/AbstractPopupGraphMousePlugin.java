@@ -10,9 +10,13 @@ package org.jungrapht.visualization.control;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractPopupGraphMousePlugin extends AbstractGraphMousePlugin
     implements MouseListener {
+
+  private static Logger log = LoggerFactory.getLogger(AbstractGraphMousePlugin.class);
 
   public AbstractPopupGraphMousePlugin() {
     this(MouseEvent.BUTTON3_DOWN_MASK);
@@ -23,6 +27,7 @@ public abstract class AbstractPopupGraphMousePlugin extends AbstractGraphMousePl
   }
 
   public void mousePressed(MouseEvent e) {
+    log.trace("mousePressed in {}", this.getClass().getName());
     if (e.isPopupTrigger()) {
       handlePopup(e);
       e.consume();
@@ -31,6 +36,7 @@ public abstract class AbstractPopupGraphMousePlugin extends AbstractGraphMousePl
 
   /** if this is the popup trigger, process here, otherwise defer to the superclass */
   public void mouseReleased(MouseEvent e) {
+    log.trace("mouseReleased in {}", this.getClass().getName());
     if (e.isPopupTrigger()) {
       handlePopup(e);
       e.consume();

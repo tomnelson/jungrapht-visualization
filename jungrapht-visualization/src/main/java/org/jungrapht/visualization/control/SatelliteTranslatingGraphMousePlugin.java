@@ -41,6 +41,7 @@ public class SatelliteTranslatingGraphMousePlugin extends TranslatingGraphMouseP
   }
 
   public void mouseClicked(MouseEvent e) {
+    log.trace("mouseClicked {} in {}", e.getClickCount(), this.getClass().getName());
     super.mouseClicked(e);
     VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
     VisualizationViewer<?, ?> vvMaster = ((SatelliteVisualizationViewer<?, ?>) vv).getMaster();
