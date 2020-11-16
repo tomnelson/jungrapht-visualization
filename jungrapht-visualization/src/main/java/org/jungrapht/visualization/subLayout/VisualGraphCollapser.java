@@ -6,8 +6,6 @@ import java.util.function.Supplier;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
-import org.jungrapht.visualization.selection.MutableSelectedState;
-import org.jungrapht.visualization.selection.SelectedState;
 
 /**
  * Extends {@code GraphCollapser} to add layout placement and painting for the collapsed graph
@@ -30,7 +28,6 @@ public class VisualGraphCollapser<V, E> extends GraphCollapser<V, E> {
       setGraph(vv.getVisualizationModel().getGraph());
     }
     selected = new HashSet(selected);
-    vv.getSelectedVertexState().deselect(selected);
     if (selected.size() > 1) {
       LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
       V clusterVertex = super.collapse(selected);
@@ -51,6 +48,8 @@ public class VisualGraphCollapser<V, E> extends GraphCollapser<V, E> {
       layoutModel.accept(vv.getVisualizationModel().getLayoutAlgorithm());
       //      vv.getSelectedVertexState().clear();
       //      vv.getSelectedVertexState().select(clusterVertex);
+      vv.getSelectedVertexState().deselect(selected);
+      vv.getSelectedVertexState().select(clusterVertex);
       vv.repaint();
       return clusterVertex;
     } else {
