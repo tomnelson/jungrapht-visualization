@@ -185,6 +185,17 @@ public class DemoTreeSupplier {
     return tree.build();
   }
 
+  public static Graph<String, Integer> createTreeZero() {
+    GraphBuilder<String, Integer, ?> tree =
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.dag())
+            .edgeSupplier(SupplierUtil.createIntegerSupplier())
+            .buildGraphBuilder();
+
+    tree.addVertex("root");
+
+    return tree.build();
+  }
+
   public static Graph<String, Integer> createForestForTidierTreeLayout() {
     GraphBuilder<String, Integer, Graph<String, Integer>> tree =
         GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.dag())

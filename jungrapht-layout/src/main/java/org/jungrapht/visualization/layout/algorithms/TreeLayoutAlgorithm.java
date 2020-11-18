@@ -126,6 +126,12 @@ public class TreeLayoutAlgorithm<V> extends AbstractTreeLayoutAlgorithm<V>
     } else {
       this.rootPredicate = this.rootPredicate.or(this.defaultRootPredicate);
     }
+    if (graph.vertexSet().size() == 1) {
+      V loner = graph.vertexSet().stream().findFirst().get();
+      layoutModel.set(loner, Point.of(layoutModel.getWidth() / 2, layoutModel.getHeight() / 2));
+      return Collections.singleton(loner);
+    }
+
     List<V> roots =
         graph
             .vertexSet()
@@ -136,6 +142,9 @@ public class TreeLayoutAlgorithm<V> extends AbstractTreeLayoutAlgorithm<V>
             .collect(Collectors.toList());
 
     if (roots.size() == 0) {
+      if (graph.vertexSet().size() == 1) {
+        return graph.vertexSet();
+      }
       Graph<V, ?> tree = TreeLayoutAlgorithm.getSpanningTree(graph);
       layoutModel.setGraph(tree);
       Set<V> treeRoots = buildTree(layoutModel);

@@ -526,6 +526,12 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
             .vertexComparator(vertexComparator)
             .vertexPredicate(vertexPredicate);
 
+    if (graph.vertexSet().size() == 1) {
+      V loner = graph.vertexSet().stream().findFirst().get();
+      layoutModel.set(loner, Point.of(layoutModel.getWidth() / 2, layoutModel.getHeight() / 2));
+      return;
+    }
+
     this.roots =
         graph
             .vertexSet()
@@ -537,6 +543,11 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
     this.roots = ComponentGrouping.groupByComponents(graph, roots);
 
     if (roots.size() == 0) {
+      if (graph.vertexSet().size() == 1) {
+        layoutModel.setGraph(graph);
+        visit(layoutModel);
+        return;
+      }
       Graph<V, ?> tree = TreeLayoutAlgorithm.getSpanningTree(graph);
       layoutModel.setGraph(tree);
       visit(layoutModel);
