@@ -17,6 +17,7 @@ import org.jgrapht.alg.util.NeighborCache;
 import org.jungrapht.visualization.layout.algorithms.util.ComponentGrouping;
 import org.jungrapht.visualization.layout.algorithms.util.TreeView;
 import org.jungrapht.visualization.layout.algorithms.util.VertexBoundsFunctionConsumer;
+import org.jungrapht.visualization.layout.model.DefaultLayoutModel;
 import org.jungrapht.visualization.layout.model.Dimension;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
@@ -549,8 +550,10 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
         return;
       }
       Graph<V, ?> tree = TreeLayoutAlgorithm.getSpanningTree(graph);
-      layoutModel.setGraph(tree);
-      visit(layoutModel);
+      LayoutModel<V> treeLayoutModel = DefaultLayoutModel.from(layoutModel);
+      treeLayoutModel.setGraph(tree);
+      visit(treeLayoutModel);
+      layoutModel.setInitializer(treeLayoutModel);
       return;
     }
 

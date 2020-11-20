@@ -18,6 +18,7 @@ import org.jgrapht.alg.spanning.PrimMinimumSpanningTree;
 import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jungrapht.visualization.layout.model.DefaultLayoutModel;
 import org.jungrapht.visualization.layout.model.Dimension;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
@@ -146,8 +147,10 @@ public class TreeLayoutAlgorithm<V> extends AbstractTreeLayoutAlgorithm<V>
         return graph.vertexSet();
       }
       Graph<V, ?> tree = TreeLayoutAlgorithm.getSpanningTree(graph);
-      layoutModel.setGraph(tree);
-      Set<V> treeRoots = buildTree(layoutModel);
+      LayoutModel<V> treeLayoutModel = DefaultLayoutModel.from(layoutModel);
+      treeLayoutModel.setGraph(tree);
+      Set<V> treeRoots = buildTree(treeLayoutModel);
+      layoutModel.setInitializer(treeLayoutModel);
       return treeRoots;
     }
 
@@ -168,10 +171,10 @@ public class TreeLayoutAlgorithm<V> extends AbstractTreeLayoutAlgorithm<V>
     }
     this.rootPredicate = null;
 
+    this.moveVerticesThatOverlapVerticalEdges(layoutModel, horizontalVertexSpacing);
     if (expandLayout) {
       expandToFill(layoutModel);
     }
-    this.moveVerticesThatOverlapVerticalEdges(layoutModel, horizontalVertexSpacing);
     this.after.run();
     return new LinkedHashSet<>(roots);
   }
