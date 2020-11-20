@@ -504,8 +504,9 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
     }
     this.defaultRootPredicate =
         v ->
-            graph.incomingEdgesOf(v).isEmpty()
-                || TreeLayout.isIsolatedVertex(layoutModel.getGraph(), v);
+            graph.containsVertex(v)
+                && (graph.incomingEdgesOf(v).isEmpty()
+                    || TreeLayout.isIsolatedVertex(layoutModel.getGraph(), v));
     this.vertexData.clear();
     this.heights.clear();
     if (this.rootPredicate == null) {

@@ -114,7 +114,9 @@ public class TreeLayoutAlgorithm<V> extends AbstractTreeLayoutAlgorithm<V>
     }
 
     this.defaultRootPredicate =
-        v -> graph.incomingEdgesOf(v).isEmpty() || TreeLayout.isIsolatedVertex(graph, v);
+        v ->
+            graph.containsVertex(v)
+                && (graph.incomingEdgesOf(v).isEmpty() || TreeLayout.isIsolatedVertex(graph, v));
     // when provided, replace the horizontal and vertical spacing with twice the average
     // width and height of the Shapes returned by the function
     if (vertexBoundsFunction != null) {
