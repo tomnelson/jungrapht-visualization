@@ -9,7 +9,6 @@ import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.selection.MultiMutableSelectedState;
-import org.jungrapht.visualization.subLayout.GraphCollapser;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -36,7 +35,7 @@ public class GraphCollapserTest {
     Assert.assertEquals(Set.of("C", "A"), endpoints(graph, 1));
     Assert.assertEquals(Set.of("B", "C"), endpoints(graph, 2));
 
-    GraphCollapser<String, Integer> collapser = new GraphCollapser(graph, collapsedVertexFactory);
+    GraphCollapser<String, Integer> collapser = new GraphCollapser(graph);
     MultiMutableSelectedState<String> picker = new MultiMutableSelectedState<>();
     picker.select("B");
     picker.select("C");
@@ -44,7 +43,8 @@ public class GraphCollapserTest {
     Graph<String, Integer> clusterGraph = collapser.getClusterGraph(picker.getSelected());
     Assert.assertEquals(Set.of("B", "C"), clusterGraph.vertexSet());
 
-    String collapsedVertex = collapser.collapse(clusterGraph);
+    String collapsedVertex =
+        collapser.collapse(picker.getSelected(), s -> collapsedVertexFactory.get());
 
     for (String vertex : graph.vertexSet()) {
       Graph<String, Integer> collapsedGraph = collapser.collapsedGraphFunction().apply(vertex);
@@ -94,7 +94,7 @@ public class GraphCollapserTest {
     // make a graph of the same type but with Collapsable vertex type
 
     // graph is: ([A, B, C, D, E, F, G], [0={A,B}, 1={A,C}, 2={B,C}, 3={D,E}, 4={D,F}, 5={E,F}, 6={B,D}, 7={A,G}])
-    GraphCollapser<String, Integer> collapser = new GraphCollapser<>(graph, collapsedVertexFactory);
+    GraphCollapser<String, Integer> collapser = new GraphCollapser<>(graph);
     MultiMutableSelectedState<String> picker = new MultiMutableSelectedState<>();
     picker.select("A");
     picker.select("B");
@@ -104,7 +104,8 @@ public class GraphCollapserTest {
 
     Graph<String, Integer> clusterGraphOne = collapser.getClusterGraph(picker.getSelected());
     // clusterGraphOne: AA -> ([A, B, C], [0={A,B}, 1={A,C}, 2={B,C}])
-    String clusterVertexOne = collapser.collapse(clusterGraphOne);
+    String clusterVertexOne =
+        collapser.collapse(clusterGraphOne, s -> collapsedVertexFactory.get());
 
     // graph now: ([D, E, F, G, AA], [3={D,E}, 4={D,F}, 5={E,F}, 6={AA,D}, 7={AA,G}])
 
@@ -117,7 +118,8 @@ public class GraphCollapserTest {
 
     Graph<String, Integer> clusterGraphTwo = collapser.getClusterGraph(picker.getSelected());
     // clusterGraphTwo:  BB -> ([D, E, F], [3={D,E}, 4={D,F}, 5={E,F}])
-    String clusterVertexTwo = collapser.collapse(clusterGraphTwo);
+    String clusterVertexTwo =
+        collapser.collapse(clusterGraphTwo, s -> collapsedVertexFactory.get());
 
     // graph now: ([G, AA, BB], [7={AA,G}])
     log.debug("clusterVertexTwo:" + clusterVertexTwo);
@@ -134,7 +136,7 @@ public class GraphCollapserTest {
   public void testMore() {
     Graph<String, Integer> graph = getDemoGraph2();
     // graph is: ([A, B, C, D, E, F, G], [0={A,B}, 1={A,C}, 2={B,C}, 3={D,E}, 4={D,F}, 5={E,F}, 6={B,D}, 7={A,G}])
-    GraphCollapser<String, Integer> collapser = new GraphCollapser<>(graph, collapsedVertexFactory);
+    GraphCollapser<String, Integer> collapser = new GraphCollapser<>(graph);
     MultiMutableSelectedState<String> picker = new MultiMutableSelectedState<>();
     picker.select("B");
     picker.select("C");
@@ -142,21 +144,24 @@ public class GraphCollapserTest {
 
     Graph<String, Integer> clusterGraphOne = collapser.getClusterGraph(picker.getSelected());
     // clusterGraphOne: AA -> ([A, B, C], [0={A,B}, 1={A,C}, 2={B,C}])
-    String clusterVertexOne = collapser.collapse(clusterGraphOne);
+    String clusterVertexOne =
+        collapser.collapse(clusterGraphOne, s -> collapsedVertexFactory.get());
 
     picker.clear();
     picker.select(List.of("AA", "E", "F"));
 
     Graph<String, Integer> clusterGraphTwo = collapser.getClusterGraph(picker.getSelected());
     // clusterGraphOne: AA -> ([A, B, C], [0={A,B}, 1={A,C}, 2={B,C}])
-    String clusterVertexTwo = collapser.collapse(clusterGraphTwo);
+    String clusterVertexTwo =
+        collapser.collapse(clusterGraphTwo, s -> collapsedVertexFactory.get());
 
     picker.clear();
     picker.select(List.of("BB", "A", "G"));
 
     Graph<String, Integer> clusterGraphThree = collapser.getClusterGraph(picker.getSelected());
     // clusterGraphOne: AA -> ([A, B, C], [0={A,B}, 1={A,C}, 2={B,C}])
-    String clusterVertexThree = collapser.collapse(clusterGraphThree);
+    String clusterVertexThree =
+        collapser.collapse(clusterGraphThree, s -> collapsedVertexFactory.get());
 
     log.info("graph is {}", graph);
 

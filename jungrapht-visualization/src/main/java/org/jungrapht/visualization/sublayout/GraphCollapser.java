@@ -7,7 +7,7 @@
  *
  * Created on Aug 23, 2005
  */
-package org.jungrapht.visualization.subLayout;
+package org.jungrapht.visualization.sublayout;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -16,7 +16,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
@@ -36,7 +35,6 @@ public class GraphCollapser<V, E> implements Collapser<V, E> {
 
   protected Graph<V, E> graph;
   protected Graph<V, E> originalGraph;
-  protected Supplier<V> vertexSupplier;
   protected GraphTypeBuilder<V, E> graphTypeBuilder;
 
   protected final Map<V, Graph<V, E>> vertexToClusterMap = new HashMap<>();
@@ -45,11 +43,9 @@ public class GraphCollapser<V, E> implements Collapser<V, E> {
    * create an instance with a {@code Graph} and a {@code Supplier&lt;V&gt;}
    *
    * @param graph the {@code Graph} to operate on.
-   * @param vertexSupplier supplies a new vertex to use in place of the collapsed vertices
    */
-  public GraphCollapser(Graph<V, E> graph, Supplier<V> vertexSupplier) {
+  public GraphCollapser(Graph<V, E> graph) {
     this.graph = graph;
-    this.vertexSupplier = vertexSupplier;
     setGraph(graph);
   }
 
@@ -65,10 +61,6 @@ public class GraphCollapser<V, E> implements Collapser<V, E> {
             .allowingMultipleEdges(true)
             .allowingSelfLoops(true);
     this.originalGraph = copyGraph(graph);
-  }
-
-  public void setVertexSupplier(Supplier<V> vertexSupplier) {
-    this.vertexSupplier = vertexSupplier;
   }
 
   /**
@@ -104,8 +96,8 @@ public class GraphCollapser<V, E> implements Collapser<V, E> {
    * @return the new vertex that replaces the selected vertices
    */
   @Override
-  public V collapse(Collection<V> selected) {
-    return collapse(this.getClusterGraph(selected));
+  public V collapse(Collection<V> selected, Function<Collection<V>, V> vertexFunction) {
+    return collapse(this.getClusterGraph(selected), vertexFunction);
   }
 
   /**
@@ -114,14 +106,14 @@ public class GraphCollapser<V, E> implements Collapser<V, E> {
    * @param clusterGraph the {@code Graph} to collapse
    * @return the new vertex that replaces the clusterGraph
    */
-  public V collapse(Graph<V, E> clusterGraph) {
+  V collapse(Graph<V, E> clusterGraph, Function<Collection<V>, V> vertexFunction) {
     // for a cluster of size < 2, do nothing
     if (clusterGraph.vertexSet().size() < 2) {
       return null;
     }
 
     // create a new vertex for the cluster
-    V clusterVertex = vertexSupplier.get();
+    V clusterVertex = vertexFunction.apply(clusterGraph.vertexSet());
     vertexToClusterMap.put(clusterVertex, clusterGraph);
 
     // loser vertices

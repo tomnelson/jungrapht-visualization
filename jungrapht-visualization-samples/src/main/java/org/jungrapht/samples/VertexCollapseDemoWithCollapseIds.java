@@ -30,8 +30,8 @@ import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
-import org.jungrapht.visualization.subLayout.Collapser;
-import org.jungrapht.visualization.subLayout.VisualGraphCollapser;
+import org.jungrapht.visualization.sublayout.Collapser;
+import org.jungrapht.visualization.sublayout.VisualGraphCollapser;
 import org.jungrapht.visualization.util.PredicatedParallelEdgeIndexFunction;
 
 /**
@@ -103,29 +103,7 @@ public class VertexCollapseDemoWithCollapseIds extends JPanel {
             .viewSize(preferredSize)
             .build();
 
-    // the passed Supplier<V> is not used because it is replaced with each
-    // overridden call to collapse (below)
-    collapser =
-        new VisualGraphCollapser<>(vv, MyVertex::new) {
-          // Function to change the selected vertices into a comma-separated
-          // String of their ids. The String will be used as the id for the collapsed vertex
-          Function<Collection<MyVertex>, String> vertexFunction =
-              c -> c.stream().map(Object::toString).collect(Collectors.joining(","));
-
-          /**
-           * Overridden to replace the vertexSupplier each time with one that will use the selected
-           * vertices in the CTOR of the new MyVertex
-           *
-           * @param selected
-           * @return
-           */
-          @Override
-          public MyVertex collapse(Collection<MyVertex> selected) {
-            // reset the vertex supplier
-            super.setVertexSupplier(() -> new MyVertex("{" + vertexFunction.apply(selected) + "}"));
-            return super.collapse(selected);
-          }
-        };
+    collapser = new VisualGraphCollapser<>(vv);
 
     vv.getRenderContext()
         .setVertexShapeFunction(new ClusterShapeFunction<>(collapser.collapsedGraphFunction()));
@@ -151,7 +129,14 @@ public class VertexCollapseDemoWithCollapseIds extends JPanel {
     collapse.addActionListener(
         e ->
             SwingUtilities.invokeLater(
-                () -> collapser.collapse(vv.getSelectedVertexState().getSelected())));
+                () ->
+                    collapser.collapse(
+                        vv.getSelectedVertexState().getSelected(),
+                        c ->
+                            new MyVertex(
+                                c.stream()
+                                    .map(Object::toString)
+                                    .collect(Collectors.joining(","))))));
 
     JButton expand = new JButton("Expand");
     expand.addActionListener(

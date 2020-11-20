@@ -24,8 +24,8 @@ import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.decorators.EllipseShapeFunction;
-import org.jungrapht.visualization.subLayout.TreeCollapser;
-import org.jungrapht.visualization.subLayout.VisualTreeCollapser;
+import org.jungrapht.visualization.sublayout.TreeCollapser;
+import org.jungrapht.visualization.sublayout.VisualTreeCollapser;
 
 /**
  * Demonstrates "collapsing"/"expanding" of a tree's subtrees.

@@ -7,7 +7,7 @@
  *
  * Created on Aug 23, 2005
  */
-package org.jungrapht.visualization.subLayout;
+package org.jungrapht.visualization.sublayout;
 
 import java.util.Collection;
 import java.util.HashMap;

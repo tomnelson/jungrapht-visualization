@@ -1,4 +1,4 @@
-package org.jungrapht.visualization.subLayout;
+package org.jungrapht.visualization.sublayout;
 
 import java.util.function.Supplier;
 import org.jungrapht.visualization.VisualizationServer;

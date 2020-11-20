@@ -37,7 +37,7 @@ import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
-import org.jungrapht.visualization.subLayout.Collapser;
+import org.jungrapht.visualization.sublayout.Collapser;
 import org.jungrapht.visualization.util.PredicatedParallelEdgeIndexFunction;
 
 /**
@@ -103,7 +103,7 @@ public class VertexCollapseDemo extends JPanel {
             .viewSize(preferredSize)
             .build();
 
-    collapser = Collapser.forVisualization(vv, MyVertex::new);
+    collapser = Collapser.forVisualization(vv);
 
     vv.getRenderContext()
         .setVertexShapeFunction(new ClusterShapeFunction<>(collapser.collapsedGraphFunction()));
@@ -129,7 +129,9 @@ public class VertexCollapseDemo extends JPanel {
     collapse.addActionListener(
         e ->
             SwingUtilities.invokeLater(
-                () -> collapser.collapse(vv.getSelectedVertexState().getSelected())));
+                () ->
+                    collapser.collapse(
+                        vv.getSelectedVertexState().getSelected(), s -> new MyVertex())));
 
     JButton expand = new JButton("Expand");
     expand.addActionListener(
