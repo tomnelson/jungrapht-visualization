@@ -27,12 +27,12 @@ import org.jungrapht.visualization.control.AnimatedPickingGraphMousePlugin;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.GraphElementAccessor;
 import org.jungrapht.visualization.control.LayoutScalingControl;
+import org.jungrapht.visualization.control.RegionSelectingGraphMousePlugin;
 import org.jungrapht.visualization.control.RotatingGraphMousePlugin;
 import org.jungrapht.visualization.control.ScalingGraphMousePlugin;
 import org.jungrapht.visualization.control.SelectingGraphMousePlugin;
 import org.jungrapht.visualization.control.ShearingGraphMousePlugin;
 import org.jungrapht.visualization.control.TranslatingGraphMousePlugin;
-import org.jungrapht.visualization.control.ViewScalingControl;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
@@ -193,10 +193,26 @@ public class MultiViewDemoModal extends JPanel {
     DefaultModalGraphMouse<String, Integer> gm1 =
         new DefaultModalGraphMouse<>() {
           public void loadPlugins() {
-            pickingPlugin = new SelectingGraphMousePlugin<String, Integer>();
+            pickingPlugin =
+                SelectingGraphMousePlugin.builder()
+                    .singleSelectionMask(InputEvent.BUTTON1_DOWN_MASK)
+                    .addSingleSelectionMask(
+                        InputEvent.BUTTON1_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)
+                    .build();
+            regionSelectingPlugin =
+                RegionSelectingGraphMousePlugin.builder()
+                    .regionSelectionMask(InputEvent.BUTTON1_DOWN_MASK)
+                    .addRegionSelectionMask(
+                        InputEvent.BUTTON1_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)
+                    .regionSelectionCompleteMask(0)
+                    .addRegionSelectionCompleteMask(InputEvent.SHIFT_DOWN_MASK)
+                    .build();
             animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<String, Integer>();
             translatingPlugin = new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
-            scalingPlugin = new ScalingGraphMousePlugin(new LayoutScalingControl(), 0);
+            scalingPlugin =
+                ScalingGraphMousePlugin.builder()
+                    .scalingControl(new LayoutScalingControl())
+                    .build();
             rotatingPlugin = new RotatingGraphMousePlugin();
             shearingPlugin = new ShearingGraphMousePlugin();
 
@@ -212,7 +228,10 @@ public class MultiViewDemoModal extends JPanel {
             pickingPlugin = new SelectingGraphMousePlugin<String, Integer>();
             animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<String, Integer>();
             translatingPlugin = new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
-            scalingPlugin = new ScalingGraphMousePlugin(new ViewScalingControl(), 0);
+            scalingPlugin =
+                ScalingGraphMousePlugin.builder()
+                    .scalingControl(new LayoutScalingControl())
+                    .build();
             rotatingPlugin = new RotatingGraphMousePlugin();
             shearingPlugin = new ShearingGraphMousePlugin();
 

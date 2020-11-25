@@ -16,7 +16,7 @@ public class ModalSatelliteGraphMouse<V, E> extends DefaultModalGraphMouse<V, E>
     implements ModalGraphMouse {
 
   /**
-   * Build an instance of a DefaultGraphMouse
+   * Build an instance of a PrevDefaultGraphMouse
    *
    * @param <V>
    * @param <E>
@@ -53,11 +53,25 @@ public class ModalSatelliteGraphMouse<V, E> extends DefaultModalGraphMouse<V, E>
   }
 
   public void loadPlugins() {
-    //    super.loadPlugins();
-    pickingPlugin = new SelectingGraphMousePlugin();
-    animatedPickingPlugin = new SatelliteAnimatedPickingGraphMousePlugin();
+    pickingPlugin =
+        SelectingGraphMousePlugin.builder()
+            .singleSelectionMask(InputEvent.BUTTON1_DOWN_MASK)
+            .addSingleSelectionMask(InputEvent.BUTTON1_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)
+            .build();
+    regionSelectingPlugin =
+        RegionSelectingGraphMousePlugin.builder()
+            .regionSelectionMask(InputEvent.BUTTON1_DOWN_MASK)
+            .addRegionSelectionMask(0)
+            .regionSelectionCompleteMask(0)
+            .addRegionSelectionCompleteMask(InputEvent.SHIFT_DOWN_MASK)
+            .build();
+
+    //    animatedPickingPlugin = new SatelliteAnimatedPickingGraphMousePlugin();
     translatingPlugin = new SatelliteTranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
-    scalingPlugin = new SatelliteScalingGraphMousePlugin(new CrossoverScalingControl(), 0, in, out);
+    scalingPlugin =
+        SatelliteScalingGraphMousePlugin.builder()
+            .scalingControl(new CrossoverScalingControl())
+            .build();
     rotatingPlugin = new SatelliteRotatingGraphMousePlugin();
     shearingPlugin = new SatelliteShearingGraphMousePlugin();
 

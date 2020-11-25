@@ -8,7 +8,17 @@
  */
 package org.jungrapht.samples;
 
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ItemEvent;
@@ -23,8 +33,8 @@ import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.DefaultModalGraphMouse;
-import org.jungrapht.visualization.control.ModalSatelliteGraphMouse;
+import org.jungrapht.visualization.control.DefaultGraphMouse;
+import org.jungrapht.visualization.control.DefaultSatelliteGraphMouse;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.GradientVertexRenderer;
@@ -40,7 +50,7 @@ import org.jungrapht.visualization.transform.shape.ShapeTransformer;
  *
  * @author Tom Nelson
  */
-public class SatelliteViewDemo extends JPanel {
+public class SatelliteViewRefactoredMouseDemo extends JPanel {
 
   static final String instructions =
       "<html>"
@@ -77,7 +87,7 @@ public class SatelliteViewDemo extends JPanel {
   VisualizationServer.Paintable viewGrid;
 
   /** create an instance of a simple graph in two views with controls to demo the features. */
-  public SatelliteViewDemo() {
+  public SatelliteViewRefactoredMouseDemo() {
 
     setLayout(new BorderLayout());
     // create a simple graph for the demo
@@ -101,7 +111,7 @@ public class SatelliteViewDemo extends JPanel {
             .build();
 
     // create a GraphMouse for the main view
-    final DefaultModalGraphMouse<String, Integer> graphMouse = new DefaultModalGraphMouse<>();
+    final DefaultGraphMouse<String, Integer> graphMouse = new DefaultGraphMouse<>();
 
     // create 2 views that share the same model
     final VisualizationViewer<String, Integer> mainVisualizationViewer =
@@ -109,9 +119,10 @@ public class SatelliteViewDemo extends JPanel {
     final SatelliteVisualizationViewer<String, Integer> satelliteVisualizationViewer =
         SatelliteVisualizationViewer.builder(mainVisualizationViewer)
             .viewSize(preferredSize2)
-            .graphMouse(new ModalSatelliteGraphMouse<>())
+            .graphMouse(DefaultSatelliteGraphMouse.builder().build())
             .transparent(false)
             .build();
+    //    satelliteVisualizationViewer.setGraphMouse(DefaultSatelliteGraphMouse.builder().build());
     mainVisualizationViewer
         .getRenderContext()
         .setEdgeDrawPaintFunction(
@@ -184,10 +195,10 @@ public class SatelliteViewDemo extends JPanel {
     helpDialog = new JDialog();
     helpDialog.getContentPane().add(new JLabel(instructions));
 
-    JComboBox<?> modeBox = graphMouse.getModeComboBox();
-    modeBox.addItemListener(
-        ((DefaultModalGraphMouse<?, ?>) satelliteVisualizationViewer.getGraphMouse())
-            .getModeListener());
+    //    JComboBox<?> modeBox = graphMouse.getModeComboBox();
+    //    modeBox.addItemListener(
+    //        ((DefaultModalGraphMouse<?, ?>) satelliteVisualizationViewer.getGraphMouse())
+    //            .getModeListener());
 
     JCheckBox gridBox = new JCheckBox("Show Grid");
     gridBox.addItemListener(
@@ -203,7 +214,7 @@ public class SatelliteViewDemo extends JPanel {
     JPanel controls = new JPanel();
     controls.add(ControlHelpers.getZoomControls(mainVisualizationViewer));
     //    controls.add(minus);
-    controls.add(modeBox);
+    //    controls.add(modeBox);
     controls.add(gridBox);
     controls.add(help);
     add(panel);
@@ -291,7 +302,7 @@ public class SatelliteViewDemo extends JPanel {
   public static void main(String[] args) {
     JFrame f = new JFrame();
     f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-    f.getContentPane().add(new SatelliteViewDemo());
+    f.getContentPane().add(new SatelliteViewRefactoredMouseDemo());
     f.pack();
     f.setVisible(true);
   }

@@ -18,17 +18,13 @@ import java.awt.event.ItemEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.function.Supplier;
-import javax.swing.ButtonGroup;
-import javax.swing.Icon;
-import javax.swing.JComboBox;
-import javax.swing.JMenu;
-import javax.swing.JRadioButtonMenuItem;
+import javax.swing.*;
 import javax.swing.plaf.basic.BasicIconFactory;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.control.AbstractModalGraphMouse;
-import org.jungrapht.visualization.control.AnimatedPickingGraphMousePlugin;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.ModalGraphMouse;
+import org.jungrapht.visualization.control.RegionSelectingGraphMousePlugin;
 import org.jungrapht.visualization.control.RotatingGraphMousePlugin;
 import org.jungrapht.visualization.control.ScalingGraphMousePlugin;
 import org.jungrapht.visualization.control.SelectingGraphMousePlugin;
@@ -122,15 +118,33 @@ public class AnnotatingModalGraphMouse<V, E> extends AbstractModalGraphMouse
   /** create the plugins, and load the plugins for TRANSFORMING mode */
   @Override
   public void loadPlugins() {
-    super.loadPlugins();
-    this.pickingPlugin =
-        new SelectingGraphMousePlugin<>(
-            InputEvent.BUTTON1_DOWN_MASK, 0, InputEvent.SHIFT_DOWN_MASK);
-    this.animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<V, E>();
-    this.translatingPlugin = new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
-    this.scalingPlugin = new ScalingGraphMousePlugin(new CrossoverScalingControl(), 0, in, out);
-    this.rotatingPlugin = new RotatingGraphMousePlugin();
-    this.shearingPlugin = new ShearingGraphMousePlugin();
+    pickingPlugin =
+        SelectingGraphMousePlugin.builder()
+            .singleSelectionMask(InputEvent.BUTTON1_DOWN_MASK)
+            .addSingleSelectionMask(InputEvent.BUTTON1_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)
+            .build();
+    regionSelectingPlugin =
+        RegionSelectingGraphMousePlugin.builder()
+            .regionSelectionMask(InputEvent.BUTTON1_DOWN_MASK)
+            .addRegionSelectionMask(InputEvent.BUTTON1_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)
+            .regionSelectionCompleteMask(0)
+            .addRegionSelectionCompleteMask(InputEvent.SHIFT_DOWN_MASK)
+            .build();
+    translatingPlugin = new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
+    scalingPlugin =
+        ScalingGraphMousePlugin.builder().scalingControl(new CrossoverScalingControl()).build();
+    rotatingPlugin = new RotatingGraphMousePlugin();
+    shearingPlugin = new ShearingGraphMousePlugin();
+
+    //    super.loadPlugins();
+    //    this.pickingPlugin =
+    //        new PrevSelectingGraphMousePlugin<>(
+    //            InputEvent.BUTTON1_DOWN_MASK, 0, InputEvent.SHIFT_DOWN_MASK);
+    //    this.animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<V, E>();
+    //    this.translatingPlugin = new PrevTranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
+    //    this.scalingPlugin = new PrevScalingGraphMousePlugin(new CrossoverScalingControl(), 0, in, out);
+    //    this.rotatingPlugin = new RotatingGraphMousePlugin();
+    //    this.shearingPlugin = new ShearingGraphMousePlugin();
     add(scalingPlugin);
     setMode(Mode.TRANSFORMING);
   }

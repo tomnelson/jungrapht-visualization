@@ -11,13 +11,14 @@
 package org.jungrapht.visualization.control;
 
 import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import org.jungrapht.visualization.SatelliteVisualizationViewer;
 import org.jungrapht.visualization.VisualizationViewer;
 
 /**
- * Overrides ScalingGraphMousePlugin so that mouse events in the satellite view will cause scaling
- * in the main view
+ * Overrides PrevScalingGraphMousePlugin so that mouse events in the satellite view will cause
+ * scaling in the main view
  * <li>Using only the mouse wheel, both the X-axis and Y-axis are scaled equally.
  * <li>If the CTRL key is pressed while the mouse wheel is turned, only the X-axis is scaled
  * <li>If the ALT key is pressed while the mouse wheel is turned, only the Y-axis is scaled
@@ -27,13 +28,19 @@ import org.jungrapht.visualization.VisualizationViewer;
  */
 public class SatelliteScalingGraphMousePlugin extends ScalingGraphMousePlugin {
 
-  public SatelliteScalingGraphMousePlugin(ScalingControl scaler, int modifiers) {
-    super(scaler, modifiers);
+  public SatelliteScalingGraphMousePlugin(
+      ScalingControl scaler, int scalingMask, int xAxisScalingMask, int yAxisScalingMask) {
+    super(scaler, scalingMask, xAxisScalingMask, yAxisScalingMask);
   }
 
   public SatelliteScalingGraphMousePlugin(
-      ScalingControl scaler, int modifiers, float in, float out) {
-    super(scaler, modifiers, in, out);
+      ScalingControl scaler,
+      int scalingMask,
+      int xAxisScalingMask,
+      int yAxisScalingMask,
+      float in,
+      float out) {
+    super(scaler, scalingMask, xAxisScalingMask, yAxisScalingMask, in, out);
   }
 
   /**
@@ -76,4 +83,7 @@ public class SatelliteScalingGraphMousePlugin extends ScalingGraphMousePlugin {
       }
     }
   }
+
+  @Override
+  public void mouseClicked(MouseEvent e) {}
 }

@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A subclass of SelectingGraphMousePlugin that will deactivate the lens
+ * A subclass of PrevSelectingGraphMousePlugin that will deactivate the lens
  *
  * @author Tom Nelson
  * @param <V> vertex type

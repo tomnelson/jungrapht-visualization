@@ -2,7 +2,9 @@ package org.jungrapht.visualization.sublayout;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Function;
+import org.jgrapht.Graph;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
@@ -60,12 +62,21 @@ public class VisualGraphCollapser<V, E> extends GraphCollapser<V, E> {
     Collection<V> picked = new HashSet(clusterVertices);
     LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
 
+    Set<V> selected = new HashSet<>();
+    picked.forEach(
+        v -> {
+          Graph<V, E> subGraph = vertexToClusterMap.get(v);
+          if (subGraph != null) {
+            selected.addAll(subGraph.vertexSet());
+          }
+        });
     super.expand(picked);
 
     layoutModel.lock(false);
     vv.getRenderContext().getParallelEdgeIndexFunction().reset();
     layoutModel.accept(vv.getVisualizationModel().getLayoutAlgorithm());
     vv.getSelectedVertexState().clear();
+    vv.getSelectedVertexState().select(selected);
     vv.repaint();
   }
 }

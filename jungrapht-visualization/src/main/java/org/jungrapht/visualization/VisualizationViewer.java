@@ -41,7 +41,7 @@ public interface VisualizationViewer<V, E> extends VisualizationServer<V, E> {
 
     private static final String ARBITRARY_SHAPE_SELECTION = PREFIX + "arbitraryShapeSelection";
 
-    protected GraphMouse graphMouse = new DefaultGraphMouse();
+    protected GraphMouse graphMouse = new DefaultGraphMouse<V, E>();
 
     protected Supplier<MultiSelectionStrategy> multiSelectionStrategySupplier =
         () ->

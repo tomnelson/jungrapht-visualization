@@ -82,7 +82,7 @@ class DefaultRenderer<V, E> implements Renderer<V, E> {
       // paint all the edges
       log.trace("the visibleEdges are {}", visibleEdges);
       for (E e : visibleEdges) {
-        if (graph.edgeSet().contains(e)) {
+        if (graph.containsEdge(e)) {
           renderEdge(renderContext, layoutModel, e);
           renderEdgeLabel(renderContext, layoutModel, e);
         }

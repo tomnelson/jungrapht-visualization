@@ -95,6 +95,8 @@ class DefaultVisualizationServer<V, E> extends JPanel
         launchProgram = launchProgram.substring(launchProgram.lastIndexOf('.') + 1) + ".properties";
         InputStream stream = DefaultRenderContext.class.getResourceAsStream("/" + launchProgram);
         System.getProperties().load(stream);
+
+        Properties props = System.getProperties();
         return true;
       }
     } catch (Exception ex) {

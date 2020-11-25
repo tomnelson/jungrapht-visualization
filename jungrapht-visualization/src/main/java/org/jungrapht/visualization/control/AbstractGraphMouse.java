@@ -13,6 +13,8 @@ package org.jungrapht.visualization.control;
 
 import static org.jungrapht.visualization.VisualizationServer.PREFIX;
 
+import java.awt.event.MouseEvent;
+
 /**
  * AbstractGraphMouse is a PluggableGraphMouse class that manages a collection of plugins for
  * picking and transforming the graph.
@@ -28,10 +30,10 @@ public abstract class AbstractGraphMouse extends PluggableGraphMouse {
   private static final String VERTEX_SELECTION_ONLY = PREFIX + "vertexSelectionOnly";
 
   /**
-   * Configure an instance of an AbtractGraphMouse // * @param <V> // * @param <E>
+   * Configure an instance of an AbstractGraphMouse
    *
-   * @param <T>
-   * @param <B>
+   * @param <T> GraphMouse type
+   * @param <B> Builder type
    */
   public abstract static class Builder<T extends AbstractGraphMouse, B extends Builder<T, B>> {
 
@@ -39,6 +41,8 @@ public abstract class AbstractGraphMouse extends PluggableGraphMouse {
         Boolean.parseBoolean(System.getProperty(VERTEX_SELECTION_ONLY, "false"));
     protected float in = 1.1f;
     protected float out = 1 / 1.1f;
+    protected int selectionMask = MouseEvent.BUTTON1_DOWN_MASK;
+    protected int addToSelectionMask = MouseEvent.SHIFT_DOWN_MASK;
 
     public B self() {
       return (B) this;
@@ -72,6 +76,8 @@ public abstract class AbstractGraphMouse extends PluggableGraphMouse {
   protected GraphMousePlugin scalingPlugin;
 
   protected AbstractGraphMousePlugin pickingPlugin;
+
+  protected AbstractGraphMousePlugin regionSelectingPlugin;
 
   protected boolean pluginsLoaded;
 

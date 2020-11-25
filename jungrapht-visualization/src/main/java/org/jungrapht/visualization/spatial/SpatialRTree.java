@@ -537,7 +537,7 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
     public void layoutVertexPositionChanged(LayoutVertexPositionChange.Event<V> evt) {
       V vertex = evt.vertex;
       org.jungrapht.visualization.layout.model.Point p = evt.location;
-      if (visualizationModel.getGraph().vertexSet().contains(vertex)) {
+      if (visualizationModel.getGraph().containsVertex(vertex)) {
         Set<E> edges = visualizationModel.getGraph().edgesOf(vertex);
 
         for (E edge : edges) {
@@ -550,7 +550,7 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
     public void layoutVertexPositionChanged(LayoutVertexPositionChange.GraphEvent<V> evt) {
       V vertex = evt.vertex;
       org.jungrapht.visualization.layout.model.Point p = evt.location;
-      if (visualizationModel.getGraph().vertexSet().contains(vertex)) {
+      if (visualizationModel.getGraph().containsVertex(vertex)) {
         Set<E> edges = visualizationModel.getGraph().edgesOf(vertex);
         for (E edge : edges) {
           update(edge, p);

@@ -39,6 +39,48 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
 
   private static final Logger log = LoggerFactory.getLogger(ScalingGraphMousePlugin.class);
 
+  public static class Builder {
+    ScalingControl scalingControl = new CrossoverScalingControl();
+    protected int xAxisScalingMask =
+        Modifiers.masks.get(System.getProperty(PREFIX + "xAxisScalingMask", "CTRL"));
+    protected int yAxisScalingMask =
+        Modifiers.masks.get(System.getProperty(PREFIX + "yAxisScalingMask", "ALT"));
+    protected int scalingMask =
+        Modifiers.masks.get(System.getProperty(PREFIX + "scalingMask", "NONE"));
+
+    public Builder self() {
+      return this;
+    }
+
+    public Builder scalingControl(ScalingControl scalingControl) {
+      this.scalingControl = scalingControl;
+      return self();
+    }
+
+    public Builder scalingMask(int scalingMask) {
+      this.scalingMask = scalingMask;
+      return self();
+    }
+
+    public Builder xAisScalingMask(int xAxisScalingMask) {
+      this.xAxisScalingMask = xAxisScalingMask;
+      return self();
+    }
+
+    public Builder yAxisScalingMask(int yAxisScalingMask) {
+      this.yAxisScalingMask = yAxisScalingMask;
+      return self();
+    }
+
+    public ScalingGraphMousePlugin build() {
+      return new ScalingGraphMousePlugin(this);
+    }
+  }
+
+  public static Builder builder() {
+    return new Builder();
+  }
+
   private static String ENABLE_MIDDLE_MOUSE_BUTTON_SCALE_RESET =
       PREFIX + "enableMiddleMouseButtonScaleReset";
   private static String ENABLE_DOUBLE_CLICK_SCALE_RESET = PREFIX + "enableDoubleClickScaleReset";
@@ -47,6 +89,10 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
   protected float in = 1.1f;
   /** the amount to zoom out by */
   protected float out = 1 / 1.1f;
+
+  protected int scalingMask;
+  protected int xAxisScalingMask;
+  protected int yAxisScalingMask;
 
   /** whether to center the zoom at the current mouse position */
   protected boolean zoomAtMouse = true;
@@ -62,13 +108,35 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
   protected boolean enableDoubleClickScaleReset =
       Boolean.parseBoolean(System.getProperty(ENABLE_DOUBLE_CLICK_SCALE_RESET, "true"));
 
-  public ScalingGraphMousePlugin(ScalingControl scaler, int modifiers) {
-    this(scaler, modifiers, 1.1f, 1 / 1.1f);
+  public ScalingGraphMousePlugin() {
+    this(ScalingGraphMousePlugin.builder());
   }
 
-  public ScalingGraphMousePlugin(ScalingControl scaler, int modifiers, float in, float out) {
-    super(modifiers);
+  public ScalingGraphMousePlugin(Builder builder) {
+    this(
+        builder.scalingControl,
+        builder.scalingMask,
+        builder.xAxisScalingMask,
+        builder.yAxisScalingMask);
+  }
+
+  public ScalingGraphMousePlugin(
+      ScalingControl scaler, int scalingMask, int xAxisScalingMask, int yAxisScalingMask) {
+    this(scaler, scalingMask, xAxisScalingMask, yAxisScalingMask, 1.1f, 1 / 1.1f);
+  }
+
+  public ScalingGraphMousePlugin(
+      ScalingControl scaler,
+      int scalingMask,
+      int xAxisScalingMask,
+      int yAxisScalingMask,
+      float in,
+      float out) {
+    super(scalingMask);
     this.scaler = scaler;
+    this.scalingMask = scalingMask;
+    this.xAxisScalingMask = xAxisScalingMask;
+    this.yAxisScalingMask = yAxisScalingMask;
     this.in = in;
     this.out = out;
   }
@@ -78,10 +146,9 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
   }
 
   public boolean checkModifiers(MouseEvent e) {
-    return e.getModifiersEx() == modifiers
-        || (e.getModifiersEx() & modifiers) != 0
-        || e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK
-        || e.getModifiersEx() == InputEvent.ALT_DOWN_MASK;
+    return e.getModifiersEx() == scalingMask
+        || e.getModifiersEx() == xAxisScalingMask
+        || e.getModifiersEx() == yAxisScalingMask;
   }
 
   /** zoom the display in or out, depending on the direction of the mouse wheel motion. */
@@ -94,12 +161,12 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
       float xout = out;
       float yout = out;
       // check for single axis
-      if ((e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) == InputEvent.CTRL_DOWN_MASK) {
+      if (e.getModifiersEx() == xAxisScalingMask) {
         // only scale x axis,
         yin = yout = 1.0f;
         scalingControl = layoutScalingControl;
       }
-      if ((e.getModifiersEx() & InputEvent.ALT_DOWN_MASK) == InputEvent.ALT_DOWN_MASK) {
+      if (e.getModifiersEx() == yAxisScalingMask) {
         // only scroll y axis
         xin = xout = 1.0f;
         scalingControl = layoutScalingControl;

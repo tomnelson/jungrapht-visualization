@@ -54,7 +54,7 @@ import org.jungrapht.visualization.util.LayoutAlgorithmTransition;
 /**
  * Demonstrates the use of <code>HyperbolicTransform</code> and <code>MagnifyTransform</code>
  * applied to either the model (graph layout) or the view (VisualizationViewer). The
- * DefaultGraphMouse is used (CTRL-click to select) and there is a toggle to switch between
+ * PrevDefaultGraphMouse is used (CTRL-click to select) and there is a toggle to switch between
  * rectangular area multiselect and free-form multiselect. The purpose of this sample was to ensure
  * that the multiselection works properly in all the lenses
  *
@@ -101,19 +101,25 @@ public class LensDemoWithMultiSelectStrategy extends JPanel {
     grid = this.generateVertexGrid(map, preferredSize, 25);
     gridLayoutAlgorithm = new StaticLayoutAlgorithm<>();
 
-    // the regular graph mouse for the normal view
-    final DefaultGraphMouse<String, Integer> graphMouse = new DefaultGraphMouse<>();
-
     final VisualizationModel<String, Integer> visualizationModel =
         VisualizationModel.builder(graph)
             .layoutAlgorithm(graphLayoutAlgorithm)
             .layoutSize(preferredSize)
             .build();
+
     vv =
         VisualizationViewer.builder(visualizationModel)
-            .graphMouse(graphMouse)
+            //            .graphMouse(graphMouse)
             .viewSize(preferredSize)
             .build();
+
+    // the regular graph mouse for the normal view
+    final DefaultGraphMouse<String, Integer> graphMouse = new DefaultGraphMouse<>();
+    vv.setGraphMouse(graphMouse);
+
+    //    String propValue = System.getProperty("jungrapht." + "singleSelectionMask");
+    //    Modifiers modifier = Modifiers.valueOf(propValue);
+    //    int value = modifier.getValue();
 
     MutableSelectedState<String> ps = vv.getSelectedVertexState();
     MutableSelectedState<Integer> pes = vv.getSelectedEdgeState();

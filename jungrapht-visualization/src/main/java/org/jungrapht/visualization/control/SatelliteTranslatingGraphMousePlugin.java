@@ -23,10 +23,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Overrides TranslatingGraphMousePlugin so that mouse events in the satellite view cause
+ * Overrides PrevTranslatingGraphMousePlugin so that mouse events in the satellite view cause
  * translating of the main view
  *
- * @see TranslatingGraphMousePlugin
+ * @see SatelliteTranslatingGraphMousePlugin
  * @author Tom Nelson
  */
 public class SatelliteTranslatingGraphMousePlugin extends TranslatingGraphMousePlugin {
@@ -34,10 +34,10 @@ public class SatelliteTranslatingGraphMousePlugin extends TranslatingGraphMouseP
   private static final Logger log =
       LoggerFactory.getLogger(SatelliteTranslatingGraphMousePlugin.class);
 
-  public SatelliteTranslatingGraphMousePlugin() {}
-
-  public SatelliteTranslatingGraphMousePlugin(int modifiers) {
-    super(modifiers);
+  //  public SatelliteTranslatingGraphMousePlugin() {}
+  //
+  public SatelliteTranslatingGraphMousePlugin(int translatingMask) {
+    super(translatingMask);
   }
 
   public void mouseClicked(MouseEvent e) {

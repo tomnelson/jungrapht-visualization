@@ -195,13 +195,21 @@ public class EditingModalGraphMouse<V, E> extends AbstractModalGraphMouse
   /** create the plugins, and load the plugins for TRANSFORMING mode */
   @Override
   public void loadPlugins() {
-    super.loadPlugins();
     pickingPlugin =
-        new SelectingGraphMousePlugin<V, E>(
-            InputEvent.BUTTON1_DOWN_MASK, 0, InputEvent.SHIFT_DOWN_MASK);
-    animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<V, E>();
+        SelectingGraphMousePlugin.builder()
+            .singleSelectionMask(InputEvent.BUTTON1_DOWN_MASK)
+            .addSingleSelectionMask(InputEvent.BUTTON1_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)
+            .build();
+    regionSelectingPlugin =
+        RegionSelectingGraphMousePlugin.builder()
+            .regionSelectionMask(InputEvent.BUTTON1_DOWN_MASK)
+            .addRegionSelectionMask(InputEvent.BUTTON1_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)
+            .regionSelectionCompleteMask(0)
+            .addRegionSelectionCompleteMask(InputEvent.SHIFT_DOWN_MASK)
+            .build();
     translatingPlugin = new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
-    scalingPlugin = new ScalingGraphMousePlugin(new CrossoverScalingControl(), 0, in, out);
+    scalingPlugin =
+        ScalingGraphMousePlugin.builder().scalingControl(new CrossoverScalingControl()).build();
     rotatingPlugin = new RotatingGraphMousePlugin();
     shearingPlugin = new ShearingGraphMousePlugin();
     editingPlugin = new EditingGraphMousePlugin<>(vertexFactory, edgeFactory);

@@ -18,8 +18,6 @@ import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
-import java.awt.Toolkit;
-import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -31,7 +29,6 @@ import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.selection.MutableSelectedState;
-import org.jungrapht.visualization.selection.ShapePickSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * @param <V> vertex type
  * @param <E> edge type
  */
-public class EdgeSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin.Selecting
+public class EdgeSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     implements MouseListener, MouseMotionListener {
 
   private static final Logger log = LoggerFactory.getLogger(EdgeSelectingGraphMousePlugin.class);
@@ -59,12 +56,8 @@ public class EdgeSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugi
   /** the selected Edge, if any */
   protected E edge;
 
-  protected int selectionModifiers;
-
-  /** additional modifiers for the action of adding to an existing selection */
-  protected int addToSelectionModifiers;
-
   protected Rectangle2D footprintRectangle = new Rectangle2D.Float();
+
   protected VisualizationViewer.Paintable pickFootprintPaintable;
 
   /** color for the picking rectangle */
@@ -72,25 +65,19 @@ public class EdgeSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugi
 
   protected Point2D deltaDown; // what's that flower you have on...
 
-  /** create an instance with default settings */
-  public EdgeSelectingGraphMousePlugin() {
-    this(
-        InputEvent.BUTTON1_DOWN_MASK,
-        Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx(),
-        InputEvent.SHIFT_DOWN_MASK);
-  }
+  protected int singleSelectionMask;
+  protected int addSingleSelectionMask;
 
   /**
    * create an instance with overrides
    *
-   * @param selectionModifiers for primary selection
-   * @param addToSelectionModifiers for additional selection
+   * <p>// * @param selectionModifiers for primary selection // * @param addToSelectionModifiers for
+   * additional selection
    */
-  public EdgeSelectingGraphMousePlugin(
-      int modifiers, int selectionModifiers, int addToSelectionModifiers) {
-    super(modifiers);
-    this.selectionModifiers = selectionModifiers;
-    this.addToSelectionModifiers = addToSelectionModifiers;
+  public EdgeSelectingGraphMousePlugin(int singleSelectionMask, int addSingleSelectionMask) {
+    super(singleSelectionMask);
+    this.singleSelectionMask = singleSelectionMask;
+    this.addSingleSelectionMask = addSingleSelectionMask;
     this.pickFootprintPaintable = new FootprintPaintable();
     this.cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
   }
@@ -137,9 +124,6 @@ public class EdgeSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugi
     deltaDown = down;
     VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
     TransformSupport<V, E> transformSupport = vv.getTransformSupport();
-    LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
-    GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
-    MutableSelectedState<E> selectedEdgeState = vv.getSelectedEdgeState();
 
     // a rectangle in the view coordinate system.
     this.footprintRectangle =
@@ -155,51 +139,42 @@ public class EdgeSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugi
     // subclass can override to account for view distortion effects
     // layoutPoint is the mouse event point projected on the layout coordinate system
     Point2D layoutPoint = transformSupport.inverseTransform(vv, down);
-    log.trace("layout coords of mouse click {}", layoutPoint);
-    if (e.getModifiersEx() == (modifiers | selectionModifiers)) { // default button1 down and ctrl
 
-      if (pickSupport instanceof ShapePickSupport) {
-        ShapePickSupport<V, E> shapePickSupport = (ShapePickSupport<V, E>) pickSupport;
-        this.edge = shapePickSupport.getEdge(layoutModel, footprintRectangle);
-      } else {
-        this.edge = pickSupport.getEdge(layoutModel, layoutPoint.getX(), layoutPoint.getY());
-      }
+    boolean somethingSelected = false;
+    if (e.getModifiersEx() == singleSelectionMask) {
+      somethingSelected = this.singleEdgeSelection(e, layoutPoint, false);
+    } else if (e.getModifiersEx() == addSingleSelectionMask) {
+      somethingSelected = this.singleEdgeSelection(e, layoutPoint, true);
+    } else {
+      down = null;
+    }
+    if (somethingSelected) {
+      e.consume();
+    }
+  }
 
-      if (edge != null) {
+  protected boolean singleEdgeSelection(MouseEvent e, Point2D layoutPoint, boolean addToSelection) {
+    VisualizationServer<V, E> vv = (VisualizationServer<V, E>) e.getSource();
+    GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
+    MutableSelectedState<V> selectedVertexState = vv.getSelectedVertexState();
+    MutableSelectedState<E> selectedEdgeState = vv.getSelectedEdgeState();
+    LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
+    E edge = null;
+    edge = pickSupport.getEdge(layoutModel, layoutPoint.getX(), layoutPoint.getY());
 
-        log.trace("mousePressed set the edge to {}", edge);
-        if (!selectedEdgeState.isSelected(edge)) {
-          selectedEdgeState.clear();
-          selectedEdgeState.select(edge);
-        }
-        e.consume();
-        return;
-      }
-
-      // got no edge, clear all selections
-      selectedEdgeState.clear();
-      return;
-
-    } else if (e.getModifiersEx() == (modifiers | selectionModifiers | addToSelectionModifiers)) {
-
-      this.edge = pickSupport.getEdge(layoutModel, layoutPoint.getX(), layoutPoint.getY());
-
-      if (edge != null) {
-        log.trace("mousePressed set the edge to {}", edge);
-        if (selectedEdgeState.isSelected(edge)) {
+    if (edge != null) {
+      log.trace("mousePressed set the edge to {}", edge);
+      if (selectedEdgeState.isSelected(edge)) {
+        if (!addToSelection) {
           selectedEdgeState.deselect(edge);
         } else {
           selectedEdgeState.select(edge);
         }
         e.consume();
-        return;
+        return true;
       }
-    } else {
-      down = null;
     }
-    if (edge != null) {
-      e.consume();
-    }
+    return false;
   }
 
   /**

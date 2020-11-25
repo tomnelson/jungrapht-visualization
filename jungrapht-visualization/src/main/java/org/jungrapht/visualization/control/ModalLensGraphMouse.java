@@ -26,7 +26,7 @@ public class ModalLensGraphMouse extends AbstractModalGraphMouse
     implements ModalGraphMouse, LensGraphMouse {
 
   /**
-   * Build an instance of a DefaultGraphMouse
+   * Build an instance of a PrevDefaultGraphMouse
    *
    * @param <T>
    * @param <B>
@@ -78,8 +78,10 @@ public class ModalLensGraphMouse extends AbstractModalGraphMouse
     this.out = out;
     this.magnificationPlugin = magnificationPlugin;
     this.lensSelectingGraphMousePlugin =
-        new LensSelectingGraphMousePlugin<>(
-            InputEvent.BUTTON1_DOWN_MASK, 0, InputEvent.SHIFT_DOWN_MASK);
+        LensSelectingGraphMousePlugin.builder()
+            .singleSelectionMask(InputEvent.BUTTON1_DOWN_MASK)
+            .addSingleSelectionMask(InputEvent.BUTTON1_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)
+            .build();
     this.lensKillingGraphMousePlugin = new LensKillingGraphMousePlugin();
     setModeKeyListener(new ModeKeyAdapter(this));
   }
@@ -94,7 +96,8 @@ public class ModalLensGraphMouse extends AbstractModalGraphMouse
     pickingPlugin = lensSelectingGraphMousePlugin;
     //    animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<>();
     translatingPlugin = new LensTranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
-    scalingPlugin = new ScalingGraphMousePlugin(new CrossoverScalingControl(), 0, in, out);
+    scalingPlugin =
+        ScalingGraphMousePlugin.builder().scalingControl(new CrossoverScalingControl()).build();
     rotatingPlugin = new RotatingGraphMousePlugin();
     shearingPlugin = new ShearingGraphMousePlugin();
 

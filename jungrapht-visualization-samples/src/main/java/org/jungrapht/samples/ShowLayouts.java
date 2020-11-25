@@ -101,10 +101,10 @@ public class ShowLayouts extends JPanel {
         .setVertexShapeFunction(
             v -> {
               Graph<String, Integer> g = vv.getVisualizationModel().getGraph();
-              if (!g.vertexSet().contains(v)) {
+              if (!g.containsVertex(v)) {
                 log.error("shapeFunction {} was not in {}", v, g.vertexSet());
               }
-              int size = Math.max(5, 2 * (g.vertexSet().contains(v) ? g.degreeOf(v) : 20));
+              int size = Math.max(5, 2 * (g.containsVertex(v) ? g.degreeOf(v) : 20));
               return new Ellipse2D.Float(-size / 2.f, -size / 2.f, size, size);
             });
 

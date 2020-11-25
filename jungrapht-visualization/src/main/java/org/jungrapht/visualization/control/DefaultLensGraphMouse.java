@@ -10,16 +10,16 @@ import java.awt.event.InputEvent;
  * @param <V> vertex type
  * @param <E> edge type
  */
-public class DefaultLensGraphMouse<V, E> extends AbstractGraphMouse implements LensGraphMouse {
+public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> implements LensGraphMouse {
 
   /**
-   * Build an instance of a DefaultGraphMouse
+   * Build an instance of a RefactoredDefaultLEnsGraphMouse
    *
    * @param <T>
    * @param <B>
    */
   public static class Builder<V, E, T extends DefaultLensGraphMouse, B extends Builder<V, E, T, B>>
-      extends AbstractGraphMouse.Builder<T, B> {
+      extends DefaultGraphMouse.Builder<V, E, T, B> {
 
     protected LensMagnificationGraphMousePlugin magnificationPlugin;
 
@@ -46,6 +46,7 @@ public class DefaultLensGraphMouse<V, E> extends AbstractGraphMouse implements L
   protected LensMagnificationGraphMousePlugin magnificationPlugin;
 
   protected LensSelectingGraphMousePlugin<V, E> lensSelectingGraphMousePlugin;
+  protected LensRegionSelectingGraphMousePlugin<V, E> lensRegionSelectingGraphMousePlugin;
   protected LensKillingGraphMousePlugin lensKillingGraphMousePlugin;
 
   public DefaultLensGraphMouse() {
@@ -53,26 +54,62 @@ public class DefaultLensGraphMouse<V, E> extends AbstractGraphMouse implements L
   }
 
   DefaultLensGraphMouse(Builder<V, E, ?, ?> builder) {
-    this(builder.in, builder.out, builder.vertexSelectionOnly, builder.magnificationPlugin);
-  }
-
-  DefaultLensGraphMouse(float in, float out) {
-    this(in, out, false, new LensMagnificationGraphMousePlugin());
-  }
-
-  public DefaultLensGraphMouse(LensMagnificationGraphMousePlugin magnificationPlugin) {
-    this(1.1f, 1 / 1.1f, false, magnificationPlugin);
+    this(
+        builder.in,
+        builder.out,
+        builder.vertexSelectionOnly,
+        builder.singleSelectionMask,
+        builder.addSingleSelectionMask,
+        builder.regionSelectionMask,
+        builder.addRegionSelectionMask,
+        builder.regionSelectionCompleteMask,
+        builder.addRegionSelectionCompleteMask,
+        builder.translatingMask,
+        builder.scalingMask,
+        builder.xAxisScalingMask,
+        builder.yAxisScalingMask,
+        builder.magnificationPlugin);
   }
 
   DefaultLensGraphMouse(
       float in,
       float out,
       boolean vertexSelectionOnly,
+      int singleSelectionMask,
+      int addSingleSelectionMask,
+      int regionSelectionMask,
+      int addRegionSelectionMask,
+      int regionSelectionCompleteMask,
+      int addRegionSelectionCompleteMask,
+      int translatingMask,
+      int scalingMask,
+      int xAxisScalingMask,
+      int yAxisScalingMask,
       LensMagnificationGraphMousePlugin magnificationPlugin) {
-    super(in, out, vertexSelectionOnly);
+    super(
+        in,
+        out,
+        vertexSelectionOnly,
+        singleSelectionMask,
+        addSingleSelectionMask,
+        regionSelectionMask,
+        addRegionSelectionMask,
+        regionSelectionCompleteMask,
+        addRegionSelectionCompleteMask,
+        translatingMask,
+        scalingMask,
+        xAxisScalingMask,
+        yAxisScalingMask);
     this.magnificationPlugin = magnificationPlugin;
-    this.scalingPlugin = new ScalingGraphMousePlugin(new CrossoverScalingControl(), 0, in, out);
-    this.lensSelectingGraphMousePlugin = new LensSelectingGraphMousePlugin<>();
+    //    this.scalingPlugin = new PrevScalingGraphMousePlugin(new CrossoverScalingControl(), 0, in, out);
+    this.lensSelectingGraphMousePlugin =
+        new LensSelectingGraphMousePlugin<>(singleSelectionMask, addSingleSelectionMask);
+    this.lensRegionSelectingGraphMousePlugin =
+        new LensRegionSelectingGraphMousePlugin<>(
+            regionSelectionMask,
+            addRegionSelectionMask,
+            regionSelectionCompleteMask,
+            addRegionSelectionCompleteMask);
     this.lensKillingGraphMousePlugin = new LensKillingGraphMousePlugin();
   }
 
@@ -81,11 +118,14 @@ public class DefaultLensGraphMouse<V, E> extends AbstractGraphMouse implements L
   }
 
   public void loadPlugins() {
-    super.loadPlugins();
+    add(pickingPlugin);
+    add(regionSelectingPlugin);
+    add(new TranslatingGraphMousePlugin(translatingMask));
     add(lensKillingGraphMousePlugin);
     add(new LensTranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK));
     add(lensSelectingGraphMousePlugin);
     add(magnificationPlugin);
     add(scalingPlugin);
+    setPluginsLoaded();
   }
 }

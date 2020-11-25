@@ -1,14 +1,3 @@
-/*
- * Copyright (c) 2005, The JUNG Authors
- *
- * All rights reserved.
- *
- * This software is open-source under the BSD license; see either
- * "license.txt" or
- * https://github.com/tomnelson/jungrapht-visualization/blob/master/LICENSE for a description.
- * Created on Mar 8, 2005
- *
- */
 package org.jungrapht.visualization.control;
 
 import static org.jungrapht.visualization.VisualizationServer.PREFIX;
@@ -26,41 +15,85 @@ import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import javax.swing.*;
 import org.jungrapht.visualization.MultiLayerTransformer;
-import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.selection.MutableSelectedState;
-import org.jungrapht.visualization.selection.ShapePickSupport;
-import org.jungrapht.visualization.selection.VertexEndpointsSelectedEdgeSelectedState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * PrevVertexSelectingGraphMousePlugin supports the selecting of graph vertices with the mouse.
- * MouseButtonOne selects a single vertex, and MouseButtonTwo adds to the set of selected Vertices.
- * If a Vertex is selected and the mouse is dragged while on the selected Vertex, then that Vertex
- * will be repositioned to follow the mouse until the button is released.
+ * PrevSelectingGraphMousePlugin supports the selecting of graph elements with the mouse.
+ * MouseButtonOne selects a single vertex or edge, and MouseButtonTwo adds to the set of selected
+ * Vertices or EdgeType. If a Vertex is selected and the mouse is dragged while on the selected
+ * Vertex, then that Vertex will be repositioned to follow the mouse until the button is released.
  *
  * @author Tom Nelson
  * @param <V> vertex type
  * @param <E> edge type
  */
-public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
+public class RegionSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     implements MouseListener, MouseMotionListener {
 
-  private static final Logger log = LoggerFactory.getLogger(VertexSelectingGraphMousePlugin.class);
+  private static final Logger log = LoggerFactory.getLogger(RegionSelectingGraphMousePlugin.class);
 
-  private static final int TOO_CLOSE_LIMIT = 5;
+  public static class Builder<
+      V, E, T extends RegionSelectingGraphMousePlugin, B extends Builder<V, E, T, B>> {
+    protected int regionSelectionMask =
+        Modifiers.masks.get(System.getProperty(PREFIX + "regionSelectionMask", "MB1_MENU"));
+    protected int addRegionSelectionMask =
+        Modifiers.masks.get(
+            System.getProperty(PREFIX + "addRegionSelectionMask", "MB1_SHIFT_MENU"));
+    protected int regionSelectionCompleteMask =
+        Modifiers.masks.get(System.getProperty(PREFIX + "regionSelectionCompleteMask", "MENU"));
+    protected int addRegionSelectionCompleteMask =
+        Modifiers.masks.get(
+            System.getProperty(PREFIX + "addRegionSelectionCompleteMask", "SHIFT_MENU"));
 
-  private static final String PICK_AREA_SIZE = PREFIX + "pickAreaSize";
+    public B self() {
+      return (B) this;
+    }
 
-  protected int pickSize = Integer.getInteger(PICK_AREA_SIZE, 4);
+    public B regionSelectionMask(int regionSelectionMask) {
+      this.regionSelectionMask = regionSelectionMask;
+      return self();
+    }
 
-  /** the selected Vertex, if any */
-  protected V vertex;
+    public B addRegionSelectionMask(int addRegionSelectionMask) {
+      this.addRegionSelectionMask = addRegionSelectionMask;
+      return self();
+    }
 
-  /** controls whether the Vertices may be moved with the mouse */
+    public B regionSelectionCompleteMask(int regionSelectionCompleteMask) {
+      this.regionSelectionCompleteMask = regionSelectionCompleteMask;
+      return self();
+    }
+
+    public B addRegionSelectionCompleteMask(int addRegionSelectionCompleteMask) {
+      this.addRegionSelectionCompleteMask = addRegionSelectionCompleteMask;
+      return self();
+    }
+
+    public T build() {
+      return (T) new RegionSelectingGraphMousePlugin(this);
+    }
+  }
+
+  public static <V, E> Builder<V, E, ?, ?> builder() {
+    return new Builder<>();
+  }
+
+  //  private static final String PICK_AREA_SIZE = PREFIX + "pickAreaSize";
+
+  //  protected int pickSize = Integer.getInteger(PICK_AREA_SIZE, 4);
+
+  //  /** the selected Vertex, if any */
+  //  protected V vertex;
+  //
+  //  /** the selected Edge, if any */
+  //  protected E edge;
+  //
+  //  /** controls whether the Vertices may be moved with the mouse */
   protected boolean locked;
 
   /** used to draw a rectangle to contain selected vertices */
@@ -77,7 +110,7 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
   /** color for the picking rectangle */
   protected Color lensColor = Color.cyan;
 
-  protected Point2D deltaDown; // what's that flower you have on...
+  protected Point2D deltaDown;
 
   protected MultiSelectionStrategy multiSelectionStrategy;
 
@@ -88,41 +121,35 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
   protected int regionSelectionCompleteMask;
   protected int addRegionSelectionCompleteMask;
 
-  /** create an instance with overrides */
-  public VertexSelectingGraphMousePlugin(
-      int singleSelectionMask,
-      int addSingleSelectionMask,
+  public RegionSelectingGraphMousePlugin(Builder<V, E, ?, ?> builder) {
+    this(
+        builder.regionSelectionMask,
+        builder.addRegionSelectionMask,
+        builder.regionSelectionCompleteMask,
+        builder.addRegionSelectionCompleteMask);
+  }
+
+  public RegionSelectingGraphMousePlugin() {
+    this(RegionSelectingGraphMousePlugin.builder());
+  }
+  /**
+   * create an instance with overrides
+   *
+   * <p>// * @param selectionModifiers for primary selection // * @param addToSelectionModifiers for
+   * additional selection
+   */
+  protected RegionSelectingGraphMousePlugin(
       int regionSelectionMask,
       int addRegionSelectionMask,
       int regionSelectionCompleteMask,
       int addRegionSelectionCompleteMask) {
-    super(singleSelectionMask);
-    this.singleSelectionMask = singleSelectionMask;
-    this.addSingleSelectionMask = addSingleSelectionMask;
+    super(regionSelectionMask);
     this.regionSelectionMask = regionSelectionMask;
     this.addRegionSelectionMask = addRegionSelectionMask;
     this.regionSelectionCompleteMask = regionSelectionCompleteMask;
     this.addRegionSelectionCompleteMask = addRegionSelectionCompleteMask;
     this.lensPaintable = new LensPaintable();
-    this.pickFootprintPaintable = new FootprintPaintable();
     this.cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
-  }
-
-  /**
-   * Configure the passed VisualizationViewer to use vertex selection only. No edge selection with
-   * the mouse. Edges will be 'selected' only when both endpoint vertices are selected.
-   *
-   * @param visualizationViewer to configure
-   * @param <V> vertex type
-   * @param <E> edge type
-   */
-  public static <V, E> void configure(VisualizationViewer<V, E> visualizationViewer) {
-    visualizationViewer.setSelectedEdgeState(
-        new VertexEndpointsSelectedEdgeSelectedState<>(
-            visualizationViewer.getVisualizationModel()::getGraph,
-            visualizationViewer.getSelectedVertexState()));
-    visualizationViewer.setGraphMouse(
-        DefaultGraphMouse.<V, E>builder().vertexSelectionOnly(true).build());
   }
 
   /** @return Returns the lensColor. */
@@ -154,20 +181,6 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
     }
   }
 
-  class FootprintPaintable implements VisualizationServer.Paintable {
-
-    public void paint(Graphics g) {
-      Color oldColor = g.getColor();
-      g.setColor(lensColor);
-      ((Graphics2D) g).draw(footprintRectangle);
-      g.setColor(oldColor);
-    }
-
-    public boolean useTransform() {
-      return true;
-    }
-  }
-
   /**
    * For primary modifiers (default, MouseButton1): pick a single Vertex or Edge that is under the
    * mouse pointer. If no Vertex or edge is under the pointer, unselect all selected Vertices and
@@ -180,82 +193,28 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
    * @param e the event
    */
   public void mousePressed(MouseEvent e) {
-    log.trace("mousePressed in {}", this.getClass().getName());
-
     down = e.getPoint();
     log.trace("mouse pick at screen coords {}", e.getPoint());
     deltaDown = down;
     VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
     multiSelectionStrategy = vv.getMultiSelectionStrategySupplier().get();
     TransformSupport<V, E> transformSupport = vv.getTransformSupport();
-    LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
-    GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
-    MutableSelectedState<V> selectedVertexState = vv.getSelectedVertexState();
     viewRectangle = multiSelectionStrategy.getInitialShape(e.getPoint());
 
     MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
 
-    // a rectangle in the view coordinate system.
-    this.footprintRectangle =
-        new Rectangle2D.Float(
-            (float) e.getPoint().x - pickSize / 2,
-            (float) e.getPoint().y - pickSize / 2,
-            pickSize,
-            pickSize);
-
-    vv.addPostRenderPaintable(pickFootprintPaintable);
-    vv.repaint();
     // subclass can override to account for view distortion effects
     updatePickingTargets(vv, multiLayerTransformer, down, down);
 
     // subclass can override to account for view distortion effects
     // layoutPoint is the mouse event point projected on the layout coordinate system
-    Point2D layoutPoint = transformSupport.inverseTransform(vv, down);
-    log.trace("layout coords of mouse click {}", layoutPoint);
+    //    Point2D layoutPoint = transformSupport.inverseTransform(vv, down);
+    //    log.trace("layout coords of mouse click {}", layoutPoint);
 
-    boolean somethingSelected = false;
-    if (e.getModifiersEx() == singleSelectionMask) {
-      somethingSelected = this.singleVertexSelection(e, layoutPoint, false);
-    } else if (e.getModifiersEx() == addSingleSelectionMask) {
-      somethingSelected = this.singleVertexSelection(e, layoutPoint, true);
-    } else {
-      down = null;
-    }
-    if (somethingSelected) {
-      e.consume();
-    } else {
-      vv.addPostRenderPaintable(lensPaintable);
-    }
-  }
-
-  protected boolean singleVertexSelection(
-      MouseEvent e, Point2D layoutPoint, boolean addToSelection) {
-    VisualizationServer<V, E> vv = (VisualizationServer<V, E>) e.getSource();
-    GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
-    MutableSelectedState<V> selectedVertexState = vv.getSelectedVertexState();
-    MutableSelectedState<E> selectedEdgeState = vv.getSelectedEdgeState();
-    LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
-    V vertex;
-    if (pickSupport instanceof ShapePickSupport) {
-      ShapePickSupport<V, E> shapePickSupport = (ShapePickSupport<V, E>) pickSupport;
-      vertex = shapePickSupport.getVertex(layoutModel, footprintRectangle);
-    } else {
-      vertex = pickSupport.getVertex(layoutModel, layoutPoint.getX(), layoutPoint.getY());
-    }
-
-    if (vertex != null) {
-
-      log.trace("mousePressed set the vertex to {}", vertex);
-      if (!selectedVertexState.isSelected(vertex)) {
-        if (!addToSelection) {
-          selectedVertexState.clear();
-        }
-        selectedVertexState.select(vertex);
-      }
-      e.consume();
-      return true;
-    }
-    return false;
+    // test for vertex select or vertex add to selection
+    //    boolean vertexWasSelected = false;
+    //    boolean edgeWasSelected = false;
+    vv.addPostRenderPaintable(lensPaintable);
   }
 
   /**
@@ -263,9 +222,10 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
    *
    * <p>clean up settings from mousePressed
    */
-  @SuppressWarnings("unchecked")
   public void mouseReleased(MouseEvent e) {
-    log.trace("mouseReleased in {}", this.getClass().getName());
+
+    // if the mouse is released in lasso mode with no selection, then clear the vertex
+    // and edge selections ?
     Point2D out = e.getPoint();
 
     VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
@@ -274,44 +234,27 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
     // mouse is not down, check only for the addToSelectionModifiers (defaults to SHIFT_DOWN_MASK)
     if (e.getModifiersEx() == addRegionSelectionCompleteMask) {
       if (down != null) {
-        if (vertex == null && multiSelectionMayProceed(layoutTargetShape.getBounds2D())) {
-          pickContainedVertices(vv, layoutTargetShape, false);
+        if (multiSelectionMayProceed(layoutTargetShape.getBounds2D())) {
+          Collection<V> picked = pickContainedVertices(vv, layoutTargetShape, false);
+          if (picked.isEmpty()) {
+            vv.getSelectedVertexState().clear();
+            vv.getSelectedEdgeState().clear();
+          }
         }
       }
     } else if (e.getModifiersEx() == regionSelectionCompleteMask) {
       if (down != null) {
-        if (vertex == null && multiSelectionMayProceed(layoutTargetShape.getBounds2D())) {
-          pickContainedVertices(vv, layoutTargetShape, true);
+        if (multiSelectionMayProceed(layoutTargetShape.getBounds2D())) {
+          Collection<V> picked = pickContainedVertices(vv, layoutTargetShape, true);
+          if (picked.isEmpty()) {
+            vv.getSelectedVertexState().clear();
+            vv.getSelectedEdgeState().clear();
+          }
         }
       }
     }
     log.trace("down:{} out:{}", down, out);
-    if (vertex != null && !down.equals(out)) {
-
-      multiSelectionStrategy.closeShape();
-      // dragging points and changing their layout locations
-      Point2D graphPoint = multiLayerTransformer.inverseTransform(out);
-      log.trace("p in graph coords is {}", graphPoint);
-      Point2D graphDown = multiLayerTransformer.inverseTransform(deltaDown);
-      log.trace("graphDown (down in graph coords) is {}", graphDown);
-      VisualizationModel<V, E> visualizationModel = vv.getVisualizationModel();
-      LayoutModel<V> layoutModel = visualizationModel.getLayoutModel();
-      double dx = graphPoint.getX() - graphDown.getX();
-      double dy = graphPoint.getY() - graphDown.getY();
-      log.trace("dx, dy: {},{}", dx, dy);
-      MutableSelectedState<V> ps = vv.getSelectedVertexState();
-
-      for (V v : ps.getSelected()) {
-        org.jungrapht.visualization.layout.model.Point vp = layoutModel.apply(v);
-        vp = vp.add(dx, dy);
-        //                org.jungrapht.visualization.layout.model.Point.of(vp.x + dx, vp.y + dy);
-        layoutModel.set(v, vp);
-      }
-      deltaDown = out;
-    }
-
     down = null;
-    vertex = null;
     layoutTargetShape = multiLayerTransformer.inverseTransform(viewRectangle);
     vv.removePostRenderPaintable(lensPaintable);
     vv.removePostRenderPaintable(pickFootprintPaintable);
@@ -332,49 +275,13 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
       Point2D p = e.getPoint();
       log.trace("view p for drag event is {}", p);
       log.trace("down is {}", down);
-      if (vertex != null) {
-        // dragging points and changing their layout locations
-        Point2D graphPoint = multiLayerTransformer.inverseTransform(p);
-        log.trace("p in graph coords is {}", graphPoint);
-        Point2D graphDown = multiLayerTransformer.inverseTransform(deltaDown);
-        log.trace("graphDown (down in graph coords) is {}", graphDown);
-        VisualizationModel<V, E> visualizationModel = vv.getVisualizationModel();
-        LayoutModel<V> layoutModel = visualizationModel.getLayoutModel();
-        double dx = graphPoint.getX() - graphDown.getX();
-        double dy = graphPoint.getY() - graphDown.getY();
-        log.trace("dx, dy: {},{}", dx, dy);
-        MutableSelectedState<V> ps = vv.getSelectedVertexState();
-
-        for (V v : ps.getSelected()) {
-          org.jungrapht.visualization.layout.model.Point vp = layoutModel.apply(v);
-          vp = vp.add(dx, dy); //Point.of(vp.x + dx, vp.y + dy);
-          layoutModel.set(v, vp);
-        }
-        deltaDown = p;
-
-      } else if (down != null) {
+      if (down != null) {
         Point2D out = e.getPoint();
         multiSelectionStrategy.updateShape(down, out);
         layoutTargetShape = multiLayerTransformer.inverseTransform(viewRectangle);
       }
-      if (vertex != null) {
-        e.consume();
-      }
       vv.repaint();
     }
-  }
-
-  /**
-   * rejects picking if the rectangle is too small, like if the user meant to select one vertex but
-   * moved the mouse slightly
-   *
-   * @param p
-   * @param q
-   * @return
-   */
-  private boolean tooClose(Point2D p, Point2D q) {
-    return Math.abs(p.getX() - q.getX()) < TOO_CLOSE_LIMIT
-        && Math.abs(p.getY() - q.getY()) < TOO_CLOSE_LIMIT;
   }
 
   /**
@@ -438,7 +345,7 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
    * @param pickTarget - the shape to pick vertices in (layout coordinate system)
    * @param clear whether to reset existing selected state
    */
-  protected void pickContainedVertices(
+  protected Collection<V> pickContainedVertices(
       VisualizationViewer<V, E> vv, Shape pickTarget, boolean clear) {
     MutableSelectedState<V> selectedVertexState = vv.getSelectedVertexState();
     GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
@@ -448,6 +355,7 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
       selectedVertexState.clear();
     }
     selectedVertexState.select(picked);
+    return picked;
   }
 
   public void mouseClicked(MouseEvent e) {}

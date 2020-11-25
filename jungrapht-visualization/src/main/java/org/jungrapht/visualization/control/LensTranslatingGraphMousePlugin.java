@@ -11,7 +11,7 @@
  */
 package org.jungrapht.visualization.control;
 
-import java.awt.*;
+import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -25,9 +25,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Extends TranslatingGraphMousePlugin and adds the capability to drag and resize the viewing lens
- * in the graph view. Mouse1 in the center moves the lens, mouse1 on the edge resizes the lens. The
- * default mouse button and modifiers can be overridden in the constructor.
+ * Extends PrevTranslatingGraphMousePlugin and adds the capability to drag and resize the viewing
+ * lens in the graph view. Mouse1 in the center moves the lens, mouse1 on the edge resizes the lens.
+ * The default mouse button and modifiers can be overridden in the constructor.
  *
  * @author Tom Nelson
  */
@@ -46,10 +46,10 @@ public class LensTranslatingGraphMousePlugin extends TranslatingGraphMousePlugin
   /**
    * create an instance with passed modifer value
    *
-   * @param modifiers the mouse event modifier to activate this function
+   * @param translatingMask the mouse event modifier to activate this function
    */
-  public LensTranslatingGraphMousePlugin(int modifiers) {
-    super(modifiers);
+  public LensTranslatingGraphMousePlugin(int translatingMask) {
+    super(translatingMask);
   }
 
   /**

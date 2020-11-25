@@ -105,7 +105,8 @@ public abstract class AbstractModalGraphMouse extends AbstractGraphMouse
     remove(rotatingPlugin);
     remove(shearingPlugin);
     add(pickingPlugin);
-    add(animatedPickingPlugin);
+    add(regionSelectingPlugin);
+    //    add(animatedPickingPlugin);
   }
 
   /* (non-Javadoc)
@@ -113,7 +114,8 @@ public abstract class AbstractModalGraphMouse extends AbstractGraphMouse
    */
   protected void setTransformingMode() {
     remove(pickingPlugin);
-    remove(animatedPickingPlugin);
+    remove(regionSelectingPlugin);
+    //    remove(animatedPickingPlugin);
     add(translatingPlugin);
     add(rotatingPlugin);
     add(shearingPlugin);

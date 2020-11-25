@@ -20,10 +20,12 @@ import java.awt.event.MouseEvent;
 public interface GraphMousePlugin {
 
   /** @return the mouse event modifiers that will activate this plugin */
-  int getModifiersEx();
+  default int getModifiersEx() {
+    return 0;
+  }
 
   /** @param modifiers the mouse event modifiers that will activate this plugin */
-  void setModifiers(int modifiers);
+  default void setModifiers(int modifiers) {}
 
   /**
    * compare the set modifiers against those of the supplied event
@@ -31,5 +33,7 @@ public interface GraphMousePlugin {
    * @param e an event to compare to
    * @return whether the member modifiers match the event modifiers
    */
-  boolean checkModifiers(MouseEvent e);
+  default boolean checkModifiers(MouseEvent e) {
+    return false;
+  }
 }

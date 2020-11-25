@@ -60,7 +60,7 @@ public class TreeUtils {
     Objects.requireNonNull(tree, "tree");
     Objects.requireNonNull(root, "root");
     Objects.requireNonNull(
-        tree.vertexSet().contains(root), "Input tree does not contain the input subtree root");
+        tree.containsVertex(root), "Input tree does not contain the input subtree root");
     // subtree must allow parallel and loop edges
     DirectedPseudograph<V, E> subtree =
         (DirectedPseudograph)
@@ -113,7 +113,7 @@ public class TreeUtils {
     Objects.requireNonNull(subTreeParent, "subTreeParent");
     Objects.requireNonNull(connectingEdge, "connectingEdge");
     Objects.requireNonNull(
-        tree.vertexSet().contains(subTreeParent), "'tree' does not contain 'subTreeParent'");
+        tree.containsVertex(subTreeParent), "'tree' does not contain 'subTreeParent'");
 
     Set<V> roots = TreeUtils.roots(subTree);
     log.trace("ast roots of {} is {}", subTree, roots);

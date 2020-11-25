@@ -218,7 +218,7 @@ public class AggregateLayoutModel<V> implements LayoutModel<V> {
    */
   public void lock(V vertex, boolean state) {
     for (LayoutModel<V> layoutModel : layouts.keySet()) {
-      if (layoutModel.getGraph().vertexSet().contains(vertex)) {
+      if (layoutModel.getGraph().containsVertex(vertex)) {
         layoutModel.lock(vertex, state);
       }
     }
@@ -264,7 +264,7 @@ public class AggregateLayoutModel<V> implements LayoutModel<V> {
    */
   public Point apply(V vertex) {
     for (LayoutModel<V> layoutModel : layouts.keySet()) {
-      if (layoutModel.getGraph().vertexSet().contains(vertex)) {
+      if (layoutModel.getGraph().containsVertex(vertex)) {
         Point center = layouts.get(layoutModel);
         // transform by the layout itself, but offset to the
         // center of the sublayout

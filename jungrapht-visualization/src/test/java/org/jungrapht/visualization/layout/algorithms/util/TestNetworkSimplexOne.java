@@ -110,8 +110,8 @@ public class TestNetworkSimplexOne {
     }
     log.info("bestSpanningTree: {}", spanningTree);
     Assert.assertTrue(spanningTree.edgeSet().containsAll(List.of(0, 2, 3, 4, 5, 6, 8)));
-    Assert.assertFalse(spanningTree.edgeSet().contains(1));
-    Assert.assertFalse(spanningTree.edgeSet().contains(7));
+    Assert.assertFalse(spanningTree.containsEdge(1));
+    Assert.assertFalse(spanningTree.containsEdge(7));
   }
 
   Map<Integer, Integer> getEdgeCutValues(

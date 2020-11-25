@@ -136,7 +136,7 @@ public class GraphCollapser<V, E> implements Collapser<V, E> {
             .stream()
             .filter(e -> !edgeInCluster(graph, e))
             .filter(e -> !clusterEdges.contains(e))
-            .filter(e -> !graph.edgeSet().contains(e))
+            .filter(e -> !graph.containsEdge(e))
             .collect(Collectors.toSet());
 
     if (log.isTraceEnabled()) {
@@ -157,8 +157,8 @@ public class GraphCollapser<V, E> implements Collapser<V, E> {
       V source = originalGraph.getEdgeSource(e);
       V target = originalGraph.getEdgeTarget(e);
 
-      if (graph.vertexSet().contains(source)) {
-        if (!graph.vertexSet().contains(target)) {
+      if (graph.containsVertex(source)) {
+        if (!graph.containsVertex(target)) {
           target = clusterVertex;
           graph.addEdge(source, target, e);
         } else {
@@ -172,8 +172,8 @@ public class GraphCollapser<V, E> implements Collapser<V, E> {
             }
           }
         }
-      } else if (graph.vertexSet().contains(target)) {
-        if (!graph.vertexSet().contains(source)) {
+      } else if (graph.containsVertex(target)) {
+        if (!graph.containsVertex(source)) {
           source = clusterVertex;
           graph.addEdge(source, target, e);
         } else {
@@ -239,7 +239,7 @@ public class GraphCollapser<V, E> implements Collapser<V, E> {
             originalGraph
                 .edgeSet()
                 .stream()
-                .filter(e -> !graph.edgeSet().contains(e))
+                .filter(e -> !graph.containsEdge(e))
                 .filter(e -> !edgeInCluster(graph, e))
                 .collect(Collectors.toSet());
 
@@ -247,12 +247,12 @@ public class GraphCollapser<V, E> implements Collapser<V, E> {
           V source = originalGraph.getEdgeSource(e);
           V target = originalGraph.getEdgeTarget(e);
 
-          if (graph.vertexSet().contains(source) && graph.vertexSet().contains(target)) {
+          if (graph.containsVertex(source) && graph.containsVertex(target)) {
             graph.addEdge(source, target, e);
-          } else if (graph.vertexSet().contains(source)) {
+          } else if (graph.containsVertex(source)) {
             // find the target
             V originalTarget = originalGraph.getEdgeTarget(e);
-            if (graph.vertexSet().contains(originalTarget)) { // source and target are in the graph
+            if (graph.containsVertex(originalTarget)) { // source and target are in the graph
               graph.addEdge(source, originalTarget, e);
             } else {
               // target not in graph
@@ -266,10 +266,10 @@ public class GraphCollapser<V, E> implements Collapser<V, E> {
                 }
               }
             }
-          } else if (graph.vertexSet().contains(target)) {
+          } else if (graph.containsVertex(target)) {
             // find the source
             V originalSource = originalGraph.getEdgeSource(e);
-            if (graph.vertexSet().contains(originalSource)) { // source and target are in the graph
+            if (graph.containsVertex(originalSource)) { // source and target are in the graph
               graph.addEdge(source, originalSource, e);
             } else {
               // source not in graph

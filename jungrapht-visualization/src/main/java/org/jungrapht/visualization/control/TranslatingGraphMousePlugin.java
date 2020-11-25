@@ -23,9 +23,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * TranslatingGraphMousePlugin uses a MouseButtonOne press and drag gesture to translate the graph
- * display in the x and y direction. The default MouseButtonOne modifier can be overridden to cause
- * a different mouse gesture to translate the display.
+ * PrevTranslatingGraphMousePlugin uses a MouseButtonOne press and drag gesture to translate the
+ * graph display in the x and y direction. The default MouseButtonOne modifier can be overridden to
+ * cause a different mouse gesture to translate the display.
  *
  * @author Tom Nelson
  */
@@ -33,19 +33,18 @@ public class TranslatingGraphMousePlugin extends AbstractGraphMousePlugin
     implements MouseListener, MouseMotionListener {
 
   private static final Logger log = LoggerFactory.getLogger(TranslatingGraphMousePlugin.class);
-  /** */
-  public TranslatingGraphMousePlugin() {
-    this(MouseEvent.BUTTON1_DOWN_MASK);
-  }
+
+  protected int translatingMask;
 
   /**
-   * create an instance with passed modifer value
+   * create an instance with passed translatingMask value
    *
-   * @param modifiers the mouse event modifier to activate this function
+   * @param translatingMask the mouse event mask to activate. Default is BUTTON_ONE_DOWN
    */
-  public TranslatingGraphMousePlugin(int modifiers) {
-    super(modifiers);
-    log.trace("setModifiers({})", modifiers);
+  public TranslatingGraphMousePlugin(int translatingMask) {
+    super(translatingMask);
+    this.translatingMask = translatingMask;
+    log.trace("setModifiers({})", translatingMask);
     this.cursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
   }
 
@@ -58,7 +57,7 @@ public class TranslatingGraphMousePlugin extends AbstractGraphMousePlugin
   public void mousePressed(MouseEvent e) {
     log.trace("mousePressed in {}", this.getClass().getName());
     VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
-    boolean accepted = checkModifiers(e);
+    boolean accepted = e.getModifiersEx() == translatingMask;
     down = e.getPoint();
     if (accepted) {
       vv.setCursor(cursor);
@@ -72,7 +71,7 @@ public class TranslatingGraphMousePlugin extends AbstractGraphMousePlugin
     VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
     down = null;
     vv.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-    if (checkModifiers(e)) {
+    if (e.getModifiersEx() == translatingMask) {
       e.consume();
     }
   }
@@ -88,7 +87,7 @@ public class TranslatingGraphMousePlugin extends AbstractGraphMousePlugin
       return;
     }
     VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
-    boolean accepted = checkModifiers(e);
+    boolean accepted = e.getModifiersEx() == translatingMask;
     if (accepted) {
       MutableTransformer modelTransformer =
           vv.getRenderContext()

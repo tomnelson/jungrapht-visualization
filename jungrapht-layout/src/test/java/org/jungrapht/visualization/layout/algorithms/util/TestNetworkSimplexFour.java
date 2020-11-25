@@ -40,8 +40,8 @@ public class TestNetworkSimplexFour {
 
     log.info("bestSpanningTree: {}", best);
     Assert.assertTrue(best.edgeSet().containsAll(List.of(0, 2, 3, 4, 5, 6, 8)));
-    Assert.assertFalse(best.edgeSet().contains(1));
-    Assert.assertFalse(best.edgeSet().contains(7));
+    Assert.assertFalse(best.containsEdge(1));
+    Assert.assertFalse(best.containsEdge(7));
   }
 
   /** build the graph and the spanning tree shown in the paper */

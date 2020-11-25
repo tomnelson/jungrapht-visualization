@@ -14,16 +14,18 @@ import org.slf4j.LoggerFactory;
  * @param <V> vertex type
  * @param <E> edge type
  */
-public class LensSelectingGraphMousePlugin<V, E> extends SelectingGraphMousePlugin<V, E> {
+public class LensRegionSelectingGraphMousePlugin<V, E>
+    extends RegionSelectingGraphMousePlugin<V, E> {
 
-  private static final Logger log = LoggerFactory.getLogger(LensSelectingGraphMousePlugin.class);
+  private static final Logger log =
+      LoggerFactory.getLogger(LensRegionSelectingGraphMousePlugin.class);
 
   public static class Builder<
-          V, E, T extends LensSelectingGraphMousePlugin, B extends Builder<V, E, T, B>>
-      extends SelectingGraphMousePlugin.Builder<V, E, T, B> {
+          V, E, T extends LensRegionSelectingGraphMousePlugin, B extends Builder<V, E, T, B>>
+      extends RegionSelectingGraphMousePlugin.Builder<V, E, T, B> {
 
     public T build() {
-      return (T) new LensSelectingGraphMousePlugin(this);
+      return (T) new LensRegionSelectingGraphMousePlugin(this);
     }
   }
 
@@ -33,17 +35,29 @@ public class LensSelectingGraphMousePlugin<V, E> extends SelectingGraphMousePlug
 
   protected TransformSupport transformSupport = new LensTransformSupport();
 
-  public LensSelectingGraphMousePlugin() {
-    this(LensSelectingGraphMousePlugin.builder());
+  public LensRegionSelectingGraphMousePlugin() {
+    this(LensRegionSelectingGraphMousePlugin.builder());
   }
 
-  public LensSelectingGraphMousePlugin(Builder<V, E, ?, ?> builder) {
-    this(builder.singleSelectionMask, builder.addSingleSelectionMask);
+  public LensRegionSelectingGraphMousePlugin(Builder<V, E, ?, ?> builder) {
+    this(
+        builder.regionSelectionMask,
+        builder.addRegionSelectionMask,
+        builder.regionSelectionCompleteMask,
+        builder.addRegionSelectionCompleteMask);
   }
 
   /** create an instance with overides */
-  public LensSelectingGraphMousePlugin(int singleSelectionMask, int addSingleSelectionMask) {
-    super(singleSelectionMask, addSingleSelectionMask);
+  public LensRegionSelectingGraphMousePlugin(
+      int regionSelectionMask,
+      int addRegionSelectionMask,
+      int regionSelectionCompleteMask,
+      int addRegionSelectionCompleteMask) {
+    super(
+        regionSelectionMask,
+        addRegionSelectionMask,
+        regionSelectionCompleteMask,
+        addRegionSelectionCompleteMask);
   }
 
   /**
