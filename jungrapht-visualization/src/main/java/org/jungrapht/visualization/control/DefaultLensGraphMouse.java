@@ -118,12 +118,13 @@ public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> impleme
   }
 
   public void loadPlugins() {
-    add(pickingPlugin);
+    add(selectingPlugin);
     add(regionSelectingPlugin);
     add(new TranslatingGraphMousePlugin(translatingMask));
     add(lensKillingGraphMousePlugin);
-    add(new LensTranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK));
     add(lensSelectingGraphMousePlugin);
+    add(lensRegionSelectingGraphMousePlugin);
+    add(new LensTranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK));
     add(magnificationPlugin);
     add(scalingPlugin);
     setPluginsLoaded();

@@ -192,7 +192,7 @@ public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
             yAxisScalingMask,
             in,
             out);
-    pickingPlugin =
+    selectingPlugin =
         vertexSelectionOnly
             ? new VertexSelectingGraphMousePlugin<>(
                 singleSelectionMask, addSingleSelectionMask,
@@ -211,25 +211,7 @@ public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
   /** create the plugins, and load them */
   @Override
   public void loadPlugins() {
-    //    scalingPlugin =
-    //        new ScalingGraphMousePlugin(
-    //            new CrossoverScalingControl(),
-    //            scalingMask,
-    //            xAxisScalingMask,
-    //            yAxisScalingMask,
-    //            in,
-    //            out);
-    //    pickingPlugin =
-    //        vertexSelectionOnly
-    //            ? new VertexSelectingGraphMousePlugin<>(
-    //                singleSelectionMask, addSingleSelectionMask,
-    //                regionSelectionMask, addRegionSelectionMask,
-    //                regionSelectionCompleteMask, addRegionSelectionCompleteMask)
-    //            : new SelectingGraphMousePlugin<>(
-    //                singleSelectionMask, addSingleSelectionMask,
-    //                regionSelectionMask, addRegionSelectionMask,
-    //                regionSelectionCompleteMask, addRegionSelectionCompleteMask);
-    add(pickingPlugin);
+    add(selectingPlugin);
     add(regionSelectingPlugin);
     add(new TranslatingGraphMousePlugin(translatingMask));
     add(scalingPlugin);

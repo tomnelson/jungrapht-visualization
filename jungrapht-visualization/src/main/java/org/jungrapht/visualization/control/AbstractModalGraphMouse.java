@@ -104,7 +104,7 @@ public abstract class AbstractModalGraphMouse extends AbstractGraphMouse
     remove(translatingPlugin);
     remove(rotatingPlugin);
     remove(shearingPlugin);
-    add(pickingPlugin);
+    add(selectingPlugin);
     add(regionSelectingPlugin);
     //    add(animatedPickingPlugin);
   }
@@ -113,7 +113,7 @@ public abstract class AbstractModalGraphMouse extends AbstractGraphMouse
    * @see ModalGraphMouse#setTransformingMode()
    */
   protected void setTransformingMode() {
-    remove(pickingPlugin);
+    remove(selectingPlugin);
     remove(regionSelectingPlugin);
     //    remove(animatedPickingPlugin);
     add(translatingPlugin);

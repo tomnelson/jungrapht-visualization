@@ -93,7 +93,7 @@ public class ModalLensGraphMouse extends AbstractModalGraphMouse
   public void loadPlugins() {
     super.loadPlugins();
     add(lensKillingGraphMousePlugin);
-    pickingPlugin = lensSelectingGraphMousePlugin;
+    selectingPlugin = lensSelectingGraphMousePlugin;
     //    animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<>();
     translatingPlugin = new LensTranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
     scalingPlugin =

@@ -53,7 +53,7 @@ public class ModalSatelliteGraphMouse<V, E> extends DefaultModalGraphMouse<V, E>
   }
 
   public void loadPlugins() {
-    pickingPlugin =
+    selectingPlugin =
         SelectingGraphMousePlugin.builder()
             .singleSelectionMask(InputEvent.BUTTON1_DOWN_MASK)
             .addSingleSelectionMask(InputEvent.BUTTON1_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)

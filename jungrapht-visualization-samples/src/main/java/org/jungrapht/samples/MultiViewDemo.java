@@ -195,8 +195,8 @@ public class MultiViewDemo extends JPanel {
                     .scalingControl(new LayoutScalingControl())
                     .build();
             add(new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK));
-            pickingPlugin = new SelectingGraphMousePlugin();
-            add(pickingPlugin);
+            selectingPlugin = new SelectingGraphMousePlugin();
+            add(selectingPlugin);
             add(scalingPlugin);
             setPluginsLoaded();
           }
@@ -208,8 +208,8 @@ public class MultiViewDemo extends JPanel {
             scalingPlugin =
                 ScalingGraphMousePlugin.builder().scalingControl(new ViewScalingControl()).build();
             add(new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK));
-            pickingPlugin = new SelectingGraphMousePlugin<>();
-            add(pickingPlugin);
+            selectingPlugin = new SelectingGraphMousePlugin<>();
+            add(selectingPlugin);
             add(scalingPlugin);
             setPluginsLoaded();
           }

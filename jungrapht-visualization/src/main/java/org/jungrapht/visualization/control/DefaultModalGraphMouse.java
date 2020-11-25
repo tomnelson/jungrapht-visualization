@@ -90,7 +90,7 @@ public class DefaultModalGraphMouse<V, E> extends AbstractModalGraphMouse
   /** create the plugins, and load the plugins for TRANSFORMING mode */
   @Override
   public void loadPlugins() {
-    pickingPlugin =
+    selectingPlugin =
         SelectingGraphMousePlugin.builder()
             .singleSelectionMask(InputEvent.BUTTON1_DOWN_MASK)
             .addSingleSelectionMask(InputEvent.BUTTON1_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)

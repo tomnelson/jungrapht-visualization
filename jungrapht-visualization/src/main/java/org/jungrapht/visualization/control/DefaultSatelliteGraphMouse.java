@@ -50,9 +50,17 @@ public class DefaultSatelliteGraphMouse<V, E> extends DefaultGraphMouse<V, E> {
             yAxisScalingMask,
             in,
             out);
+    selectingPlugin = new SelectingGraphMousePlugin<>(singleSelectionMask, addSingleSelectionMask);
+    regionSelectingPlugin =
+        RegionSelectingGraphMousePlugin.builder()
+            .regionSelectionMask(regionSelectionMask)
+            .addRegionSelectionMask(addRegionSelectionMask)
+            .regionSelectionCompleteMask(regionSelectionCompleteMask)
+            .addRegionSelectionCompleteMask(addRegionSelectionCompleteMask)
+            .build();
+    add(selectingPlugin);
+    add(regionSelectingPlugin);
     add(new SatelliteTranslatingGraphMousePlugin(translatingMask));
-    pickingPlugin = new SelectingGraphMousePlugin<>(singleSelectionMask, addSingleSelectionMask);
-    add(pickingPlugin);
     add(scalingPlugin);
   }
 

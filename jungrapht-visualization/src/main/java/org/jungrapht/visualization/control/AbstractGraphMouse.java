@@ -75,7 +75,7 @@ public abstract class AbstractGraphMouse extends PluggableGraphMouse {
 
   protected GraphMousePlugin scalingPlugin;
 
-  protected AbstractGraphMousePlugin pickingPlugin;
+  protected AbstractGraphMousePlugin selectingPlugin;
 
   protected AbstractGraphMousePlugin regionSelectingPlugin;
 

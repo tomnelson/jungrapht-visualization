@@ -118,7 +118,7 @@ public class AnnotatingModalGraphMouse<V, E> extends AbstractModalGraphMouse
   /** create the plugins, and load the plugins for TRANSFORMING mode */
   @Override
   public void loadPlugins() {
-    pickingPlugin =
+    selectingPlugin =
         SelectingGraphMousePlugin.builder()
             .singleSelectionMask(InputEvent.BUTTON1_DOWN_MASK)
             .addSingleSelectionMask(InputEvent.BUTTON1_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)
@@ -177,13 +177,13 @@ public class AnnotatingModalGraphMouse<V, E> extends AbstractModalGraphMouse
     remove(rotatingPlugin);
     remove(shearingPlugin);
     remove(annotatingPlugin);
-    add(pickingPlugin);
+    add(selectingPlugin);
     add(animatedPickingPlugin);
   }
 
   @Override
   protected void setTransformingMode() {
-    remove(pickingPlugin);
+    remove(selectingPlugin);
     remove(animatedPickingPlugin);
     remove(annotatingPlugin);
     add(translatingPlugin);
@@ -192,7 +192,7 @@ public class AnnotatingModalGraphMouse<V, E> extends AbstractModalGraphMouse
   }
 
   protected void setEditingMode() {
-    remove(pickingPlugin);
+    remove(selectingPlugin);
     remove(animatedPickingPlugin);
     remove(translatingPlugin);
     remove(rotatingPlugin);
@@ -201,7 +201,7 @@ public class AnnotatingModalGraphMouse<V, E> extends AbstractModalGraphMouse
   }
 
   protected void setAnnotatingMode() {
-    remove(pickingPlugin);
+    remove(selectingPlugin);
     remove(animatedPickingPlugin);
     remove(translatingPlugin);
     remove(rotatingPlugin);
