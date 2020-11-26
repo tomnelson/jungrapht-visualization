@@ -1,6 +1,6 @@
 package org.jungrapht.visualization.layout.algorithms;
 
-import static org.jungrapht.visualization.layout.model.LayoutModel.PREFIX;
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,6 +26,7 @@ import org.jungrapht.visualization.layout.algorithms.util.VertexBoundsFunctionCo
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
+import org.jungrapht.visualization.layout.util.PropertyLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +57,10 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
   private static final Logger log =
       LoggerFactory.getLogger(AbstractHierarchicalMinCrossLayoutAlgorithm.class);
 
+  static {
+    PropertyLoader.load();
+  }
+
   protected static final Rectangle IDENTITY_SHAPE = Rectangle.IDENTITY;
   protected static final String MINCROSS_STRAIGHTEN_EDGES = PREFIX + "mincross.straightenEdges";
   protected static final String MINCROSS_POST_STRAIGHTEN = PREFIX + "mincross.postStraighten";
@@ -78,6 +83,10 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
               AbstractHierarchicalMinCrossLayoutAlgorithm<V, E> & EdgeAwareLayoutAlgorithm<V, E>,
           B extends Builder<V, E, T, B>>
       implements LayoutAlgorithm.Builder<V, T, B> {
+    static {
+      PropertyLoader.load();
+    }
+
     protected Executor executor;
     protected Function<V, Rectangle> vertexBoundsFunction = v -> IDENTITY_SHAPE;
     protected boolean straightenEdges =

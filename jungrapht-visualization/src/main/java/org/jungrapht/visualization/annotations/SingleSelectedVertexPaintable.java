@@ -1,6 +1,6 @@
 package org.jungrapht.visualization.annotations;
 
-import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
 import static org.jungrapht.visualization.renderers.BiModalRenderer.LIGHTWEIGHT;
 
 import java.awt.BasicStroke;
@@ -16,6 +16,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.function.Function;
 import javax.swing.*;
 import org.jungrapht.visualization.MultiLayerTransformer;
+import org.jungrapht.visualization.PropertyLoader;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationServer;
@@ -44,6 +45,10 @@ import org.slf4j.LoggerFactory;
 public class SingleSelectedVertexPaintable<V, E> implements VisualizationServer.Paintable {
 
   private static final Logger log = LoggerFactory.getLogger(SingleSelectedVertexPaintable.class);
+
+  static {
+    PropertyLoader.load();
+  }
 
   /**
    * builder for the {@code SelectedVertexPaintable}

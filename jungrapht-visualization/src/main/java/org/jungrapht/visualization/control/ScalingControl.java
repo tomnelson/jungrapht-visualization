@@ -8,7 +8,7 @@
  */
 package org.jungrapht.visualization.control;
 
-import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
 
 import java.awt.geom.Point2D;
 import org.jungrapht.visualization.VisualizationServer;

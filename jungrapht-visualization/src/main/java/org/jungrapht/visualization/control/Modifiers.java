@@ -5,6 +5,7 @@ import static java.util.Map.entry;
 
 import java.awt.Toolkit;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Modifiers {
 
@@ -14,7 +15,7 @@ public class Modifiers {
   public static final String MB2 = "MB2";
   public static final String MB3 = "MB3";
 
-  public static final String CTRL = "CTRL";
+  //  public static final String CTRL = "CTRL";
   public static final String ALT = "ALT";
   public static final String SHIFT = "SHIFT";
   public static final String MENU = "MENU";
@@ -32,15 +33,18 @@ public class Modifiers {
           entry(MB1, BUTTON1_DOWN_MASK),
           entry(MB2, BUTTON2_DOWN_MASK),
           entry(MB3, BUTTON3_DOWN_MASK),
-          entry(CTRL, CTRL_DOWN_MASK),
+          //          entry(CTRL, CTRL_DOWN_MASK),
           entry(ALT, ALT_DOWN_MASK),
           entry(SHIFT, SHIFT_DOWN_MASK),
           entry(MENU, MENU_SHORTCUT),
           entry(SHIFT_MENU, SHIFT_DOWN_MASK | MENU_SHORTCUT),
           entry(MB1_SHIFT, BUTTON1_DOWN_MASK | SHIFT_DOWN_MASK),
-          entry(MB1_CTRL, BUTTON1_DOWN_MASK | CTRL_DOWN_MASK),
+          //          entry(MB1_CTRL, BUTTON1_DOWN_MASK | CTRL_DOWN_MASK),
           entry(MB1_ALT, BUTTON1_DOWN_MASK | ALT_DOWN_MASK),
           entry(MB1_MENU, BUTTON1_DOWN_MASK | MENU_SHORTCUT),
           entry(MB1_SHIFT_MENU, BUTTON1_DOWN_MASK | SHIFT_DOWN_MASK | MENU_SHORTCUT),
           entry(NONE, 0));
+
+  public static Map<Integer, String> maskStrings =
+      masks.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
 }

@@ -9,7 +9,7 @@
  */
 package org.jungrapht.visualization.renderers;
 
-import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
@@ -19,6 +19,7 @@ import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.util.function.BiFunction;
 import org.jgrapht.Graph;
+import org.jungrapht.visualization.PropertyLoader;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
@@ -29,6 +30,10 @@ import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
  */
 public class HeavyweightEdgeRenderer<V, E> extends AbstractEdgeRenderer<V, E>
     implements Renderer.Edge<V, E> {
+
+  static {
+    PropertyLoader.load();
+  }
 
   protected EdgeArrowRenderingSupport<V, E> edgeArrowRenderingSupport =
       getPreferredEdgeArrowRenderingSupport();

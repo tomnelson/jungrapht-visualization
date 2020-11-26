@@ -2,7 +2,7 @@ package org.jungrapht.visualization.renderers;
 
 import static java.awt.RenderingHints.KEY_ANTIALIASING;
 import static java.awt.RenderingHints.VALUE_ANTIALIAS_OFF;
-import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -16,6 +16,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.MultiLayerTransformer;
+import org.jungrapht.visualization.PropertyLoader;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -61,6 +62,10 @@ import org.slf4j.LoggerFactory;
  * @param <E> the edge type
  */
 public class BiModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeListener {
+
+  static {
+    PropertyLoader.load();
+  }
 
   public static final Mode LIGHTWEIGHT = new Mode();
   public static final Mode HEAVYWEIGHT = new Mode();

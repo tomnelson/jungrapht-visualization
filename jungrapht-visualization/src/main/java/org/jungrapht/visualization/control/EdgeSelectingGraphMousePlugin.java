@@ -11,7 +11,7 @@
  */
 package org.jungrapht.visualization.control;
 
-import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -25,6 +25,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import javax.swing.*;
 import org.jungrapht.visualization.MultiLayerTransformer;
+import org.jungrapht.visualization.PropertyLoader;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -46,6 +47,10 @@ public class EdgeSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugi
     implements MouseListener, MouseMotionListener {
 
   private static final Logger log = LoggerFactory.getLogger(EdgeSelectingGraphMousePlugin.class);
+
+  static {
+    PropertyLoader.load();
+  }
 
   private static final int TOO_CLOSE_LIMIT = 5;
 

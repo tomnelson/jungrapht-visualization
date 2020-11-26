@@ -1,6 +1,6 @@
 package org.jungrapht.visualization.layout.algorithms;
 
-import static org.jungrapht.visualization.layout.model.LayoutModel.PREFIX;
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
 
 import java.util.concurrent.Executor;
 import java.util.function.Function;
@@ -15,6 +15,7 @@ import org.jungrapht.visualization.layout.algorithms.util.Threaded;
 import org.jungrapht.visualization.layout.algorithms.util.VertexBoundsFunctionConsumer;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Rectangle;
+import org.jungrapht.visualization.layout.util.PropertyLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +49,10 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
 
   private static final Logger log =
       LoggerFactory.getLogger(HierarchicalMinCrossLayoutAlgorithm.class);
+
+  static {
+    PropertyLoader.load();
+  }
 
   protected static final String EIGLSPERGER_THRESHOLD = PREFIX + "mincross.eiglspergerThreshold";
 

@@ -1,8 +1,10 @@
 package org.jungrapht.visualization.control;
 
-import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
 
 import java.awt.Toolkit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The PrevDefaultGraphMouse does not have 'transforming/selecting' modes. It has 3 plugins that are
@@ -19,6 +21,7 @@ import java.awt.Toolkit;
  */
 public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
 
+  private static Logger log = LoggerFactory.getLogger(DefaultGraphMouse.class);
   /**
    * Build an instance of a PrevDefaultGraphMouse
    *
@@ -54,7 +57,7 @@ public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
 
     // scaling masks
     protected int xAxisScalingMask =
-        Modifiers.masks.get(System.getProperty(PREFIX + "xAxisScalingMask", "CTRL"));
+        Modifiers.masks.get(System.getProperty(PREFIX + "xAxisScalingMask", "MENU"));
     protected int yAxisScalingMask =
         Modifiers.masks.get(System.getProperty(PREFIX + "yAxisScalingMask", "ALT"));
     protected int scalingMask =
@@ -194,10 +197,7 @@ public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
             out);
     selectingPlugin =
         vertexSelectionOnly
-            ? new VertexSelectingGraphMousePlugin<>(
-                singleSelectionMask, addSingleSelectionMask,
-                regionSelectionMask, addRegionSelectionMask,
-                regionSelectionCompleteMask, addRegionSelectionCompleteMask)
+            ? new VertexSelectingGraphMousePlugin<>(singleSelectionMask, addSingleSelectionMask)
             : new SelectingGraphMousePlugin<>(singleSelectionMask, addSingleSelectionMask);
     regionSelectingPlugin =
         RegionSelectingGraphMousePlugin.builder()
@@ -212,7 +212,9 @@ public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
   @Override
   public void loadPlugins() {
     add(selectingPlugin);
+    log.info("added " + selectingPlugin);
     add(regionSelectingPlugin);
+    log.info("added " + regionSelectingPlugin);
     add(new TranslatingGraphMousePlugin(translatingMask));
     add(scalingPlugin);
     setPluginsLoaded();

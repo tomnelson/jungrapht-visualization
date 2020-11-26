@@ -7,7 +7,7 @@
  */
 package org.jungrapht.visualization;
 
-import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -45,6 +45,9 @@ import org.jungrapht.visualization.util.ParallelEdgeIndexFunction;
  */
 public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
 
+  static {
+    PropertyLoader.load();
+  }
   /** event support for changes in the RenderContext state */
   private RenderContextStateChange.Support<V, E> renderContextStateChangeSupport =
       RenderContextStateChange.Support.create();

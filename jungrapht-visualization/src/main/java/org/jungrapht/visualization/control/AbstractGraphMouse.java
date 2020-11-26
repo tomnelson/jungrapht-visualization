@@ -11,9 +11,10 @@
  */
 package org.jungrapht.visualization.control;
 
-import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
 
 import java.awt.event.MouseEvent;
+import org.jungrapht.visualization.PropertyLoader;
 
 /**
  * AbstractGraphMouse is a PluggableGraphMouse class that manages a collection of plugins for
@@ -26,6 +27,10 @@ import java.awt.event.MouseEvent;
  * @author Tom Nelson
  */
 public abstract class AbstractGraphMouse extends PluggableGraphMouse {
+
+  static {
+    PropertyLoader.load();
+  }
 
   private static final String VERTEX_SELECTION_ONLY = PREFIX + "vertexSelectionOnly";
 

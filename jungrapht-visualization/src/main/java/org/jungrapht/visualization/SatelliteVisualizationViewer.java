@@ -10,6 +10,8 @@
 
 package org.jungrapht.visualization;
 
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;

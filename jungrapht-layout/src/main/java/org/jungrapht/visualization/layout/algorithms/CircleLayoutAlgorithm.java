@@ -12,7 +12,7 @@
  */
 package org.jungrapht.visualization.layout.algorithms;
 
-import static org.jungrapht.visualization.layout.model.LayoutModel.PREFIX;
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,6 +34,7 @@ import org.jungrapht.visualization.layout.algorithms.util.CircleLayoutReduceEdge
 import org.jungrapht.visualization.layout.algorithms.util.ExecutorConsumer;
 import org.jungrapht.visualization.layout.algorithms.util.Threaded;
 import org.jungrapht.visualization.layout.model.LayoutModel;
+import org.jungrapht.visualization.layout.util.PropertyLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +48,10 @@ public class CircleLayoutAlgorithm<V>
     implements LayoutAlgorithm<V>, AfterRunnable, Threaded, ExecutorConsumer {
 
   private static final Logger log = LoggerFactory.getLogger(CircleLayoutAlgorithm.class);
+
+  static {
+    PropertyLoader.load();
+  }
 
   protected static final String CIRCLE_REDUCE_EDGE_CROSSING = PREFIX + "circle.reduceEdgeCrossing";
   protected static final String CIRCLE_REDUCE_EDGE_CROSSING_MAX_EDGES =

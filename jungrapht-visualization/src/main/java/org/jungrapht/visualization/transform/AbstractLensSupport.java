@@ -10,7 +10,7 @@
 
 package org.jungrapht.visualization.transform;
 
-import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
 
 import java.awt.*;
 import java.awt.event.ItemEvent;
@@ -18,6 +18,7 @@ import java.awt.event.ItemListener;
 import java.awt.geom.*;
 import java.util.Arrays;
 import java.util.Optional;
+import org.jungrapht.visualization.PropertyLoader;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.GraphElementAccessor;
@@ -37,6 +38,10 @@ import org.jungrapht.visualization.util.ItemSupport;
  */
 public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse> extends ItemSupport
     implements LensSupport<M> {
+
+  static {
+    PropertyLoader.load();
+  }
 
   private static final String LENS_STROKE_WIDTH = PREFIX + "lensStrokeWidth";
 

@@ -79,15 +79,19 @@ public class LensTranslatingGraphMousePlugin extends TranslatingGraphMousePlugin
       vv.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
       if (layoutTransformer instanceof LensTransformer) {
         Lens lens = ((LensTransformer) layoutTransformer).getLens();
-        testViewCenter(lens, p);
+        if (testViewCenter(lens, p)) {
+          e.consume();
+        }
       }
       if (viewTransformer instanceof LensTransformer) {
         Lens lens = ((LensTransformer) viewTransformer).getLens();
-        testViewCenter(lens, p);
+        if (testViewCenter(lens, p)) {
+          e.consume();
+        }
       }
       vv.repaint();
     }
-    super.mousePressed(e);
+    //    super.mousePressed(e);
   }
 
   /**
@@ -117,7 +121,7 @@ public class LensTranslatingGraphMousePlugin extends TranslatingGraphMousePlugin
    * @param lens
    * @param point
    */
-  private void testViewCenter(Lens lens, Point2D point) {
+  private boolean testViewCenter(Lens lens, Point2D point) {
     double closeness = lens.getRadius() / 10;
     double distanceFromCenter = lens.getDistanceFromCenter(point);
     if (distanceFromCenter < closeness) {
@@ -128,12 +132,16 @@ public class LensTranslatingGraphMousePlugin extends TranslatingGraphMousePlugin
       lens.setRadius(distanceFromCenter + edgeOffset);
       dragOnEdge = true;
     }
+    return dragOnLens || dragOnEdge;
   }
 
   /** unset the 'down' point and change the cursoe back to the system default cursor */
   public void mouseReleased(MouseEvent e) {
     log.info("mouseReleased in {}", this.getClass().getName());
-    super.mouseReleased(e);
+    if (dragOnEdge || dragOnLens) {
+      e.consume();
+    }
+    //    super.mouseReleased(e);
     dragOnLens = false;
     dragOnEdge = false;
     edgeOffset = 0;
@@ -184,7 +192,7 @@ public class LensTranslatingGraphMousePlugin extends TranslatingGraphMousePlugin
 
         } else {
 
-          super.mouseDragged(e);
+          //          super.mouseDragged(e);
         }
       }
     }

@@ -1,6 +1,6 @@
 package org.jungrapht.samples.sugiyama.test.algorithms;
 
-import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,6 +28,7 @@ import org.jungrapht.visualization.layout.algorithms.sugiyama.Unaligned;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.VertexMetadata;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
+import org.jungrapht.visualization.layout.util.PropertyLoader;
 import org.jungrapht.visualization.layout.util.synthetics.Synthetic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +51,10 @@ import org.slf4j.LoggerFactory;
 public class TestSugiyamaRunnable<V, E> extends SugiyamaRunnable<V, E> implements Runnable {
 
   private static final Logger log = LoggerFactory.getLogger(TestSugiyamaRunnable.class);
+
+  static {
+    PropertyLoader.load();
+  }
 
   /**
    * a Builder to create a configured instance

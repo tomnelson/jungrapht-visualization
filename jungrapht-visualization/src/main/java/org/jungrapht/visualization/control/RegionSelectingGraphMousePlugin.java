@@ -1,6 +1,6 @@
 package org.jungrapht.visualization.control;
 
-import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -15,6 +15,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import javax.swing.*;
 import org.jungrapht.visualization.MultiLayerTransformer;
+import org.jungrapht.visualization.PropertyLoader;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -36,6 +37,10 @@ public class RegionSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
     implements MouseListener, MouseMotionListener {
 
   private static final Logger log = LoggerFactory.getLogger(RegionSelectingGraphMousePlugin.class);
+
+  static {
+    PropertyLoader.load();
+  }
 
   public static class Builder<
       V, E, T extends RegionSelectingGraphMousePlugin, B extends Builder<V, E, T, B>> {
@@ -104,8 +109,8 @@ public class RegionSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
   /** the Paintable for the lens picking rectangle */
   protected VisualizationServer.Paintable lensPaintable;
 
-  protected Rectangle2D footprintRectangle = new Rectangle2D.Float();
-  protected VisualizationViewer.Paintable pickFootprintPaintable;
+  //  protected Rectangle2D footprintRectangle = new Rectangle2D.Float();
+  //  protected VisualizationViewer.Paintable pickFootprintPaintable;
 
   /** color for the picking rectangle */
   protected Color lensColor = Color.cyan;
@@ -193,28 +198,31 @@ public class RegionSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
    * @param e the event
    */
   public void mousePressed(MouseEvent e) {
-    down = e.getPoint();
-    log.trace("mouse pick at screen coords {}", e.getPoint());
-    deltaDown = down;
-    VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
-    multiSelectionStrategy = vv.getMultiSelectionStrategySupplier().get();
-    TransformSupport<V, E> transformSupport = vv.getTransformSupport();
-    viewRectangle = multiSelectionStrategy.getInitialShape(e.getPoint());
+    if (e.getModifiersEx() == regionSelectionMask || e.getModifiersEx() == addRegionSelectionMask) {
+      down = e.getPoint();
+      log.trace("mouse pick at screen coords {}", e.getPoint());
+      deltaDown = down;
+      VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
+      multiSelectionStrategy = vv.getMultiSelectionStrategySupplier().get();
+      TransformSupport<V, E> transformSupport = vv.getTransformSupport();
+      viewRectangle = multiSelectionStrategy.getInitialShape(e.getPoint());
 
-    MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
+      MultiLayerTransformer multiLayerTransformer =
+          vv.getRenderContext().getMultiLayerTransformer();
 
-    // subclass can override to account for view distortion effects
-    updatePickingTargets(vv, multiLayerTransformer, down, down);
+      // subclass can override to account for view distortion effects
+      updatePickingTargets(vv, multiLayerTransformer, down, down);
 
-    // subclass can override to account for view distortion effects
-    // layoutPoint is the mouse event point projected on the layout coordinate system
-    //    Point2D layoutPoint = transformSupport.inverseTransform(vv, down);
-    //    log.trace("layout coords of mouse click {}", layoutPoint);
+      // subclass can override to account for view distortion effects
+      // layoutPoint is the mouse event point projected on the layout coordinate system
+      //    Point2D layoutPoint = transformSupport.inverseTransform(vv, down);
+      //    log.trace("layout coords of mouse click {}", layoutPoint);
 
-    // test for vertex select or vertex add to selection
-    //    boolean vertexWasSelected = false;
-    //    boolean edgeWasSelected = false;
-    vv.addPostRenderPaintable(lensPaintable);
+      // test for vertex select or vertex add to selection
+      //    boolean vertexWasSelected = false;
+      //    boolean edgeWasSelected = false;
+      vv.addPostRenderPaintable(lensPaintable);
+    }
   }
 
   /**
@@ -257,7 +265,7 @@ public class RegionSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
     down = null;
     layoutTargetShape = multiLayerTransformer.inverseTransform(viewRectangle);
     vv.removePostRenderPaintable(lensPaintable);
-    vv.removePostRenderPaintable(pickFootprintPaintable);
+    //    vv.removePostRenderPaintable(pickFootprintPaintable);
     vv.repaint();
   }
 
@@ -266,21 +274,23 @@ public class RegionSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
    * is not over a Vertex, draw the rectangle to select multiple Vertices
    */
   public void mouseDragged(MouseEvent e) {
-    log.trace("mouseDragged");
-    VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
-    if (!locked) {
+    if (e.getModifiersEx() == regionSelectionMask || e.getModifiersEx() == addRegionSelectionMask) {
+      log.trace("mouseDragged");
+      VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
+      if (!locked) {
 
-      MultiLayerTransformer multiLayerTransformer =
-          vv.getRenderContext().getMultiLayerTransformer();
-      Point2D p = e.getPoint();
-      log.trace("view p for drag event is {}", p);
-      log.trace("down is {}", down);
-      if (down != null) {
-        Point2D out = e.getPoint();
-        multiSelectionStrategy.updateShape(down, out);
-        layoutTargetShape = multiLayerTransformer.inverseTransform(viewRectangle);
+        MultiLayerTransformer multiLayerTransformer =
+            vv.getRenderContext().getMultiLayerTransformer();
+        Point2D p = e.getPoint();
+        log.trace("view p for drag event is {}", p);
+        log.trace("down is {}", down);
+        if (down != null) {
+          Point2D out = e.getPoint();
+          multiSelectionStrategy.updateShape(down, out);
+          layoutTargetShape = multiLayerTransformer.inverseTransform(viewRectangle);
+        }
+        vv.repaint();
       }
-      vv.repaint();
     }
   }
 
@@ -380,5 +390,17 @@ public class RegionSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
   /** @param locked The locked to set. */
   public void setLocked(boolean locked) {
     this.locked = locked;
+  }
+
+  public String toString() {
+    return getClass().getSimpleName()
+        + "\n regionSelectionMask :"
+        + Modifiers.maskStrings.get(regionSelectionMask)
+        + "\n addRegionSelectionMask:"
+        + Modifiers.maskStrings.get(addRegionSelectionMask)
+        + "\n regionSelectionCompleteMask:"
+        + Modifiers.maskStrings.get(regionSelectionCompleteMask)
+        + "\n addRegionSelectionCompleteMask:"
+        + Modifiers.maskStrings.get(addRegionSelectionCompleteMask);
   }
 }

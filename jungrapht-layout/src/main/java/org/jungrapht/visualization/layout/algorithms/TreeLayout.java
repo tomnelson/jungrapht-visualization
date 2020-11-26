@@ -1,6 +1,6 @@
 package org.jungrapht.visualization.layout.algorithms;
 
-import static org.jungrapht.visualization.layout.model.LayoutModel.PREFIX;
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
 
 import java.util.Comparator;
 import java.util.Map;

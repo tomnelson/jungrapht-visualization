@@ -1,6 +1,6 @@
 package org.jungrapht.samples.sugiyama.test.algorithms;
 
-import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import org.jgrapht.Graph;
+import org.jungrapht.visualization.PropertyLoader;
 import org.jungrapht.visualization.layout.algorithms.EdgeAwareLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.ArticulatedEdge;
@@ -42,6 +43,10 @@ public class BrandesKopfLayoutAlgorithm<V, E>
         VertexBoundsFunctionConsumer<V> {
 
   private static final Logger log = LoggerFactory.getLogger(BrandesKopfLayoutAlgorithm.class);
+
+  static {
+    PropertyLoader.load();
+  }
 
   private static final Rectangle IDENTITY_SHAPE = Rectangle.IDENTITY;
 

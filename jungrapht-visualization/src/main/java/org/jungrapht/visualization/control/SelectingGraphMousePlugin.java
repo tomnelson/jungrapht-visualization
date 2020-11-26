@@ -1,6 +1,6 @@
 package org.jungrapht.visualization.control;
 
-import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -15,6 +15,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import javax.swing.*;
 import org.jungrapht.visualization.MultiLayerTransformer;
+import org.jungrapht.visualization.PropertyLoader;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
@@ -38,6 +39,10 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     implements MouseListener, MouseMotionListener {
 
   private static final Logger log = LoggerFactory.getLogger(SelectingGraphMousePlugin.class);
+
+  static {
+    PropertyLoader.load();
+  }
 
   public static class Builder<
       V, E, T extends SelectingGraphMousePlugin, B extends Builder<V, E, T, B>> {
@@ -462,5 +467,13 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   /** @param locked The locked to set. */
   public void setLocked(boolean locked) {
     this.locked = locked;
+  }
+
+  public String toString() {
+    return getClass().getSimpleName()
+        + "\n singleSelectionMask :"
+        + Modifiers.maskStrings.get(singleSelectionMask)
+        + "\n addSingleSelectionMask:"
+        + Modifiers.maskStrings.get(addSingleSelectionMask);
   }
 }

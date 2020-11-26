@@ -1,6 +1,6 @@
 package org.jungrapht.samples.sugiyama.test.algorithms;
 
-import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,6 +30,7 @@ import org.jungrapht.visualization.layout.algorithms.sugiyama.VertexMetadata;
 import org.jungrapht.visualization.layout.algorithms.util.Attributed;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
+import org.jungrapht.visualization.layout.util.PropertyLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,6 +53,9 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
 
   private static final Logger log = LoggerFactory.getLogger(TestEiglspergerRunnable.class);
 
+  static {
+    PropertyLoader.load();
+  }
   /**
    * a Builder to create a configured instance
    *

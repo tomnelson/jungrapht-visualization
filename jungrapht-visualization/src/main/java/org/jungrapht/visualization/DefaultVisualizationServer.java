@@ -10,6 +10,7 @@
 package org.jungrapht.visualization;
 
 import static org.jungrapht.visualization.MultiLayerTransformer.*;
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
 
 import java.awt.*;
 import java.awt.RenderingHints.Key;
@@ -20,7 +21,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.InputStream;
 import java.util.*;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -78,6 +78,10 @@ class DefaultVisualizationServer<V, E> extends JPanel
 
   static Logger log = LoggerFactory.getLogger(DefaultVisualizationServer.class);
 
+  static {
+    PropertyLoader.load();
+  }
+
   private static final String VERTEX_SPATIAL_SUPPORT = PREFIX + "vertexSpatialSupport";
   private static final String EDGE_SPATIAL_SUPPORT = PREFIX + "edgeSpatialSupport";
   private static final String PROPERTIES_FILE_NAME =
@@ -87,38 +91,6 @@ class DefaultVisualizationServer<V, E> extends JPanel
   private static final String LIGHTWEIGHT_SCALE_THRESHOLD = PREFIX + "lightweightScaleThreshold";
 
   private static final String DOUBLE_BUFFERED = PREFIX + "doubleBuffered";
-
-  private static boolean loadFromAppName() {
-    try {
-      String launchProgram = System.getProperty("sun.java.command");
-      if (launchProgram != null && !launchProgram.isEmpty()) {
-        launchProgram = launchProgram.substring(launchProgram.lastIndexOf('.') + 1) + ".properties";
-        InputStream stream = DefaultRenderContext.class.getResourceAsStream("/" + launchProgram);
-        System.getProperties().load(stream);
-
-        Properties props = System.getProperties();
-        return true;
-      }
-    } catch (Exception ex) {
-    }
-    return false;
-  }
-
-  private static boolean loadFromDefault() {
-    try {
-      InputStream stream =
-          DefaultRenderContext.class.getResourceAsStream("/" + PROPERTIES_FILE_NAME);
-      System.getProperties().load(stream);
-      return true;
-    } catch (Exception ex) {
-    }
-    return false;
-  }
-
-  static {
-    loadFromDefault();
-    loadFromAppName();
-  }
 
   protected ChangeEventSupport changeSupport = new DefaultChangeEventSupport(this);
 

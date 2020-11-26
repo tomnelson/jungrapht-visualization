@@ -11,7 +11,7 @@
  */
 package org.jungrapht.visualization.control;
 
-import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -26,6 +26,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import javax.swing.*;
 import org.jungrapht.visualization.MultiLayerTransformer;
+import org.jungrapht.visualization.PropertyLoader;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
@@ -50,6 +51,41 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
     implements MouseListener, MouseMotionListener {
 
   private static final Logger log = LoggerFactory.getLogger(VertexSelectingGraphMousePlugin.class);
+
+  static {
+    PropertyLoader.load();
+  }
+
+  public static class Builder<
+      V, E, T extends VertexSelectingGraphMousePlugin, B extends Builder<V, E, T, B>> {
+    protected int singleSelectionMask =
+        Modifiers.masks.get(System.getProperty(PREFIX + "singleSelectionMask", "MB1_MENU"));
+    protected int addSingleSelectionMask =
+        Modifiers.masks.get(
+            System.getProperty(PREFIX + "addSingleSelectionMask", "MB1_SHIFT_MENU"));
+
+    public B self() {
+      return (B) this;
+    }
+
+    public B singleSelectionMask(int singleSelectionMask) {
+      this.singleSelectionMask = singleSelectionMask;
+      return self();
+    }
+
+    public B addSingleSelectionMask(int addSingleSelectionMask) {
+      this.addSingleSelectionMask = addSingleSelectionMask;
+      return self();
+    }
+
+    public T build() {
+      return (T) new VertexSelectingGraphMousePlugin(this);
+    }
+  }
+
+  public static <V, E> Builder<V, E, ?, ?> builder() {
+    return new Builder<>();
+  }
 
   private static final int TOO_CLOSE_LIMIT = 5;
 
@@ -88,22 +124,19 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
   protected int regionSelectionCompleteMask;
   protected int addRegionSelectionCompleteMask;
 
+  public VertexSelectingGraphMousePlugin(Builder<V, E, ?, ?> builder) {
+    this(builder.singleSelectionMask, builder.addSingleSelectionMask);
+  }
+
+  public VertexSelectingGraphMousePlugin() {
+    this(VertexSelectingGraphMousePlugin.builder());
+  }
+
   /** create an instance with overrides */
-  public VertexSelectingGraphMousePlugin(
-      int singleSelectionMask,
-      int addSingleSelectionMask,
-      int regionSelectionMask,
-      int addRegionSelectionMask,
-      int regionSelectionCompleteMask,
-      int addRegionSelectionCompleteMask) {
+  public VertexSelectingGraphMousePlugin(int singleSelectionMask, int addSingleSelectionMask) {
     super(singleSelectionMask);
     this.singleSelectionMask = singleSelectionMask;
     this.addSingleSelectionMask = addSingleSelectionMask;
-    this.regionSelectionMask = regionSelectionMask;
-    this.addRegionSelectionMask = addRegionSelectionMask;
-    this.regionSelectionCompleteMask = regionSelectionCompleteMask;
-    this.addRegionSelectionCompleteMask = addRegionSelectionCompleteMask;
-    this.lensPaintable = new LensPaintable();
     this.pickFootprintPaintable = new FootprintPaintable();
     this.cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
   }

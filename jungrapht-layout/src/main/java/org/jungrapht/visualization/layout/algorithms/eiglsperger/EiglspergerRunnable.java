@@ -1,6 +1,6 @@
 package org.jungrapht.visualization.layout.algorithms.eiglsperger;
 
-import static org.jungrapht.visualization.layout.model.LayoutModel.PREFIX;
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +32,7 @@ import org.jungrapht.visualization.layout.algorithms.util.LayeredRunnable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
+import org.jungrapht.visualization.layout.util.PropertyLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +55,9 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
 
   private static final Logger log = LoggerFactory.getLogger(EiglspergerRunnable.class);
 
+  static {
+    PropertyLoader.load();
+  }
   /**
    * a Builder to create a configured instance
    *
@@ -64,6 +68,7 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
    */
   public static class Builder<
       V, E, T extends EiglspergerRunnable<V, E>, B extends Builder<V, E, T, B>> {
+
     protected LayoutModel<V> layoutModel;
     protected Function<V, Rectangle> vertexShapeFunction;
     protected boolean straightenEdges;

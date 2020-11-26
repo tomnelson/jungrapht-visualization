@@ -1,6 +1,8 @@
 package org.jungrapht.visualization.control;
 
 import java.awt.event.InputEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * an implementation of the PluggableGraphMouse that includes plugins for manipulating a view that
@@ -12,6 +14,7 @@ import java.awt.event.InputEvent;
  */
 public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> implements LensGraphMouse {
 
+  private static final Logger log = LoggerFactory.getLogger(DefaultLensGraphMouse.class);
   /**
    * Build an instance of a RefactoredDefaultLEnsGraphMouse
    *
@@ -45,8 +48,8 @@ public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> impleme
   /** not included in the base class */
   protected LensMagnificationGraphMousePlugin magnificationPlugin;
 
-  protected LensSelectingGraphMousePlugin<V, E> lensSelectingGraphMousePlugin;
-  protected LensRegionSelectingGraphMousePlugin<V, E> lensRegionSelectingGraphMousePlugin;
+  //  protected AbstractGraphMousePlugin<V, E> lensSelectingGraphMousePlugin;
+  //  protected LensRegionSelectingGraphMousePlugin<V, E> lensRegionSelectingGraphMousePlugin;
   protected LensKillingGraphMousePlugin lensKillingGraphMousePlugin;
 
   public DefaultLensGraphMouse() {
@@ -101,10 +104,13 @@ public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> impleme
         xAxisScalingMask,
         yAxisScalingMask);
     this.magnificationPlugin = magnificationPlugin;
-    //    this.scalingPlugin = new PrevScalingGraphMousePlugin(new CrossoverScalingControl(), 0, in, out);
-    this.lensSelectingGraphMousePlugin =
-        new LensSelectingGraphMousePlugin<>(singleSelectionMask, addSingleSelectionMask);
-    this.lensRegionSelectingGraphMousePlugin =
+    this.selectingPlugin =
+        vertexSelectionOnly
+            ? new LensVertexSelectingGraphMousePlugin<V, E>(
+                singleSelectionMask, addSingleSelectionMask)
+            : new LensSelectingGraphMousePlugin<>(singleSelectionMask, addSingleSelectionMask);
+    new LensSelectingGraphMousePlugin<>(singleSelectionMask, addSingleSelectionMask);
+    this.regionSelectingPlugin =
         new LensRegionSelectingGraphMousePlugin<>(
             regionSelectionMask,
             addRegionSelectionMask,
@@ -118,13 +124,13 @@ public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> impleme
   }
 
   public void loadPlugins() {
-    add(selectingPlugin);
-    add(regionSelectingPlugin);
-    add(new TranslatingGraphMousePlugin(translatingMask));
     add(lensKillingGraphMousePlugin);
-    add(lensSelectingGraphMousePlugin);
-    add(lensRegionSelectingGraphMousePlugin);
-    add(new LensTranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK));
+    add(new LensTranslatingGraphMousePlugin());
+    add(selectingPlugin);
+    log.info("added " + selectingPlugin);
+    add(regionSelectingPlugin);
+    log.info("added " + regionSelectingPlugin);
+    add(new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK));
     add(magnificationPlugin);
     add(scalingPlugin);
     setPluginsLoaded();

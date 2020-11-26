@@ -9,6 +9,8 @@
  */
 package org.jungrapht.visualization;
 
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
+
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -38,6 +40,10 @@ public interface VisualizationViewer<V, E> extends VisualizationServer<V, E> {
    */
   class Builder<V, E, T extends DefaultVisualizationViewer<V, E>, B extends Builder<V, E, T, B>>
       extends DefaultVisualizationServer.Builder<V, E, T, B> {
+
+    static {
+      PropertyLoader.load();
+    }
 
     private static final String ARBITRARY_SHAPE_SELECTION = PREFIX + "arbitraryShapeSelection";
 

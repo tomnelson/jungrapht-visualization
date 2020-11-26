@@ -11,7 +11,7 @@
  */
 package org.jungrapht.visualization.control;
 
-import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
 
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
@@ -19,6 +19,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
+import org.jungrapht.visualization.PropertyLoader;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.slf4j.Logger;
@@ -39,10 +40,14 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
 
   private static final Logger log = LoggerFactory.getLogger(ScalingGraphMousePlugin.class);
 
+  static {
+    PropertyLoader.load();
+  }
+
   public static class Builder {
     ScalingControl scalingControl = new CrossoverScalingControl();
     protected int xAxisScalingMask =
-        Modifiers.masks.get(System.getProperty(PREFIX + "xAxisScalingMask", "CTRL"));
+        Modifiers.masks.get(System.getProperty(PREFIX + "xAxisScalingMask", "MENU"));
     protected int yAxisScalingMask =
         Modifiers.masks.get(System.getProperty(PREFIX + "yAxisScalingMask", "ALT"));
     protected int scalingMask =

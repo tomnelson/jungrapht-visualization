@@ -48,8 +48,6 @@ public interface VisualizationServer<V, E>
         LayoutSizeChange.Listener,
         RenderContextStateChange.Listener {
 
-  String PREFIX = "jungrapht.";
-
   /**
    * A builder for creating instances of a {@link VisualizationServer} with user defined properties
    *
@@ -74,7 +72,9 @@ public interface VisualizationServer<V, E>
     protected Function<Graph<V, ?>, Pair<Integer>> initialDimensionFunction;
 
     /** create an instance with no args */
-    protected Builder() {}
+    protected Builder() {
+      PropertyLoader.load();
+    }
 
     /**
      * create an instance of the builder with the passed {@link Graph}

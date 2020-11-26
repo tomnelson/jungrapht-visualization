@@ -1,6 +1,6 @@
 package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
-import static org.jungrapht.visualization.layout.model.LayoutModel.PREFIX;
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +24,7 @@ import org.jungrapht.visualization.layout.algorithms.util.LayeredRunnable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
+import org.jungrapht.visualization.layout.util.PropertyLoader;
 import org.jungrapht.visualization.layout.util.synthetics.Synthetic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +49,9 @@ public class SugiyamaRunnable<V, E> implements LayeredRunnable<E> {
 
   private static final Logger log = LoggerFactory.getLogger(SugiyamaRunnable.class);
 
+  static {
+    PropertyLoader.load();
+  }
   /**
    * a Builder to create a configured instance
    *
@@ -58,6 +62,10 @@ public class SugiyamaRunnable<V, E> implements LayeredRunnable<E> {
    */
   public static class Builder<
       V, E, T extends SugiyamaRunnable<V, E>, B extends Builder<V, E, T, B>> {
+    static {
+      PropertyLoader.load();
+    }
+
     protected LayoutModel<V> layoutModel;
     protected Function<V, Rectangle> vertexShapeFunction;
     protected Predicate<V> vertexPredicate; // can be null

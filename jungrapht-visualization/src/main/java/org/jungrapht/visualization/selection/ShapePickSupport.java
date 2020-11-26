@@ -12,7 +12,7 @@
 package org.jungrapht.visualization.selection;
 
 import static org.jungrapht.visualization.MultiLayerTransformer.Layer;
-import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -34,6 +34,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.MultiLayerTransformer;
+import org.jungrapht.visualization.PropertyLoader;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.control.GraphElementAccessor;
@@ -58,6 +59,10 @@ import org.slf4j.LoggerFactory;
  * @param <E> edge type
  */
 public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
+
+  static {
+    PropertyLoader.load();
+  }
 
   private static final String PICK_AREA_SIZE = PREFIX + "pickAreaSize";
 

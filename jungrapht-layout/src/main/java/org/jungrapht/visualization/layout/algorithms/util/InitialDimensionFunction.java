@@ -1,17 +1,22 @@
 package org.jungrapht.visualization.layout.algorithms.util;
 
-import static org.jungrapht.visualization.layout.model.LayoutModel.PREFIX;
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
 
 import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.model.Dimension;
 import org.jungrapht.visualization.layout.model.Rectangle;
+import org.jungrapht.visualization.layout.util.PropertyLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class InitialDimensionFunction<V> implements Function<Graph<V, ?>, Pair<Integer>> {
 
   private static final Logger log = LoggerFactory.getLogger(InitialDimensionFunction.class);
+
+  static {
+    PropertyLoader.load();
+  }
 
   private static final Rectangle IDENTITY_SHAPE = Rectangle.of(-5, -5, 10, 10);
 

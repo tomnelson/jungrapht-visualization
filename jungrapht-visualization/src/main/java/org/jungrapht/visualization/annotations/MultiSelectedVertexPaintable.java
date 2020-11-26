@@ -2,7 +2,7 @@ package org.jungrapht.visualization.annotations;
 
 import static java.awt.RenderingHints.KEY_ANTIALIASING;
 import static java.awt.RenderingHints.VALUE_ANTIALIAS_ON;
-import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
 import static org.jungrapht.visualization.renderers.BiModalRenderer.LIGHTWEIGHT;
 
 import java.awt.*;
@@ -13,6 +13,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.swing.*;
 import org.jungrapht.visualization.MultiLayerTransformer;
+import org.jungrapht.visualization.PropertyLoader;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationServer;
@@ -35,6 +36,9 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
 
   private static final Logger log = LoggerFactory.getLogger(MultiSelectedVertexPaintable.class);
 
+  static {
+    PropertyLoader.load();
+  }
   /**
    * builder for the {@code SelectedVertexPaintable}
    *

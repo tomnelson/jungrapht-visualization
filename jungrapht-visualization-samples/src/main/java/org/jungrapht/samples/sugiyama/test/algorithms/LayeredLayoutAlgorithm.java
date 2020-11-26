@@ -1,6 +1,6 @@
 package org.jungrapht.samples.sugiyama.test.algorithms;
 
-import static org.jungrapht.visualization.VisualizationServer.PREFIX;
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
 
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
@@ -32,6 +32,7 @@ import org.jungrapht.visualization.layout.algorithms.util.VertexBoundsFunctionCo
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
+import org.jungrapht.visualization.layout.util.PropertyLoader;
 import org.jungrapht.visualization.layout.util.synthetics.Synthetic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +49,10 @@ public class LayeredLayoutAlgorithm<V, E>
         VertexBoundsFunctionConsumer<V> {
 
   private static final Logger log = LoggerFactory.getLogger(LayeredLayoutAlgorithm.class);
+
+  static {
+    PropertyLoader.load();
+  }
 
   private static final Shape IDENTITY_SHAPE = new Ellipse2D.Double();
 
