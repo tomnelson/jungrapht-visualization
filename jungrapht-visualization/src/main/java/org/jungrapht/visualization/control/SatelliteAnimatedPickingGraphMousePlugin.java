@@ -47,7 +47,7 @@ public class SatelliteAnimatedPickingGraphMousePlugin<V, E>
   /** override subclass method to translate the master view instead of this satellite view */
   @SuppressWarnings("unchecked")
   public void mouseReleased(MouseEvent e) {
-    if (e.getModifiersEx() == modifiers) {
+    if (e.getModifiersEx() == selectionModifiers) {
       final VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
       if (vv instanceof SatelliteVisualizationViewer) {
         final VisualizationViewer<V, E> vvMaster =

@@ -71,6 +71,8 @@ public class AnnotatingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   /** set to true when the AnnotationPaintable has been added to the view component */
   protected boolean added = false;
 
+  protected int modifiers;
+
   /**
    * Create an instance with defaults for primary (button 1) and secondary (button 1 + shift)
    * selection.
@@ -93,7 +95,7 @@ public class AnnotatingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    */
   public AnnotatingGraphMousePlugin(
       RenderContext<V, E> rc, int selectionModifiers, int additionalModifiers) {
-    super(selectionModifiers);
+    this.modifiers = selectionModifiers;
     this.rc = rc;
     this.basicTransformer = rc.getMultiLayerTransformer();
     this.additionalModifiers = additionalModifiers;

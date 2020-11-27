@@ -29,6 +29,7 @@ public class EditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   protected VertexSupport<V, E> vertexSupport;
   protected EdgeSupport<V, E> edgeSupport;
   private Creating createMode = Creating.UNDETERMINED;
+  protected int modifiers;
 
   private enum Creating {
     EDGE,
@@ -56,7 +57,7 @@ public class EditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    */
   public EditingGraphMousePlugin(
       int modifiers, Supplier<V> vertexFactory, Supplier<E> edgeFactory) {
-    super(modifiers);
+    this.modifiers = modifiers;
     this.cursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
     this.vertexSupport = new SimpleVertexSupport<>(vertexFactory);
     this.edgeSupport = new SimpleEdgeSupport<>(edgeFactory);
@@ -68,19 +69,17 @@ public class EditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    */
   @Override
   public boolean checkModifiers(MouseEvent e) {
-    return (e.getModifiersEx() & modifiers) == modifiers;
+    return e.getModifiersEx() == modifiers;
   }
 
   /**
    * If the mouse is pressed in an empty area, create a new vertex there. If the mouse is pressed on
    * an existing vertex, prepare to create an edge from that vertex to another
    */
-  @SuppressWarnings("unchecked")
   public void mousePressed(MouseEvent e) {
     log.trace("mousePressed in {}", this.getClass().getName());
     if (checkModifiers(e)) {
       final VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
-      //      vv.getVertexSpatial().setActive(true);
       final LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
 
       Point2D down = e.getPoint();

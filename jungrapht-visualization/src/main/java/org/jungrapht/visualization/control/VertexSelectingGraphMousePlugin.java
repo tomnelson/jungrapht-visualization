@@ -134,7 +134,6 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
 
   /** create an instance with overrides */
   public VertexSelectingGraphMousePlugin(int singleSelectionMask, int addSingleSelectionMask) {
-    super(singleSelectionMask);
     this.singleSelectionMask = singleSelectionMask;
     this.addSingleSelectionMask = addSingleSelectionMask;
     this.pickFootprintPaintable = new FootprintPaintable();

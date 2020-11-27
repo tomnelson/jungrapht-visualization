@@ -137,7 +137,6 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
       int yAxisScalingMask,
       float in,
       float out) {
-    super(scalingMask);
     this.scaler = scaler;
     this.scalingMask = scalingMask;
     this.xAxisScalingMask = xAxisScalingMask;

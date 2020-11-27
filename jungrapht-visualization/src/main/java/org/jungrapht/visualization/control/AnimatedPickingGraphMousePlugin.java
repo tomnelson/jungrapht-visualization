@@ -39,6 +39,8 @@ public class AnimatedPickingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
   /** the selected Vertex */
   protected V vertex;
 
+  protected int selectionModifiers;
+
   /** Creates an instance with default modifiers of BUTTON1_DOWN_MASK and CTRL_DOWN_MASK */
   public AnimatedPickingGraphMousePlugin() {
     this(InputEvent.BUTTON1_DOWN_MASK | InputEvent.CTRL_DOWN_MASK);
@@ -50,7 +52,7 @@ public class AnimatedPickingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
    * @param selectionModifiers the mouse event modifiers to use.
    */
   public AnimatedPickingGraphMousePlugin(int selectionModifiers) {
-    super(selectionModifiers);
+    this.selectionModifiers = selectionModifiers;
     this.cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
   }
 
@@ -62,7 +64,7 @@ public class AnimatedPickingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
   @SuppressWarnings("unchecked")
   public void mousePressed(MouseEvent e) {
     log.trace("mousePressed in {}", this.getClass().getName());
-    if (e.getModifiersEx() == modifiers) {
+    if (e.getModifiersEx() == selectionModifiers) {
       VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
       LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
       GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();

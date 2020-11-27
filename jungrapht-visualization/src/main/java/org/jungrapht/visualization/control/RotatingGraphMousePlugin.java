@@ -42,6 +42,8 @@ public class RotatingGraphMousePlugin extends AbstractGraphMousePlugin
     implements MouseListener, MouseMotionListener {
 
   private static final Logger log = LoggerFactory.getLogger(RotatingGraphMousePlugin.class);
+
+  protected int modifiers;
   /** create an instance with default modifier values */
   public RotatingGraphMousePlugin() {
     this(MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.SHIFT_DOWN_MASK);
@@ -53,7 +55,7 @@ public class RotatingGraphMousePlugin extends AbstractGraphMousePlugin
    * @param modifiers the event modifiers to trigger rotation
    */
   public RotatingGraphMousePlugin(int modifiers) {
-    super(modifiers);
+    this.modifiers = modifiers;
     Dimension cd = Toolkit.getDefaultToolkit().getBestCursorSize(16, 16);
     BufferedImage cursorImage = new BufferedImage(cd.width, cd.height, BufferedImage.TYPE_INT_ARGB);
     Graphics2D g = cursorImage.createGraphics();

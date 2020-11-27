@@ -34,6 +34,9 @@ public class ViewTranslatingGraphMousePlugin extends AbstractGraphMousePlugin
     implements MouseListener, MouseMotionListener {
 
   private static final Logger log = LoggerFactory.getLogger(ViewTranslatingGraphMousePlugin.class);
+
+  protected int modifiers;
+
   /** */
   public ViewTranslatingGraphMousePlugin() {
     this(MouseEvent.BUTTON1_DOWN_MASK);
@@ -45,7 +48,7 @@ public class ViewTranslatingGraphMousePlugin extends AbstractGraphMousePlugin
    * @param modifiers the mouse event modifier to activate this function
    */
   public ViewTranslatingGraphMousePlugin(int modifiers) {
-    super(modifiers);
+    this.modifiers = modifiers;
     this.cursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
   }
 

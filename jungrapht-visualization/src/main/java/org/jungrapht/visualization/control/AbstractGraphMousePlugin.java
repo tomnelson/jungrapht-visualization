@@ -12,7 +12,6 @@ package org.jungrapht.visualization.control;
 
 import java.awt.Cursor;
 import java.awt.Point;
-import java.awt.event.MouseEvent;
 
 /**
  * a base class for GraphMousePlugin instances. Holds some members common to all GraphMousePlugins
@@ -21,55 +20,11 @@ import java.awt.event.MouseEvent;
  */
 public abstract class AbstractGraphMousePlugin implements GraphMousePlugin {
 
-  public abstract static class Selecting extends AbstractGraphMousePlugin {
-
-    /**
-     * Creates an instance with the specified mouse event modifiers.
-     *
-     * @param modifiers the mouse event modifiers to use
-     */
-    public Selecting(int modifiers) {
-      super(modifiers);
-    }
-  }
-
-  /** modifiers to compare against mouse event modifiers */
-  protected int modifiers;
-
   /** the location in the View where the mouse was pressed */
   protected Point down;
 
   /** the special cursor that plugins may display */
   protected Cursor cursor;
-
-  /**
-   * Creates an instance with the specified mouse event modifiers.
-   *
-   * @param modifiers the mouse event modifiers to use
-   */
-  public AbstractGraphMousePlugin(int modifiers) {
-    this.modifiers = modifiers;
-  }
-
-  /** getter for mouse modifiers */
-  @Override
-  public int getModifiersEx() {
-    return modifiers;
-  }
-
-  /** setter for mouse modifiers */
-  public void setModifiers(int modifiers) {
-    this.modifiers = modifiers;
-  }
-
-  /**
-   * check the mouse event modifiers against the instance member modifiers. Default implementation
-   * checks equality. Can be overridden to test with a mask
-   */
-  @Override
-  public boolean checkModifiers(MouseEvent e) {
-    return e.getModifiersEx() == modifiers;
-  }
 
   /** @return Returns the cursor. */
   public Cursor getCursor() {

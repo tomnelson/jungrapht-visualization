@@ -42,7 +42,6 @@ public class TranslatingGraphMousePlugin extends AbstractGraphMousePlugin
    * @param translatingMask the mouse event mask to activate. Default is BUTTON_ONE_DOWN
    */
   public TranslatingGraphMousePlugin(int translatingMask) {
-    super(translatingMask);
     this.translatingMask = translatingMask;
     log.trace("setModifiers({})", translatingMask);
     this.cursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);

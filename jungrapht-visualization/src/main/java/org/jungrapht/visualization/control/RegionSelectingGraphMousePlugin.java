@@ -88,17 +88,7 @@ public class RegionSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
     return new Builder<>();
   }
 
-  //  private static final String PICK_AREA_SIZE = PREFIX + "pickAreaSize";
-
-  //  protected int pickSize = Integer.getInteger(PICK_AREA_SIZE, 4);
-
-  //  /** the selected Vertex, if any */
-  //  protected V vertex;
-  //
-  //  /** the selected Edge, if any */
-  //  protected E edge;
-  //
-  //  /** controls whether the Vertices may be moved with the mouse */
+  /** controls whether the Vertices may be moved with the mouse */
   protected boolean locked;
 
   /** used to draw a rectangle to contain selected vertices */
@@ -148,7 +138,6 @@ public class RegionSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
       int addRegionSelectionMask,
       int regionSelectionCompleteMask,
       int addRegionSelectionCompleteMask) {
-    super(regionSelectionMask);
     this.regionSelectionMask = regionSelectionMask;
     this.addRegionSelectionMask = addRegionSelectionMask;
     this.regionSelectionCompleteMask = regionSelectionCompleteMask;

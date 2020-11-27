@@ -42,16 +42,11 @@ public class ShearingGraphMousePlugin extends AbstractGraphMousePlugin
     implements MouseListener, MouseMotionListener {
 
   private static final Logger log = LoggerFactory.getLogger(ShearingGraphMousePlugin.class);
-  private static int mask = MouseEvent.CTRL_DOWN_MASK;
+  protected int mask;
 
-  static {
-    if (System.getProperty("os.name").startsWith("Mac")) {
-      mask = MouseEvent.META_DOWN_MASK;
-    }
-  }
   /** create an instance with default modifier values */
   public ShearingGraphMousePlugin() {
-    this(MouseEvent.BUTTON1_DOWN_MASK | mask);
+    this(MouseEvent.BUTTON1_DOWN_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx());
   }
 
   /**
@@ -60,7 +55,7 @@ public class ShearingGraphMousePlugin extends AbstractGraphMousePlugin
    * @param modifiers the mouse modifiers to use
    */
   public ShearingGraphMousePlugin(int modifiers) {
-    super(modifiers);
+    this.mask = modifiers;
     Dimension cd = Toolkit.getDefaultToolkit().getBestCursorSize(16, 16);
     BufferedImage cursorImage = new BufferedImage(cd.width, cd.height, BufferedImage.TYPE_INT_ARGB);
     Graphics2D g = cursorImage.createGraphics();

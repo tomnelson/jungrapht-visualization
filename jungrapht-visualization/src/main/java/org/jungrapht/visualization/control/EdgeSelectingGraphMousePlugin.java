@@ -80,7 +80,6 @@ public class EdgeSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugi
    * additional selection
    */
   public EdgeSelectingGraphMousePlugin(int singleSelectionMask, int addSingleSelectionMask) {
-    super(singleSelectionMask);
     this.singleSelectionMask = singleSelectionMask;
     this.addSingleSelectionMask = addSingleSelectionMask;
     this.pickFootprintPaintable = new FootprintPaintable();

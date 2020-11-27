@@ -43,6 +43,8 @@ public class LabelEditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
 
   protected Map<E, String> edgeLabelMap;
 
+  protected int selectionModifiers;
+
   /** create an instance with default settings */
   public LabelEditingGraphMousePlugin(Map<V, String> vertexLabelMap, Map<E, String> edgeLabelMap) {
     this(vertexLabelMap, edgeLabelMap, 0);
@@ -55,7 +57,7 @@ public class LabelEditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    */
   public LabelEditingGraphMousePlugin(
       Map<V, String> vertexLabelMap, Map<E, String> edgeLabelMap, int selectionModifiers) {
-    super(selectionModifiers);
+    this.selectionModifiers = selectionModifiers;
     this.vertexLabelMap = vertexLabelMap;
     this.edgeLabelMap = edgeLabelMap;
     this.cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);

@@ -18,12 +18,14 @@ public abstract class AbstractPopupGraphMousePlugin extends AbstractGraphMousePl
 
   private static Logger log = LoggerFactory.getLogger(AbstractGraphMousePlugin.class);
 
+  protected int modifiers;
+
   public AbstractPopupGraphMousePlugin() {
     this(MouseEvent.BUTTON3_DOWN_MASK);
   }
 
   public AbstractPopupGraphMousePlugin(int modifiers) {
-    super(modifiers);
+    this.modifiers = modifiers;
   }
 
   public void mousePressed(MouseEvent e) {

@@ -36,6 +36,7 @@ public class LensMagnificationGraphMousePlugin extends AbstractGraphMousePlugin
   protected final float floor;
   protected final float ceiling;
   protected final float delta;
+  protected int modifiers;
 
   /**
    * Creates an instance with modifier of CTRL_DOWN_MASK, and default min/max/delta zoom values of
@@ -75,7 +76,7 @@ public class LensMagnificationGraphMousePlugin extends AbstractGraphMousePlugin
    * @param delta the change in zoom value caused by each mouse event
    */
   public LensMagnificationGraphMousePlugin(int modifiers, float floor, float ceiling, float delta) {
-    super(0);
+    this.modifiers = modifiers;
     this.floor = floor;
     this.ceiling = ceiling;
     this.delta = delta;

@@ -84,6 +84,8 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   /** the selected Vertex, if any */
   protected V vertex;
 
+  protected V deselectedVertex;
+
   /** the selected Edge, if any */
   protected E edge;
 
@@ -111,6 +113,8 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   protected int singleSelectionMask;
   protected int addSingleSelectionMask;
 
+  protected boolean vertexDragged;
+
   public SelectingGraphMousePlugin(Builder<V, E, ?, ?> builder) {
     this(builder.singleSelectionMask, builder.addSingleSelectionMask);
   }
@@ -121,11 +125,10 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   /**
    * create an instance with overrides
    *
-   * <p>// * @param selectionModifiers for primary selection // * @param addToSelectionModifiers for
-   * additional selection
+   * @param singleSelectionMask for primary selection of one vertex
+   * @param addSingleSelectionMask to add another vertex to the current selection
    */
   protected SelectingGraphMousePlugin(int singleSelectionMask, int addSingleSelectionMask) {
-    super(singleSelectionMask);
     this.singleSelectionMask = singleSelectionMask;
     this.addSingleSelectionMask = addSingleSelectionMask;
     this.pickFootprintPaintable = new FootprintPaintable();
@@ -240,7 +243,6 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
     MutableSelectedState<V> selectedVertexState = vv.getSelectedVertexState();
     LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
-    V vertex;
     if (pickSupport instanceof ShapePickSupport) {
       ShapePickSupport<V, E> shapePickSupport = (ShapePickSupport<V, E>) pickSupport;
       vertex = shapePickSupport.getVertex(layoutModel, footprintRectangle);
@@ -256,8 +258,10 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
         }
         selectedVertexState.select(vertex);
       } else {
-        // this vertex was selected before so unselect it
-        selectedVertexState.deselect(vertex);
+        // If this vertex is still around in mouseReleased, it will be deselected
+        // If this vertex was pressed again in order to drag it, it will be set
+        // to null in the mouseDragged method
+        deselectedVertex = vertex;
       }
       e.consume();
       return true;
@@ -308,6 +312,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
 
     VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
     MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
+    MutableSelectedState<V> ps = vv.getSelectedVertexState();
 
     log.trace("down:{} out:{}", down, out);
     if (vertex != null && !down.equals(out)) {
@@ -323,7 +328,6 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
       double dx = graphPoint.getX() - graphDown.getX();
       double dy = graphPoint.getY() - graphDown.getY();
       log.trace("dx, dy: {},{}", dx, dy);
-      MutableSelectedState<V> ps = vv.getSelectedVertexState();
 
       for (V v : ps.getSelected()) {
         org.jungrapht.visualization.layout.model.Point vp = layoutModel.apply(v);
@@ -338,6 +342,10 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     edge = null;
     layoutTargetShape = multiLayerTransformer.inverseTransform(viewRectangle);
     vv.removePostRenderPaintable(pickFootprintPaintable);
+    if (deselectedVertex != null) {
+      ps.deselect(deselectedVertex);
+    }
+
     vv.repaint();
   }
 
@@ -347,8 +355,10 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    */
   public void mouseDragged(MouseEvent e) {
     log.trace("mouseDragged");
+    deselectedVertex = null;
     VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
     if (!locked) {
+      MutableSelectedState<V> selectedVertexState = vv.getSelectedVertexState();
 
       MultiLayerTransformer multiLayerTransformer =
           vv.getRenderContext().getMultiLayerTransformer();
@@ -356,6 +366,8 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
       log.trace("view p for drag event is {}", p);
       log.trace("down is {}", down);
       if (vertex != null) {
+        selectedVertexState.select(vertex);
+        vertexDragged = true;
         // dragging points and changing their layout locations
         Point2D graphPoint = multiLayerTransformer.inverseTransform(p);
         log.trace("p in graph coords is {}", graphPoint);
