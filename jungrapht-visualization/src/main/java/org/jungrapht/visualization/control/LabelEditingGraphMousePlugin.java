@@ -16,7 +16,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Point2D;
 import java.util.Map;
-import java.util.function.Function;
 import javax.swing.JOptionPane;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationViewer;
@@ -82,14 +81,12 @@ public class LabelEditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
       LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
       GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
       if (pickSupport != null) {
-        Function<V, String> vs = vv.getRenderContext().getVertexLabelFunction();
         // p is the screen point for the mouse event
         Point2D p = e.getPoint();
 
         V vertex = pickSupport.getVertex(layoutModel, p.getX(), p.getY());
         if (vertex != null) {
-          String newLabel = vs.apply(vertex);
-          newLabel = JOptionPane.showInputDialog("New Vertex Label for " + vertex);
+          String newLabel = JOptionPane.showInputDialog("New Vertex Label for " + vertex);
           if (newLabel != null) {
             vertexLabelMap.put(vertex, newLabel);
             vv.repaint();

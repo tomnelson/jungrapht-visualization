@@ -11,6 +11,8 @@
  */
 package org.jungrapht.visualization.control;
 
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -42,20 +44,19 @@ public class ShearingGraphMousePlugin extends AbstractGraphMousePlugin
     implements MouseListener, MouseMotionListener {
 
   private static final Logger log = LoggerFactory.getLogger(ShearingGraphMousePlugin.class);
-  protected int mask;
+  protected int shearingMask =
+      Modifiers.masks.get(System.getProperty(PREFIX + "shearingMask", "MB1_MENU"));
 
   /** create an instance with default modifier values */
-  public ShearingGraphMousePlugin() {
-    this(MouseEvent.BUTTON1_DOWN_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx());
-  }
+  public ShearingGraphMousePlugin() {}
 
   /**
    * create an instance with passed modifier values
    *
-   * @param modifiers the mouse modifiers to use
+   * @param shearingMask the mouse modifiers to use
    */
-  public ShearingGraphMousePlugin(int modifiers) {
-    this.mask = modifiers;
+  public ShearingGraphMousePlugin(int shearingMask) {
+    this.shearingMask = shearingMask;
     Dimension cd = Toolkit.getDefaultToolkit().getBestCursorSize(16, 16);
     BufferedImage cursorImage = new BufferedImage(cd.width, cd.height, BufferedImage.TYPE_INT_ARGB);
     Graphics2D g = cursorImage.createGraphics();

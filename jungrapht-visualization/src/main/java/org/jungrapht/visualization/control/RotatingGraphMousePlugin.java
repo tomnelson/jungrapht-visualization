@@ -11,6 +11,8 @@
  */
 package org.jungrapht.visualization.control;
 
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -43,19 +45,19 @@ public class RotatingGraphMousePlugin extends AbstractGraphMousePlugin
 
   private static final Logger log = LoggerFactory.getLogger(RotatingGraphMousePlugin.class);
 
-  protected int modifiers;
+  protected int rotatingMask =
+      Modifiers.masks.get(System.getProperty(PREFIX + "rotatingMask", "MB1_SHIFT"));
+
   /** create an instance with default modifier values */
-  public RotatingGraphMousePlugin() {
-    this(MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.SHIFT_DOWN_MASK);
-  }
+  public RotatingGraphMousePlugin() {}
 
   /**
    * create an instance with passed zoom in/out values
    *
-   * @param modifiers the event modifiers to trigger rotation
+   * @param rotatingMask the event modifiers to trigger rotation
    */
-  public RotatingGraphMousePlugin(int modifiers) {
-    this.modifiers = modifiers;
+  public RotatingGraphMousePlugin(int rotatingMask) {
+    this.rotatingMask = rotatingMask;
     Dimension cd = Toolkit.getDefaultToolkit().getBestCursorSize(16, 16);
     BufferedImage cursorImage = new BufferedImage(cd.width, cd.height, BufferedImage.TYPE_INT_ARGB);
     Graphics2D g = cursorImage.createGraphics();
