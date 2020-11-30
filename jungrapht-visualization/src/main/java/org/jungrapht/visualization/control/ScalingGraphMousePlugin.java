@@ -19,9 +19,12 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import org.jungrapht.visualization.PropertyLoader;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
+import org.jungrapht.visualization.layout.model.LayoutModel;
+import org.jungrapht.visualization.selection.ShapePickSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +42,9 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
     implements MouseWheelListener, MouseListener {
 
   private static final Logger log = LoggerFactory.getLogger(ScalingGraphMousePlugin.class);
+
+  private static final String PICK_AREA_SIZE = PREFIX + "pickAreaSize";
+  protected int pickSize = Integer.getInteger(PICK_AREA_SIZE, 4);
 
   static {
     PropertyLoader.load();
@@ -157,7 +163,7 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
 
   /** zoom the display in or out, depending on the direction of the mouse wheel motion. */
   public void mouseWheelMoved(MouseWheelEvent e) {
-    boolean accepted = e.getModifiersEx() == scalingMask;
+    boolean accepted = checkModifiers(e);
     if (accepted) {
       ScalingControl scalingControl = scaler;
       float xin = in;
@@ -233,11 +239,60 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
 
     if (enableDoubleClickScaleReset) {
       if (e.getClickCount() == 2 && scaler instanceof CrossoverScalingControl) {
-        CrossoverScalingControl crossoverScalingControl = (CrossoverScalingControl) scaler;
-        crossoverScalingControl.reset((VisualizationServer) e.getSource(), e.getPoint());
-        e.consume();
+        if (!singleVertexSelection(e) && !singleEdgeSelection(e)) {
+          CrossoverScalingControl crossoverScalingControl = (CrossoverScalingControl) scaler;
+          crossoverScalingControl.reset((VisualizationServer) e.getSource(), e.getPoint());
+          e.consume();
+        }
       }
     }
+  }
+
+  protected <V, E> boolean singleVertexSelection(MouseEvent e) {
+    VisualizationServer<V, E> vv = (VisualizationServer<V, E>) e.getSource();
+    GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
+    LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
+    TransformSupport<V, E> transformSupport = vv.getTransformSupport();
+    Point2D layoutPoint = transformSupport.inverseTransform(vv, e.getPoint());
+    Rectangle2D footprintRectangle =
+        new Rectangle2D.Float(
+            (float) e.getPoint().x - pickSize / 2,
+            (float) e.getPoint().y - pickSize / 2,
+            pickSize,
+            pickSize);
+
+    V vertex;
+    if (pickSupport instanceof ShapePickSupport) {
+      ShapePickSupport<V, E> shapePickSupport = (ShapePickSupport<V, E>) pickSupport;
+      vertex = shapePickSupport.getVertex(layoutModel, footprintRectangle);
+    } else {
+      vertex = pickSupport.getVertex(layoutModel, layoutPoint.getX(), layoutPoint.getY());
+    }
+    return vertex != null;
+  }
+
+  protected <V, E> boolean singleEdgeSelection(MouseEvent e) {
+    VisualizationServer<V, E> vv = (VisualizationServer<V, E>) e.getSource();
+    GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
+    LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
+    TransformSupport<V, E> transformSupport = vv.getTransformSupport();
+    Point2D layoutPoint = transformSupport.inverseTransform(vv, e.getPoint());
+    Rectangle2D footprintRectangle =
+        new Rectangle2D.Float(
+            (float) e.getPoint().x - pickSize / 2,
+            (float) e.getPoint().y - pickSize / 2,
+            pickSize,
+            pickSize);
+
+    E edge;
+    if (pickSupport instanceof ShapePickSupport) {
+      ShapePickSupport<V, E> shapePickSupport = (ShapePickSupport<V, E>) pickSupport;
+      edge = shapePickSupport.getEdge(layoutModel, footprintRectangle);
+    } else {
+      edge = pickSupport.getEdge(layoutModel, layoutPoint.getX(), layoutPoint.getY());
+    }
+
+    return edge != null;
   }
 
   /**
