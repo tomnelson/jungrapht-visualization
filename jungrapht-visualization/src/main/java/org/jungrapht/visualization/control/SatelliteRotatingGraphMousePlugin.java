@@ -29,8 +29,8 @@ public class SatelliteRotatingGraphMousePlugin extends RotatingGraphMousePlugin 
     super();
   }
 
-  public SatelliteRotatingGraphMousePlugin(int modifiers) {
-    super(modifiers);
+  public SatelliteRotatingGraphMousePlugin(int rotatingMask) {
+    super(rotatingMask);
   }
   /**
    * check the modifiers. If accepted, use the mouse drag motion to rotate the graph in the master
@@ -41,7 +41,7 @@ public class SatelliteRotatingGraphMousePlugin extends RotatingGraphMousePlugin 
       return;
     }
     VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
-    boolean accepted = checkModifiers(e);
+    boolean accepted = e.getModifiersEx() == rotatingMask;
     if (accepted) {
       if (vv instanceof SatelliteVisualizationViewer) {
         VisualizationViewer<?, ?> vvMaster = ((SatelliteVisualizationViewer<?, ?>) vv).getMaster();

@@ -118,7 +118,7 @@ public class RotatingGraphMousePlugin extends AbstractGraphMousePlugin
     log.trace("mousePressed in {}", this.getClass().getName());
 
     VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
-    boolean accepted = checkModifiers(e);
+    boolean accepted = e.getModifiersEx() == rotatingMask;
     down = e.getPoint();
     if (accepted) {
       vv.setCursor(cursor);
@@ -139,7 +139,7 @@ public class RotatingGraphMousePlugin extends AbstractGraphMousePlugin
       return;
     }
     VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
-    boolean accepted = checkModifiers(e);
+    boolean accepted = e.getModifiersEx() == rotatingMask;
     if (accepted) {
       MutableTransformer modelTransformer =
           vv.getRenderContext()

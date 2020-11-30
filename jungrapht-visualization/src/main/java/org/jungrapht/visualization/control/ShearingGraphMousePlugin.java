@@ -93,10 +93,21 @@ public class ShearingGraphMousePlugin extends AbstractGraphMousePlugin
         Toolkit.getDefaultToolkit().createCustomCursor(cursorImage, new Point(), "RotateCursor");
   }
 
+  /**
+   * check the mouse event modifiers against the instance member modifiers. Default implementation
+   * checks equality. Can be overridden to test with a mask
+   *
+   * @param e
+   */
+  @Override
+  public boolean checkModifiers(MouseEvent e) {
+    return e.getModifiersEx() == this.shearingMask;
+  }
+
   public void mousePressed(MouseEvent e) {
     log.trace("mousePressed in {}", this.getClass().getName());
     VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
-    boolean accepted = checkModifiers(e);
+    boolean accepted = e.getModifiersEx() == shearingMask;
     down = e.getPoint();
     if (accepted) {
       vv.setCursor(cursor);
@@ -115,7 +126,7 @@ public class ShearingGraphMousePlugin extends AbstractGraphMousePlugin
       return;
     }
     VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
-    boolean accepted = checkModifiers(e);
+    boolean accepted = e.getModifiersEx() == shearingMask;
     if (accepted) {
       MutableTransformer modelTransformer =
           vv.getRenderContext()

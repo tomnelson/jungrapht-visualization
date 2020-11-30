@@ -75,7 +75,7 @@ public abstract class AbstractGraphMousePlugin implements GraphMousePlugin {
   @Override
   @Deprecated
   public boolean checkModifiers(MouseEvent e) {
-    return e.getModifiersEx() == modifiers;
+    return false;
   }
 
   /** @return Returns the cursor. */

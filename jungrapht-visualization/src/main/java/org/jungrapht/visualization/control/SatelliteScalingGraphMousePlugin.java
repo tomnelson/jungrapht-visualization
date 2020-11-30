@@ -47,7 +47,7 @@ public class SatelliteScalingGraphMousePlugin extends ScalingGraphMousePlugin {
    * zoom the master view display in or out, depending on the direction of the mouse wheel motion.
    */
   public void mouseWheelMoved(MouseWheelEvent e) {
-    boolean accepted = checkModifiers(e);
+    boolean accepted = e.getModifiersEx() == scalingMask;
     if (accepted) {
       ScalingControl scalingControl = scaler;
       float xin = in;

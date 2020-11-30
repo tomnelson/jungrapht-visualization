@@ -74,7 +74,7 @@ public class LensTranslatingGraphMousePlugin extends TranslatingGraphMousePlugin
     } else {
       p = viewTransformer.inverseTransform(p);
     }
-    boolean accepted = checkModifiers(e);
+    boolean accepted = e.getModifiersEx() == translatingMask;
     if (accepted) {
       vv.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
       if (layoutTransformer instanceof LensTransformer) {
@@ -154,7 +154,7 @@ public class LensTranslatingGraphMousePlugin extends TranslatingGraphMousePlugin
    * @param e the event
    */
   public void mouseDragged(MouseEvent e) {
-    boolean accepted = checkModifiers(e);
+    boolean accepted = e.getModifiersEx() == translatingMask;
     if (accepted) {
 
       VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();

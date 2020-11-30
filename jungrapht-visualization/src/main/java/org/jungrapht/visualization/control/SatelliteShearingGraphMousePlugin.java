@@ -41,7 +41,7 @@ public class SatelliteShearingGraphMousePlugin extends ShearingGraphMousePlugin 
       return;
     }
     VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
-    boolean accepted = checkModifiers(e);
+    boolean accepted = e.getModifiersEx() == shearingMask;
     if (accepted) {
       if (vv instanceof SatelliteVisualizationViewer) {
         VisualizationViewer<?, ?> vvMaster = ((SatelliteVisualizationViewer<?, ?>) vv).getMaster();

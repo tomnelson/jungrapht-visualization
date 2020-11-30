@@ -78,7 +78,7 @@ public class EditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    */
   public void mousePressed(MouseEvent e) {
     log.trace("mousePressed in {}", this.getClass().getName());
-    if (checkModifiers(e)) {
+    if (e.getModifiersEx() == modifiers) {
       final VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
       final LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
 
@@ -137,7 +137,7 @@ public class EditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    */
   @SuppressWarnings("unchecked")
   public void mouseDragged(MouseEvent e) {
-    if (checkModifiers(e)) {
+    if (e.getModifiersEx() == modifiers) {
       VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
       if (createMode == Creating.EDGE) {
         edgeSupport.midEdgeCreate(vv, e.getPoint());

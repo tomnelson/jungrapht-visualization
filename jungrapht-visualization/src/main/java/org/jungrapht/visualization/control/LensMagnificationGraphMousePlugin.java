@@ -96,7 +96,7 @@ public class LensMagnificationGraphMousePlugin extends AbstractGraphMousePlugin
 
   /** change magnification of the lens, depending on the direction of the mouse wheel motion. */
   public void mouseWheelMoved(MouseWheelEvent e) {
-    boolean accepted = checkModifiers(e);
+    boolean accepted = e.getModifiersEx() == modifiers;
     float delta = this.delta;
     if (accepted) {
       VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();

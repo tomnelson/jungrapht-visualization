@@ -35,7 +35,7 @@ public class ViewTranslatingGraphMousePlugin extends AbstractGraphMousePlugin
 
   private static final Logger log = LoggerFactory.getLogger(ViewTranslatingGraphMousePlugin.class);
 
-  protected int modifiers;
+  protected int translatingMask;
 
   /** */
   public ViewTranslatingGraphMousePlugin() {
@@ -45,10 +45,10 @@ public class ViewTranslatingGraphMousePlugin extends AbstractGraphMousePlugin
   /**
    * create an instance with passed modifer value
    *
-   * @param modifiers the mouse event modifier to activate this function
+   * @param translatingMask the mouse event modifier to activate this function
    */
-  public ViewTranslatingGraphMousePlugin(int modifiers) {
-    this.modifiers = modifiers;
+  public ViewTranslatingGraphMousePlugin(int translatingMask) {
+    this.translatingMask = translatingMask;
     this.cursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
   }
 
@@ -61,7 +61,7 @@ public class ViewTranslatingGraphMousePlugin extends AbstractGraphMousePlugin
   public void mousePressed(MouseEvent e) {
     log.trace("mousePressed in {}", this.getClass().getName());
     VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
-    boolean accepted = checkModifiers(e);
+    boolean accepted = e.getModifiersEx() == this.translatingMask;
     down = e.getPoint();
     if (accepted) {
       vv.setCursor(cursor);
@@ -84,7 +84,7 @@ public class ViewTranslatingGraphMousePlugin extends AbstractGraphMousePlugin
    */
   public void mouseDragged(MouseEvent e) {
     VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
-    boolean accepted = checkModifiers(e);
+    boolean accepted = e.getModifiersEx() == translatingMask;
     if (accepted) {
       MutableTransformer viewTransformer =
           vv.getRenderContext()
