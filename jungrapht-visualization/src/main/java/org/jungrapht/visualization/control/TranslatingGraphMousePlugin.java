@@ -11,6 +11,8 @@
  */
 package org.jungrapht.visualization.control;
 
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
+
 import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -34,7 +36,8 @@ public class TranslatingGraphMousePlugin extends AbstractGraphMousePlugin
 
   private static final Logger log = LoggerFactory.getLogger(TranslatingGraphMousePlugin.class);
 
-  protected int translatingMask;
+  protected int translatingMask =
+      Modifiers.masks.get(System.getProperty(PREFIX + "singleSelectionMask", "MB1_MENU"));
 
   /**
    * create an instance with passed translatingMask value

@@ -62,6 +62,7 @@ public class DefaultSatelliteGraphMouse<V, E> extends DefaultGraphMouse<V, E> {
     add(regionSelectingPlugin);
     add(new SatelliteTranslatingGraphMousePlugin(translatingMask));
     add(scalingPlugin);
+    setPluginsLoaded();
   }
 
   /** @param zoomAtMouse The zoomAtMouse to set. */

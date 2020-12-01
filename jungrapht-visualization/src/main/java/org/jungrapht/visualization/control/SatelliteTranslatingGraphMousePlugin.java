@@ -40,6 +40,11 @@ public class SatelliteTranslatingGraphMousePlugin extends TranslatingGraphMouseP
     super(translatingMask);
   }
 
+  @Override
+  public void mousePressed(MouseEvent e) {
+    super.mousePressed(e);
+  }
+
   public void mouseClicked(MouseEvent e) {
     log.trace("mouseClicked {} in {}", e.getClickCount(), this.getClass().getName());
     super.mouseClicked(e);
@@ -59,6 +64,9 @@ public class SatelliteTranslatingGraphMousePlugin extends TranslatingGraphMouseP
    * @param e the event
    */
   public void mouseDragged(MouseEvent e) {
+    if (down == null) {
+      return;
+    }
     VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
     boolean accepted = e.getModifiersEx() == translatingMask;
     if (accepted) {
@@ -72,7 +80,7 @@ public class SatelliteTranslatingGraphMousePlugin extends TranslatingGraphMouseP
                 .getTransformer(MultiLayerTransformer.Layer.LAYOUT);
         vv.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
         try {
-          Point2D q = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint());
+          Point2D q = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(down);
           Point2D p =
               vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint());
           float dx = (float) (p.getX() - q.getX());
