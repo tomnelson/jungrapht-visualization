@@ -72,7 +72,7 @@ public class SatelliteTranslatingGraphMousePlugin extends TranslatingGraphMouseP
                 .getTransformer(MultiLayerTransformer.Layer.LAYOUT);
         vv.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
         try {
-          Point2D q = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(down);
+          Point2D q = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint());
           Point2D p =
               vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint());
           float dx = (float) (p.getX() - q.getX());
