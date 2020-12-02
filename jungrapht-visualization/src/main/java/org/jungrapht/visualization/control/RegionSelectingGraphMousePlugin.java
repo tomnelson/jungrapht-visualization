@@ -99,9 +99,6 @@ public class RegionSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
   /** the Paintable for the lens picking rectangle */
   protected VisualizationServer.Paintable lensPaintable;
 
-  //  protected Rectangle2D footprintRectangle = new Rectangle2D.Float();
-  //  protected VisualizationViewer.Paintable pickFootprintPaintable;
-
   /** color for the picking rectangle */
   protected Color lensColor = Color.cyan;
 
@@ -202,14 +199,6 @@ public class RegionSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
       // subclass can override to account for view distortion effects
       updatePickingTargets(vv, multiLayerTransformer, down, down);
 
-      // subclass can override to account for view distortion effects
-      // layoutPoint is the mouse event point projected on the layout coordinate system
-      //    Point2D layoutPoint = transformSupport.inverseTransform(vv, down);
-      //    log.trace("layout coords of mouse click {}", layoutPoint);
-
-      // test for vertex select or vertex add to selection
-      //    boolean vertexWasSelected = false;
-      //    boolean edgeWasSelected = false;
       vv.addPostRenderPaintable(lensPaintable);
     }
   }
@@ -254,7 +243,6 @@ public class RegionSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
     down = null;
     layoutTargetShape = multiLayerTransformer.inverseTransform(viewRectangle);
     vv.removePostRenderPaintable(lensPaintable);
-    //    vv.removePostRenderPaintable(pickFootprintPaintable);
     vv.repaint();
   }
 

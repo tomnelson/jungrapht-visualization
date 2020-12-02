@@ -242,6 +242,7 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
         if (!singleVertexSelection(e) && !singleEdgeSelection(e)) {
           CrossoverScalingControl crossoverScalingControl = (CrossoverScalingControl) scaler;
           crossoverScalingControl.reset((VisualizationServer) e.getSource(), e.getPoint());
+          ((VisualizationViewer) e.getSource()).scaleToLayout(scaler);
           e.consume();
         }
       }
@@ -310,6 +311,7 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
           && scaler instanceof CrossoverScalingControl) {
         CrossoverScalingControl crossoverScalingControl = (CrossoverScalingControl) scaler;
         crossoverScalingControl.reset((VisualizationServer) e.getSource(), e.getPoint());
+        ((VisualizationViewer) e.getSource()).scaleToLayout(scaler);
         e.consume();
       }
     }
