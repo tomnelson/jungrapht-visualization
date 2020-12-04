@@ -92,6 +92,9 @@ class DefaultVisualizationServer<V, E> extends JPanel
 
   private static final String DOUBLE_BUFFERED = PREFIX + "doubleBuffered";
 
+  private static final String SCALE_TO_LAYOUT_PADDING_FACTOR =
+      PREFIX + "scaleToLayoutPaddingFactor";
+
   protected ChangeEventSupport changeSupport = new DefaultChangeEventSupport(this);
 
   /** holds the state of this View */
@@ -150,6 +153,9 @@ class DefaultVisualizationServer<V, E> extends JPanel
 
   protected double lightweightRenderingScaleThreshold =
       Double.parseDouble(System.getProperty(LIGHTWEIGHT_SCALE_THRESHOLD, "0.5"));
+
+  protected double scaleToLayoutPaddingFactor =
+      Double.parseDouble(System.getProperty(SCALE_TO_LAYOUT_PADDING_FACTOR, "0.9"));
 
   protected Predicate<Double> smallScaleOverridePredicate =
       e -> e < lightweightRenderingScaleThreshold;
@@ -450,6 +456,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
       double widthRatio = vd.getWidth() / ld.getWidth();
       double heightRatio = vd.getHeight() / ld.getHeight();
       double ratio = Math.min(widthRatio, heightRatio);
+      ratio *= scaleToLayoutPaddingFactor;
       if (log.isTraceEnabled()) {
         log.trace(
             "scaling with {} {}", (widthRatio < heightRatio ? "widthRatio" : "heightRatio"), ratio);
