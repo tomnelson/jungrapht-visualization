@@ -39,7 +39,7 @@ public interface SatelliteVisualizationViewer<V, E> extends VisualizationViewer<
     protected VisualizationViewer<V, E> master;
 
     protected boolean transparent =
-        Boolean.parseBoolean(System.getProperty(SATELLITE_BACKGROUND_TRANSPARENT, "false"));;
+        Boolean.parseBoolean(System.getProperty(SATELLITE_BACKGROUND_TRANSPARENT, "false"));
 
     protected Color lensColor =
         Color.getColor(PREFIX + "satelliteLensColor", Color.decode("0xFFFAE0"));
