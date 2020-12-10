@@ -592,7 +592,24 @@ class DefaultVisualizationServer<V, E> extends JPanel
     if (log.isDebugEnabled()) {
       SwingUtilities.invokeLater(() -> displayLayoutBounds()); // for debugging
     }
+    updateSelectionStates();
     repaint();
+  }
+
+  /**
+   * when the graph model changed (added/removed vertices/edges) update the
+   * selected state so that nothing is 'selected' that is not still in the graph.
+   */
+  protected void updateSelectionStates() {
+    Graph<V, E> graph = visualizationModel.getGraph();
+    selectedVertexState.getSelected()
+            .stream().filter(v -> !graph.containsVertex(v))
+            .collect(Collectors.toSet())
+            .forEach(selectedVertexState::deselect);
+    selectedEdgeState.getSelected()
+            .stream().filter(e -> !graph.containsEdge(e))
+            .collect(Collectors.toSet())
+            .forEach(selectedEdgeState::deselect);
   }
 
   private LayoutPaintable.LayoutBounds layoutBounds;
@@ -760,11 +777,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
 
   @Override
   public Set<V> getSelectedVertices() {
-    return this.selectedVertexState
-        .getSelected()
-        .stream()
-        .filter(v -> getVisualizationModel().getGraph().containsVertex(v))
-        .collect(Collectors.toSet());
+    return getSelectedVertexState().getSelected();
   }
 
   @Override
@@ -774,11 +787,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
 
   @Override
   public Set<E> getSelectedEdges() {
-    return this.selectedEdgeState
-        .getSelected()
-        .stream()
-        .filter(e -> getVisualizationModel().getGraph().containsEdge(e))
-        .collect(Collectors.toSet());
+    return getSelectedEdgeState().getSelected();
   }
 
   @Override
