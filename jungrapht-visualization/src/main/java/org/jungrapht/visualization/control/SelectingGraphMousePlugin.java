@@ -329,7 +329,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
       double dy = graphPoint.getY() - graphDown.getY();
       log.trace("dx, dy: {},{}", dx, dy);
 
-      for (V v : ps.getSelected()) {
+      for (V v : vv.getSelectedVertices()) {
         org.jungrapht.visualization.layout.model.Point vp = layoutModel.apply(v);
         vp = vp.add(dx, dy);
         layoutModel.set(v, vp);
@@ -380,7 +380,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
         log.trace("dx, dy: {},{}", dx, dy);
         MutableSelectedState<V> ps = vv.getSelectedVertexState();
 
-        for (V v : ps.getSelected()) {
+        for (V v : vv.getSelectedVertices()) {
           org.jungrapht.visualization.layout.model.Point vp = layoutModel.apply(v);
           vp = vp.add(dx, dy); //Point.of(vp.x + dx, vp.y + dy);
           layoutModel.set(v, vp);

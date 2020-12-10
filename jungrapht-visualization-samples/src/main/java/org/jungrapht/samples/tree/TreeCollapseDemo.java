@@ -67,10 +67,10 @@ public class TreeCollapseDemo extends JPanel {
     add(panel);
 
     JButton collapse = new JButton("Collapse");
-    collapse.addActionListener(e -> collapser.collapse(vv.getSelectedVertexState().getSelected()));
+    collapse.addActionListener(e -> collapser.collapse(vv.getSelectedVertices()));
 
     JButton expand = new JButton("Expand");
-    expand.addActionListener(e -> collapser.expand(vv.getSelectedVertexState().getSelected()));
+    expand.addActionListener(e -> collapser.expand(vv.getSelectedVertices()));
 
     JPanel controls = new JPanel();
     controls.add(TreeLayoutSelector.builder(vv).initialSelection(0).build());

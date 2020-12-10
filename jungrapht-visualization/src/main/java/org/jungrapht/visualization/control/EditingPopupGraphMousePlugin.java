@@ -46,7 +46,7 @@ public class EditingPopupGraphMousePlugin<V, E> extends AbstractPopupGraphMouseP
 
       JPopupMenu popup = new JPopupMenu();
       if (vertex != null) {
-        Set<V> picked = pickedVertexState.getSelected();
+        Set<V> picked = vv.getSelectedVertices();
         if (picked.size() > 0) {
           JMenu menu =
               new JMenu(

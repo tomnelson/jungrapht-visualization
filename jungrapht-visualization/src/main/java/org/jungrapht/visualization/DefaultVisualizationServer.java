@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -758,8 +759,26 @@ class DefaultVisualizationServer<V, E> extends JPanel
   }
 
   @Override
+  public Set<V> getSelectedVertices() {
+    return this.selectedVertexState
+        .getSelected()
+        .stream()
+        .filter(v -> getVisualizationModel().getGraph().containsVertex(v))
+        .collect(Collectors.toSet());
+  }
+
+  @Override
   public MutableSelectedState<E> getSelectedEdgeState() {
     return selectedEdgeState;
+  }
+
+  @Override
+  public Set<E> getSelectedEdges() {
+    return this.selectedEdgeState
+        .getSelected()
+        .stream()
+        .filter(e -> getVisualizationModel().getGraph().containsEdge(e))
+        .collect(Collectors.toSet());
   }
 
   @Override

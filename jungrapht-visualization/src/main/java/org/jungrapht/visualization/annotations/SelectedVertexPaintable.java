@@ -120,7 +120,7 @@ public class SelectedVertexPaintable<V> implements VisualizationServer.Paintable
     // set the transform to identity
     g2d.setTransform(new AffineTransform());
     // get the currently currently selected vertices
-    Set<V> selectedVertices = visualizationServer.getSelectedVertexState().getSelected();
+    Set<V> selectedVertices = visualizationServer.getSelectedVertices();
     LayoutModel<V> layoutModel = visualizationServer.getVisualizationModel().getLayoutModel();
     MultiLayerTransformer multiLayerTransformer =
         visualizationServer.getRenderContext().getMultiLayerTransformer();

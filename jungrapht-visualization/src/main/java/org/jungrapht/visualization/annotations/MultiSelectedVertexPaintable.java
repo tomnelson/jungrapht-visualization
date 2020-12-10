@@ -188,11 +188,9 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
 
   protected Collection<V> getSelectedVertices(VisualizationServer<V, E> visualizationServer) {
     return visualizationServer
-        .getSelectedVertexState()
-        .getSelected()
+        .getSelectedVertices()
         .stream()
         .filter(v -> visualizationServer.getRenderContext().getVertexIncludePredicate().test(v))
-        .filter(visualizationServer.getVisualizationModel().getGraph().vertexSet()::contains)
         .collect(Collectors.toList());
   }
 

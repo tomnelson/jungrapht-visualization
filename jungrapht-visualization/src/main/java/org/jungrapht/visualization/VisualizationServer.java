@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.RenderingHints.Key;
 import java.awt.geom.Point2D;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -278,8 +279,12 @@ public interface VisualizationServer<V, E>
   /** @return the vertex MutableSelectedState instance */
   MutableSelectedState<V> getSelectedVertexState();
 
+  Set<V> getSelectedVertices();
+
   /** @return the edge MutableSelectedState instance */
   MutableSelectedState<E> getSelectedEdgeState();
+
+  Set<E> getSelectedEdges();
 
   void setSelectedVertexState(MutableSelectedState<V> selectedVertexState);
 

@@ -129,22 +129,16 @@ public class VertexCollapseDemo extends JPanel {
     collapse.addActionListener(
         e ->
             SwingUtilities.invokeLater(
-                () ->
-                    collapser.collapse(
-                        vv.getSelectedVertexState().getSelected(), s -> new MyVertex())));
+                () -> collapser.collapse(vv.getSelectedVertices(), s -> new MyVertex())));
 
     JButton expand = new JButton("Expand");
     expand.addActionListener(
-        e ->
-            SwingUtilities.invokeLater(
-                () ->
-                    collapser.expand(
-                        vv.getRenderContext().getSelectedVertexState().getSelected())));
+        e -> SwingUtilities.invokeLater(() -> collapser.expand(vv.getSelectedVertices())));
 
     JButton compressEdges = new JButton("Compress Edges");
     compressEdges.addActionListener(
         e -> {
-          Set<MyVertex> picked = vv.getSelectedVertexState().getSelected();
+          Set<MyVertex> picked = vv.getSelectedVertices();
           if (picked.size() == 2) {
             Iterator<MyVertex> pickedIter = picked.iterator();
             MyVertex vertexU = pickedIter.next();
@@ -160,7 +154,7 @@ public class VertexCollapseDemo extends JPanel {
     JButton expandEdges = new JButton("Expand Edges");
     expandEdges.addActionListener(
         e -> {
-          Set<MyVertex> picked = vv.getSelectedVertexState().getSelected();
+          Set<MyVertex> picked = vv.getSelectedVertices();
           if (picked.size() == 2) {
             Iterator<MyVertex> pickedIter = picked.iterator();
             MyVertex vertexU = pickedIter.next();

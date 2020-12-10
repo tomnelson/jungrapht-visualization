@@ -191,11 +191,9 @@ public class SingleSelectedVertexPaintable<V, E> implements VisualizationServer.
 
   protected V getSelectedVertex(VisualizationServer<V, E> visualizationServer) {
     return visualizationServer
-        .getSelectedVertexState()
-        .getSelected()
+        .getSelectedVertices()
         .stream()
         .filter(v -> visualizationServer.getRenderContext().getVertexIncludePredicate().test(v))
-        .filter(visualizationServer.getVisualizationModel().getGraph().vertexSet()::contains)
         .findFirst()
         .orElse(null);
   }

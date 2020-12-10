@@ -129,7 +129,7 @@ public class SatelliteViewTreeDemo extends JPanel {
             .selectedVertexFunction(
                 vs -> {
                   Graph<String, Integer> g = vs.getVisualizationModel().getGraph();
-                  Set<String> selected = vs.getSelectedVertexState().getSelected();
+                  Set<String> selected = vs.getSelectedVertices();
                   List<String> roots = new ArrayList<>();
                   for (String v : selected) {
                     List<String> predecessors = Graphs.predecessorListOf(g, v);

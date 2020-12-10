@@ -265,7 +265,6 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
     VisualizationServer<V, E> vv = (VisualizationServer<V, E>) e.getSource();
     GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
     MutableSelectedState<V> selectedVertexState = vv.getSelectedVertexState();
-    MutableSelectedState<E> selectedEdgeState = vv.getSelectedEdgeState();
     LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
     V vertex;
     if (pickSupport instanceof ShapePickSupport) {
@@ -333,7 +332,7 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
       log.trace("dx, dy: {},{}", dx, dy);
       MutableSelectedState<V> ps = vv.getSelectedVertexState();
 
-      for (V v : ps.getSelected()) {
+      for (V v : vv.getSelectedVertices()) {
         org.jungrapht.visualization.layout.model.Point vp = layoutModel.apply(v);
         vp = vp.add(dx, dy);
         //                org.jungrapht.visualization.layout.model.Point.of(vp.x + dx, vp.y + dy);
@@ -377,7 +376,7 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
         log.trace("dx, dy: {},{}", dx, dy);
         MutableSelectedState<V> ps = vv.getSelectedVertexState();
 
-        for (V v : ps.getSelected()) {
+        for (V v : vv.getSelectedVertices()) {
           org.jungrapht.visualization.layout.model.Point vp = layoutModel.apply(v);
           vp = vp.add(dx, dy); //Point.of(vp.x + dx, vp.y + dy);
           layoutModel.set(v, vp);

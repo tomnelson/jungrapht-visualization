@@ -162,8 +162,7 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
         e ->
             SwingUtilities.invokeLater(
                 () -> {
-                  Collection<String> picked =
-                      new HashSet(vv.getSelectedVertexState().getSelected());
+                  Collection<String> picked = new HashSet(vv.getSelectedVertices());
                   collapser.collapse(picked, s -> vertexFactory.get());
                 }));
 
@@ -172,15 +171,14 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
         e ->
             SwingUtilities.invokeLater(
                 () -> {
-                  Collection<String> picked =
-                      new HashSet(vv.getSelectedVertexState().getSelected());
+                  Collection<String> picked = new HashSet(vv.getSelectedVertices());
                   collapser.expand(picked);
                 }));
 
     JButton compressEdges = new JButton("Compress Edges");
     compressEdges.addActionListener(
         e -> {
-          Set picked = vv.getSelectedVertexState().getSelected();
+          Set picked = vv.getSelectedVertices();
           if (picked.size() == 2) {
             Iterator pickedIter = picked.iterator();
             Object vertexU = pickedIter.next();
@@ -196,7 +194,7 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
     JButton expandEdges = new JButton("Expand Edges");
     expandEdges.addActionListener(
         e -> {
-          Set picked = vv.getSelectedVertexState().getSelected();
+          Set picked = vv.getSelectedVertices();
           if (picked.size() == 2) {
             Iterator pickedIter = picked.iterator();
             Object vertexU = pickedIter.next();

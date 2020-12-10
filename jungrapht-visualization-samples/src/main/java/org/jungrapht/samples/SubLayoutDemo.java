@@ -278,7 +278,7 @@ public class SubLayoutDemo extends JPanel {
   private void cluster(boolean state) {
     if (state) {
       // put the selected vertices into a new sublayout
-      Collection<String> picked = ps.getSelected();
+      Collection<String> picked = vv.getSelectedVertices();
       if (picked.size() > 1) {
         Point2D center = new Point2D.Double();
         double x = 0;
