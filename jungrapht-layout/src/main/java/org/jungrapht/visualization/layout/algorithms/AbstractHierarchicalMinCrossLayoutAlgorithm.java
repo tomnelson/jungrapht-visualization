@@ -92,7 +92,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
     protected boolean straightenEdges =
         Boolean.parseBoolean(System.getProperty(MINCROSS_STRAIGHTEN_EDGES, "true"));
     protected boolean postStraighten =
-        Boolean.parseBoolean(System.getProperty(MINCROSS_POST_STRAIGHTEN, "true"));;
+        Boolean.parseBoolean(System.getProperty(MINCROSS_POST_STRAIGHTEN, "true"));
     protected boolean transpose = true;
     protected int maxLevelCross = Integer.getInteger(MAX_LEVEL_CROSS, 23);
     protected Function<Graph<V, E>, Integer> maxLevelCrossFunction = g -> maxLevelCross;

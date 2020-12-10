@@ -54,44 +54,6 @@ public class VisualizationImageServer<V, E> extends DefaultVisualizationServer<V
 
   Map<RenderingHints.Key, Object> renderingHints = new HashMap<>();
 
-  //  public Image getFullImage(double scale) {
-  //    Dimension layoutSize = getVisualizationModel().getLayoutSize();
-  //    // make this view the same size as the layout size
-  //    setSize(new Dimension((int) (layoutSize.width / scale), (int) (layoutSize.height / scale)));
-  //
-  //    return getImage(new Point2D.Double(), getSize());
-  // save off the original view transform
-  //    AffineTransform originalViewTransform = new AffineTransform(
-  //            renderContext.getMultiLayerTransformer()
-  //                    .getTransformer(MultiLayerTransformer.Layer.VIEW).getTransform()
-  //    );
-  //    AffineTransform originalLayoutTransform = new AffineTransform(
-  //            renderContext.getMultiLayerTransformer()
-  //                    .getTransformer(MultiLayerTransformer.Layer.LAYOUT).getTransform()
-  //    );
-  //    // remove any view scaling so that the vertices/edges are drawn at non-scaled size
-  //    renderContext.getMultiLayerTransformer()
-  //            .getTransformer(MultiLayerTransformer.Layer.VIEW).setToIdentity();
-  //    try {
-  //      BufferedImage bi = new BufferedImage(layoutSize.width, layoutSize.height, BufferedImage.TYPE_INT_RGB);
-  //      Graphics2D graphics = bi.createGraphics();
-  //      graphics.setRenderingHints(renderingHints);
-  //      paint(graphics);
-  //      graphics.dispose();
-  //      return bi;
-  //    } finally {
-  //      renderContext
-  //              .getMultiLayerTransformer()
-  //              .setTransformer(MultiLayerTransformer.Layer.VIEW,
-  //                      new MutableAffineTransformer(originalViewTransform));
-  ////      renderContext
-  ////              .getMultiLayerTransformer()
-  ////              .setTransformer(MultiLayerTransformer.Layer.LAYOUT,
-  ////                      new MutableAffineTransformer(originalLayoutTransform));
-  //
-  //    }
-  //  }
-
   public Image getFullImage() {
     Dimension layoutSize = getVisualizationModel().getLayoutSize();
     // make this view the same size as the layout size
@@ -134,53 +96,4 @@ public class VisualizationImageServer<V, E> extends DefaultVisualizationServer<V
               new MutableAffineTransformer(originalLayoutTransform));
     }
   }
-
-  //  public Image getImage(Point2D center, Dimension d) {
-  //    return getImage(center, d, 1.0);
-  //  }
-  //
-  //  public Image getImage(Point2D center, Dimension d, double scale) {
-  //    int width = (int) this.getPreferredSize().getWidth();
-  //    int height = (int) this.getPreferredSize().getHeight();
-  //
-  //    float scalex = (float) width / d.width;
-  //    float scaley = (float) height / d.height;
-  //    AffineTransform originalViewTransform =
-  //        new AffineTransform(
-  //            renderContext
-  //                .getMultiLayerTransformer()
-  //                .getTransformer(MultiLayerTransformer.Layer.VIEW)
-  //                .getTransform());
-  //    AffineTransform originalLayoutTransform =
-  //        new AffineTransform(
-  //            renderContext
-  //                .getMultiLayerTransformer()
-  //                .getTransformer(MultiLayerTransformer.Layer.LAYOUT)
-  //                .getTransform());
-  //    try {
-  //      renderContext
-  //          .getMultiLayerTransformer()
-  //          .getTransformer(MultiLayerTransformer.Layer.VIEW)
-  //          .scale(scalex, scaley, center);
-  //
-  //      BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-  //      Graphics2D graphics = bi.createGraphics();
-  //      //      graphics.setTransform(AffineTransform.getScaleInstance(scale, scale));
-  //      graphics.setRenderingHints(renderingHints);
-  //      paint(graphics);
-  //      graphics.dispose();
-  //      return bi;
-  //    } finally {
-  //      renderContext
-  //          .getMultiLayerTransformer()
-  //          .setTransformer(
-  //              MultiLayerTransformer.Layer.VIEW,
-  //              new MutableAffineTransformer(originalViewTransform));
-  //      renderContext
-  //          .getMultiLayerTransformer()
-  //          .setTransformer(
-  //              MultiLayerTransformer.Layer.LAYOUT,
-  //              new MutableAffineTransformer(originalLayoutTransform));
-  //    }
-  //  }
 }

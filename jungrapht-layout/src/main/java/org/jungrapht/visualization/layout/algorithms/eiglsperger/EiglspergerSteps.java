@@ -834,6 +834,9 @@ public class EiglspergerSteps<V, E> {
     } else {
       int left = P[m - 1] - P[0];
       int right = P[P.length - 1] - P[m];
+      if (left + right == 0) {
+        return 0;
+      }
       return (P[m - 1] * right + P[m] * left) / (left + right);
     }
   }
