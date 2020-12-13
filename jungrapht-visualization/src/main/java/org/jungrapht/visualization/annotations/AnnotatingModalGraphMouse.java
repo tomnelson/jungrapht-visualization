@@ -79,7 +79,7 @@ public class AnnotatingModalGraphMouse<V, E> extends AbstractModalGraphMouse
   protected AnnotatingGraphMousePlugin<V, E> annotatingPlugin;
   protected MultiLayerTransformer basicTransformer;
 
-  AnnotatingModalGraphMouse(Builder<V, E, ?, ?> builder) {
+  public AnnotatingModalGraphMouse(Builder<V, E, ?, ?> builder) {
     super(builder);
     this.basicTransformer = builder.multiLayerTransformerSupplier.get();
     this.annotatingPlugin = builder.annotatingPlugin;

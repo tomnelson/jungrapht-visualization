@@ -597,19 +597,23 @@ class DefaultVisualizationServer<V, E> extends JPanel
   }
 
   /**
-   * when the graph model changed (added/removed vertices/edges) update the
-   * selected state so that nothing is 'selected' that is not still in the graph.
+   * when the graph model changed (added/removed vertices/edges) update the selected state so that
+   * nothing is 'selected' that is not still in the graph.
    */
   protected void updateSelectionStates() {
     Graph<V, E> graph = visualizationModel.getGraph();
-    selectedVertexState.getSelected()
-            .stream().filter(v -> !graph.containsVertex(v))
-            .collect(Collectors.toSet())
-            .forEach(selectedVertexState::deselect);
-    selectedEdgeState.getSelected()
-            .stream().filter(e -> !graph.containsEdge(e))
-            .collect(Collectors.toSet())
-            .forEach(selectedEdgeState::deselect);
+    selectedVertexState
+        .getSelected()
+        .stream()
+        .filter(v -> !graph.containsVertex(v))
+        .collect(Collectors.toSet())
+        .forEach(selectedVertexState::deselect);
+    selectedEdgeState
+        .getSelected()
+        .stream()
+        .filter(e -> !graph.containsEdge(e))
+        .collect(Collectors.toSet())
+        .forEach(selectedEdgeState::deselect);
   }
 
   private LayoutPaintable.LayoutBounds layoutBounds;

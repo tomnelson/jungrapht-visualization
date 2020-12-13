@@ -101,7 +101,7 @@ public class EditingModalGraphMouse<V, E> extends AbstractModalGraphMouse
   protected MultiLayerTransformer basicTransformer;
   protected RenderContext<V, E> rc;
 
-  EditingModalGraphMouse(Builder<V, E, ?, ?> builder) {
+  public EditingModalGraphMouse(Builder<V, E, ?, ?> builder) {
     this(
         builder.renderContextSupplier.get(),
         builder.multiLayerTransformerSupplier,
