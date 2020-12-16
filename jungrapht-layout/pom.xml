@@ -9,10 +9,6 @@
     <artifactId>jungrapht-layout</artifactId>
     <name>Graph - Layout Support</name>
     <description>Core Layout support</description>
-    <properties>
-        <version.logback>1.2.3</version.logback>
-        <version.slf4j>1.7.25</version.slf4j>
-    </properties>
     <dependencies>
         <dependency>
             <groupId>org.jgrapht</groupId>

@@ -62,13 +62,13 @@ public class AnnotatingModalGraphMouse<V, E> extends AbstractModalGraphMouse
       return self();
     }
 
-    public B annotatingPlugin(AnnotatingGraphMousePlugin annotatingGraphMousePlugin) {
+    public B annotatingPlugin(AnnotatingGraphMousePlugin<V, E> annotatingGraphMousePlugin) {
       this.annotatingPlugin = annotatingGraphMousePlugin;
       return self();
     }
 
     public T build() {
-      return (T) new AnnotatingModalGraphMouse(this);
+      return (T) new AnnotatingModalGraphMouse<>(this);
     }
   }
 

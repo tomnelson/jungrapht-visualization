@@ -9,10 +9,6 @@
     <artifactId>jungrapht-visualization</artifactId>
     <name>Graph - Visualization Support</name>
     <description>Core visualization support jgrapht</description>
-    <properties>
-        <version.logback>1.2.3</version.logback>
-        <version.slf4j>1.7.25</version.slf4j>
-    </properties>
     <dependencies>
         <dependency>
             <groupId>com.github.tomnelson</groupId>

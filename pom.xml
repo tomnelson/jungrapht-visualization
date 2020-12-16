@@ -74,6 +74,8 @@
         <release.plugin.version>2.5.3</release.plugin.version>
         <source.plugin.version>3.0.1</source.plugin.version>
         <surefire.plugin.version>2.19.1</surefire.plugin.version>
+        <version.logback>1.2.3</version.logback>
+        <version.slf4j>1.7.30</version.slf4j>
     </properties>
     <dependencyManagement>
         <dependencies>

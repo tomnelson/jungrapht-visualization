@@ -81,7 +81,7 @@ public class EditingModalGraphMouse<V, E> extends AbstractModalGraphMouse
     }
 
     public T build() {
-      return (T) new EditingModalGraphMouse(this);
+      return (T) new EditingModalGraphMouse<>(this);
     }
   }
 

@@ -114,7 +114,7 @@ public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
     }
 
     public T build() {
-      return (T) new DefaultGraphMouse(this);
+      return (T) new DefaultGraphMouse<>(this);
     }
   }
 

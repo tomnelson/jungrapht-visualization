@@ -9,10 +9,6 @@
     <artifactId>jungrapht-visualization-samples</artifactId>
     <name>Graph Visualization - Samples</name>
     <description>Sample programs using Graph Visualization.</description>
-    <properties>
-        <version.logback>1.2.3</version.logback>
-        <version.slf4j>1.7.25</version.slf4j>
-    </properties>
     <dependencies>
         <dependency>
             <groupId>ch.qos.logback</groupId>
