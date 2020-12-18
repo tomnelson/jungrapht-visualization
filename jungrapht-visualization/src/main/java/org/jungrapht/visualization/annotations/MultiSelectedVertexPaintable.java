@@ -313,7 +313,6 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
     // get the shape to be rendered
     Shape shape;
     if (visualizationServer.getRenderer() instanceof BiModalRenderer) {
-      BiModalRenderer<V, ?> biModalRenderer = (BiModalRenderer) visualizationServer.getRenderer();
       shape = visualizationServer.getRenderContext().getVertexShapeFunction().apply(v);
       if (useBounds) {
         shape = shape.getBounds();
@@ -330,8 +329,8 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
             .transform(MultiLayerTransformer.Layer.LAYOUT, p.x, p.y);
     // now p is in view coordinates, ready to be further transformed by any transform in the
     // graphics context
-    float x = (float) p2d.getX();
-    float y = (float) p2d.getY();
+    double x = p2d.getX();
+    double y = p2d.getY();
     coords[0] = (int) x;
     coords[1] = (int) y;
     // create a transform that translates to the location of

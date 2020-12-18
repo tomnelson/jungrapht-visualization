@@ -151,6 +151,14 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
     this.edgeComparator = builder.edgeComparator;
   }
 
+  protected void clearMetadata() {
+    this.heights.clear();
+    this.visitedVertices.clear();
+    super.baseBounds.clear();
+    this.vertexData.clear();
+    this.bounds = Rectangle.IDENTITY;
+  }
+
   private final Map<V, VertexData<V>> vertexData = new HashMap<>();
 
   @Override
@@ -531,6 +539,7 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
     if (graph.vertexSet().size() == 1) {
       V loner = graph.vertexSet().stream().findFirst().get();
       layoutModel.set(loner, Point.of(layoutModel.getWidth() / 2, layoutModel.getHeight() / 2));
+      clearMetadata();
       return;
     }
 
@@ -609,5 +618,6 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
     }
     this.moveVerticesThatOverlapVerticalEdges(layoutModel, horizontalVertexSpacing);
     this.runAfter();
+    clearMetadata();
   }
 }
