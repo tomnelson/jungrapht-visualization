@@ -38,9 +38,9 @@ public abstract class VerticalAlignmentDeprecated<V, E>
   protected int alignSegmentVertexMoveCursor(SegmentVertex<V> segmentVertex, LV<V> vertex) {
     SegmentVertex<V> neighborSegmentVertex;
     if (segmentVertex instanceof PVertex) {
-      neighborSegmentVertex = ((PVertex<V>) segmentVertex).segment.qVertex;
+      neighborSegmentVertex = segmentVertex.segment.qVertex;
     } else {
-      neighborSegmentVertex = ((QVertex<V>) segmentVertex).segment.pVertex;
+      neighborSegmentVertex = segmentVertex.segment.pVertex;
     }
     //    align(neighbor, vertex);
     root(vertex, root(neighborSegmentVertex));

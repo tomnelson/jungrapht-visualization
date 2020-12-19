@@ -254,7 +254,7 @@ public class HorizontalCoordinateAssignment<V, E>
       if (v instanceof PVertex) continue;
       if (v instanceof QVertex) continue;
       double x = v.getPoint().x;
-      if (innerEdgeMap.keySet().contains(x)) {
+      if (innerEdgeMap.containsKey(x)) {
         double lowy = innerEdgeMap.get(x).getSource().getPoint().y;
         double hiy = innerEdgeMap.get(x).getTarget().getPoint().y;
         if (lowy > hiy) {

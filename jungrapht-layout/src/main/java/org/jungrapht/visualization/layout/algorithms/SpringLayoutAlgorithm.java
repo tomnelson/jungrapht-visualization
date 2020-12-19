@@ -38,6 +38,7 @@ public class SpringLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorith
   protected int repulsion_range_sq = 100 * 100;
   protected double force_multiplier = 1.0 / 3.0;
   boolean done = false;
+  final Object lock = new Object();
 
   protected Map<V, SpringVertexData> springVertexData = new ConcurrentHashMap<>();
 
@@ -139,9 +140,6 @@ public class SpringLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorith
       for (V vertex : graph.vertexSet()) {
         SpringVertexData svd =
             springVertexData.computeIfAbsent(vertex, v -> new SpringVertexData());
-        //        if (svd == null) {
-        //          continue;
-        //        }
         svd.dx /= 4;
         svd.dy /= 4;
         svd.edgedx = svd.edgedy = 0;
@@ -205,7 +203,7 @@ public class SpringLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorith
   protected void moveVertices() {
     Graph<V, ?> graph = layoutModel.getGraph();
 
-    synchronized (layoutModel) {
+    synchronized (lock) {
       try {
         for (V vertex : graph.vertexSet()) {
           if (layoutModel.isLocked(vertex)) {
@@ -232,16 +230,9 @@ public class SpringLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorith
           int width = layoutModel.getWidth();
           int height = layoutModel.getHeight();
 
-          if (posX < 0) {
-            posX = 0;
-          } else if (posX > width) {
-            posX = width;
-          }
-          if (posY < 0) {
-            posY = 0;
-          } else if (posY > height) {
-            posY = height;
-          }
+          posX = Math.max(0, Math.min(width, posX));
+          posY = Math.max(0, Math.min(height, posY));
+
           // after the bounds have been honored above, really set the location
           // in the layout model
           layoutModel.set(vertex, posX, posY);

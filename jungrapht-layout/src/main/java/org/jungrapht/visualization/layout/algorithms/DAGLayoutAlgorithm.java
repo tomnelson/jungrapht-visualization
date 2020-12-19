@@ -47,6 +47,7 @@ public class DAGLayoutAlgorithm<V, E> extends SpringLayoutAlgorithm<V, E> {
    */
   private Map<V, Number> minLevels = new HashMap<>();
   // Simpler than the "pair" technique.
+  final Object lock = new Object();
   static int graphHeight;
   static int numRoots;
   final double SPACEFACTOR = 1.3;
@@ -193,7 +194,7 @@ public class DAGLayoutAlgorithm<V, E> extends SpringLayoutAlgorithm<V, E> {
     double oldMSV = meanSquareVel;
     meanSquareVel = 0;
 
-    synchronized (layoutModel) {
+    synchronized (lock) {
       for (V vertex : graph.vertexSet()) {
         if (layoutModel.isLocked(vertex)) {
           continue;

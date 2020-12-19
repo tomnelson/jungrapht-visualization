@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -261,7 +262,6 @@ public class EiglspergerSteps<V, E> {
     for (LV<V> v : downstreamLayer) {
       if (splitVertexPredicate.test(v)) { // skip any QVertex for top to bottom
         segmentVertexList.add((SegmentVertex<V>) v);
-        continue;
       } else if (v instanceof Container) {
         Container<V> container = (Container<V>) v;
         if (container.size() > 0) {
@@ -512,10 +512,15 @@ public class EiglspergerSteps<V, E> {
 
     // remove any empty containers from the currentLayer and reset the index metadata
     // for the currentLayer vertices
-    for (int i = 0; i < currentLayer.size(); i++) {
-      LV<V> v = currentLayer.get(i);
-      if (isEmptyContainer(v)) {
-        currentLayer.remove(i);
+    //    for (int i = 0; i < currentLayer.size(); i++) {
+    //      LV<V> v = currentLayer.get(i);
+    //      if (isEmptyContainer(v)) {
+    //        currentLayer.remove(i);
+    //      }
+    //    }
+    for (Iterator<LV<V>> iterator = currentLayer.iterator(); iterator.hasNext(); ) {
+      if (isEmptyContainer(iterator.next())) {
+        iterator.remove();
       }
     }
     updateIndices(currentLayer);
@@ -523,10 +528,15 @@ public class EiglspergerSteps<V, E> {
 
     // remove any empty containers from the downstreamLayer and reset the index metadata
     // for the currentLayer vertices
-    for (int i = 0; i < downstreamLayer.size(); i++) {
-      LV<V> v = downstreamLayer.get(i);
-      if (isEmptyContainer(v)) {
-        downstreamLayer.remove(i);
+    //    for (int i = 0; i < downstreamLayer.size(); i++) {
+    //      LV<V> v = downstreamLayer.get(i);
+    //      if (isEmptyContainer(v)) {
+    //        downstreamLayer.remove(i);
+    //      }
+    //    }
+    for (Iterator<LV<V>> iterator = downstreamLayer.iterator(); iterator.hasNext(); ) {
+      if (isEmptyContainer(iterator.next())) {
+        iterator.remove();
       }
     }
     updateIndices(downstreamLayer);

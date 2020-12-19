@@ -172,16 +172,18 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
                             vv, (RadialTreeLayoutAlgorithm) layoutAlgorithm);
                     vv.addPreRenderPaintable(radialLayoutRings);
                   }
-                  log.info(
-                      "view transform:{}, layoutTransform:{}",
-                      vv.getRenderContext()
-                          .getMultiLayerTransformer()
-                          .getTransformer(Layer.VIEW)
-                          .getTransform(),
-                      vv.getRenderContext()
-                          .getMultiLayerTransformer()
-                          .getTransformer(Layer.LAYOUT)
-                          .getTransform());
+                  if (log.isTraceEnabled()) {
+                    log.trace(
+                        "view transform:{}, layoutTransform:{}",
+                        vv.getRenderContext()
+                            .getMultiLayerTransformer()
+                            .getTransformer(Layer.VIEW)
+                            .getTransform(),
+                        vv.getRenderContext()
+                            .getMultiLayerTransformer()
+                            .getTransformer(Layer.LAYOUT)
+                            .getTransform());
+                  }
                 }));
 
     layoutComboBox.setSelectedItem(LayoutHelper.Layouts.FR_BH_VISITOR);

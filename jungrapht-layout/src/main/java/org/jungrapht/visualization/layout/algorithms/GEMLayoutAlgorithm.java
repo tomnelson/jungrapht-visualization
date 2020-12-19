@@ -114,7 +114,7 @@ public class GEMLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorithm<V
    *
    * @author taubertj
    */
-  private class Properties<V> {
+  private static class Properties {
 
     public int x, y; // position
 
@@ -394,7 +394,7 @@ public class GEMLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorithm<V
         dX = pX - q.x;
         dY = pY - q.y;
         n = (int) ((dX * dX + dY * dY) / p.mass);
-        n = (int) Math.min(n, MAXATTRACT);
+        n = Math.min(n, MAXATTRACT);
         iX -= dX * n / ELENSQR;
         iY -= dY * n / ELENSQR;
       }

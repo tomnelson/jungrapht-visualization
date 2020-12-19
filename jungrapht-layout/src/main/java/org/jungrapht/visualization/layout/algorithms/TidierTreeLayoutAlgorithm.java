@@ -460,7 +460,7 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
     if (roots.contains(v)) {
       // if v is one of the roots, then its predecessor is null (not empty collection)
       log.trace("predecessors({}) = {}", v, Collections.singletonList(null));
-      return ((List<V>) Collections.singletonList(null));
+      return Collections.singletonList(null);
     }
     if (log.isTraceEnabled()) {
       log.trace("predecessors({}) = {}", v, neighborCache.predecessorsOf(v));

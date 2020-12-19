@@ -132,7 +132,7 @@ public class IconCache<V> implements Function<V, Icon> {
   @Override
   public Icon apply(V n) {
     if (!iconMap.containsKey(n)) {
-      cacheIconFor(label, (V) n, vertexLabelFunction, colorFunction);
+      cacheIconFor(label, n, vertexLabelFunction, colorFunction);
     }
     return iconMap.get(n);
   }

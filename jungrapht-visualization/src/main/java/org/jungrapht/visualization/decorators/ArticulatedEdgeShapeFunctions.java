@@ -85,8 +85,6 @@ public class ArticulatedEdgeShapeFunctions {
           int type = iterator.currentSegment(coords);
           switch (type) {
             case PathIterator.SEG_MOVETO:
-              pathPoints.add(Point.of(coords[0], coords[1]));
-              break;
             case PathIterator.SEG_LINETO:
               pathPoints.add(Point.of(coords[0], coords[1]));
               break;

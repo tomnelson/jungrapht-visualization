@@ -708,7 +708,7 @@ public class SugiyamaRunnable<V, E> implements LayeredRunnable<E> {
     return edgePointMap;
   }
 
-  private <V> void swap(LV<V>[] array, int i, int j) {
+  private void swap(LV<V>[] array, int i, int j) {
     LV<V> temp = array[i];
     array[i] = array[j];
     array[j] = temp;

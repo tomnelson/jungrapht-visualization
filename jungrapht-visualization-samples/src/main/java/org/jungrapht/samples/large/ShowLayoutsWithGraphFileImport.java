@@ -330,6 +330,7 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
                 importer = new GmlImporter();
                 break;
               case "dot":
+              case "gv":
                 importer = new DOTImporter();
                 break;
               case "csv":
@@ -337,9 +338,6 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
                 break;
               case "col":
                 importer = new DIMACSImporter();
-                break;
-              case "gv":
-                importer = new DOTImporter();
                 break;
               case "json":
                 importer = new JSONImporter();
