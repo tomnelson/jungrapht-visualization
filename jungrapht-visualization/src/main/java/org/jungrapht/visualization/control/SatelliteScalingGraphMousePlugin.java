@@ -17,8 +17,8 @@ import org.jungrapht.visualization.SatelliteVisualizationViewer;
 import org.jungrapht.visualization.VisualizationViewer;
 
 /**
- * Overrides PrevScalingGraphMousePlugin so that mouse events in the satellite view will cause
- * scaling in the main view
+ * Overrides ScalingGraphMousePlugin so that mouse events in the satellite view will cause scaling
+ * in the main view
  * <li>Using only the mouse wheel, both the X-axis and Y-axis are scaled equally.
  * <li>If the CTRL key is pressed while the mouse wheel is turned, only the X-axis is scaled
  * <li>If the ALT key is pressed while the mouse wheel is turned, only the Y-axis is scaled

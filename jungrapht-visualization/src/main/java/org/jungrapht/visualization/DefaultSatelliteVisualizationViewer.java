@@ -42,14 +42,10 @@ public class DefaultSatelliteVisualizationViewer<V, E> extends DefaultVisualizat
     this.master = builder.master;
     this.transparent = builder.transparent;
     this.lensColor = builder.lensColor;
-    this.graphMouse = builder.graphMouse;
+    this.setGraphMouse(builder.satelliteGraphMouse);
 
     setOpaque(!transparent);
     setBorder(BorderFactory.createEtchedBorder());
-
-    // create a graph mouse with custom plugins to affect the master view
-    //    ModalGraphMouse gm = new ModalSatelliteGraphMouse();
-    //    setGraphMouse(gm);
 
     // this adds the Lens to the satellite view
     addPreRenderPaintable(new ViewLens<>(this, master));

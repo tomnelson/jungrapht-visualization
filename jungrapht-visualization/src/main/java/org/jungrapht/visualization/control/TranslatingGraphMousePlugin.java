@@ -25,9 +25,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * PrevTranslatingGraphMousePlugin uses a MouseButtonOne press and drag gesture to translate the
- * graph display in the x and y direction. The default MouseButtonOne modifier can be overridden to
- * cause a different mouse gesture to translate the display.
+ * TranslatingGraphMousePlugin uses a MouseButtonOne press and drag gesture to translate the graph
+ * display in the x and y direction. The default MouseButtonOne modifier can be overridden to cause
+ * a different mouse gesture to translate the display.
  *
  * @author Tom Nelson
  */

@@ -54,8 +54,10 @@ public class GraphEditorDemo extends JPanel implements Printable {
   /** the visual component and renderer for the graph */
   VisualizationViewer<Number, Number> vv;
 
+  /** Used in the vertexLabelFunction. Values may be inserted by the EditingGraphMouse */
   Map<Number, String> vertexLabelMap = new HashMap<>();
 
+  /** Used in the edgeLabelFunction Values may be inserted by the EditingGraphMouse */
   Map<Number, String> edgeLabelMap = new HashMap<>();
 
   String instructions =

@@ -7,8 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A subclass of PrevSelectingGraphMousePlugin that contains methods that are overridden to account
- * for the Lens effects that are in the view projection
+ * A subclass of SelectingGraphMousePlugin that contains methods that are overridden to account for
+ * the Lens effects that are in the view projection
  *
  * @author Tom Nelson
  * @param <V> vertex type

@@ -25,9 +25,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Extends PrevTranslatingGraphMousePlugin and adds the capability to drag and resize the viewing
- * lens in the graph view. Mouse1 in the center moves the lens, mouse1 on the edge resizes the lens.
- * The default mouse button and modifiers can be overridden in the constructor.
+ * Extends TranslatingGraphMousePlugin and adds the capability to drag and resize the viewing lens
+ * in the graph view. Mouse1 in the center moves the lens, mouse1 on the edge resizes the lens. The
+ * default mouse button and modifiers can be overridden in the constructor.
  *
  * @author Tom Nelson
  */

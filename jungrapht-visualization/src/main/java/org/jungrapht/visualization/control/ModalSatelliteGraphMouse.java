@@ -16,7 +16,7 @@ public class ModalSatelliteGraphMouse<V, E> extends DefaultModalGraphMouse<V, E>
     implements ModalGraphMouse {
 
   /**
-   * Build an instance of a PrevDefaultGraphMouse
+   * Build an instance of a ModalSatelliteGraphMouse
    *
    * @param <V>
    * @param <E>

@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The PrevDefaultGraphMouse does not have 'transforming/selecting' modes. It has 3 plugins that are
+ * The DefaultGraphMouse does not have 'transforming/selecting' modes. It has 3 plugins that are
  * always active:
  *
  * <ul>
@@ -23,7 +23,7 @@ public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
 
   private static Logger log = LoggerFactory.getLogger(DefaultGraphMouse.class);
   /**
-   * Build an instance of a PrevDefaultGraphMouse
+   * Build an instance of a DefaultGraphMouse
    *
    * @param <V>
    * @param <E>

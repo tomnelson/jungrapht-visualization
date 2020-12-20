@@ -35,7 +35,6 @@ import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.annotations.MultiSelectedVertexPaintable;
 import org.jungrapht.visualization.annotations.SingleSelectedVertexPaintable;
-import org.jungrapht.visualization.control.DefaultSatelliteGraphMouse;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.TidierTreeLayoutAlgorithm;
@@ -165,7 +164,7 @@ public class SatelliteViewTreeDemo extends JPanel {
         .setVertexFillPaintFunction(
             new PickableElementPaintFunction<>(
                 satelliteVisualizationViewer.getSelectedVertexState(), Color.red, Color.yellow));
-    satelliteVisualizationViewer.setGraphMouse(new DefaultSatelliteGraphMouse());
+
     mainVisualizationViewer
         .getRenderer()
         .setVertexRenderer(new GradientVertexRenderer<>(Color.red, Color.white, true));

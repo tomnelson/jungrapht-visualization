@@ -17,9 +17,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
+import java.util.Arrays;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import javax.swing.*;
@@ -98,8 +97,7 @@ class DefaultVisualizationViewer<V, E> extends DefaultVisualizationServer<V, E>
   }
 
   /**
-   * a setter for the GraphMouse. This will remove any previous GraphMouse (including the one that
-   * is added in the initMouseClicker method.
+   * sets and configures the GraphMouse. This will remove any previous GraphMouse.
    *
    * @param graphMouse new value
    */
@@ -108,24 +106,16 @@ class DefaultVisualizationViewer<V, E> extends DefaultVisualizationServer<V, E>
     if (!this.graphMouse.isPluginsLoaded()) {
       this.graphMouse.loadPlugins();
     }
-    MouseListener[] ml = getMouseListeners();
-    for (MouseListener aMl : ml) {
-      if (aMl instanceof GraphMouse) {
-        removeMouseListener(aMl);
-      }
-    }
-    MouseMotionListener[] mml = getMouseMotionListeners();
-    for (MouseMotionListener aMml : mml) {
-      if (aMml instanceof GraphMouse) {
-        removeMouseMotionListener(aMml);
-      }
-    }
-    MouseWheelListener[] mwl = getMouseWheelListeners();
-    for (MouseWheelListener aMwl : mwl) {
-      if (aMwl instanceof GraphMouse) {
-        removeMouseWheelListener(aMwl);
-      }
-    }
+    Arrays.stream(getMouseListeners())
+        .filter(aMl -> aMl instanceof GraphMouse)
+        .forEach(this::removeMouseListener);
+    Arrays.stream(getMouseMotionListeners())
+        .filter(aMml -> aMml instanceof GraphMouse)
+        .forEach(this::removeMouseMotionListener);
+    Arrays.stream(getMouseWheelListeners())
+        .filter(aMwl -> aMwl instanceof GraphMouse)
+        .forEach(this::removeMouseWheelListener);
+
     addMouseListener(graphMouse);
     addMouseMotionListener(graphMouse);
     addMouseWheelListener(graphMouse);
@@ -140,11 +130,11 @@ class DefaultVisualizationViewer<V, E> extends DefaultVisualizationServer<V, E>
   }
 
   /**
-   * This is the interface for adding a mouse listener. The GEL will be called back with mouse
-   * clicks on vertices.
+   * Adds a listener
    *
    * @param graphMouseListener the mouse listener to add
    */
+  @Override
   public void addGraphMouseListener(GraphMouseListener<V> graphMouseListener) {
     addMouseListener(new MouseListenerTranslator<>(graphMouseListener, this));
   }

@@ -38,8 +38,10 @@ public class LabelEditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   /** the selected Edge, if any */
   protected E edge;
 
+  /** Holds vertex String associations that may be used in the vertex label function */
   protected Map<V, String> vertexLabelMap;
 
+  /** Holds edge to String associations that may be used in the edge label function */
   protected Map<E, String> edgeLabelMap;
 
   protected int selectionModifiers;
@@ -63,13 +65,8 @@ public class LabelEditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   }
 
   /**
-   * For primary modifiers (default, MouseButton1): pick a single Vertex or Edge that is under the
-   * mouse pointer. If no Vertex or edge is under the pointer, unselect all selected Vertices and
-   * edges, and set up to draw a rectangle for multiple selection of contained Vertices. For
-   * additional selection (default Shift+MouseButton1): Add to the selection, a single Vertex or
-   * Edge that is under the mouse pointer. If a previously selected Vertex or Edge is under the
-   * pointer, it is un-selected. If no vertex or Edge is under the pointer, set up to draw a
-   * multiple selection rectangle (as above) but do not unpick previously selected elements.
+   * If the mouse is double-clicked on a vertex, show a popup to request a new label for the vertex.
+   * The label becomes the value for the vertex key in the vertexLabelMap
    *
    * @param e the event
    */
@@ -115,17 +112,8 @@ public class LabelEditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     }
   }
 
-  /**
-   * If the mouse is dragging a rectangle, pick the Vertices contained in that rectangle
-   *
-   * <p>clean up settings from mousePressed
-   */
   public void mouseReleased(MouseEvent e) {}
 
-  /**
-   * If the mouse is over a selected vertex, drag all selected vertices with the mouse. If the mouse
-   * is not over a Vertex, draw the rectangle to select multiple Vertices
-   */
   public void mousePressed(MouseEvent e) {}
 
   public void mouseEntered(MouseEvent e) {}

@@ -38,7 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * PrevVertexSelectingGraphMousePlugin supports the selecting of graph vertices with the mouse.
+ * VertexSelectingGraphMousePlugin supports the selecting of graph vertices with the mouse.
  * MouseButtonOne selects a single vertex, and MouseButtonTwo adds to the set of selected Vertices.
  * If a Vertex is selected and the mouse is dragged while on the selected Vertex, then that Vertex
  * will be repositioned to follow the mouse until the button is released.

@@ -7,14 +7,14 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
 
 /**
- * supports multiple vertex selection by either a containing Rectangle or a containing arbitrarily
+ * Supports multiple vertex selection by either a containing Rectangle or a containing arbitrarily
  * drawn shape.
  */
 public interface MultiSelectionStrategy {
 
   Shape getInitialShape(Point2D location);
 
-  void closeShape();
+  default void closeShape() {}
 
   Shape updateShape(Point2D down, Point2D out);
 
@@ -28,8 +28,7 @@ public interface MultiSelectionStrategy {
       return this.shape;
     }
 
-    public void closeShape() {}
-
+    @Override
     public Shape updateShape(Point2D down, Point2D out) {
       shape.setFrameFromDiagonal(down, out);
       return this.shape;
@@ -51,10 +50,12 @@ public interface MultiSelectionStrategy {
       return this.shape;
     }
 
+    @Override
     public void closeShape() {
       this.shape.closePath();
     }
 
+    @Override
     public Shape updateShape(Point2D down, Point2D out) {
       Path2D path = shape;
       path.lineTo(out.getX(), out.getY());

@@ -17,6 +17,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
+import org.jungrapht.visualization.control.DefaultSatelliteGraphMouse;
 import org.jungrapht.visualization.transform.shape.ShapeTransformer;
 
 /**
@@ -38,6 +39,8 @@ public interface SatelliteVisualizationViewer<V, E> extends VisualizationViewer<
 
     protected VisualizationViewer<V, E> master;
 
+    protected GraphMouse satelliteGraphMouse = new DefaultSatelliteGraphMouse<>();
+
     protected boolean transparent =
         Boolean.parseBoolean(System.getProperty(SATELLITE_BACKGROUND_TRANSPARENT, "false"));
 
@@ -51,6 +54,11 @@ public interface SatelliteVisualizationViewer<V, E> extends VisualizationViewer<
 
     public B lensColor(Color lensColor) {
       this.lensColor = lensColor;
+      return self();
+    }
+
+    public B satelliteGraphMouse(GraphMouse satelliteGraphMouse) {
+      this.satelliteGraphMouse = satelliteGraphMouse;
       return self();
     }
 

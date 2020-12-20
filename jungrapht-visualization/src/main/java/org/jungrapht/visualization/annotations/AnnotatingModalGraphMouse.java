@@ -135,16 +135,6 @@ public class AnnotatingModalGraphMouse<V, E> extends AbstractModalGraphMouse
         ScalingGraphMousePlugin.builder().scalingControl(new CrossoverScalingControl()).build();
     rotatingPlugin = new RotatingGraphMousePlugin();
     shearingPlugin = new ShearingGraphMousePlugin();
-
-    //    super.loadPlugins();
-    //    this.pickingPlugin =
-    //        new PrevSelectingGraphMousePlugin<>(
-    //            InputEvent.BUTTON1_DOWN_MASK, 0, InputEvent.SHIFT_DOWN_MASK);
-    //    this.animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<V, E>();
-    //    this.translatingPlugin = new PrevTranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
-    //    this.scalingPlugin = new PrevScalingGraphMousePlugin(new CrossoverScalingControl(), 0, in, out);
-    //    this.rotatingPlugin = new RotatingGraphMousePlugin();
-    //    this.shearingPlugin = new ShearingGraphMousePlugin();
     add(scalingPlugin);
     setMode(Mode.TRANSFORMING);
   }

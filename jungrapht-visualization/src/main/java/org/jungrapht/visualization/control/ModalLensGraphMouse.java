@@ -26,7 +26,7 @@ public class ModalLensGraphMouse extends AbstractModalGraphMouse
     implements ModalGraphMouse, LensGraphMouse {
 
   /**
-   * Build an instance of a PrevDefaultGraphMouse
+   * Build an instance of a ModalLensGraphMouse
    *
    * @param <T>
    * @param <B>

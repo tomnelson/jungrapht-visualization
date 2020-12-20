@@ -37,7 +37,7 @@ public class DefaultModalGraphMouse<V, E> extends AbstractModalGraphMouse
     implements ModalGraphMouse, ItemSelectable {
 
   /**
-   * Build an instance of a PrevDefaultGraphMouse
+   * Build an instance of a DefaultGraphMouse
    *
    * @param <V>
    * @param <E>

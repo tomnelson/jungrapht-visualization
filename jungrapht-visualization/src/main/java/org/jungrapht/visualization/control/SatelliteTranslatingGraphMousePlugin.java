@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Overrides PrevTranslatingGraphMousePlugin so that mouse events in the satellite view cause
+ * Overrides TranslatingGraphMousePlugin so that mouse events in the satellite view cause
  * translating of the main view
  *
  * @see SatelliteTranslatingGraphMousePlugin

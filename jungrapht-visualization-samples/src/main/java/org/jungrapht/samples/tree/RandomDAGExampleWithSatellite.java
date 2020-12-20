@@ -82,7 +82,6 @@ public class RandomDAGExampleWithSatellite extends JPanel {
     final SatelliteVisualizationViewer<String, Integer> satelliteVisualizationViewer =
         SatelliteVisualizationViewer.builder(vv).viewSize(preferredSatelliteSize).build();
 
-    //    Container panel = new JPanel(new BorderLayout());
     this.add(vv.getComponent());
 
     vv.getComponent().setLayout(null);

@@ -26,10 +26,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * PrevSelectingGraphMousePlugin supports the selecting of graph elements with the mouse.
- * MouseButtonOne selects a single vertex or edge, and MouseButtonTwo adds to the set of selected
- * Vertices or EdgeType. If a Vertex is selected and the mouse is dragged while on the selected
- * Vertex, then that Vertex will be repositioned to follow the mouse until the button is released.
+ * SelectingGraphMousePlugin supports the selecting of graph elements with the mouse. MouseButtonOne
+ * selects a single vertex or edge, and MouseButtonTwo adds to the set of selected Vertices or
+ * EdgeType. If a Vertex is selected and the mouse is dragged while on the selected Vertex, then
+ * that Vertex will be repositioned to follow the mouse until the button is released.
  *
  * @author Tom Nelson
  * @param <V> vertex type
