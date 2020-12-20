@@ -1,8 +1,7 @@
 package org.jungrapht.visualization.control;
 
 /**
- * A Satellite version of the {@link DefaultGraphMouse}. Non-modal, Use CTRL-mouse to translate the
- * graph visualization
+ * A Satellite version of the {@link DefaultGraphMouse}.
  *
  * @author Tom Nelson
  */
@@ -29,16 +28,6 @@ public class DefaultSatelliteGraphMouse<V, E> extends DefaultGraphMouse<V, E> {
   public DefaultSatelliteGraphMouse(Builder<V, E, ?, ?> builder) {
     super(builder);
   }
-  //
-  //  /**
-  //   * create an instance with passed values
-  //   *
-  //   * @param in override value for scale in
-  //   * @param out override value for scale out
-  //   */
-  //  public DefaultSatelliteGraphMouse(float in, float out, boolean vertexSelectionOnly) {
-  //    super(in, out, vertexSelectionOnly);
-  //  }
 
   /** create the plugins, and load them */
   public void loadPlugins() {

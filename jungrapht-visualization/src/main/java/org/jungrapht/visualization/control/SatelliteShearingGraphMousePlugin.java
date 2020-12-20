@@ -55,12 +55,12 @@ public class SatelliteShearingGraphMousePlugin extends ShearingGraphMousePlugin 
         vv.setCursor(cursor);
         Point2D q = down;
         Point2D p = e.getPoint();
-        float dx = (float) (p.getX() - q.getX());
-        float dy = (float) (p.getY() - q.getY());
+        double dx = p.getX() - q.getX();
+        double dy = p.getY() - q.getY();
 
         Dimension d = vv.getSize();
-        float shx = 2.f * dx / d.height;
-        float shy = 2.f * dy / d.width;
+        double shx = 2.f * dx / d.height;
+        double shy = 2.f * dy / d.width;
         // I want to compute shear based on the view coordinates of the
         // lens center in the satellite view.
         // translate the master view center to layout coords, then translate

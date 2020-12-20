@@ -34,8 +34,6 @@ public class SatelliteTranslatingGraphMousePlugin extends TranslatingGraphMouseP
   private static final Logger log =
       LoggerFactory.getLogger(SatelliteTranslatingGraphMousePlugin.class);
 
-  //  public SatelliteTranslatingGraphMousePlugin() {}
-  //
   public SatelliteTranslatingGraphMousePlugin(int translatingMask) {
     super(translatingMask);
   }
@@ -45,6 +43,7 @@ public class SatelliteTranslatingGraphMousePlugin extends TranslatingGraphMouseP
     super.mousePressed(e);
   }
 
+  @Override
   public void mouseClicked(MouseEvent e) {
     log.trace("mouseClicked {} in {}", e.getClickCount(), this.getClass().getName());
     super.mouseClicked(e);
@@ -63,6 +62,7 @@ public class SatelliteTranslatingGraphMousePlugin extends TranslatingGraphMouseP
    *
    * @param e the event
    */
+  @Override
   public void mouseDragged(MouseEvent e) {
     if (down == null) {
       return;
@@ -83,8 +83,8 @@ public class SatelliteTranslatingGraphMousePlugin extends TranslatingGraphMouseP
           Point2D q = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(down);
           Point2D p =
               vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint());
-          float dx = (float) (p.getX() - q.getX());
-          float dy = (float) (p.getY() - q.getY());
+          double dx = p.getX() - q.getX();
+          double dy = p.getY() - q.getY();
 
           modelTransformerMaster.translate(-dx, -dy);
           down.x = e.getX();
