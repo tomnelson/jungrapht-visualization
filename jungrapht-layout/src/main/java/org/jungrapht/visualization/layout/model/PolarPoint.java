@@ -53,7 +53,7 @@ public class PolarPoint {
 
     PolarPoint other = (PolarPoint) o;
 
-    return (Double.compare(other.theta, theta) == 0 && Double.compare(other.radius, radius) == 0);
+    return Double.compare(other.theta, theta) == 0 && Double.compare(other.radius, radius) == 0;
   }
 
   @Override
