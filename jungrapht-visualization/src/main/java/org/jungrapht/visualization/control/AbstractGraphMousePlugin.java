@@ -73,7 +73,6 @@ public abstract class AbstractGraphMousePlugin implements GraphMousePlugin {
    * checks equality. Can be overridden to test with a mask
    */
   @Override
-  @Deprecated
   public boolean checkModifiers(MouseEvent e) {
     return false;
   }

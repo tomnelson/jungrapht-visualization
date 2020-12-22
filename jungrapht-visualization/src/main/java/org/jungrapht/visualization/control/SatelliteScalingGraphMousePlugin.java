@@ -10,7 +10,6 @@
 
 package org.jungrapht.visualization.control;
 
-import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import org.jungrapht.visualization.SatelliteVisualizationViewer;
@@ -47,7 +46,7 @@ public class SatelliteScalingGraphMousePlugin extends ScalingGraphMousePlugin {
    * zoom the master view display in or out, depending on the direction of the mouse wheel motion.
    */
   public void mouseWheelMoved(MouseWheelEvent e) {
-    boolean accepted = e.getModifiersEx() == scalingMask;
+    boolean accepted = checkModifiers(e);
     if (accepted) {
       ScalingControl scalingControl = scaler;
       float xin = in;
@@ -55,12 +54,12 @@ public class SatelliteScalingGraphMousePlugin extends ScalingGraphMousePlugin {
       float xout = out;
       float yout = out;
       // check for single axis
-      if ((e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) == InputEvent.CTRL_DOWN_MASK) {
+      if (e.getModifiersEx() == xAxisScalingMask) {
         // only scale x axis,
         yin = yout = 1.0f;
         scalingControl = layoutScalingControl;
       }
-      if ((e.getModifiersEx() & InputEvent.ALT_DOWN_MASK) == InputEvent.ALT_DOWN_MASK) {
+      if (e.getModifiersEx() == yAxisScalingMask) {
         // only scroll y axis
         xin = xout = 1.0f;
         scalingControl = layoutScalingControl;
