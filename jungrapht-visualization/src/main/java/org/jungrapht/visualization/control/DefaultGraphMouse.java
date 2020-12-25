@@ -212,9 +212,9 @@ public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
   @Override
   public void loadPlugins() {
     add(selectingPlugin);
-    log.info("added " + selectingPlugin);
+    log.trace("added " + selectingPlugin);
     add(regionSelectingPlugin);
-    log.info("added " + regionSelectingPlugin);
+    log.trace("added " + regionSelectingPlugin);
     add(new TranslatingGraphMousePlugin(translatingMask));
     add(scalingPlugin);
     setPluginsLoaded();

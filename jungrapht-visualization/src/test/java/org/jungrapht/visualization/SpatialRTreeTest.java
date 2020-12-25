@@ -38,6 +38,8 @@ public class SpatialRTreeTest {
     this.graph = Pseudograph.<String, Integer>createBuilder(Integer.class).build();
     IntStream.range(0, 10).mapToObj(i -> "N" + i).forEach(graph::addVertex);
 
+    System.setProperty("jungrapht.spatialSupportOnSwingThread", "false");
+
     VisualizationServer<String, Integer> vv =
         VisualizationServer.builder(graph)
             .layoutAlgorithm(new StaticLayoutAlgorithm())

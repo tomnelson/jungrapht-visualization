@@ -53,6 +53,7 @@ import org.jungrapht.visualization.spatial.Spatial;
 import org.jungrapht.visualization.spatial.SpatialGrid;
 import org.jungrapht.visualization.spatial.SpatialQuadTree;
 import org.jungrapht.visualization.spatial.SpatialRTree;
+import org.jungrapht.visualization.spatial.SwingThreadSpatial;
 import org.jungrapht.visualization.spatial.rtree.QuadraticLeafSplitter;
 import org.jungrapht.visualization.spatial.rtree.QuadraticSplitter;
 import org.jungrapht.visualization.spatial.rtree.RStarLeafSplitter;
@@ -85,6 +86,8 @@ class DefaultVisualizationServer<V, E> extends JPanel
 
   private static final String VERTEX_SPATIAL_SUPPORT = PREFIX + "vertexSpatialSupport";
   private static final String EDGE_SPATIAL_SUPPORT = PREFIX + "edgeSpatialSupport";
+  private static final String SPATIAL_SUPPORT_ON_SWING_THREAD =
+      PREFIX + "spatialSupportOnSwingThread";
   private static final String PROPERTIES_FILE_NAME =
       System.getProperty("jungrapht.properties.file.name", PREFIX + "properties");
   private static final String LIGHTWEIGHT_VERTEX_COUNT_THRESHOLD =
@@ -146,6 +149,9 @@ class DefaultVisualizationServer<V, E> extends JPanel
   protected Spatial<V> vertexSpatial;
 
   protected Spatial<E> edgeSpatial;
+
+  protected boolean spatialSupportOnSwingThread =
+      Boolean.parseBoolean(System.getProperty(SPATIAL_SUPPORT_ON_SWING_THREAD, "true"));
 
   protected BiFunction<Graph<V, E>, E, Shape> savedEdgeShapeFunction;
 
@@ -937,60 +943,71 @@ class DefaultVisualizationServer<V, E> extends JPanel
 
   private Spatial<V> createVertexSpatial(
       VisualizationModel<V, E> visualizationModel, RenderContext<V, E> renderContext) {
+    Spatial<V> vertexSpatial;
     switch (getVertexSpatialSupportPreference()) {
       case RTREE:
-        return SpatialRTree.Vertices.builder()
-            .visualizationModel(visualizationModel)
-            .boundingRectangleCollector(
-                new BoundingRectangleCollector.Vertices<>(
-                    renderContext
-                        .getVertexShapeFunction()
-                        .andThen(
-                            shape -> {
-                              // use the inverse of the scales from the layoutTransform to fix the rectangle when
-                              // layout scale has been applied (> 1.0 or when single axis scaling has been applied)
-                              AffineTransform layoutTransform =
-                                  renderContext
-                                      .getMultiLayerTransformer()
-                                      .getTransformer(Layer.LAYOUT)
-                                      .getTransform();
-                              return AffineTransform.getScaleInstance(
-                                      1 / layoutTransform.getScaleX(),
-                                      1 / layoutTransform.getScaleY())
-                                  .createTransformedShape(shape);
-                            }),
-                    visualizationModel.getLayoutModel()))
-            .splitterContext(SplitterContext.of(new RStarLeafSplitter<>(), new RStarSplitter<>()))
-            .reinsert(true)
-            .build();
+        vertexSpatial =
+            SpatialRTree.Vertices.builder()
+                .visualizationModel(visualizationModel)
+                .boundingRectangleCollector(
+                    new BoundingRectangleCollector.Vertices<>(
+                        renderContext
+                            .getVertexShapeFunction()
+                            .andThen(
+                                shape -> {
+                                  // use the inverse of the scales from the layoutTransform to fix the rectangle when
+                                  // layout scale has been applied (> 1.0 or when single axis scaling has been applied)
+                                  AffineTransform layoutTransform =
+                                      renderContext
+                                          .getMultiLayerTransformer()
+                                          .getTransformer(Layer.LAYOUT)
+                                          .getTransform();
+                                  return AffineTransform.getScaleInstance(
+                                          1 / layoutTransform.getScaleX(),
+                                          1 / layoutTransform.getScaleY())
+                                      .createTransformedShape(shape);
+                                }),
+                        visualizationModel.getLayoutModel()))
+                .splitterContext(
+                    SplitterContext.of(new RStarLeafSplitter<>(), new RStarSplitter<>()))
+                .reinsert(true)
+                .build();
+        break;
       case GRID:
-        return new SpatialGrid<>(visualizationModel.getLayoutModel());
+        vertexSpatial = new SpatialGrid<>(visualizationModel.getLayoutModel());
+        break;
       case QUADTREE:
-        return new SpatialQuadTree<>(visualizationModel.getLayoutModel());
+        vertexSpatial = new SpatialQuadTree<>(visualizationModel.getLayoutModel());
+        break;
       case NONE:
       default:
-        return new Spatial.NoOp.Vertex<>(visualizationModel.getLayoutModel());
+        vertexSpatial = new Spatial.NoOp.Vertex<>(visualizationModel.getLayoutModel());
+        break;
     }
+    return spatialSupportOnSwingThread ? SwingThreadSpatial.of(vertexSpatial) : vertexSpatial;
   }
 
   private Spatial<E> createEdgeSpatial(
       VisualizationModel<V, E> visualizationModel, RenderContext<V, E> renderContext) {
+    Spatial<E> edgeSpatial;
     switch (getEdgeSpatialSupportPreference()) {
       case RTREE:
-        return SpatialRTree.Edges.builder()
-            .visualizationModel(visualizationModel)
-            .boundingRectangleCollector(
-                new BoundingRectangleCollector.Edges<>(
-                    renderContext.getVertexShapeFunction(),
-                    renderContext.getEdgeShapeFunction(),
-                    visualizationModel.getLayoutModel()))
-            .splitterContext(
-                SplitterContext.of(new QuadraticLeafSplitter(), new QuadraticSplitter()))
-            .reinsert(false)
-            .build();
+        edgeSpatial =
+            SpatialRTree.Edges.builder()
+                .visualizationModel(visualizationModel)
+                .boundingRectangleCollector(
+                    new BoundingRectangleCollector.Edges<>(
+                        renderContext.getVertexShapeFunction(),
+                        renderContext.getEdgeShapeFunction(),
+                        visualizationModel.getLayoutModel()))
+                .splitterContext(
+                    SplitterContext.of(new QuadraticLeafSplitter(), new QuadraticSplitter()))
+                .reinsert(false)
+                .build();
       case NONE:
       default:
-        return new Spatial.NoOp.Edge<>(visualizationModel);
+        edgeSpatial = new Spatial.NoOp.Edge<>(visualizationModel);
     }
+    return spatialSupportOnSwingThread ? SwingThreadSpatial.of(edgeSpatial) : edgeSpatial;
   }
 }
