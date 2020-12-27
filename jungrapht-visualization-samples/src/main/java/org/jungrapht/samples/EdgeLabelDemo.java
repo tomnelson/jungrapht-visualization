@@ -121,10 +121,19 @@ public class EdgeLabelDemo extends JPanel {
             vv.repaint();
           }
         });
+    JRadioButton wedgeButton = new JRadioButton("Wedge");
+    wedgeButton.addItemListener(
+        e -> {
+          if (e.getStateChange() == ItemEvent.SELECTED) {
+            vv.getRenderContext().setEdgeShapeFunction(EdgeShape.wedge());
+            vv.repaint();
+          }
+        });
 
     radio.add(lineButton);
     radio.add(quadButton);
     radio.add(cubicButton);
+    radio.add(wedgeButton);
 
     graphMouse.setMode(ModalGraphMouse.Mode.TRANSFORMING);
 
@@ -173,6 +182,7 @@ public class EdgeLabelDemo extends JPanel {
     edgePanel.add(lineButton);
     edgePanel.add(quadButton);
     edgePanel.add(cubicButton);
+    edgePanel.add(wedgeButton);
 
     JPanel rotatePanel = new JPanel();
     rotatePanel.setBorder(BorderFactory.createTitledBorder("Alignment"));

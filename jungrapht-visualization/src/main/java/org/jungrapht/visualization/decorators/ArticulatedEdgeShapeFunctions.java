@@ -55,7 +55,7 @@ public class ArticulatedEdgeShapeFunctions {
     at.translate(-list.get(0).x, -list.get(0).y);
     Shape theShape = at.createTransformedShape(path);
     // theShape starts at 0,0 and extends to 1,0
-    return theShape;
+    return EdgeShape.ExpandXY.of(theShape);
   }
 
   /**

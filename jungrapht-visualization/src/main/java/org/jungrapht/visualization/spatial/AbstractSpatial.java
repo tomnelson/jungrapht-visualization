@@ -67,6 +67,11 @@ public abstract class AbstractSpatial<T, NT> implements Spatial<T> {
     this.active = active;
   }
 
+  @Override
+  public LayoutModel<NT> getLayoutModel() {
+    return this.layoutModel;
+  }
+
   protected NT getClosest(Collection<NT> nodes, double x, double y, double radius) {
 
     // since I am comparing with distance squared, i need to square the radius

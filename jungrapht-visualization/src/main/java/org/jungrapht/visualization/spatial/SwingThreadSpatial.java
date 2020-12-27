@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import javax.swing.*;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
+import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.spatial.rtree.TreeNode;
 
@@ -25,7 +26,13 @@ public class SwingThreadSpatial<T> implements Spatial<T> {
 
   @Override
   public void layoutStateChanged(LayoutStateChange.Event evt) {
-    spatial.layoutStateChanged(evt);
+    // if the layoutmodel is not active, then it is safe to activate this
+    setActive(!evt.active);
+    // if the layout model is finished, then rebuild the spatial data structure
+    if (!evt.active) {
+      recalculate();
+      getLayoutModel().getModelChangeSupport().fireModelChanged(); // this will cause a repaint
+    }
   }
 
   @Override
@@ -111,5 +118,10 @@ public class SwingThreadSpatial<T> implements Spatial<T> {
   @Override
   public T getClosestElement(double x, double y) {
     return spatial.getClosestElement(x, y);
+  }
+
+  @Override
+  public LayoutModel getLayoutModel() {
+    return spatial.getLayoutModel();
   }
 }

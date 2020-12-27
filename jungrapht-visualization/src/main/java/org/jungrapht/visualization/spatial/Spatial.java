@@ -117,6 +117,8 @@ public interface Spatial<T> extends LayoutStateChange.Listener {
    */
   T getClosestElement(double x, double y);
 
+  LayoutModel getLayoutModel();
+
   /**
    * a special case Spatial that does no filtering
    *

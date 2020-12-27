@@ -3,7 +3,6 @@ package org.jungrapht.visualization.renderers;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.function.BiFunction;
@@ -11,6 +10,7 @@ import java.util.function.Predicate;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
+import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
@@ -108,9 +108,13 @@ public abstract class AbstractEdgeRenderer<V, E> implements Renderer.Edge<V, E> 
       float thetaRadians = (float) Math.atan2(dy, dx);
       xform.rotate(thetaRadians);
       double dist = Math.sqrt(dx * dx + dy * dy);
-      if (edgeShape instanceof Path2D) {
+
+      if (edgeShape instanceof EdgeShape.ExpandXY) {
+        // this is for the Articulated edges in the min cross layouts
+        // and (future) orthogonal layout edges
         xform.scale(dist, dist);
       } else {
+        // all other edges are scaled only in the x axis (to span from vertex to vertex)
         xform.scale(dist, 1.0);
       }
     }

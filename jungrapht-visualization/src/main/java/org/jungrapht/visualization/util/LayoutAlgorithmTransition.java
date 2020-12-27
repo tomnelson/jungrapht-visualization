@@ -44,9 +44,6 @@ public class LayoutAlgorithmTransition {
       LayoutAlgorithm<V> endLayoutAlgorithm,
       Runnable after) {
 
-    //    if (endLayoutAlgorithm instanceof AfterRunnable) {
-    //      ((AfterRunnable) endLayoutAlgorithm).setAfter(after);
-    //    }
     endLayoutAlgorithm.setAfter(after);
     visualizationServer.getVisualizationModel().setLayoutAlgorithm(endLayoutAlgorithm);
   }

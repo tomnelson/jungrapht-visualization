@@ -10,6 +10,7 @@
  */
 package org.jungrapht.visualization.decorators;
 
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.*;
 import java.util.Collection;
@@ -18,7 +19,9 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultGraphType;
 import org.jungrapht.visualization.layout.model.Point;
+import org.jungrapht.visualization.util.ArrowFactory;
 import org.jungrapht.visualization.util.EdgeIndexFunction;
 
 /**
@@ -36,6 +39,69 @@ public interface EdgeShape {
   CubicCurve2D CUBIC_CURVE = new CubicCurve2D.Float();
   Ellipse2D ELLIPSE = new Ellipse2D.Float(-.5f, -.5f, 1, 1);
   Rectangle2D BOX = new Rectangle2D.Float();
+  Wedge WEDGE = new Wedge(10);
+
+  class ExpandXY implements Shape {
+    protected Shape delegate;
+
+    public static ExpandXY of(Shape delegate) {
+      return new ExpandXY(delegate);
+    }
+
+    ExpandXY(Shape delegate) {
+      this.delegate = delegate;
+    }
+
+    @Override
+    public Rectangle getBounds() {
+      return delegate.getBounds();
+    }
+
+    @Override
+    public Rectangle2D getBounds2D() {
+      return delegate.getBounds2D();
+    }
+
+    @Override
+    public boolean contains(double x, double y) {
+      return delegate.contains(x, y);
+    }
+
+    @Override
+    public boolean contains(Point2D p) {
+      return delegate.contains(p);
+    }
+
+    @Override
+    public boolean intersects(double x, double y, double w, double h) {
+      return delegate.intersects(x, y, w, h);
+    }
+
+    @Override
+    public boolean intersects(Rectangle2D r) {
+      return delegate.intersects(r);
+    }
+
+    @Override
+    public boolean contains(double x, double y, double w, double h) {
+      return delegate.contains(x, y, w, h);
+    }
+
+    @Override
+    public boolean contains(Rectangle2D r) {
+      return delegate.contains(r);
+    }
+
+    @Override
+    public PathIterator getPathIterator(AffineTransform at) {
+      return delegate.getPathIterator(at);
+    }
+
+    @Override
+    public PathIterator getPathIterator(AffineTransform at, double flatness) {
+      return delegate.getPathIterator(at, flatness);
+    }
+  }
 
   /**
    * A convenience instance for other edge shapes to use for self-loop edges where parallel
@@ -57,6 +123,10 @@ public interface EdgeShape {
 
   static <V, E> CubicCurve<V, E> cubicCurve() {
     return new CubicCurve<>();
+  }
+
+  static <V, E> Wedge<V, E> wedge() {
+    return new Wedge<>(10);
   }
 
   @Deprecated
@@ -189,6 +259,39 @@ public interface EdgeShape {
   class Loop<V, E> extends ParallelEdgeShapeFunction<V, E> {
     public Shape apply(Graph<V, E> graph, E e) {
       return buildFrame(ELLIPSE, edgeIndexFunction.apply(graph, e));
+    }
+  }
+
+  /**
+   * An edge shape that renders as an isosceles triangle whose apex is at the destination vertex for
+   * directed edges, and as a "bowtie" shape for undirected edges.
+   *
+   * @author Joshua O'Madadhain
+   */
+  class Wedge<V, E> extends AbstractEdgeShapeFunction<V, E> {
+    private static GeneralPath triangle;
+    private static GeneralPath bowtie;
+
+    public Wedge(int width) {
+      triangle = ArrowFactory.getWedgeArrow(width, 1);
+      triangle.transform(AffineTransform.getTranslateInstance(1, 0));
+      bowtie = new GeneralPath(GeneralPath.WIND_EVEN_ODD);
+      bowtie.moveTo(0, width / 2);
+      bowtie.lineTo(1, -width / 2);
+      bowtie.lineTo(1, width / 2);
+      bowtie.lineTo(0, -width / 2);
+      bowtie.closePath();
+    }
+
+    public Shape apply(Graph<V, E> graph, E edge) {
+
+      V source = graph.getEdgeSource(edge);
+      V target = graph.getEdgeTarget(edge);
+      if (source.equals(target)) {
+        return loop.apply(graph, edge);
+      }
+      if (graph.getType() == DefaultGraphType.dag()) return triangle;
+      else return bowtie;
     }
   }
 

@@ -673,6 +673,9 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
       case "CUBIC_CURVE":
         setEdgeShapeFunction(EdgeShape.cubicCurve());
         break;
+      case "WEDGE":
+        setEdgeShapeFunction(EdgeShape.wedge());
+        break;
       case "QUAD_CURVE":
       default:
         setEdgeShapeFunction(EdgeShape.quadCurve());

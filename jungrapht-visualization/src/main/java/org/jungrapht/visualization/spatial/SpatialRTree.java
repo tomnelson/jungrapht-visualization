@@ -7,6 +7,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 import java.util.List;
+import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.control.GraphElementAccessor;
@@ -177,6 +178,9 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
   }
 
   protected void recalculate(Collection<T> elements) {
+    //    if (!SwingUtilities.isEventDispatchThread()) {
+    //      log.warn("NOT AWT Thread");
+    //    }
     try {
       log.trace("start recalculate");
       clear();

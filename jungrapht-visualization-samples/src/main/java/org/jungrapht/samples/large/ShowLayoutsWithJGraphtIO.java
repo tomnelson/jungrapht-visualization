@@ -12,6 +12,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipInputStream;
 import javax.swing.*;
@@ -29,6 +31,7 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.LensMagnificationGraphMousePlugin;
 import org.jungrapht.visualization.control.ModalLensGraphMouse;
+import org.jungrapht.visualization.layout.algorithms.AbstractIterativeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
@@ -79,6 +82,8 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
   LayoutPaintable.BalloonRings balloonLayoutRings;
   LayoutPaintable.RadialRings radialLayoutRings;
 
+  ExecutorService executorService = Executors.newFixedThreadPool(1);
+
   public ShowLayoutsWithJGraphtIO() {
 
     Graph<String, DefaultEdge> graph =
@@ -98,8 +103,6 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
             .build();
 
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
-    //    vv.setInitialDimensionFunction(
-    //        new InitialDimensionFunction<>(vv.getRenderContext().getVertexShapeFunction()));
 
     vv.setVertexToolTipFunction(
         vertex ->
@@ -149,16 +152,22 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
         e ->
             SwingUtilities.invokeLater(
                 () -> {
-                  LayoutHelper.Layouts layoutType =
+                  LayoutHelper.Layouts layoutBuilderType =
                       (LayoutHelper.Layouts) layoutComboBox.getSelectedItem();
-                  LayoutAlgorithm layoutAlgorithm = layoutType.getLayoutAlgorithm();
+                  LayoutAlgorithm.Builder layoutAlgorithmBuilder =
+                      layoutBuilderType.getLayoutAlgorithmBuilder();
+                  if (layoutAlgorithmBuilder instanceof AbstractIterativeLayoutAlgorithm.Builder) {
+                    ((AbstractIterativeLayoutAlgorithm.Builder) layoutAlgorithmBuilder)
+                        .executor(executorService);
+                  }
+                  LayoutAlgorithm layoutAlgorithm = layoutAlgorithmBuilder.build();
                   vv.removePreRenderPaintable(balloonLayoutRings);
                   vv.removePreRenderPaintable(radialLayoutRings);
                   layoutAlgorithm.setAfter(vv::scaleToLayout);
                   if (animateLayoutTransition.isSelected()) {
-                    LayoutAlgorithmTransition.animate(vv, layoutAlgorithm);
+                    LayoutAlgorithmTransition.animate(vv, layoutAlgorithm, vv::scaleToLayout);
                   } else {
-                    LayoutAlgorithmTransition.apply(vv, layoutAlgorithm);
+                    LayoutAlgorithmTransition.apply(vv, layoutAlgorithm, vv::scaleToLayout);
                   }
                   if (layoutAlgorithm instanceof BalloonLayoutAlgorithm) {
                     balloonLayoutRings =

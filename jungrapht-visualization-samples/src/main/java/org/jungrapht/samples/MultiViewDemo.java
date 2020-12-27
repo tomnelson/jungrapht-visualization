@@ -104,7 +104,8 @@ public class MultiViewDemo extends JPanel {
 
     vv2.getRenderContext().setEdgeShapeFunction(EdgeShape.quadCurve());
 
-    vv3.getRenderContext().setEdgeShapeFunction(EdgeShape.cubicCurve());
+    vv3.getRenderContext().setEdgeShapeFunction(EdgeShape.wedge());
+    vv3.getRenderContext().setEdgeFillPaintFunction(e -> Color.gray);
 
     vv2.getRenderContext()
         .setMultiLayerTransformer(vv1.getRenderContext().getMultiLayerTransformer());
