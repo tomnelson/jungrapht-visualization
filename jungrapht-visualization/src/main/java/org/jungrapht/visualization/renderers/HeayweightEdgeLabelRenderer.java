@@ -26,6 +26,7 @@ import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.decorators.ArticulatedEdgeShapeFunction;
 import org.jungrapht.visualization.decorators.EdgeShape;
+import org.jungrapht.visualization.decorators.ExpandXY;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
@@ -207,7 +208,7 @@ public class HeayweightEdgeLabelRenderer<V, E> implements Renderer.EdgeLabel<V, 
     float thetaRadians = (float) Math.atan2(dy, dx);
     xform.rotate(thetaRadians);
     float dist = (float) Math.sqrt(dx * dx + dy * dy);
-    if (edgeShape instanceof Path2D) {
+    if (edgeShape instanceof ExpandXY) {
       xform.scale(dist, dist);
     } else {
       xform.scale(dist, 1.0);

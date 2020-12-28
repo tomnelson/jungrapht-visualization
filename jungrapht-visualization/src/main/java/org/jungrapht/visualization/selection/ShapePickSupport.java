@@ -21,7 +21,6 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
-import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -38,6 +37,7 @@ import org.jungrapht.visualization.PropertyLoader;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.control.GraphElementAccessor;
+import org.jungrapht.visualization.decorators.ExpandXY;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.spatial.Spatial;
@@ -605,8 +605,9 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
       try {
         // this checks every edge.
         for (E edge : getFilteredEdges()) {
-
+          log.info("checking edge {}", edge);
           Shape edgeShape = prepareFinalEdgeShape(vv.getRenderContext(), layoutModel, edge);
+          log.info("edgeShape: {}", edgeShape);
           if (edgeShape == null) {
             continue;
           }
@@ -618,6 +619,12 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
           }
 
           Line2D endToEnd = getLineFromShape(edgeShape);
+          log.info("endToEndLine: {}", endToEnd);
+          log.info("pickFootprint: {}", pickFootprint);
+
+          log.info("!edgeShape.contains(pickFootprint): {}", !edgeShape.contains(pickFootprint));
+          log.info("edgeShape.intersects(pickFootprint): {}", edgeShape.intersects(pickFootprint));
+          log.info("!endToEnd.intersects(pickFootprint): {}", !endToEnd.intersects(pickFootprint));
           // for articulated edges, the edge 'shape' is an area bounded by the zig-zag edge and the
           // (invisible) line from source to target vertex. The pick footprint is not inside the shape
           // and is not intersecting the invisible line, but does intersect the zig zag line
@@ -829,7 +836,7 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
       xform.rotate(theta);
       // stretch the edge to span the distance between the vertices
       float dist = (float) Math.sqrt(dx * dx + dy * dy);
-      if (edgeShape instanceof Path2D) {
+      if (edgeShape instanceof ExpandXY) {
         xform.scale(dist, dist);
       } else {
         xform.scale(dist, 1.0);
@@ -1000,7 +1007,7 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
       float thetaRadians = (float) Math.atan2(dy, dx);
       xform.rotate(thetaRadians);
       double dist = Math.sqrt(dx * dx + dy * dy);
-      if (edgeShape instanceof Path2D) {
+      if (edgeShape instanceof ExpandXY) {
         xform.scale(dist, dist);
       } else {
         xform.scale(dist, 1.0);

@@ -2,7 +2,6 @@ package org.jungrapht.visualization.util;
 
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,6 +9,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import org.jgrapht.Graph;
+import org.jungrapht.visualization.decorators.ExpandXY;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.slf4j.Logger;
@@ -227,7 +227,7 @@ public abstract class BoundingRectangleCollector<T> {
         float theta = (float) Math.atan2(dy, dx);
         xform.rotate(theta);
         float dist = (float) p1.distance(p2);
-        if (edgeShape instanceof Path2D) {
+        if (edgeShape instanceof ExpandXY) {
           xform.scale(dist, dist);
         } else {
           xform.scale(dist, 1.0);
@@ -267,7 +267,7 @@ public abstract class BoundingRectangleCollector<T> {
         float theta = (float) Math.atan2(dy, dx);
         xform.rotate(theta);
         float dist = (float) p1.distance(p2);
-        if (edgeShape instanceof Path2D) {
+        if (edgeShape instanceof ExpandXY) {
           xform.scale(dist, dist);
         } else {
           xform.scale(dist, 1.0);
@@ -307,7 +307,7 @@ public abstract class BoundingRectangleCollector<T> {
           float theta = (float) Math.atan2(dy, dx);
           xform.rotate(theta);
           float dist = (float) p1.distance(p2);
-          if (edgeShape instanceof Path2D) {
+          if (edgeShape instanceof ExpandXY) {
             xform.scale(dist, dist);
           } else {
             xform.scale(dist, 1.0);
