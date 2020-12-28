@@ -10,7 +10,7 @@ import java.util.function.Predicate;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
-import org.jungrapht.visualization.decorators.EdgeShape;
+import org.jungrapht.visualization.decorators.ExpandXY;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
@@ -109,7 +109,7 @@ public abstract class AbstractEdgeRenderer<V, E> implements Renderer.Edge<V, E> 
       xform.rotate(thetaRadians);
       double dist = Math.sqrt(dx * dx + dy * dy);
 
-      if (edgeShape instanceof EdgeShape.ExpandXY) {
+      if (edgeShape instanceof ExpandXY) {
         // this is for the Articulated edges in the min cross layouts
         // and (future) orthogonal layout edges
         xform.scale(dist, dist);
