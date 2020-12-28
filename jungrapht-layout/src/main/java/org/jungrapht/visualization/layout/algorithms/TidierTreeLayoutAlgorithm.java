@@ -603,9 +603,6 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
       layoutModel.set(entry.getKey(), np);
     }
     layoutModel.setSize((int) extent.width, (int) extent.height);
-    if (expandLayout) {
-      expandToFill(layoutModel);
-    }
     if (log.isTraceEnabled()) {
       log.trace("visited {} vertices", visitedVertices.size());
       log.trace(
@@ -617,6 +614,9 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
               .collect(Collectors.toSet()));
     }
     this.moveVerticesThatOverlapVerticalEdges(layoutModel, horizontalVertexSpacing);
+    if (expandLayout) {
+      expandToFill(layoutModel);
+    }
     this.runAfter();
     clearMetadata();
   }
