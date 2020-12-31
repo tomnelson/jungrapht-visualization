@@ -605,9 +605,7 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
       try {
         // this checks every edge.
         for (E edge : getFilteredEdges()) {
-          log.info("checking edge {}", edge);
           Shape edgeShape = prepareFinalEdgeShape(vv.getRenderContext(), layoutModel, edge);
-          log.info("edgeShape: {}", edgeShape);
           if (edgeShape == null) {
             continue;
           }
@@ -619,12 +617,6 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
           }
 
           Line2D endToEnd = getLineFromShape(edgeShape);
-          log.info("endToEndLine: {}", endToEnd);
-          log.info("pickFootprint: {}", pickFootprint);
-
-          log.info("!edgeShape.contains(pickFootprint): {}", !edgeShape.contains(pickFootprint));
-          log.info("edgeShape.intersects(pickFootprint): {}", edgeShape.intersects(pickFootprint));
-          log.info("!endToEnd.intersects(pickFootprint): {}", !endToEnd.intersects(pickFootprint));
           // for articulated edges, the edge 'shape' is an area bounded by the zig-zag edge and the
           // (invisible) line from source to target vertex. The pick footprint is not inside the shape
           // and is not intersecting the invisible line, but does intersect the zig zag line
