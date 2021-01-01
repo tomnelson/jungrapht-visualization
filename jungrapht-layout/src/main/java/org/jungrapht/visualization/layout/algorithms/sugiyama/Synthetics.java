@@ -58,7 +58,6 @@ public class Synthetics<V, E> {
         // for edges that 'jump' a row, create a new vertex at the next row's rank
         // and add edges that route the original edge thru the new vertex
         for (LE<V, E> edge : outgoingMulti) {
-          //          log.info("will replace outgoingMulti edge {}", edge);
           SyntheticLV<V> virtualVertex = SyntheticLV.of();
           // rank of new vertex is the rank of the source vertex + 1
           int newVertexRank = edge.getSource().getRank() + 1;
@@ -72,7 +71,6 @@ public class Synthetics<V, E> {
         // for edges that 'jump' a row, create a new vertex at the previous row's rank
         // and add edges that route the original edge thru the new vertex
         for (LE<V, E> edge : incomingMulti) {
-          //          log.info("will replace incomingMulti edge {}", edge);
           LV<V> virtualVertex = SyntheticLV.of();
           // rank of new vertex is the rank of the target vertex - 1
           int newVertexRank = edge.getTarget().getRank() - 1;

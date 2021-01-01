@@ -79,15 +79,5 @@ public class FRLayoutsTimingTest {
                 layoutAlgorithm,
                 System.currentTimeMillis() - startTime));
     layoutModel.accept(layoutAlgorithm);
-    //    if (layoutModel.getTheFuture() instanceof CompletableFuture) {
-    //      ((CompletableFuture) layoutModel.getTheFuture())
-    //          .thenRun(
-    //              () ->
-    //                  log.info(
-    //                      "elapsed time for {} was {}",
-    //                      layoutAlgorithm,
-    //                      System.currentTimeMillis() - startTime))
-    //          .join();
-    //    }
   }
 }

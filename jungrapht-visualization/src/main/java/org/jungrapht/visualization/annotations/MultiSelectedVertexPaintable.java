@@ -295,7 +295,7 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
     // translate to view coords
     Point2D viewLocation = multiLayerTransformer.transform(location.x, location.y);
     AffineTransform graphicsTransform = g2d.getTransform();
-    log.info("graphics transform is {}", graphicsTransform);
+    log.trace("graphics transform is {}", graphicsTransform);
     // move the shape to the right place in the view
     Shape shape =
         AffineTransform.getTranslateInstance(viewLocation.getX(), viewLocation.getY())

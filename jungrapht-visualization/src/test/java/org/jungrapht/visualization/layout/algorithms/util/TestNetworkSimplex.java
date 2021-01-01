@@ -32,12 +32,6 @@ public class TestNetworkSimplex {
     NetworkSimplex<String, Integer> nws = NetworkSimplex.builder(svGraph).build();
 
     nws.run();
-
-    //    buildGraphAndSpanningTree();
-    //
-    //    NetworkSimplex<String, Integer> networkSimplex = new NetworkSimplex<>(dag);
-    //    Graph<String, Integer> best = networkSimplex.getTheBestSpanningTree();
-    //    log.info("bestSpanningTree: {}", best);
   }
 
   private void buildGraphAndSpanningTree() {

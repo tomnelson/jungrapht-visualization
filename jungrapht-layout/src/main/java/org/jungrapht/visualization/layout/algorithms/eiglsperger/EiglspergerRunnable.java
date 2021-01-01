@@ -520,7 +520,7 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
     log.trace("articulated edges took {}", (articulatedEdgeTime - pointsSetTime));
 
     if (cancelled) {
-      log.info("interrupted before setting layoutModel from svGraph, cancelled: {}", cancelled);
+      log.debug("interrupted before setting layoutModel from svGraph, cancelled: {}", cancelled);
       return;
     }
     svGraph.vertexSet().forEach(v -> layoutModel.set(v.getVertex(), v.getPoint()));

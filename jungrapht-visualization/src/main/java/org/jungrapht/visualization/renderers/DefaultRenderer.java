@@ -68,8 +68,8 @@ class DefaultRenderer<V, E> implements Renderer<V, E> {
       // skip rendering until graph vertex index is stable,
       // this can happen if the layout relax thread is changing locations while the
       // visualization is rendering
-      log.info("got {} so returning", ex.toString());
-      log.info(
+      log.debug("got {} so returning", ex.toString());
+      log.debug(
           "layoutMode active: {}, edgeSpatial active {}, vertexSpatial active: {}",
           layoutModel.isRelaxing(),
           edgeSpatial != null && edgeSpatial.isActive(),

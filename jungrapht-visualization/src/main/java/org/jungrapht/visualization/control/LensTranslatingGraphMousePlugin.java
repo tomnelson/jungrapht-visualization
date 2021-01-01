@@ -59,8 +59,6 @@ public class LensTranslatingGraphMousePlugin extends TranslatingGraphMousePlugin
    * @param e the event
    */
   public void mousePressed(MouseEvent e) {
-    log.info("mousePressed in {}", this.getClass().getName());
-
     VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
     MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
     MutableTransformer viewTransformer =
@@ -137,7 +135,6 @@ public class LensTranslatingGraphMousePlugin extends TranslatingGraphMousePlugin
 
   /** unset the 'down' point and change the cursoe back to the system default cursor */
   public void mouseReleased(MouseEvent e) {
-    log.info("mouseReleased in {}", this.getClass().getName());
     if (dragOnEdge || dragOnLens) {
       e.consume();
     }

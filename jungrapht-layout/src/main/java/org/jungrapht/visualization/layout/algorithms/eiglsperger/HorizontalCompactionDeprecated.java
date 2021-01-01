@@ -31,7 +31,6 @@ public class HorizontalCompactionDeprecated<V>
 
   public void horizontalCompaction() {
     //    EiglspergerUtil.layerSanityCheck(layers);
-    //    log.info("placeBlock for all v where root(v) is v");
     if (log.isTraceEnabled()) {
       Arrays.stream(layers)
           .flatMap(Arrays::stream)
@@ -65,7 +64,6 @@ public class HorizontalCompactionDeprecated<V>
   }
 
   protected void placeBlock(LV<V> v) {
-    //    log.info("placeBlock: {} and x.containsKey(v) is {}", v, x.containsKey(v));
     // if x[v] undefined
     if (!x.containsKey(v)) {
       // x[v] <- 0, w <- v

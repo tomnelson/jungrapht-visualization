@@ -57,6 +57,5 @@ public final class LinearTimeMedian {
     int temp = array[i];
     array[i] = array[j];
     array[j] = temp;
-    //    log.info("after swap of {} and {}: {}", i, j, Arrays.toString(array));
   }
 }

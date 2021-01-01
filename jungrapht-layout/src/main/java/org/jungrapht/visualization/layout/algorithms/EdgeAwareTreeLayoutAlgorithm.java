@@ -222,7 +222,6 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
               .stream()
               .sorted(edgeComparator)
               .collect(Collectors.toCollection(LinkedHashSet::new))) {
-        //     log.info("consider edge {}", edge);
         if (edgePredicate.test(edge)
             || graph.incomingEdgesOf(graph.getEdgeTarget(edge)).stream().noneMatch(edgePredicate)) {
           V v = graph.getEdgeTarget(edge);

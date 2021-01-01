@@ -127,9 +127,7 @@ public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> impleme
     add(lensKillingGraphMousePlugin);
     add(new LensTranslatingGraphMousePlugin());
     add(selectingPlugin);
-    log.info("added " + selectingPlugin);
     add(regionSelectingPlugin);
-    log.info("added " + regionSelectingPlugin);
     add(new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK));
     add(magnificationPlugin);
     add(scalingPlugin);
