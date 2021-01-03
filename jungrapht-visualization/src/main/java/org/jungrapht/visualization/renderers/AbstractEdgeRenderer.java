@@ -13,6 +13,7 @@ import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.decorators.ExpandXY;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
+import org.jungrapht.visualization.transform.MutableTransformer;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,6 +113,18 @@ public abstract class AbstractEdgeRenderer<V, E> implements Renderer.Edge<V, E> 
       if (edgeShape instanceof ExpandXY) {
         // this is for the Articulated edges in the min cross layouts
         // and (future) orthogonal layout edges
+        MutableTransformer layoutTransformer =
+            renderContext
+                .getMultiLayerTransformer()
+                .getTransformer(MultiLayerTransformer.Layer.LAYOUT);
+        double scaleX = layoutTransformer.getScaleX();
+        double scaleY = layoutTransformer.getScaleY();
+        // account for any single axis scaling by mutating the 'Y' coords of the articulated edge
+        AffineTransform singleAxisScalingTransform =
+            AffineTransform.getScaleInstance(1, scaleX / scaleY);
+        log.trace("scaleX: {} ", scaleX);
+        log.trace("scaleY: {}", scaleY);
+        edgeShape = singleAxisScalingTransform.createTransformedShape(edgeShape);
         xform.scale(dist, dist);
       } else {
         // all other edges are scaled only in the x axis (to span from vertex to vertex)
