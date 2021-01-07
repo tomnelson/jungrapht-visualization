@@ -335,9 +335,6 @@ public class MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> extends MultiRowTreeLayo
         layoutModel.set(vertex, vertexRectangle.x, vertexRectangle.y);
       }
     }
-    if (expandLayout) {
-      expandToFill(layoutModel);
-    }
     return roots;
   }
 

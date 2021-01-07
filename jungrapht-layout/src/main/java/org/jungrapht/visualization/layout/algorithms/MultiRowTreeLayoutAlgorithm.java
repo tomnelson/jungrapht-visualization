@@ -50,17 +50,6 @@ public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
   protected int rowCount = 1;
 
   /**
-   * visit a {@link LayoutModel} to set all of the graph vertex positions according to the
-   * LayoutAlgorithm logic.
-   *
-   * @param layoutModel the mediator between the container for vertices (the Graph) and the mapping
-   */
-  @Override
-  public void visit(LayoutModel<V> layoutModel) {
-    super.visit(layoutModel);
-  }
-
-  /**
    * Build the entire forest, first measuring the width and height, then possibly expanding the
    * layout area, then placing the vertices under rows of tree roots
    *
@@ -98,14 +87,7 @@ public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
             .sorted(Comparator.comparingInt(v -> TreeLayout.vertexIsolationScore(graph, v)))
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
-    if (roots.size() == 0) {
-      Graph<V, ?> tree = TreeLayoutAlgorithm.getSpanningTree(graph);
-      layoutModel.setGraph(tree);
-      Set<V> treeRoots = buildTree(layoutModel);
-      return treeRoots;
-    }
     int overallWidth = calculateWidth(layoutModel, roots, new HashSet<>());
-    int overallHeight = calculateOverallHeight(layoutModel, roots, overallWidth);
 
     int cursor =
         horizontalVertexSpacing; //(horizontalVertexSpacing, layoutModel.getWidth(), overallWidth);
@@ -136,8 +118,6 @@ public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
         merge(layoutModel, vertex);
       }
     }
-    // last row
-    int rowHeight = calculateHeight(layoutModel, rootsInRow, seenForHeight);
     if (expandLayout) {
       expandToFill(layoutModel);
     }

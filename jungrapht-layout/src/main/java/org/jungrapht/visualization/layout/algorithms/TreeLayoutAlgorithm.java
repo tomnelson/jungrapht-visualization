@@ -85,9 +85,21 @@ public class TreeLayoutAlgorithm<V> extends AbstractTreeLayoutAlgorithm<V>
   @Override
   public void visit(LayoutModel<V> layoutModel) {
     if (!layoutModel.getGraph().vertexSet().isEmpty()) {
-      super.visit(layoutModel);
-      //    this.neighborCache = new NeighborCache<>(layoutModel.getGraph());
-      buildTree(layoutModel);
+
+      // if this is an undirected graph, create a spanning tree, lay that out and use it to
+      // initialize this layout model
+      if (layoutModel.getGraph().getType().isUndirected()) {
+        Graph<V, ?> tree = TreeLayoutAlgorithm.getSpanningTree(layoutModel.getGraph());
+        LayoutModel<V> treeLayoutModel = DefaultLayoutModel.from(layoutModel);
+        treeLayoutModel.setGraph(tree);
+        visit(treeLayoutModel);
+        layoutModel.setSize(treeLayoutModel.getWidth(), treeLayoutModel.getHeight());
+        layoutModel.setInitializer(treeLayoutModel);
+      } else {
+        super.visit(layoutModel);
+        buildTree(layoutModel);
+      }
+      this.after.run();
     }
   }
 
@@ -108,6 +120,9 @@ public class TreeLayoutAlgorithm<V> extends AbstractTreeLayoutAlgorithm<V>
     Graph<V, ?> graph = layoutModel.getGraph();
     if (graph == null || graph.vertexSet().isEmpty()) {
       return Collections.emptySet();
+    }
+    if (graph.vertexSet().size() == 1) {
+      return graph.vertexSet();
     }
     if (layoutModel instanceof Caching) {
       ((Caching) layoutModel).clear();
@@ -144,18 +159,6 @@ public class TreeLayoutAlgorithm<V> extends AbstractTreeLayoutAlgorithm<V>
             .sorted(Comparator.comparingInt(v -> TreeLayout.vertexIsolationScore(graph, v)))
             .collect(Collectors.toList());
 
-    if (roots.size() == 0) {
-      if (graph.vertexSet().size() == 1) {
-        return graph.vertexSet();
-      }
-      Graph<V, ?> tree = TreeLayoutAlgorithm.getSpanningTree(graph);
-      LayoutModel<V> treeLayoutModel = DefaultLayoutModel.from(layoutModel);
-      treeLayoutModel.setGraph(tree);
-      Set<V> treeRoots = buildTree(treeLayoutModel);
-      layoutModel.setInitializer(treeLayoutModel);
-      return treeRoots;
-    }
-
     calculateWidth(layoutModel, roots, new HashSet<>());
     calculateHeight(layoutModel, roots, new HashSet<>());
     int x = horizontalVertexSpacing;
@@ -177,7 +180,6 @@ public class TreeLayoutAlgorithm<V> extends AbstractTreeLayoutAlgorithm<V>
     if (expandLayout) {
       expandToFill(layoutModel);
     }
-    this.after.run();
     return new LinkedHashSet<>(roots);
   }
 

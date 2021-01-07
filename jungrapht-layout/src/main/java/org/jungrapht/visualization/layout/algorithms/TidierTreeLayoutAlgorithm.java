@@ -499,6 +499,25 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
 
   @Override
   public void visit(LayoutModel<V> layoutModel) {
+    // if this is an undirected graph, create a spanning tree, lay that out and use it to
+    // initialize this layout model
+    if (layoutModel.getGraph().getType().isUndirected()) {
+      Graph<V, ?> tree = TreeLayoutAlgorithm.getSpanningTree(layoutModel.getGraph());
+      LayoutModel<V> treeLayoutModel = DefaultLayoutModel.from(layoutModel);
+      treeLayoutModel.setGraph(tree);
+      visit(treeLayoutModel);
+      layoutModel.setSize(treeLayoutModel.getWidth(), treeLayoutModel.getHeight());
+      layoutModel.setInitializer(treeLayoutModel);
+    } else {
+      super.visit(layoutModel);
+      buildTree(layoutModel);
+    }
+    this.moveVerticesThatOverlapVerticalEdges(layoutModel, horizontalVertexSpacing);
+    this.runAfter();
+    clearMetadata();
+  }
+
+  protected void buildTree(LayoutModel<V> layoutModel) {
     if (layoutModel instanceof Caching) {
       ((Caching) layoutModel).clear();
     }
@@ -553,20 +572,6 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
 
     this.roots = ComponentGrouping.groupByComponents(graph, roots);
 
-    if (roots.size() == 0) {
-      if (graph.vertexSet().size() == 1) {
-        layoutModel.setGraph(graph);
-        visit(layoutModel);
-        return;
-      }
-      Graph<V, ?> tree = TreeLayoutAlgorithm.getSpanningTree(graph);
-      LayoutModel<V> treeLayoutModel = DefaultLayoutModel.from(layoutModel);
-      treeLayoutModel.setGraph(tree);
-      visit(treeLayoutModel);
-      layoutModel.setInitializer(treeLayoutModel);
-      return;
-    }
-
     TreeView<V, E> treeView =
         builder
             .rootPredicate(rootPredicate)
@@ -617,7 +622,5 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
     if (expandLayout) {
       expandToFill(layoutModel);
     }
-    this.runAfter();
-    clearMetadata();
   }
 }

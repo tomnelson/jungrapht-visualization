@@ -81,7 +81,9 @@ public class ShowLayouts extends JPanel {
     graphArray[6] = graph;
     graphArray[7] = TestGraphs.getGeneratedBipartiteGraph();
 
-    Graph<String, Integer> initialGraph = graphArray[3]; // initial graph
+    Graph<String, Integer> initialGraph =
+        //            TreeLayoutAlgorithm.getSpanningTree(graphArray[3]);
+        graphArray[3]; // initial graph
 
     final VisualizationViewer<String, Integer> vv =
         VisualizationViewer.builder(initialGraph)
@@ -139,9 +141,9 @@ public class ShowLayouts extends JPanel {
                   vv.removePreRenderPaintable(radialLayoutRings);
                   vv.removePreRenderPaintable(layoutBounds);
                   if (animateLayoutTransition.isSelected()) {
-                    LayoutAlgorithmTransition.animate(vv, layoutAlgorithm);
+                    LayoutAlgorithmTransition.animate(vv, layoutAlgorithm, vv::scaleToLayout);
                   } else {
-                    LayoutAlgorithmTransition.apply(vv, layoutAlgorithm);
+                    LayoutAlgorithmTransition.apply(vv, layoutAlgorithm, vv::scaleToLayout);
                   }
                   if (layoutAlgorithm instanceof BalloonLayoutAlgorithm) {
                     balloonLayoutRings =

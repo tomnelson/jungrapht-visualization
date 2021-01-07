@@ -143,11 +143,6 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
 
   protected boolean alignFavoredEdges;
 
-  @Override
-  public void visit(LayoutModel<V> layoutModel) {
-    super.visit(layoutModel);
-  }
-
   /** @param vertexPredicate parameter to set */
   @Override
   public void setVertexPredicate(Predicate<V> vertexPredicate) {
