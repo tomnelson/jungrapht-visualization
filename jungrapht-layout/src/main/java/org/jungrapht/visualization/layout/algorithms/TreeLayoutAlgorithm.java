@@ -180,11 +180,6 @@ public class TreeLayoutAlgorithm<V> extends AbstractTreeLayoutAlgorithm<V>
       x += w / 2 + horizontalVertexSpacing;
     }
     this.rootPredicate = null;
-
-//    this.moveVerticesThatOverlapVerticalEdges(layoutModel, horizontalVertexSpacing);
-//    if (expandLayout) {
-//      expandToFill(layoutModel);
-//    }
     return new LinkedHashSet<>(roots);
   }
 

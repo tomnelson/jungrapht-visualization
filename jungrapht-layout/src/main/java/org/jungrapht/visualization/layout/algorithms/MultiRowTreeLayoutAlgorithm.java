@@ -119,10 +119,9 @@ public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
         merge(layoutModel, vertex);
       }
     }
-//    if (expandLayout) {
-//      expandToFill(layoutModel);
-//    }
-    log.info("buildTree locations: {}", layoutModel.getLocations());
+    if (log.isTraceEnabled()) {
+      log.trace("buildTree locations: {}", layoutModel.getLocations());
+    }
     return roots;
   }
 
