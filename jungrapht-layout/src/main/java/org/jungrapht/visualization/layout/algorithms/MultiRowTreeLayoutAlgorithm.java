@@ -109,7 +109,6 @@ public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
           cursor += w;
           cursor += horizontalVertexSpacing;
           int rowHeight = calculateHeight(layoutModel, rootsInRow, seenForHeight);
-          log.info("adding rowHeight {} to y {}", rowHeight, y);
           y += rowHeight;
           rootsInRow.clear();
         }
