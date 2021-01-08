@@ -109,6 +109,7 @@ public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
           cursor += w;
           cursor += horizontalVertexSpacing;
           int rowHeight = calculateHeight(layoutModel, rootsInRow, seenForHeight);
+          log.info("adding rowHeight {} to y {}", rowHeight, y);
           y += rowHeight;
           rootsInRow.clear();
         }
@@ -118,9 +119,10 @@ public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
         merge(layoutModel, vertex);
       }
     }
-    if (expandLayout) {
-      expandToFill(layoutModel);
-    }
+//    if (expandLayout) {
+//      expandToFill(layoutModel);
+//    }
+    log.info("buildTree locations: {}", layoutModel.getLocations());
     return roots;
   }
 

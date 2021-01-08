@@ -82,7 +82,7 @@ public class ShowLayouts extends JPanel {
     graphArray[7] = TestGraphs.getGeneratedBipartiteGraph();
 
     Graph<String, Integer> initialGraph =
-        //            TreeLayoutAlgorithm.getSpanningTree(graphArray[3]);
+//                    TreeLayoutAlgorithm.getSpanningTree(graphArray[3]);
         graphArray[3]; // initial graph
 
     final VisualizationViewer<String, Integer> vv =
@@ -177,8 +177,8 @@ public class ShowLayouts extends JPanel {
                   graphIndex = graphChooser.getSelectedIndex();
                   vv.getVertexSpatial().clear();
                   vv.getEdgeSpatial().clear();
-                  //                  vv.getVisualizationModel().getLayoutModel().setSize(600, 600);
-                  //                  vv.reset();
+                                    vv.getVisualizationModel().getLayoutModel().setSize(600, 600);
+                                    vv.reset();
                   vv.getVisualizationModel().setGraph(graphArray[graphIndex]);
                   vv.getRenderContext()
                       .setVertexShapeFunction(

@@ -350,9 +350,9 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
         layoutModel.set(vertex, vertexRectangle.x, vertexRectangle.y);
       }
     }
-    if (expandLayout) {
-      expandToFill(layoutModel);
-    }
+//    if (expandLayout) {
+//      expandToFill(layoutModel);
+//    }
     return roots;
   }
 }

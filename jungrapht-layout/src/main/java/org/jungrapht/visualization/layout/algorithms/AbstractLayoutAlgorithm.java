@@ -74,6 +74,8 @@ public abstract class AbstractLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
    * @param occupiedRegion
    */
   protected void expandToFill(LayoutModel<V> layoutModel, Rectangle occupiedRegion) {
+    int regionX = (int) occupiedRegion.x;
+    int regionY = (int) occupiedRegion.y;
     int regionWidth = (int) occupiedRegion.width;
     int regionHeight = (int) occupiedRegion.height;
     if (regionWidth > regionHeight) {
@@ -84,7 +86,7 @@ public abstract class AbstractLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
           .forEach(
               v -> {
                 Point p = layoutModel.get(v);
-                p = Point.of(p.x, expansion * p.y);
+                p = Point.of(p.x, expansion * (p.y - regionY));
                 layoutModel.set(v, p);
               });
     } else if (regionWidth < regionHeight) {
@@ -95,7 +97,7 @@ public abstract class AbstractLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
           .forEach(
               v -> {
                 Point p = layoutModel.get(v);
-                p = Point.of(expansion * p.x, p.y);
+                p = Point.of(expansion * (p.x - regionX), p.y);
                 layoutModel.set(v, p);
               });
     }

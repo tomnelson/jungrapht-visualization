@@ -92,12 +92,17 @@ public class TreeLayoutAlgorithm<V> extends AbstractTreeLayoutAlgorithm<V>
         Graph<V, ?> tree = TreeLayoutAlgorithm.getSpanningTree(layoutModel.getGraph());
         LayoutModel<V> treeLayoutModel = DefaultLayoutModel.from(layoutModel);
         treeLayoutModel.setGraph(tree);
-        visit(treeLayoutModel);
+        super.visit(treeLayoutModel);
+        buildTree(treeLayoutModel);
         layoutModel.setSize(treeLayoutModel.getWidth(), treeLayoutModel.getHeight());
         layoutModel.setInitializer(treeLayoutModel);
       } else {
         super.visit(layoutModel);
         buildTree(layoutModel);
+      }
+      this.moveVerticesThatOverlapVerticalEdges(layoutModel, horizontalVertexSpacing);
+      if (expandLayout) {
+        expandToFill(layoutModel);
       }
       this.after.run();
     }
@@ -176,10 +181,10 @@ public class TreeLayoutAlgorithm<V> extends AbstractTreeLayoutAlgorithm<V>
     }
     this.rootPredicate = null;
 
-    this.moveVerticesThatOverlapVerticalEdges(layoutModel, horizontalVertexSpacing);
-    if (expandLayout) {
-      expandToFill(layoutModel);
-    }
+//    this.moveVerticesThatOverlapVerticalEdges(layoutModel, horizontalVertexSpacing);
+//    if (expandLayout) {
+//      expandToFill(layoutModel);
+//    }
     return new LinkedHashSet<>(roots);
   }
 
