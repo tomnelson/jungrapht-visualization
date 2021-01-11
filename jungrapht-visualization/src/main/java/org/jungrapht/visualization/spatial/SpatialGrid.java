@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  * @author Tom Nelson
  */
 public class SpatialGrid<V> extends AbstractSpatial<V, V>
-    implements Spatial<V>, TreeNode, LayoutVertexPositionChange.Listener<V> {
+    implements Spatial<V, V>, TreeNode, LayoutVertexPositionChange.Listener<V> {
 
   private static final Logger log = LoggerFactory.getLogger(SpatialGrid.class);
 

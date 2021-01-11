@@ -185,7 +185,7 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
     MutableTransformer viewTransformer = multiLayerTransformer.getTransformer(Layer.VIEW);
 
     // if there is a spatial data structure active, use it
-    Spatial<V> vertexSpatial = vv.getVertexSpatial();
+    Spatial<V, V> vertexSpatial = vv.getVertexSpatial();
     if (!(viewTransformer instanceof LensTransformer) && vertexSpatial.isActive()) {
       return getVertex(vertexSpatial, layoutModel, pickingFootprint);
     }
@@ -275,7 +275,7 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
    * @return the selected vertex
    */
   protected V getVertex(
-      Spatial<V> spatial, LayoutModel<V> layoutModel, Rectangle2D pickingFootprint) {
+      Spatial<V, V> spatial, LayoutModel<V> layoutModel, Rectangle2D pickingFootprint) {
 
     MultiLayerTransformer mlt = vv.getRenderContext().getMultiLayerTransformer();
 

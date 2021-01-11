@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
  * @param <V> the node type
  */
 public class SpatialQuadTree<V> extends AbstractSpatial<V, V>
-    implements TreeNode, Spatial<V>, LayoutVertexPositionChange.Listener<V> {
+    implements TreeNode, Spatial<V, V>, LayoutVertexPositionChange.Listener<V> {
 
   private static final Logger log = LoggerFactory.getLogger(SpatialQuadTree.class);
 

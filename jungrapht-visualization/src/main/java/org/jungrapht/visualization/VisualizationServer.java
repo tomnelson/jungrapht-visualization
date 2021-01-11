@@ -188,13 +188,13 @@ public interface VisualizationServer<V, E>
 
   Shape viewOnLayout();
 
-  Spatial<V> getVertexSpatial();
+  Spatial<V, V> getVertexSpatial();
 
-  void setVertexSpatial(Spatial<V> spatial);
+  void setVertexSpatial(Spatial<V, V> spatial);
 
-  Spatial<E> getEdgeSpatial();
+  Spatial<E, V> getEdgeSpatial();
 
-  void setEdgeSpatial(Spatial<E> spatial);
+  void setEdgeSpatial(Spatial<E, V> spatial);
 
   TransformSupport<V, E> getTransformSupport();
 

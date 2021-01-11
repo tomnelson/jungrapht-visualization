@@ -74,7 +74,6 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-@SuppressWarnings("serial")
 class DefaultVisualizationServer<V, E> extends JPanel
     implements VisualizationServer<V, E>, VisualizationComponent {
 
@@ -146,9 +145,9 @@ class DefaultVisualizationServer<V, E> extends JPanel
 
   protected TransformSupport<V, E> transformSupport = new TransformSupport();
 
-  protected Spatial<V> vertexSpatial;
+  protected Spatial<V, V> vertexSpatial;
 
-  protected Spatial<E> edgeSpatial;
+  protected Spatial<E, V> edgeSpatial;
 
   protected boolean spatialSupportOnSwingThread =
       Boolean.parseBoolean(System.getProperty(SPATIAL_SUPPORT_ON_SWING_THREAD, "true"));
@@ -222,12 +221,12 @@ class DefaultVisualizationServer<V, E> extends JPanel
 
     renderContext.getMultiLayerTransformer().addChangeListener(this);
 
-    Spatial<V> vertexSpatial = createVertexSpatial(visualizationModel, renderContext);
+    Spatial<V, V> vertexSpatial = createVertexSpatial(visualizationModel, renderContext);
     if (vertexSpatial != null) {
       setVertexSpatial(vertexSpatial);
     }
 
-    Spatial<E> edgeSpatial = createEdgeSpatial(visualizationModel, renderContext);
+    Spatial<E, V> edgeSpatial = createEdgeSpatial(visualizationModel, renderContext);
     if (edgeSpatial != null) {
       setEdgeSpatial(edgeSpatial);
     }
@@ -263,12 +262,12 @@ class DefaultVisualizationServer<V, E> extends JPanel
   }
 
   @Override
-  public Spatial<V> getVertexSpatial() {
+  public Spatial<V, V> getVertexSpatial() {
     return vertexSpatial;
   }
 
   @Override
-  public void setVertexSpatial(Spatial<V> spatial) {
+  public void setVertexSpatial(Spatial<V, V> spatial) {
 
     if (this.vertexSpatial != null) {
       disconnectListeners(this.vertexSpatial);
@@ -284,12 +283,12 @@ class DefaultVisualizationServer<V, E> extends JPanel
   }
 
   @Override
-  public Spatial<E> getEdgeSpatial() {
+  public Spatial<E, V> getEdgeSpatial() {
     return edgeSpatial;
   }
 
   @Override
-  public void setEdgeSpatial(Spatial<E> spatial) {
+  public void setEdgeSpatial(Spatial<E, V> spatial) {
 
     if (this.edgeSpatial != null) {
       disconnectListeners(this.edgeSpatial);
@@ -875,12 +874,12 @@ class DefaultVisualizationServer<V, E> extends JPanel
     this.transformSupport = transformSupport;
   }
 
-  class SpatialPaintable<T> implements VisualizationServer.Paintable {
+  class SpatialPaintable<T, NT> implements VisualizationServer.Paintable {
 
-    Spatial<T> quadTree;
+    Spatial<T, NT> quadTree;
     Color color;
 
-    public SpatialPaintable(Spatial<T> quadTree, Color color) {
+    public SpatialPaintable(Spatial<T, NT> quadTree, Color color) {
       this.quadTree = quadTree;
       this.color = color;
     }
@@ -941,9 +940,9 @@ class DefaultVisualizationServer<V, E> extends JPanel
     return VisualizationModel.SpatialSupport.NONE;
   }
 
-  private Spatial<V> createVertexSpatial(
+  private Spatial<V, V> createVertexSpatial(
       VisualizationModel<V, E> visualizationModel, RenderContext<V, E> renderContext) {
-    Spatial<V> vertexSpatial;
+    Spatial<V, V> vertexSpatial;
     switch (getVertexSpatialSupportPreference()) {
       case RTREE:
         vertexSpatial =
@@ -987,9 +986,9 @@ class DefaultVisualizationServer<V, E> extends JPanel
     return spatialSupportOnSwingThread ? SwingThreadSpatial.of(vertexSpatial) : vertexSpatial;
   }
 
-  private Spatial<E> createEdgeSpatial(
+  private Spatial<E, V> createEdgeSpatial(
       VisualizationModel<V, E> visualizationModel, RenderContext<V, E> renderContext) {
-    Spatial<E> edgeSpatial;
+    Spatial<E, V> edgeSpatial;
     switch (getEdgeSpatialSupportPreference()) {
       case RTREE:
         edgeSpatial =

@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
+import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.util.RadiusVertexAccessor;
@@ -16,7 +17,7 @@ import org.slf4j.LoggerFactory;
  * @param <T> the element type that is managed by the spatial data structure. Node or Edge
  * @param <NT> the node type for the LayoutModel reference. Could be the same as T.
  */
-public abstract class AbstractSpatial<T, NT> implements Spatial<T> {
+public abstract class AbstractSpatial<T, NT> implements Spatial<T, NT> {
 
   private static Logger log = LoggerFactory.getLogger(AbstractSpatial.class);
   /** should this model actively update itself */

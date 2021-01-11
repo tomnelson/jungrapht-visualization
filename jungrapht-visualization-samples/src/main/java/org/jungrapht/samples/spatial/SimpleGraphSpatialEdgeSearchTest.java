@@ -144,7 +144,7 @@ public class SimpleGraphSpatialEdgeSearchTest extends JPanel {
       VisualizationViewer<String, Integer> vv,
       Graph<String, Integer> graph,
       LayoutModel<String> layoutModel,
-      Spatial<String> tree) {
+      Spatial<String, String> tree) {
     vv.getSelectedVertexState().clear();
     VertexAccessor<String> slowWay = new RadiusVertexAccessor<>(Double.MAX_VALUE);
 

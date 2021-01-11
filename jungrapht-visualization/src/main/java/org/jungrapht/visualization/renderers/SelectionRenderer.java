@@ -24,8 +24,8 @@ public class SelectionRenderer<V, E> implements Renderer<V, E> {
   public void render(
       RenderContext<V, E> renderContext,
       LayoutModel<V> layoutModel,
-      Spatial<V> vertexSpatial,
-      Spatial<E> edgeSpatial) {
+      Spatial<V, V> vertexSpatial,
+      Spatial<E, V> edgeSpatial) {
     // BiModalRenderer handles this
   }
 

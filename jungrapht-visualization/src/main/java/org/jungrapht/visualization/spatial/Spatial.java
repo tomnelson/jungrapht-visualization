@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
+import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.util.RadiusVertexAccessor;
@@ -20,7 +21,7 @@ import org.jungrapht.visualization.util.RadiusGraphElementAccessor;
  *
  * @author Tom Nelson
  */
-public interface Spatial<T> extends LayoutStateChange.Listener {
+public interface Spatial<T, NT> extends LayoutStateChange.Listener, LayoutVertexPositionChange.Listener<NT> {
 
   /**
    * a flag to suggest whether or not the spatial structure should be used
@@ -215,6 +216,18 @@ public interface Spatial<T> extends LayoutStateChange.Listener {
       return this.treeVertex;
     }
 
+    @Override
+    public void layoutVertexPositionChanged(LayoutVertexPositionChange.Event<NT> evt) {
+      // noop
+    }
+
+    @Override
+    public void layoutVertexPositionChanged(LayoutVertexPositionChange.GraphEvent<NT> evt) {
+      //noop
+    }
+
+
+
     /**
      * a TreeNode that is immutable and covers the entire layout area
      *
@@ -273,7 +286,7 @@ public interface Spatial<T> extends LayoutStateChange.Listener {
       }
     }
 
-    public static class Edge<E, V> extends NoOp<E, V> {
+    public static class Edge<E, V> extends NoOp<E, V>  {
 
       private VisualizationModel<V, E> visualizationModel;
       RadiusGraphElementAccessor<V, E> accessor;

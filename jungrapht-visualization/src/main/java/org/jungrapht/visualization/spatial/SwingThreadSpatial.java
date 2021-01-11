@@ -8,19 +8,20 @@ import java.util.List;
 import java.util.Set;
 import javax.swing.*;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
+import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.spatial.rtree.TreeNode;
 
-public class SwingThreadSpatial<T> implements Spatial<T> {
+public class SwingThreadSpatial<T, NT> implements Spatial<T, NT> {
 
-  protected Spatial<T> spatial;
+  protected Spatial<T, NT> spatial;
 
-  public static <T> Spatial<T> of(Spatial<T> delegate) {
+  public static <T, NT> Spatial<T, NT> of(Spatial<T, NT> delegate) {
     return new SwingThreadSpatial(delegate);
   }
 
-  protected SwingThreadSpatial(Spatial<T> delegate) {
+  protected SwingThreadSpatial(Spatial<T, NT> delegate) {
     this.spatial = delegate;
   }
 
@@ -123,5 +124,15 @@ public class SwingThreadSpatial<T> implements Spatial<T> {
   @Override
   public LayoutModel getLayoutModel() {
     return spatial.getLayoutModel();
+  }
+
+  @Override
+  public void layoutVertexPositionChanged(LayoutVertexPositionChange.Event<NT> evt) {
+    spatial.layoutVertexPositionChanged(evt);
+  }
+
+  @Override
+  public void layoutVertexPositionChanged(LayoutVertexPositionChange.GraphEvent<NT> evt) {
+    spatial.layoutVertexPositionChanged(evt);
   }
 }

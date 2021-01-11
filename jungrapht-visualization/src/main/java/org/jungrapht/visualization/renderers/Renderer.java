@@ -37,8 +37,8 @@ public interface Renderer<V, E> {
   void render(
       RenderContext<V, E> renderContext,
       LayoutModel<V> layoutModel,
-      Spatial<V> vertexSpatial,
-      Spatial<E> edgeSpatial);
+      Spatial<V, V> vertexSpatial,
+      Spatial<E, V> edgeSpatial);
 
   void render(RenderContext<V, E> renderContext, LayoutModel<V> layoutModel);
 

@@ -30,7 +30,7 @@ public class SpatialRTreeTest {
 
   Graph<String, Integer> graph;
   LayoutModel<String> layoutModel;
-  Spatial<String> tree;
+  Spatial<String, String> tree;
 
   @Before
   public void setup() {

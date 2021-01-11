@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  * @param <NT> The Type for the Vertices of the graph. May be the same as T
  * @author Tom Nelson
  */
-public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> implements Spatial<T> {
+public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> implements Spatial<T, NT> {
 
   private static final Logger log = LoggerFactory.getLogger(SpatialRTree.class);
 
@@ -235,7 +235,7 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
   }
 
   public static class Vertices<V> extends SpatialRTree<V, V>
-      implements Spatial<V>, LayoutVertexPositionChange.Listener<V> {
+      implements Spatial<V, V>, LayoutVertexPositionChange.Listener<V> {
 
     private static final Logger log = LoggerFactory.getLogger(Vertices.class);
 
@@ -422,7 +422,7 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
   }
 
   public static class Edges<E, V> extends SpatialRTree<E, V>
-      implements Spatial<E>, LayoutVertexPositionChange.Listener<V> {
+      implements Spatial<E, V>, LayoutVertexPositionChange.Listener<V> {
 
     private static final Logger log = LoggerFactory.getLogger(Edges.class);
 
