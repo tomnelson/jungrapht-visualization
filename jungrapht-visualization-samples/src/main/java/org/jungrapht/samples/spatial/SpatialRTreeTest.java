@@ -91,7 +91,7 @@ public class SpatialRTreeTest extends JPanel {
     // vertexLocations function to set the locations of the vertices as
     // they are created
     vv.setGraphMouse(graphMouse);
-    vv.addKeyListener(graphMouse.getModeKeyListener());
+    //    vv.addKeyListener(graphMouse.getModeKeyListener());
 
     JRadioButton showSpatialEffects = new JRadioButton("Show Spatial Structure");
     showSpatialEffects.addItemListener(

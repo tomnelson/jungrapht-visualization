@@ -1,11 +1,43 @@
 package org.jungrapht.visualization.control;
 
+import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import javax.swing.*;
 import org.jungrapht.visualization.control.modal.Modal.Mode;
 import org.jungrapht.visualization.control.modal.ModeComboBox;
+import org.jungrapht.visualization.control.modal.ModeControl;
 import org.jungrapht.visualization.control.modal.ModeMenu;
 
 public class ModeControls {
+
+  public static class ModeKeyAdapter extends KeyAdapter {
+    private char t = 't';
+    private char p = 'p';
+    protected ModeControl modeControl;
+
+    public ModeKeyAdapter(ModeControl modeControl) {
+      this.modeControl = modeControl;
+    }
+
+    public ModeKeyAdapter(char t, char p, ModeControl modeControl) {
+      this.t = t;
+      this.p = p;
+      this.modeControl = modeControl;
+    }
+
+    public void keyTyped(KeyEvent event) {
+      char keyChar = event.getKeyChar();
+      if (keyChar == t) {
+        ((Component) event.getSource())
+            .setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        modeControl.setMode(Mode.TRANSFORMING);
+      } else if (keyChar == p) {
+        ((Component) event.getSource()).setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        modeControl.setMode(Mode.PICKING);
+      }
+    }
+  }
 
   public static JComboBox getStandardModeComboBox() {
     return ModeComboBox.builder().modes(Mode.TRANSFORMING, Mode.PICKING).build().buildUI();

@@ -133,7 +133,7 @@ public class AnnotatingModalGraphMouse<V, E> extends AbstractModalGraphMouse
         ScalingGraphMousePlugin.builder().scalingControl(new CrossoverScalingControl()).build();
     rotatingPlugin = new RotatingGraphMousePlugin();
     shearingPlugin = new ShearingGraphMousePlugin();
-    add(scalingPlugin);
+    //    add(scalingPlugin);
     setMode(this.mode);
   }
 
@@ -161,39 +161,47 @@ public class AnnotatingModalGraphMouse<V, E> extends AbstractModalGraphMouse
 
   @Override
   protected void setPickingMode() {
-    remove(translatingPlugin);
-    remove(rotatingPlugin);
-    remove(shearingPlugin);
-    remove(annotatingPlugin);
+    clear();
+    add(scalingPlugin);
+    //    remove(translatingPlugin);
+    //    remove(rotatingPlugin);
+    //    remove(shearingPlugin);
+    //    remove(annotatingPlugin);
     add(selectingPlugin);
     add(animatedPickingPlugin);
   }
 
   @Override
   protected void setTransformingMode() {
-    remove(selectingPlugin);
-    remove(animatedPickingPlugin);
-    remove(annotatingPlugin);
+    clear();
+    add(scalingPlugin);
+    //    remove(selectingPlugin);
+    //    remove(animatedPickingPlugin);
+    //    remove(annotatingPlugin);
     add(translatingPlugin);
     add(rotatingPlugin);
     add(shearingPlugin);
   }
 
-  protected void setEditingMode() {
-    remove(selectingPlugin);
-    remove(animatedPickingPlugin);
-    remove(translatingPlugin);
-    remove(rotatingPlugin);
-    remove(shearingPlugin);
-    remove(annotatingPlugin);
-  }
+  //  protected void setEditingMode() {
+  //    clear();
+  //    add(scalingPlugin);
+  ////    remove(selectingPlugin);
+  ////    remove(animatedPickingPlugin);
+  ////    remove(translatingPlugin);
+  ////    remove(rotatingPlugin);
+  ////    remove(shearingPlugin);
+  ////    remove(annotatingPlugin);
+  //  }
 
   protected void setAnnotatingMode() {
-    remove(selectingPlugin);
-    remove(animatedPickingPlugin);
-    remove(translatingPlugin);
-    remove(rotatingPlugin);
-    remove(shearingPlugin);
+    clear();
+    add(scalingPlugin);
+    //    remove(selectingPlugin);
+    //    remove(animatedPickingPlugin);
+    //    remove(translatingPlugin);
+    //    remove(rotatingPlugin);
+    //    remove(shearingPlugin);
     add(annotatingPlugin);
   }
 

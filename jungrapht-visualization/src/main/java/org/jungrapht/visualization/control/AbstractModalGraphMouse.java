@@ -95,21 +95,18 @@ public abstract class AbstractModalGraphMouse extends AbstractGraphMouse
    * @see ModalGraphMouse#setPickingMode()
    */
   protected void setPickingMode() {
-    remove(translatingPlugin);
-    remove(rotatingPlugin);
-    remove(shearingPlugin);
+    clear();
+    add(scalingPlugin);
     add(selectingPlugin);
     add(regionSelectingPlugin);
-    //    add(animatedPickingPlugin);
   }
 
   /* (non-Javadoc)
    * @see ModalGraphMouse#setTransformingMode()
    */
   protected void setTransformingMode() {
-    remove(selectingPlugin);
-    remove(regionSelectingPlugin);
-    //    remove(animatedPickingPlugin);
+    clear();
+    add(scalingPlugin);
     add(translatingPlugin);
     add(rotatingPlugin);
     add(shearingPlugin);
@@ -139,13 +136,13 @@ public abstract class AbstractModalGraphMouse extends AbstractGraphMouse
     return modeListener;
   }
 
-  /** @return the modeKeyListener */
-  @Override
+  //  /** @return the modeKeyListener */
+  //  @Override
   public KeyListener getModeKeyListener() {
     return modeKeyListener;
   }
-
-  /** @param modeKeyListener the modeKeyListener to set */
+  //
+  //  /** @param modeKeyListener the modeKeyListener to set */
   public void setModeKeyListener(KeyListener modeKeyListener) {
     this.modeKeyListener = modeKeyListener;
   }

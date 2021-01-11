@@ -23,10 +23,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import javax.swing.*;
 import org.jgrapht.Graph;
-import org.jungrapht.visualization.control.GraphMouseListener;
-import org.jungrapht.visualization.control.ModalGraphMouse;
-import org.jungrapht.visualization.control.MouseListenerTranslator;
-import org.jungrapht.visualization.control.MultiSelectionStrategy;
+import org.jungrapht.visualization.control.*;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.util.Pair;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -66,9 +63,9 @@ class DefaultVisualizationViewer<V, E> extends DefaultVisualizationServer<V, E>
     addMouseListener(requestFocusListener);
     setMultiSelectionStrategySupplier(multiSelectionStrategySupplier);
     setGraphMouse(graphMouse);
-    if (graphMouse instanceof ModalGraphMouse) {
-      addKeyListener(((ModalGraphMouse) graphMouse).getModeKeyListener());
-    }
+    //    if (graphMouse instanceof ModalGraphMouse) {
+    //      addKeyListener(((ModalGraphMouse) graphMouse).getModeKeyListener());
+    //    }
   }
 
   protected Function<V, String> vertexToolTipFunction;

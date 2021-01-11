@@ -181,8 +181,8 @@ public class EditingModalGraphMouse<V, E> extends AbstractModalGraphMouse
     this.vertexLabelMap = vertexLabelMapSupplier.get();
     this.edgeLabelMap = edgeLabelMapSupplier.get();
     this.basicTransformer = multiLayerTransformerSupplier.get();
-    this.mode = Mode.EDITING;
     setModeKeyListener(new ModeKeyAdapter(this));
+    this.mode = Mode.EDITING;
   }
 
   /** create the plugins, and load the plugins for TRANSFORMING mode */
@@ -209,7 +209,7 @@ public class EditingModalGraphMouse<V, E> extends AbstractModalGraphMouse
     labelEditingPlugin = new LabelEditingGraphMousePlugin<>(vertexLabelMap, edgeLabelMap);
     annotatingPlugin = new AnnotatingGraphMousePlugin<>(rc);
     popupEditingPlugin = new EditingPopupGraphMousePlugin<>(vertexFactory, edgeFactory);
-    add(scalingPlugin);
+    //    add(scalingPlugin);
     setMode(this.mode);
   }
 
@@ -239,11 +239,13 @@ public class EditingModalGraphMouse<V, E> extends AbstractModalGraphMouse
 
   @Override
   protected void setPickingMode() {
-    remove(translatingPlugin);
-    remove(rotatingPlugin);
-    remove(shearingPlugin);
-    remove(editingPlugin);
-    remove(annotatingPlugin);
+    clear();
+    add(scalingPlugin);
+    //    remove(translatingPlugin);
+    //    remove(rotatingPlugin);
+    //    remove(shearingPlugin);
+    //    remove(editingPlugin);
+    //    remove(annotatingPlugin);
     add(selectingPlugin);
     add(animatedPickingPlugin);
     add(labelEditingPlugin);
@@ -252,10 +254,12 @@ public class EditingModalGraphMouse<V, E> extends AbstractModalGraphMouse
 
   @Override
   protected void setTransformingMode() {
-    remove(selectingPlugin);
-    remove(animatedPickingPlugin);
-    remove(editingPlugin);
-    remove(annotatingPlugin);
+    clear();
+    //    remove(selectingPlugin);
+    //    remove(animatedPickingPlugin);
+    //    remove(editingPlugin);
+    //    remove(annotatingPlugin);
+    add(scalingPlugin);
     add(translatingPlugin);
     add(rotatingPlugin);
     add(shearingPlugin);
@@ -264,27 +268,31 @@ public class EditingModalGraphMouse<V, E> extends AbstractModalGraphMouse
   }
 
   protected void setEditingMode() {
-    remove(selectingPlugin);
-    remove(animatedPickingPlugin);
-    remove(translatingPlugin);
-    remove(rotatingPlugin);
-    remove(shearingPlugin);
-    remove(labelEditingPlugin);
-    remove(annotatingPlugin);
+    clear();
+    add(scalingPlugin);
+    //    remove(selectingPlugin);
+    //    remove(animatedPickingPlugin);
+    //    remove(translatingPlugin);
+    //    remove(rotatingPlugin);
+    //    remove(shearingPlugin);
+    //    remove(labelEditingPlugin);
+    //    remove(annotatingPlugin);
     add(labelEditingPlugin);
     add(editingPlugin);
     add(popupEditingPlugin);
   }
 
   protected void setAnnotatingMode() {
-    remove(selectingPlugin);
-    remove(animatedPickingPlugin);
-    remove(translatingPlugin);
-    remove(rotatingPlugin);
-    remove(shearingPlugin);
-    remove(labelEditingPlugin);
-    remove(editingPlugin);
-    remove(popupEditingPlugin);
+    clear();
+    add(scalingPlugin);
+    //    remove(selectingPlugin);
+    //    remove(animatedPickingPlugin);
+    //    remove(translatingPlugin);
+    //    remove(rotatingPlugin);
+    //    remove(shearingPlugin);
+    //    remove(labelEditingPlugin);
+    //    remove(editingPlugin);
+    //    remove(popupEditingPlugin);
     add(annotatingPlugin);
   }
 

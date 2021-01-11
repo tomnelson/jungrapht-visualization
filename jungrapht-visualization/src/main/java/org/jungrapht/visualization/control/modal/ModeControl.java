@@ -48,7 +48,10 @@ public class ModeControl implements Modal {
 
   @Override
   public void setMode(Mode mode) {
-    Stream.of(modals).forEach(m -> setMode(mode));
+    if (this.mode != mode) {
+      this.mode = mode;
+      modals.forEach(modal -> modal.setMode(mode));
+    }
   }
 
   @Override

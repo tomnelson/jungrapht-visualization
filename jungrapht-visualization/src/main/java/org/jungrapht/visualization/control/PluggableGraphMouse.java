@@ -36,6 +36,15 @@ public class PluggableGraphMouse implements VisualizationViewer.GraphMouse {
   Set<MouseMotionListener> mouseMotionPluginList = new LinkedHashSet<>();
   Set<MouseWheelListener> mouseWheelPluginList = new LinkedHashSet<>();
 
+  public void clear() {
+    mousePluginList.clear();
+    mouseMotionPluginList.clear();
+    mouseWheelPluginList.clear();
+    mouseListeners = null;
+    mouseMotionListeners = null;
+    mouseWheelListeners = null;
+  }
+
   public void add(GraphMousePlugin plugin) {
     if (plugin instanceof MouseListener) {
       mousePluginList.add(plugin);

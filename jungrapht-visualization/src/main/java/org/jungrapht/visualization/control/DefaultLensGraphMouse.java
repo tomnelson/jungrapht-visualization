@@ -1,5 +1,7 @@
 package org.jungrapht.visualization.control;
 
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,11 +25,20 @@ public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> impleme
   public static class Builder<V, E, T extends DefaultLensGraphMouse, B extends Builder<V, E, T, B>>
       extends DefaultGraphMouse.Builder<V, E, T, B> {
 
+    // translation mask
+    protected int lensTranslatingMask =
+        Modifiers.masks.get(System.getProperty(PREFIX + "lensTranslatingMask", "MB1"));
+
     protected LensMagnificationGraphMousePlugin magnificationPlugin =
         new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f);
 
     public B magnificationPlugin(LensMagnificationGraphMousePlugin magnificationPlugin) {
       this.magnificationPlugin = magnificationPlugin;
+      return self();
+    }
+
+    public B lensTranslatingMask(int lensTranslatingMask) {
+      this.lensTranslatingMask = lensTranslatingMask;
       return self();
     }
 
@@ -44,6 +55,8 @@ public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> impleme
   protected LensMagnificationGraphMousePlugin magnificationPlugin;
 
   protected LensKillingGraphMousePlugin lensKillingGraphMousePlugin;
+
+  protected LensTranslatingGraphMousePlugin lensTranslatingGraphMousePlugin;
 
   public DefaultLensGraphMouse() {
     this(new Builder<>());
@@ -62,6 +75,7 @@ public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> impleme
         builder.regionSelectionCompleteMask,
         builder.addRegionSelectionCompleteMask,
         builder.translatingMask,
+        builder.lensTranslatingMask,
         builder.scalingMask,
         builder.xAxisScalingMask,
         builder.yAxisScalingMask,
@@ -79,6 +93,7 @@ public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> impleme
       int regionSelectionCompleteMask,
       int addRegionSelectionCompleteMask,
       int translatingMask,
+      int lensTranslatingMask,
       int scalingMask,
       int xAxisScalingMask,
       int yAxisScalingMask,
@@ -98,7 +113,9 @@ public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> impleme
         xAxisScalingMask,
         yAxisScalingMask);
     this.magnificationPlugin = magnificationPlugin;
+    this.lensTranslatingGraphMousePlugin = new LensTranslatingGraphMousePlugin(lensTranslatingMask);
     this.lensKillingGraphMousePlugin = new LensKillingGraphMousePlugin();
+    this.lensTranslatingGraphMousePlugin = new LensTranslatingGraphMousePlugin();
   }
 
   public void setKillSwitch(Runnable killSwitch) {
@@ -129,8 +146,9 @@ public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> impleme
             addRegionSelectionCompleteMask);
 
     add(lensKillingGraphMousePlugin);
+    add(lensTranslatingGraphMousePlugin);
     add(selectingPlugin);
-    add(new LensTranslatingGraphMousePlugin());
+    add(new TranslatingGraphMousePlugin(translatingMask));
     add(regionSelectingPlugin);
     add(magnificationPlugin);
     add(scalingPlugin);

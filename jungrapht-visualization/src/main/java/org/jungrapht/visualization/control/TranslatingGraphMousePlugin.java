@@ -37,7 +37,7 @@ public class TranslatingGraphMousePlugin extends AbstractGraphMousePlugin
   private static final Logger log = LoggerFactory.getLogger(TranslatingGraphMousePlugin.class);
 
   protected int translatingMask =
-      Modifiers.masks.get(System.getProperty(PREFIX + "singleSelectionMask", "MB1_MENU"));
+      Modifiers.masks.get(System.getProperty(PREFIX + "translatingMask", "MB1_MENU"));
 
   /**
    * create an instance with passed translatingMask value

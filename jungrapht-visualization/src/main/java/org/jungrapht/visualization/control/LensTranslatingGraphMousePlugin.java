@@ -11,6 +11,8 @@
  */
 package org.jungrapht.visualization.control;
 
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
+
 import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -31,13 +33,16 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-public class LensTranslatingGraphMousePlugin extends TranslatingGraphMousePlugin
+public class LensTranslatingGraphMousePlugin extends AbstractGraphMousePlugin
     implements MouseListener, MouseMotionListener {
 
   private static final Logger log = LoggerFactory.getLogger(LensTranslatingGraphMousePlugin.class);
   protected boolean dragOnLens;
   protected boolean dragOnEdge;
   protected double edgeOffset;
+  protected int lensTranslatingMask =
+      Modifiers.masks.get(System.getProperty(PREFIX + "lensTranslatingMask", "MB1"));
+
   /** create an instance with default modifiers */
   public LensTranslatingGraphMousePlugin() {
     this(MouseEvent.BUTTON1_DOWN_MASK);
@@ -71,7 +76,7 @@ public class LensTranslatingGraphMousePlugin extends TranslatingGraphMousePlugin
     } else {
       p = viewTransformer.inverseTransform(p);
     }
-    boolean accepted = e.getModifiersEx() == translatingMask;
+    boolean accepted = e.getModifiersEx() == lensTranslatingMask;
     if (accepted) {
       vv.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
       if (layoutTransformer instanceof LensTransformer) {
@@ -88,7 +93,7 @@ public class LensTranslatingGraphMousePlugin extends TranslatingGraphMousePlugin
       }
       vv.repaint();
     }
-    super.mousePressed(e);
+    //    super.mousePressed(e);
   }
 
   /**
@@ -150,7 +155,7 @@ public class LensTranslatingGraphMousePlugin extends TranslatingGraphMousePlugin
    * @param e the event
    */
   public void mouseDragged(MouseEvent e) {
-    boolean accepted = e.getModifiersEx() == translatingMask;
+    boolean accepted = e.getModifiersEx() == lensTranslatingMask;
     if (accepted) {
 
       VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
@@ -188,9 +193,28 @@ public class LensTranslatingGraphMousePlugin extends TranslatingGraphMousePlugin
 
         } else {
 
-          super.mouseDragged(e);
+          //          super.mouseDragged(e);
         }
       }
     }
+  }
+
+  public void mouseClicked(MouseEvent e) {
+    // TODO Auto-generated method stub
+
+  }
+
+  public void mouseEntered(MouseEvent e) {
+    // TODO Auto-generated method stub
+  }
+
+  public void mouseExited(MouseEvent e) {
+    // TODO Auto-generated method stub
+
+  }
+
+  public void mouseMoved(MouseEvent e) {
+    // TODO Auto-generated method stub
+
   }
 }

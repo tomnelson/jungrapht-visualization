@@ -238,7 +238,7 @@ public class DefaultModalGraphMouse<V, E> extends AbstractModalGraphMouse
     rotatingPlugin = new RotatingGraphMousePlugin();
     shearingPlugin = new ShearingGraphMousePlugin();
 
-    add(scalingPlugin);
+    //    add(scalingPlugin);
     setMode(this.mode);
   }
 

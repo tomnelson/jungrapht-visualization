@@ -103,7 +103,7 @@ public class AnnotationsDemo extends JPanel {
             .annotatingPlugin(annotatingPlugin)
             .build();
     vv.setGraphMouse(graphMouse);
-    vv.addKeyListener(graphMouse.getModeKeyListener());
+    //    vv.addKeyListener(graphMouse.getModeKeyListener());
 
     JComboBox modeBox = ModeControls.getAnnotationModeComboBox(graphMouse);
 

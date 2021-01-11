@@ -10,7 +10,6 @@
 
 package org.jungrapht.visualization.control;
 
-import java.awt.event.ItemListener;
 import java.awt.event.KeyListener;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.modal.Modal;
@@ -22,13 +21,13 @@ import org.jungrapht.visualization.control.modal.Modal;
  */
 public interface ModalGraphMouse extends VisualizationViewer.GraphMouse, Modal {
 
-  void setMode(Mode mode);
+  //  void setMode(Mode mode);
 
-  Mode getMode();
+  //  Mode getMode();
 
   /** @return Returns the modeListener. */
-  ItemListener getModeListener();
-
+  //    ItemListener getModeListener();
+  //
   KeyListener getModeKeyListener();
 
   //  /** */
