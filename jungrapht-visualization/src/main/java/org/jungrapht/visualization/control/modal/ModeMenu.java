@@ -1,5 +1,6 @@
 package org.jungrapht.visualization.control.modal;
 
+import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -9,11 +10,12 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicIconFactory;
 
 public class ModeMenu extends JMenu implements Modal {
 
   public static class Builder {
-    protected String menuText = "";
+    protected String menuText;
     protected Supplier<AbstractButton> buttonSupplier = JRadioButtonMenuItem::new;
     protected Mode[] modes;
     protected Set<Modal> modals = new LinkedHashSet<>();
@@ -75,6 +77,11 @@ public class ModeMenu extends JMenu implements Modal {
     this.buttonSupplier = buttonSupplier;
     this.modes = modes;
     this.modals = modals;
+    if (menuText == null) {
+      Icon icon = BasicIconFactory.getMenuArrowIcon();
+      this.setIcon(BasicIconFactory.getMenuArrowIcon());
+      this.setPreferredSize(new Dimension(icon.getIconWidth() + 10, icon.getIconHeight() + 10));
+    }
     if (this.mode == null) {
       this.mode = modes[0];
     }

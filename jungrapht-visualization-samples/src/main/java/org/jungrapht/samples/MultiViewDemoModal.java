@@ -222,9 +222,7 @@ public class MultiViewDemoModal extends JPanel {
             animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<String, Integer>();
             translatingPlugin = new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
             scalingPlugin =
-                ScalingGraphMousePlugin.builder()
-                    .scalingControl(new ViewScalingControl())
-                    .build();
+                ScalingGraphMousePlugin.builder().scalingControl(new ViewScalingControl()).build();
             rotatingPlugin = new RotatingGraphMousePlugin();
             shearingPlugin = new ShearingGraphMousePlugin();
 
