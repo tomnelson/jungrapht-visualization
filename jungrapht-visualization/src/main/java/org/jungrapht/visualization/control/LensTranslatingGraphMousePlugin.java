@@ -67,7 +67,6 @@ public class LensTranslatingGraphMousePlugin extends TranslatingGraphMousePlugin
         multiLayerTransformer.getTransformer(MultiLayerTransformer.Layer.LAYOUT);
     Point2D p = e.getPoint();
     if (viewTransformer instanceof LensTransformer) {
-      //        viewTransformer = ((LensTransformer) viewTransformer).getDelegate();
       p = ((LensTransformer) viewTransformer).getDelegate().inverseTransform(p);
     } else {
       p = viewTransformer.inverseTransform(p);

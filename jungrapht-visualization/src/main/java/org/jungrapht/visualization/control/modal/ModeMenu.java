@@ -13,7 +13,7 @@ import javax.swing.*;
 public class ModeMenu extends JMenu implements Modal {
 
   public static class Builder {
-    protected String menuText = "Mode";
+    protected String menuText = "";
     protected Supplier<AbstractButton> buttonSupplier = JRadioButtonMenuItem::new;
     protected Mode[] modes;
     protected Set<Modal> modals = new LinkedHashSet<>();

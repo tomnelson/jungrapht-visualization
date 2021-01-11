@@ -223,7 +223,7 @@ public class MultiViewDemoModal extends JPanel {
             translatingPlugin = new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
             scalingPlugin =
                 ScalingGraphMousePlugin.builder()
-                    .scalingControl(new LayoutScalingControl())
+                    .scalingControl(new ViewScalingControl())
                     .build();
             rotatingPlugin = new RotatingGraphMousePlugin();
             shearingPlugin = new ShearingGraphMousePlugin();
