@@ -89,7 +89,7 @@ public class LensTranslatingGraphMousePlugin extends TranslatingGraphMousePlugin
       }
       vv.repaint();
     }
-    //    super.mousePressed(e);
+    super.mousePressed(e);
   }
 
   /**
@@ -189,7 +189,7 @@ public class LensTranslatingGraphMousePlugin extends TranslatingGraphMousePlugin
 
         } else {
 
-          //          super.mouseDragged(e);
+          super.mouseDragged(e);
         }
       }
     }

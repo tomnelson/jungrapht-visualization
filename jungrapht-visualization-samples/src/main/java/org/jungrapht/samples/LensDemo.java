@@ -26,9 +26,9 @@ import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.DefaultModalGraphMouse;
-import org.jungrapht.visualization.control.LensMagnificationGraphMousePlugin;
-import org.jungrapht.visualization.control.ModalLensGraphMouse;
+import org.jungrapht.visualization.control.*;
+import org.jungrapht.visualization.control.modal.Modal;
+import org.jungrapht.visualization.control.modal.ModeMenu;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -187,10 +187,10 @@ public class LensDemo extends JPanel {
     JLabel modeLabel = new JLabel("Mode >>");
     modeLabel.setUI(new VerticalLabelUI(false));
 
-    graphMouse.addItemListener(hyperbolicLayoutSupport.getGraphMouse().getModeListener());
-    graphMouse.addItemListener(hyperbolicViewSupport.getGraphMouse().getModeListener());
-    graphMouse.addItemListener(magnifyLayoutSupport.getGraphMouse().getModeListener());
-    graphMouse.addItemListener(magnifyViewSupport.getGraphMouse().getModeListener());
+    //    graphMouse.addItemListener(hyperbolicLayoutSupport.getGraphMouse().getModeListener());
+    //    graphMouse.addItemListener(hyperbolicViewSupport.getGraphMouse().getModeListener());
+    //    graphMouse.addItemListener(magnifyLayoutSupport.getGraphMouse().getModeListener());
+    //    graphMouse.addItemListener(magnifyViewSupport.getGraphMouse().getModeListener());
 
     ButtonGroup graphRadio = new ButtonGroup();
     JRadioButton graphButton = new JRadioButton("Graph");
@@ -231,7 +231,33 @@ public class LensDemo extends JPanel {
     modePanel.add(gridButton);
 
     JMenuBar menubar = new JMenuBar();
-    menubar.add(graphMouse.getModeMenu());
+    JMenu modeMenu =
+        ModeMenu.builder()
+            .modes(Modal.Mode.TRANSFORMING, Modal.Mode.PICKING)
+            .mode(Modal.Mode.TRANSFORMING)
+            .buttonSupplier(JRadioButtonMenuItem::new)
+            .modals(
+                graphMouse,
+                hyperbolicLayoutSupport.getGraphMouse(),
+                hyperbolicViewSupport.getGraphMouse(),
+                magnifyLayoutSupport.getGraphMouse(),
+                magnifyViewSupport.getGraphMouse())
+            .build()
+            .buildUI();
+    //        ModeControls.getStandardModeMenu(
+    //            graphMouse,
+    //            hyperbolicLayoutSupport.getGraphMouse(),
+    //            hyperbolicViewSupport.getGraphMouse(),
+    //            magnifyLayoutSupport.getGraphMouse(),
+    //            magnifyViewSupport.getGraphMouse());
+
+    //            new ModeControls.ModeMenu(ModalGraphMouse.Mode.TRANSFORMING, ModalGraphMouse.Mode.PICKING);
+    //    modeMenu.addItemListener(graphMouse);
+    //    modeMenu.addItemListener(hyperbolicLayoutSupport.getGraphMouse());
+    //    modeMenu.addItemListener(hyperbolicViewSupport.getGraphMouse());
+    //    modeMenu.addItemListener(magnifyLayoutSupport.getGraphMouse());
+    //    modeMenu.addItemListener(magnifyViewSupport.getGraphMouse());
+    menubar.add(modeMenu);
     visualizationScrollPane.setCorner(menubar);
 
     Box controls = Box.createHorizontalBox();

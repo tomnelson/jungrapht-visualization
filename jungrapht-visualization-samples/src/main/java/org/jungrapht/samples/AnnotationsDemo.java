@@ -20,8 +20,7 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.annotations.AnnotatingGraphMousePlugin;
 import org.jungrapht.visualization.annotations.AnnotatingModalGraphMouse;
 import org.jungrapht.visualization.annotations.AnnotationControls;
-import org.jungrapht.visualization.control.ModalGraphMouse;
-import org.jungrapht.visualization.control.ModalGraphMouse.Mode;
+import org.jungrapht.visualization.control.ModeControls;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.Renderer;
 
@@ -106,8 +105,7 @@ public class AnnotationsDemo extends JPanel {
     vv.setGraphMouse(graphMouse);
     vv.addKeyListener(graphMouse.getModeKeyListener());
 
-    JComboBox<Mode> modeBox = graphMouse.getModeComboBox();
-    modeBox.setSelectedItem(ModalGraphMouse.Mode.ANNOTATING);
+    JComboBox modeBox = ModeControls.getAnnotationModeComboBox(graphMouse);
 
     JButton help = new JButton("Help");
     help.addActionListener(
@@ -121,7 +119,7 @@ public class AnnotationsDemo extends JPanel {
 
     JPanel modeControls = new JPanel();
     modeControls.setBorder(BorderFactory.createTitledBorder("Mouse Mode"));
-    modeControls.add(graphMouse.getModeComboBox());
+    modeControls.add(modeBox);
     controls.add(modeControls);
 
     JPanel annotationControlPanel = new JPanel();

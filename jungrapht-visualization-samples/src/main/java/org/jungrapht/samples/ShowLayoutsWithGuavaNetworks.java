@@ -22,6 +22,7 @@ import org.jungrapht.samples.util.LayoutHelper;
 import org.jungrapht.samples.util.TestGuavaNetworks;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
+import org.jungrapht.visualization.control.ModeControls;
 import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -89,7 +90,8 @@ public class ShowLayoutsWithGuavaNetworks extends JPanel {
                 + ". with neighbors:"
                 + Graphs.neighborListOf(vv.getVisualizationModel().getGraph(), vertex));
 
-    JComboBox modeBox = graphMouse.getModeComboBox();
+    JComboBox modeBox = ModeControls.getStandardModeComboBox(graphMouse);
+    //graphMouse.getModeComboBox();
     modeBox.addItemListener(
         ((DefaultModalGraphMouse<Integer, Number>) vv.getGraphMouse()).getModeListener());
 

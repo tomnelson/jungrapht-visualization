@@ -26,6 +26,7 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.LensMagnificationGraphMousePlugin;
 import org.jungrapht.visualization.control.ModalLensGraphMouse;
+import org.jungrapht.visualization.control.ModeControls;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -172,12 +173,8 @@ public class SpatialLensDemo extends JPanel {
     graphMouse.addItemListener(magnifyViewSupport.getGraphMouse().getModeListener());
 
     JMenuBar menubar = new JMenuBar();
-    menubar.add(graphMouse.getModeMenu());
+    menubar.add(ModeControls.getStandardModeMenu(graphMouse));
     visualizationScrollPane.setCorner(menubar);
-
-    JComboBox modeBox = graphMouse.getModeComboBox();
-    modeBox.addItemListener(
-        ((DefaultModalGraphMouse<Integer, Number>) vv.getGraphMouse()).getModeListener());
 
     JRadioButton showSpatialEffects = new JRadioButton("Spatial Structure");
     showSpatialEffects.addItemListener(

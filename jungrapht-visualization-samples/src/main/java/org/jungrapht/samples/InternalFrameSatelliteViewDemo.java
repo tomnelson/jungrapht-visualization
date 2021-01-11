@@ -18,11 +18,7 @@ import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.SatelliteVisualizationViewer;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.CrossoverScalingControl;
-import org.jungrapht.visualization.control.DefaultModalGraphMouse;
-import org.jungrapht.visualization.control.ModalGraphMouse;
-import org.jungrapht.visualization.control.ModalGraphMouse.Mode;
-import org.jungrapht.visualization.control.ScalingControl;
+import org.jungrapht.visualization.control.*;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.GEMLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -97,7 +93,11 @@ public class InternalFrameSatelliteViewDemo {
 
     // add my listener for ToolTips
     vv.setVertexToolTipFunction(Object::toString);
-    satellite = SatelliteVisualizationViewer.builder(vv).viewSize(new Dimension(200, 200)).build();
+    satellite =
+        SatelliteVisualizationViewer.builder(vv)
+            .viewSize(new Dimension(200, 200))
+            .graphMouse(new ModalSatelliteGraphMouse<>())
+            .build();
     satellite
         .getRenderContext()
         .setEdgeDrawPaintFunction(
@@ -162,8 +162,17 @@ public class InternalFrameSatelliteViewDemo {
           }
         });
 
-    JComboBox<Mode> modeBox = graphMouse.getModeComboBox();
-    modeBox.addItemListener(((ModalGraphMouse) satellite.getGraphMouse()).getModeListener());
+    //    JComboBox<Mode> modeBox = ModeControls.getStandardModeComboBox();
+    JComboBox modeBox =
+        ModeControls.getStandardModeComboBox(
+            graphMouse, (ModalGraphMouse) satellite.getGraphMouse());
+    //        ModeComboBox.builder()
+    //            .modes(Modal.Mode.TRANSFORMING, Modal.Mode.PICKING)
+    //            .modals(graphMouse)
+    //            .build();
+
+    //graphMouse.getModeComboBox();
+    //    modeBox.addItemListener(((ModalGraphMouse) satellite.getGraphMouse()).getModeListener());
     JPanel p = new JPanel();
     p.add(zoomer);
     p.add(modeBox);

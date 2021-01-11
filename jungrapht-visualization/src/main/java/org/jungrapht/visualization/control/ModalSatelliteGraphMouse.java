@@ -11,10 +11,14 @@
 package org.jungrapht.visualization.control;
 
 import java.awt.event.InputEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /** @author Tom Nelson */
 public class ModalSatelliteGraphMouse<V, E> extends DefaultModalGraphMouse<V, E>
     implements ModalGraphMouse {
 
+  private static final Logger log = LoggerFactory.getLogger(ModalSatelliteGraphMouse.class);
   /**
    * Build an instance of a ModalSatelliteGraphMouse
    *
@@ -26,9 +30,8 @@ public class ModalSatelliteGraphMouse<V, E> extends DefaultModalGraphMouse<V, E>
   public static class Builder<
           V, E, T extends ModalSatelliteGraphMouse<V, E>, B extends Builder<V, E, T, B>>
       extends DefaultModalGraphMouse.Builder<V, E, T, B> {
-
     public T build() {
-      return (T) new ModalSatelliteGraphMouse(in, out, vertexSelectionOnly);
+      return (T) new ModalSatelliteGraphMouse(this);
     }
   }
 
@@ -36,20 +39,63 @@ public class ModalSatelliteGraphMouse<V, E> extends DefaultModalGraphMouse<V, E>
     return new Builder<>();
   }
 
+  protected int singleSelectionMask;
+  protected int addSingleSelectionMask;
+  protected int regionSelectionMask;
+  protected int addRegionSelectionMask;
+  protected int regionSelectionCompleteMask;
+  protected int addRegionSelectionCompleteMask;
+  protected int translatingMask;
+  protected int scalingMask;
+  protected int xAxisScalingMask;
+  protected int yAxisScalingMask;
+
   public ModalSatelliteGraphMouse() {
     this(new Builder<>());
   }
 
   ModalSatelliteGraphMouse(Builder<V, E, ?, ?> builder) {
-    this(builder.in, builder.out, builder.vertexSelectionOnly);
+    this(
+        builder.in,
+        builder.out,
+        builder.vertexSelectionOnly,
+        builder.singleSelectionMask,
+        builder.addSingleSelectionMask,
+        builder.regionSelectionMask,
+        builder.addRegionSelectionMask,
+        builder.regionSelectionCompleteMask,
+        builder.addRegionSelectionCompleteMask,
+        builder.translatingMask,
+        builder.scalingMask,
+        builder.xAxisScalingMask,
+        builder.yAxisScalingMask);
   }
 
-  ModalSatelliteGraphMouse(float in, float out) {
-    super(in, out);
-  }
-
-  ModalSatelliteGraphMouse(float in, float out, boolean vertexSelectionOnly) {
+  ModalSatelliteGraphMouse(
+      float in,
+      float out,
+      boolean vertexSelectionOnly,
+      int singleSelectionMask,
+      int addSingleSelectionMask,
+      int regionSelectionMask,
+      int addRegionSelectionMask,
+      int regionSelectionCompleteMask,
+      int addRegionSelectionCompleteMask,
+      int translatingMask,
+      int scalingMask,
+      int xAxisScalingMask,
+      int yAxisScalingMask) {
     super(in, out, vertexSelectionOnly);
+    this.singleSelectionMask = singleSelectionMask;
+    this.addSingleSelectionMask = addSingleSelectionMask;
+    this.regionSelectionMask = regionSelectionMask;
+    this.addRegionSelectionMask = addRegionSelectionMask;
+    this.regionSelectionCompleteMask = regionSelectionCompleteMask;
+    this.addRegionSelectionCompleteMask = addRegionSelectionCompleteMask;
+    this.translatingMask = translatingMask;
+    this.scalingMask = scalingMask;
+    this.xAxisScalingMask = xAxisScalingMask;
+    this.yAxisScalingMask = yAxisScalingMask;
   }
 
   public void loadPlugins() {
@@ -69,14 +115,22 @@ public class ModalSatelliteGraphMouse<V, E> extends DefaultModalGraphMouse<V, E>
     //    animatedPickingPlugin = new SatelliteAnimatedPickingGraphMousePlugin();
     translatingPlugin = new SatelliteTranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
     scalingPlugin =
-        SatelliteScalingGraphMousePlugin.builder()
-            .scalingControl(new CrossoverScalingControl())
-            .build();
+        new SatelliteScalingGraphMousePlugin(
+            new CrossoverScalingControl(),
+            scalingMask,
+            xAxisScalingMask,
+            yAxisScalingMask,
+            in,
+            out);
+    //        SatelliteScalingGraphMousePlugin.builder()
+    //            .scalingControl(new CrossoverScalingControl())
+    //            .build();
     rotatingPlugin = new SatelliteRotatingGraphMousePlugin();
     shearingPlugin = new SatelliteShearingGraphMousePlugin();
 
     add(scalingPlugin);
 
-    setMode(Mode.TRANSFORMING);
+    //    log.info("setMode to: {}", mode);
+    //    setMode(this.mode);
   }
 }

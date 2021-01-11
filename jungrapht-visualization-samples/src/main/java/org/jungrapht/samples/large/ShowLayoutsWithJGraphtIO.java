@@ -31,6 +31,7 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.LensMagnificationGraphMousePlugin;
 import org.jungrapht.visualization.control.ModalLensGraphMouse;
+import org.jungrapht.visualization.control.ModeControls;
 import org.jungrapht.visualization.layout.algorithms.AbstractIterativeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -113,7 +114,8 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
     // for the first layout
     vv.scaleToLayout();
 
-    JComboBox modeBox = graphMouse.getModeComboBox();
+    JComboBox modeBox = ModeControls.getStandardModeComboBox(graphMouse);
+    //graphMouse.getModeComboBox();
     modeBox.addItemListener(
         ((DefaultModalGraphMouse<Integer, DefaultEdge>) vv.getGraphMouse()).getModeListener());
 

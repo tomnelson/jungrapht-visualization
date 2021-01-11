@@ -24,7 +24,9 @@ import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
+import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.control.ModalSatelliteGraphMouse;
+import org.jungrapht.visualization.control.ModeControls;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.GradientVertexRenderer;
@@ -184,10 +186,18 @@ public class SatelliteViewDemo extends JPanel {
     helpDialog = new JDialog();
     helpDialog.getContentPane().add(new JLabel(instructions));
 
-    JComboBox<?> modeBox = graphMouse.getModeComboBox();
-    modeBox.addItemListener(
-        ((DefaultModalGraphMouse<?, ?>) satelliteVisualizationViewer.getGraphMouse())
-            .getModeListener());
+    JComboBox modeBox =
+        ModeControls.getStandardModeComboBox(
+            graphMouse, (ModalGraphMouse) satelliteVisualizationViewer.getGraphMouse());
+    //        ModeComboBox.builder()
+    //            .modes(Modal.Mode.TRANSFORMING, Modal.Mode.PICKING)
+    //            .modals(graphMouse, (Modal) satelliteVisualizationViewer.getGraphMouse())
+    //            .build();
+    //            ModeControls.getStandardModeComboBox(graphMouse);
+    //graphMouse.getModeComboBox();
+    //    modeBox.addItemListener(
+    //        ((DefaultModalGraphMouse<?, ?>) satelliteVisualizationViewer.getGraphMouse())
+    //            .getModeListener());
 
     JCheckBox gridBox = new JCheckBox("Show Grid");
     gridBox.addItemListener(

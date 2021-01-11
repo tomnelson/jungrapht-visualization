@@ -25,10 +25,7 @@ import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.CrossoverScalingControl;
-import org.jungrapht.visualization.control.EditingModalGraphMouse;
-import org.jungrapht.visualization.control.ModalGraphMouse;
-import org.jungrapht.visualization.control.ScalingControl;
+import org.jungrapht.visualization.control.*;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -129,7 +126,8 @@ public class SpatialRTreeTest extends JPanel {
           }
         });
 
-    JComboBox<ModalGraphMouse.Mode> modeBox = graphMouse.getModeComboBox();
+    JComboBox<ModalGraphMouse.Mode> modeBox = ModeControls.getStandardModeComboBox(graphMouse);
+    //graphMouse.getModeComboBox();
 
     JButton recalculate = new JButton("Recalculate");
     recalculate.addActionListener(e -> vv.getVertexSpatial().recalculate());

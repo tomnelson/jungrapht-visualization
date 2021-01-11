@@ -32,6 +32,7 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.LensMagnificationGraphMousePlugin;
 import org.jungrapht.visualization.control.ModalLensGraphMouse;
+import org.jungrapht.visualization.control.ModeControls;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFRRepulsion;
@@ -194,12 +195,13 @@ public class SpatialLensLargeGraphDemo extends JPanel {
     modeLabel.setUI(new VerticalLabelUI(false));
 
     JMenuBar menubar = new JMenuBar();
-    menubar.add(graphMouse.getModeMenu());
+    menubar.add(ModeControls.getStandardModeMenu(graphMouse));
+    //graphMouse.getModeMenu());
     visualizationScrollPane.setCorner(menubar);
 
-    JComboBox modeBox = graphMouse.getModeComboBox();
-    modeBox.addItemListener(
-        ((DefaultModalGraphMouse<Integer, Number>) vv.getGraphMouse()).getModeListener());
+    JComboBox modeBox = ModeControls.getStandardModeComboBox(graphMouse);
+    //    modeBox.addItemListener(
+    //        ((DefaultModalGraphMouse<Integer, Number>) vv.getGraphMouse()).getModeListener());
 
     JToggleButton showSpatialEffects = new JToggleButton("Spatial Structure");
     showSpatialEffects.addItemListener(

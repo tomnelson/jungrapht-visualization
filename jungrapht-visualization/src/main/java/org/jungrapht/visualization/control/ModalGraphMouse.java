@@ -13,26 +13,29 @@ package org.jungrapht.visualization.control;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyListener;
 import org.jungrapht.visualization.VisualizationViewer;
+import org.jungrapht.visualization.control.modal.Modal;
 
 /**
  * Interface for a GraphMouse that supports modality.
  *
  * @author Tom Nelson
  */
-public interface ModalGraphMouse extends VisualizationViewer.GraphMouse {
+public interface ModalGraphMouse extends VisualizationViewer.GraphMouse, Modal {
 
   void setMode(Mode mode);
+
+  Mode getMode();
 
   /** @return Returns the modeListener. */
   ItemListener getModeListener();
 
   KeyListener getModeKeyListener();
 
-  /** */
-  enum Mode {
-    TRANSFORMING,
-    PICKING,
-    ANNOTATING,
-    EDITING
-  }
+  //  /** */
+  //  enum Mode {
+  //    TRANSFORMING,
+  //    PICKING,
+  //    ANNOTATING,
+  //    EDITING
+  //  }
 }

@@ -21,7 +21,8 @@ import org.jungrapht.visualization.util.RadiusGraphElementAccessor;
  *
  * @author Tom Nelson
  */
-public interface Spatial<T, NT> extends LayoutStateChange.Listener, LayoutVertexPositionChange.Listener<NT> {
+public interface Spatial<T, NT>
+    extends LayoutStateChange.Listener, LayoutVertexPositionChange.Listener<NT> {
 
   /**
    * a flag to suggest whether or not the spatial structure should be used
@@ -226,8 +227,6 @@ public interface Spatial<T, NT> extends LayoutStateChange.Listener, LayoutVertex
       //noop
     }
 
-
-
     /**
      * a TreeNode that is immutable and covers the entire layout area
      *
@@ -286,7 +285,7 @@ public interface Spatial<T, NT> extends LayoutStateChange.Listener, LayoutVertex
       }
     }
 
-    public static class Edge<E, V> extends NoOp<E, V>  {
+    public static class Edge<E, V> extends NoOp<E, V> {
 
       private VisualizationModel<V, E> visualizationModel;
       RadiusGraphElementAccessor<V, E> accessor;

@@ -11,9 +11,10 @@
  */
 package org.jungrapht.visualization.control;
 
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
+
 import java.awt.Component;
 import java.awt.Cursor;
-import java.awt.ItemSelectable;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -34,7 +35,7 @@ import java.awt.event.KeyEvent;
  * @author Tom Nelson
  */
 public class DefaultModalGraphMouse<V, E> extends AbstractModalGraphMouse
-    implements ModalGraphMouse, ItemSelectable {
+    implements ModalGraphMouse {
 
   /**
    * Build an instance of a DefaultGraphMouse
@@ -46,6 +47,84 @@ public class DefaultModalGraphMouse<V, E> extends AbstractModalGraphMouse
    */
   public static class Builder<V, E, T extends DefaultModalGraphMouse, B extends Builder<V, E, T, B>>
       extends AbstractModalGraphMouse.Builder<T, B> {
+    // selection masks
+    protected int singleSelectionMask =
+        Modifiers.masks.get(System.getProperty(PREFIX + "singleSelectionMask", "MB1_MENU"));
+    protected int addSingleSelectionMask =
+        Modifiers.masks.get(
+            System.getProperty(PREFIX + "addSingleSelectionMask", "MB1_SHIFT_MENU"));
+    protected int regionSelectionMask =
+        Modifiers.masks.get(System.getProperty(PREFIX + "regionSelectionMask", "MB1_MENU"));
+    protected int addRegionSelectionMask =
+        Modifiers.masks.get(
+            System.getProperty(PREFIX + "addregionSelectionMask", "MB1_SHIFT_MENU"));
+    protected int regionSelectionCompleteMask =
+        Modifiers.masks.get(System.getProperty(PREFIX + "regionSelectionCompleteMask", "MENU"));
+    protected int addRegionSelectionCompleteMask =
+        Modifiers.masks.get(
+            System.getProperty(PREFIX + "addRegionSelectionCompleteMask", "SHIFT_MENU"));
+
+    // translation mask
+    protected int translatingMask =
+        Modifiers.masks.get(System.getProperty(PREFIX + "translatingMask", "MB1"));
+
+    // scaling masks
+    protected int xAxisScalingMask =
+        Modifiers.masks.get(System.getProperty(PREFIX + "xAxisScalingMask", "MENU"));
+    protected int yAxisScalingMask =
+        Modifiers.masks.get(System.getProperty(PREFIX + "yAxisScalingMask", "ALT"));
+    protected int scalingMask =
+        Modifiers.masks.get(System.getProperty(PREFIX + "scalingMask", "NONE"));
+
+    public B singleSelectionMask(int singleSelectionMask) {
+      this.singleSelectionMask = singleSelectionMask;
+      return self();
+    }
+
+    public B addSingleSelectionMask(int addSingleSelectionMask) {
+      this.addSingleSelectionMask = addSingleSelectionMask;
+      return self();
+    }
+
+    public B regionSelectionMask(int regionSelectionMask) {
+      this.regionSelectionMask = regionSelectionMask;
+      return self();
+    }
+
+    public B addRegionSelectionMask(int addRegionSelectionMask) {
+      this.addRegionSelectionMask = addRegionSelectionMask;
+      return self();
+    }
+
+    public B regionSelectionCompleteMask(int regionSelectionCompleteMask) {
+      this.regionSelectionCompleteMask = regionSelectionCompleteMask;
+      return self();
+    }
+
+    public B addRegionSelectionCompleteMask(int addRegionSelectionCompleteMask) {
+      this.addRegionSelectionCompleteMask = addRegionSelectionCompleteMask;
+      return self();
+    }
+
+    public B translatingMask(int translatingMask) {
+      this.translatingMask = translatingMask;
+      return self();
+    }
+
+    public B scalingMask(int scalingMask) {
+      this.scalingMask = scalingMask;
+      return self();
+    }
+
+    public B xAxisScalingMask(int xAxisScalingMask) {
+      this.xAxisScalingMask = xAxisScalingMask;
+      return self();
+    }
+
+    public B yAxisScalingMask(int yAxisScalingMask) {
+      this.yAxisScalingMask = yAxisScalingMask;
+      return self();
+    }
 
     public T build() {
       return (T) new DefaultModalGraphMouse(in, out, vertexSelectionOnly);
@@ -55,6 +134,17 @@ public class DefaultModalGraphMouse<V, E> extends AbstractModalGraphMouse
   public static <V, E> Builder<V, E, ?, ?> builder() {
     return new Builder<>();
   }
+
+  protected int singleSelectionMask;
+  protected int addSingleSelectionMask;
+  protected int regionSelectionMask;
+  protected int addRegionSelectionMask;
+  protected int regionSelectionCompleteMask;
+  protected int addRegionSelectionCompleteMask;
+  protected int translatingMask;
+  protected int scalingMask;
+  protected int xAxisScalingMask;
+  protected int yAxisScalingMask;
 
   /** create an instance with default values */
   public DefaultModalGraphMouse() {
@@ -74,20 +164,60 @@ public class DefaultModalGraphMouse<V, E> extends AbstractModalGraphMouse
 
   /** create an instance with default values */
   protected DefaultModalGraphMouse(Builder<V, E, ?, ?> builder) {
-    this(builder.in, builder.out, builder.vertexSelectionOnly);
+    this(
+        builder.in,
+        builder.out,
+        builder.vertexSelectionOnly,
+        builder.singleSelectionMask,
+        builder.addSingleSelectionMask,
+        builder.regionSelectionMask,
+        builder.addRegionSelectionMask,
+        builder.regionSelectionCompleteMask,
+        builder.addRegionSelectionCompleteMask,
+        builder.translatingMask,
+        builder.scalingMask,
+        builder.xAxisScalingMask,
+        builder.yAxisScalingMask);
+    //    this(builder.in, builder.out, builder.vertexSelectionOnly);
   }
 
-  /**
-   * create an instance with passed values
-   *
-   * @param in override value for scale in
-   * @param out override value for scale out
-   */
-  protected DefaultModalGraphMouse(float in, float out) {
-    this(in, out, false);
+  public DefaultModalGraphMouse(
+      float in,
+      float out,
+      boolean vertexSelectionOnly,
+      int singleSelectionMask,
+      int addSingleSelectionMask,
+      int regionSelectionMask,
+      int addRegionSelectionMask,
+      int regionSelectionCompleteMask,
+      int addRegionSelectionCompleteMask,
+      int translatingMask,
+      int scalingMask,
+      int xAxisScalingMask,
+      int yAxisScalingMask) {
+    super(in, out, vertexSelectionOnly);
+    this.singleSelectionMask = singleSelectionMask;
+    this.addSingleSelectionMask = addSingleSelectionMask;
+    this.regionSelectionMask = regionSelectionMask;
+    this.addRegionSelectionMask = addRegionSelectionMask;
+    this.regionSelectionCompleteMask = regionSelectionCompleteMask;
+    this.addRegionSelectionCompleteMask = addRegionSelectionCompleteMask;
+    this.translatingMask = translatingMask;
+    this.scalingMask = scalingMask;
+    this.xAxisScalingMask = xAxisScalingMask;
+    this.yAxisScalingMask = yAxisScalingMask;
   }
+  //  /**
+  //   * create an instance with passed values
+  //   *
+  //   * @param in override value for scale in
+  //   * @param out override value for scale out
+  //   */
+  //  protected DefaultModalGraphMouse(float in, float out) {
+  //    this(in, out, false);
+  //  }
 
-  /** create the plugins, and load the plugins for TRANSFORMING mode */
+  /** create the plugins, and load the plugins for set mode */
   @Override
   public void loadPlugins() {
     selectingPlugin =
@@ -109,7 +239,7 @@ public class DefaultModalGraphMouse<V, E> extends AbstractModalGraphMouse
     shearingPlugin = new ShearingGraphMousePlugin();
 
     add(scalingPlugin);
-    setMode(Mode.TRANSFORMING);
+    setMode(this.mode);
   }
 
   public static class ModeKeyAdapter extends KeyAdapter {

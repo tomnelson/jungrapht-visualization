@@ -17,7 +17,6 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyListener;
 import javax.swing.*;
 import javax.swing.event.EventListenerList;
-import javax.swing.plaf.basic.BasicIconFactory;
 
 /**
  * AbstractModalGraphMouse is a PluggableGraphMouse class that manages a collection of plugins for
@@ -26,11 +25,13 @@ import javax.swing.plaf.basic.BasicIconFactory;
  * used for the various plugins. The default modifiers are intended to mimick those of mainstream
  * software applications in order to be intuitive to users.
  *
- * <p>To change between modes, two different controls are offered, a combo box and a menu system.
- * These controls are lazily created in their respective 'getter' methods so they don't impact code
- * that does not intend to use them. The menu control can be placed in an unused corner of the
- * VisualizationScrollPane, which is a common location for mouse mode selection menus in mainstream
- * applications.
+ * <p>// *
+ *
+ * <p>To change between modes, two different controls are offered, a combo box and a menu system. //
+ * * These controls are lazily created in their respective 'getter' methods so they don't impact
+ * code // * that does not intend to use them. The menu control can be placed in an unused corner of
+ * the // * VisualizationScrollPane, which is a common location for mouse mode selection menus in
+ * mainstream // * applications.
  *
  * <p>Users must implement the loadPlugins() method to create and install the GraphMousePlugins. The
  * order of the plugins is important, as they are evaluated against the mask parameters in the order
@@ -39,7 +40,7 @@ import javax.swing.plaf.basic.BasicIconFactory;
  * @author Tom Nelson
  */
 public abstract class AbstractModalGraphMouse extends AbstractGraphMouse
-    implements ModalGraphMouse, ItemSelectable {
+    implements ModalGraphMouse {
 
   /**
    * Configure an instance of an AbstractModalGraphMouse
@@ -55,12 +56,8 @@ public abstract class AbstractModalGraphMouse extends AbstractGraphMouse
 
   /** a listener for mode changes */
   protected ItemListener modeListener;
-  /** a JComboBox control available to set the mode */
-  protected JComboBox<Mode> modeBox;
-  /** a menu available to set the mode */
-  protected JMenu modeMenu;
   /** the current mode */
-  protected Mode mode;
+  protected Mode mode = Mode.TRANSFORMING;
   /** listeners for mode changes */
   protected EventListenerList listenerList = new EventListenerList();
 
@@ -79,22 +76,19 @@ public abstract class AbstractModalGraphMouse extends AbstractGraphMouse
   }
 
   /** setter for the Mode. */
+  @Override
   public void setMode(Mode mode) {
-    if (this.mode != mode) {
-      fireItemStateChanged(
-          new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, this.mode, ItemEvent.DESELECTED));
-      this.mode = mode;
-      if (mode == Mode.TRANSFORMING) {
-        setTransformingMode();
-      } else if (mode == Mode.PICKING) {
-        setPickingMode();
-      }
-      if (modeBox != null) {
-        modeBox.setSelectedItem(mode);
-      }
-      fireItemStateChanged(
-          new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, mode, ItemEvent.SELECTED));
+    this.mode = mode;
+    if (mode == Mode.TRANSFORMING) {
+      setTransformingMode();
+    } else if (mode == Mode.PICKING) {
+      setPickingMode();
     }
+  }
+
+  @Override
+  public Mode getMode() {
+    return this.mode;
   }
 
   /* (non-Javadoc)
@@ -129,7 +123,9 @@ public abstract class AbstractModalGraphMouse extends AbstractGraphMouse
   /** listener to set the mode from an external event source */
   class ModeListener implements ItemListener {
     public void itemStateChanged(ItemEvent e) {
-      setMode((Mode) e.getItem());
+      if (e.getStateChange() == ItemEvent.SELECTED) {
+        setMode((Mode) e.getItem());
+      }
     }
   }
 
@@ -155,70 +151,70 @@ public abstract class AbstractModalGraphMouse extends AbstractGraphMouse
   }
 
   /** @return Returns the modeBox. */
-  public JComboBox<Mode> getModeComboBox() {
-    if (modeBox == null) {
-      modeBox = new JComboBox<>(new Mode[] {Mode.TRANSFORMING, Mode.PICKING});
-      modeBox.addItemListener(getModeListener());
-    }
-    modeBox.setSelectedItem(mode);
-    return modeBox;
-  }
+  //  public JComboBox<Mode> getModeComboBox() {
+  //    if (modeBox == null) {
+  //      modeBox = new JComboBox<>(new Mode[] {Mode.TRANSFORMING, Mode.PICKING});
+  //      modeBox.addItemListener(getModeListener());
+  //    }
+  //    modeBox.setSelectedItem(mode);
+  //    return modeBox;
+  //  }
 
-  public JMenu getModeMenu() {
-    return getModeMenu(null);
-  }
+  //  public JMenu getModeMenu() {
+  //    return getModeMenu(null);
+  //  }
   /**
    * create (if necessary) and return a menu that will change the mode
    *
    * @return the menu
    */
-  public JMenu getModeMenu(String text) {
-    if (modeMenu == null) {
-      if (text != null) {
-        modeMenu = new JMenu(text);
-      } else {
-        modeMenu = new JMenu();
-        Icon icon = BasicIconFactory.getMenuArrowIcon();
-        modeMenu.setIcon(BasicIconFactory.getMenuArrowIcon());
-        modeMenu.setPreferredSize(
-            new Dimension(icon.getIconWidth() + 10, icon.getIconHeight() + 10));
-      }
-      final JRadioButtonMenuItem transformingButton =
-          new JRadioButtonMenuItem(Mode.TRANSFORMING.toString());
-      transformingButton.addItemListener(
-          e -> {
-            if (e.getStateChange() == ItemEvent.SELECTED) {
-              setMode(Mode.TRANSFORMING);
-            }
-          });
-
-      final JRadioButtonMenuItem pickingButton = new JRadioButtonMenuItem(Mode.PICKING.toString());
-      pickingButton.addItemListener(
-          e -> {
-            if (e.getStateChange() == ItemEvent.SELECTED) {
-              setMode(Mode.PICKING);
-            }
-          });
-      ButtonGroup radio = new ButtonGroup();
-      radio.add(transformingButton);
-      radio.add(pickingButton);
-      transformingButton.setSelected(true);
-      modeMenu.add(transformingButton);
-      modeMenu.add(pickingButton);
-      modeMenu.setToolTipText("Menu for setting Mouse Mode");
-      addItemListener(
-          e -> {
-            if (e.getStateChange() == ItemEvent.SELECTED) {
-              if (e.getItem() == Mode.TRANSFORMING) {
-                transformingButton.setSelected(true);
-              } else if (e.getItem() == Mode.PICKING) {
-                pickingButton.setSelected(true);
-              }
-            }
-          });
-    }
-    return modeMenu;
-  }
+  //  public JMenu getModeMenu(String text) {
+  //    if (modeMenu == null) {
+  //      if (text != null) {
+  //        modeMenu = new JMenu(text);
+  //      } else {
+  //        modeMenu = new JMenu();
+  //        Icon icon = BasicIconFactory.getMenuArrowIcon();
+  //        modeMenu.setIcon(BasicIconFactory.getMenuArrowIcon());
+  //        modeMenu.setPreferredSize(
+  //            new Dimension(icon.getIconWidth() + 10, icon.getIconHeight() + 10));
+  //      }
+  //      final JRadioButtonMenuItem transformingButton =
+  //          new JRadioButtonMenuItem(Mode.TRANSFORMING.toString());
+  //      transformingButton.addItemListener(
+  //          e -> {
+  //            if (e.getStateChange() == ItemEvent.SELECTED) {
+  //              setMode(Mode.TRANSFORMING);
+  //            }
+  //          });
+  //
+  //      final JRadioButtonMenuItem pickingButton = new JRadioButtonMenuItem(Mode.PICKING.toString());
+  //      pickingButton.addItemListener(
+  //          e -> {
+  //            if (e.getStateChange() == ItemEvent.SELECTED) {
+  //              setMode(Mode.PICKING);
+  //            }
+  //          });
+  //      ButtonGroup radio = new ButtonGroup();
+  //      radio.add(transformingButton);
+  //      radio.add(pickingButton);
+  //      transformingButton.setSelected(true);
+  //      modeMenu.add(transformingButton);
+  //      modeMenu.add(pickingButton);
+  //      modeMenu.setToolTipText("Menu for setting Mouse Mode");
+  //      addItemListener(
+  //          e -> {
+  //            if (e.getStateChange() == ItemEvent.SELECTED) {
+  //              if (e.getItem() == Mode.TRANSFORMING) {
+  //                transformingButton.setSelected(true);
+  //              } else if (e.getItem() == Mode.PICKING) {
+  //                pickingButton.setSelected(true);
+  //              }
+  //            }
+  //          });
+  //    }
+  //    return modeMenu;
+  //  }
 
   /** add a listener for mode changes */
   public void addItemListener(ItemListener aListener) {
@@ -252,21 +248,21 @@ public abstract class AbstractModalGraphMouse extends AbstractGraphMouse
     }
   }
 
-  /**
-   * Notifies all listeners that have registered interest for notification on this event type.
-   *
-   * @param e the event of interest
-   * @see EventListenerList
-   */
-  protected void fireItemStateChanged(ItemEvent e) {
-    // Guaranteed to return a non-null array
-    Object[] listeners = listenerList.getListenerList();
-    // Process the listeners last to first, notifying
-    // those that are interested in this event
-    for (int i = listeners.length - 2; i >= 0; i -= 2) {
-      if (listeners[i] == ItemListener.class) {
-        ((ItemListener) listeners[i + 1]).itemStateChanged(e);
-      }
-    }
-  }
+  //  /**
+  //   * Notifies all listeners that have registered interest for notification on this event type.
+  //   *
+  //   * @param e the event of interest
+  //   * @see EventListenerList
+  //   */
+  //  protected void fireItemStateChanged(ItemEvent e) {
+  //    // Guaranteed to return a non-null array
+  //    Object[] listeners = listenerList.getListenerList();
+  //    // Process the listeners last to first, notifying
+  //    // those that are interested in this event
+  //    for (int i = listeners.length - 2; i >= 0; i -= 2) {
+  //      if (listeners[i] == ItemListener.class) {
+  //        ((ItemListener) listeners[i + 1]).itemStateChanged(e);
+  //      }
+  //    }
+  //  }
 }

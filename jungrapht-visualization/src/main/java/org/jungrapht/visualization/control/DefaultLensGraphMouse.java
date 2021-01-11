@@ -1,6 +1,5 @@
 package org.jungrapht.visualization.control;
 
-import java.awt.event.InputEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -125,10 +124,10 @@ public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> impleme
 
   public void loadPlugins() {
     add(lensKillingGraphMousePlugin);
-    add(new LensTranslatingGraphMousePlugin());
     add(selectingPlugin);
+    add(new LensTranslatingGraphMousePlugin());
     add(regionSelectingPlugin);
-    add(new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK));
+    //    add(new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK));
     add(magnificationPlugin);
     add(scalingPlugin);
     setPluginsLoaded();

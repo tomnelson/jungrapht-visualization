@@ -28,8 +28,10 @@ import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.LensMagnificationGraphMousePlugin;
-import org.jungrapht.visualization.control.ModalGraphMouse.Mode;
 import org.jungrapht.visualization.control.ModalLensGraphMouse;
+import org.jungrapht.visualization.control.modal.Modal;
+import org.jungrapht.visualization.control.modal.ModeComboBox;
+import org.jungrapht.visualization.control.modal.ModeMenu;
 import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.decorators.IconShapeFunction;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
@@ -187,23 +189,6 @@ public class LensVertexImageShaperDemo extends JPanel {
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
 
-    JComboBox<Mode> modeBox = graphMouse.getModeComboBox();
-    JPanel modePanel = new JPanel();
-    modePanel.setBorder(BorderFactory.createTitledBorder("Mouse Mode"));
-    modePanel.add(modeBox);
-
-    Box controls = Box.createHorizontalBox();
-    controls.add(ControlHelpers.getZoomControls("Scale", vv));
-
-    controls.add(modePanel);
-    JButton imageButton = new JButton("Save Image");
-    imageButton.addActionListener(evt -> GraphImage.capture(vv));
-    controls.add(imageButton);
-    add(controls, BorderLayout.SOUTH);
-
-    LayoutModel<Number> layoutModel = vv.getVisualizationModel().getLayoutModel();
-    Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
-
     Lens lens = Lens.builder().lensShape(Lens.Shape.RECTANGLE).build();
     lens.setMagnification(2.f);
     magnifyViewSupport =
@@ -230,11 +215,72 @@ public class LensVertexImageShaperDemo extends JPanel {
                 new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
             .build();
 
+    //    JComboBox<Mode> modeBox =
+    //            ModeControls.getStandardModeComboBox(graphMouse,
+    //                    magnifyLayoutSupport.getGraphMouse(), magnifyViewSupport.getGraphMouse());
+    ModeComboBox modeBox =
+        ModeComboBox.builder()
+            .modes(Modal.Mode.TRANSFORMING, Modal.Mode.PICKING)
+            .modals(graphMouse)
+            .build();
+    //graphMouse.getModeComboBox();
+    JPanel modePanel = new JPanel();
+    modePanel.setBorder(BorderFactory.createTitledBorder("Mouse Mode"));
+    modePanel.add(modeBox.buildUI());
+
+    Box controls = Box.createHorizontalBox();
+    controls.add(ControlHelpers.getZoomControls("Scale", vv));
+
+    controls.add(modePanel);
+    JButton imageButton = new JButton("Save Image");
+    imageButton.addActionListener(evt -> GraphImage.capture(vv));
+    controls.add(imageButton);
+    add(controls, BorderLayout.SOUTH);
+
+    LayoutModel<Number> layoutModel = vv.getVisualizationModel().getLayoutModel();
+    Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
+
+    //    Lens lens = Lens.builder().lensShape(Lens.Shape.RECTANGLE).build();
+    //    lens.setMagnification(2.f);
+    //    magnifyViewSupport =
+    //        MagnifyImageLensSupport.<Number, Number, ModalLensGraphMouse>builder(vv)
+    //            .lensTransformer(
+    //                MagnifyShapeTransformer.builder(lens)
+    //                    .delegate(
+    //                        vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
+    //                    .build())
+    //            .lensGraphMouse(
+    //                new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
+    //            .build();
+    //
+    //    magnifyLayoutSupport =
+    //        LayoutLensSupport.<Number, Number, ModalLensGraphMouse>builder(vv)
+    //            .lensTransformer(
+    //                MagnifyTransformer.builder(lens)
+    //                    .delegate(
+    //                        vv.getRenderContext()
+    //                            .getMultiLayerTransformer()
+    //                            .getTransformer(Layer.LAYOUT))
+    //                    .build())
+    //            .lensGraphMouse(
+    //                new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
+    //            .build();
+
     graphMouse.addItemListener(magnifyLayoutSupport.getGraphMouse().getModeListener());
     graphMouse.addItemListener(magnifyViewSupport.getGraphMouse().getModeListener());
 
     JMenuBar menubar = new JMenuBar();
-    JMenu modeMenu = graphMouse.getModeMenu();
+    //    JMenu modeMenu = ModeControls.getStandardModeMenu();
+    ModeMenu modeMenu =
+        ModeMenu.builder()
+            .modes(Modal.Mode.TRANSFORMING, Modal.Mode.PICKING)
+            .modals(
+                graphMouse,
+                magnifyLayoutSupport.getGraphMouse(),
+                magnifyViewSupport.getGraphMouse())
+            .buttonSupplier(JRadioButtonMenuItem::new)
+            .build();
+    //graphMouse.getModeMenu();
     menubar.add(modeMenu);
     controls.add(
         LensControlHelper.builder(

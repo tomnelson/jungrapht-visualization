@@ -19,7 +19,7 @@ import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
-import org.jungrapht.visualization.control.ModalGraphMouse.Mode;
+import org.jungrapht.visualization.control.ModeControls;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.JLabelEdgeLabelRenderer;
@@ -82,7 +82,15 @@ public class ImageEdgeLabelDemo extends JPanel {
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
 
-    JComboBox<Mode> modeBox = graphMouse.getModeComboBox();
+    //    JComboBox<Mode> modeBox = ModeControls.getStandardModeComboBox();
+    JComboBox modeBox = ModeControls.getStandardModeComboBox(graphMouse);
+    //        ModeComboBox.builder()
+    //            .modes(Modal.Mode.TRANSFORMING, Modal.Mode.PICKING)
+    //            .mode(Modal.Mode.TRANSFORMING)
+    //            .modals(graphMouse)
+    //            .build();
+
+    //hMouse.getModeComboBox();
     JPanel modePanel = new JPanel();
     modePanel.setBorder(BorderFactory.createTitledBorder("Mouse Mode"));
     modePanel.add(modeBox);

@@ -18,6 +18,7 @@ import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.AbstractModalGraphMouse;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
+import org.jungrapht.visualization.control.ModeControls;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.Renderer;
@@ -87,7 +88,8 @@ public class VertexLabelPositionDemo extends JPanel {
 
     JPanel positionPanel = new JPanel();
     JMenuBar menubar = new JMenuBar();
-    menubar.add(graphMouse.getModeMenu());
+    menubar.add(ModeControls.getStandardModeMenu(graphMouse));
+    //graphMouse.getModeMenu());
     visualizationScrollPane.setCorner(menubar);
     JComboBox<Position> cb = new JComboBox<>();
     cb.addItem(Renderer.VertexLabel.Position.N);

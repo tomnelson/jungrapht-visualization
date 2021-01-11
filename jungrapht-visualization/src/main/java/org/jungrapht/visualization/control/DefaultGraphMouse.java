@@ -187,6 +187,30 @@ public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
     this.scalingMask = scalingMask;
     this.xAxisScalingMask = xAxisScalingMask;
     this.yAxisScalingMask = yAxisScalingMask;
+    //    scalingPlugin =
+    //        new ScalingGraphMousePlugin(
+    //            new CrossoverScalingControl(),
+    //            scalingMask,
+    //            xAxisScalingMask,
+    //            yAxisScalingMask,
+    //            in,
+    //            out);
+    //    selectingPlugin =
+    //        vertexSelectionOnly
+    //            ? new VertexSelectingGraphMousePlugin<>(singleSelectionMask, addSingleSelectionMask)
+    //            : new SelectingGraphMousePlugin<>(singleSelectionMask, addSingleSelectionMask);
+    //    regionSelectingPlugin =
+    //        RegionSelectingGraphMousePlugin.builder()
+    //            .regionSelectionMask(regionSelectionMask)
+    //            .addRegionSelectionMask(addRegionSelectionMask)
+    //            .regionSelectionCompleteMask(regionSelectionCompleteMask)
+    //            .addRegionSelectionCompleteMask(addRegionSelectionCompleteMask)
+    //            .build();
+  }
+
+  /** create the plugins, and load them */
+  @Override
+  public void loadPlugins() {
     scalingPlugin =
         new ScalingGraphMousePlugin(
             new CrossoverScalingControl(),
@@ -206,11 +230,6 @@ public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
             .regionSelectionCompleteMask(regionSelectionCompleteMask)
             .addRegionSelectionCompleteMask(addRegionSelectionCompleteMask)
             .build();
-  }
-
-  /** create the plugins, and load them */
-  @Override
-  public void loadPlugins() {
     add(selectingPlugin);
     log.trace("added " + selectingPlugin);
     add(regionSelectingPlugin);

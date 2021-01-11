@@ -5,7 +5,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import javax.swing.event.EventListenerList;
 
-public abstract class ItemSupport<T> implements ItemSelectable {
+public class ItemSupport<T> implements ItemSelectable {
 
   protected EventListenerList listenerList = new EventListenerList();
 

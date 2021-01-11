@@ -41,6 +41,7 @@ import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
+import org.jungrapht.visualization.control.ModeControls;
 import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.decorators.IconShapeFunction;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
@@ -231,7 +232,8 @@ public class VertexImageShaperDemo extends JPanel {
           vv.repaint();
         });
 
-    JComboBox<?> modeBox = graphMouse.getModeComboBox();
+    JComboBox<?> modeBox = ModeControls.getStandardModeComboBox(graphMouse);
+    // graphMouse.getModeComboBox();
     JPanel modePanel = new JPanel();
     modePanel.setBorder(BorderFactory.createTitledBorder("Mouse Mode"));
     modePanel.add(modeBox);

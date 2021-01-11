@@ -83,6 +83,15 @@ public class ModalLensGraphMouse extends AbstractModalGraphMouse
             .addSingleSelectionMask(InputEvent.BUTTON1_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)
             .build();
     this.lensKillingGraphMousePlugin = new LensKillingGraphMousePlugin();
+    this.selectingPlugin = lensSelectingGraphMousePlugin;
+    this.regionSelectingPlugin = new LensRegionSelectingGraphMousePlugin<>();
+    //    animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<>();
+    this.translatingPlugin = new LensTranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
+    this.scalingPlugin =
+        ScalingGraphMousePlugin.builder().scalingControl(new CrossoverScalingControl()).build();
+    this.rotatingPlugin = new RotatingGraphMousePlugin();
+    this.shearingPlugin = new ShearingGraphMousePlugin();
+
     setModeKeyListener(new ModeKeyAdapter(this));
   }
 
@@ -93,18 +102,18 @@ public class ModalLensGraphMouse extends AbstractModalGraphMouse
   public void loadPlugins() {
     super.loadPlugins();
     add(lensKillingGraphMousePlugin);
-    selectingPlugin = lensSelectingGraphMousePlugin;
-    //    animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<>();
-    translatingPlugin = new LensTranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
-    scalingPlugin =
-        ScalingGraphMousePlugin.builder().scalingControl(new CrossoverScalingControl()).build();
-    rotatingPlugin = new RotatingGraphMousePlugin();
-    shearingPlugin = new ShearingGraphMousePlugin();
+    //    selectingPlugin = lensSelectingGraphMousePlugin;
+    //    //    animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<>();
+    //    translatingPlugin = new LensTranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
+    //    scalingPlugin =
+    //        ScalingGraphMousePlugin.builder().scalingControl(new CrossoverScalingControl()).build();
+    //    rotatingPlugin = new RotatingGraphMousePlugin();
+    //    shearingPlugin = new ShearingGraphMousePlugin();
 
     add(magnificationPlugin);
     add(scalingPlugin);
 
-    setMode(Mode.TRANSFORMING);
+    setMode(this.mode);
   }
 
   public static class ModeKeyAdapter extends KeyAdapter {

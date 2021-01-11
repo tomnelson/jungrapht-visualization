@@ -42,7 +42,7 @@ public class DefaultSatelliteVisualizationViewer<V, E> extends DefaultVisualizat
     this.master = builder.master;
     this.transparent = builder.transparent;
     this.lensColor = builder.lensColor;
-    this.setGraphMouse(builder.satelliteGraphMouse);
+    this.setGraphMouse(builder.graphMouse);
 
     setOpaque(!transparent);
     setBorder(BorderFactory.createEtchedBorder());

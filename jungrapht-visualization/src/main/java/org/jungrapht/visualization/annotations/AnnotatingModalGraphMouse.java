@@ -11,15 +11,12 @@ package org.jungrapht.visualization.annotations;
 
 import java.awt.Component;
 import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.ItemSelectable;
 import java.awt.event.InputEvent;
-import java.awt.event.ItemEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.function.Supplier;
 import javax.swing.*;
-import javax.swing.plaf.basic.BasicIconFactory;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.control.AbstractModalGraphMouse;
 import org.jungrapht.visualization.control.CrossoverScalingControl;
@@ -112,6 +109,7 @@ public class AnnotatingModalGraphMouse<V, E> extends AbstractModalGraphMouse
     super(in, out, vertexSelectionOnly);
     this.basicTransformer = multiLayerTransformerSupplier.get();
     this.annotatingPlugin = annotatingPlugin;
+    this.mode = Mode.ANNOTATING;
     setModeKeyListener(new ModeKeyAdapter(this));
   }
 
@@ -136,29 +134,29 @@ public class AnnotatingModalGraphMouse<V, E> extends AbstractModalGraphMouse
     rotatingPlugin = new RotatingGraphMousePlugin();
     shearingPlugin = new ShearingGraphMousePlugin();
     add(scalingPlugin);
-    setMode(Mode.TRANSFORMING);
+    setMode(this.mode);
   }
 
   /** setter for the Mode. */
   @Override
   public void setMode(Mode mode) {
-    if (this.mode != mode) {
-      fireItemStateChanged(
-          new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, this.mode, ItemEvent.DESELECTED));
-      this.mode = mode;
-      if (mode == Mode.TRANSFORMING) {
-        setTransformingMode();
-      } else if (mode == Mode.PICKING) {
-        setPickingMode();
-      } else if (mode == Mode.ANNOTATING) {
-        setAnnotatingMode();
-      }
-      if (modeBox != null) {
-        modeBox.setSelectedItem(mode);
-      }
-      fireItemStateChanged(
-          new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, mode, ItemEvent.SELECTED));
+    //    if (this.mode != mode) {
+    //      fireItemStateChanged(
+    //          new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, this.mode, ItemEvent.DESELECTED));
+    this.mode = mode;
+    if (mode == Mode.TRANSFORMING) {
+      setTransformingMode();
+    } else if (mode == Mode.PICKING) {
+      setPickingMode();
+    } else if (mode == Mode.ANNOTATING) {
+      setAnnotatingMode();
     }
+    //      if (modeBox != null) {
+    //        modeBox.setSelectedItem(mode);
+    //      }
+    //      fireItemStateChanged(
+    //          new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, mode, ItemEvent.SELECTED));
+    //    }
   }
 
   @Override
@@ -199,67 +197,67 @@ public class AnnotatingModalGraphMouse<V, E> extends AbstractModalGraphMouse
     add(annotatingPlugin);
   }
 
-  /** @return Returns the modeBox. */
-  @Override
-  public JComboBox<Mode> getModeComboBox() {
-    if (modeBox == null) {
-      modeBox = new JComboBox<>(new Mode[] {Mode.TRANSFORMING, Mode.PICKING, Mode.ANNOTATING});
-      modeBox.addItemListener(getModeListener());
-    }
-    modeBox.setSelectedItem(mode);
-    return modeBox;
-  }
+  //  /** @return Returns the modeBox. */
+  //  @Override
+  //  public JComboBox<Mode> getModeComboBox() {
+  //    if (modeBox == null) {
+  //      modeBox = new JComboBox<>(new Mode[] {Mode.TRANSFORMING, Mode.PICKING, Mode.ANNOTATING});
+  //      modeBox.addItemListener(getModeListener());
+  //    }
+  //    modeBox.setSelectedItem(mode);
+  //    return modeBox;
+  //  }
 
-  /**
-   * create (if necessary) and return a menu that will change the mode
-   *
-   * @return the menu
-   */
-  @Override
-  public JMenu getModeMenu() {
-    if (modeMenu == null) {
-      modeMenu = new JMenu(); // {
-      Icon icon = BasicIconFactory.getMenuArrowIcon();
-      modeMenu.setIcon(BasicIconFactory.getMenuArrowIcon());
-      modeMenu.setPreferredSize(new Dimension(icon.getIconWidth() + 10, icon.getIconHeight() + 10));
-
-      final JRadioButtonMenuItem transformingButton =
-          new JRadioButtonMenuItem(Mode.TRANSFORMING.toString());
-      transformingButton.addItemListener(
-          e -> {
-            if (e.getStateChange() == ItemEvent.SELECTED) {
-              setMode(Mode.TRANSFORMING);
-            }
-          });
-
-      final JRadioButtonMenuItem pickingButton = new JRadioButtonMenuItem(Mode.PICKING.toString());
-      pickingButton.addItemListener(
-          e -> {
-            if (e.getStateChange() == ItemEvent.SELECTED) {
-              setMode(Mode.PICKING);
-            }
-          });
-
-      ButtonGroup radio = new ButtonGroup();
-      radio.add(transformingButton);
-      radio.add(pickingButton);
-      transformingButton.setSelected(true);
-      modeMenu.add(transformingButton);
-      modeMenu.add(pickingButton);
-      modeMenu.setToolTipText("Menu for setting Mouse Mode");
-      addItemListener(
-          e -> {
-            if (e.getStateChange() == ItemEvent.SELECTED) {
-              if (e.getItem() == Mode.TRANSFORMING) {
-                transformingButton.setSelected(true);
-              } else if (e.getItem() == Mode.PICKING) {
-                pickingButton.setSelected(true);
-              }
-            }
-          });
-    }
-    return modeMenu;
-  }
+  //  /**
+  //   * create (if necessary) and return a menu that will change the mode
+  //   *
+  //   * @return the menu
+  //   */
+  //  @Override
+  //  public JMenu getModeMenu() {
+  //    if (modeMenu == null) {
+  //      modeMenu = new JMenu(); // {
+  //      Icon icon = BasicIconFactory.getMenuArrowIcon();
+  //      modeMenu.setIcon(BasicIconFactory.getMenuArrowIcon());
+  //      modeMenu.setPreferredSize(new Dimension(icon.getIconWidth() + 10, icon.getIconHeight() + 10));
+  //
+  //      final JRadioButtonMenuItem transformingButton =
+  //          new JRadioButtonMenuItem(Mode.TRANSFORMING.toString());
+  //      transformingButton.addItemListener(
+  //          e -> {
+  //            if (e.getStateChange() == ItemEvent.SELECTED) {
+  //              setMode(Mode.TRANSFORMING);
+  //            }
+  //          });
+  //
+  //      final JRadioButtonMenuItem pickingButton = new JRadioButtonMenuItem(Mode.PICKING.toString());
+  //      pickingButton.addItemListener(
+  //          e -> {
+  //            if (e.getStateChange() == ItemEvent.SELECTED) {
+  //              setMode(Mode.PICKING);
+  //            }
+  //          });
+  //
+  //      ButtonGroup radio = new ButtonGroup();
+  //      radio.add(transformingButton);
+  //      radio.add(pickingButton);
+  //      transformingButton.setSelected(true);
+  //      modeMenu.add(transformingButton);
+  //      modeMenu.add(pickingButton);
+  //      modeMenu.setToolTipText("Menu for setting Mouse Mode");
+  //      addItemListener(
+  //          e -> {
+  //            if (e.getStateChange() == ItemEvent.SELECTED) {
+  //              if (e.getItem() == Mode.TRANSFORMING) {
+  //                transformingButton.setSelected(true);
+  //              } else if (e.getItem() == Mode.PICKING) {
+  //                pickingButton.setSelected(true);
+  //              }
+  //            }
+  //          });
+  //    }
+  //    return modeMenu;
+  //  }
 
   public static class ModeKeyAdapter extends KeyAdapter {
     private char t = 't';

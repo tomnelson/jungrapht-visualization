@@ -39,8 +39,6 @@ public interface SatelliteVisualizationViewer<V, E> extends VisualizationViewer<
 
     protected VisualizationViewer<V, E> master;
 
-    protected GraphMouse satelliteGraphMouse = new DefaultSatelliteGraphMouse<>();
-
     protected boolean transparent =
         Boolean.parseBoolean(System.getProperty(SATELLITE_BACKGROUND_TRANSPARENT, "false"));
 
@@ -57,13 +55,9 @@ public interface SatelliteVisualizationViewer<V, E> extends VisualizationViewer<
       return self();
     }
 
-    public B satelliteGraphMouse(GraphMouse satelliteGraphMouse) {
-      this.satelliteGraphMouse = satelliteGraphMouse;
-      return self();
-    }
-
     protected Builder(VisualizationViewer<V, E> master) {
       super(master.getVisualizationModel());
+      this.graphMouse = new DefaultSatelliteGraphMouse<>();
       this.master = master;
     }
 

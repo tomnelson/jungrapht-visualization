@@ -18,6 +18,8 @@ import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
+import org.jungrapht.visualization.control.modal.Modal;
+import org.jungrapht.visualization.control.modal.ModeMenu;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.JLabelEdgeLabelRenderer;
@@ -104,7 +106,13 @@ public class DrawnIconVertexDemo {
 
     JPanel controls = new JPanel();
     controls.add(ControlHelpers.getZoomControls(vv));
-    controls.add(gm.getModeComboBox());
+    controls.add(
+        ModeMenu.builder()
+            .modes(Modal.Mode.TRANSFORMING, Modal.Mode.PICKING)
+            .modals((Modal) vv.getGraphMouse())
+            .buttonSupplier(JRadioButtonMenuItem::new)
+            .build());
+    //            ModeControls.getStandardModeMenu());
     content.add(controls, BorderLayout.SOUTH);
 
     frame.pack();

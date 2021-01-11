@@ -29,6 +29,8 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.LensMagnificationGraphMousePlugin;
 import org.jungrapht.visualization.control.ModalLensGraphMouse;
+import org.jungrapht.visualization.control.modal.Modal;
+import org.jungrapht.visualization.control.modal.ModeMenu;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -226,7 +228,20 @@ public class RectangularLensDemo extends JPanel {
     modePanel.add(gridButton);
 
     JMenuBar menubar = new JMenuBar();
-    menubar.add(graphMouse.getModeMenu());
+    menubar.add(
+        ModeMenu.builder()
+            .modes(Modal.Mode.TRANSFORMING, Modal.Mode.PICKING)
+            .modals(
+                graphMouse,
+                hyperbolicLayoutSupport.getGraphMouse(),
+                hyperbolicViewSupport.getGraphMouse(),
+                magnifyLayoutSupport.getGraphMouse(),
+                magnifyViewSupport.getGraphMouse())
+            .build()
+            .buildUI());
+
+    //            ModeControls.getStandardModeMenu(graphMouse));
+    //            graphMouse.getModeMenu());
     visualizationScrollPane.setCorner(menubar);
 
     Box controls = Box.createHorizontalBox();

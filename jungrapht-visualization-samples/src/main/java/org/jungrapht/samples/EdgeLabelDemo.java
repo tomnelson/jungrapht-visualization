@@ -8,6 +8,8 @@
  */
 package org.jungrapht.samples;
 
+import static org.jungrapht.visualization.control.modal.Modal.Mode.*;
+
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.util.function.BiFunction;
@@ -20,10 +22,8 @@ import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.CrossoverScalingControl;
-import org.jungrapht.visualization.control.DefaultModalGraphMouse;
-import org.jungrapht.visualization.control.ModalGraphMouse;
-import org.jungrapht.visualization.control.ScalingControl;
+import org.jungrapht.visualization.control.*;
+import org.jungrapht.visualization.control.modal.ModePanel;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.decorators.ParallelEdgeShapeFunction;
 import org.jungrapht.visualization.layout.algorithms.CircleLayoutAlgorithm;
@@ -135,7 +135,7 @@ public class EdgeLabelDemo extends JPanel {
     radio.add(cubicButton);
     radio.add(wedgeButton);
 
-    graphMouse.setMode(ModalGraphMouse.Mode.TRANSFORMING);
+    graphMouse.setMode(TRANSFORMING);
 
     JCheckBox rotate = new JCheckBox("<html><center>EdgeType<p>Parallel</center></html>");
     rotate.addItemListener(
@@ -204,7 +204,15 @@ public class EdgeLabelDemo extends JPanel {
 
     JPanel modePanel = new JPanel(new GridLayout(2, 1));
     modePanel.setBorder(BorderFactory.createTitledBorder("Mouse Mode"));
-    modePanel.add(graphMouse.getModeComboBox());
+    modePanel.add(
+        ModePanel.builder()
+            .modes(TRANSFORMING, PICKING)
+            .mode(TRANSFORMING)
+            .buttonSupplier(JRadioButton::new)
+            .modals(graphMouse)
+            .build()
+            .buildUI());
+    //ModeControls.getStandardModeMenu());
 
     controls.add(ControlHelpers.getZoomControls("Zoom", vv));
     controls.add(edgePanel);

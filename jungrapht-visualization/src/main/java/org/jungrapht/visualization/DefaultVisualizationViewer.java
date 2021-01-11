@@ -102,10 +102,14 @@ class DefaultVisualizationViewer<V, E> extends DefaultVisualizationServer<V, E>
    * @param graphMouse new value
    */
   public void setGraphMouse(GraphMouse graphMouse) {
+    //    if (graphMouse instanceof ModalGraphMouse) {
+    //      setModalGraphMouse((ModalGraphMouse) graphMouse);
+    //    } else {
     this.graphMouse = graphMouse;
-    if (!this.graphMouse.isPluginsLoaded()) {
-      this.graphMouse.loadPlugins();
-    }
+    //      if (!this.graphMouse.isPluginsLoaded()) {
+    this.graphMouse.loadPlugins();
+    //      }
+    //    }
     Arrays.stream(getMouseListeners())
         .filter(aMl -> aMl instanceof GraphMouse)
         .forEach(this::removeMouseListener);
@@ -123,6 +127,15 @@ class DefaultVisualizationViewer<V, E> extends DefaultVisualizationServer<V, E>
       addKeyListener(((ModalGraphMouse) graphMouse).getModeKeyListener());
     }
   }
+
+  //  protected void setModalGraphMouse(ModalGraphMouse graphMouse) {
+  //    ModalGraphMouse.Mode previousMode = null;
+  //    this.graphMouse = graphMouse;
+  //    if (!this.graphMouse.isPluginsLoaded()) {
+  //      this.graphMouse.loadPlugins();
+  //    }
+  //    graphMouse.setMode(previousMode);
+  //  }
 
   /** @return the current <code>GraphMouse</code> */
   public GraphMouse getGraphMouse() {

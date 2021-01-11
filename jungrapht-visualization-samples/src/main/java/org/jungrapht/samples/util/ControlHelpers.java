@@ -90,7 +90,7 @@ public class ControlHelpers {
     }
     if (graphMouse instanceof DefaultModalGraphMouse) {
       JPanel modePanel = new JPanel(new GridLayout(2, 1));
-      modePanel.add(((DefaultModalGraphMouse) graphMouse).getModeComboBox());
+      //      modePanel.add(((DefaultModalGraphMouse) graphMouse).getModeComboBox());
       return modePanel;
     } else {
       return new JPanel();
@@ -103,7 +103,7 @@ public class ControlHelpers {
 
   public static JComponent getModeControls(DefaultModalGraphMouse graphMouse) {
     JPanel modePanel = new JPanel(new GridLayout(2, 1));
-    modePanel.add(graphMouse.getModeComboBox());
+    //    modePanel.add(graphMouse.getModeComboBox());
     return modePanel;
   }
 

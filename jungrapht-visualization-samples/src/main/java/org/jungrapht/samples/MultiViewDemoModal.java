@@ -23,16 +23,9 @@ import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.AnimatedPickingGraphMousePlugin;
-import org.jungrapht.visualization.control.DefaultModalGraphMouse;
-import org.jungrapht.visualization.control.GraphElementAccessor;
-import org.jungrapht.visualization.control.LayoutScalingControl;
-import org.jungrapht.visualization.control.RegionSelectingGraphMousePlugin;
-import org.jungrapht.visualization.control.RotatingGraphMousePlugin;
-import org.jungrapht.visualization.control.ScalingGraphMousePlugin;
-import org.jungrapht.visualization.control.SelectingGraphMousePlugin;
-import org.jungrapht.visualization.control.ShearingGraphMousePlugin;
-import org.jungrapht.visualization.control.TranslatingGraphMousePlugin;
+import org.jungrapht.visualization.control.*;
+import org.jungrapht.visualization.control.modal.Modal;
+import org.jungrapht.visualization.control.modal.ModeComboBox;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
@@ -268,15 +261,36 @@ public class MultiViewDemoModal extends JPanel {
 
     JPanel flow = new JPanel();
     flow.add(h1);
-    flow.add(gm1.getModeComboBox());
+    flow.add(
+        ModeComboBox.builder()
+            .modes(Modal.Mode.TRANSFORMING, Modal.Mode.PICKING)
+            .modals(gm1)
+            .build()
+            .buildUI());
+    //            ModeControls.getStandardModeComboBox(gm1));
+    //gm1.getModeComboBox());
     p1.add(flow, BorderLayout.SOUTH);
     flow = new JPanel();
     flow.add(h2);
-    flow.add(gm2.getModeComboBox());
+    flow.add(
+        ModeComboBox.builder()
+            .modes(Modal.Mode.TRANSFORMING, Modal.Mode.PICKING)
+            .modals(gm2)
+            .build()
+            .buildUI());
+    //            ModeControls.getStandardModeComboBox(gm2));
+    //gm2.getModeComboBox());
     p2.add(flow, BorderLayout.SOUTH);
     flow = new JPanel();
     flow.add(h3);
-    flow.add(gm3.getModeComboBox());
+    flow.add(
+        ModeComboBox.builder()
+            .modes(Modal.Mode.TRANSFORMING, Modal.Mode.PICKING)
+            .modals(gm3)
+            .build()
+            .buildUI());
+    //ModeControls.getStandardModeComboBox(gm3));
+    //            gm3.getModeComboBox());
     p3.add(flow, BorderLayout.SOUTH);
 
     panel.add(p1);

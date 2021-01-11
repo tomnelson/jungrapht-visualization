@@ -28,7 +28,7 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.annotations.AnnotationControls;
 import org.jungrapht.visualization.control.EditingModalGraphMouse;
 import org.jungrapht.visualization.control.ModalGraphMouse;
-import org.jungrapht.visualization.control.ModalGraphMouse.Mode;
+import org.jungrapht.visualization.control.ModeControls;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.spatial.Spatial;
@@ -169,7 +169,7 @@ public class GraphEditorDemo extends JPanel implements Printable {
         new AnnotationControls<>(graphMouse.getAnnotatingPlugin());
     JPanel controls = new JPanel();
     controls.add(ControlHelpers.getZoomControls("Zoom", vv));
-    JComboBox<Mode> modeBox = graphMouse.getModeComboBox();
+    JComboBox modeBox = ModeControls.getEditingModeComboBox(graphMouse);
     controls.add(ControlHelpers.getCenteredContainer("Mouse Mode", modeBox));
     controls.add(annotationControls.getAnnotationsToolBar());
     controls.add(help);
