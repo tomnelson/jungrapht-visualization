@@ -14,7 +14,7 @@ public class ModeMenu extends JMenu implements Modal {
 
   public static class Builder {
     protected String menuText = "Mode";
-    protected Supplier<AbstractButton> buttonSupplier;
+    protected Supplier<AbstractButton> buttonSupplier = JRadioButtonMenuItem::new;
     protected Mode[] modes;
     protected Set<Modal> modals = new LinkedHashSet<>();
     protected Mode mode;

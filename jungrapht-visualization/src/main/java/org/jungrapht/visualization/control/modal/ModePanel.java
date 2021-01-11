@@ -18,7 +18,7 @@ public class ModePanel extends JPanel implements Modal {
   private static final Logger log = LoggerFactory.getLogger(ModePanel.class);
 
   public static class Builder {
-    protected Supplier<AbstractButton> buttonSupplier;
+    protected Supplier<AbstractButton> buttonSupplier = JRadioButton::new;
     protected Mode[] modes;
     protected Set<Modal> modals = new LinkedHashSet<>();
     protected Mode mode;
