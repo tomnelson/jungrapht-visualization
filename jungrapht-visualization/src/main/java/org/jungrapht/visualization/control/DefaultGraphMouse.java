@@ -2,7 +2,6 @@ package org.jungrapht.visualization.control;
 
 import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
 
-import java.awt.Toolkit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +32,6 @@ public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
   public static class Builder<V, E, T extends DefaultGraphMouse, B extends Builder<V, E, T, B>>
       extends AbstractGraphMouse.Builder<T, B> {
 
-    private static int MENU = Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx();
     // selection masks
     protected int singleSelectionMask =
         Modifiers.masks.get(System.getProperty(PREFIX + "singleSelectionMask", "MB1_MENU"));
@@ -187,25 +185,6 @@ public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
     this.scalingMask = scalingMask;
     this.xAxisScalingMask = xAxisScalingMask;
     this.yAxisScalingMask = yAxisScalingMask;
-    //    scalingPlugin =
-    //        new ScalingGraphMousePlugin(
-    //            new CrossoverScalingControl(),
-    //            scalingMask,
-    //            xAxisScalingMask,
-    //            yAxisScalingMask,
-    //            in,
-    //            out);
-    //    selectingPlugin =
-    //        vertexSelectionOnly
-    //            ? new VertexSelectingGraphMousePlugin<>(singleSelectionMask, addSingleSelectionMask)
-    //            : new SelectingGraphMousePlugin<>(singleSelectionMask, addSingleSelectionMask);
-    //    regionSelectingPlugin =
-    //        RegionSelectingGraphMousePlugin.builder()
-    //            .regionSelectionMask(regionSelectionMask)
-    //            .addRegionSelectionMask(addRegionSelectionMask)
-    //            .regionSelectionCompleteMask(regionSelectionCompleteMask)
-    //            .addRegionSelectionCompleteMask(addRegionSelectionCompleteMask)
-    //            .build();
   }
 
   /** create the plugins, and load them */

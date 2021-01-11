@@ -29,7 +29,6 @@ import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.control.DefaultLensGraphMouse;
-import org.jungrapht.visualization.control.LensMagnificationGraphMousePlugin;
 import org.jungrapht.visualization.layout.algorithms.CircleLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -154,9 +153,7 @@ public class SpatialLensDemoWithThreeStarVertices extends JPanel {
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
-            .lensGraphMouse(
-                DefaultLensGraphMouse.builder(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f))
-                    .build())
+            .lensGraphMouse(new DefaultLensGraphMouse<>())
             .build();
 
     magnifyLayoutSupport =
@@ -168,9 +165,7 @@ public class SpatialLensDemoWithThreeStarVertices extends JPanel {
                             .getMultiLayerTransformer()
                             .getTransformer(Layer.LAYOUT))
                     .build())
-            .lensGraphMouse(
-                DefaultLensGraphMouse.builder(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f))
-                    .build())
+            .lensGraphMouse(new DefaultLensGraphMouse<>())
             .build();
 
     hyperbolicLayoutSupport

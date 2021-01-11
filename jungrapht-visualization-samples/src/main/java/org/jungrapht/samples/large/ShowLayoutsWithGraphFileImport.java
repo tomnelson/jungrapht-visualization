@@ -53,7 +53,6 @@ import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.control.DefaultLensGraphMouse;
-import org.jungrapht.visualization.control.LensMagnificationGraphMousePlugin;
 import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
@@ -252,9 +251,7 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
                             .getMultiLayerTransformer()
                             .getTransformer(MultiLayerTransformer.Layer.VIEW))
                     .build())
-            .lensGraphMouse(
-                DefaultLensGraphMouse.builder(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f))
-                    .build())
+            .lensGraphMouse(new DefaultLensGraphMouse<>())
             .build();
 
     LensSupport<DefaultLensGraphMouse> magnifyLayoutSupport =
@@ -266,9 +263,7 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
                             .getMultiLayerTransformer()
                             .getTransformer(MultiLayerTransformer.Layer.LAYOUT))
                     .build())
-            .lensGraphMouse(
-                DefaultLensGraphMouse.builder(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f))
-                    .build())
+            .lensGraphMouse(new DefaultLensGraphMouse<>())
             .build();
 
     hyperbolicLayoutSupport

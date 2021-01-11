@@ -32,7 +32,6 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.control.DefaultLensGraphMouse;
 import org.jungrapht.visualization.control.LensGraphMouse;
-import org.jungrapht.visualization.control.LensMagnificationGraphMousePlugin;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -178,9 +177,7 @@ public class LensDemoWithMultiSelectStrategy extends JPanel {
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
-            .lensGraphMouse(
-                DefaultLensGraphMouse.builder(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f))
-                    .build())
+            .lensGraphMouse(new DefaultLensGraphMouse<>())
             .build();
 
     magnifyLayoutSupport =
@@ -193,9 +190,7 @@ public class LensDemoWithMultiSelectStrategy extends JPanel {
                             .getMultiLayerTransformer()
                             .getTransformer(Layer.LAYOUT))
                     .build())
-            .lensGraphMouse(
-                DefaultLensGraphMouse.builder(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f))
-                    .build())
+            .lensGraphMouse(new DefaultLensGraphMouse<>())
             .build();
 
     ButtonGroup graphRadio = new ButtonGroup();

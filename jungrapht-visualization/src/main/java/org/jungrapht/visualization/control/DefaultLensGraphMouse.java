@@ -23,11 +23,8 @@ public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> impleme
   public static class Builder<V, E, T extends DefaultLensGraphMouse, B extends Builder<V, E, T, B>>
       extends DefaultGraphMouse.Builder<V, E, T, B> {
 
-    protected LensMagnificationGraphMousePlugin magnificationPlugin;
-
-    protected Builder(LensMagnificationGraphMousePlugin magnificationPlugin) {
-      this.magnificationPlugin = magnificationPlugin;
-    }
+    protected LensMagnificationGraphMousePlugin magnificationPlugin =
+        new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f);
 
     public B magnificationPlugin(LensMagnificationGraphMousePlugin magnificationPlugin) {
       this.magnificationPlugin = magnificationPlugin;
@@ -39,20 +36,18 @@ public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> impleme
     }
   }
 
-  public static <V, E> Builder<V, E, ?, ?> builder(
-      LensMagnificationGraphMousePlugin magnificationPlugin) {
-    return new Builder<>(magnificationPlugin);
+  public static <V, E> Builder<V, E, ?, ?> builder() {
+    return new Builder<>();
   }
 
   /** not included in the base class */
   protected LensMagnificationGraphMousePlugin magnificationPlugin;
 
-  //  protected AbstractGraphMousePlugin<V, E> lensSelectingGraphMousePlugin;
-  //  protected LensRegionSelectingGraphMousePlugin<V, E> lensRegionSelectingGraphMousePlugin;
   protected LensKillingGraphMousePlugin lensKillingGraphMousePlugin;
 
   public DefaultLensGraphMouse() {
-    this(new Builder<>(new LensMagnificationGraphMousePlugin()));
+    this(new Builder<>());
+    this.magnificationPlugin = new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f);
   }
 
   DefaultLensGraphMouse(Builder<V, E, ?, ?> builder) {
@@ -103,6 +98,23 @@ public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> impleme
         xAxisScalingMask,
         yAxisScalingMask);
     this.magnificationPlugin = magnificationPlugin;
+    this.lensKillingGraphMousePlugin = new LensKillingGraphMousePlugin();
+  }
+
+  public void setKillSwitch(Runnable killSwitch) {
+    this.lensKillingGraphMousePlugin.setKillSwitch(killSwitch);
+  }
+
+  public void loadPlugins() {
+
+    scalingPlugin =
+        new ScalingGraphMousePlugin(
+            new CrossoverScalingControl(),
+            scalingMask,
+            xAxisScalingMask,
+            yAxisScalingMask,
+            in,
+            out);
     this.selectingPlugin =
         vertexSelectionOnly
             ? new LensVertexSelectingGraphMousePlugin<V, E>(
@@ -115,19 +127,11 @@ public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> impleme
             addRegionSelectionMask,
             regionSelectionCompleteMask,
             addRegionSelectionCompleteMask);
-    this.lensKillingGraphMousePlugin = new LensKillingGraphMousePlugin();
-  }
 
-  public void setKillSwitch(Runnable killSwitch) {
-    this.lensKillingGraphMousePlugin.setKillSwitch(killSwitch);
-  }
-
-  public void loadPlugins() {
     add(lensKillingGraphMousePlugin);
     add(selectingPlugin);
     add(new LensTranslatingGraphMousePlugin());
     add(regionSelectingPlugin);
-    //    add(new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK));
     add(magnificationPlugin);
     add(scalingPlugin);
     setPluginsLoaded();

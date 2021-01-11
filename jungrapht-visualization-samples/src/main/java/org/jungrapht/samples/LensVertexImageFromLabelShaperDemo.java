@@ -194,9 +194,7 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
-            .lensGraphMouse(
-                DefaultLensGraphMouse.builder(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f))
-                    .build())
+            .lensGraphMouse(new DefaultLensGraphMouse<>())
             .build();
 
     lens = new Lens();
@@ -211,9 +209,7 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
                             .getMultiLayerTransformer()
                             .getTransformer(Layer.LAYOUT))
                     .build())
-            .lensGraphMouse(
-                DefaultLensGraphMouse.builder(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f))
-                    .build())
+            .lensGraphMouse(new DefaultLensGraphMouse<>())
             .build();
 
     controls.add(
