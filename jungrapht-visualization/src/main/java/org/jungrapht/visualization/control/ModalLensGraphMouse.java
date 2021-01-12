@@ -12,6 +12,10 @@ package org.jungrapht.visualization.control;
 
 import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
 
+import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+
 /**
  * an implementation of the AbstractModalGraphMouse that includes plugins for manipulating a view
  * that is using a LensTransformer.
@@ -66,7 +70,8 @@ public class ModalLensGraphMouse<V, E> extends DefaultModalGraphMouse<V, E>
   }
 
   ModalLensGraphMouse(Builder<V, E, ?, ?> builder) {
-    this(
+    super(
+        builder.mode,
         builder.in,
         builder.out,
         builder.vertexSelectionOnly,
@@ -77,12 +82,16 @@ public class ModalLensGraphMouse<V, E> extends DefaultModalGraphMouse<V, E>
         builder.regionSelectionCompleteMask,
         builder.addRegionSelectionCompleteMask,
         builder.translatingMask,
-        builder.lensTranslatingMask,
         builder.scalingMask,
         builder.xAxisScalingMask,
-        builder.yAxisScalingMask,
-        builder.magnificationPlugin);
+        builder.yAxisScalingMask);
+    this.magnificationPlugin = builder.magnificationPlugin;
+    this.lensTranslatingGraphMousePlugin =
+        new LensTranslatingGraphMousePlugin(builder.lensTranslatingMask);
+    this.lensKillingGraphMousePlugin = new LensKillingGraphMousePlugin();
+    this.translatingPlugin = new TranslatingGraphMousePlugin(translatingMask);
   }
+
   //  public ModalLensGraphMouse(float in, float out) {
   //    this(in, out, false, new LensMagnificationGraphMousePlugin());
   //  }
@@ -91,41 +100,41 @@ public class ModalLensGraphMouse<V, E> extends DefaultModalGraphMouse<V, E>
   //    this(1.1f, 1 / 1.1f, false, magnificationPlugin);
   //  }
 
-  ModalLensGraphMouse(
-      float in,
-      float out,
-      boolean vertexSelectionOnly,
-      int singleSelectionMask,
-      int addSingleSelectionMask,
-      int regionSelectionMask,
-      int addRegionSelectionMask,
-      int regionSelectionCompleteMask,
-      int addRegionSelectionCompleteMask,
-      int translatingMask,
-      int lensTranslatingMask,
-      int scalingMask,
-      int xAxisScalingMask,
-      int yAxisScalingMask,
-      LensMagnificationGraphMousePlugin magnificationPlugin) {
-    super(
-        in,
-        out,
-        vertexSelectionOnly,
-        singleSelectionMask,
-        addSingleSelectionMask,
-        regionSelectionMask,
-        addRegionSelectionMask,
-        regionSelectionCompleteMask,
-        addRegionSelectionCompleteMask,
-        translatingMask,
-        scalingMask,
-        xAxisScalingMask,
-        yAxisScalingMask);
-    this.magnificationPlugin = magnificationPlugin;
-    this.lensTranslatingGraphMousePlugin = new LensTranslatingGraphMousePlugin(lensTranslatingMask);
-    this.lensKillingGraphMousePlugin = new LensKillingGraphMousePlugin();
-    this.translatingPlugin = new TranslatingGraphMousePlugin(translatingMask);
-  }
+  //  ModalLensGraphMouse(
+  //      float in,
+  //      float out,
+  //      boolean vertexSelectionOnly,
+  //      int singleSelectionMask,
+  //      int addSingleSelectionMask,
+  //      int regionSelectionMask,
+  //      int addRegionSelectionMask,
+  //      int regionSelectionCompleteMask,
+  //      int addRegionSelectionCompleteMask,
+  //      int translatingMask,
+  //      int lensTranslatingMask,
+  //      int scalingMask,
+  //      int xAxisScalingMask,
+  //      int yAxisScalingMask,
+  //      LensMagnificationGraphMousePlugin magnificationPlugin) {
+  //    super(
+  //        in,
+  //        out,
+  //        vertexSelectionOnly,
+  //        singleSelectionMask,
+  //        addSingleSelectionMask,
+  //        regionSelectionMask,
+  //        addRegionSelectionMask,
+  //        regionSelectionCompleteMask,
+  //        addRegionSelectionCompleteMask,
+  //        translatingMask,
+  //        scalingMask,
+  //        xAxisScalingMask,
+  //        yAxisScalingMask);
+  //    this.magnificationPlugin = magnificationPlugin;
+  //    this.lensTranslatingGraphMousePlugin = new LensTranslatingGraphMousePlugin(lensTranslatingMask);
+  //    this.lensKillingGraphMousePlugin = new LensKillingGraphMousePlugin();
+  //    this.translatingPlugin = new TranslatingGraphMousePlugin(translatingMask);
+  //  }
 
   //  public ModalLensGraphMouse(
   //      float in,
@@ -161,48 +170,36 @@ public class ModalLensGraphMouse<V, E> extends DefaultModalGraphMouse<V, E>
 
   public void loadPlugins() {
     super.loadPlugins();
-    //    add(lensKillingGraphMousePlugin);
-    //    //    selectingPlugin = lensSelectingGraphMousePlugin;
-    //    //    //    animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<>();
-    //    //    translatingPlugin = new LensTranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
-    //    //    scalingPlugin =
-    //    //        ScalingGraphMousePlugin.builder().scalingControl(new CrossoverScalingControl()).build();
-    //    //    rotatingPlugin = new RotatingGraphMousePlugin();
-    //    //    shearingPlugin = new ShearingGraphMousePlugin();
-    //
-    //    add(magnificationPlugin);
-    //    add(scalingPlugin);
-
     setMode(this.mode);
   }
 
-  //  public static class ModeKeyAdapter extends KeyAdapter {
-  //    private char t = 't';
-  //    private char p = 'p';
-  //    protected ModalGraphMouse graphMouse;
-  //
-  //    public ModeKeyAdapter(ModalGraphMouse graphMouse) {
-  //      this.graphMouse = graphMouse;
-  //    }
-  //
-  //    public ModeKeyAdapter(char t, char p, ModalGraphMouse graphMouse) {
-  //      this.t = t;
-  //      this.p = p;
-  //      this.graphMouse = graphMouse;
-  //    }
-  //
-  //    public void keyTyped(KeyEvent event) {
-  //      char keyChar = event.getKeyChar();
-  //      if (keyChar == t) {
-  //        ((Component) event.getSource())
-  //            .setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-  //        graphMouse.setMode(Mode.TRANSFORMING);
-  //      } else if (keyChar == p) {
-  //        ((Component) event.getSource()).setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-  //        graphMouse.setMode(Mode.PICKING);
-  //      }
-  //    }
-  //  }
+  public static class ModeKeyAdapter extends KeyAdapter {
+    private char t = 't';
+    private char p = 'p';
+    protected ModalGraphMouse graphMouse;
+
+    public ModeKeyAdapter(ModalGraphMouse graphMouse) {
+      this.graphMouse = graphMouse;
+    }
+
+    public ModeKeyAdapter(char t, char p, ModalGraphMouse graphMouse) {
+      this.t = t;
+      this.p = p;
+      this.graphMouse = graphMouse;
+    }
+
+    public void keyTyped(KeyEvent event) {
+      char keyChar = event.getKeyChar();
+      if (keyChar == t) {
+        ((Component) event.getSource())
+            .setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        graphMouse.setMode(Mode.TRANSFORMING);
+      } else if (keyChar == p) {
+        ((Component) event.getSource()).setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        graphMouse.setMode(Mode.PICKING);
+      }
+    }
+  }
 
   /* (non-Javadoc)
    * @see ModalGraphMouse#setPickingMode()

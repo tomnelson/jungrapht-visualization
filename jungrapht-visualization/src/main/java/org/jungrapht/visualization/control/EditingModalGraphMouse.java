@@ -101,6 +101,7 @@ public class EditingModalGraphMouse<V, E> extends AbstractModalGraphMouse
         builder.edgeFactory,
         builder.vertexLabelMapSupplier,
         builder.edgeLabelMapSupplier,
+        builder.mode,
         1.1f,
         1 / 1.1f,
         false);
@@ -125,6 +126,7 @@ public class EditingModalGraphMouse<V, E> extends AbstractModalGraphMouse
         edgeFactory,
         HashMap::new,
         HashMap::new,
+        Mode.EDITING,
         1.1f,
         1 / 1.1f,
         false);
@@ -136,24 +138,24 @@ public class EditingModalGraphMouse<V, E> extends AbstractModalGraphMouse
    * @param vertexFactory used to construct vertices
    * @param edgeFactory used to construct edges
    */
-  EditingModalGraphMouse(
-      RenderContext<V, E> rc,
-      Supplier<MultiLayerTransformer> multiLayerTransformerSupplier,
-      Supplier<V> vertexFactory,
-      Supplier<E> edgeFactory,
-      Supplier<Map<V, String>> vertexLabelMapSupplier,
-      Supplier<Map<E, String>> edgeLabelMapSupplier) {
-    this(
-        rc,
-        multiLayerTransformerSupplier,
-        vertexFactory,
-        edgeFactory,
-        vertexLabelMapSupplier,
-        edgeLabelMapSupplier,
-        1.1f,
-        1 / 1.1f,
-        false);
-  }
+  //  EditingModalGraphMouse(
+  //      RenderContext<V, E> rc,
+  //      Supplier<MultiLayerTransformer> multiLayerTransformerSupplier,
+  //      Supplier<V> vertexFactory,
+  //      Supplier<E> edgeFactory,
+  //      Supplier<Map<V, String>> vertexLabelMapSupplier,
+  //      Supplier<Map<E, String>> edgeLabelMapSupplier) {
+  //    this(
+  //        rc,
+  //        multiLayerTransformerSupplier,
+  //        vertexFactory,
+  //        edgeFactory,
+  //        vertexLabelMapSupplier,
+  //        edgeLabelMapSupplier,
+  //        1.1f,
+  //        1 / 1.1f,
+  //        false);
+  //  }
 
   /**
    * Creates an instance with the specified rendering context and vertex/edge factories, and with
@@ -171,10 +173,11 @@ public class EditingModalGraphMouse<V, E> extends AbstractModalGraphMouse
       Supplier<E> edgeFactory,
       Supplier<Map<V, String>> vertexLabelMapSupplier,
       Supplier<Map<E, String>> edgeLabelMapSupplier,
+      Mode mode,
       float in,
       float out,
       boolean vertexSelectionOnly) {
-    super(in, out, vertexSelectionOnly);
+    super(mode, in, out, vertexSelectionOnly);
     this.rc = rc;
     this.vertexFactory = vertexFactory;
     this.edgeFactory = edgeFactory;
@@ -209,16 +212,12 @@ public class EditingModalGraphMouse<V, E> extends AbstractModalGraphMouse
     labelEditingPlugin = new LabelEditingGraphMousePlugin<>(vertexLabelMap, edgeLabelMap);
     annotatingPlugin = new AnnotatingGraphMousePlugin<>(rc);
     popupEditingPlugin = new EditingPopupGraphMousePlugin<>(vertexFactory, edgeFactory);
-    //    add(scalingPlugin);
     setMode(this.mode);
   }
 
   /** setter for the Mode. */
   @Override
   public void setMode(Mode mode) {
-    //    if (this.mode != mode) {
-    //      fireItemStateChanged(
-    //          new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, this.mode, ItemEvent.DESELECTED));
     this.mode = mode;
     if (mode == Mode.TRANSFORMING) {
       setTransformingMode();
@@ -229,23 +228,12 @@ public class EditingModalGraphMouse<V, E> extends AbstractModalGraphMouse
     } else if (mode == Mode.ANNOTATING) {
       setAnnotatingMode();
     }
-    //      if (modeBox != null) {
-    //        modeBox.setSelectedItem(mode);
-    //      }
-    //      fireItemStateChanged(
-    //          new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, mode, ItemEvent.SELECTED));
-    //    }
   }
 
   @Override
   protected void setPickingMode() {
     clear();
     add(scalingPlugin);
-    //    remove(translatingPlugin);
-    //    remove(rotatingPlugin);
-    //    remove(shearingPlugin);
-    //    remove(editingPlugin);
-    //    remove(annotatingPlugin);
     add(selectingPlugin);
     add(animatedPickingPlugin);
     add(labelEditingPlugin);
@@ -255,10 +243,6 @@ public class EditingModalGraphMouse<V, E> extends AbstractModalGraphMouse
   @Override
   protected void setTransformingMode() {
     clear();
-    //    remove(selectingPlugin);
-    //    remove(animatedPickingPlugin);
-    //    remove(editingPlugin);
-    //    remove(annotatingPlugin);
     add(scalingPlugin);
     add(translatingPlugin);
     add(rotatingPlugin);
@@ -270,13 +254,6 @@ public class EditingModalGraphMouse<V, E> extends AbstractModalGraphMouse
   protected void setEditingMode() {
     clear();
     add(scalingPlugin);
-    //    remove(selectingPlugin);
-    //    remove(animatedPickingPlugin);
-    //    remove(translatingPlugin);
-    //    remove(rotatingPlugin);
-    //    remove(shearingPlugin);
-    //    remove(labelEditingPlugin);
-    //    remove(annotatingPlugin);
     add(labelEditingPlugin);
     add(editingPlugin);
     add(popupEditingPlugin);
@@ -285,92 +262,8 @@ public class EditingModalGraphMouse<V, E> extends AbstractModalGraphMouse
   protected void setAnnotatingMode() {
     clear();
     add(scalingPlugin);
-    //    remove(selectingPlugin);
-    //    remove(animatedPickingPlugin);
-    //    remove(translatingPlugin);
-    //    remove(rotatingPlugin);
-    //    remove(shearingPlugin);
-    //    remove(labelEditingPlugin);
-    //    remove(editingPlugin);
-    //    remove(popupEditingPlugin);
     add(annotatingPlugin);
   }
-
-  //  /** @return the modeBox. */
-  //  @Override
-  //  public JComboBox<Mode> getModeComboBox() {
-  //    if (modeBox == null) {
-  //      modeBox =
-  //          new JComboBox<>(
-  //              new Mode[] {Mode.TRANSFORMING, Mode.PICKING, Mode.EDITING, Mode.ANNOTATING});
-  //      modeBox.addItemListener(getModeListener());
-  //    }
-  //    modeBox.setSelectedItem(mode);
-  //    return modeBox;
-  //  }
-
-  //  /**
-  //   * create (if necessary) and return a menu that will change the mode
-  //   *
-  //   * @return the menu
-  //   */
-  //  @Override
-  //  public JMenu getModeMenu() {
-  //    if (modeMenu == null) {
-  //      modeMenu = new JMenu(); // {
-  //      Icon icon = BasicIconFactory.getMenuArrowIcon();
-  //      modeMenu.setIcon(BasicIconFactory.getMenuArrowIcon());
-  //      modeMenu.setPreferredSize(new Dimension(icon.getIconWidth() + 10, icon.getIconHeight() + 10));
-  //
-  //      final JRadioButtonMenuItem transformingButton =
-  //          new JRadioButtonMenuItem(Mode.TRANSFORMING.toString());
-  //      transformingButton.addItemListener(
-  //          e -> {
-  //            if (e.getStateChange() == ItemEvent.SELECTED) {
-  //              setMode(Mode.TRANSFORMING);
-  //            }
-  //          });
-  //
-  //      final JRadioButtonMenuItem pickingButton = new JRadioButtonMenuItem(Mode.PICKING.toString());
-  //      pickingButton.addItemListener(
-  //          e -> {
-  //            if (e.getStateChange() == ItemEvent.SELECTED) {
-  //              setMode(Mode.PICKING);
-  //            }
-  //          });
-  //
-  //      final JRadioButtonMenuItem editingButton = new JRadioButtonMenuItem(Mode.EDITING.toString());
-  //      editingButton.addItemListener(
-  //          e -> {
-  //            if (e.getStateChange() == ItemEvent.SELECTED) {
-  //              setMode(Mode.EDITING);
-  //            }
-  //          });
-  //
-  //      ButtonGroup radio = new ButtonGroup();
-  //      radio.add(transformingButton);
-  //      radio.add(pickingButton);
-  //      radio.add(editingButton);
-  //      transformingButton.setSelected(true);
-  //      modeMenu.add(transformingButton);
-  //      modeMenu.add(pickingButton);
-  //      modeMenu.add(editingButton);
-  //      modeMenu.setToolTipText("Menu for setting Mouse Mode");
-  //      addItemListener(
-  //          e -> {
-  //            if (e.getStateChange() == ItemEvent.SELECTED) {
-  //              if (e.getItem() == Mode.TRANSFORMING) {
-  //                transformingButton.setSelected(true);
-  //              } else if (e.getItem() == Mode.PICKING) {
-  //                pickingButton.setSelected(true);
-  //              } else if (e.getItem() == Mode.EDITING) {
-  //                editingButton.setSelected(true);
-  //              }
-  //            }
-  //          });
-  //    }
-  //    return modeMenu;
-  //  }
 
   public static class ModeKeyAdapter extends KeyAdapter {
     private char t = 't';

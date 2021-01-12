@@ -158,13 +158,14 @@ public class DefaultModalGraphMouse<V, E> extends AbstractModalGraphMouse
    * @param out override value for scale out
    */
   DefaultModalGraphMouse(float in, float out, boolean vertexSelectionOnly) {
-    super(in, out, vertexSelectionOnly);
+    super(Mode.TRANSFORMING, in, out, vertexSelectionOnly);
     setModeKeyListener(new ModeKeyAdapter(this));
   }
 
   /** create an instance with default values */
   protected DefaultModalGraphMouse(Builder<V, E, ?, ?> builder) {
     this(
+        builder.mode,
         builder.in,
         builder.out,
         builder.vertexSelectionOnly,
@@ -182,6 +183,7 @@ public class DefaultModalGraphMouse<V, E> extends AbstractModalGraphMouse
   }
 
   public DefaultModalGraphMouse(
+      Mode mode,
       float in,
       float out,
       boolean vertexSelectionOnly,
@@ -195,7 +197,7 @@ public class DefaultModalGraphMouse<V, E> extends AbstractModalGraphMouse
       int scalingMask,
       int xAxisScalingMask,
       int yAxisScalingMask) {
-    super(in, out, vertexSelectionOnly);
+    super(mode, in, out, vertexSelectionOnly);
     this.singleSelectionMask = singleSelectionMask;
     this.addSingleSelectionMask = addSingleSelectionMask;
     this.regionSelectionMask = regionSelectionMask;
@@ -206,17 +208,8 @@ public class DefaultModalGraphMouse<V, E> extends AbstractModalGraphMouse
     this.scalingMask = scalingMask;
     this.xAxisScalingMask = xAxisScalingMask;
     this.yAxisScalingMask = yAxisScalingMask;
+    setModeKeyListener(new ModeKeyAdapter(this));
   }
-  //  /**
-  //   * create an instance with passed values
-  //   *
-  //   * @param in override value for scale in
-  //   * @param out override value for scale out
-  //   */
-  //  protected DefaultModalGraphMouse(float in, float out) {
-  //    this(in, out, false);
-  //  }
-
   /** create the plugins, and load the plugins for set mode */
   @Override
   public void loadPlugins() {
@@ -237,8 +230,6 @@ public class DefaultModalGraphMouse<V, E> extends AbstractModalGraphMouse
         ScalingGraphMousePlugin.builder().scalingControl(new CrossoverScalingControl()).build();
     rotatingPlugin = new RotatingGraphMousePlugin();
     shearingPlugin = new ShearingGraphMousePlugin();
-
-    //    add(scalingPlugin);
     setMode(this.mode);
   }
 

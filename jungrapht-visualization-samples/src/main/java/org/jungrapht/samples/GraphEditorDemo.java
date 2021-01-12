@@ -158,7 +158,7 @@ public class GraphEditorDemo extends JPanel implements Printable {
     // vertexLocations function to set the locations of the vertices as
     // they are created
     vv.setGraphMouse(graphMouse);
-    //    vv.addKeyListener(graphMouse.getModeKeyListener());
+    vv.addKeyListener(graphMouse.getModeKeyListener());
 
     graphMouse.setMode(ModalGraphMouse.Mode.EDITING);
 

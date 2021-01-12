@@ -57,7 +57,7 @@ public class ModeControls {
   public static JComboBox getEditingModeComboBox(ModalGraphMouse... graphMice) {
     ModeComboBox comboBox =
         ModeComboBox.builder()
-            .modes(Mode.TRANSFORMING, Mode.PICKING, Mode.EDITING)
+            .modes(Mode.TRANSFORMING, Mode.PICKING, Mode.EDITING, Mode.ANNOTATING)
             .mode(Mode.EDITING)
             .modals(graphMice)
             .build()
@@ -68,7 +68,7 @@ public class ModeControls {
   public static JComboBox getAnnotationModeComboBox(ModalGraphMouse... graphMice) {
     ModeComboBox comboBox =
         ModeComboBox.builder()
-            .modes(Mode.TRANSFORMING, Mode.PICKING, Mode.EDITING, Mode.ANNOTATING)
+            .modes(Mode.TRANSFORMING, Mode.PICKING, Mode.ANNOTATING)
             .mode(Mode.EDITING)
             .modals(graphMice)
             .build()

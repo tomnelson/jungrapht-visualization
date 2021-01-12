@@ -9,24 +9,13 @@
  */
 package org.jungrapht.visualization.annotations;
 
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.ItemSelectable;
+import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.function.Supplier;
-import javax.swing.*;
 import org.jungrapht.visualization.MultiLayerTransformer;
-import org.jungrapht.visualization.control.AbstractModalGraphMouse;
-import org.jungrapht.visualization.control.CrossoverScalingControl;
-import org.jungrapht.visualization.control.ModalGraphMouse;
-import org.jungrapht.visualization.control.RegionSelectingGraphMousePlugin;
-import org.jungrapht.visualization.control.RotatingGraphMousePlugin;
-import org.jungrapht.visualization.control.ScalingGraphMousePlugin;
-import org.jungrapht.visualization.control.SelectingGraphMousePlugin;
-import org.jungrapht.visualization.control.ShearingGraphMousePlugin;
-import org.jungrapht.visualization.control.TranslatingGraphMousePlugin;
+import org.jungrapht.visualization.control.*;
 
 /**
  * a graph mouse that supplies an annotations mode
@@ -76,7 +65,11 @@ public class AnnotatingModalGraphMouse<V, E> extends AbstractModalGraphMouse
   protected AnnotatingGraphMousePlugin<V, E> annotatingPlugin;
   protected MultiLayerTransformer basicTransformer;
 
-  public AnnotatingModalGraphMouse(Builder<V, E, ?, ?> builder) {
+  public AnnotatingModalGraphMouse() {
+    this(new Builder<>());
+  }
+
+  protected AnnotatingModalGraphMouse(Builder<V, E, ?, ?> builder) {
     super(builder);
     this.basicTransformer = builder.multiLayerTransformerSupplier.get();
     this.annotatingPlugin = builder.annotatingPlugin;
@@ -87,11 +80,11 @@ public class AnnotatingModalGraphMouse<V, E> extends AbstractModalGraphMouse
    *
    * @param annotatingPlugin the plugin used by this class for annotating
    */
-  AnnotatingModalGraphMouse(
-      Supplier<MultiLayerTransformer> multiLayerTransformerSupplier,
-      AnnotatingGraphMousePlugin<V, E> annotatingPlugin) {
-    this(multiLayerTransformerSupplier, annotatingPlugin, 1.1f, 1 / 1.1f, false);
-  }
+  //  AnnotatingModalGraphMouse(
+  //      Supplier<MultiLayerTransformer> multiLayerTransformerSupplier,
+  //      AnnotatingGraphMousePlugin<V, E> annotatingPlugin) {
+  //    this(multiLayerTransformerSupplier, annotatingPlugin, 1.1f, 1 / 1.1f, false);
+  //  }
 
   /**
    * Create an instance with the specified scale in and scale out values.
@@ -100,18 +93,18 @@ public class AnnotatingModalGraphMouse<V, E> extends AbstractModalGraphMouse
    * @param in override value for scale in
    * @param out override value for scale out
    */
-  AnnotatingModalGraphMouse(
-      Supplier<MultiLayerTransformer> multiLayerTransformerSupplier,
-      AnnotatingGraphMousePlugin<V, E> annotatingPlugin,
-      float in,
-      float out,
-      boolean vertexSelectionOnly) {
-    super(in, out, vertexSelectionOnly);
-    this.basicTransformer = multiLayerTransformerSupplier.get();
-    this.annotatingPlugin = annotatingPlugin;
-    this.mode = Mode.ANNOTATING;
-    setModeKeyListener(new ModeKeyAdapter(this));
-  }
+  //  AnnotatingModalGraphMouse(
+  //      Supplier<MultiLayerTransformer> multiLayerTransformerSupplier,
+  //      AnnotatingGraphMousePlugin<V, E> annotatingPlugin,
+  //      float in,
+  //      float out,
+  //      boolean vertexSelectionOnly) {
+  //    super(in, out, vertexSelectionOnly);
+  //    this.basicTransformer = multiLayerTransformerSupplier.get();
+  //    this.annotatingPlugin = annotatingPlugin;
+  //    this.mode = Mode.ANNOTATING;
+  //    setModeKeyListener(new ModeKeyAdapter(this));
+  //  }
 
   /** create the plugins, and load the plugins for TRANSFORMING mode */
   @Override
@@ -133,16 +126,12 @@ public class AnnotatingModalGraphMouse<V, E> extends AbstractModalGraphMouse
         ScalingGraphMousePlugin.builder().scalingControl(new CrossoverScalingControl()).build();
     rotatingPlugin = new RotatingGraphMousePlugin();
     shearingPlugin = new ShearingGraphMousePlugin();
-    //    add(scalingPlugin);
     setMode(this.mode);
   }
 
   /** setter for the Mode. */
   @Override
   public void setMode(Mode mode) {
-    //    if (this.mode != mode) {
-    //      fireItemStateChanged(
-    //          new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, this.mode, ItemEvent.DESELECTED));
     this.mode = mode;
     if (mode == Mode.TRANSFORMING) {
       setTransformingMode();
@@ -151,22 +140,12 @@ public class AnnotatingModalGraphMouse<V, E> extends AbstractModalGraphMouse
     } else if (mode == Mode.ANNOTATING) {
       setAnnotatingMode();
     }
-    //      if (modeBox != null) {
-    //        modeBox.setSelectedItem(mode);
-    //      }
-    //      fireItemStateChanged(
-    //          new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, mode, ItemEvent.SELECTED));
-    //    }
   }
 
   @Override
   protected void setPickingMode() {
     clear();
     add(scalingPlugin);
-    //    remove(translatingPlugin);
-    //    remove(rotatingPlugin);
-    //    remove(shearingPlugin);
-    //    remove(annotatingPlugin);
     add(selectingPlugin);
     add(animatedPickingPlugin);
   }
@@ -175,9 +154,6 @@ public class AnnotatingModalGraphMouse<V, E> extends AbstractModalGraphMouse
   protected void setTransformingMode() {
     clear();
     add(scalingPlugin);
-    //    remove(selectingPlugin);
-    //    remove(animatedPickingPlugin);
-    //    remove(annotatingPlugin);
     add(translatingPlugin);
     add(rotatingPlugin);
     add(shearingPlugin);
@@ -197,75 +173,8 @@ public class AnnotatingModalGraphMouse<V, E> extends AbstractModalGraphMouse
   protected void setAnnotatingMode() {
     clear();
     add(scalingPlugin);
-    //    remove(selectingPlugin);
-    //    remove(animatedPickingPlugin);
-    //    remove(translatingPlugin);
-    //    remove(rotatingPlugin);
-    //    remove(shearingPlugin);
     add(annotatingPlugin);
   }
-
-  //  /** @return Returns the modeBox. */
-  //  @Override
-  //  public JComboBox<Mode> getModeComboBox() {
-  //    if (modeBox == null) {
-  //      modeBox = new JComboBox<>(new Mode[] {Mode.TRANSFORMING, Mode.PICKING, Mode.ANNOTATING});
-  //      modeBox.addItemListener(getModeListener());
-  //    }
-  //    modeBox.setSelectedItem(mode);
-  //    return modeBox;
-  //  }
-
-  //  /**
-  //   * create (if necessary) and return a menu that will change the mode
-  //   *
-  //   * @return the menu
-  //   */
-  //  @Override
-  //  public JMenu getModeMenu() {
-  //    if (modeMenu == null) {
-  //      modeMenu = new JMenu(); // {
-  //      Icon icon = BasicIconFactory.getMenuArrowIcon();
-  //      modeMenu.setIcon(BasicIconFactory.getMenuArrowIcon());
-  //      modeMenu.setPreferredSize(new Dimension(icon.getIconWidth() + 10, icon.getIconHeight() + 10));
-  //
-  //      final JRadioButtonMenuItem transformingButton =
-  //          new JRadioButtonMenuItem(Mode.TRANSFORMING.toString());
-  //      transformingButton.addItemListener(
-  //          e -> {
-  //            if (e.getStateChange() == ItemEvent.SELECTED) {
-  //              setMode(Mode.TRANSFORMING);
-  //            }
-  //          });
-  //
-  //      final JRadioButtonMenuItem pickingButton = new JRadioButtonMenuItem(Mode.PICKING.toString());
-  //      pickingButton.addItemListener(
-  //          e -> {
-  //            if (e.getStateChange() == ItemEvent.SELECTED) {
-  //              setMode(Mode.PICKING);
-  //            }
-  //          });
-  //
-  //      ButtonGroup radio = new ButtonGroup();
-  //      radio.add(transformingButton);
-  //      radio.add(pickingButton);
-  //      transformingButton.setSelected(true);
-  //      modeMenu.add(transformingButton);
-  //      modeMenu.add(pickingButton);
-  //      modeMenu.setToolTipText("Menu for setting Mouse Mode");
-  //      addItemListener(
-  //          e -> {
-  //            if (e.getStateChange() == ItemEvent.SELECTED) {
-  //              if (e.getItem() == Mode.TRANSFORMING) {
-  //                transformingButton.setSelected(true);
-  //              } else if (e.getItem() == Mode.PICKING) {
-  //                pickingButton.setSelected(true);
-  //              }
-  //            }
-  //          });
-  //    }
-  //    return modeMenu;
-  //  }
 
   public static class ModeKeyAdapter extends KeyAdapter {
     private char t = 't';
