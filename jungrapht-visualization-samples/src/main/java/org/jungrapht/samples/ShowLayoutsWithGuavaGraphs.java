@@ -96,10 +96,6 @@ public class ShowLayoutsWithGuavaGraphs extends JPanel {
             .modes(Modal.Mode.TRANSFORMING, Modal.Mode.PICKING)
             .modals(graphMouse)
             .build();
-    //            ModeControls.getStandardModeComboBox(graphMouse);
-    //graphMouse.getModeComboBox();
-    //    modeBox.addItemListener(
-    //        ((DefaultModalGraphMouse<Integer, Number>) vv.getGraphMouse()).getModeListener());
 
     setLayout(new BorderLayout());
     add(vv.getComponent(), BorderLayout.CENTER);

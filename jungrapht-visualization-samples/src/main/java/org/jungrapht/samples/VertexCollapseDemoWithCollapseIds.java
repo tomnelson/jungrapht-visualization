@@ -26,8 +26,8 @@ import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
-import org.jungrapht.visualization.control.ModalGraphMouse;
-import org.jungrapht.visualization.control.ModeControls;
+import org.jungrapht.visualization.control.modal.Modal.Mode;
+import org.jungrapht.visualization.control.modal.ModeControls;
 import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -122,10 +122,7 @@ public class VertexCollapseDemoWithCollapseIds extends JPanel {
     VisualizationScrollPane visualizationScrollPane = new VisualizationScrollPane(vv);
     add(visualizationScrollPane);
 
-    JComboBox<ModalGraphMouse.Mode> modeBox = ModeControls.getStandardModeComboBox(graphMouse);
-    //graphMouse.getModeComboBox();
-    modeBox.addItemListener(graphMouse.getModeListener());
-    graphMouse.setMode(ModalGraphMouse.Mode.PICKING);
+    JComboBox<Mode> modeBox = ModeControls.getStandardModeComboBox(Mode.PICKING, graphMouse);
 
     JButton collapse = new JButton("Collapse");
     collapse.addActionListener(

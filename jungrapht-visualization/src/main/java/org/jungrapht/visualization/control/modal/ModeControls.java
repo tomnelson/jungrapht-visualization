@@ -1,13 +1,11 @@
-package org.jungrapht.visualization.control;
+package org.jungrapht.visualization.control.modal;
 
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import javax.swing.*;
+import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.control.modal.Modal.Mode;
-import org.jungrapht.visualization.control.modal.ModeComboBox;
-import org.jungrapht.visualization.control.modal.ModeControl;
-import org.jungrapht.visualization.control.modal.ModeMenu;
 
 public class ModeControls {
 
@@ -43,15 +41,19 @@ public class ModeControls {
     return ModeComboBox.builder().modes(Mode.TRANSFORMING, Mode.PICKING).build().buildUI();
   }
 
-  public static JComboBox getStandardModeComboBox(ModalGraphMouse... graphMice) {
+  public static JComboBox getStandardModeComboBox(Mode mode, ModalGraphMouse... graphMice) {
     ModeComboBox comboBox =
         ModeComboBox.builder()
             .modes(Mode.TRANSFORMING, Mode.PICKING)
             .modals(graphMice)
-            .mode(Mode.TRANSFORMING)
+            .mode(mode)
             .build()
             .buildUI();
     return comboBox;
+  }
+
+  public static JComboBox getStandardModeComboBox(ModalGraphMouse... graphMice) {
+    return getStandardModeComboBox(Mode.TRANSFORMING, graphMice);
   }
 
   public static JComboBox getEditingModeComboBox(ModalGraphMouse... graphMice) {
@@ -85,14 +87,19 @@ public class ModeControls {
     return modeMenu.buildUI();
   }
 
-  public static JMenu getStandardModeMenu(ModalGraphMouse... graphMice) {
+  public static JMenu getStandardModeMenu(Mode mode, ModalGraphMouse... graphMice) {
     ModeMenu modeMenu =
         ModeMenu.builder()
             .modes(Mode.TRANSFORMING, Mode.PICKING)
             .modals(graphMice)
+            .mode(mode)
             .buttonSupplier(JRadioButtonMenuItem::new)
             .build();
     return modeMenu.buildUI();
+  }
+
+  public static JMenu getStandardModeMenu(ModalGraphMouse... graphMice) {
+    return getStandardModeMenu(Mode.TRANSFORMING, graphMice);
   }
 
   public static JMenu getEditingModeMenu(ModalGraphMouse... graphMice) {

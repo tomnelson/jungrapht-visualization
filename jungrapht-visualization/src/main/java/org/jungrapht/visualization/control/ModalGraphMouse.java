@@ -21,20 +21,5 @@ import org.jungrapht.visualization.control.modal.Modal;
  */
 public interface ModalGraphMouse extends VisualizationViewer.GraphMouse, Modal {
 
-  //  void setMode(Mode mode);
-
-  //  Mode getMode();
-
-  /** @return Returns the modeListener. */
-  //    ItemListener getModeListener();
-  //
   KeyListener getModeKeyListener();
-
-  //  /** */
-  //  enum Mode {
-  //    TRANSFORMING,
-  //    PICKING,
-  //    ANNOTATING,
-  //    EDITING
-  //  }
 }

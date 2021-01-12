@@ -162,8 +162,7 @@ public class RectangularLensDemo extends JPanel {
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
-            .lensGraphMouse(ModalLensGraphMouse.builder().build())
-            //                new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
+            .lensGraphMouse(new ModalLensGraphMouse())
             .build();
 
     magnifyLayoutSupport =
@@ -176,17 +175,11 @@ public class RectangularLensDemo extends JPanel {
                             .getMultiLayerTransformer()
                             .getTransformer(Layer.LAYOUT))
                     .build())
-            .lensGraphMouse(ModalLensGraphMouse.builder().build())
-            //                new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
+            .lensGraphMouse(new ModalLensGraphMouse())
             .build();
 
     JLabel modeLabel = new JLabel("     Mode Menu >>");
     modeLabel.setUI(new VerticalLabelUI(false));
-
-    graphMouse.addItemListener(hyperbolicLayoutSupport.getGraphMouse().getModeListener());
-    graphMouse.addItemListener(hyperbolicViewSupport.getGraphMouse().getModeListener());
-    graphMouse.addItemListener(magnifyLayoutSupport.getGraphMouse().getModeListener());
-    graphMouse.addItemListener(magnifyViewSupport.getGraphMouse().getModeListener());
 
     ButtonGroup graphRadio = new ButtonGroup();
     JRadioButton graphButton = new JRadioButton("Graph");
@@ -239,8 +232,6 @@ public class RectangularLensDemo extends JPanel {
             .build()
             .buildUI());
 
-    //            ModeControls.getStandardModeMenu(graphMouse));
-    //            graphMouse.getModeMenu());
     visualizationScrollPane.setCorner(menubar);
 
     Box controls = Box.createHorizontalBox();

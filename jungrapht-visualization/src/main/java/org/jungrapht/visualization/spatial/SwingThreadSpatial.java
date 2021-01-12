@@ -25,6 +25,10 @@ public class SwingThreadSpatial<T, NT> implements Spatial<T, NT> {
     this.spatial = delegate;
   }
 
+  public Spatial<T, NT> getSpatial() {
+    return this.spatial;
+  }
+
   @Override
   public void layoutStateChanged(LayoutStateChange.Event evt) {
     // if the layoutmodel is not active, then it is safe to activate this

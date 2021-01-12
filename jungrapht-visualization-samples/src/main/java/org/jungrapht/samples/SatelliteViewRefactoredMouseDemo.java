@@ -122,7 +122,6 @@ public class SatelliteViewRefactoredMouseDemo extends JPanel {
             .graphMouse(DefaultSatelliteGraphMouse.builder().build())
             .transparent(false)
             .build();
-    //    satelliteVisualizationViewer.setGraphMouse(DefaultSatelliteGraphMouse.builder().build());
     mainVisualizationViewer
         .getRenderContext()
         .setEdgeDrawPaintFunction(
@@ -195,11 +194,6 @@ public class SatelliteViewRefactoredMouseDemo extends JPanel {
     helpDialog = new JDialog();
     helpDialog.getContentPane().add(new JLabel(instructions));
 
-    //    JComboBox<?> modeBox = graphMouse.getModeComboBox();
-    //    modeBox.addItemListener(
-    //        ((DefaultModalGraphMouse<?, ?>) satelliteVisualizationViewer.getGraphMouse())
-    //            .getModeListener());
-
     JCheckBox gridBox = new JCheckBox("Show Grid");
     gridBox.addItemListener(
         e -> showGrid(satelliteVisualizationViewer, e.getStateChange() == ItemEvent.SELECTED));
@@ -213,8 +207,6 @@ public class SatelliteViewRefactoredMouseDemo extends JPanel {
 
     JPanel controls = new JPanel();
     controls.add(ControlHelpers.getZoomControls(mainVisualizationViewer));
-    //    controls.add(minus);
-    //    controls.add(modeBox);
     controls.add(gridBox);
     controls.add(help);
     add(panel);

@@ -15,7 +15,6 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.GridLayout;
-import java.awt.event.InputEvent;
 import java.awt.geom.Rectangle2D;
 import javax.swing.*;
 import org.jgrapht.Graph;
@@ -186,49 +185,20 @@ public class MultiViewDemoModal extends JPanel {
     DefaultModalGraphMouse<String, Integer> gm1 =
         new DefaultModalGraphMouse<>() {
           public void loadPlugins() {
-            selectingPlugin =
-                SelectingGraphMousePlugin.builder()
-                    .singleSelectionMask(InputEvent.BUTTON1_DOWN_MASK)
-                    .addSingleSelectionMask(
-                        InputEvent.BUTTON1_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)
-                    .build();
-            regionSelectingPlugin =
-                RegionSelectingGraphMousePlugin.builder()
-                    .regionSelectionMask(InputEvent.BUTTON1_DOWN_MASK)
-                    .addRegionSelectionMask(
-                        InputEvent.BUTTON1_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)
-                    .regionSelectionCompleteMask(0)
-                    .addRegionSelectionCompleteMask(InputEvent.SHIFT_DOWN_MASK)
-                    .build();
-            animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<String, Integer>();
-            translatingPlugin = new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
+            super.loadPlugins();
             scalingPlugin =
                 ScalingGraphMousePlugin.builder()
                     .scalingControl(new LayoutScalingControl())
                     .build();
-            rotatingPlugin = new RotatingGraphMousePlugin();
-            shearingPlugin = new ShearingGraphMousePlugin();
-
-            add(scalingPlugin);
-            setMode(Mode.TRANSFORMING);
-            setPluginsLoaded();
           }
         };
 
     DefaultModalGraphMouse<String, Integer> gm2 =
         new DefaultModalGraphMouse<>() {
           public void loadPlugins() {
-            selectingPlugin = new SelectingGraphMousePlugin<String, Integer>();
-            animatedPickingPlugin = new AnimatedPickingGraphMousePlugin<String, Integer>();
-            translatingPlugin = new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
+            super.loadPlugins();
             scalingPlugin =
                 ScalingGraphMousePlugin.builder().scalingControl(new ViewScalingControl()).build();
-            rotatingPlugin = new RotatingGraphMousePlugin();
-            shearingPlugin = new ShearingGraphMousePlugin();
-
-            add(scalingPlugin);
-            setMode(Mode.TRANSFORMING);
-            setPluginsLoaded();
           }
         };
 
@@ -265,9 +235,8 @@ public class MultiViewDemoModal extends JPanel {
             .modals(gm1)
             .build()
             .buildUI());
-    //            ModeControls.getStandardModeComboBox(gm1));
-    //gm1.getModeComboBox());
     p1.add(flow, BorderLayout.SOUTH);
+
     flow = new JPanel();
     flow.add(h2);
     flow.add(
@@ -276,9 +245,8 @@ public class MultiViewDemoModal extends JPanel {
             .modals(gm2)
             .build()
             .buildUI());
-    //            ModeControls.getStandardModeComboBox(gm2));
-    //gm2.getModeComboBox());
     p2.add(flow, BorderLayout.SOUTH);
+
     flow = new JPanel();
     flow.add(h3);
     flow.add(
@@ -287,8 +255,6 @@ public class MultiViewDemoModal extends JPanel {
             .modals(gm3)
             .build()
             .buildUI());
-    //ModeControls.getStandardModeComboBox(gm3));
-    //            gm3.getModeComboBox());
     p3.add(flow, BorderLayout.SOUTH);
 
     panel.add(p1);

@@ -184,7 +184,7 @@ public class RegionSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
    * @param e the event
    */
   public void mousePressed(MouseEvent e) {
-    log.info("pressed");
+    log.trace("pressed");
     if (e.getModifiersEx() == regionSelectionMask || e.getModifiersEx() == addRegionSelectionMask) {
       down = e.getPoint();
       log.trace("mouse pick at screen coords {}", e.getPoint());
@@ -210,7 +210,7 @@ public class RegionSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
    * <p>clean up settings from mousePressed
    */
   public void mouseReleased(MouseEvent e) {
-    log.info("released");
+    log.trace("released");
     // if the mouse is released in lasso mode with no selection, then clear the vertex
     // and edge selections ?
     Point2D out = e.getPoint();
@@ -252,7 +252,7 @@ public class RegionSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
    * is not over a Vertex, draw the rectangle to select multiple Vertices
    */
   public void mouseDragged(MouseEvent e) {
-    log.info("dragged " + viewRectangle);
+    log.trace("dragged " + viewRectangle);
     if (e.getModifiersEx() == regionSelectionMask || e.getModifiersEx() == addRegionSelectionMask) {
       log.trace("mouseDragged");
       VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();

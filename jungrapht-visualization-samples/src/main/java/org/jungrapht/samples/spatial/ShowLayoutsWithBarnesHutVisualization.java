@@ -31,6 +31,7 @@ import org.jungrapht.visualization.VisualizationComponent;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.*;
+import org.jungrapht.visualization.control.modal.ModeControls;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.repulsion.StandardRepulsion;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -103,12 +104,7 @@ public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
                 + ". with neighbors:"
                 + Graphs.neighborListOf(vv.getVisualizationModel().getGraph(), vertex));
 
-    final ScalingControl scaler = new CrossoverScalingControl();
-
     JComboBox modeBox = ModeControls.getStandardModeComboBox((ModalGraphMouse) vv.getGraphMouse());
-    //graphMouse.getModeComboBox();
-    //    modeBox.addItemListener(
-    //        ((DefaultModalGraphMouse<Integer, Number>) vv.getGraphMouse()).getModeListener());
 
     setBackground(Color.WHITE);
     setLayout(new BorderLayout());

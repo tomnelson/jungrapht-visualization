@@ -19,6 +19,7 @@ import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.SatelliteVisualizationViewer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.*;
+import org.jungrapht.visualization.control.modal.ModeControls;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.GEMLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -162,17 +163,10 @@ public class InternalFrameSatelliteViewDemo {
           }
         });
 
-    //    JComboBox<Mode> modeBox = ModeControls.getStandardModeComboBox();
     JComboBox modeBox =
         ModeControls.getStandardModeComboBox(
             graphMouse, (ModalGraphMouse) satellite.getGraphMouse());
-    //        ModeComboBox.builder()
-    //            .modes(Modal.Mode.TRANSFORMING, Modal.Mode.PICKING)
-    //            .modals(graphMouse)
-    //            .build();
 
-    //graphMouse.getModeComboBox();
-    //    modeBox.addItemListener(((ModalGraphMouse) satellite.getGraphMouse()).getModeListener());
     JPanel p = new JPanel();
     p.add(zoomer);
     p.add(modeBox);

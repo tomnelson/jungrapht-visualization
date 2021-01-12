@@ -11,11 +11,7 @@
  */
 package org.jungrapht.visualization.control;
 
-import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyListener;
-import javax.swing.*;
 import javax.swing.event.EventListenerList;
 
 /**
@@ -25,13 +21,7 @@ import javax.swing.event.EventListenerList;
  * used for the various plugins. The default modifiers are intended to mimick those of mainstream
  * software applications in order to be intuitive to users.
  *
- * <p>// *
- *
- * <p>To change between modes, two different controls are offered, a combo box and a menu system. //
- * * These controls are lazily created in their respective 'getter' methods so they don't impact
- * code // * that does not intend to use them. The menu control can be placed in an unused corner of
- * the // * VisualizationScrollPane, which is a common location for mouse mode selection menus in
- * mainstream // * applications.
+ * <p>// * *
  *
  * <p>Users must implement the loadPlugins() method to create and install the GraphMousePlugins. The
  * order of the plugins is important, as they are evaluated against the mask parameters in the order
@@ -60,8 +50,6 @@ public abstract class AbstractModalGraphMouse extends AbstractGraphMouse
     public abstract T build();
   }
 
-  /** a listener for mode changes */
-  protected ItemListener modeListener;
   /** the current mode */
   protected Mode mode;
   /** listeners for mode changes */
@@ -124,65 +112,14 @@ public abstract class AbstractModalGraphMouse extends AbstractGraphMouse
     ((ScalingGraphMousePlugin) scalingPlugin).setZoomAtMouse(zoomAtMouse);
   }
 
-  /** listener to set the mode from an external event source */
-  class ModeListener implements ItemListener {
-    public void itemStateChanged(ItemEvent e) {
-      if (e.getStateChange() == ItemEvent.SELECTED) {
-        setMode((Mode) e.getItem());
-      }
-    }
-  }
-
-  /* (non-Javadoc)
-   * @see ModalGraphMouse#getModeListener()
-   */
-  public ItemListener getModeListener() {
-    if (modeListener == null) {
-      modeListener = new ModeListener();
-    }
-    return modeListener;
-  }
-
-  //  /** @return the modeKeyListener */
+  /** @return the modeKeyListener */
   @Override
   public KeyListener getModeKeyListener() {
     return modeKeyListener;
   }
-  //
-  //  /** @param modeKeyListener the modeKeyListener to set */
+
+  /** @param modeKeyListener the modeKeyListener to set */
   public void setModeKeyListener(KeyListener modeKeyListener) {
     this.modeKeyListener = modeKeyListener;
-  }
-
-  /** add a listener for mode changes */
-  public void addItemListener(ItemListener aListener) {
-    listenerList.add(ItemListener.class, aListener);
-  }
-
-  /** remove a listener for mode changes */
-  public void removeItemListener(ItemListener aListener) {
-    listenerList.remove(ItemListener.class, aListener);
-  }
-
-  /**
-   * Returns an array of all the <code>ItemListener</code>s added to this JComboBox with
-   * addItemListener().
-   *
-   * @return all of the <code>ItemListener</code>s added or an empty array if no listeners have been
-   *     added
-   * @since 1.4
-   */
-  public ItemListener[] getItemListeners() {
-    return listenerList.getListeners(ItemListener.class);
-  }
-
-  public Object[] getSelectedObjects() {
-    if (mode == null) {
-      return new Object[0];
-    } else {
-      Object[] result = new Object[1];
-      result[0] = mode;
-      return result;
-    }
   }
 }

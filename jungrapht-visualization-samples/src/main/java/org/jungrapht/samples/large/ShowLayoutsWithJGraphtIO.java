@@ -30,7 +30,7 @@ import org.jungrapht.samples.util.LensControlHelper;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.ModalLensGraphMouse;
-import org.jungrapht.visualization.control.ModeControls;
+import org.jungrapht.visualization.control.modal.ModeControls;
 import org.jungrapht.visualization.layout.algorithms.AbstractIterativeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -112,11 +112,6 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
 
     // for the first layout
     vv.scaleToLayout();
-
-    JComboBox modeBox = ModeControls.getStandardModeComboBox(graphMouse);
-    //graphMouse.getModeComboBox();
-    modeBox.addItemListener(
-        ((DefaultModalGraphMouse<Integer, DefaultEdge>) vv.getGraphMouse()).getModeListener());
 
     final JComboBox graphComboBox = new JComboBox(getCombos());
     graphComboBox.addActionListener(
@@ -221,7 +216,7 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
                             .getMultiLayerTransformer()
                             .getTransformer(Layer.LAYOUT))
                     .build())
-            .lensGraphMouse(new ModalLensGraphMouse())
+            .lensGraphMouse(new ModalLensGraphMouse<>())
             .build();
 
     // the magnification lens uses a different magnification than the hyperbolic lens
@@ -235,8 +230,7 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
-            .lensGraphMouse(ModalLensGraphMouse.builder().build())
-            //                new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
+            .lensGraphMouse(new ModalLensGraphMouse<>())
             .build();
 
     LensSupport<ModalLensGraphMouse> magnifyLayoutSupport =
@@ -248,8 +242,7 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
                             .getMultiLayerTransformer()
                             .getTransformer(Layer.LAYOUT))
                     .build())
-            .lensGraphMouse(ModalLensGraphMouse.builder().build())
-            //                new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
+            .lensGraphMouse(new ModalLensGraphMouse<>())
             .build();
 
     hyperbolicLayoutSupport
@@ -265,10 +258,13 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
         .getLens()
         .setLensShape(magnifyViewSupport.getLensTransformer().getLens().getLensShape());
 
-    graphMouse.addItemListener(hyperbolicLayoutSupport.getGraphMouse().getModeListener());
-    graphMouse.addItemListener(hyperbolicViewSupport.getGraphMouse().getModeListener());
-    graphMouse.addItemListener(magnifyLayoutSupport.getGraphMouse().getModeListener());
-    graphMouse.addItemListener(magnifyViewSupport.getGraphMouse().getModeListener());
+    JComboBox modeBox =
+        ModeControls.getStandardModeComboBox(
+            graphMouse,
+            hyperbolicLayoutSupport.getGraphMouse(),
+            hyperbolicViewSupport.getGraphMouse(),
+            magnifyLayoutSupport.getGraphMouse(),
+            magnifyViewSupport.getGraphMouse());
 
     JComponent lensBox =
         LensControlHelper.builder(
@@ -300,8 +296,6 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
     JComponent bottom =
         ControlHelpers.getContainer(
             Box.createHorizontalBox(),
-            //            ControlHelpers.getZoomControls("Scale", vv),
-            //            imageButton,
             ControlHelpers.getCenteredContainer("Mouse Mode", modeBox),
             lensBox,
             ControlHelpers.getCenteredContainer(

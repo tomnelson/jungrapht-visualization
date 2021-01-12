@@ -25,7 +25,7 @@ import org.jungrapht.visualization.control.*;
  * @param <E> the edge type
  */
 public class AnnotatingModalGraphMouse<V, E> extends AbstractModalGraphMouse
-    implements ModalGraphMouse, ItemSelectable {
+    implements ModalGraphMouse {
 
   /**
    * Build an instance of a EditingModalGraphMouse
@@ -75,37 +75,6 @@ public class AnnotatingModalGraphMouse<V, E> extends AbstractModalGraphMouse
     this.annotatingPlugin = builder.annotatingPlugin;
   }
 
-  /**
-   * Create an instance with default values for scale in (1.1) and scale out (1/1.1).
-   *
-   * @param annotatingPlugin the plugin used by this class for annotating
-   */
-  //  AnnotatingModalGraphMouse(
-  //      Supplier<MultiLayerTransformer> multiLayerTransformerSupplier,
-  //      AnnotatingGraphMousePlugin<V, E> annotatingPlugin) {
-  //    this(multiLayerTransformerSupplier, annotatingPlugin, 1.1f, 1 / 1.1f, false);
-  //  }
-
-  /**
-   * Create an instance with the specified scale in and scale out values.
-   *
-   * @param annotatingPlugin the plugin used by this class for annotating
-   * @param in override value for scale in
-   * @param out override value for scale out
-   */
-  //  AnnotatingModalGraphMouse(
-  //      Supplier<MultiLayerTransformer> multiLayerTransformerSupplier,
-  //      AnnotatingGraphMousePlugin<V, E> annotatingPlugin,
-  //      float in,
-  //      float out,
-  //      boolean vertexSelectionOnly) {
-  //    super(in, out, vertexSelectionOnly);
-  //    this.basicTransformer = multiLayerTransformerSupplier.get();
-  //    this.annotatingPlugin = annotatingPlugin;
-  //    this.mode = Mode.ANNOTATING;
-  //    setModeKeyListener(new ModeKeyAdapter(this));
-  //  }
-
   /** create the plugins, and load the plugins for TRANSFORMING mode */
   @Override
   public void loadPlugins() {
@@ -147,6 +116,7 @@ public class AnnotatingModalGraphMouse<V, E> extends AbstractModalGraphMouse
     clear();
     add(scalingPlugin);
     add(selectingPlugin);
+    add(regionSelectingPlugin);
     add(animatedPickingPlugin);
   }
 
@@ -158,17 +128,6 @@ public class AnnotatingModalGraphMouse<V, E> extends AbstractModalGraphMouse
     add(rotatingPlugin);
     add(shearingPlugin);
   }
-
-  //  protected void setEditingMode() {
-  //    clear();
-  //    add(scalingPlugin);
-  ////    remove(selectingPlugin);
-  ////    remove(animatedPickingPlugin);
-  ////    remove(translatingPlugin);
-  ////    remove(rotatingPlugin);
-  ////    remove(shearingPlugin);
-  ////    remove(annotatingPlugin);
-  //  }
 
   protected void setAnnotatingMode() {
     clear();

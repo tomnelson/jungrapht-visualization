@@ -20,7 +20,7 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.annotations.AnnotatingGraphMousePlugin;
 import org.jungrapht.visualization.annotations.AnnotatingModalGraphMouse;
 import org.jungrapht.visualization.annotations.AnnotationControls;
-import org.jungrapht.visualization.control.ModeControls;
+import org.jungrapht.visualization.control.modal.ModeControls;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.Renderer;
 

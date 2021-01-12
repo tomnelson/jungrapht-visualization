@@ -2,7 +2,6 @@ package org.jungrapht.visualization.control;
 
 import java.awt.Component;
 import java.awt.Cursor;
-import java.awt.ItemSelectable;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -20,7 +19,7 @@ import org.slf4j.LoggerFactory;
  * @param <E> edge type
  */
 public class EditingModalGraphMouse<V, E> extends AbstractModalGraphMouse
-    implements ModalGraphMouse, ItemSelectable {
+    implements ModalGraphMouse {
 
   private static final Logger log = LoggerFactory.getLogger(EditingModalGraphMouse.class);
   /**
@@ -36,8 +35,8 @@ public class EditingModalGraphMouse<V, E> extends AbstractModalGraphMouse
 
     protected Supplier<V> vertexFactory;
     protected Supplier<E> edgeFactory;
-    protected Supplier<Map<V, String>> vertexLabelMapSupplier;
-    protected Supplier<Map<E, String>> edgeLabelMapSupplier;
+    protected Supplier<Map<V, String>> vertexLabelMapSupplier = HashMap::new;
+    protected Supplier<Map<E, String>> edgeLabelMapSupplier = HashMap::new;
     protected Supplier<MultiLayerTransformer> multiLayerTransformerSupplier;
     protected Supplier<RenderContext<V, E>> renderContextSupplier;
 
@@ -235,6 +234,7 @@ public class EditingModalGraphMouse<V, E> extends AbstractModalGraphMouse
     clear();
     add(scalingPlugin);
     add(selectingPlugin);
+    add(regionSelectingPlugin);
     add(animatedPickingPlugin);
     add(labelEditingPlugin);
     add(popupEditingPlugin);

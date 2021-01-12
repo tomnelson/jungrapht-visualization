@@ -22,7 +22,7 @@ import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
-import org.jungrapht.visualization.control.ModeControls;
+import org.jungrapht.visualization.control.modal.ModeControls;
 import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.decorators.IconShapeFunction;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
@@ -100,7 +100,6 @@ public class UnicodeLabelDemo {
     controls.add(
         ControlHelpers.getCenteredContainer(
             "Mouse Mode", ModeControls.getStandardModeComboBox(gm)));
-    //gm.getModeComboBox()));
     content.add(controls, BorderLayout.SOUTH);
 
     frame.pack();

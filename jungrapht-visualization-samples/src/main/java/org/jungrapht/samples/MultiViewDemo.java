@@ -15,9 +15,14 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.GridLayout;
-import java.awt.event.InputEvent;
 import java.awt.geom.Rectangle2D;
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.WindowConstants;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationModel;
@@ -27,8 +32,6 @@ import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.control.GraphElementAccessor;
 import org.jungrapht.visualization.control.LayoutScalingControl;
 import org.jungrapht.visualization.control.ScalingGraphMousePlugin;
-import org.jungrapht.visualization.control.SelectingGraphMousePlugin;
-import org.jungrapht.visualization.control.TranslatingGraphMousePlugin;
 import org.jungrapht.visualization.control.ViewScalingControl;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
@@ -191,28 +194,20 @@ public class MultiViewDemo extends JPanel {
     DefaultGraphMouse<String, Integer> gm1 =
         new DefaultGraphMouse<>() {
           public void loadPlugins() {
+            super.loadPlugins();
             scalingPlugin =
                 ScalingGraphMousePlugin.builder()
                     .scalingControl(new LayoutScalingControl())
                     .build();
-            add(new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK));
-            selectingPlugin = new SelectingGraphMousePlugin();
-            add(selectingPlugin);
-            add(scalingPlugin);
-            setPluginsLoaded();
           }
         };
 
     DefaultGraphMouse<String, Integer> gm2 =
         new DefaultGraphMouse<>() {
           public void loadPlugins() {
+            super.loadPlugins();
             scalingPlugin =
                 ScalingGraphMousePlugin.builder().scalingControl(new ViewScalingControl()).build();
-            add(new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK));
-            selectingPlugin = new SelectingGraphMousePlugin<>();
-            add(selectingPlugin);
-            add(scalingPlugin);
-            setPluginsLoaded();
           }
         };
 

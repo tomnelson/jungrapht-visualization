@@ -166,8 +166,7 @@ public class LensDemo extends JPanel {
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
-            .lensGraphMouse(ModalLensGraphMouse.builder().build())
-            //                new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
+            .lensGraphMouse(new ModalLensGraphMouse())
             .build();
 
     magnifyLayoutSupport =
@@ -180,17 +179,11 @@ public class LensDemo extends JPanel {
                             .getMultiLayerTransformer()
                             .getTransformer(Layer.LAYOUT))
                     .build())
-            .lensGraphMouse(ModalLensGraphMouse.builder().build())
-            //                new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
+            .lensGraphMouse(new ModalLensGraphMouse())
             .build();
 
     JLabel modeLabel = new JLabel("Mode >>");
     modeLabel.setUI(new VerticalLabelUI(false));
-
-    //    graphMouse.addItemListener(hyperbolicLayoutSupport.getGraphMouse().getModeListener());
-    //    graphMouse.addItemListener(hyperbolicViewSupport.getGraphMouse().getModeListener());
-    //    graphMouse.addItemListener(magnifyLayoutSupport.getGraphMouse().getModeListener());
-    //    graphMouse.addItemListener(magnifyViewSupport.getGraphMouse().getModeListener());
 
     ButtonGroup graphRadio = new ButtonGroup();
     JRadioButton graphButton = new JRadioButton("Graph");
@@ -244,19 +237,6 @@ public class LensDemo extends JPanel {
                 magnifyViewSupport.getGraphMouse())
             .build()
             .buildUI();
-    //        ModeControls.getStandardModeMenu(
-    //            graphMouse,
-    //            hyperbolicLayoutSupport.getGraphMouse(),
-    //            hyperbolicViewSupport.getGraphMouse(),
-    //            magnifyLayoutSupport.getGraphMouse(),
-    //            magnifyViewSupport.getGraphMouse());
-
-    //            new ModeControls.ModeMenu(ModalGraphMouse.Mode.TRANSFORMING, ModalGraphMouse.Mode.PICKING);
-    //    modeMenu.addItemListener(graphMouse);
-    //    modeMenu.addItemListener(hyperbolicLayoutSupport.getGraphMouse());
-    //    modeMenu.addItemListener(hyperbolicViewSupport.getGraphMouse());
-    //    modeMenu.addItemListener(magnifyLayoutSupport.getGraphMouse());
-    //    modeMenu.addItemListener(magnifyViewSupport.getGraphMouse());
     menubar.add(modeMenu);
     visualizationScrollPane.setCorner(menubar);
 

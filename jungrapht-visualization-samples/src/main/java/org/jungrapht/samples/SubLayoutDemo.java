@@ -10,6 +10,7 @@ package org.jungrapht.samples;
 
 import static org.jungrapht.samples.util.SubLayoutHelper.Layouts;
 import static org.jungrapht.samples.util.SubLayoutHelper.getCombos;
+import static org.jungrapht.visualization.control.modal.Modal.*;
 
 import java.awt.*;
 import java.awt.event.ItemEvent;
@@ -24,8 +25,7 @@ import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
-import org.jungrapht.visualization.control.ModalGraphMouse;
-import org.jungrapht.visualization.control.ModeControls;
+import org.jungrapht.visualization.control.modal.ModeControls;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.CircleLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
@@ -127,10 +127,7 @@ public class SubLayoutDemo extends JPanel {
     VisualizationScrollPane visualizationScrollPane = new VisualizationScrollPane(vv);
     add(visualizationScrollPane);
 
-    JComboBox<?> modeBox = ModeControls.getStandardModeComboBox(graphMouse);
-    //graphMouse.getModeComboBox();
-    modeBox.addItemListener(graphMouse.getModeListener());
-    graphMouse.setMode(ModalGraphMouse.Mode.PICKING);
+    JComboBox<?> modeBox = ModeControls.getStandardModeComboBox(Mode.PICKING, graphMouse);
 
     JButton cluster = new JButton("Cluster Picked");
     cluster.addActionListener(e -> clusterPicked());

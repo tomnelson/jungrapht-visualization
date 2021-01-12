@@ -11,14 +11,10 @@ import org.jungrapht.visualization.control.modal.Modal.Mode;
 public class ModeComboBox extends JComboBox<Mode> implements Modal {
 
   public static class Builder {
-    //        protected Supplier<AbstractButton> buttonSupplier;
     protected Mode[] modes;
     protected Set<Modal> modals = new LinkedHashSet<>();
-    protected Mode mode;
-    //        public Builder buttonSupplier(Supplier<AbstractButton> buttonSupplier) {
-    //            this.buttonSupplier = buttonSupplier;
-    //            return this;
-    //        }
+    protected Mode mode = Mode.TRANSFORMING;
+
     public Builder modes(Mode... modes) {
       this.modes = modes;
       return this;
@@ -42,13 +38,11 @@ public class ModeComboBox extends JComboBox<Mode> implements Modal {
   public static Builder builder() {
     return new Builder();
   }
-  //    protected Supplier<AbstractButton> buttonSupplier;
+
   protected Mode[] modes;
   protected Set<Modal> modals;
-  //    protected ButtonGroup buttonGroup = new ButtonGroup();
   protected Mode mode;
-  //    protected Map<Mode, AbstractButton> modeMap
-  //            = new HashMap<>();
+
   ModeComboBox(Builder builder) {
     this(builder.mode, builder.modals, builder.modes);
   }
@@ -56,12 +50,12 @@ public class ModeComboBox extends JComboBox<Mode> implements Modal {
   private ModeComboBox(Mode mode, Set<Modal> modals, Mode[] modes) {
     super(modes);
     this.mode = mode;
-    //        this.buttonSupplier = buttonSupplier;
     this.modes = modes;
     this.modals = modals;
     if (this.mode == null) {
       this.mode = modes[0];
     }
+    setSelectedItem(mode);
   }
 
   public boolean addModal(Modal modal) {

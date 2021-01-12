@@ -26,6 +26,7 @@ import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.*;
+import org.jungrapht.visualization.control.modal.ModeControls;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -65,7 +66,6 @@ public class SpatialRTreeTest extends JPanel {
     Dimension layoutPreferredSize = new Dimension(600, 600);
     LayoutAlgorithm layoutAlgorithm = new StaticLayoutAlgorithm();
 
-    ScalingControl scaler = new CrossoverScalingControl();
     VisualizationModel<String, Integer> model =
         VisualizationModel.builder(g)
             .layoutAlgorithm(layoutAlgorithm)
@@ -82,6 +82,7 @@ public class SpatialRTreeTest extends JPanel {
 
     final EditingModalGraphMouse<String, Integer> graphMouse =
         EditingModalGraphMouse.<String, Integer>builder()
+            .renderContextSupplier(vv::getRenderContext)
             .multiLayerTransformerSupplier(vv.getRenderContext()::getMultiLayerTransformer)
             .vertexFactory(vertexFactory)
             .edgeFactory(edgeFactory)
@@ -126,8 +127,8 @@ public class SpatialRTreeTest extends JPanel {
           }
         });
 
-    JComboBox<ModalGraphMouse.Mode> modeBox = ModeControls.getStandardModeComboBox(graphMouse);
-    //graphMouse.getModeComboBox();
+    JComboBox<ModalGraphMouse.Mode> modeBox = ModeControls.getEditingModeComboBox(graphMouse);
+    //                    .getStandardModeComboBox(graphMouse);
 
     JButton recalculate = new JButton("Recalculate");
     recalculate.addActionListener(e -> vv.getVertexSpatial().recalculate());

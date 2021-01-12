@@ -26,7 +26,7 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.control.ModalSatelliteGraphMouse;
-import org.jungrapht.visualization.control.ModeControls;
+import org.jungrapht.visualization.control.modal.ModeControls;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.GradientVertexRenderer;
@@ -189,15 +189,6 @@ public class SatelliteViewDemo extends JPanel {
     JComboBox modeBox =
         ModeControls.getStandardModeComboBox(
             graphMouse, (ModalGraphMouse) satelliteVisualizationViewer.getGraphMouse());
-    //        ModeComboBox.builder()
-    //            .modes(Modal.Mode.TRANSFORMING, Modal.Mode.PICKING)
-    //            .modals(graphMouse, (Modal) satelliteVisualizationViewer.getGraphMouse())
-    //            .build();
-    //            ModeControls.getStandardModeComboBox(graphMouse);
-    //graphMouse.getModeComboBox();
-    //    modeBox.addItemListener(
-    //        ((DefaultModalGraphMouse<?, ?>) satelliteVisualizationViewer.getGraphMouse())
-    //            .getModeListener());
 
     JCheckBox gridBox = new JCheckBox("Show Grid");
     gridBox.addItemListener(
@@ -212,7 +203,6 @@ public class SatelliteViewDemo extends JPanel {
 
     JPanel controls = new JPanel();
     controls.add(ControlHelpers.getZoomControls(mainVisualizationViewer));
-    //    controls.add(minus);
     controls.add(modeBox);
     controls.add(gridBox);
     controls.add(help);

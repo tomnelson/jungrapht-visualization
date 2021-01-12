@@ -17,7 +17,7 @@ import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
-import org.jungrapht.visualization.control.ModeControls;
+import org.jungrapht.visualization.control.modal.ModeControls;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.ISOMLayoutAlgorithm;
@@ -109,10 +109,7 @@ public class TwoModelDemo extends JPanel {
 
     JPanel modePanel = new JPanel();
     modePanel.setBorder(BorderFactory.createTitledBorder("Mouse Mode"));
-    //    JComboBox cb = ModeC
-    //    gm1.getModeComboBox().addItemListener(gm2.getModeListener());
     modePanel.add(ModeControls.getStandardModeComboBox(gm1, gm2));
-    //gm1.getModeComboBox());
 
     JPanel controls = new JPanel();
     controls.add(ControlHelpers.getZoomControls("Zoom", vv1));

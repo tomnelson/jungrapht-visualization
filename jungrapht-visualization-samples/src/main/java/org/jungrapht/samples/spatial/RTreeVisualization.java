@@ -40,6 +40,7 @@ import org.jungrapht.visualization.layout.model.PolarPoint;
 import org.jungrapht.visualization.selection.MutableSelectedState;
 import org.jungrapht.visualization.spatial.Spatial;
 import org.jungrapht.visualization.spatial.SpatialRTree;
+import org.jungrapht.visualization.spatial.SwingThreadSpatial;
 import org.jungrapht.visualization.spatial.rtree.InnerNode;
 import org.jungrapht.visualization.spatial.rtree.LeafNode;
 import org.jungrapht.visualization.spatial.rtree.Node;
@@ -366,6 +367,9 @@ public class RTreeVisualization<V> extends JPanel {
     Container content = frame.getContentPane();
 
     Spatial spatial = vv.getVertexSpatial();
+    if (spatial instanceof SwingThreadSpatial) {
+      spatial = ((SwingThreadSpatial) spatial).getSpatial();
+    }
     if (spatial instanceof SpatialRTree.Vertices) {
       try {
         SpatialRTree mySpatial = (SpatialRTree) spatial;

@@ -122,15 +122,9 @@ public class ModalSatelliteGraphMouse<V, E> extends DefaultModalGraphMouse<V, E>
             yAxisScalingMask,
             in,
             out);
-    //        SatelliteScalingGraphMousePlugin.builder()
-    //            .scalingControl(new CrossoverScalingControl())
-    //            .build();
     rotatingPlugin = new SatelliteRotatingGraphMousePlugin();
     shearingPlugin = new SatelliteShearingGraphMousePlugin();
 
     add(scalingPlugin);
-
-    //    log.info("setMode to: {}", mode);
-    //    setMode(this.mode);
   }
 }
