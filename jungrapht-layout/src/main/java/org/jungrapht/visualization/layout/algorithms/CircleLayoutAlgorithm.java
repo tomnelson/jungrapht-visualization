@@ -296,7 +296,9 @@ public class CircleLayoutAlgorithm<V>
 
       double posX = Math.cos(angle) * radius + width / 2;
       double posY = Math.sin(angle) * radius + height / 2;
-      layoutModel.set(vertex, posX, posY);
+      if (!layoutModel.isLocked(vertex)) {
+        layoutModel.set(vertex, posX, posY);
+      }
       if (log.isTraceEnabled()) {
         log.trace("set {} to {},{} ", vertex, posX, posY);
       }

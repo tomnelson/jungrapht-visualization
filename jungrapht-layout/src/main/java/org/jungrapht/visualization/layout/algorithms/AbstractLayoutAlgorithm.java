@@ -83,6 +83,8 @@ public abstract class AbstractLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
       Graph<V, ?> graph = layoutModel.getGraph();
       graph
           .vertexSet()
+          .stream()
+          .filter(v -> !layoutModel.isLocked(v))
           .forEach(
               v -> {
                 Point p = layoutModel.get(v);
@@ -94,6 +96,8 @@ public abstract class AbstractLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
       Graph<V, ?> graph = layoutModel.getGraph();
       graph
           .vertexSet()
+          .stream()
+          .filter(v -> !layoutModel.isLocked(v))
           .forEach(
               v -> {
                 Point p = layoutModel.get(v);
