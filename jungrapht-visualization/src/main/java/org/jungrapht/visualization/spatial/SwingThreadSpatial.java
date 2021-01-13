@@ -132,11 +132,11 @@ public class SwingThreadSpatial<T, NT> implements Spatial<T, NT> {
 
   @Override
   public void layoutVertexPositionChanged(LayoutVertexPositionChange.Event<NT> evt) {
-    spatial.layoutVertexPositionChanged(evt);
+    SwingUtilities.invokeLater(() -> spatial.layoutVertexPositionChanged(evt));
   }
 
   @Override
   public void layoutVertexPositionChanged(LayoutVertexPositionChange.GraphEvent<NT> evt) {
-    spatial.layoutVertexPositionChanged(evt);
+    SwingUtilities.invokeLater(() -> spatial.layoutVertexPositionChanged(evt));
   }
 }
