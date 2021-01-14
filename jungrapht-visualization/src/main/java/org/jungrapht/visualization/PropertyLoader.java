@@ -27,7 +27,7 @@ public class PropertyLoader {
       String launchProgram = System.getProperty("sun.java.command");
       if (launchProgram != null && !launchProgram.isEmpty()) {
         launchProgram = launchProgram.substring(launchProgram.lastIndexOf('.') + 1) + ".properties";
-        InputStream stream = DefaultRenderContext.class.getResourceAsStream("/" + launchProgram);
+        InputStream stream = PropertyLoader.class.getResourceAsStream("/" + launchProgram);
         System.getProperties().load(stream);
 
         Properties props = System.getProperties();
