@@ -209,13 +209,12 @@ public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
             .regionSelectionCompleteMask(regionSelectionCompleteMask)
             .addRegionSelectionCompleteMask(addRegionSelectionCompleteMask)
             .build();
+    translatingPlugin = new TranslatingGraphMousePlugin(translatingMask);
+
     add(selectingPlugin);
-    log.trace("added " + selectingPlugin);
     add(regionSelectingPlugin);
-    log.trace("added " + regionSelectingPlugin);
-    add(new TranslatingGraphMousePlugin(translatingMask));
+    add(translatingPlugin);
     add(scalingPlugin);
-    setPluginsLoaded();
   }
 
   /** @param zoomAtMouse The zoomAtMouse to set. */

@@ -27,6 +27,7 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.DemoTreeSupplier;
+import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationServer;
@@ -38,7 +39,8 @@ import org.jungrapht.visualization.layout.algorithms.TidierTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.PolarPoint;
-import org.jungrapht.visualization.util.LayoutAlgorithmTransition;
+import org.jungrapht.visualization.spatial.Spatial;
+import org.jungrapht.visualization.transform.MutableTransformer;
 
 /**
  * A variant of TidierTreeLayoutDemo that rotates the view by 90 degrees from the default
@@ -65,7 +67,10 @@ public class TidierL2RTreeLayoutDemo extends JPanel {
     graph = DemoTreeSupplier.createTreeOne();
 
     treeLayoutAlgorithm =
-        TidierTreeLayoutAlgorithm.<String, Integer>edgeAwareBuilder().expandLayout(true).build();
+        TidierTreeLayoutAlgorithm.<String, Integer>edgeAwareBuilder()
+            .after(this::setLtoR)
+            .expandLayout(true)
+            .build();
     radialLayoutAlgorithm =
         TidierRadialTreeLayoutAlgorithm.<String, Integer>edgeAwareBuilder()
             .expandLayout(true)
@@ -87,7 +92,7 @@ public class TidierL2RTreeLayoutDemo extends JPanel {
     vv.getRenderContext().setArrowFillPaintFunction(a -> Color.lightGray);
     vv.getVisualizationModel()
         .setLayoutAlgorithm(treeLayoutAlgorithm); // after the vertexShapeFunction is set
-    setLtoR(vv);
+    vv.setVertexSpatial(new Spatial.NoOp.Vertex(vv.getVisualizationModel().getLayoutModel()));
 
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
@@ -96,15 +101,15 @@ public class TidierL2RTreeLayoutDemo extends JPanel {
     radial.addItemListener(
         e -> {
           if (e.getStateChange() == ItemEvent.SELECTED) {
-            LayoutAlgorithmTransition.animate(vv, radialLayoutAlgorithm);
+            vv.getRenderContext().getMultiLayerTransformer().setToIdentity();
+            vv.getVisualizationModel().setLayoutAlgorithm(radialLayoutAlgorithm);
             if (rings == null) {
               rings = new Rings(vv.getVisualizationModel().getLayoutModel());
             }
             vv.addPreRenderPaintable(rings);
           } else {
-            LayoutAlgorithmTransition.animate(vv, treeLayoutAlgorithm);
             vv.getRenderContext().getMultiLayerTransformer().setToIdentity();
-            setLtoR(vv);
+            vv.getVisualizationModel().setLayoutAlgorithm(treeLayoutAlgorithm);
             vv.removePreRenderPaintable(rings);
           }
           vv.repaint();
@@ -119,26 +124,18 @@ public class TidierL2RTreeLayoutDemo extends JPanel {
     add(controls, BorderLayout.SOUTH);
   }
 
-  private void setLtoR(VisualizationViewer<String, Integer> vv) {
-    Point2D viewCenter = vv.getCenter();
-    Point2D viewCenterInLayout =
-        vv.getRenderContext().getMultiLayerTransformer().inverseTransform(viewCenter);
-    Point layoutCenter =
-        Point.centroidOf(vv.getVisualizationModel().getLayoutModel().getLocations().values());
+  private void setLtoR() {
 
-    // move the layout center to the viewCenterInLayout
-    double deltaX = viewCenterInLayout.getX() - layoutCenter.x;
-    double deltaY = viewCenterInLayout.getY() - layoutCenter.y;
-
-    vv.getRenderContext()
-        .getMultiLayerTransformer()
-        .getTransformer(Layer.LAYOUT)
-        .translate(deltaX, deltaY);
-
-    vv.getRenderContext()
-        .getMultiLayerTransformer()
-        .getTransformer(Layer.LAYOUT)
-        .rotate(-Math.PI / 2, viewCenterInLayout);
+    MutableTransformer modelTransformer =
+        vv.getRenderContext()
+            .getMultiLayerTransformer()
+            .getTransformer(MultiLayerTransformer.Layer.LAYOUT);
+    Point2D center = vv.getCenter();
+    modelTransformer.rotate(
+        -Math.PI / 2,
+        vv.getRenderContext()
+            .getMultiLayerTransformer()
+            .inverseTransform(MultiLayerTransformer.Layer.VIEW, center));
   }
 
   class Rings implements VisualizationServer.Paintable {

@@ -84,22 +84,12 @@ public abstract class AbstractGraphMouse extends PluggableGraphMouse {
 
   protected AbstractGraphMousePlugin regionSelectingPlugin;
 
-  protected boolean pluginsLoaded;
+  protected AbstractGraphMousePlugin translatingPlugin;
 
   protected AbstractGraphMouse(float in, float out, boolean vertexSelectionOnly) {
     this.in = in;
     this.out = out;
     this.vertexSelectionOnly = vertexSelectionOnly;
-  }
-
-  /** create the plugins, and load the plugins for TRANSFORMING mode */
-  @Override
-  public void setPluginsLoaded() {
-    this.pluginsLoaded = true;
-  }
-
-  public boolean isPluginsLoaded() {
-    return this.pluginsLoaded;
   }
 
   /** @param zoomAtMouse The zoomAtMouse to set. */

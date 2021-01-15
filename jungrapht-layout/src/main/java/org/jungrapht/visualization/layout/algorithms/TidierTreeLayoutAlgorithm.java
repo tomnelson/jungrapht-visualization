@@ -501,6 +501,7 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
   public void visit(LayoutModel<V> layoutModel) {
     // if this is an undirected graph, create a spanning tree, lay that out and use it to
     // initialize this layout model
+    Graph<V, ?> graph = layoutModel.getGraph();
     if (layoutModel.getGraph().getType().isUndirected()) {
       Graph<V, ?> tree = TreeLayoutAlgorithm.getSpanningTree(layoutModel.getGraph());
       LayoutModel<V> treeLayoutModel = DefaultLayoutModel.from(layoutModel);
@@ -512,7 +513,12 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
       super.visit(layoutModel);
       buildTree(layoutModel);
     }
-    this.moveVerticesThatOverlapVerticalEdges(layoutModel, horizontalVertexSpacing);
+    if (correctOverlap) {
+      this.moveVerticesThatOverlapVerticalEdges(layoutModel, horizontalVertexSpacing);
+    }
+    if (expandLayout) {
+      expandToFill(layoutModel);
+    }
     this.runAfter();
     clearMetadata();
   }
@@ -524,6 +530,14 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
     this.layoutModel = layoutModel;
     Graph<V, E> graph = layoutModel.getGraph();
     if (graph == null || graph.vertexSet().isEmpty()) {
+      correctOverlap = expandLayout = false;
+      return;
+    }
+    if (graph.vertexSet().size() == 1) {
+      V loner = graph.vertexSet().stream().findFirst().get();
+      layoutModel.set(loner, layoutModel.getWidth() / 2, layoutModel.getHeight() / 2);
+      roots = new ArrayList<>(graph.vertexSet());
+      correctOverlap = expandLayout = false;
       return;
     }
     if (log.isTraceEnabled()) {
@@ -618,9 +632,9 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
               .filter(v -> !visitedVertices.contains(v))
               .collect(Collectors.toSet()));
     }
-    this.moveVerticesThatOverlapVerticalEdges(layoutModel, horizontalVertexSpacing);
-    if (expandLayout) {
-      expandToFill(layoutModel);
-    }
+    //    this.moveVerticesThatOverlapVerticalEdges(layoutModel, horizontalVertexSpacing);
+    //    if (expandLayout) {
+    //      expandToFill(layoutModel);
+    //    }
   }
 }

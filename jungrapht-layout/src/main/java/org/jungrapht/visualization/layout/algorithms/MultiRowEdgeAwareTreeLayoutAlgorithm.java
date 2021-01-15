@@ -321,10 +321,8 @@ public class MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> extends MultiRowTreeLayo
    * @return the Set of root vertices
    */
   protected Set<V> alignBuildTree(LayoutModel<V> layoutModel) {
-    boolean expandLayoutRequested = this.expandLayout;
     this.expandLayout = false;
     Set<V> roots = super.buildTree(layoutModel);
-    this.expandLayout = expandLayoutRequested;
     Graph<V, E> graph = layoutModel.getGraph();
     // move all the predicated vertices or vertices with adjacent predicated edges
     for (V vertex : layoutModel.getGraph().vertexSet()) {

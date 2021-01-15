@@ -163,11 +163,5 @@ public interface VisualizationViewer<V, E> extends VisualizationServer<V, E> {
   interface GraphMouse extends MouseListener, MouseMotionListener, MouseWheelListener {
 
     default void loadPlugins() {}
-
-    default void setPluginsLoaded() {}
-
-    default boolean isPluginsLoaded() {
-      return false;
-    }
   }
 }

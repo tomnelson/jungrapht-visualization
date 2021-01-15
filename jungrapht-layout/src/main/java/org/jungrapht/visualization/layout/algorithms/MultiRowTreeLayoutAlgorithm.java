@@ -1,11 +1,6 @@
 package org.jungrapht.visualization.layout.algorithms;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.model.Dimension;
@@ -61,8 +56,16 @@ public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
     rowCount = 1;
     Graph<V, ?> graph = layoutModel.getGraph();
     if (graph == null || graph.vertexSet().isEmpty()) {
+      correctOverlap = expandLayout = false;
       return Collections.emptySet();
     }
+    if (graph.vertexSet().size() == 1) {
+      V loner = graph.vertexSet().stream().findFirst().get();
+      layoutModel.set(loner, layoutModel.getWidth() / 2, layoutModel.getHeight() / 2);
+      correctOverlap = expandLayout = false;
+      return graph.vertexSet();
+    }
+
     if (layoutModel instanceof Caching) {
       ((Caching) layoutModel).clear();
     }

@@ -52,6 +52,7 @@ public abstract class AbstractTreeLayoutAlgorithm<V> extends AbstractLayoutAlgor
     protected int horizontalVertexSpacing = TREE_LAYOUT_HORIZONTAL_SPACING;
     protected int verticalVertexSpacing = TREE_LAYOUT_VERTICAL_SPACING;
     protected boolean expandLayout = true;
+    protected boolean correctOverlap = true;
     protected Function<V, Rectangle> vertexBoundsFunction = v -> Rectangle.of(-5, -5, 10, 10);
 
     /** @return this builder cast to type B */
@@ -121,6 +122,16 @@ public abstract class AbstractTreeLayoutAlgorithm<V> extends AbstractLayoutAlgor
       this.expandLayout = expandLayout;
       return self();
     }
+
+    /**
+     * @param correctOverlap if {@code true} move vertices to correct overlap with non-incident
+     *     edges.
+     * @return the Builder
+     */
+    public B correctOverlap(boolean correctOverlap) {
+      this.correctOverlap = correctOverlap;
+      return self();
+    }
   }
 
   /**
@@ -137,6 +148,7 @@ public abstract class AbstractTreeLayoutAlgorithm<V> extends AbstractLayoutAlgor
     this.verticalVertexSpacing = builder.verticalVertexSpacing;
     this.vertexBoundsFunction = builder.vertexBoundsFunction;
     this.expandLayout = builder.expandLayout;
+    this.correctOverlap = builder.correctOverlap;
   }
 
   /** the {}@link Predicate} to determine root vertices */
@@ -184,6 +196,9 @@ public abstract class AbstractTreeLayoutAlgorithm<V> extends AbstractLayoutAlgor
 
   /** if {@code true} then expand the layout size to accomodate the entire tree. */
   protected boolean expandLayout;
+
+  /** if {@code true} then move vertices that overlap non-incident edges */
+  protected boolean correctOverlap;
 
   /**
    * visit a {@link LayoutModel} to set all of the graph vertex positions according to the

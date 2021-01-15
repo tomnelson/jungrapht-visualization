@@ -144,14 +144,14 @@ public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> impleme
             addRegionSelectionMask,
             regionSelectionCompleteMask,
             addRegionSelectionCompleteMask);
+    this.translatingPlugin = new TranslatingGraphMousePlugin(translatingMask);
 
     add(lensKillingGraphMousePlugin);
     add(lensTranslatingGraphMousePlugin);
     add(selectingPlugin);
-    add(new TranslatingGraphMousePlugin(translatingMask));
+    add(translatingPlugin);
     add(regionSelectingPlugin);
     add(magnificationPlugin);
     add(scalingPlugin);
-    setPluginsLoaded();
   }
 }

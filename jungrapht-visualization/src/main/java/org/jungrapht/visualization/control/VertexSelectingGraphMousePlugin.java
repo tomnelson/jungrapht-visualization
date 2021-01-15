@@ -104,9 +104,6 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
   // viewRectangle projected onto the layout coordinate system
   protected Shape layoutTargetShape = viewRectangle;
 
-  /** the Paintable for the lens picking rectangle */
-  protected VisualizationServer.Paintable lensPaintable;
-
   protected Rectangle2D footprintRectangle = new Rectangle2D.Float();
   protected VisualizationViewer.Paintable pickFootprintPaintable;
 
@@ -255,8 +252,6 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
     }
     if (somethingSelected) {
       e.consume();
-    } else {
-      vv.addPostRenderPaintable(lensPaintable);
     }
   }
 
@@ -344,7 +339,6 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
     down = null;
     vertex = null;
     layoutTargetShape = multiLayerTransformer.inverseTransform(viewRectangle);
-    vv.removePostRenderPaintable(lensPaintable);
     vv.removePostRenderPaintable(pickFootprintPaintable);
     vv.repaint();
   }

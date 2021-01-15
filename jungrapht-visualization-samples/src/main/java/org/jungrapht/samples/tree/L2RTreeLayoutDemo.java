@@ -70,10 +70,7 @@ public class L2RTreeLayoutDemo extends JPanel {
     // create a simple graph for the demo
     graph = DemoTreeSupplier.createTreeOne();
 
-    treeLayoutAlgorithm =
-        TreeLayoutAlgorithm.<String>builder()
-            .after(this::setLtoR)
-            .build();
+    treeLayoutAlgorithm = TreeLayoutAlgorithm.<String>builder().after(this::setLtoR).build();
     radialLayoutAlgorithm = new RadialTreeLayoutAlgorithm<>();
     final DefaultGraphMouse<String, Integer> graphMouse = new DefaultGraphMouse<>();
 

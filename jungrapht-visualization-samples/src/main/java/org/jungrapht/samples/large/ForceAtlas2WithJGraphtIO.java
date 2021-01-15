@@ -2,7 +2,6 @@ package org.jungrapht.samples.large;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -118,7 +117,7 @@ public class ForceAtlas2WithJGraphtIO extends JFrame {
 
     container.add(vv.getComponent(), BorderLayout.CENTER);
 
-    JPanel controlPanel = new JPanel(new GridLayout(2, 1));
+    JPanel controlPanel = new JPanel(new BorderLayout());
 
     JComponent top =
         ControlHelpers.getContainer(

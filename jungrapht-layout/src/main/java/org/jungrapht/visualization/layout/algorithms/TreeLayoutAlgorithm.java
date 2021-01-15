@@ -100,10 +100,13 @@ public class TreeLayoutAlgorithm<V> extends AbstractTreeLayoutAlgorithm<V>
         super.visit(layoutModel);
         buildTree(layoutModel);
       }
-      this.moveVerticesThatOverlapVerticalEdges(layoutModel, horizontalVertexSpacing);
+      if (correctOverlap) {
+        this.moveVerticesThatOverlapVerticalEdges(layoutModel, horizontalVertexSpacing);
+      }
       if (expandLayout) {
         expandToFill(layoutModel);
       }
+
       this.after.run();
     }
   }
@@ -124,9 +127,13 @@ public class TreeLayoutAlgorithm<V> extends AbstractTreeLayoutAlgorithm<V>
   protected Set<V> buildTree(LayoutModel<V> layoutModel) {
     Graph<V, ?> graph = layoutModel.getGraph();
     if (graph == null || graph.vertexSet().isEmpty()) {
+      correctOverlap = expandLayout = false;
       return Collections.emptySet();
     }
     if (graph.vertexSet().size() == 1) {
+      V loner = graph.vertexSet().stream().findFirst().get();
+      layoutModel.set(loner, layoutModel.getWidth() / 2, layoutModel.getHeight() / 2);
+      correctOverlap = expandLayout = false;
       return graph.vertexSet();
     }
     if (layoutModel instanceof Caching) {
