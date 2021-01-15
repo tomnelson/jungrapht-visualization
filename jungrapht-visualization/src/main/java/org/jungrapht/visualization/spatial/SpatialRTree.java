@@ -9,7 +9,6 @@ import java.util.*;
 import java.util.List;
 import javax.swing.*;
 import org.jgrapht.Graph;
-import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.control.GraphElementAccessor;
 import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -33,7 +32,6 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
   private static final Logger log = LoggerFactory.getLogger(SpatialRTree.class);
 
   public abstract static class Builder<T, NT> {
-    protected VisualizationModel visualizationModel;
     protected LayoutModel<NT> layoutModel;
     protected BoundingRectangleCollector<T> boundingRectangleCollector;
     protected SplitterContext<T> splitterContext;
@@ -45,16 +43,16 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
       return this;
     }
 
-    public Builder<T, NT> visualizationModel(VisualizationModel visualizationModel) {
-      this.visualizationModel = visualizationModel;
-      return this;
-    }
-
     public Builder<T, NT> layoutModel(LayoutModel<NT> layoutModel) {
       this.layoutModel = layoutModel;
       return this;
     }
 
+    //    public Builder<T, NT> layoutModel(LayoutModel<NT> layoutModel) {
+    //      this.layoutModel = layoutModel;
+    //      return this;
+    //    }
+    //
     public Builder<T, NT> splitterContext(SplitterContext<T> splitterContext) {
       this.splitterContext = splitterContext;
       return this;
@@ -210,6 +208,7 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
         log.trace("got no rectangles");
       }
       log.trace("end recalculate");
+
     } catch (Exception ex) {
       log.debug("unstable RTree got exception: {}", ex);
     }
@@ -252,18 +251,18 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
 
     Vertices(Builder<V> builder) {
       this(
-          builder.visualizationModel,
+          builder.layoutModel,
           builder.boundingRectangleCollector,
           builder.splitterContext,
           builder.reinsert);
     }
 
     Vertices(
-        VisualizationModel visualizationModel,
+        LayoutModel<V> layoutModel,
         BoundingRectangleCollector<V> boundingRectangleCollector,
         SplitterContext<V> splitterContext,
         boolean reinsert) {
-      super(visualizationModel.getLayoutModel(), splitterContext, reinsert);
+      super(layoutModel, splitterContext, reinsert);
       this.boundingRectangleCollector = boundingRectangleCollector;
       rtree = RTree.create();
     }
@@ -428,8 +427,8 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
 
     public static class Builder<E, V> extends SpatialRTree.Builder<E, V> {
 
-      public Builder<E, V> visualizationModel(VisualizationModel visualizationModel) {
-        this.visualizationModel = visualizationModel;
+      public Builder<E, V> layoutModel(LayoutModel<V> layoutModel) {
+        this.layoutModel = layoutModel;
         return this;
       }
 
@@ -444,7 +443,7 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
 
     Edges(Builder<E, V> builder) {
       this(
-          builder.visualizationModel,
+          builder.layoutModel,
           builder.boundingRectangleCollector,
           builder.splitterContext,
           builder.reinsert);
@@ -453,15 +452,15 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
     GraphElementAccessor<V, E> graphElementAccessor;
 
     // Edges gets a VisualizationModel reference to access the Graph and work with edges
-    VisualizationModel<V, E> visualizationModel;
+    //    VisualizationModel<V, E> visualizationModel;
 
     Edges(
-        VisualizationModel<V, E> visualizationModel,
+        LayoutModel<V> layoutModel,
         BoundingRectangleCollector<E> boundingRectangleCollector,
         SplitterContext<E> splitterContext,
         boolean reinsert) {
-      super(visualizationModel.getLayoutModel(), splitterContext, reinsert);
-      this.visualizationModel = visualizationModel;
+      super(layoutModel, splitterContext, reinsert);
+      //      this.layoutModel = layoutModel;
       this.boundingRectangleCollector = boundingRectangleCollector;
       graphElementAccessor = new RadiusGraphElementAccessor();
       rtree = RTree.create();
@@ -476,7 +475,7 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
     public Set<E> getVisibleElements(Shape shape) {
       if (!isActive() || rtree.getRoot().isEmpty()) {
         log.trace("not relaxing so getting from the graph");
-        return visualizationModel.getGraph().edgeSet();
+        return (Set<E>) layoutModel.getGraph().edgeSet();
       }
       pickShapes.add(shape);
       Node<E> root = rtree.getRoot().get();
@@ -498,8 +497,8 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
 
           // get the endpoints for this edge
           // there should be 2
-          V n1 = visualizationModel.getGraph().getEdgeSource(element);
-          V n2 = visualizationModel.getGraph().getEdgeTarget(element);
+          V n1 = layoutModel.getGraph().getEdgeSource(element);
+          V n2 = layoutModel.getGraph().getEdgeTarget(element);
 
           if (n2 == null) {
             n2 = n1;
@@ -541,8 +540,9 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
     public void layoutVertexPositionChanged(LayoutVertexPositionChange.Event<V> evt) {
       V vertex = evt.vertex;
       org.jungrapht.visualization.layout.model.Point p = evt.location;
-      if (visualizationModel.getGraph().containsVertex(vertex)) {
-        Set<E> edges = visualizationModel.getGraph().edgesOf(vertex);
+      if (layoutModel.getGraph().containsVertex(vertex)) {
+        Graph<V, E> graph = layoutModel.getGraph();
+        Set<E> edges = graph.edgesOf(vertex);
 
         for (E edge : edges) {
           update(edge, p);
@@ -554,8 +554,9 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
     public void layoutVertexPositionChanged(LayoutVertexPositionChange.GraphEvent<V> evt) {
       V vertex = evt.vertex;
       org.jungrapht.visualization.layout.model.Point p = evt.location;
-      if (visualizationModel.getGraph().containsVertex(vertex)) {
-        Set<E> edges = visualizationModel.getGraph().edgesOf(vertex);
+      if (layoutModel.getGraph().containsVertex(vertex)) {
+        Graph<V, E> graph = layoutModel.getGraph();
+        Set<E> edges = graph.edgesOf(vertex);
         for (E edge : edges) {
           update(edge, p);
         }
@@ -624,7 +625,7 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
         double winningDistance = -1;
         for (E edge : edges) {
           // get the 2 endpoints
-          Graph<V, E> graph = visualizationModel.getGraph();
+          Graph<V, E> graph = layoutModel.getGraph();
           V u = graph.getEdgeSource(edge);
           V v = graph.getEdgeTarget(edge);
           org.jungrapht.visualization.layout.model.Point up = layoutModel.apply(u);
@@ -668,9 +669,10 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
           layoutModel.isRelaxing());
       if (isActive()) {
         if (log.isTraceEnabled()) {
-          log.trace("recalculate for edges: {}", visualizationModel.getGraph().edgeSet());
+          log.trace("recalculate for edges: {}", layoutModel.getGraph().edgeSet());
         }
-        recalculate(visualizationModel.getGraph().edgeSet());
+        Graph<V, E> graph = layoutModel.getGraph();
+        recalculate(graph.edgeSet());
       }
     }
   }

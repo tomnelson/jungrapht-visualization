@@ -221,12 +221,14 @@ class DefaultVisualizationServer<V, E> extends JPanel
 
     renderContext.getMultiLayerTransformer().addChangeListener(this);
 
-    Spatial<V, V> vertexSpatial = createVertexSpatial(visualizationModel, renderContext);
+    Spatial<V, V> vertexSpatial =
+        createVertexSpatial(visualizationModel.getLayoutModel(), renderContext);
     if (vertexSpatial != null) {
       setVertexSpatial(vertexSpatial);
     }
 
-    Spatial<E, V> edgeSpatial = createEdgeSpatial(visualizationModel, renderContext);
+    Spatial<E, V> edgeSpatial =
+        createEdgeSpatial(visualizationModel.getLayoutModel(), renderContext);
     if (edgeSpatial != null) {
       setEdgeSpatial(edgeSpatial);
     }
@@ -257,8 +259,8 @@ class DefaultVisualizationServer<V, E> extends JPanel
 
   private void createSpatialStuctures(
       VisualizationModel<V, E> visualizationModel, RenderContext<V, E> renderContext) {
-    setVertexSpatial(createVertexSpatial(visualizationModel, renderContext));
-    setEdgeSpatial(createEdgeSpatial(visualizationModel, renderContext));
+    setVertexSpatial(createVertexSpatial(visualizationModel.getLayoutModel(), renderContext));
+    setEdgeSpatial(createEdgeSpatial(visualizationModel.getLayoutModel(), renderContext));
   }
 
   @Override
@@ -941,13 +943,13 @@ class DefaultVisualizationServer<V, E> extends JPanel
   }
 
   private Spatial<V, V> createVertexSpatial(
-      VisualizationModel<V, E> visualizationModel, RenderContext<V, E> renderContext) {
+      LayoutModel<V> layoutModel, RenderContext<V, E> renderContext) {
     Spatial<V, V> vertexSpatial;
     switch (getVertexSpatialSupportPreference()) {
       case RTREE:
         vertexSpatial =
             SpatialRTree.Vertices.builder()
-                .visualizationModel(visualizationModel)
+                .layoutModel(layoutModel)
                 .boundingRectangleCollector(
                     new BoundingRectangleCollector.Vertices<>(
                         renderContext
@@ -987,13 +989,13 @@ class DefaultVisualizationServer<V, E> extends JPanel
   }
 
   private Spatial<E, V> createEdgeSpatial(
-      VisualizationModel<V, E> visualizationModel, RenderContext<V, E> renderContext) {
+      LayoutModel<V> layoutModel, RenderContext<V, E> renderContext) {
     Spatial<E, V> edgeSpatial;
     switch (getEdgeSpatialSupportPreference()) {
       case RTREE:
         edgeSpatial =
             SpatialRTree.Edges.builder()
-                .visualizationModel(visualizationModel)
+                .layoutModel(layoutModel)
                 .boundingRectangleCollector(
                     new BoundingRectangleCollector.Edges<>(
                         renderContext.getVertexShapeFunction(),
