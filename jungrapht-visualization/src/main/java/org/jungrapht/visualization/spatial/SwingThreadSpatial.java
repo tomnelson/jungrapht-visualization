@@ -16,8 +16,9 @@ import org.jungrapht.visualization.spatial.rtree.TreeNode;
 public class SwingThreadSpatial<T, NT> implements Spatial<T, NT> {
 
   protected Spatial<T, NT> spatial;
+  protected Runnable after = () -> {};
 
-  public static <T, NT> Spatial<T, NT> of(Spatial<T, NT> delegate) {
+  public static <T, NT> SwingThreadSpatial<T, NT> of(Spatial<T, NT> delegate) {
     return new SwingThreadSpatial(delegate);
   }
 
@@ -38,6 +39,11 @@ public class SwingThreadSpatial<T, NT> implements Spatial<T, NT> {
       recalculate();
       getLayoutModel().getModelChangeSupport().fireModelChanged(); // this will cause a repaint
     }
+  }
+
+  public Spatial<T, NT> after(Runnable after) {
+    this.after = after;
+    return this;
   }
 
   @Override
@@ -62,12 +68,20 @@ public class SwingThreadSpatial<T, NT> implements Spatial<T, NT> {
 
   @Override
   public void clear() {
-    SwingUtilities.invokeLater(() -> spatial.clear());
+    SwingUtilities.invokeLater(
+        () -> {
+          spatial.clear();
+          after.run();
+        });
   }
 
   @Override
   public void recalculate() {
-    SwingUtilities.invokeLater(() -> spatial.recalculate());
+    SwingUtilities.invokeLater(
+        () -> {
+          spatial.recalculate();
+          after.run();
+        });
   }
 
   @Override

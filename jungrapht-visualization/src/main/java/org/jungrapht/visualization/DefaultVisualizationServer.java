@@ -985,7 +985,9 @@ class DefaultVisualizationServer<V, E> extends JPanel
         vertexSpatial = new Spatial.NoOp.Vertex<>(visualizationModel.getLayoutModel());
         break;
     }
-    return spatialSupportOnSwingThread ? SwingThreadSpatial.of(vertexSpatial) : vertexSpatial;
+    return spatialSupportOnSwingThread
+        ? SwingThreadSpatial.of(vertexSpatial).after(this::repaint)
+        : vertexSpatial;
   }
 
   private Spatial<E, V> createEdgeSpatial(
@@ -1009,6 +1011,8 @@ class DefaultVisualizationServer<V, E> extends JPanel
       default:
         edgeSpatial = new Spatial.NoOp.Edge<>(visualizationModel);
     }
-    return spatialSupportOnSwingThread ? SwingThreadSpatial.of(edgeSpatial) : edgeSpatial;
+    return spatialSupportOnSwingThread
+        ? SwingThreadSpatial.of(edgeSpatial).after(this::repaint)
+        : edgeSpatial;
   }
 }
