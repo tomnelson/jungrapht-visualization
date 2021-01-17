@@ -40,7 +40,6 @@ public class EiglspergerNetworkSimplex extends JFrame {
 
     EiglspergerLayoutAlgorithm<String, Integer> layoutAlgorithm3 =
         EiglspergerLayoutAlgorithm.<String, Integer>edgeAwareBuilder()
-            //                        .straightenEdges(false)
             .postStraighten(true)
             .threaded(false)
             .layering(Layering.NETWORK_SIMPLEX)

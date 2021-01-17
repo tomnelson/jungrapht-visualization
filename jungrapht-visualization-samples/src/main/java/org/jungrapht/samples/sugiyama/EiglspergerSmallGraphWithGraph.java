@@ -33,10 +33,8 @@ public class EiglspergerSmallGraphWithGraph extends JFrame {
 
     EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm3 =
         EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
-            //                        .straightenEdges(false)
             .postStraighten(true)
             .threaded(false)
-            //            .useLongestPathLayering(false)
             .build();
     layoutAlgorithm3.setVertexBoundsFunction(vv3.getRenderContext().getVertexBoundsFunction());
     vv3.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm3);

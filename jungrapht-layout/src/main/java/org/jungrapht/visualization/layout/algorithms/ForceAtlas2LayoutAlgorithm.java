@@ -299,6 +299,11 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
     if (graph == null || graph.vertexSet().isEmpty()) {
       return;
     }
+    if (graph.vertexSet().size() == 1) {
+      V loner = graph.vertexSet().stream().findFirst().get();
+      layoutModel.set(loner, layoutModel.getWidth() / 2, layoutModel.getHeight() / 2);
+      return;
+    }
     if (nodeSizes == null) {
       this.nodeSizes = v -> 1.0;
     }

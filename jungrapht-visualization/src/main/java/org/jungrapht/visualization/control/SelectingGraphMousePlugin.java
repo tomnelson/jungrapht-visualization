@@ -12,7 +12,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.Collection;
 import javax.swing.*;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.PropertyLoader;
@@ -97,9 +96,6 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   // viewRectangle projected onto the layout coordinate system
   protected Shape layoutTargetShape = viewRectangle;
 
-  /** the Paintable for the lens picking rectangle */
-  protected VisualizationServer.Paintable lensPaintable;
-
   protected Rectangle2D footprintRectangle = new Rectangle2D.Float();
   protected VisualizationViewer.Paintable pickFootprintPaintable;
 
@@ -145,25 +141,6 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     this.lensColor = lensColor;
   }
 
-  /**
-   * a Paintable to draw the rectangle used to pick multiple Vertices
-   *
-   * @author Tom Nelson
-   */
-  class LensPaintable implements VisualizationServer.Paintable {
-
-    public void paint(Graphics g) {
-      Color oldColor = g.getColor();
-      g.setColor(lensColor);
-      ((Graphics2D) g).draw(viewRectangle);
-      g.setColor(oldColor);
-    }
-
-    public boolean useTransform() {
-      return false;
-    }
-  }
-
   class FootprintPaintable implements VisualizationServer.Paintable {
 
     public void paint(Graphics g) {
@@ -196,7 +173,6 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
     multiSelectionStrategy = vv.getMultiSelectionStrategySupplier().get();
     TransformSupport<V, E> transformSupport = vv.getTransformSupport();
-    viewRectangle = multiSelectionStrategy.getInitialShape(e.getPoint());
 
     MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
 
@@ -210,10 +186,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
 
     vv.addPostRenderPaintable(pickFootprintPaintable);
     vv.repaint();
-    // subclass can override to account for view distortion effects
-    updatePickingTargets(vv, multiLayerTransformer, down, down);
 
-    // subclass can override to account for view distortion effects
     // layoutPoint is the mouse event point projected on the layout coordinate system
     Point2D layoutPoint = transformSupport.inverseTransform(vv, down);
     log.trace("layout coords of mouse click {}", layoutPoint);
@@ -257,6 +230,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
           selectedVertexState.clear();
         }
         selectedVertexState.select(vertex);
+        deselectedVertex = null;
       } else {
         // If this vertex is still around in mouseReleased, it will be deselected
         // If this vertex was pressed again in order to drag it, it will be set
@@ -316,8 +290,6 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
 
     log.trace("down:{} out:{}", down, out);
     if (vertex != null && !down.equals(out)) {
-
-      multiSelectionStrategy.closeShape();
       // dragging points and changing their layout locations
       Point2D graphPoint = multiLayerTransformer.inverseTransform(out);
       log.trace("p in graph coords is {}", graphPoint);
@@ -432,29 +404,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
       Point2D down,
       Point2D out) {
 
-    multiSelectionStrategy.updateShape(down, down);
     layoutTargetShape = multiLayerTransformer.inverseTransform(viewRectangle);
-  }
-
-  /**
-   * pick the vertices inside the rectangle created from points 'down' and 'out' (two diagonally
-   * opposed corners of the rectangle)
-   *
-   * @param vv the viewer containing the layout and selected state
-   * @param pickTarget - the shape to pick vertices in (layout coordinate system)
-   * @param clear whether to reset existing selected state
-   */
-  protected Collection<V> pickContainedVertices(
-      VisualizationViewer<V, E> vv, Shape pickTarget, boolean clear) {
-    MutableSelectedState<V> selectedVertexState = vv.getSelectedVertexState();
-    GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
-    LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
-    Collection<V> picked = pickSupport.getVertices(layoutModel, pickTarget);
-    if (clear) {
-      selectedVertexState.clear();
-    }
-    selectedVertexState.select(picked);
-    return picked;
   }
 
   public void mouseClicked(MouseEvent e) {}
