@@ -55,12 +55,12 @@ Same graph using CircleLayoutAlgorithm with reduced edge crossing
 ### Latest Release
 
 
-The most recent version of JUNGRAPHT-VISUALIZATION is [version 1.0](https://github.com/tomnelson/jungrapht-visualization/releases/tag/v1.0), released 29 October 2020.
+The most recent version of JUNGRAPHT-VISUALIZATION is [version 1.1](https://github.com/tomnelson/jungrapht-visualization/releases/tag/v1.1), released 18 January 2021.
 *   [Javadoc](http://tomnelson.github.io/jungrapht-visualization/javadoc/index.html)
-*   [Maven Search Repository](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.tomnelson%22%20AND%20v%3A%221.0%22%20AND%20(a%3A%22jungrapht-visualization%22%20OR%20a%3A%22jungrapht-visualization-samples%22))
-    *   `jungrapht-visualization`: [jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization/1.0/jungrapht-visualization-1.0.jar), [source jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization/1.0/jungrapht-visualization-1.0-sources.jar), [documentation jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization/1.0/jungrapht-visualization-1.0-javadoc.jar)
-    *   `jungrapht-layout`: [jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-layout/1.0/jungrapht-layout-1.0.jar), [source jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-layout/1.0/jungrapht-layout-1.0-sources.jar), [documentation jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-layout/1.0/jungrapht-layout-1.0-javadoc.jar)
-    *   `jungrapht-visualization-samples`: [jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization-samples/1.0/jungrapht-visualization-samples-1.0.jar), [source jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization-samples/1.0/jungrapht-visualization-samples-1.0-sources.jar), [documentation jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization-samples/1.0/jungrapht-visualization-samples-1.0-javadoc.jar)
+*   [Maven Search Repository](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.tomnelson%22%20AND%20v%3A%221.1%22%20AND%20(a%3A%22jungrapht-visualization%22%20OR%20a%3A%22jungrapht-visualization-samples%22))
+    *   `jungrapht-visualization`: [jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization/1.1/jungrapht-visualization-1.1.jar), [source jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization/1.1/jungrapht-visualization-1.1-sources.jar), [documentation jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization/1.1/jungrapht-visualization-1.1-javadoc.jar)
+    *   `jungrapht-layout`: [jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-layout/1.1/jungrapht-layout-1.1.jar), [source jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-layout/1.1/jungrapht-layout-1.1-sources.jar), [documentation jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-layout/1.1/jungrapht-layout-1.1-javadoc.jar)
+    *   `jungrapht-visualization-samples`: [jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization-samples/1.1/jungrapht-visualization-samples-1.1.jar), [source jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization-samples/1.1/jungrapht-visualization-samples-1.1-sources.jar), [documentation jar](http://search.maven.org/remotecontent?filepath=com/github/tomnelson/jungrapht-visualization-samples/1.1/jungrapht-visualization-samples-1.1-javadoc.jar)
 
 To add a dependency on this release of JUNGRAPHT-VISUALIZATION using Maven, use the following:
 
@@ -68,13 +68,13 @@ To add a dependency on this release of JUNGRAPHT-VISUALIZATION using Maven, use 
 <dependency>
   <groupId>com.github.tomnelson</groupId>
   <artifactId>jungrapht-visualization</artifactId>
-  <version>1.0</version>
+  <version>1.1</version>
 </dependency>
 ```
 
 ### Snapshots
 
-Snapshots of JUNGRAPHT-VISUALIZATION built from the `master` branch are available through Maven using version `1.1-SNAPSHOT`.
+Snapshots of JUNGRAPHT-VISUALIZATION built from the `master` branch are available through Maven using version `1.2-SNAPSHOT`.
 
 ### Links
 
