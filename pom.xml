@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.tomnelson</groupId>
     <artifactId>jungrapht-visualization-parent</artifactId>
-    <version>1.1</version>
+    <version>1.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>JunGrapht Visualization</name>
     <description>Jungrapht-visualization is a port of the Java Universal Network Graph (JUNG)
