@@ -126,23 +126,4 @@ public class LensKillingGraphMousePlugin<V, E> extends SelectingGraphMousePlugin
   protected Shape transform(VisualizationViewer<V, E> vv, Shape shape) {
     return transformSupport.transform(vv, shape);
   }
-
-  /**
-   * Overriden to perform Lens effects when managing the picking Lens target shape (drawn with the
-   * mouse) in both the layout and view coordinate systems
-   *
-   * @param vv
-   * @param multiLayerTransformer
-   * @param down
-   * @param out
-   */
-  @Override
-  protected void updatePickingTargets(
-      VisualizationViewer vv,
-      MultiLayerTransformer multiLayerTransformer,
-      Point2D down,
-      Point2D out) {
-    multiSelectionStrategy.updateShape(down, down);
-    layoutTargetShape = transformSupport.inverseTransform(vv, viewRectangle);
-  }
 }

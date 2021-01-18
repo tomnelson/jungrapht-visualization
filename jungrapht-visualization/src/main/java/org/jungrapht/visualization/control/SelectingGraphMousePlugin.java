@@ -91,11 +91,6 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   /** controls whether the Vertices may be moved with the mouse */
   protected boolean locked;
 
-  /** used to draw a rectangle to contain selected vertices */
-  protected Shape viewRectangle = new Rectangle2D.Float();
-  // viewRectangle projected onto the layout coordinate system
-  protected Shape layoutTargetShape = viewRectangle;
-
   protected Rectangle2D footprintRectangle = new Rectangle2D.Float();
   protected VisualizationViewer.Paintable pickFootprintPaintable;
 
@@ -312,7 +307,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     down = null;
     vertex = null;
     edge = null;
-    layoutTargetShape = multiLayerTransformer.inverseTransform(viewRectangle);
+
     vv.removePostRenderPaintable(pickFootprintPaintable);
     if (deselectedVertex != null) {
       ps.deselect(deselectedVertex);
@@ -388,23 +383,6 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   protected Shape transform(VisualizationViewer<V, E> vv, Shape shape) {
     MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
     return multiLayerTransformer.transform(shape);
-  }
-
-  /**
-   * override to consider Lens effects
-   *
-   * @param vv
-   * @param multiLayerTransformer
-   * @param down
-   * @param out
-   */
-  protected void updatePickingTargets(
-      VisualizationViewer vv,
-      MultiLayerTransformer multiLayerTransformer,
-      Point2D down,
-      Point2D out) {
-
-    layoutTargetShape = multiLayerTransformer.inverseTransform(viewRectangle);
   }
 
   public void mouseClicked(MouseEvent e) {}

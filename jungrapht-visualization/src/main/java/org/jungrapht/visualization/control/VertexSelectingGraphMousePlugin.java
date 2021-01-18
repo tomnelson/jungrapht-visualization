@@ -27,9 +27,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * VertexSelectingGraphMousePlugin supports the selecting of graph vertices with the mouse.
- * MouseButtonOne selects a single vertex, and MouseButtonTwo adds to the set of selected Vertices.
- * If a Vertex is selected and the mouse is dragged while on the selected Vertex, then that Vertex
- * will be repositioned to follow the mouse until the button is released.
+ * MouseButtonOne selects a single vertex. If a Vertex is selected and the mouse is dragged while on
+ * the selected Vertex, then that Vertex will be repositioned to follow the mouse until the button
+ * is released.
  *
  * @author Tom Nelson
  * @param <V> vertex type
@@ -89,11 +89,6 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
   /** controls whether the Vertices may be moved with the mouse */
   protected boolean locked;
 
-  /** used to draw a rectangle to contain selected vertices */
-  protected Shape viewRectangle = new Rectangle2D.Float();
-  // viewRectangle projected onto the layout coordinate system
-  protected Shape layoutTargetShape = viewRectangle;
-
   protected Rectangle2D footprintRectangle = new Rectangle2D.Float();
   protected VisualizationViewer.Paintable pickFootprintPaintable;
 
@@ -103,6 +98,7 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
   protected Point2D deltaDown;
 
   protected int singleSelectionMask;
+
   protected int addSingleSelectionMask;
 
   protected boolean vertexDragged;
@@ -166,12 +162,9 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
 
   /**
    * For primary modifiers (default, MouseButton1): pick a single Vertex or Edge that is under the
-   * mouse pointer. If no Vertex or edge is under the pointer, unselect all selected Vertices and
-   * edges, and set up to draw a rectangle for multiple selection of contained Vertices. For
-   * additional selection (default Shift+MouseButton1): Add to the selection, a single Vertex or
-   * Edge that is under the mouse pointer. If a previously selected Vertex or Edge is under the
-   * pointer, it is un-selected. If no vertex or Edge is under the pointer, set up to draw a
-   * multiple selection rectangle (as above) but do not unpick previously selected elements.
+   * mouse pointer. For additional selection (default Shift+MouseButton1): Add to the selection, a
+   * single Vertex or Edge that is under the mouse pointer. If a previously selected Vertex or Edge
+   * is under the pointer, it is un-selected.
    *
    * @param e the event
    */
@@ -197,8 +190,6 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
 
     vv.addPostRenderPaintable(pickFootprintPaintable);
     vv.repaint();
-    // subclass can override to account for view distortion effects
-    updatePickingTargets(vv, multiLayerTransformer, down, down);
 
     // subclass can override to account for view distortion effects
     // layoutPoint is the mouse event point projected on the layout coordinate system
@@ -288,7 +279,6 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
 
     down = null;
     vertex = null;
-    layoutTargetShape = multiLayerTransformer.inverseTransform(viewRectangle);
     vv.removePostRenderPaintable(pickFootprintPaintable);
     if (deselectedVertex != null) {
       ps.deselect(deselectedVertex);
@@ -364,23 +354,6 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
   protected Shape transform(VisualizationViewer<V, E> vv, Shape shape) {
     MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
     return multiLayerTransformer.transform(shape);
-  }
-
-  /**
-   * override to consider Lens effects
-   *
-   * @param vv
-   * @param multiLayerTransformer
-   * @param down
-   * @param out
-   */
-  protected void updatePickingTargets(
-      VisualizationViewer vv,
-      MultiLayerTransformer multiLayerTransformer,
-      Point2D down,
-      Point2D out) {
-
-    layoutTargetShape = multiLayerTransformer.inverseTransform(viewRectangle);
   }
 
   public void mouseClicked(MouseEvent e) {}
