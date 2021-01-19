@@ -1,4 +1,6 @@
 org.jungrapht.samples
+org.jungrapht.samples.control.modal
+org.jungrapht.samples.flow
 org.jungrapht.samples.large
 org.jungrapht.samples.quadtree
 org.jungrapht.samples.rtree
@@ -10,8 +12,8 @@ org.jungrapht.samples.util
 org.jungrapht.visualization
 org.jungrapht.visualization.annotations
 org.jungrapht.visualization.control
+org.jungrapht.visualization.control.modal
 org.jungrapht.visualization.decorators
-org.jungrapht.visualization.layout
 org.jungrapht.visualization.layout.algorithms
 org.jungrapht.visualization.layout.algorithms.eiglsperger
 org.jungrapht.visualization.layout.algorithms.repulsion
@@ -26,7 +28,7 @@ org.jungrapht.visualization.renderers
 org.jungrapht.visualization.selection
 org.jungrapht.visualization.spatial
 org.jungrapht.visualization.spatial.rtree
-org.jungrapht.visualization.subLayout
+org.jungrapht.visualization.sublayout
 org.jungrapht.visualization.transform
 org.jungrapht.visualization.transform.shape
 org.jungrapht.visualization.util
