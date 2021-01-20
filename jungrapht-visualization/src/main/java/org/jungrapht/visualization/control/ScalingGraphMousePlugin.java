@@ -73,7 +73,7 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
       return self();
     }
 
-    public Builder xAisScalingMask(int xAxisScalingMask) {
+    public Builder xAxisScalingMask(int xAxisScalingMask) {
       this.xAxisScalingMask = xAxisScalingMask;
       return self();
     }

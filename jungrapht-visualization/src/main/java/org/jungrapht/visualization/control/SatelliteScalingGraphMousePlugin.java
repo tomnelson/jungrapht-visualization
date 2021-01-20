@@ -27,6 +27,29 @@ import org.jungrapht.visualization.VisualizationViewer;
  */
 public class SatelliteScalingGraphMousePlugin extends ScalingGraphMousePlugin {
 
+  public static class Builder extends ScalingGraphMousePlugin.Builder {
+
+    public SatelliteScalingGraphMousePlugin build() {
+      return new SatelliteScalingGraphMousePlugin(this);
+    }
+  }
+
+  public static Builder builder() {
+    return new Builder();
+  }
+
+  public SatelliteScalingGraphMousePlugin() {
+    this(SatelliteScalingGraphMousePlugin.builder());
+  }
+
+  public SatelliteScalingGraphMousePlugin(Builder builder) {
+    this(
+        builder.scalingControl,
+        builder.scalingMask,
+        builder.xAxisScalingMask,
+        builder.yAxisScalingMask);
+  }
+
   public SatelliteScalingGraphMousePlugin(
       ScalingControl scaler, int scalingMask, int xAxisScalingMask, int yAxisScalingMask) {
     super(scaler, scalingMask, xAxisScalingMask, yAxisScalingMask);
