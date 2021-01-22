@@ -54,6 +54,13 @@ import org.jungrapht.visualization.util.LayoutAlgorithmTransition;
  * applied to either the model (graph layout) or the view (VisualizationViewer) The transforms are
  * applied in an elliptical lens that affects that part of the visualization.
  *
+ * <p>This version of the LensDemo has customized (via properties) graph mouse settings so that
+ * MouseButtonOne click on a vertex or edge selects it (no additional modifier), click on vertex
+ * followed by a drag will move the selected vertices, while a click not on a vertex or an edge
+ * followed by a drag will translate the graph. MouseButtonOne+CTRL (Command on Mac) will initiate
+ * tracing a rectangle which can be dragged to enclose vertices. When the mouse button is released,
+ * the contained vertices will be selected.
+ *
  * @author Tom Nelson
  */
 public class LensDemoWithDefaultGraphMouseProperyDriven extends JPanel {

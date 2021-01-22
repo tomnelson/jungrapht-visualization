@@ -25,6 +25,7 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.*;
 import org.jungrapht.visualization.control.modal.ModePanel;
 import org.jungrapht.visualization.decorators.EdgeShape;
+import org.jungrapht.visualization.decorators.GradientEdgePaintFunction;
 import org.jungrapht.visualization.decorators.ParallelEdgeShapeFunction;
 import org.jungrapht.visualization.layout.algorithms.CircleLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -90,6 +91,9 @@ public class EdgeLabelDemo extends JPanel {
     vv.setVertexToolTipFunction(
         o -> o + " " + vv.getVisualizationModel().getLayoutModel().apply(o));
 
+    Function<Number, Paint> gradientPaintFunction = new GradientEdgePaintFunction<>(vv);
+    vv.getRenderContext().setEdgeDrawPaintFunction(gradientPaintFunction);
+
     // create a frame to hold the graph
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
@@ -100,6 +104,7 @@ public class EdgeLabelDemo extends JPanel {
         e -> {
           if (e.getStateChange() == ItemEvent.SELECTED) {
             vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
+            vv.getRenderContext().setEdgeFillPaintFunction(v -> null);
             vv.repaint();
           }
         });
@@ -109,6 +114,7 @@ public class EdgeLabelDemo extends JPanel {
         e -> {
           if (e.getStateChange() == ItemEvent.SELECTED) {
             vv.getRenderContext().setEdgeShapeFunction(EdgeShape.quadCurve());
+            vv.getRenderContext().setEdgeFillPaintFunction(v -> null);
             vv.repaint();
           }
         });
@@ -118,6 +124,7 @@ public class EdgeLabelDemo extends JPanel {
         e -> {
           if (e.getStateChange() == ItemEvent.SELECTED) {
             vv.getRenderContext().setEdgeShapeFunction(EdgeShape.cubicCurve());
+            vv.getRenderContext().setEdgeFillPaintFunction(v -> null);
             vv.repaint();
           }
         });
@@ -126,6 +133,7 @@ public class EdgeLabelDemo extends JPanel {
         e -> {
           if (e.getStateChange() == ItemEvent.SELECTED) {
             vv.getRenderContext().setEdgeShapeFunction(EdgeShape.wedge());
+            vv.getRenderContext().setEdgeFillPaintFunction(gradientPaintFunction);
             vv.repaint();
           }
         });

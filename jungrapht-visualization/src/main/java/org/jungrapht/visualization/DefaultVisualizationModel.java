@@ -101,7 +101,7 @@ class DefaultVisualizationModel<V, E> implements VisualizationModel<V, E> {
 
   @Override
   public LayoutModel<V> getLayoutModel() {
-    log.trace("getting a layourModel " + layoutModel);
+    //    log.trace("getting a layourModel " + layoutModel);
     return layoutModel;
   }
 
