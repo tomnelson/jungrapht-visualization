@@ -1,5 +1,7 @@
 package org.jungrapht.visualization.decorators;
 
+import static org.jungrapht.visualization.MultiLayerTransformer.Layer.LAYOUT;
+
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.function.Function;
@@ -40,8 +42,8 @@ public class GradientEdgePaintFunction<V, E> implements Function<E, Paint> {
     V target = graph.getEdgeTarget(edge);
     Point sourcePoint = layoutModel.apply(source);
     Point targetPoint = layoutModel.apply(target);
-    Point2D sourceInView = transformer.transform(sourcePoint.x, sourcePoint.y);
-    Point2D targetInView = transformer.transform(targetPoint.x, targetPoint.y);
+    Point2D sourceInView = transformer.transform(LAYOUT, sourcePoint.x, sourcePoint.y);
+    Point2D targetInView = transformer.transform(LAYOUT, targetPoint.x, targetPoint.y);
     Color edgeColor = (Color) originalEdgePaintFunction.apply(edge);
     if (Color.black.equals(edgeColor)) {
       return new GradientPaint(sourceInView, Color.lightGray.brighter(), targetInView, Color.black);

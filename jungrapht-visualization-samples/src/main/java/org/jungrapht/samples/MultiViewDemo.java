@@ -34,6 +34,7 @@ import org.jungrapht.visualization.control.LayoutScalingControl;
 import org.jungrapht.visualization.control.ScalingGraphMousePlugin;
 import org.jungrapht.visualization.control.ViewScalingControl;
 import org.jungrapht.visualization.decorators.EdgeShape;
+import org.jungrapht.visualization.decorators.GradientVertexPaintFunction;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.selection.MultiMutableSelectedState;
@@ -156,6 +157,10 @@ public class MultiViewDemo extends JPanel {
     vv1.setVertexToolTipFunction(Object::toString);
     vv2.setVertexToolTipFunction(Object::toString);
     vv3.setVertexToolTipFunction(Object::toString);
+
+    vv1.getRenderContext().setVertexFillPaintFunction(new GradientVertexPaintFunction<>(vv1));
+    vv2.getRenderContext().setVertexFillPaintFunction(new GradientVertexPaintFunction<>(vv2));
+    vv3.getRenderContext().setVertexFillPaintFunction(new GradientVertexPaintFunction<>(vv3));
 
     JPanel panel = new JPanel(new GridLayout(1, 0));
 

@@ -26,6 +26,7 @@ import org.jungrapht.visualization.control.*;
 import org.jungrapht.visualization.control.modal.ModePanel;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.decorators.GradientEdgePaintFunction;
+import org.jungrapht.visualization.decorators.GradientVertexPaintFunction;
 import org.jungrapht.visualization.decorators.ParallelEdgeShapeFunction;
 import org.jungrapht.visualization.layout.algorithms.CircleLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
@@ -85,7 +86,10 @@ public class EdgeLabelDemo extends JPanel {
             v -> vv.getSelectedEdgeState().isSelected(v) ? Color.cyan : Color.black);
     vv.getRenderContext()
         .setVertexFillPaintFunction(
-            v -> vv.getSelectedVertexState().isSelected(v) ? Color.yellow : Color.red);
+            v -> vv.getSelectedVertexState().isSelected(v) ? Color.blue : Color.red);
+    vv.getRenderContext()
+        .setVertexDrawPaintFunction(
+            v -> vv.getSelectedVertexState().isSelected(v) ? Color.blue : Color.red);
 
     // add my listener for ToolTips
     vv.setVertexToolTipFunction(
@@ -93,7 +97,8 @@ public class EdgeLabelDemo extends JPanel {
 
     Function<Number, Paint> gradientPaintFunction = new GradientEdgePaintFunction<>(vv);
     vv.getRenderContext().setEdgeDrawPaintFunction(gradientPaintFunction);
-
+    Function<Integer, Paint> gradientVertexPaintFunction = new GradientVertexPaintFunction<>(vv);
+    vv.getRenderContext().setVertexFillPaintFunction(gradientVertexPaintFunction);
     // create a frame to hold the graph
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
