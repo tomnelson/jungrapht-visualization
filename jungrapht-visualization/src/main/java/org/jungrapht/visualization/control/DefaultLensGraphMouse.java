@@ -134,10 +134,14 @@ public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> impleme
             out);
     this.selectingPlugin =
         vertexSelectionOnly
-            ? new LensVertexSelectingGraphMousePlugin<V, E>(
-                singleSelectionMask, addSingleSelectionMask)
-            : new LensSelectingGraphMousePlugin<>(singleSelectionMask, addSingleSelectionMask);
-    new LensSelectingGraphMousePlugin<>(singleSelectionMask, addSingleSelectionMask);
+            ? LensVertexSelectingGraphMousePlugin.builder()
+                .singleSelectionMask(singleSelectionMask)
+                .addSingleSelectionMask(addSingleSelectionMask)
+                .build()
+            : LensSelectingGraphMousePlugin.builder()
+                .singleSelectionMask(singleSelectionMask)
+                .addSingleSelectionMask(addSingleSelectionMask)
+                .build();
     this.regionSelectingPlugin =
         new LensRegionSelectingGraphMousePlugin<>(
             regionSelectionMask,

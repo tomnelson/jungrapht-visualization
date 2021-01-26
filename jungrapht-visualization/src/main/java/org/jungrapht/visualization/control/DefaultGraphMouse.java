@@ -201,7 +201,10 @@ public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
     selectingPlugin =
         vertexSelectionOnly
             ? new VertexSelectingGraphMousePlugin<>(singleSelectionMask, addSingleSelectionMask)
-            : new SelectingGraphMousePlugin<>(singleSelectionMask, addSingleSelectionMask);
+            : SelectingGraphMousePlugin.builder()
+                .singleSelectionMask(singleSelectionMask)
+                .addSingleSelectionMask(addSingleSelectionMask)
+                .build();
     regionSelectingPlugin =
         RegionSelectingGraphMousePlugin.builder()
             .regionSelectionMask(regionSelectionMask)

@@ -51,6 +51,9 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
         Modifiers.masks.get(
             System.getProperty(PREFIX + "addSingleSelectionMask", "MB1_SHIFT_MENU"));
 
+    protected boolean showFootprint =
+        Boolean.parseBoolean(System.getProperty(PREFIX + "showFootprint", "false"));
+
     public B self() {
       return (B) this;
     }
@@ -62,6 +65,11 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
 
     public B addSingleSelectionMask(int addSingleSelectionMask) {
       this.addSingleSelectionMask = addSingleSelectionMask;
+      return self();
+    }
+
+    public B showFootprint(boolean showFootprint) {
+      this.showFootprint = showFootprint;
       return self();
     }
 
@@ -104,10 +112,10 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   protected int singleSelectionMask;
   protected int addSingleSelectionMask;
 
-  protected boolean vertexDragged;
+  protected boolean showFootprint;
 
   public SelectingGraphMousePlugin(Builder<V, E, ?, ?> builder) {
-    this(builder.singleSelectionMask, builder.addSingleSelectionMask);
+    this(builder.singleSelectionMask, builder.addSingleSelectionMask, builder.showFootprint);
   }
 
   public SelectingGraphMousePlugin() {
@@ -119,9 +127,11 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    * @param singleSelectionMask for primary selection of one vertex
    * @param addSingleSelectionMask to add another vertex to the current selection
    */
-  protected SelectingGraphMousePlugin(int singleSelectionMask, int addSingleSelectionMask) {
+  SelectingGraphMousePlugin(
+      int singleSelectionMask, int addSingleSelectionMask, boolean showFootprint) {
     this.singleSelectionMask = singleSelectionMask;
     this.addSingleSelectionMask = addSingleSelectionMask;
+    this.showFootprint = showFootprint;
     this.pickFootprintPaintable = new FootprintPaintable();
     this.cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
   }
@@ -334,7 +344,6 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
       log.trace("down is {}", down);
       if (vertex != null) {
         selectedVertexState.select(vertex);
-        vertexDragged = true;
         // dragging points and changing their layout locations
         Point2D graphPoint = multiLayerTransformer.inverseTransform(p);
         log.trace("p in graph coords is {}", graphPoint);
