@@ -10,16 +10,10 @@
 
 package org.jungrapht.visualization.layout.algorithms;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.util.NeighborCache;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -176,6 +170,29 @@ public abstract class AbstractTreeLayoutAlgorithm<V> extends AbstractLayoutAlgor
     this.vertexBoundsFunction = vertexBoundsFunction;
   }
 
+  protected List<V> getRoots(Graph<V, ?> graph) {
+    return graph
+        .vertexSet()
+        .stream()
+        .filter(rootPredicate)
+        .sorted(rootComparator)
+        .sorted(Comparator.comparingInt(v -> TreeLayout.vertexIsolationScore(graph, v)))
+        .collect(Collectors.toList());
+  }
+
+  protected void defineRootPredicate(Graph<V, ?> graph) {
+    this.defaultRootPredicate =
+        v ->
+            graph.containsVertex(v)
+                && (graph.incomingEdgesOf(v).isEmpty() || TreeLayout.isIsolatedVertex(graph, v));
+
+    if (this.rootPredicate == null) {
+      this.rootPredicate = this.defaultRootPredicate;
+    } else {
+      this.rootPredicate = this.rootPredicate.or(this.defaultRootPredicate);
+    }
+  }
+
   /**
    * a {}@link Map} of vertex to a {@link Rectangle} that will contain the vertex and all of its
    * children
@@ -208,6 +225,7 @@ public abstract class AbstractTreeLayoutAlgorithm<V> extends AbstractLayoutAlgor
    */
   @Override
   public void visit(LayoutModel<V> layoutModel) {
+    defineRootPredicate(layoutModel.getGraph());
     this.neighborCache = new NeighborCache<>(layoutModel.getGraph());
   }
 

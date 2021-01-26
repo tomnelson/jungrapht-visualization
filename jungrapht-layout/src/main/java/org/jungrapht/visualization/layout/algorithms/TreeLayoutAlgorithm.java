@@ -84,11 +84,13 @@ public class TreeLayoutAlgorithm<V> extends AbstractTreeLayoutAlgorithm<V>
    */
   @Override
   public void visit(LayoutModel<V> layoutModel) {
-    if (!layoutModel.getGraph().vertexSet().isEmpty()) {
+    super.visit(layoutModel);
+    Graph<V, ?> graph = layoutModel.getGraph();
+    if (!graph.vertexSet().isEmpty()) {
 
       // if this is an undirected graph, create a spanning tree, lay that out and use it to
       // initialize this layout model
-      if (layoutModel.getGraph().getType().isUndirected()) {
+      if (graph.getType().isUndirected() || getRoots(graph).size() == 0) {
         Graph<V, ?> tree = TreeLayoutAlgorithm.getSpanningTree(layoutModel.getGraph());
         LayoutModel<V> treeLayoutModel = DefaultLayoutModel.from(layoutModel);
         treeLayoutModel.setGraph(tree);
@@ -140,10 +142,10 @@ public class TreeLayoutAlgorithm<V> extends AbstractTreeLayoutAlgorithm<V>
       ((Caching) layoutModel).clear();
     }
 
-    this.defaultRootPredicate =
-        v ->
-            graph.containsVertex(v)
-                && (graph.incomingEdgesOf(v).isEmpty() || TreeLayout.isIsolatedVertex(graph, v));
+    //    this.defaultRootPredicate =
+    //        v ->
+    //            graph.containsVertex(v)
+    //                && (graph.incomingEdgesOf(v).isEmpty() || TreeLayout.isIsolatedVertex(graph, v));
     // when provided, replace the horizontal and vertical spacing with twice the average
     // width and height of the Shapes returned by the function
     if (vertexBoundsFunction != null) {
@@ -151,11 +153,11 @@ public class TreeLayoutAlgorithm<V> extends AbstractTreeLayoutAlgorithm<V>
       this.horizontalVertexSpacing = averageVertexSize.width * 2;
       this.verticalVertexSpacing = averageVertexSize.height * 2;
     }
-    if (this.rootPredicate == null) {
-      this.rootPredicate = this.defaultRootPredicate;
-    } else {
-      this.rootPredicate = this.rootPredicate.or(this.defaultRootPredicate);
-    }
+    //    if (this.rootPredicate == null) {
+    //      this.rootPredicate = this.defaultRootPredicate;
+    //    } else {
+    //      this.rootPredicate = this.rootPredicate.or(this.defaultRootPredicate);
+    //    }
     if (graph.vertexSet().size() == 1) {
       V loner = graph.vertexSet().stream().findFirst().get();
       layoutModel.set(loner, Point.of(layoutModel.getWidth() / 2, layoutModel.getHeight() / 2));
@@ -170,6 +172,13 @@ public class TreeLayoutAlgorithm<V> extends AbstractTreeLayoutAlgorithm<V>
             .sorted(rootComparator)
             .sorted(Comparator.comparingInt(v -> TreeLayout.vertexIsolationScore(graph, v)))
             .collect(Collectors.toList());
+
+    //    if (roots.size() == 0) {
+    //      Graph<V, ?> tree = TreeLayoutAlgorithm.getSpanningTree(graph);
+    //      layoutModel.setGraph(tree);
+    //      Set<V> treeRoots = buildTree(layoutModel);
+    //      return treeRoots;
+    //    }
 
     calculateWidth(layoutModel, roots, new HashSet<>());
     calculateHeight(layoutModel, roots, new HashSet<>());

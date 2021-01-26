@@ -499,10 +499,12 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
 
   @Override
   public void visit(LayoutModel<V> layoutModel) {
+    super.visit(layoutModel);
     // if this is an undirected graph, create a spanning tree, lay that out and use it to
     // initialize this layout model
     Graph<V, ?> graph = layoutModel.getGraph();
-    if (layoutModel.getGraph().getType().isUndirected()) {
+    if (layoutModel.getGraph().getType().isUndirected()
+        || getRoots(layoutModel.getGraph()).size() == 0) {
       Graph<V, ?> tree = TreeLayoutAlgorithm.getSpanningTree(layoutModel.getGraph());
       LayoutModel<V> treeLayoutModel = DefaultLayoutModel.from(layoutModel);
       treeLayoutModel.setGraph(tree);
@@ -543,18 +545,18 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
     if (log.isTraceEnabled()) {
       log.trace("this graph has {} vertices", graph.vertexSet().size());
     }
-    this.defaultRootPredicate =
-        v ->
-            graph.containsVertex(v)
-                && (graph.incomingEdgesOf(v).isEmpty()
-                    || TreeLayout.isIsolatedVertex(layoutModel.getGraph(), v));
+    //    this.defaultRootPredicate =
+    //        v ->
+    //            graph.containsVertex(v)
+    //                && (graph.incomingEdgesOf(v).isEmpty()
+    //                    || TreeLayout.isIsolatedVertex(layoutModel.getGraph(), v));
     this.vertexData.clear();
     this.heights.clear();
-    if (this.rootPredicate == null) {
-      this.rootPredicate = this.defaultRootPredicate;
-    } else {
-      this.rootPredicate = this.rootPredicate.or(this.defaultRootPredicate);
-    }
+    //    if (this.rootPredicate == null) {
+    //      this.rootPredicate = this.defaultRootPredicate;
+    //    } else {
+    //      this.rootPredicate = this.rootPredicate.or(this.defaultRootPredicate);
+    //    }
     if (vertexBoundsFunction != null) {
       Dimension averageVertexSize = computeAverageVertexDimension(graph, vertexBoundsFunction);
       this.horizontalVertexSpacing = averageVertexSize.width * 2;
@@ -585,6 +587,13 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
             .collect(Collectors.toList());
 
     this.roots = ComponentGrouping.groupByComponents(graph, roots);
+
+    if (roots.size() == 0) {
+      Graph<V, ?> tree = TreeLayoutAlgorithm.getSpanningTree(graph);
+      layoutModel.setGraph(tree);
+      visit(layoutModel);
+      return;
+    }
 
     TreeView<V, E> treeView =
         builder
