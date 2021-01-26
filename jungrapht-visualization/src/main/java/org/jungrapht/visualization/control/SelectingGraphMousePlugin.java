@@ -189,7 +189,9 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
             pickSize,
             pickSize);
 
-    vv.addPostRenderPaintable(pickFootprintPaintable);
+    if (showFootprint) {
+      vv.addPostRenderPaintable(pickFootprintPaintable);
+    }
     vv.repaint();
 
     // layoutPoint is the mouse event point projected on the layout coordinate system
