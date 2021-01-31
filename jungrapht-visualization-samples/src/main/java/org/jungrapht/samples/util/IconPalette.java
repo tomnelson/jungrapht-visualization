@@ -35,11 +35,9 @@ public class IconPalette extends JPanel {
       String name = "/images/topic" + iconNames[i] + ".gif";
       try {
         Icon icon = new LayeredIcon(new ImageIcon(IconPalette.class.getResource(name)).getImage());
-        //                Image icon = new ImageIcon(IconPalette.class.getResource(name)).getImage();
         var label = new JLabel(icon);
         DragSource ds = new DragSource();
         ds.createDefaultDragGestureRecognizer(label, DnDConstants.ACTION_COPY, listener);
-        //                label.addMouseListener(listener);
         label.setTransferHandler(new TransferHandler("icon"));
         add(label);
       } catch (Exception ex) {
@@ -48,17 +46,7 @@ public class IconPalette extends JPanel {
     }
   }
 
-  //    private class DragMouseAdapter extends MouseAdapter {
-  //
-  //        public void mousePressed(MouseEvent e) {
-  //
-  //            var c = (JComponent) e.getSource();
-  //            var handler = c.getTransferHandler();
-  //            handler.exportAsDrag(c, e, TransferHandler.COPY);
-  //        }
-  //    }
-
-  class MyDragGestureListener implements DragGestureListener {
+  static class MyDragGestureListener implements DragGestureListener {
 
     @Override
     public void dragGestureRecognized(DragGestureEvent event) {
@@ -88,12 +76,5 @@ public class IconPalette extends JPanel {
           };
       event.startDrag(null, transferable);
     }
-  }
-
-  public static void main(String[] args) {
-    JFrame frame = new JFrame();
-    frame.getContentPane().add(new IconPalette());
-    frame.pack();
-    frame.setVisible(true);
   }
 }

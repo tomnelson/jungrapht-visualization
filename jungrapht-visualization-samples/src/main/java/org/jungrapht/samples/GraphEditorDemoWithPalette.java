@@ -11,7 +11,6 @@ package org.jungrapht.samples;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
@@ -20,7 +19,6 @@ import java.awt.image.BufferedImage;
 import java.awt.print.Printable;
 import java.awt.print.PrinterJob;
 import java.io.File;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -221,8 +219,6 @@ public class GraphEditorDemoWithPalette extends JPanel implements Printable {
     MutableSelectedState<Integer> ps = vv.getSelectedVertexState();
     ps.addItemListener(new PickWithIconListener<Integer>(vertexIconFunction));
 
-    ////
-
     //    vv.getRenderContext()
     //        .setVertexLabelFunction(
     //            v -> vertexLabelMap.containsKey(v) ? vertexLabelMap.get(v) : v.toString());
@@ -315,24 +311,6 @@ public class GraphEditorDemoWithPalette extends JPanel implements Printable {
     else return number.toString();
   }
 
-  //  static class VertexFactory implements Supplier<Number> {
-  //
-  //    int i = 0;
-  //
-  //    public Number get() {
-  //      return i++;
-  //    }
-  //  }
-  //
-  //  static class EdgeFactory implements Supplier<Number> {
-  //
-  //    int i = 0;
-  //
-  //    public Number get() {
-  //      return i++;
-  //    }
-  //  }
-
   public Map<Integer, String> getVertexLabelMap() {
     return vertexLabelMap;
   }
@@ -341,55 +319,6 @@ public class GraphEditorDemoWithPalette extends JPanel implements Printable {
     return edgeLabelMap;
   }
 
-  //  class GraphDropTargetListener extends DropTargetAdapter {
-  //
-  //    VisualizationViewer<Number, Number> vv;
-  //
-  //    public GraphDropTargetListener(VisualizationViewer<Number, Number> vv) {
-  //      this.vv = vv;
-  //      vv.getComponent().setDropTarget(new DropTarget(vv.getComponent(),
-  //              DnDConstants.ACTION_COPY_OR_MOVE, this, true, null));
-  //    }
-  //
-  //    @Override
-  //    public void dropActionChanged(DropTargetDragEvent event) {
-  //      super.dropActionChanged(event);
-  //      log.info("dropActionChanged, event = {}", event);
-  //    }
-  //
-  //    @Override
-  //    public void dragEnter(DropTargetDragEvent event) {
-  //      super.dragEnter(event);
-  //      log.info("dragEnter, event = {}", event);
-  //
-  //    }
-  //    @Override
-  //    public void drop(DropTargetDropEvent event) {
-  //      try {
-  //        DropTarget target = (DropTarget) event.getSource();
-  //        Component component = (Component) target.getComponent();
-  //        Point pt = component.getMousePosition();
-  //        Transferable tr = event.getTransferable();
-  //        if (event.isDataFlavorSupported(DataFlavor.imageFlavor)) {
-  //          Image image = (Image) tr.getTransferData(DataFlavor.imageFlavor);
-  //          ImageIcon icon = new ImageIcon(image);
-  //          if (icon != null) {
-  //            Graph<Number, Number> graph = vv.getVisualizationModel().getGraph();
-  //            LayoutModel<Number> layoutModel = vv.getVisualizationModel().getLayoutModel();
-  //            Number vertex = vertexFactory.get();
-  //            layoutModel.set(vertex, pt.x, pt.y);
-  //            iconMap.put(vertex, icon);
-  //            graph.addVertex(vertex);
-  //
-  //          }
-  //        }
-  //      } catch(Exception ex) {
-  //        event.rejectDrop();
-  //      }
-  //    }
-  //  }
-
-  @SuppressWarnings("serial")
   public static void main(String[] args) {
     JFrame frame = new JFrame();
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -430,7 +359,7 @@ public class GraphEditorDemoWithPalette extends JPanel implements Printable {
     frame.setVisible(true);
   }
 
-  class MyDropTargetListener<V, E> extends DropTargetAdapter {
+  static class MyDropTargetListener<V, E> extends DropTargetAdapter {
 
     private DropTarget dropTarget;
     private VisualizationViewer<V, E> viewer;
@@ -446,65 +375,30 @@ public class GraphEditorDemoWithPalette extends JPanel implements Printable {
     @Override
     public void drop(DropTargetDropEvent event) {
       try {
-        DropTarget test = (DropTarget) event.getSource();
-        Component ca = test.getComponent();
-        Point dropPoint = ca.getMousePosition();
-        Transferable tr = event.getTransferable();
+        DropTarget dropTarget = (DropTarget) event.getSource();
+        Component component = dropTarget.getComponent();
+        Point dropPoint = component.getMousePosition();
+        Transferable transferable = event.getTransferable();
 
-        //        if (event.isDataFlavorSupported(DataFlavor.imageFlavor)) {
-        Image image = (Image) tr.getTransferData(DataFlavor.imageFlavor);
-        ImageIcon ico = new ImageIcon(image);
+        if (event.isDataFlavorSupported(DataFlavor.imageFlavor)) {
+          Image image = (Image) transferable.getTransferData(DataFlavor.imageFlavor);
+          ImageIcon icon = new LayeredIcon(image);
 
-        if (ico != null) {
+          if (icon != null) {
 
-          V vertex = viewer.getVisualizationModel().getGraph().addVertex();
-          iconMap.put(vertex, ico);
-          viewer.getVisualizationModel().getLayoutModel().set(vertex, dropPoint.x, dropPoint.y);
+            V vertex = viewer.getVisualizationModel().getGraph().addVertex();
+            iconMap.put(vertex, icon);
+            viewer.getVisualizationModel().getLayoutModel().set(vertex, dropPoint.x, dropPoint.y);
 
-          //            p.add(new JLabel(ico));
-          //            p.revalidate();
-          //            p.repaint();
-          event.dropComplete(true);
+            event.dropComplete(true);
+          }
+        } else {
+          event.rejectDrop();
         }
-        //        } else {
-        //          event.rejectDrop();
-        //        }
       } catch (Exception e) {
         e.printStackTrace();
         event.rejectDrop();
       }
-    }
-  }
-
-  class MyDragGestureListener implements DragGestureListener {
-
-    @Override
-    public void dragGestureRecognized(DragGestureEvent event) {
-      JLabel label = (JLabel) event.getComponent();
-      final ImageIcon ico = (ImageIcon) label.getIcon();
-
-      Transferable transferable =
-          new Transferable() {
-            @Override
-            public DataFlavor[] getTransferDataFlavors() {
-              return new DataFlavor[] {DataFlavor.imageFlavor};
-            }
-
-            @Override
-            public boolean isDataFlavorSupported(DataFlavor flavor) {
-              if (!isDataFlavorSupported(flavor)) {
-                return false;
-              }
-              return true;
-            }
-
-            @Override
-            public Object getTransferData(DataFlavor flavor)
-                throws UnsupportedFlavorException, IOException {
-              return ico.getImage();
-            }
-          };
-      event.startDrag(null, transferable);
     }
   }
 

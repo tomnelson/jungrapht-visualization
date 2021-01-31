@@ -51,11 +51,11 @@ public class SimpleEdgeSupport<V, E> implements EdgeSupport<V, E> {
       Graph<V, E> graph = vv.getVisualizationModel().getGraph();
       graph.addEdge(startVertex, endVertex, edgeFactory.get());
       vv.getEdgeSpatial().recalculate();
-      vv.repaint();
     }
     startVertex = null;
     edgeEffects.endEdgeEffects(vv);
     edgeEffects.endArrowEffects(vv);
+    vv.repaint();
   }
 
   @Override
