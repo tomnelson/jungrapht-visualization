@@ -18,6 +18,7 @@ import org.jungrapht.visualization.VisualizationServer;
  */
 public class SimpleVertexSupport<V, E> implements VertexSupport<V, E> {
 
+  // can be null to disable mouse-click vertex creation
   protected Supplier<V> vertexFactory;
 
   public SimpleVertexSupport(Supplier<V> vertexFactory) {
@@ -27,13 +28,15 @@ public class SimpleVertexSupport<V, E> implements VertexSupport<V, E> {
   public void startVertexCreate(VisualizationServer<V, E> vv, Point2D point) {
     Objects.requireNonNull(
         vv.getVisualizationModel().getGraph().getType().isModifiable(), "graph must be mutable");
-    V newVertex = vertexFactory.get();
-    VisualizationModel<V, E> visualizationModel = vv.getVisualizationModel();
-    Graph<V, E> graph = visualizationModel.getGraph();
-    graph.addVertex(newVertex);
-    Point2D p2d = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(point);
-    visualizationModel.getLayoutModel().set(newVertex, p2d.getX(), p2d.getY());
-    vv.repaint();
+    if (vertexFactory != null) {
+      V newVertex = vertexFactory.get();
+      VisualizationModel<V, E> visualizationModel = vv.getVisualizationModel();
+      Graph<V, E> graph = visualizationModel.getGraph();
+      graph.addVertex(newVertex);
+      Point2D p2d = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(point);
+      visualizationModel.getLayoutModel().set(newVertex, p2d.getX(), p2d.getY());
+      vv.repaint();
+    }
   }
 
   public void midVertexCreate(VisualizationServer<V, E> vv, Point2D point) {
