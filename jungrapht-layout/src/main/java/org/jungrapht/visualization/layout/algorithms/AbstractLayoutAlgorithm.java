@@ -63,6 +63,9 @@ public abstract class AbstractLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
    * @return
    */
   protected Rectangle computeLayoutExtent(LayoutModel<V> layoutModel) {
+    if (layoutModel.getLocations().size() == 0) {
+      return Rectangle.from(Point.ORIGIN, Point.ORIGIN);
+    }
     // find the dimensions of the layout
     PointSummaryStatistics pss = new PointSummaryStatistics();
     layoutModel.getLocations().values().forEach(pss::accept);
