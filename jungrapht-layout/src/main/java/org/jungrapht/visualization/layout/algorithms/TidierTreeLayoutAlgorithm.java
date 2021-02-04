@@ -516,7 +516,7 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
       buildTree(layoutModel);
     }
     if (correctOverlap) {
-      this.moveVerticesThatOverlapVerticalEdges(layoutModel, horizontalVertexSpacing);
+      this.moveVerticesThatOverlapVerticalEdges(layoutModel, horizontalVertexSpacing / 4);
     }
     if (expandLayout) {
       expandToFill(layoutModel);
@@ -545,18 +545,8 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
     if (log.isTraceEnabled()) {
       log.trace("this graph has {} vertices", graph.vertexSet().size());
     }
-    //    this.defaultRootPredicate =
-    //        v ->
-    //            graph.containsVertex(v)
-    //                && (graph.incomingEdgesOf(v).isEmpty()
-    //                    || TreeLayout.isIsolatedVertex(layoutModel.getGraph(), v));
     this.vertexData.clear();
     this.heights.clear();
-    //    if (this.rootPredicate == null) {
-    //      this.rootPredicate = this.defaultRootPredicate;
-    //    } else {
-    //      this.rootPredicate = this.rootPredicate.or(this.defaultRootPredicate);
-    //    }
     if (vertexBoundsFunction != null) {
       Dimension averageVertexSize = computeAverageVertexDimension(graph, vertexBoundsFunction);
       this.horizontalVertexSpacing = averageVertexSize.width * 2;
