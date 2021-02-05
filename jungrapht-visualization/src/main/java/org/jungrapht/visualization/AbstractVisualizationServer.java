@@ -6,7 +6,7 @@ package org.jungrapht.visualization;
  * @param <V> vertex type
  * @param <E> edge type
  */
-public abstract class AbstractVisualizationServer<V, E> extends DefaultVisualizationServer<V, E> {
+public class AbstractVisualizationServer<V, E> extends DefaultVisualizationServer<V, E> {
 
   /**
    * Constructor for extending classes

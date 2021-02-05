@@ -12,21 +12,16 @@ import java.util.List;
 import java.util.LongSummaryStatistics;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.util.NeighborCache;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.ArticulatedEdge;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.GraphLayers;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.GreedyCycleRemoval;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.TransformedGraphSupplier;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.Unaligned;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.VertexMetadata;
+import org.jungrapht.visualization.layout.algorithms.Layered;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.*;
 import org.jungrapht.visualization.layout.algorithms.util.Attributed;
 import org.jungrapht.visualization.layout.algorithms.util.LayeredRunnable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -78,6 +73,9 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
     protected boolean minimizeEdgeLength = false;
     protected Layering layering = Layering.LONGEST_PATH;
     protected boolean multiComponent;
+    protected Comparator<E> edgeComparator;
+    protected Function<Graph<V, E>, Collection<E>> cycleRemovalFunction =
+        new GreedyFeedbackArcFunction<>();
 
     /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
@@ -130,6 +128,11 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
       return self();
     }
 
+    public B edgeComparator(Comparator<E> edgeComparator) {
+      this.edgeComparator = edgeComparator;
+      return self();
+    }
+
     /** {@inheritDoc} */
     public T build() {
       return (T) new EiglspergerRunnable<>(this);
@@ -157,12 +160,14 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
   protected boolean transpose;
   protected int maxLevelCross;
   protected boolean minimizeEdgeLength;
+  protected BiFunction<Graph<V, E>, Comparator<V>, Collection<E>> cycleRemovalFunction;
   protected Layering layering;
   protected Map<LV<V>, VertexMetadata<V>> vertexMetadataMap = new HashMap<>();
   protected Map<E, List<Point>> edgePointMap = new HashMap<>();
   protected EiglspergerStepsForward<V, E> stepsForward;
   protected EiglspergerStepsBackward<V, E> stepsBackward;
   protected EiglspergerSteps<V, E> steps = null;
+  protected Comparator<E> edgeComparator;
   protected boolean multiComponent;
   protected boolean cancelled;
 
@@ -176,6 +181,7 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
         builder.maxLevelCross,
         builder.minimizeEdgeLength,
         builder.layering,
+        builder.edgeComparator,
         builder.multiComponent);
   }
 
@@ -188,6 +194,7 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
       int maxLevelCross,
       boolean minimizeEdgeLength,
       Layering layering,
+      Comparator<E> edgeComparator,
       boolean multiComponent) {
     this.layoutModel = layoutModel;
     this.vertexShapeFunction = vertexShapeFunction;
@@ -201,6 +208,7 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
     }
     this.layering = layering;
     this.multiComponent = multiComponent;
+    this.edgeComparator = edgeComparator;
   }
 
   @Override
@@ -229,8 +237,23 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
     long transformTime = System.currentTimeMillis();
     log.trace("transform Graph took {}", (transformTime - startTime));
 
-    GreedyCycleRemoval<LV<V>, LE<V, E>> greedyCycleRemoval = new GreedyCycleRemoval<>(svGraph);
-    Collection<LE<V, E>> feedbackArcs = greedyCycleRemoval.getFeedbackArcs();
+    Collection<E> feedbacks;
+    if (edgeComparator == Layered.noopComparator) {
+      GreedyFeedbackArcFunction<V, E> greedyFeedbackArcFunction = new GreedyFeedbackArcFunction<>();
+      feedbacks = greedyFeedbackArcFunction.apply(graph);
+
+    } else {
+      ConstructiveFeedbackArcFunction constructiveFeedbackArcFunction =
+          new ConstructiveFeedbackArcFunction(edgeComparator);
+      feedbacks = constructiveFeedbackArcFunction.apply(graph);
+    }
+
+    Collection<LE<V, E>> feedbackArcs =
+        svGraph
+            .edgeSet()
+            .stream()
+            .filter(e -> feedbacks.contains(e.getEdge()))
+            .collect(Collectors.toSet());
 
     // reverse the direction of feedback arcs so that they no longer introduce cycles in the graph
     // the feedback arcs will be processed later to draw with the correct direction and correct articulation points

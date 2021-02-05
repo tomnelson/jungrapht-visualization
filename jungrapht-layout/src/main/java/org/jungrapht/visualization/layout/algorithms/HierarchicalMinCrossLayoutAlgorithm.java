@@ -153,6 +153,7 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
         maxLevelCrossFunction,
         expandLayout,
         layering,
+        Layered.noopComparator,
         threaded,
         executor,
         separateComponents,

@@ -91,8 +91,6 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   /** the selected Vertex, if any */
   protected V vertex;
 
-  //  protected V deselectedVertex;
-
   /** the selected Edge, if any */
   protected E edge;
 
@@ -105,7 +103,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   /** color for the picking rectangle */
   protected Color lensColor = Color.cyan;
 
-  protected Point2D deltaDown; // what's that flower you have on...
+  protected Point2D deltaDown;
 
   protected MultiSelectionStrategy multiSelectionStrategy;
 
@@ -178,8 +176,6 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
     multiSelectionStrategy = vv.getMultiSelectionStrategySupplier().get();
     TransformSupport<V, E> transformSupport = vv.getTransformSupport();
-
-    MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
 
     // a rectangle in the view coordinate system.
     this.footprintRectangle =
@@ -285,9 +281,6 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    * <p>clean up settings from mousePressed
    */
   public void mouseReleased(MouseEvent e) {
-
-    // if the mouse is released in lasso mode with no selection, then clear the vertex
-    // and edge selections ?
     Point2D out = e.getPoint();
 
     VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
@@ -320,9 +313,6 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     edge = null;
 
     vv.removePostRenderPaintable(pickFootprintPaintable);
-    //    if (deselectedVertex != null) {
-    //      ps.deselect(deselectedVertex);
-    //    }
 
     vv.repaint();
   }
@@ -333,7 +323,6 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    */
   public void mouseDragged(MouseEvent e) {
     log.trace("mouseDragged");
-    //    deselectedVertex = null;
     VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
     if (!locked) {
       MutableSelectedState<V> selectedVertexState = vv.getSelectedVertexState();

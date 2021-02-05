@@ -453,7 +453,20 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
     if (log.isTraceEnabled()) {
       log.trace("successors({}) = {}", v, neighborCache.successorsOf(v));
     }
-    return neighborCache.successorsOf(v);
+    List<V> successors;
+    if (edgePredicate != null) {
+      List<E> outgoingEdges =
+          tree.outgoingEdgesOf(v)
+              .stream()
+              .sorted(edgeComparator)
+              .filter(edgePredicate)
+              .collect(Collectors.toList());
+      successors = outgoingEdges.stream().map(tree::getEdgeTarget).collect(Collectors.toList());
+
+    } else {
+      successors = neighborCache.successorsOf(v).stream().collect(Collectors.toList());
+    }
+    return successors;
   }
 
   private Collection<V> predecessors(V v) {
@@ -505,7 +518,7 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
     Graph<V, ?> graph = layoutModel.getGraph();
     if (layoutModel.getGraph().getType().isUndirected()
         || getRoots(layoutModel.getGraph()).size() == 0) {
-      Graph<V, ?> tree = TreeLayoutAlgorithm.getSpanningTree(layoutModel.getGraph());
+      Graph<V, E> tree = TreeLayoutAlgorithm.getSpanningTree(layoutModel.getGraph());
       LayoutModel<V> treeLayoutModel = DefaultLayoutModel.from(layoutModel);
       treeLayoutModel.setGraph(tree);
       visit(treeLayoutModel);

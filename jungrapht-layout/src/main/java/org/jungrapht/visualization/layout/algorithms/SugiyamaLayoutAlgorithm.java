@@ -127,6 +127,7 @@ public class SugiyamaLayoutAlgorithm<V, E> extends AbstractHierarchicalMinCrossL
         maxLevelCrossFunction,
         expandLayout,
         layering,
+        (v1, v2) -> 0,
         threaded,
         executor,
         separateComponents,

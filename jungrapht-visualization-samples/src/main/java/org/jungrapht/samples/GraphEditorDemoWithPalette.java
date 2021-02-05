@@ -219,9 +219,6 @@ public class GraphEditorDemoWithPalette extends JPanel implements Printable {
     MutableSelectedState<Integer> ps = vv.getSelectedVertexState();
     ps.addItemListener(new PickWithIconListener<Integer>(vertexIconFunction));
 
-    //    vv.getRenderContext()
-    //        .setVertexLabelFunction(
-    //            v -> vertexLabelMap.containsKey(v) ? vertexLabelMap.get(v) : v.toString());
     vv.getRenderContext()
         .setEdgeLabelFunction(
             e -> edgeLabelMap.containsKey(e) ? edgeLabelMap.get(e) : e.toString());

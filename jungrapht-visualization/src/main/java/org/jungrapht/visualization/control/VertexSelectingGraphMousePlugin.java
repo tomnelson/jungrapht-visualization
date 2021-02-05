@@ -52,6 +52,9 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
         Modifiers.masks.get(
             System.getProperty(PREFIX + "toggleSingleSelectionMask", "MB1_SHIFT_MENU"));
 
+    protected boolean showFootprint =
+        Boolean.parseBoolean(System.getProperty(PREFIX + "showFootprint", "false"));
+
     public B self() {
       return (B) this;
     }
@@ -63,6 +66,11 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
 
     public B toggleSingleSelectionMask(int toggleSingleSelectionMask) {
       this.toggleSingleSelectionMask = toggleSingleSelectionMask;
+      return self();
+    }
+
+    public B showFootprint(boolean showFootprint) {
+      this.showFootprint = showFootprint;
       return self();
     }
 
@@ -101,10 +109,10 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
 
   protected int toggleSingleSelectionMask;
 
-  protected boolean vertexDragged;
+  protected boolean showFootprint;
 
   public VertexSelectingGraphMousePlugin(Builder<V, E, ?, ?> builder) {
-    this(builder.singleSelectionMask, builder.toggleSingleSelectionMask);
+    this(builder.singleSelectionMask, builder.toggleSingleSelectionMask, builder.showFootprint);
   }
 
   public VertexSelectingGraphMousePlugin() {
@@ -112,9 +120,11 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
   }
 
   /** create an instance with overrides */
-  public VertexSelectingGraphMousePlugin(int singleSelectionMask, int toggleSingleSelectionMask) {
+  public VertexSelectingGraphMousePlugin(
+      int singleSelectionMask, int toggleSingleSelectionMask, boolean showFootprint) {
     this.singleSelectionMask = singleSelectionMask;
     this.toggleSingleSelectionMask = toggleSingleSelectionMask;
+    this.showFootprint = showFootprint;
     this.pickFootprintPaintable = new FootprintPaintable();
     this.cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
   }
@@ -156,7 +166,7 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
     }
 
     public boolean useTransform() {
-      return true;
+      return false;
     }
   }
 
@@ -174,11 +184,11 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
     deltaDown = down;
     VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
     TransformSupport<V, E> transformSupport = vv.getTransformSupport();
-    LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
-    GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
-    MutableSelectedState<V> selectedVertexState = vv.getSelectedVertexState();
+    //    LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
+    //    GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
+    //    MutableSelectedState<V> selectedVertexState = vv.getSelectedVertexState();
 
-    MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
+    //    MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
 
     // a rectangle in the view coordinate system.
     this.footprintRectangle =
@@ -188,7 +198,9 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
             pickSize,
             pickSize);
 
-    vv.addPostRenderPaintable(pickFootprintPaintable);
+    if (showFootprint) {
+      vv.addPostRenderPaintable(pickFootprintPaintable);
+    }
     vv.repaint();
 
     // subclass can override to account for view distortion effects
@@ -201,8 +213,6 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
       vertexWasSelected = this.singleVertexSelection(e, layoutPoint, false);
     } else if (e.getModifiersEx() == toggleSingleSelectionMask) {
       vertexWasSelected = this.singleVertexSelection(e, layoutPoint, true);
-    } else {
-      down = null;
     }
     if (vertexWasSelected) {
       e.consume();
@@ -210,7 +220,7 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
   }
 
   protected boolean singleVertexSelection(
-      MouseEvent e, Point2D layoutPoint, boolean addToSelection) {
+      MouseEvent e, Point2D layoutPoint, boolean toggleSelection) {
     VisualizationServer<V, E> vv = (VisualizationServer<V, E>) e.getSource();
     GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
     MutableSelectedState<V> selectedVertexState = vv.getSelectedVertexState();
@@ -224,17 +234,16 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
 
     if (vertex != null) {
       log.trace("mousePressed set the vertex to {}", vertex);
-      if (!selectedVertexState.isSelected(vertex)) {
-        if (!addToSelection) {
+      if (selectedVertexState.isSelected(vertex)) {
+        if (toggleSelection) {
+          selectedVertexState.deselect(vertex);
+          vertex = null;
+        }
+      } else {
+        if (!toggleSelection) {
           selectedVertexState.clear();
         }
         selectedVertexState.select(vertex);
-        deselectedVertex = null;
-      } else {
-        // If this vertex is still around in mouseReleased, it will be deselected
-        // If this vertex was pressed again in order to drag it, it will be set
-        // to null in the mouseDragged method
-        deselectedVertex = vertex;
       }
       e.consume();
       return true;
@@ -249,7 +258,6 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
    */
   @SuppressWarnings("unchecked")
   public void mouseReleased(MouseEvent e) {
-    log.trace("mouseReleased in {}", this.getClass().getName());
     Point2D out = e.getPoint();
 
     VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
@@ -280,9 +288,6 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
     down = null;
     vertex = null;
     vv.removePostRenderPaintable(pickFootprintPaintable);
-    if (deselectedVertex != null) {
-      ps.deselect(deselectedVertex);
-    }
 
     vv.repaint();
   }
@@ -293,7 +298,6 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
    */
   public void mouseDragged(MouseEvent e) {
     log.trace("mouseDragged");
-    deselectedVertex = null;
     VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
     if (!locked) {
       MutableSelectedState<V> selectedVertexState = vv.getSelectedVertexState();
@@ -305,7 +309,6 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
       log.trace("down is {}", down);
       if (vertex != null) {
         selectedVertexState.select(vertex);
-        vertexDragged = true;
         // dragging points and changing their layout locations
         Point2D graphPoint = multiLayerTransformer.inverseTransform(p);
         log.trace("p in graph coords is {}", graphPoint);

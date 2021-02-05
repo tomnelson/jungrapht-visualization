@@ -2,14 +2,7 @@ package org.jungrapht.visualization.layout.algorithms;
 
 import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -50,6 +43,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
         VertexBoundsFunctionConsumer<V>,
         EdgeArticulationFunctionSupplier<E>,
         Layered<V, E>,
+        EdgeSorting<E>,
         AfterRunnable,
         Threaded,
         ExecutorConsumer {
@@ -102,6 +96,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
     protected boolean threaded =
         Boolean.parseBoolean(System.getProperty(MINCROSS_THREADED, "true"));
     protected boolean separateComponents = true;
+    protected Comparator<E> edgeComparator = noopComparator;
 
     /** {@inheritDoc} */
     protected B self() {
@@ -135,6 +130,11 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
 
     public B maxLevelCrossFunction(Function<Graph<V, E>, Integer> maxLevelCrossFunction) {
       this.maxLevelCrossFunction = maxLevelCrossFunction;
+      return self();
+    }
+
+    public B edgeComparator(Comparator<E> edgeComparator) {
+      this.edgeComparator = edgeComparator;
       return self();
     }
 
@@ -191,6 +191,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
   protected Set<LayeredRunnable<E>> runnables = new HashSet<>();
   protected LayoutModel<V> layoutModel; // ref used to switch events back on after cancel
   protected boolean cancelled;
+  protected Comparator<E> edgeComparator;
 
   protected AbstractHierarchicalMinCrossLayoutAlgorithm(Builder builder) {
     this(
@@ -202,6 +203,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
         builder.maxLevelCrossFunction,
         builder.expandLayout,
         builder.layering,
+        builder.edgeComparator,
         builder.threaded,
         builder.executor,
         builder.separateComponents,
@@ -217,6 +219,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
       Function<Graph<V, E>, Integer> maxLevelCrossFunction,
       boolean expandLayout,
       Layering layering,
+      Comparator<E> edgeComparator,
       boolean threaded,
       Executor executor,
       boolean separateComponents,
@@ -232,7 +235,13 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
     this.threaded = threaded;
     this.executor = executor;
     this.separateComponents = separateComponents;
+    this.edgeComparator = edgeComparator;
     this.after = after;
+  }
+
+  @Override
+  public void setEdgeComparator(Comparator<E> edgeComparator) {
+    this.edgeComparator = edgeComparator;
   }
 
   @Override

@@ -1,10 +1,6 @@
 package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
@@ -66,7 +62,7 @@ public class GreedyCycleRemoval<V, E> {
    * @param graph the incoming graph to examine
    * @return a List of vertices of degree 0
    */
-  private Collection<V> getIsolatedVerties(Graph<V, E> graph) {
+  private Collection<V> getIsolatedVertices(Graph<V, E> graph) {
     return graph
         .vertexSet()
         .stream()
@@ -98,7 +94,7 @@ public class GreedyCycleRemoval<V, E> {
       copy.removeAllEdges(losers);
       copy.removeVertex(sink);
     }
-    copy.removeAllVertices(getIsolatedVerties(copy));
+    copy.removeAllVertices(getIsolatedVertices(copy));
 
     while ((opt = getSource(copy)).isPresent()) {
       V source = opt.get();
@@ -120,9 +116,9 @@ public class GreedyCycleRemoval<V, E> {
           return -Integer.compare(leftDiff, rightDiff);
         });
     for (V v : orderedBy) {
-      Collection<E> outgoingEdges = new HashSet<>(copy.outgoingEdgesOf(v));
-      Collection<E> incomingEdges = new HashSet<>(copy.incomingEdgesOf(v));
-      log.trace("incoming {}", incomingEdges);
+      Collection<E> outgoingEdges = new LinkedHashSet<>(copy.outgoingEdgesOf(v));
+      Collection<E> incomingEdges = new LinkedHashSet<>(copy.incomingEdgesOf(v));
+      log.info("incoming {} going to feedbackArcs", incomingEdges);
       feedbackArcs.addAll(incomingEdges);
       copy.removeAllEdges(outgoingEdges);
       copy.removeAllEdges(incomingEdges);

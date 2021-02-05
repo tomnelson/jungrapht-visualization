@@ -200,7 +200,8 @@ public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
             out);
     selectingPlugin =
         vertexSelectionOnly
-            ? new VertexSelectingGraphMousePlugin<>(singleSelectionMask, toggleSingleSelectionMask)
+            ? new VertexSelectingGraphMousePlugin<>(
+                singleSelectionMask, toggleSingleSelectionMask, false)
             : SelectingGraphMousePlugin.builder()
                 .singleSelectionMask(singleSelectionMask)
                 .toggleSingleSelectionMask(toggleSingleSelectionMask)

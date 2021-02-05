@@ -1,21 +1,8 @@
-/* ###
- * IP: GHIDRA
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.jungrapht.samples.util;
 
 import static java.util.Map.entry;
+import static org.jungrapht.samples.large.ShowLayoutsWithDirectedGraphFileImport.EDGE_TYPE_TO_COLOR_MAP;
+import static org.jungrapht.samples.large.ShowLayoutsWithDirectedGraphFileImport.VERTEX_TYPE_TO_COLOR_MAP;
 
 import java.awt.Color;
 import java.awt.Paint;
@@ -23,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.jgrapht.nio.Attribute;
 
 /** support for coercing colors from attributes or color names */
 public abstract class Colors {
@@ -33,7 +21,7 @@ public abstract class Colors {
   private Colors() {}
 
   /** a map of well-known 'web' color names to colors */
-  static Map<String, Color> WEB_COLOR_MAP =
+  public static Map<String, Color> WEB_COLOR_MAP =
       Map.ofEntries(
           entry("Black", Color.decode("0x000000")),
           entry("Navy", Color.decode("0x000080")),
@@ -192,11 +180,23 @@ public abstract class Colors {
     WEB_COLOR_MAP.keySet().forEach(k -> COLOR_MAP.put(k.toLowerCase(), WEB_COLOR_MAP.get(k)));
   }
 
-  public static <V> Paint getColor(Map<String, String> map) {
+  public static <V> Paint getColor(Map<String, Attribute> map) {
+    // if there is a 'VertexType' attribute key, use its value to choose a predefined color
+    if (map.containsKey("VertexType")) {
+      String typeValue = map.get("VertexType").getValue();
+      return VERTEX_TYPE_TO_COLOR_MAP.getOrDefault(typeValue, Color.blue);
+    }
+    // if there is an 'EdgeType' attribute key, use its value to choose a predefined color
+    if (map.containsKey("EdgeType")) {
+      String typeValue = map.get("EdgeType").getValue();
+      return EDGE_TYPE_TO_COLOR_MAP.getOrDefault(typeValue, Color.green);
+    }
+
     // if there is a 'Color' attribute key, use its value (either a color name or an RGB hex string)
     // to choose a color
     if (map.containsKey("Color")) {
-      String colorName = map.get("Color");
+      Attribute colorAttribute = map.get("Color");
+      String colorName = colorAttribute.getValue();
       if (COLOR_MAP.containsKey(colorName)) {
         return COLOR_MAP.get(colorName);
       }
@@ -206,7 +206,7 @@ public abstract class Colors {
         return c;
       }
     } else if (map.containsKey("color")) {
-      String colorName = map.get("color");
+      String colorName = map.get("color").getValue();
       if (COLOR_MAP.containsKey(colorName)) {
         return COLOR_MAP.get(colorName);
       }

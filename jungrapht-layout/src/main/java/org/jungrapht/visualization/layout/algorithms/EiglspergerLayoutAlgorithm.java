@@ -1,6 +1,7 @@
 
 package org.jungrapht.visualization.layout.algorithms;
 
+import java.util.Comparator;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 import org.jgrapht.Graph;
@@ -92,6 +93,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
         builder.maxLevelCrossFunction,
         builder.expandLayout,
         builder.layering,
+        builder.edgeComparator,
         builder.threaded,
         builder.executor,
         builder.separateComponents,
@@ -107,6 +109,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
       Function<Graph<V, E>, Integer> maxLevelCrossFunction,
       boolean expandLayout,
       Layering layering,
+      Comparator<E> edgeComparator,
       boolean threaded,
       Executor executor,
       boolean separateComponents,
@@ -120,6 +123,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
         maxLevelCrossFunction,
         expandLayout,
         layering,
+        edgeComparator,
         threaded,
         executor,
         separateComponents,
@@ -137,6 +141,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
         .transpose(transpose)
         .maxLevelCross(maxLevelCrossFunction.apply(layoutModel.getGraph()))
         .layering(layering)
+        .edgeComparator(edgeComparator)
         .multiComponent(componentCount > 1)
         .build();
   }
