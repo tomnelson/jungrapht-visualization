@@ -5,6 +5,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jungrapht.visualization.layout.algorithms.Layered;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,10 +14,10 @@ public class TreeView<V, E> {
   public static class Builder<V, E, T extends TreeView<V, E>, B extends Builder<V, E, T, B>> {
     protected Predicate<V> rootPredicate = v -> true;
     protected Comparator<V> rootComparator = (v1, v2) -> 0;
-    protected Predicate<V> vertexPredicate = v -> false;
-    protected Predicate<E> edgePredicate = e -> false;
-    protected Comparator<V> vertexComparator = (v1, v2) -> 0;
-    protected Comparator<E> edgeComparator = (e1, e2) -> 0;
+    protected Predicate<V> vertexPredicate = Layered.truePredicate;
+    protected Predicate<E> edgePredicate = Layered.truePredicate;
+    protected Comparator<V> vertexComparator = Layered.noopComparator;
+    protected Comparator<E> edgeComparator = Layered.noopComparator;
 
     /** {@inheritDoc} */
     protected B self() {

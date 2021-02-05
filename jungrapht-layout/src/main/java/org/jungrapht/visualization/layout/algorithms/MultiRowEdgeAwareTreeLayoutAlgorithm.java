@@ -41,10 +41,10 @@ public class MultiRowEdgeAwareTreeLayoutAlgorithm<V, E> extends MultiRowTreeLayo
           V, E, T extends MultiRowEdgeAwareTreeLayoutAlgorithm<V, E>, B extends Builder<V, E, T, B>>
       extends MultiRowTreeLayoutAlgorithm.Builder<V, T, B>
       implements EdgeAwareLayoutAlgorithm.Builder<V, E, T, B> {
-    protected Predicate<V> vertexPredicate = v -> false;
-    protected Predicate<E> edgePredicate = e -> false;
-    protected Comparator<V> vertexComparator = (v1, v2) -> 0;
-    protected Comparator<E> edgeComparator = (e1, e2) -> 0;
+    protected Predicate<V> vertexPredicate = Layered.falsePredicate;
+    protected Predicate<E> edgePredicate = Layered.falsePredicate;
+    protected Comparator<V> vertexComparator = Layered.noopComparator;
+    protected Comparator<E> edgeComparator = Layered.noopComparator;
     protected boolean alignFavoredEdges = true;
 
     /**

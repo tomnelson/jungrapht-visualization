@@ -72,10 +72,10 @@ public class MultipleLayoutSelector<V, E> extends JPanel {
     int intialialSelection;
     Function<V, Shape> vertexShapeFunction = new DefaultRenderContext.ShapeFunctionSupplier().get();
     Runnable after = () -> {};
-    Predicate<E> edgePredicate = e -> false;
-    Comparator<E> edgeComparator = (e1, e2) -> 0;
-    Predicate<V> vertexPredicate = e -> false;
-    Comparator<V> vertexComparator = (e1, e2) -> 0;
+    Predicate<E> edgePredicate = Layered.truePredicate;
+    Comparator<E> edgeComparator = Layered.noopComparator;
+    Predicate<V> vertexPredicate = Layered.truePredicate;
+    Comparator<V> vertexComparator = Layered.noopComparator;
     boolean alignFavoredEdges = true;
 
     /** @param visualizationServer required {@link VisualizationServer} */

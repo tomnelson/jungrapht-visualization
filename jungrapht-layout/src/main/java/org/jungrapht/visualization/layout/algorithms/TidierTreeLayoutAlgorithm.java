@@ -60,10 +60,10 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
           V, E, T extends TidierTreeLayoutAlgorithm<V, E>, B extends Builder<V, E, T, B>>
       extends AbstractTreeLayoutAlgorithm.Builder<V, T, B>
       implements LayoutAlgorithm.Builder<V, T, B>, EdgeAwareLayoutAlgorithm.Builder<V, E, T, B> {
-    protected Predicate<V> vertexPredicate = v -> false;
-    protected Predicate<E> edgePredicate = e -> false;
-    protected Comparator<V> vertexComparator = (v1, v2) -> 0;
-    protected Comparator<E> edgeComparator = (e1, e2) -> 0;
+    protected Predicate<V> vertexPredicate = Layered.truePredicate;
+    protected Predicate<E> edgePredicate = Layered.truePredicate;
+    protected Comparator<V> vertexComparator = Layered.noopComparator;
+    protected Comparator<E> edgeComparator = Layered.noopComparator;
 
     /**
      * @param vertexPredicate {@link Predicate} to apply to vertices
