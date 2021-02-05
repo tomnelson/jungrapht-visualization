@@ -69,11 +69,11 @@ public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> impleme
         builder.out,
         builder.vertexSelectionOnly,
         builder.singleSelectionMask,
-        builder.addSingleSelectionMask,
+        builder.toggleSingleSelectionMask,
         builder.regionSelectionMask,
-        builder.addRegionSelectionMask,
+        builder.toggleRegionSelectionMask,
         builder.regionSelectionCompleteMask,
-        builder.addRegionSelectionCompleteMask,
+        builder.toggleRegionSelectionCompleteMask,
         builder.translatingMask,
         builder.lensTranslatingMask,
         builder.scalingMask,
@@ -87,11 +87,11 @@ public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> impleme
       float out,
       boolean vertexSelectionOnly,
       int singleSelectionMask,
-      int addSingleSelectionMask,
+      int toggleSingleSelectionMask,
       int regionSelectionMask,
-      int addRegionSelectionMask,
+      int toggleRegionSelectionMask,
       int regionSelectionCompleteMask,
-      int addRegionSelectionCompleteMask,
+      int toggleRegionSelectionCompleteMask,
       int translatingMask,
       int lensTranslatingMask,
       int scalingMask,
@@ -103,11 +103,11 @@ public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> impleme
         out,
         vertexSelectionOnly,
         singleSelectionMask,
-        addSingleSelectionMask,
+        toggleSingleSelectionMask,
         regionSelectionMask,
-        addRegionSelectionMask,
+        toggleRegionSelectionMask,
         regionSelectionCompleteMask,
-        addRegionSelectionCompleteMask,
+        toggleRegionSelectionCompleteMask,
         translatingMask,
         scalingMask,
         xAxisScalingMask,
@@ -136,18 +136,18 @@ public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> impleme
         vertexSelectionOnly
             ? LensVertexSelectingGraphMousePlugin.builder()
                 .singleSelectionMask(singleSelectionMask)
-                .addSingleSelectionMask(addSingleSelectionMask)
+                .toggleSingleSelectionMask(toggleSingleSelectionMask)
                 .build()
             : LensSelectingGraphMousePlugin.builder()
                 .singleSelectionMask(singleSelectionMask)
-                .addSingleSelectionMask(addSingleSelectionMask)
+                .toggleSingleSelectionMask(toggleSingleSelectionMask)
                 .build();
     this.regionSelectingPlugin =
         new LensRegionSelectingGraphMousePlugin<>(
             regionSelectionMask,
-            addRegionSelectionMask,
+            toggleRegionSelectionMask,
             regionSelectionCompleteMask,
-            addRegionSelectionCompleteMask);
+            toggleRegionSelectionCompleteMask);
     this.translatingPlugin = new TranslatingGraphMousePlugin(translatingMask);
 
     add(lensKillingGraphMousePlugin);

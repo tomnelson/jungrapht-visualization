@@ -42,9 +42,9 @@ public class DefaultSatelliteGraphMouse<V, E> extends DefaultGraphMouse<V, E> {
     regionSelectingPlugin =
         RegionSelectingGraphMousePlugin.builder()
             .regionSelectionMask(regionSelectionMask)
-            .addRegionSelectionMask(addRegionSelectionMask)
+            .toggleRegionSelectionMask(toggleRegionSelectionMask)
             .regionSelectionCompleteMask(regionSelectionCompleteMask)
-            .addRegionSelectionCompleteMask(addRegionSelectionCompleteMask)
+            .toggleRegionSelectionCompleteMask(toggleRegionSelectionCompleteMask)
             .build();
     translatingPlugin = new SatelliteTranslatingGraphMousePlugin(translatingMask);
     add(regionSelectingPlugin);

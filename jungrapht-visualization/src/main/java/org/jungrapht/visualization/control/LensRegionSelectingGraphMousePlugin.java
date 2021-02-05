@@ -42,22 +42,22 @@ public class LensRegionSelectingGraphMousePlugin<V, E>
   public LensRegionSelectingGraphMousePlugin(Builder<V, E, ?, ?> builder) {
     this(
         builder.regionSelectionMask,
-        builder.addRegionSelectionMask,
+        builder.toggleRegionSelectionMask,
         builder.regionSelectionCompleteMask,
-        builder.addRegionSelectionCompleteMask);
+        builder.toggleRegionSelectionCompleteMask);
   }
 
   /** create an instance with overides */
   public LensRegionSelectingGraphMousePlugin(
       int regionSelectionMask,
-      int addRegionSelectionMask,
+      int toggleRegionSelectionMask,
       int regionSelectionCompleteMask,
-      int addRegionSelectionCompleteMask) {
+      int toggleRegionSelectionCompleteMask) {
     super(
         regionSelectionMask,
-        addRegionSelectionMask,
+        toggleRegionSelectionMask,
         regionSelectionCompleteMask,
-        addRegionSelectionCompleteMask);
+        toggleRegionSelectionCompleteMask);
   }
 
   /**

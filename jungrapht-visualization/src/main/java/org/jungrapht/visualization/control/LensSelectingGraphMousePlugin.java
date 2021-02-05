@@ -38,13 +38,13 @@ public class LensSelectingGraphMousePlugin<V, E> extends SelectingGraphMousePlug
   }
 
   public LensSelectingGraphMousePlugin(Builder<V, E, ?, ?> builder) {
-    this(builder.singleSelectionMask, builder.addSingleSelectionMask, builder.showFootprint);
+    this(builder.singleSelectionMask, builder.toggleSingleSelectionMask, builder.showFootprint);
   }
 
   /** create an instance with overides */
   LensSelectingGraphMousePlugin(
-      int singleSelectionMask, int addSingleSelectionMask, boolean showFootprint) {
-    super(singleSelectionMask, addSingleSelectionMask, showFootprint);
+      int singleSelectionMask, int toggleSingleSelectionMask, boolean showFootprint) {
+    super(singleSelectionMask, toggleSingleSelectionMask, showFootprint);
   }
 
   /**

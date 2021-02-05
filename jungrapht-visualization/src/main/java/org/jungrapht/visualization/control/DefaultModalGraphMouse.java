@@ -50,19 +50,19 @@ public class DefaultModalGraphMouse<V, E> extends AbstractModalGraphMouse
     // selection masks
     protected int singleSelectionMask =
         Modifiers.masks.get(System.getProperty(PREFIX + "singleSelectionMask", "MB1_MENU"));
-    protected int addSingleSelectionMask =
+    protected int toggleSingleSelectionMask =
         Modifiers.masks.get(
-            System.getProperty(PREFIX + "addSingleSelectionMask", "MB1_SHIFT_MENU"));
+            System.getProperty(PREFIX + "toggleSingleSelectionMask", "MB1_SHIFT_MENU"));
     protected int regionSelectionMask =
         Modifiers.masks.get(System.getProperty(PREFIX + "regionSelectionMask", "MB1_MENU"));
-    protected int addRegionSelectionMask =
+    protected int toggleRegionSelectionMask =
         Modifiers.masks.get(
             System.getProperty(PREFIX + "addregionSelectionMask", "MB1_SHIFT_MENU"));
     protected int regionSelectionCompleteMask =
         Modifiers.masks.get(System.getProperty(PREFIX + "regionSelectionCompleteMask", "MENU"));
-    protected int addRegionSelectionCompleteMask =
+    protected int toggleRegionSelectionCompleteMask =
         Modifiers.masks.get(
-            System.getProperty(PREFIX + "addRegionSelectionCompleteMask", "SHIFT_MENU"));
+            System.getProperty(PREFIX + "toggleRegionSelectionCompleteMask", "SHIFT_MENU"));
 
     // translation mask
     protected int translatingMask =
@@ -81,8 +81,8 @@ public class DefaultModalGraphMouse<V, E> extends AbstractModalGraphMouse
       return self();
     }
 
-    public B addSingleSelectionMask(int addSingleSelectionMask) {
-      this.addSingleSelectionMask = addSingleSelectionMask;
+    public B toggleSingleSelectionMask(int toggleSingleSelectionMask) {
+      this.toggleSingleSelectionMask = toggleSingleSelectionMask;
       return self();
     }
 
@@ -91,8 +91,8 @@ public class DefaultModalGraphMouse<V, E> extends AbstractModalGraphMouse
       return self();
     }
 
-    public B addRegionSelectionMask(int addRegionSelectionMask) {
-      this.addRegionSelectionMask = addRegionSelectionMask;
+    public B toggleRegionSelectionMask(int toggleRegionSelectionMask) {
+      this.toggleRegionSelectionMask = toggleRegionSelectionMask;
       return self();
     }
 
@@ -101,8 +101,8 @@ public class DefaultModalGraphMouse<V, E> extends AbstractModalGraphMouse
       return self();
     }
 
-    public B addRegionSelectionCompleteMask(int addRegionSelectionCompleteMask) {
-      this.addRegionSelectionCompleteMask = addRegionSelectionCompleteMask;
+    public B toggleRegionSelectionCompleteMask(int toggleRegionSelectionCompleteMask) {
+      this.toggleRegionSelectionCompleteMask = toggleRegionSelectionCompleteMask;
       return self();
     }
 
@@ -136,11 +136,11 @@ public class DefaultModalGraphMouse<V, E> extends AbstractModalGraphMouse
   }
 
   protected int singleSelectionMask;
-  protected int addSingleSelectionMask;
+  protected int toggleSingleSelectionMask;
   protected int regionSelectionMask;
-  protected int addRegionSelectionMask;
+  protected int toggleRegionSelectionMask;
   protected int regionSelectionCompleteMask;
-  protected int addRegionSelectionCompleteMask;
+  protected int toggleRegionSelectionCompleteMask;
   protected int translatingMask;
   protected int scalingMask;
   protected int xAxisScalingMask;
@@ -170,11 +170,11 @@ public class DefaultModalGraphMouse<V, E> extends AbstractModalGraphMouse
         builder.out,
         builder.vertexSelectionOnly,
         builder.singleSelectionMask,
-        builder.addSingleSelectionMask,
+        builder.toggleSingleSelectionMask,
         builder.regionSelectionMask,
-        builder.addRegionSelectionMask,
+        builder.toggleRegionSelectionMask,
         builder.regionSelectionCompleteMask,
-        builder.addRegionSelectionCompleteMask,
+        builder.toggleRegionSelectionCompleteMask,
         builder.translatingMask,
         builder.scalingMask,
         builder.xAxisScalingMask,
@@ -188,22 +188,22 @@ public class DefaultModalGraphMouse<V, E> extends AbstractModalGraphMouse
       float out,
       boolean vertexSelectionOnly,
       int singleSelectionMask,
-      int addSingleSelectionMask,
+      int toggleSingleSelectionMask,
       int regionSelectionMask,
-      int addRegionSelectionMask,
+      int toggleRegionSelectionMask,
       int regionSelectionCompleteMask,
-      int addRegionSelectionCompleteMask,
+      int toggleRegionSelectionCompleteMask,
       int translatingMask,
       int scalingMask,
       int xAxisScalingMask,
       int yAxisScalingMask) {
     super(mode, in, out, vertexSelectionOnly);
     this.singleSelectionMask = singleSelectionMask;
-    this.addSingleSelectionMask = addSingleSelectionMask;
+    this.toggleSingleSelectionMask = toggleSingleSelectionMask;
     this.regionSelectionMask = regionSelectionMask;
-    this.addRegionSelectionMask = addRegionSelectionMask;
+    this.toggleRegionSelectionMask = toggleRegionSelectionMask;
     this.regionSelectionCompleteMask = regionSelectionCompleteMask;
-    this.addRegionSelectionCompleteMask = addRegionSelectionCompleteMask;
+    this.toggleRegionSelectionCompleteMask = toggleRegionSelectionCompleteMask;
     this.translatingMask = translatingMask;
     this.scalingMask = scalingMask;
     this.xAxisScalingMask = xAxisScalingMask;
@@ -216,14 +216,14 @@ public class DefaultModalGraphMouse<V, E> extends AbstractModalGraphMouse
     selectingPlugin =
         SelectingGraphMousePlugin.builder()
             .singleSelectionMask(InputEvent.BUTTON1_DOWN_MASK)
-            .addSingleSelectionMask(InputEvent.BUTTON1_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)
+            .toggleSingleSelectionMask(InputEvent.BUTTON1_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)
             .build();
     regionSelectingPlugin =
         RegionSelectingGraphMousePlugin.builder()
             .regionSelectionMask(InputEvent.BUTTON1_DOWN_MASK)
-            .addRegionSelectionMask(InputEvent.BUTTON1_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)
+            .toggleRegionSelectionMask(InputEvent.BUTTON1_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)
             .regionSelectionCompleteMask(0)
-            .addRegionSelectionCompleteMask(InputEvent.SHIFT_DOWN_MASK)
+            .toggleRegionSelectionCompleteMask(InputEvent.SHIFT_DOWN_MASK)
             .build();
     translatingPlugin = new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
     scalingPlugin =

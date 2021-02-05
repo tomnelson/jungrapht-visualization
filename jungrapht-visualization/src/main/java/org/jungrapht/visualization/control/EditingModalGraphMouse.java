@@ -193,14 +193,14 @@ public class EditingModalGraphMouse<V, E> extends AbstractModalGraphMouse
     selectingPlugin =
         SelectingGraphMousePlugin.builder()
             .singleSelectionMask(InputEvent.BUTTON1_DOWN_MASK)
-            .addSingleSelectionMask(InputEvent.BUTTON1_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)
+            .toggleSingleSelectionMask(InputEvent.BUTTON1_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)
             .build();
     regionSelectingPlugin =
         RegionSelectingGraphMousePlugin.builder()
             .regionSelectionMask(InputEvent.BUTTON1_DOWN_MASK)
-            .addRegionSelectionMask(InputEvent.BUTTON1_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)
+            .toggleRegionSelectionMask(InputEvent.BUTTON1_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)
             .regionSelectionCompleteMask(0)
-            .addRegionSelectionCompleteMask(InputEvent.SHIFT_DOWN_MASK)
+            .toggleRegionSelectionCompleteMask(InputEvent.SHIFT_DOWN_MASK)
             .build();
     translatingPlugin = new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
     scalingPlugin =

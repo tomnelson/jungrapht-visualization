@@ -47,9 +47,9 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
       V, E, T extends SelectingGraphMousePlugin, B extends Builder<V, E, T, B>> {
     protected int singleSelectionMask =
         Modifiers.masks.get(System.getProperty(PREFIX + "singleSelectionMask", "MB1_MENU"));
-    protected int addSingleSelectionMask =
+    protected int toggleSingleSelectionMask =
         Modifiers.masks.get(
-            System.getProperty(PREFIX + "addSingleSelectionMask", "MB1_SHIFT_MENU"));
+            System.getProperty(PREFIX + "toggleSingleSelectionMask", "MB1_SHIFT_MENU"));
 
     protected boolean showFootprint =
         Boolean.parseBoolean(System.getProperty(PREFIX + "showFootprint", "false"));
@@ -63,8 +63,8 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
       return self();
     }
 
-    public B addSingleSelectionMask(int addSingleSelectionMask) {
-      this.addSingleSelectionMask = addSingleSelectionMask;
+    public B toggleSingleSelectionMask(int toggleSingleSelectionMask) {
+      this.toggleSingleSelectionMask = toggleSingleSelectionMask;
       return self();
     }
 
@@ -91,7 +91,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   /** the selected Vertex, if any */
   protected V vertex;
 
-  protected V deselectedVertex;
+  //  protected V deselectedVertex;
 
   /** the selected Edge, if any */
   protected E edge;
@@ -110,12 +110,12 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   protected MultiSelectionStrategy multiSelectionStrategy;
 
   protected int singleSelectionMask;
-  protected int addSingleSelectionMask;
+  protected int toggleSingleSelectionMask;
 
   protected boolean showFootprint;
 
   public SelectingGraphMousePlugin(Builder<V, E, ?, ?> builder) {
-    this(builder.singleSelectionMask, builder.addSingleSelectionMask, builder.showFootprint);
+    this(builder.singleSelectionMask, builder.toggleSingleSelectionMask, builder.showFootprint);
   }
 
   public SelectingGraphMousePlugin() {
@@ -125,12 +125,12 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    * create an instance with overrides
    *
    * @param singleSelectionMask for primary selection of one vertex
-   * @param addSingleSelectionMask to add another vertex to the current selection
+   * @param toggleSingleSelectionMask to add another vertex to the current selection
    */
   SelectingGraphMousePlugin(
-      int singleSelectionMask, int addSingleSelectionMask, boolean showFootprint) {
+      int singleSelectionMask, int toggleSingleSelectionMask, boolean showFootprint) {
     this.singleSelectionMask = singleSelectionMask;
-    this.addSingleSelectionMask = addSingleSelectionMask;
+    this.toggleSingleSelectionMask = toggleSingleSelectionMask;
     this.showFootprint = showFootprint;
     this.pickFootprintPaintable = new FootprintPaintable();
     this.cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
@@ -206,7 +206,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
       if (!vertexWasSelected) {
         edgeWasSelected = this.singleEdgeSelection(e, layoutPoint, false);
       }
-    } else if (e.getModifiersEx() == addSingleSelectionMask) {
+    } else if (e.getModifiersEx() == toggleSingleSelectionMask) {
       vertexWasSelected = this.singleVertexSelection(e, layoutPoint, true);
       if (!vertexWasSelected) {
         edgeWasSelected = this.singleEdgeSelection(e, layoutPoint, true);
@@ -218,7 +218,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   }
 
   protected boolean singleVertexSelection(
-      MouseEvent e, Point2D layoutPoint, boolean addToSelection) {
+      MouseEvent e, Point2D layoutPoint, boolean toggleSelection) {
     VisualizationServer<V, E> vv = (VisualizationServer<V, E>) e.getSource();
     GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
     MutableSelectedState<V> selectedVertexState = vv.getSelectedVertexState();
@@ -232,17 +232,16 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
 
     if (vertex != null) {
       log.trace("mousePressed set the vertex to {}", vertex);
-      if (!selectedVertexState.isSelected(vertex)) {
-        if (!addToSelection) {
+      if (selectedVertexState.isSelected(vertex)) {
+        if (toggleSelection) {
+          selectedVertexState.deselect(vertex);
+          vertex = null;
+        }
+      } else {
+        if (!toggleSelection) {
           selectedVertexState.clear();
         }
         selectedVertexState.select(vertex);
-        deselectedVertex = null;
-      } else {
-        // If this vertex is still around in mouseReleased, it will be deselected
-        // If this vertex was pressed again in order to drag it, it will be set
-        // to null in the mouseDragged method
-        deselectedVertex = vertex;
       }
       e.consume();
       return true;
@@ -321,9 +320,9 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     edge = null;
 
     vv.removePostRenderPaintable(pickFootprintPaintable);
-    if (deselectedVertex != null) {
-      ps.deselect(deselectedVertex);
-    }
+    //    if (deselectedVertex != null) {
+    //      ps.deselect(deselectedVertex);
+    //    }
 
     vv.repaint();
   }
@@ -334,7 +333,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    */
   public void mouseDragged(MouseEvent e) {
     log.trace("mouseDragged");
-    deselectedVertex = null;
+    //    deselectedVertex = null;
     VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
     if (!locked) {
       MutableSelectedState<V> selectedVertexState = vv.getSelectedVertexState();
@@ -424,7 +423,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     return getClass().getSimpleName()
         + "\n singleSelectionMask :"
         + Modifiers.maskStrings.get(singleSelectionMask)
-        + "\n addSingleSelectionMask:"
-        + Modifiers.maskStrings.get(addSingleSelectionMask);
+        + "\n toggleSingleSelectionMask:"
+        + Modifiers.maskStrings.get(toggleSingleSelectionMask);
   }
 }

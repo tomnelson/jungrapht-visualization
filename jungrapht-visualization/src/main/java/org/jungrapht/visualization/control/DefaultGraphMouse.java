@@ -35,19 +35,19 @@ public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
     // selection masks
     protected int singleSelectionMask =
         Modifiers.masks.get(System.getProperty(PREFIX + "singleSelectionMask", "MB1_MENU"));
-    protected int addSingleSelectionMask =
+    protected int toggleSingleSelectionMask =
         Modifiers.masks.get(
-            System.getProperty(PREFIX + "addSingleSelectionMask", "MB1_SHIFT_MENU"));
+            System.getProperty(PREFIX + "toggleSingleSelectionMask", "MB1_SHIFT_MENU"));
     protected int regionSelectionMask =
         Modifiers.masks.get(System.getProperty(PREFIX + "regionSelectionMask", "MB1_MENU"));
-    protected int addRegionSelectionMask =
+    protected int toggleRegionSelectionMask =
         Modifiers.masks.get(
             System.getProperty(PREFIX + "addregionSelectionMask", "MB1_SHIFT_MENU"));
     protected int regionSelectionCompleteMask =
         Modifiers.masks.get(System.getProperty(PREFIX + "regionSelectionCompleteMask", "MENU"));
-    protected int addRegionSelectionCompleteMask =
+    protected int toggleRegionSelectionCompleteMask =
         Modifiers.masks.get(
-            System.getProperty(PREFIX + "addRegionSelectionCompleteMask", "SHIFT_MENU"));
+            System.getProperty(PREFIX + "toggleRegionSelectionCompleteMask", "SHIFT_MENU"));
 
     // translation mask
     protected int translatingMask =
@@ -66,8 +66,8 @@ public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
       return self();
     }
 
-    public B addSingleSelectionMask(int addSingleSelectionMask) {
-      this.addSingleSelectionMask = addSingleSelectionMask;
+    public B toggleSingleSelectionMask(int toggleSingleSelectionMask) {
+      this.toggleSingleSelectionMask = toggleSingleSelectionMask;
       return self();
     }
 
@@ -76,8 +76,8 @@ public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
       return self();
     }
 
-    public B addRegionSelectionMask(int addRegionSelectionMask) {
-      this.addRegionSelectionMask = addRegionSelectionMask;
+    public B toggleRegionSelectionMask(int toggleRegionSelectionMask) {
+      this.toggleRegionSelectionMask = toggleRegionSelectionMask;
       return self();
     }
 
@@ -86,8 +86,8 @@ public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
       return self();
     }
 
-    public B addRegionSelectionCompleteMask(int addRegionSelectionCompleteMask) {
-      this.addRegionSelectionCompleteMask = addRegionSelectionCompleteMask;
+    public B toggleRegionSelectionCompleteMask(int toggleRegionSelectionCompleteMask) {
+      this.toggleRegionSelectionCompleteMask = toggleRegionSelectionCompleteMask;
       return self();
     }
 
@@ -121,11 +121,11 @@ public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
   }
 
   protected int singleSelectionMask;
-  protected int addSingleSelectionMask;
+  protected int toggleSingleSelectionMask;
   protected int regionSelectionMask;
-  protected int addRegionSelectionMask;
+  protected int toggleRegionSelectionMask;
   protected int regionSelectionCompleteMask;
-  protected int addRegionSelectionCompleteMask;
+  protected int toggleRegionSelectionCompleteMask;
   protected int translatingMask;
   protected int scalingMask;
   protected int xAxisScalingMask;
@@ -138,11 +138,11 @@ public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
         builder.out,
         builder.vertexSelectionOnly,
         builder.singleSelectionMask,
-        builder.addSingleSelectionMask,
+        builder.toggleSingleSelectionMask,
         builder.regionSelectionMask,
-        builder.addRegionSelectionMask,
+        builder.toggleRegionSelectionMask,
         builder.regionSelectionCompleteMask,
-        builder.addRegionSelectionCompleteMask,
+        builder.toggleRegionSelectionCompleteMask,
         builder.translatingMask,
         builder.scalingMask,
         builder.xAxisScalingMask,
@@ -165,22 +165,22 @@ public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
       float out,
       boolean vertexSelectionOnly,
       int singleSelectionMask,
-      int addSingleSelectionMask,
+      int toggleSingleSelectionMask,
       int regionSelectionMask,
-      int addRegionSelectionMask,
+      int toggleRegionSelectionMask,
       int regionSelectionCompleteMask,
-      int addRegionSelectionCompleteMask,
+      int toggleRegionSelectionCompleteMask,
       int translatingMask,
       int scalingMask,
       int xAxisScalingMask,
       int yAxisScalingMask) {
     super(in, out, vertexSelectionOnly);
     this.singleSelectionMask = singleSelectionMask;
-    this.addSingleSelectionMask = addSingleSelectionMask;
+    this.toggleSingleSelectionMask = toggleSingleSelectionMask;
     this.regionSelectionMask = regionSelectionMask;
-    this.addRegionSelectionMask = addRegionSelectionMask;
+    this.toggleRegionSelectionMask = toggleRegionSelectionMask;
     this.regionSelectionCompleteMask = regionSelectionCompleteMask;
-    this.addRegionSelectionCompleteMask = addRegionSelectionCompleteMask;
+    this.toggleRegionSelectionCompleteMask = toggleRegionSelectionCompleteMask;
     this.translatingMask = translatingMask;
     this.scalingMask = scalingMask;
     this.xAxisScalingMask = xAxisScalingMask;
@@ -200,17 +200,17 @@ public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
             out);
     selectingPlugin =
         vertexSelectionOnly
-            ? new VertexSelectingGraphMousePlugin<>(singleSelectionMask, addSingleSelectionMask)
+            ? new VertexSelectingGraphMousePlugin<>(singleSelectionMask, toggleSingleSelectionMask)
             : SelectingGraphMousePlugin.builder()
                 .singleSelectionMask(singleSelectionMask)
-                .addSingleSelectionMask(addSingleSelectionMask)
+                .toggleSingleSelectionMask(toggleSingleSelectionMask)
                 .build();
     regionSelectingPlugin =
         RegionSelectingGraphMousePlugin.builder()
             .regionSelectionMask(regionSelectionMask)
-            .addRegionSelectionMask(addRegionSelectionMask)
+            .toggleRegionSelectionMask(toggleRegionSelectionMask)
             .regionSelectionCompleteMask(regionSelectionCompleteMask)
-            .addRegionSelectionCompleteMask(addRegionSelectionCompleteMask)
+            .toggleRegionSelectionCompleteMask(toggleRegionSelectionCompleteMask)
             .build();
     translatingPlugin = new TranslatingGraphMousePlugin(translatingMask);
 

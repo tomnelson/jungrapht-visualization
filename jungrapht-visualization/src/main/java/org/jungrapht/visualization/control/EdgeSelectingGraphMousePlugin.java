@@ -71,7 +71,7 @@ public class EdgeSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugi
   protected Point2D deltaDown; // what's that flower you have on...
 
   protected int singleSelectionMask;
-  protected int addSingleSelectionMask;
+  protected int toggleSingleSelectionMask;
 
   /**
    * create an instance with overrides
@@ -79,9 +79,9 @@ public class EdgeSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugi
    * <p>// * @param selectionModifiers for primary selection // * @param addToSelectionModifiers for
    * additional selection
    */
-  public EdgeSelectingGraphMousePlugin(int singleSelectionMask, int addSingleSelectionMask) {
+  public EdgeSelectingGraphMousePlugin(int singleSelectionMask, int toggleSingleSelectionMask) {
     this.singleSelectionMask = singleSelectionMask;
-    this.addSingleSelectionMask = addSingleSelectionMask;
+    this.toggleSingleSelectionMask = toggleSingleSelectionMask;
     this.pickFootprintPaintable = new FootprintPaintable();
     this.cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
   }
@@ -147,7 +147,7 @@ public class EdgeSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugi
     boolean somethingSelected = false;
     if (e.getModifiersEx() == singleSelectionMask) {
       somethingSelected = this.singleEdgeSelection(e, layoutPoint, false);
-    } else if (e.getModifiersEx() == addSingleSelectionMask) {
+    } else if (e.getModifiersEx() == toggleSingleSelectionMask) {
       somethingSelected = this.singleEdgeSelection(e, layoutPoint, true);
     } else {
       down = null;

@@ -13,6 +13,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
+import java.util.stream.Collectors;
 import javax.swing.*;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.PropertyLoader;
@@ -46,14 +47,14 @@ public class RegionSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
       V, E, T extends RegionSelectingGraphMousePlugin, B extends Builder<V, E, T, B>> {
     protected int regionSelectionMask =
         Modifiers.masks.get(System.getProperty(PREFIX + "regionSelectionMask", "MB1_MENU"));
-    protected int addRegionSelectionMask =
+    protected int toggleRegionSelectionMask =
         Modifiers.masks.get(
-            System.getProperty(PREFIX + "addRegionSelectionMask", "MB1_SHIFT_MENU"));
+            System.getProperty(PREFIX + "toggleRegionSelectionMask", "MB1_SHIFT_MENU"));
     protected int regionSelectionCompleteMask =
         Modifiers.masks.get(System.getProperty(PREFIX + "regionSelectionCompleteMask", "MENU"));
-    protected int addRegionSelectionCompleteMask =
+    protected int toggleRegionSelectionCompleteMask =
         Modifiers.masks.get(
-            System.getProperty(PREFIX + "addRegionSelectionCompleteMask", "SHIFT_MENU"));
+            System.getProperty(PREFIX + "toggleRegionSelectionCompleteMask", "SHIFT_MENU"));
 
     public B self() {
       return (B) this;
@@ -64,8 +65,8 @@ public class RegionSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
       return self();
     }
 
-    public B addRegionSelectionMask(int addRegionSelectionMask) {
-      this.addRegionSelectionMask = addRegionSelectionMask;
+    public B toggleRegionSelectionMask(int toggleRegionSelectionMask) {
+      this.toggleRegionSelectionMask = toggleRegionSelectionMask;
       return self();
     }
 
@@ -74,8 +75,8 @@ public class RegionSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
       return self();
     }
 
-    public B addRegionSelectionCompleteMask(int addRegionSelectionCompleteMask) {
-      this.addRegionSelectionCompleteMask = addRegionSelectionCompleteMask;
+    public B toggleRegionSelectionCompleteMask(int toggleRegionSelectionCompleteMask) {
+      this.toggleRegionSelectionCompleteMask = toggleRegionSelectionCompleteMask;
       return self();
     }
 
@@ -107,18 +108,18 @@ public class RegionSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
   protected MultiSelectionStrategy multiSelectionStrategy;
 
   protected int singleSelectionMask;
-  protected int addSingleSelectionMask;
+  protected int toggleSingleSelectionMask;
   protected int regionSelectionMask;
-  protected int addRegionSelectionMask;
+  protected int toggleRegionSelectionMask;
   protected int regionSelectionCompleteMask;
-  protected int addRegionSelectionCompleteMask;
+  protected int toggleRegionSelectionCompleteMask;
 
   public RegionSelectingGraphMousePlugin(Builder<V, E, ?, ?> builder) {
     this(
         builder.regionSelectionMask,
-        builder.addRegionSelectionMask,
+        builder.toggleRegionSelectionMask,
         builder.regionSelectionCompleteMask,
-        builder.addRegionSelectionCompleteMask);
+        builder.toggleRegionSelectionCompleteMask);
   }
 
   public RegionSelectingGraphMousePlugin() {
@@ -132,13 +133,13 @@ public class RegionSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
    */
   protected RegionSelectingGraphMousePlugin(
       int regionSelectionMask,
-      int addRegionSelectionMask,
+      int toggleRegionSelectionMask,
       int regionSelectionCompleteMask,
-      int addRegionSelectionCompleteMask) {
+      int toggleRegionSelectionCompleteMask) {
     this.regionSelectionMask = regionSelectionMask;
-    this.addRegionSelectionMask = addRegionSelectionMask;
+    this.toggleRegionSelectionMask = toggleRegionSelectionMask;
     this.regionSelectionCompleteMask = regionSelectionCompleteMask;
-    this.addRegionSelectionCompleteMask = addRegionSelectionCompleteMask;
+    this.toggleRegionSelectionCompleteMask = toggleRegionSelectionCompleteMask;
     this.lensPaintable = new LensPaintable();
     this.cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
   }
@@ -185,7 +186,8 @@ public class RegionSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
    */
   public void mousePressed(MouseEvent e) {
     log.trace("pressed");
-    if (e.getModifiersEx() == regionSelectionMask || e.getModifiersEx() == addRegionSelectionMask) {
+    if (e.getModifiersEx() == regionSelectionMask
+        || e.getModifiersEx() == toggleRegionSelectionMask) {
       down = e.getPoint();
       log.trace("mouse pick at screen coords {}", e.getPoint());
       deltaDown = down;
@@ -219,20 +221,18 @@ public class RegionSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
     MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
 
     // mouse is not down, check only for the addToSelectionModifiers (defaults to SHIFT_DOWN_MASK)
-    if (e.getModifiersEx() == addRegionSelectionCompleteMask) {
+    if (e.getModifiersEx() == toggleRegionSelectionCompleteMask) {
+      // toggle the selected state of everything in the selection shape
+      // don't deselect anything else
       if (down != null) {
         if (multiSelectionMayProceed(layoutTargetShape.getBounds2D())) {
-          Collection<V> picked = pickContainedVertices(vv, layoutTargetShape, false);
-          if (picked.isEmpty()) {
-            vv.getSelectedVertexState().clear();
-            vv.getSelectedEdgeState().clear();
-          }
+          Collection<V> picked = toggleSelectionForContainedVertices(vv, layoutTargetShape);
         }
       }
     } else if (e.getModifiersEx() == regionSelectionCompleteMask) {
       if (down != null) {
         if (multiSelectionMayProceed(layoutTargetShape.getBounds2D())) {
-          Collection<V> picked = pickContainedVertices(vv, layoutTargetShape, true);
+          Collection<V> picked = pickContainedVertices(vv, layoutTargetShape);
           if (picked.isEmpty()) {
             vv.getSelectedVertexState().clear();
             vv.getSelectedEdgeState().clear();
@@ -253,7 +253,8 @@ public class RegionSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
    */
   public void mouseDragged(MouseEvent e) {
     log.trace("dragged " + viewRectangle);
-    if (e.getModifiersEx() == regionSelectionMask || e.getModifiersEx() == addRegionSelectionMask) {
+    if (e.getModifiersEx() == regionSelectionMask
+        || e.getModifiersEx() == toggleRegionSelectionMask) {
       log.trace("mouseDragged");
       VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
       if (!locked) {
@@ -334,17 +335,34 @@ public class RegionSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
    * @param pickTarget - the shape to pick vertices in (layout coordinate system)
    * @param clear whether to reset existing selected state
    */
-  protected Collection<V> pickContainedVertices(
-      VisualizationViewer<V, E> vv, Shape pickTarget, boolean clear) {
+  protected Collection<V> pickContainedVertices(VisualizationViewer<V, E> vv, Shape pickTarget) {
     MutableSelectedState<V> selectedVertexState = vv.getSelectedVertexState();
     GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
     LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
     Collection<V> picked = pickSupport.getVertices(layoutModel, pickTarget);
-    if (clear) {
-      selectedVertexState.clear();
-    }
+    //    if (clear) {
+    selectedVertexState.clear();
+    //    }
     selectedVertexState.select(picked);
     return picked;
+  }
+
+  protected Collection<V> toggleSelectionForContainedVertices(
+      VisualizationViewer<V, E> vv, Shape pickTarget) {
+    MutableSelectedState<V> selectedVertexState = vv.getSelectedVertexState();
+    GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
+    LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
+    Collection<V> picked = pickSupport.getVertices(layoutModel, pickTarget);
+    picked.forEach(
+        v -> {
+          boolean selected = selectedVertexState.isSelected(v);
+          if (selected) {
+            selectedVertexState.deselect(v);
+          } else {
+            selectedVertexState.select(v);
+          }
+        });
+    return picked.stream().filter(selectedVertexState::isSelected).collect(Collectors.toSet());
   }
 
   public void mouseClicked(MouseEvent e) {}
@@ -375,11 +393,11 @@ public class RegionSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
     return getClass().getSimpleName()
         + "\n regionSelectionMask :"
         + Modifiers.maskStrings.get(regionSelectionMask)
-        + "\n addRegionSelectionMask:"
-        + Modifiers.maskStrings.get(addRegionSelectionMask)
+        + "\n toggleRegionSelectionMask:"
+        + Modifiers.maskStrings.get(toggleRegionSelectionMask)
         + "\n regionSelectionCompleteMask:"
         + Modifiers.maskStrings.get(regionSelectionCompleteMask)
-        + "\n addRegionSelectionCompleteMask:"
-        + Modifiers.maskStrings.get(addRegionSelectionCompleteMask);
+        + "\n toggleRegionSelectionCompleteMask:"
+        + Modifiers.maskStrings.get(toggleRegionSelectionCompleteMask);
   }
 }

@@ -40,12 +40,13 @@ public class LensVertexSelectingGraphMousePlugin<V, E>
   }
 
   public LensVertexSelectingGraphMousePlugin(Builder<V, E, ?, ?> builder) {
-    this(builder.singleSelectionMask, builder.addSingleSelectionMask);
+    this(builder.singleSelectionMask, builder.toggleSingleSelectionMask);
   }
 
   /** create an instance with overides */
-  public LensVertexSelectingGraphMousePlugin(int singleSelectionMask, int addSingleSelectionMask) {
-    super(singleSelectionMask, addSingleSelectionMask);
+  public LensVertexSelectingGraphMousePlugin(
+      int singleSelectionMask, int toggleSingleSelectionMask) {
+    super(singleSelectionMask, toggleSingleSelectionMask);
   }
 
   /**

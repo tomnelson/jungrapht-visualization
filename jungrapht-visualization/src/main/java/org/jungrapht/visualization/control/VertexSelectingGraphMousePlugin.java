@@ -48,9 +48,9 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
       V, E, T extends VertexSelectingGraphMousePlugin, B extends Builder<V, E, T, B>> {
     protected int singleSelectionMask =
         Modifiers.masks.get(System.getProperty(PREFIX + "singleSelectionMask", "MB1_MENU"));
-    protected int addSingleSelectionMask =
+    protected int toggleSingleSelectionMask =
         Modifiers.masks.get(
-            System.getProperty(PREFIX + "addSingleSelectionMask", "MB1_SHIFT_MENU"));
+            System.getProperty(PREFIX + "toggleSingleSelectionMask", "MB1_SHIFT_MENU"));
 
     public B self() {
       return (B) this;
@@ -61,8 +61,8 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
       return self();
     }
 
-    public B addSingleSelectionMask(int addSingleSelectionMask) {
-      this.addSingleSelectionMask = addSingleSelectionMask;
+    public B toggleSingleSelectionMask(int toggleSingleSelectionMask) {
+      this.toggleSingleSelectionMask = toggleSingleSelectionMask;
       return self();
     }
 
@@ -99,12 +99,12 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
 
   protected int singleSelectionMask;
 
-  protected int addSingleSelectionMask;
+  protected int toggleSingleSelectionMask;
 
   protected boolean vertexDragged;
 
   public VertexSelectingGraphMousePlugin(Builder<V, E, ?, ?> builder) {
-    this(builder.singleSelectionMask, builder.addSingleSelectionMask);
+    this(builder.singleSelectionMask, builder.toggleSingleSelectionMask);
   }
 
   public VertexSelectingGraphMousePlugin() {
@@ -112,9 +112,9 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
   }
 
   /** create an instance with overrides */
-  public VertexSelectingGraphMousePlugin(int singleSelectionMask, int addSingleSelectionMask) {
+  public VertexSelectingGraphMousePlugin(int singleSelectionMask, int toggleSingleSelectionMask) {
     this.singleSelectionMask = singleSelectionMask;
-    this.addSingleSelectionMask = addSingleSelectionMask;
+    this.toggleSingleSelectionMask = toggleSingleSelectionMask;
     this.pickFootprintPaintable = new FootprintPaintable();
     this.cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
   }
@@ -199,7 +199,7 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
     boolean vertexWasSelected = false;
     if (e.getModifiersEx() == singleSelectionMask) {
       vertexWasSelected = this.singleVertexSelection(e, layoutPoint, false);
-    } else if (e.getModifiersEx() == addSingleSelectionMask) {
+    } else if (e.getModifiersEx() == toggleSingleSelectionMask) {
       vertexWasSelected = this.singleVertexSelection(e, layoutPoint, true);
     } else {
       down = null;

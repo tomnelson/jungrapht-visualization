@@ -40,11 +40,11 @@ public class ModalSatelliteGraphMouse<V, E> extends DefaultModalGraphMouse<V, E>
   }
 
   protected int singleSelectionMask;
-  protected int addSingleSelectionMask;
+  protected int toggleSingleSelectionMask;
   protected int regionSelectionMask;
-  protected int addRegionSelectionMask;
+  protected int toggleRegionSelectionMask;
   protected int regionSelectionCompleteMask;
-  protected int addRegionSelectionCompleteMask;
+  protected int toggleRegionSelectionCompleteMask;
   protected int translatingMask;
   protected int scalingMask;
   protected int xAxisScalingMask;
@@ -60,11 +60,11 @@ public class ModalSatelliteGraphMouse<V, E> extends DefaultModalGraphMouse<V, E>
         builder.out,
         builder.vertexSelectionOnly,
         builder.singleSelectionMask,
-        builder.addSingleSelectionMask,
+        builder.toggleSingleSelectionMask,
         builder.regionSelectionMask,
-        builder.addRegionSelectionMask,
+        builder.toggleRegionSelectionMask,
         builder.regionSelectionCompleteMask,
-        builder.addRegionSelectionCompleteMask,
+        builder.toggleRegionSelectionCompleteMask,
         builder.translatingMask,
         builder.scalingMask,
         builder.xAxisScalingMask,
@@ -76,22 +76,22 @@ public class ModalSatelliteGraphMouse<V, E> extends DefaultModalGraphMouse<V, E>
       float out,
       boolean vertexSelectionOnly,
       int singleSelectionMask,
-      int addSingleSelectionMask,
+      int toggleSingleSelectionMask,
       int regionSelectionMask,
-      int addRegionSelectionMask,
+      int toggleRegionSelectionMask,
       int regionSelectionCompleteMask,
-      int addRegionSelectionCompleteMask,
+      int toggleRegionSelectionCompleteMask,
       int translatingMask,
       int scalingMask,
       int xAxisScalingMask,
       int yAxisScalingMask) {
     super(in, out, vertexSelectionOnly);
     this.singleSelectionMask = singleSelectionMask;
-    this.addSingleSelectionMask = addSingleSelectionMask;
+    this.toggleSingleSelectionMask = toggleSingleSelectionMask;
     this.regionSelectionMask = regionSelectionMask;
-    this.addRegionSelectionMask = addRegionSelectionMask;
+    this.toggleRegionSelectionMask = toggleRegionSelectionMask;
     this.regionSelectionCompleteMask = regionSelectionCompleteMask;
-    this.addRegionSelectionCompleteMask = addRegionSelectionCompleteMask;
+    this.toggleRegionSelectionCompleteMask = toggleRegionSelectionCompleteMask;
     this.translatingMask = translatingMask;
     this.scalingMask = scalingMask;
     this.xAxisScalingMask = xAxisScalingMask;
@@ -102,14 +102,14 @@ public class ModalSatelliteGraphMouse<V, E> extends DefaultModalGraphMouse<V, E>
     selectingPlugin =
         SelectingGraphMousePlugin.builder()
             .singleSelectionMask(InputEvent.BUTTON1_DOWN_MASK)
-            .addSingleSelectionMask(InputEvent.BUTTON1_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)
+            .toggleSingleSelectionMask(InputEvent.BUTTON1_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)
             .build();
     regionSelectingPlugin =
         RegionSelectingGraphMousePlugin.builder()
             .regionSelectionMask(InputEvent.BUTTON1_DOWN_MASK)
-            .addRegionSelectionMask(0)
+            .toggleRegionSelectionMask(0)
             .regionSelectionCompleteMask(0)
-            .addRegionSelectionCompleteMask(InputEvent.SHIFT_DOWN_MASK)
+            .toggleRegionSelectionCompleteMask(InputEvent.SHIFT_DOWN_MASK)
             .build();
 
     //    animatedPickingPlugin = new SatelliteAnimatedPickingGraphMousePlugin();
