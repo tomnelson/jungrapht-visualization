@@ -65,6 +65,7 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
   }
 
   private static final String PICK_AREA_SIZE = PREFIX + "pickAreaSize";
+  private static final String PICKING_STYLE = PREFIX + "pickingStyle";
 
   private static final Logger log = LoggerFactory.getLogger(ShapePickSupport.class);
 
@@ -98,7 +99,7 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
   protected VisualizationServer<V, E> vv;
 
   /** The current picking heuristic for this instance. Defaults to <code>CENTERED</code>. */
-  protected Style style = Style.CENTERED;
+  protected Style style = Style.valueOf(System.getProperty(PICKING_STYLE, "CENTERED"));
 
   /**
    * Creates a <code>ShapePickSupport</code> for the <code>vv</code> VisualizationServer, with the
@@ -240,10 +241,12 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
 
             if (style == Style.LOWEST) {
               // return the first match
-              return v;
+              closest = v;
+              break; // to return the first
             } else if (style == Style.HIGHEST) {
               // will return the last match
               closest = v;
+              // don't break and get the last one
             } else {
 
               // return the vertex closest to the
@@ -365,8 +368,8 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
           // return the vertex closest to the
           // center of a vertex shape
           Rectangle2D bounds = shape.getBounds2D();
-          double dx = bounds.getCenterX() - x;
-          double dy = bounds.getCenterY() - y;
+          double dx = bounds.getCenterX() - pickingCenter.getX();
+          double dy = bounds.getCenterY() - pickingCenter.getY();
           double dist = dx * dx + dy * dy;
           if (dist < minDistance) {
             minDistance = dist;
