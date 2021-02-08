@@ -105,7 +105,6 @@ public class ModePanel extends JPanel implements Modal {
                     if (e.getStateChange() == ItemEvent.SELECTED) {
                       String text = ((AbstractButton) e.getItem()).getText();
                       Mode mode = Mode.valueOf(text);
-                      log.info("setting mode to {} for {}", mode, modals);
                       modals.forEach(modal -> modal.setMode(mode));
                     }
                   });
@@ -118,7 +117,6 @@ public class ModePanel extends JPanel implements Modal {
 
   @Override
   public void setMode(Mode mode) {
-    log.info("changing mode from {} to {}", this.mode, mode);
     AbstractButton button = modeMap.get(mode);
     if (!button.isSelected()) {
       button.setSelected(true);

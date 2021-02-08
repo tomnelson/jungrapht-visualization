@@ -463,9 +463,9 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
     double min = scores.values().stream().min(Double::compare).get();
     double max = scores.values().stream().max(Double::compare).get();
     double range = max - min;
-    log.info("min:{}, max:{}, range:{}", min, max, range);
+    log.trace("min:{}, max:{}, range:{}", min, max, range);
     double delta = range / colorArray.length;
-    log.info("delta:{}", delta);
+    log.trace("delta:{}", delta);
     vv.getRenderContext()
         .setVertexFillPaintFunction(
             v -> {

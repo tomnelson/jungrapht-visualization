@@ -571,18 +571,18 @@ public class ShowLayoutsWithGhidraGraphInput extends JFrame {
     double min = scores.values().stream().min(Double::compare).get();
     double max = scores.values().stream().max(Double::compare).get();
     double range = max - min;
-    log.info("min:{}, max:{}, range:{}", min, max, range);
+    log.trace("min:{}, max:{}, range:{}", min, max, range);
     double delta = range / colorArray.length;
-    log.info("delta:{}", delta);
-    //    vv.getRenderContext()
-    //        .setVertexFillPaintFunction(
-    //            v -> {
-    //              if (scores.isEmpty() || !scores.containsKey(v)) return Color.red;
-    //              double score = scores.get(v);
-    //              double index = score / delta;
-    //              int idx = (int) Math.max(0, Math.min(colorArray.length - 1, index));
-    //              return colorArray[idx];
-    //            });
+    log.trace("delta:{}", delta);
+    vv.getRenderContext()
+        .setVertexFillPaintFunction(
+            v -> {
+              if (scores.isEmpty() || !scores.containsKey(v)) return Color.red;
+              double score = scores.get(v);
+              double index = score / delta;
+              int idx = (int) Math.max(0, Math.min(colorArray.length - 1, index));
+              return colorArray[idx];
+            });
     vv.repaint();
   }
 

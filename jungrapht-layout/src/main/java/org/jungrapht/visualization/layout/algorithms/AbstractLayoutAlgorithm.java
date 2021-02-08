@@ -72,6 +72,25 @@ public abstract class AbstractLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
     return Rectangle.from(pss.getMin(), pss.getMax());
   }
 
+  /** @param layoutModel */
+  protected void expandToFill(LayoutModel<V> layoutModel) {
+
+    // find the dimensions of the layout's occupied area
+    Rectangle vertexContainingRectangle = computeLayoutExtent(layoutModel);
+
+    // add the padding
+    //    vertexContainingRectangle =
+    //            Rectangle.from(
+    //                    vertexContainingRectangle.min().add(-horizontalVertexSpacing, -verticalVertexSpacing),
+    //                    vertexContainingRectangle.max().add(horizontalVertexSpacing, verticalVertexSpacing));
+
+    int maxDimension =
+        Math.max((int) vertexContainingRectangle.width, (int) vertexContainingRectangle.height);
+    layoutModel.setSize(maxDimension, maxDimension);
+
+    expandToFill(layoutModel, vertexContainingRectangle);
+  }
+
   /**
    * @param layoutModel
    * @param occupiedRegion

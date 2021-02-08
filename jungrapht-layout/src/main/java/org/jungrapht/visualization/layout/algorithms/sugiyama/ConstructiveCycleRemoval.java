@@ -41,7 +41,6 @@ public class ConstructiveCycleRemoval<V, E> {
     graph.vertexSet().forEach(dag::addVertex);
     graph.vertexSet().forEach(dag2::addVertex);
     List<E> edgeList = new ArrayList<>(graph.edgeSet());
-    //    Collections.sort(edgeList, comparator);
     for (E edge : edgeList) {
       V source = graph.getEdgeSource(edge);
       V target = graph.getEdgeTarget(edge);
@@ -52,11 +51,14 @@ public class ConstructiveCycleRemoval<V, E> {
         feedbackArcs.add(edge);
       }
     }
-    log.info("graph is {}", graph);
-    log.info("dag is {}", dag);
+    if (log.isTraceEnabled()) {
+      log.trace("graph is {}", graph);
+      log.trace("dag is {}", dag);
 
-    log.info("graph vertex sets are the same: {}", graph.vertexSet().containsAll(dag.vertexSet()));
-    log.info("graph edge sets are the same: {}", graph.edgeSet().containsAll(dag.edgeSet()));
+      log.trace(
+          "graph vertex sets are the same: {}", graph.vertexSet().containsAll(dag.vertexSet()));
+      log.trace("graph edge sets are the same: {}", graph.edgeSet().containsAll(dag.edgeSet()));
+    }
   }
 
   public Collection<E> getFeedbackArcs() {

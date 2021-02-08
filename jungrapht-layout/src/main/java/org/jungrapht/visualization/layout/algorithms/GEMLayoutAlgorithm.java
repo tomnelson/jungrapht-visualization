@@ -275,7 +275,8 @@ public class GEMLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorithm<V
     this.initialize();
     this.arrange();
     if (adjustToFit) {
-      adjustToFit();
+      expandToFill(layoutModel);
+      //      adjustToFit();
     }
     Rectangle range = computeLayoutExtent(layoutModel);
     // add padding of 5% of width and height

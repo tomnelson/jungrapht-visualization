@@ -90,7 +90,9 @@ public class GreedyCycleRemoval<V, E> {
               .filter(e -> copy.getEdgeTarget(e).equals(sink))
               .collect(Collectors.toList());
 
-      log.trace("removing sink {} and incoming edges {}", sink, losers);
+      if (log.isTraceEnabled()) {
+        log.trace("removing sink {} and incoming edges {}", sink, losers);
+      }
       copy.removeAllEdges(losers);
       copy.removeVertex(sink);
     }
@@ -104,7 +106,9 @@ public class GreedyCycleRemoval<V, E> {
               .filter(e -> copy.getEdgeTarget(e).equals(source))
               .collect(Collectors.toList());
 
-      log.trace("removing source {} and incoming edges {}", source, losers);
+      if (log.isTraceEnabled()) {
+        log.trace("removing source {} and incoming edges {}", source, losers);
+      }
       copy.removeAllEdges(losers);
       copy.removeVertex(source);
     }
@@ -118,14 +122,18 @@ public class GreedyCycleRemoval<V, E> {
     for (V v : orderedBy) {
       Collection<E> outgoingEdges = new LinkedHashSet<>(copy.outgoingEdgesOf(v));
       Collection<E> incomingEdges = new LinkedHashSet<>(copy.incomingEdgesOf(v));
-      log.info("incoming {} going to feedbackArcs", incomingEdges);
+      if (log.isTraceEnabled()) {
+        log.trace("incoming {} going to feedbackArcs", incomingEdges);
+      }
       feedbackArcs.addAll(incomingEdges);
       copy.removeAllEdges(outgoingEdges);
       copy.removeAllEdges(incomingEdges);
       copy.removeVertex(v);
     }
-    log.trace("copy graph is {}", copy);
-    log.trace("feedbackArcs {}", feedbackArcs);
+    if (log.isTraceEnabled()) {
+      log.trace("copy graph is {}", copy);
+      log.trace("feedbackArcs {}", feedbackArcs);
+    }
   }
 
   public void reverseFeedbackArcs() {
