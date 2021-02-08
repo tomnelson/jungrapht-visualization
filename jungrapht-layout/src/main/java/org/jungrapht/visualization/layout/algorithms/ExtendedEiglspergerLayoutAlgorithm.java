@@ -1,12 +1,10 @@
-package org.jungrapht.samples.sugiyama.test.algorithms;
+package org.jungrapht.visualization.layout.algorithms;
 
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.util.concurrent.CompletableFuture;
 import org.jgrapht.Graph;
-import org.jungrapht.visualization.layout.algorithms.EdgeAwareLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.eiglsperger.ExtendedEiglspergerRunnable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,10 +15,11 @@ import org.slf4j.LoggerFactory;
  * @param <V>
  * @param <E>
  */
-public class TestEiglspergerLayoutAlgorithm<V, E> extends EiglspergerLayoutAlgorithm<V, E>
+public class ExtendedEiglspergerLayoutAlgorithm<V, E> extends EiglspergerLayoutAlgorithm<V, E>
     implements LayoutAlgorithm<V> {
 
-  private static final Logger log = LoggerFactory.getLogger(TestEiglspergerLayoutAlgorithm.class);
+  private static final Logger log =
+      LoggerFactory.getLogger(ExtendedEiglspergerLayoutAlgorithm.class);
 
   private static final Shape IDENTITY_SHAPE = new Ellipse2D.Double();
 
@@ -35,7 +34,7 @@ public class TestEiglspergerLayoutAlgorithm<V, E> extends EiglspergerLayoutAlgor
   public static class Builder<
           V,
           E,
-          T extends TestEiglspergerLayoutAlgorithm<V, E> & EdgeAwareLayoutAlgorithm<V, E>,
+          T extends ExtendedEiglspergerLayoutAlgorithm<V, E> & EdgeAwareLayoutAlgorithm<V, E>,
           B extends Builder<V, E, T, B>>
       extends EiglspergerLayoutAlgorithm.Builder<V, E, T, B>
       implements LayoutAlgorithm.Builder<V, T, B> {
@@ -66,7 +65,7 @@ public class TestEiglspergerLayoutAlgorithm<V, E> extends EiglspergerLayoutAlgor
 
     /** {@inheritDoc} */
     public T build() {
-      return (T) new TestEiglspergerLayoutAlgorithm<>(this);
+      return (T) new ExtendedEiglspergerLayoutAlgorithm<>(this);
     }
   }
 
@@ -84,11 +83,11 @@ public class TestEiglspergerLayoutAlgorithm<V, E> extends EiglspergerLayoutAlgor
   boolean doUpRight;
   boolean doDownRight;
 
-  public TestEiglspergerLayoutAlgorithm() {
-    this(TestEiglspergerLayoutAlgorithm.edgeAwareBuilder());
+  public ExtendedEiglspergerLayoutAlgorithm() {
+    this(ExtendedEiglspergerLayoutAlgorithm.edgeAwareBuilder());
   }
 
-  protected TestEiglspergerLayoutAlgorithm(Builder builder) {
+  protected ExtendedEiglspergerLayoutAlgorithm(Builder builder) {
     super(builder);
     this.doUpLeft = builder.doUpLeft;
     this.doUpRight = builder.doUpRight;
@@ -103,8 +102,8 @@ public class TestEiglspergerLayoutAlgorithm<V, E> extends EiglspergerLayoutAlgor
     if (graph == null || graph.vertexSet().isEmpty()) {
       return;
     }
-    TestEiglspergerRunnable runnable =
-        TestEiglspergerRunnable.<V, E>builder()
+    ExtendedEiglspergerRunnable runnable =
+        ExtendedEiglspergerRunnable.<V, E>builder()
             .layoutModel(layoutModel)
             .vertexShapeFunction(vertexBoundsFunction)
             .straightenEdges(straightenEdges)

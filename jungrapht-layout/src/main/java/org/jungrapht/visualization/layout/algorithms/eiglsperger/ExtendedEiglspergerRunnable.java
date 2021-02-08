@@ -1,4 +1,4 @@
-package org.jungrapht.samples.sugiyama.test.algorithms;
+package org.jungrapht.visualization.layout.algorithms.eiglsperger;
 
 import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
 
@@ -14,11 +14,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import org.jgrapht.alg.util.NeighborCache;
-import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnable;
-import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerStepsBackward;
-import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerStepsForward;
-import org.jungrapht.visualization.layout.algorithms.eiglsperger.SyntheticLV;
-import org.jungrapht.visualization.layout.algorithms.eiglsperger.Synthetics;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.ArticulatedEdge;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.GraphLayers;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.GreedyCycleRemoval;
@@ -49,9 +44,10 @@ import org.slf4j.LoggerFactory;
  * @param <V> vertex type
  * @param <E> edge type
  */
-public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> implements Runnable {
+public class ExtendedEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E>
+    implements Runnable {
 
-  private static final Logger log = LoggerFactory.getLogger(TestEiglspergerRunnable.class);
+  private static final Logger log = LoggerFactory.getLogger(ExtendedEiglspergerRunnable.class);
 
   static {
     PropertyLoader.load();
@@ -65,7 +61,7 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
    * @param <B> the builder type
    */
   public static class Builder<
-          V, E, T extends TestEiglspergerRunnable<V, E>, B extends Builder<V, E, T, B>>
+          V, E, T extends ExtendedEiglspergerRunnable<V, E>, B extends Builder<V, E, T, B>>
       extends EiglspergerRunnable.Builder<V, E, T, B> {
     boolean doUpLeft;
     boolean doDownLeft;
@@ -94,7 +90,7 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
 
     /** {@inheritDoc} */
     public T build() {
-      return (T) new TestEiglspergerRunnable<>(this);
+      return (T) new ExtendedEiglspergerRunnable<>(this);
     }
   }
 
@@ -112,7 +108,7 @@ public class TestEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E> imp
   boolean doUpRight;
   boolean doDownRight;
 
-  protected TestEiglspergerRunnable(Builder<V, E, ?, ?> builder) {
+  protected ExtendedEiglspergerRunnable(Builder<V, E, ?, ?> builder) {
     super(builder);
     this.doUpLeft = builder.doUpLeft;
     this.doDownLeft = builder.doDownLeft;

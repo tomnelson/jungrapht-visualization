@@ -1,13 +1,10 @@
-package org.jungrapht.samples.sugiyama.test.algorithms;
+package org.jungrapht.visualization.layout.algorithms.eiglsperger;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
-import org.jungrapht.visualization.layout.algorithms.eiglsperger.HorizontalCompactionDeprecated;
-import org.jungrapht.visualization.layout.algorithms.eiglsperger.HorizontalCoordinateAssignmentDeprecated;
-import org.jungrapht.visualization.layout.algorithms.eiglsperger.VerticalAlignmentDeprecated;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.AverageMedian;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;

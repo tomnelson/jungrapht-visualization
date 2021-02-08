@@ -18,7 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The Sugiyama Hierarchical Minimum-Cross layout algorithm
+ * The Sugiyama Hierarchical Minimum-Cross layout algorithm with Eiglsperger optimizations
  *
  * @see "Methods for Visual Understanding Hierarchical System Structures. KOZO SUGIYAMA, MEMBER,
  *     IEEE, SHOJIRO TAGAWA, AND MITSUHIKO TODA, MEMBER, IEEE"

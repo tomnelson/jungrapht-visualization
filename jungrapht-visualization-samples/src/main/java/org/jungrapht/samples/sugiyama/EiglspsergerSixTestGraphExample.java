@@ -11,9 +11,9 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
-import org.jungrapht.samples.sugiyama.test.algorithms.TestEiglspergerLayoutAlgorithm;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
+import org.jungrapht.visualization.layout.algorithms.ExtendedEiglspergerLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,8 +46,8 @@ public class EiglspsergerSixTestGraphExample extends JFrame {
     VisualizationViewer<Integer, Integer> vv6 = configureVisualizationViewer(graph6);
     vv6.addPreRenderPaintable(new TitlePaintable("Upper & Lower Left", vv6.getPreferredSize()));
 
-    TestEiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm1 =
-        TestEiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+    ExtendedEiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm1 =
+        ExtendedEiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .doUpLeft(true)
             .threaded(false)
             .postStraighten(false)
@@ -55,8 +55,8 @@ public class EiglspsergerSixTestGraphExample extends JFrame {
     layoutAlgorithm1.setVertexBoundsFunction(vv1.getRenderContext().getVertexBoundsFunction());
     vv1.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm1);
 
-    TestEiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm2 =
-        TestEiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+    ExtendedEiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm2 =
+        ExtendedEiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .doUpRight(true)
             .threaded(false)
             .postStraighten(false)
@@ -64,8 +64,8 @@ public class EiglspsergerSixTestGraphExample extends JFrame {
     layoutAlgorithm2.setVertexBoundsFunction(vv2.getRenderContext().getVertexBoundsFunction());
     vv2.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm2);
 
-    TestEiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm3 =
-        TestEiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+    ExtendedEiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm3 =
+        ExtendedEiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .doDownLeft(true)
             .threaded(false)
             .postStraighten(false)
@@ -73,8 +73,8 @@ public class EiglspsergerSixTestGraphExample extends JFrame {
     layoutAlgorithm3.setVertexBoundsFunction(vv3.getRenderContext().getVertexBoundsFunction());
     vv3.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm3);
 
-    TestEiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm4 =
-        TestEiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+    ExtendedEiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm4 =
+        ExtendedEiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .doDownRight(true)
             .threaded(false)
             .postStraighten(false)
@@ -82,8 +82,8 @@ public class EiglspsergerSixTestGraphExample extends JFrame {
     layoutAlgorithm4.setVertexBoundsFunction(vv4.getRenderContext().getVertexBoundsFunction());
     vv4.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm4);
 
-    TestEiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm5 =
-        TestEiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+    ExtendedEiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm5 =
+        ExtendedEiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .doUpLeft(true)
             .doUpRight(true)
             .doDownLeft(true)
@@ -94,8 +94,8 @@ public class EiglspsergerSixTestGraphExample extends JFrame {
     layoutAlgorithm5.setVertexBoundsFunction(vv5.getRenderContext().getVertexBoundsFunction());
     vv5.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm5);
 
-    TestEiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm6 =
-        TestEiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+    ExtendedEiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm6 =
+        ExtendedEiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .doUpLeft(true)
             .doUpRight(false)
             .doDownLeft(true)
