@@ -13,15 +13,11 @@ import java.util.LongSummaryStatistics;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import org.jgrapht.Graph;
 import org.jgrapht.alg.util.NeighborCache;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.ArticulatedEdge;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.GraphLayers;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.GreedyCycleRemoval;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.TransformedGraphSupplier;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.Unaligned;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.VertexMetadata;
+import org.jungrapht.visualization.layout.algorithms.Layered;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.*;
 import org.jungrapht.visualization.layout.algorithms.util.Attributed;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
@@ -120,14 +116,40 @@ public class ExtendedEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E>
   public void run() {
     this.graph = layoutModel.getGraph();
 
+    if (graph.vertexSet().isEmpty()) {
+      return;
+    }
+    if (graph.vertexSet().size() == 1) {
+      V v = graph.vertexSet().stream().findFirst().get();
+      layoutModel.setSize(50, layoutModel.getHeight());
+      layoutModel.set(v, layoutModel.getWidth() / 2, layoutModel.getHeight() / 2);
+      return;
+    }
+
     long startTime = System.currentTimeMillis();
     TransformedGraphSupplier<V, E> transformedGraphSupplier = new TransformedGraphSupplier<>(graph);
     this.svGraph = transformedGraphSupplier.get();
+    neighborCache = new NeighborCache<>(svGraph);
     long transformTime = System.currentTimeMillis();
     log.trace("transform Graph took {}", (transformTime - startTime));
 
-    GreedyCycleRemoval<LV<V>, LE<V, E>> greedyCycleRemoval = new GreedyCycleRemoval<>(svGraph);
-    Collection<LE<V, E>> feedbackArcs = greedyCycleRemoval.getFeedbackArcs();
+    Collection<E> feedbacks;
+    if (edgeComparator == Layered.noopComparator) {
+      GreedyFeedbackArcFunction<V, E> greedyFeedbackArcFunction = new GreedyFeedbackArcFunction<>();
+      feedbacks = greedyFeedbackArcFunction.apply(graph);
+
+    } else {
+      ConstructiveFeedbackArcFunction constructiveFeedbackArcFunction =
+          new ConstructiveFeedbackArcFunction(edgeComparator);
+      feedbacks = constructiveFeedbackArcFunction.apply(graph);
+    }
+
+    Collection<LE<V, E>> feedbackArcs =
+        svGraph
+            .edgeSet()
+            .stream()
+            .filter(e -> feedbacks.contains(e.getEdge()))
+            .collect(Collectors.toSet());
 
     // reverse the direction of feedback arcs so that they no longer introduce cycles in the graph
     // the feedback arcs will be processed later to draw with the correct direction and correct articulation points
@@ -139,13 +161,17 @@ public class ExtendedEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E>
     long cycles = System.currentTimeMillis();
     log.trace("remove cycles took {}", (cycles - transformTime));
 
+    if (cancelled || Thread.currentThread().isInterrupted()) {
+      log.trace("interrupted before layering, cancelled: {}", cancelled);
+      return;
+    }
     List<List<LV<V>>> layers;
     switch (layering) {
       case LONGEST_PATH:
-        layers = GraphLayers.longestPath(svGraph);
+        layers = GraphLayers.longestPath(svGraph, neighborCache);
         break;
       case COFFMAN_GRAHAM:
-        layers = GraphLayers.coffmanGraham(svGraph, 10);
+        layers = GraphLayers.coffmanGraham(svGraph, neighborCache, 0);
         break;
       case NETWORK_SIMPLEX:
         layers = GraphLayers.networkSimplex(svGraph);
@@ -153,6 +179,9 @@ public class ExtendedEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E>
       case TOP_DOWN:
       default:
         layers = GraphLayers.assign(svGraph);
+    }
+    if (minimizeEdgeLength) {
+      GraphLayers.minimizeEdgeLength(svGraph, layers);
     }
     long assignLayersTime = System.currentTimeMillis();
     log.trace("assign layers took {} ", (assignLayersTime - cycles));
@@ -174,34 +203,41 @@ public class ExtendedEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E>
     if (svGraph.edgeSet().size() > 200) {
       maxLevelCross = 2;
     }
-    NeighborCache<LV<V>, LE<V, E>> neighborCache = new NeighborCache<>(svGraph);
-    stepsForward = new EiglspergerStepsForward<>(svGraph, neighborCache, layersArray, true);
-    stepsBackward = new EiglspergerStepsBackward<>(svGraph, neighborCache, layersArray, true);
+    stepsForward = new EiglspergerStepsForward<>(svGraph, neighborCache, layersArray, transpose);
+    stepsBackward = new EiglspergerStepsBackward<>(svGraph, neighborCache, layersArray, transpose);
 
     int bestCrossCount = Integer.MAX_VALUE;
-    VertexMetadata<V>[][] vertexMetadata = null;
+    Graph<LV<V>, Integer> bestCompactionGraph = null;
     for (int i = 0; i < maxLevelCross; i++) {
+      if (cancelled || Thread.currentThread().isInterrupted()) {
+        log.trace("interrupted in level cross, cancelled: {}", cancelled);
+        return;
+      }
       if (i % 2 == 0) {
         int sweepCrossCount = stepsForward.sweep(layersArray);
+        Graph<LV<V>, Integer> compactionGraph = stepsForward.compactionGraph;
         if (sweepCrossCount < bestCrossCount) {
           bestCrossCount = sweepCrossCount;
           vertexMetadataMap = save(layersArray);
+          bestCompactionGraph = copy(compactionGraph);
         } else {
           if (log.isTraceEnabled()) {
             log.trace("best:{}", layersArray);
           }
-          break;
+          //                    break;
         }
       } else {
         int sweepCrossCount = stepsBackward.sweep(layersArray);
+        Graph<LV<V>, Integer> compactionGraph = stepsBackward.compactionGraph;
         if (sweepCrossCount < bestCrossCount) {
           bestCrossCount = sweepCrossCount;
           vertexMetadataMap = save(layersArray);
+          bestCompactionGraph = copy(compactionGraph);
         } else {
           if (log.isTraceEnabled()) {
             log.trace("best:{}", layersArray);
           }
-          break;
+          //                    break;
         }
       }
     }
@@ -232,14 +268,20 @@ public class ExtendedEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E>
         value[j].setIndex(j);
       }
     }
+    if (cancelled || Thread.currentThread().isInterrupted()) {
+      log.trace("interrupted before compaction, cancelled: {}", cancelled);
+      return;
+    }
+
     if (straightenEdges) {
       SelectiveEiglspergerHorizontalCoordinateAssignment<V, E> horizontalCoordinateAssignment =
           new SelectiveEiglspergerHorizontalCoordinateAssignment(
               layersArray,
               svGraph,
+              bestCompactionGraph,
               new HashSet<>(),
-              50,
-              50,
+              horizontalOffset,
+              verticalOffset,
               doUpLeft,
               doUpRight,
               doDownLeft,
@@ -349,7 +391,7 @@ public class ExtendedEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E>
     int maxDimension = Math.max(totalWidth, totalHeight);
 
     layoutModel.setSize(
-        Math.max(maxDimension, layoutModel.getWidth()),
+        multiComponent ? totalWidth : Math.max(maxDimension, layoutModel.getWidth()),
         Math.max(maxDimension, layoutModel.getHeight()));
     long pointsSetTime = System.currentTimeMillis();
     double scalex = (double) layoutModel.getWidth() / pointRangeWidth;
@@ -400,6 +442,10 @@ public class ExtendedEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E>
     long articulatedEdgeTime = System.currentTimeMillis();
     log.trace("articulated edges took {}", (articulatedEdgeTime - pointsSetTime));
 
+    if (cancelled) {
+      log.debug("interrupted before setting layoutModel from svGraph, cancelled: {}", cancelled);
+      return;
+    }
     svGraph.vertexSet().forEach(v -> layoutModel.set(v.getVertex(), v.getPoint()));
     for (LV<V> v : svGraph.vertexSet()) {
       if (v.getVertex() instanceof Attributed) {

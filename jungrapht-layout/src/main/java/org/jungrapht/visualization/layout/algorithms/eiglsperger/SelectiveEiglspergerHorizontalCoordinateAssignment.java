@@ -20,7 +20,7 @@ import org.jungrapht.visualization.layout.model.Point;
  *     Germany"
  */
 public class SelectiveEiglspergerHorizontalCoordinateAssignment<V, E>
-    extends HorizontalCoordinateAssignmentDeprecated<V, E> {
+    extends HorizontalCoordinateAssignment<V, E> {
 
   boolean doUpLeft;
   boolean doDownLeft;
@@ -30,6 +30,7 @@ public class SelectiveEiglspergerHorizontalCoordinateAssignment<V, E>
   public SelectiveEiglspergerHorizontalCoordinateAssignment(
       LV<V>[][] layers,
       Graph<LV<V>, LE<V, E>> svGraph,
+      Graph<LV<V>, Integer> compactionGraph,
       Set<LE<V, E>> markedSegments,
       int horizontalOffset,
       int verticalOffset,
@@ -37,7 +38,7 @@ public class SelectiveEiglspergerHorizontalCoordinateAssignment<V, E>
       boolean doUpRight,
       boolean doDownLeft,
       boolean doDownRight) {
-    super(layers, svGraph, markedSegments, horizontalOffset, verticalOffset);
+    super(layers, svGraph, compactionGraph, markedSegments, horizontalOffset, verticalOffset);
     this.doUpLeft = doUpLeft;
     this.doDownLeft = doDownLeft;
     this.doUpRight = doUpRight;

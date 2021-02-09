@@ -8,6 +8,7 @@
  */
 package org.jungrapht.visualization.control;
 
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import org.slf4j.Logger;
@@ -18,10 +19,12 @@ public abstract class AbstractPopupGraphMousePlugin extends AbstractGraphMousePl
 
   private static Logger log = LoggerFactory.getLogger(AbstractGraphMousePlugin.class);
 
+  private static int MENU_SHORTCUT = Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx();
+
   protected int modifiers;
 
   public AbstractPopupGraphMousePlugin() {
-    this(MouseEvent.BUTTON3_DOWN_MASK);
+    this(MENU_SHORTCUT);
   }
 
   public AbstractPopupGraphMousePlugin(int modifiers) {

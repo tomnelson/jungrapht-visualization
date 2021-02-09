@@ -632,7 +632,7 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
     return Rectangle.of((int) w.getAverage(), (int) h.getAverage());
   }
 
-  private Graph<LV<V>, Integer> copy(Graph<LV<V>, Integer> graph) {
+  protected Graph<LV<V>, Integer> copy(Graph<LV<V>, Integer> graph) {
     Graph<LV<V>, Integer> out =
         GraphTypeBuilder.forGraph(graph)
             .edgeSupplier(SupplierUtil.createIntegerSupplier())

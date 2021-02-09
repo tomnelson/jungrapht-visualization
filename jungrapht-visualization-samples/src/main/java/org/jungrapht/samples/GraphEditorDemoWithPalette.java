@@ -384,6 +384,7 @@ public class GraphEditorDemoWithPalette extends JPanel implements Printable {
           if (icon != null) {
 
             V vertex = viewer.getVisualizationModel().getGraph().addVertex();
+            viewer.getVertexSpatial().recalculate();
             iconMap.put(vertex, icon);
             viewer.getVisualizationModel().getLayoutModel().set(vertex, dropPoint.x, dropPoint.y);
 
