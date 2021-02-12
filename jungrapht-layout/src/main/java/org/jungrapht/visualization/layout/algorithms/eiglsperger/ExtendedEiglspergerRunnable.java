@@ -139,8 +139,8 @@ public class ExtendedEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E>
       feedbacks = greedyFeedbackArcFunction.apply(graph);
 
     } else {
-      ConstructiveFeedbackArcFunction constructiveFeedbackArcFunction =
-          new ConstructiveFeedbackArcFunction(edgeComparator);
+      ConstructiveFeedbackArcFunction<V, E> constructiveFeedbackArcFunction =
+          new ConstructiveFeedbackArcFunction<>(edgeComparator);
       feedbacks = constructiveFeedbackArcFunction.apply(graph);
     }
 
@@ -165,20 +165,38 @@ public class ExtendedEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E>
       log.trace("interrupted before layering, cancelled: {}", cancelled);
       return;
     }
+    Comparator<LE<V, E>> svComparator =
+        (e1, e2) -> edgeComparator.compare(e1.getEdge(), e2.getEdge());
     List<List<LV<V>>> layers;
     switch (layering) {
       case LONGEST_PATH:
-        layers = GraphLayers.longestPath(svGraph, neighborCache);
+        if (edgeComparator != Layered.noopComparator) {
+          layers = GraphLayers.longestPath(svGraph, svComparator);
+        } else {
+          layers = GraphLayers.longestPath(svGraph);
+        }
         break;
       case COFFMAN_GRAHAM:
-        layers = GraphLayers.coffmanGraham(svGraph, neighborCache, 0);
+        if (edgeComparator != Layered.noopComparator) {
+          layers = GraphLayers.coffmanGraham(svGraph, neighborCache, 0, svComparator);
+        } else {
+          layers = GraphLayers.coffmanGraham(svGraph, neighborCache, 0);
+        }
         break;
       case NETWORK_SIMPLEX:
-        layers = GraphLayers.networkSimplex(svGraph);
+        if (edgeComparator != Layered.noopComparator) {
+          layers = GraphLayers.networkSimplex(svGraph, svComparator);
+        } else {
+          layers = GraphLayers.networkSimplex(svGraph);
+        }
         break;
       case TOP_DOWN:
       default:
-        layers = GraphLayers.assign(svGraph);
+        if (edgeComparator != Layered.noopComparator) {
+          layers = GraphLayers.assign(svGraph, svComparator);
+        } else {
+          layers = GraphLayers.assign(svGraph);
+        }
     }
     if (minimizeEdgeLength) {
       GraphLayers.minimizeEdgeLength(svGraph, layers);

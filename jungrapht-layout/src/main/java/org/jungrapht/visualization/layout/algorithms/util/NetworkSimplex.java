@@ -1,6 +1,7 @@
 package org.jungrapht.visualization.layout.algorithms.util;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Random;
 import java.util.Stack;
 import java.util.function.Function;
 import org.jgrapht.Graph;
+import org.jungrapht.visualization.layout.algorithms.Layered;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.GraphLayers;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
@@ -57,6 +59,7 @@ public class NetworkSimplex<V, E> {
     protected Graph<LV<V>, LE<V, E>> svGraph;
     protected Function<LE<V, E>, Integer> weightFunction = e -> 1;
     protected Function<LE<V, E>, Integer> separationFunction = e -> 1;
+    Comparator<LE<V, E>> edgeComparator = Layered.noopComparator;
 
     protected Builder(Graph<LV<V>, LE<V, E>> svGraph) {
       this.svGraph = svGraph;
@@ -82,6 +85,11 @@ public class NetworkSimplex<V, E> {
      */
     public B separationFunction(Function<LE<V, E>, Integer> separationFunction) {
       this.separationFunction = separationFunction;
+      return self();
+    }
+
+    public B edgeComparator(Comparator<LE<V, E>> edgeComparator) {
+      this.edgeComparator = edgeComparator;
       return self();
     }
 
@@ -130,11 +138,13 @@ public class NetworkSimplex<V, E> {
   protected List<LV<V>> treeVertices = new ArrayList<>();
   protected Map<LV<V>, Boolean> vertexInTreeMap = new HashMap<>();
   protected Map<LE<V, E>, Boolean> edgeInTreeMap = new HashMap<>();
+  protected Comparator<LE<V, E>> edgeComparator;
 
   protected NetworkSimplex(Builder<V, E, ?, ?> builder) {
     this.svGraph = builder.svGraph;
     this.weightFunction = builder.weightFunction;
     this.separationFunction = builder.separationFunction;
+    this.edgeComparator = builder.edgeComparator;
   }
 
   public void run() {
@@ -174,7 +184,7 @@ public class NetworkSimplex<V, E> {
   }
 
   private void feasibleTree() {
-    layerList = GraphLayers.longestPathReverse(svGraph);
+    layerList = GraphLayers.longestPathReverse(svGraph, edgeComparator);
     svGraph.vertexSet().forEach(v -> layers.put(v, v.getRank()));
 
     while (tightTree() < this.svGraph.vertexSet().size()) {

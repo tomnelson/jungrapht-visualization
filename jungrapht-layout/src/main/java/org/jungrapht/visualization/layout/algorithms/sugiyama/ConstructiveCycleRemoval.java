@@ -41,6 +41,7 @@ public class ConstructiveCycleRemoval<V, E> {
     graph.vertexSet().forEach(dag::addVertex);
     graph.vertexSet().forEach(dag2::addVertex);
     List<E> edgeList = new ArrayList<>(graph.edgeSet());
+    Collections.sort(edgeList, comparator);
     for (E edge : edgeList) {
       V source = graph.getEdgeSource(edge);
       V target = graph.getEdgeTarget(edge);

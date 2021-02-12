@@ -18,6 +18,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.util.NeighborCache;
+import org.jungrapht.visualization.layout.algorithms.Layered;
 import org.jungrapht.visualization.layout.algorithms.SugiyamaLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.util.InsertionSortCounter;
 import org.jungrapht.visualization.layout.algorithms.util.LayeredRunnable;
@@ -295,12 +296,18 @@ public class SugiyamaRunnable<V, E> implements LayeredRunnable<E> {
       return;
     }
     List<List<LV<V>>> layers;
+    Comparator<LE<V, E>> svComparator =
+        (e1, e2) -> edgeComparator.compare(e1.getEdge(), e2.getEdge());
     switch (layering) {
       case NETWORK_SIMPLEX:
         layers = GraphLayers.networkSimplex(svGraph);
         break;
       case LONGEST_PATH:
-        layers = GraphLayers.longestPath(svGraph);
+        if (edgeComparator != Layered.noopComparator) {
+          layers = GraphLayers.longestPath(svGraph, svComparator);
+        } else {
+          layers = GraphLayers.longestPath(svGraph);
+        }
         break;
       case COFFMAN_GRAHAM:
         layers = GraphLayers.coffmanGraham(svGraph, 10);

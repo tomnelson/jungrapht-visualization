@@ -111,6 +111,7 @@ public class ExtendedEiglspergerLayoutAlgorithm<V, E> extends EiglspergerLayoutA
             .postStraighten(postStraighten)
             .maxLevelCross(maxLevelCross)
             .layering(layering)
+            .edgeComparator(edgeComparator)
             .doUpLeft(doUpLeft)
             .doUpRight(doUpRight)
             .doDownLeft(doDownLeft)

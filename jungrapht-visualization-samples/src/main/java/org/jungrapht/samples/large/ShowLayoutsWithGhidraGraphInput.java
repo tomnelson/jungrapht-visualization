@@ -172,6 +172,21 @@ public class ShowLayoutsWithGhidraGraphInput extends JFrame {
     LayoutHelperDirectedGraphs.Layouts[] combos = LayoutHelperDirectedGraphs.getCombos();
     final JToggleButton animateLayoutTransition = new JToggleButton("Animate Layout Transition");
 
+    final Predicate<DefaultEdge> favoredEdgePredicate =
+        e ->
+            "Fall-Through"
+                    .equals(
+                        edgeAttributes
+                            .getOrDefault(e, Collections.emptyMap())
+                            .get("EdgeType")
+                            .getValue())
+                || "Unconditional-Jump"
+                    .equals(
+                        edgeAttributes
+                            .getOrDefault(e, Collections.emptyMap())
+                            .get("EdgeType")
+                            .getValue());
+
     final JComboBox layoutComboBox = new JComboBox(combos);
     layoutComboBox.addActionListener(
         e ->
@@ -199,6 +214,10 @@ public class ShowLayoutsWithGhidraGraphInput extends JFrame {
                                     "Terminator",
                                     "Conditional-Return"),
                                 edgeAttributes));
+                  }
+                  if (layoutAlgorithm instanceof NormalizesFavoredEdge) {
+                    ((NormalizesFavoredEdge<DefaultEdge>) layoutAlgorithm)
+                        .setFavoredEdgePredicate(favoredEdgePredicate);
                   }
                   if (layoutAlgorithm instanceof EdgePredicated) {
                     ((EdgePredicated<DefaultEdge>) layoutAlgorithm)

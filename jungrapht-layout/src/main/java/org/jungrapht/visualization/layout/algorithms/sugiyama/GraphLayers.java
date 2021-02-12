@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.util.NeighborCache;
+import org.jungrapht.visualization.layout.algorithms.Layered;
 import org.jungrapht.visualization.layout.algorithms.util.ComponentGrouping;
 import org.jungrapht.visualization.layout.algorithms.util.NetworkSimplex;
 import org.jungrapht.visualization.layout.algorithms.util.NetworkSimplexDevelopment;
@@ -17,11 +18,15 @@ public class GraphLayers {
   private GraphLayers() {}
 
   public static <V, E> List<List<LV<V>>> assign(Graph<LV<V>, LE<V, E>> dag) {
+    return assign(dag, Layered.noopComparator);
+  }
+
+  public static <V, E> List<List<LV<V>>> assign(
+      Graph<LV<V>, LE<V, E>> dag, Comparator<LE<V, E>> comparator) {
     int rank = 0;
     List<List<LV<V>>> sorted = new ArrayList<>();
-    List<LE<V, E>> edges = dag.edgeSet().stream().collect(Collectors.toCollection(LinkedList::new));
-    List<LV<V>> vertices =
-        dag.vertexSet().stream().collect(Collectors.toCollection(LinkedList::new));
+    List<LE<V, E>> edges = new LinkedList<>(dag.edgeSet());
+    Set<LV<V>> vertices = getVertices(dag, comparator); // sorted or in original order
     List<LV<V>> start =
         getVerticesWithoutIncomingEdges(dag, edges, vertices); // should be the roots
 
@@ -94,17 +99,50 @@ public class GraphLayers {
     return groupedRow;
   }
 
+  private static <V, E> Set<V> getVertices(Graph<V, E> graph, Comparator<E> edgeComparator) {
+    if (edgeComparator == Layered.noopComparator) {
+      return new LinkedHashSet<>(graph.vertexSet());
+    } else {
+      //      List<E> sortedEdges = graph
+      //              .edgeSet()
+      //              .stream()
+      //              .sorted(edgeComparator).collect(Collectors.toList());
+      Set<V> sortedVertices = new LinkedHashSet<>();
+      graph
+          .edgeSet()
+          .stream()
+          .sorted(edgeComparator)
+          .forEach(
+              e -> {
+                sortedVertices.add(graph.getEdgeSource(e));
+                sortedVertices.add(graph.getEdgeTarget(e));
+              });
+      // add any vertices with no edges
+      graph.vertexSet().stream().filter(v -> graph.degreeOf(v) == 0).forEach(sortedVertices::add);
+      //          .map(graph::getEdgeTarget)
+      //          .collect(Collectors.toCollection(LinkedHashSet::new));
+      return sortedVertices;
+    }
+  }
+
   public static <V, E> List<List<LV<V>>> longestPath(Graph<LV<V>, LE<V, E>> dag) {
-    return longestPath(dag, new NeighborCache<>(dag));
+    return longestPath(dag, new NeighborCache<>(dag), Layered.noopComparator);
   }
 
   public static <V, E> List<List<LV<V>>> longestPath(
-      Graph<LV<V>, LE<V, E>> dag, NeighborCache<LV<V>, LE<V, E>> neighborCache) {
+      Graph<LV<V>, LE<V, E>> dag, Comparator<LE<V, E>> comparator) {
+    return longestPath(dag, new NeighborCache<>(dag), comparator);
+  }
+
+  public static <V, E> List<List<LV<V>>> longestPath(
+      Graph<LV<V>, LE<V, E>> dag,
+      NeighborCache<LV<V>, LE<V, E>> neighborCache,
+      Comparator<LE<V, E>> comparator) {
     List<List<LV<V>>> list = new ArrayList<>();
 
     Set<LV<V>> U = new HashSet<>();
     Set<LV<V>> Z = new HashSet<>();
-    Set<LV<V>> V = new HashSet<>(dag.vertexSet());
+    Set<LV<V>> V = getVertices(dag, comparator); // either sorted or not
     int currentLayer = 0;
     list.add(new ArrayList<>());
     while (U.size() != dag.vertexSet().size()) {
@@ -139,16 +177,23 @@ public class GraphLayers {
   }
 
   public static <V, E> List<List<LV<V>>> longestPathReverse(Graph<LV<V>, LE<V, E>> dag) {
-    return longestPathReverse(dag, new NeighborCache<>(dag));
+    return longestPathReverse(dag, new NeighborCache<>(dag), Layered.noopComparator);
   }
 
   public static <V, E> List<List<LV<V>>> longestPathReverse(
-      Graph<LV<V>, LE<V, E>> dag, NeighborCache<LV<V>, LE<V, E>> neighborCache) {
+      Graph<LV<V>, LE<V, E>> dag, Comparator<LE<V, E>> comparator) {
+    return longestPathReverse(dag, new NeighborCache<>(dag), comparator);
+  }
+
+  public static <V, E> List<List<LV<V>>> longestPathReverse(
+      Graph<LV<V>, LE<V, E>> dag,
+      NeighborCache<LV<V>, LE<V, E>> neighborCache,
+      Comparator<LE<V, E>> comparator) {
     List<List<LV<V>>> list = new ArrayList<>();
 
     Set<LV<V>> U = new HashSet<>();
     Set<LV<V>> Z = new HashSet<>();
-    Set<LV<V>> V = new HashSet<>(dag.vertexSet());
+    Set<LV<V>> V = getVertices(dag, comparator);
     int currentLayer = 0;
     list.add(new ArrayList<>());
     while (U.size() != dag.vertexSet().size()) {
@@ -183,11 +228,16 @@ public class GraphLayers {
   }
 
   public static <V, E> List<List<LV<V>>> networkSimplex(Graph<LV<V>, LE<V, E>> dag) {
+    return networkSimplex(dag, Layered.noopComparator);
+  }
+
+  public static <V, E> List<List<LV<V>>> networkSimplex(
+      Graph<LV<V>, LE<V, E>> dag, Comparator<LE<V, E>> comparator) {
     List<List<LV<V>>> layerList = new ArrayList<>();
     List<Graph<LV<V>, LE<V, E>>> componentList = ComponentGrouping.getComponentGraphs(dag);
     componentList.sort(Comparator.comparingInt(l -> -componentList.size()));
     for (Graph<LV<V>, LE<V, E>> sub : componentList) {
-      NetworkSimplex<V, E> ns = NetworkSimplex.builder(sub).build();
+      NetworkSimplex<V, E> ns = NetworkSimplex.builder(sub).edgeComparator(comparator).build();
       ns.run();
       List<List<LV<V>>> layers = ns.getLayerList();
       for (int i = 0; i < layers.size(); i++) {
@@ -214,18 +264,31 @@ public class GraphLayers {
   }
 
   public static <V, E> List<List<LV<V>>> coffmanGraham(Graph<LV<V>, LE<V, E>> dag, int width) {
-    return coffmanGraham(dag, new NeighborCache<>(dag), width);
+    return coffmanGraham(dag, new NeighborCache<>(dag), width, Layered.noopComparator);
+  }
+
+  public static <V, E> List<List<LV<V>>> coffmanGraham(
+      Graph<LV<V>, LE<V, E>> dag, int width, Comparator<LE<V, E>> comparator) {
+    return coffmanGraham(dag, new NeighborCache<>(dag), width, comparator);
   }
 
   public static <V, E> List<List<LV<V>>> coffmanGraham(
       Graph<LV<V>, LE<V, E>> dag, NeighborCache<LV<V>, LE<V, E>> neighborCache, int width) {
+    return coffmanGraham(dag, neighborCache, width, Layered.noopComparator);
+  }
+
+  public static <V, E> List<List<LV<V>>> coffmanGraham(
+      Graph<LV<V>, LE<V, E>> dag,
+      NeighborCache<LV<V>, LE<V, E>> neighborCache,
+      int width,
+      Comparator<LE<V, E>> comparator) {
     if (width == 0) {
       width = dag.vertexSet().size() / 10;
     }
     List<List<LV<V>>> list = new ArrayList<>();
     Set<LV<V>> Z = new HashSet<>(); // seen
     Map<LV<V>, Integer> lambda = new HashMap<>(); //
-    Set<LV<V>> V = new HashSet<>(dag.vertexSet());
+    Set<LV<V>> V = getVertices(dag, comparator);
     V.stream().forEach(v -> lambda.put(v, Integer.MAX_VALUE));
 
     for (int i = 0; i < V.size(); i++) {
