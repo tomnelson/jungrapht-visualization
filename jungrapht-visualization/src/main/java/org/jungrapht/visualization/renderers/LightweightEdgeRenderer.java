@@ -9,7 +9,6 @@
  */
 package org.jungrapht.visualization.renderers;
 
-import static org.jungrapht.visualization.DefaultRenderContext.EDGE_WIDTH;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
@@ -60,11 +59,24 @@ public class LightweightEdgeRenderer<V, E> extends AbstractEdgeRenderer<V, E>
   protected void drawSimpleEdge(
       RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, E e) {
     Graphics2D g2d = renderContext.getGraphicsContext().getDelegate();
-    Stroke savedStroke = g2d.getStroke();
-    float minStrokeWidth = Float.parseFloat(System.getProperty(EDGE_WIDTH, "1.0f"));
-    // if the transform scale is small, make the stroke wider so it is still visible
-    g2d.setStroke(
-        new BasicStroke(Math.max(minStrokeWidth, (int) (1.0 / g2d.getTransform().getScaleX()))));
+    Stroke savedStroke = (BasicStroke) g2d.getStroke();
+    float savedStrokeWidth = renderContext.getEdgeWidth();
+    float wider = Math.max(savedStrokeWidth, (int) (1.0 / g2d.getTransform().getScaleX()));
+    if (savedStroke instanceof BasicStroke) {
+      BasicStroke basicStroke = (BasicStroke) savedStroke;
+      Stroke widerStroke =
+          new BasicStroke(
+              wider,
+              basicStroke.getEndCap(),
+              basicStroke.getLineJoin(),
+              basicStroke.getMiterLimit(),
+              basicStroke.getDashArray(),
+              basicStroke.getDashPhase());
+      // if the transform scale is small, make the stroke wider so it is still visible
+      g2d.setStroke(widerStroke);
+    } else {
+      g2d.setStroke(new BasicStroke(wider));
+    }
 
     int[] coords = new int[4];
     boolean[] loop = new boolean[1];
