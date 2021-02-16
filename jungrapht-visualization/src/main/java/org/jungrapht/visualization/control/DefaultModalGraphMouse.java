@@ -225,7 +225,8 @@ public class DefaultModalGraphMouse<V, E> extends AbstractModalGraphMouse
             .regionSelectionCompleteMask(0)
             .toggleRegionSelectionCompleteMask(InputEvent.SHIFT_DOWN_MASK)
             .build();
-    translatingPlugin = new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
+    translatingPlugin =
+        TranslatingGraphMousePlugin.builder().translatingMask(translatingMask).build();
     scalingPlugin =
         ScalingGraphMousePlugin.builder().scalingControl(new CrossoverScalingControl()).build();
     rotatingPlugin = new RotatingGraphMousePlugin();

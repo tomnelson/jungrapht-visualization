@@ -31,21 +31,49 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-public class TranslatingGraphMousePlugin extends AbstractGraphMousePlugin
+public class TranslatingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     implements MouseListener, MouseMotionListener {
 
   private static final Logger log = LoggerFactory.getLogger(TranslatingGraphMousePlugin.class);
 
-  protected int translatingMask =
-      Modifiers.masks.get(System.getProperty(PREFIX + "translatingMask", "MB1_MENU"));
+  public static class Builder<
+      V, E, T extends TranslatingGraphMousePlugin, B extends Builder<V, E, T, B>> {
+    protected int translatingMask =
+        Modifiers.masks.get(System.getProperty(PREFIX + "translatingMask", "MB1"));
+
+    protected Builder() {}
+
+    public B self() {
+      return (B) this;
+    }
+
+    public B translatingMask(int rotatingMask) {
+      this.translatingMask = translatingMask;
+      return self();
+    }
+
+    public T build() {
+      return (T) new TranslatingGraphMousePlugin<>(this);
+    }
+  }
+
+  public static <V, E> Builder<V, E, ?, ?> builder() {
+    return new Builder<>();
+  }
+
+  protected int translatingMask;
+
+  public TranslatingGraphMousePlugin() {
+    this(builder());
+  }
 
   /**
    * create an instance with passed translatingMask value
    *
-   * @param translatingMask the mouse event mask to activate. Default is BUTTON_ONE_DOWN
+   * @param builder the builder to use
    */
-  public TranslatingGraphMousePlugin(int translatingMask) {
-    this.translatingMask = translatingMask;
+  public TranslatingGraphMousePlugin(Builder<V, E, ?, ?> builder) {
+    this.translatingMask = builder.translatingMask;
     log.trace("setModifiers({})", translatingMask);
     this.cursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
   }
@@ -58,7 +86,7 @@ public class TranslatingGraphMousePlugin extends AbstractGraphMousePlugin
    */
   public void mousePressed(MouseEvent e) {
     log.trace("mousePressed in {}", this.getClass().getName());
-    VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
+    VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
     boolean accepted = e.getModifiersEx() == translatingMask;
     down = e.getPoint();
     if (accepted) {
@@ -70,7 +98,7 @@ public class TranslatingGraphMousePlugin extends AbstractGraphMousePlugin
   /** unset the 'down' point and change the cursor back to the system default cursor */
   public void mouseReleased(MouseEvent e) {
     log.trace("mouseReleased in {}", this.getClass().getName());
-    VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
+    VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
     down = null;
     vv.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     if (e.getModifiersEx() == translatingMask) {
@@ -88,7 +116,7 @@ public class TranslatingGraphMousePlugin extends AbstractGraphMousePlugin
     if (down == null) {
       return;
     }
-    VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
+    VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
     boolean accepted = e.getModifiersEx() == translatingMask;
     if (accepted) {
       MutableTransformer modelTransformer =

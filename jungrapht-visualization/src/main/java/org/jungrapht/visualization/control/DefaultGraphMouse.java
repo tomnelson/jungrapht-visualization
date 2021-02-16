@@ -213,7 +213,8 @@ public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
             .regionSelectionCompleteMask(regionSelectionCompleteMask)
             .toggleRegionSelectionCompleteMask(toggleRegionSelectionCompleteMask)
             .build();
-    translatingPlugin = new TranslatingGraphMousePlugin(translatingMask);
+    translatingPlugin =
+        TranslatingGraphMousePlugin.builder().translatingMask(translatingMask).build();
 
     add(selectingPlugin);
     add(regionSelectingPlugin);

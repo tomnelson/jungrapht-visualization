@@ -23,14 +23,14 @@ import org.jungrapht.visualization.transform.MutableTransformer;
  * @see RotatingGraphMousePlugin
  * @author Tom Nelson
  */
-public class SatelliteRotatingGraphMousePlugin extends RotatingGraphMousePlugin {
+public class SatelliteRotatingGraphMousePlugin<V, E> extends RotatingGraphMousePlugin<V, E> {
 
   public SatelliteRotatingGraphMousePlugin() {
-    super();
+    super(builder());
   }
 
-  public SatelliteRotatingGraphMousePlugin(int rotatingMask) {
-    super(rotatingMask);
+  public SatelliteRotatingGraphMousePlugin(Builder<V, E, ?, ?> builder) {
+    super(builder);
   }
   /**
    * check the modifiers. If accepted, use the mouse drag motion to rotate the graph in the master

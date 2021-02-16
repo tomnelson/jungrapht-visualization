@@ -1,5 +1,7 @@
 package org.jungrapht.visualization.control;
 
+import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
+
 import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -26,10 +28,57 @@ public class EditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     implements MouseListener, MouseMotionListener {
 
   private static final Logger log = LoggerFactory.getLogger(EditingGraphMousePlugin.class);
+
+  public static class Builder<
+      V, E, T extends EditingGraphMousePlugin, B extends Builder<V, E, T, B>> {
+    protected int vertexEditingMask =
+        Modifiers.masks.get(System.getProperty(PREFIX + "vertexEditingMask", "MB1"));
+    protected Supplier<V> vertexFactory;
+    protected Supplier<E> edgeFactory;
+    protected VertexSupport<V, E> vertexSupport;
+    protected EdgeSupport<V, E> edgeSupport;
+
+    protected Builder(Supplier<V> vertexFactory, Supplier<E> edgeFactory) {
+      this.vertexFactory = vertexFactory;
+      this.edgeFactory = edgeFactory;
+      this.vertexSupport = new SimpleVertexSupport<>(vertexFactory);
+      this.edgeSupport = new SimpleEdgeSupport<>(edgeFactory);
+    }
+
+    public B self() {
+      return (B) this;
+    }
+
+    public B vertexEditingMask(int vertexEditingMask) {
+      this.vertexEditingMask = vertexEditingMask;
+      return self();
+    }
+
+    public B vertexSupport(VertexSupport<V, E> vertexSupport) {
+      this.vertexSupport = vertexSupport;
+      return self();
+    }
+
+    public B edgeSupport(EdgeSupport<V, E> edgeSupport) {
+      this.edgeSupport = edgeSupport;
+      return self();
+    }
+
+    public T build() {
+      return (T) new EditingGraphMousePlugin<>(this);
+    }
+  }
+
+  public static <V, E> Builder<V, E, ?, ?> builder(
+      Supplier<V> vertexFactory, Supplier<E> edgeFactory) {
+    return new Builder<>(vertexFactory, edgeFactory);
+  }
+
+  protected int vertexEditingMask;
+
   protected VertexSupport<V, E> vertexSupport;
   protected EdgeSupport<V, E> edgeSupport;
   private Creating createMode = Creating.UNDETERMINED;
-  protected int modifiers;
 
   private enum Creating {
     EDGE,
@@ -40,27 +89,11 @@ public class EditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   /**
    * Creates an instance and prepares shapes for visual effects, using the default modifiers of
    * BUTTON1_DOWN_MASK.
-   *
-   * @param vertexFactory for creating vertices
-   * @param edgeFactory for creating edges
    */
-  public EditingGraphMousePlugin(Supplier<V> vertexFactory, Supplier<E> edgeFactory) {
-    this(MouseEvent.BUTTON1_DOWN_MASK, vertexFactory, edgeFactory);
-  }
-
-  /**
-   * Creates an instance and prepares shapes for visual effects.
-   *
-   * @param modifiers the mouse event modifiers to use
-   * @param vertexFactory for creating vertices
-   * @param edgeFactory for creating edges
-   */
-  public EditingGraphMousePlugin(
-      int modifiers, Supplier<V> vertexFactory, Supplier<E> edgeFactory) {
-    this.modifiers = modifiers;
-    this.cursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
-    this.vertexSupport = new SimpleVertexSupport<>(vertexFactory);
-    this.edgeSupport = new SimpleEdgeSupport<>(edgeFactory);
+  public EditingGraphMousePlugin(Builder<V, E, ?, ?> builder) {
+    this.vertexEditingMask = builder.vertexEditingMask;
+    this.vertexSupport = builder.vertexSupport;
+    this.edgeSupport = builder.edgeSupport;
   }
 
   /**
@@ -69,7 +102,7 @@ public class EditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    */
   @Override
   public boolean checkModifiers(MouseEvent e) {
-    return e.getModifiersEx() == modifiers;
+    return e.getModifiersEx() == vertexEditingMask;
   }
 
   /**
@@ -78,7 +111,7 @@ public class EditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    */
   public void mousePressed(MouseEvent e) {
     log.trace("mousePressed in {}", this.getClass().getName());
-    if (e.getModifiersEx() == modifiers) {
+    if (e.getModifiersEx() == vertexEditingMask) {
       final VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
       final LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
 
@@ -137,7 +170,7 @@ public class EditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    */
   @SuppressWarnings("unchecked")
   public void mouseDragged(MouseEvent e) {
-    if (e.getModifiersEx() == modifiers) {
+    if (e.getModifiersEx() == vertexEditingMask) {
       VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
       if (createMode == Creating.EDGE) {
         edgeSupport.midEdgeCreate(vv, e.getPoint());

@@ -25,14 +25,14 @@ import org.jungrapht.visualization.transform.MutableTransformer;
  * @see ShearingGraphMousePlugin
  * @author Tom Nelson
  */
-public class SatelliteShearingGraphMousePlugin extends ShearingGraphMousePlugin {
+public class SatelliteShearingGraphMousePlugin<V, E> extends ShearingGraphMousePlugin<V, E> {
 
   public SatelliteShearingGraphMousePlugin() {
-    super();
+    super(builder());
   }
 
-  public SatelliteShearingGraphMousePlugin(int modifiers) {
-    super(modifiers);
+  public SatelliteShearingGraphMousePlugin(Builder<V, E, ?, ?> builder) {
+    super(builder);
   }
 
   /** overridden to shear the main view */

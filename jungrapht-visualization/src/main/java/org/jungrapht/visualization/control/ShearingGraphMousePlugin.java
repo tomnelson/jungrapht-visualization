@@ -40,23 +40,50 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-public class ShearingGraphMousePlugin extends AbstractGraphMousePlugin
+public class ShearingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     implements MouseListener, MouseMotionListener {
 
   private static final Logger log = LoggerFactory.getLogger(ShearingGraphMousePlugin.class);
-  protected int shearingMask =
-      Modifiers.masks.get(System.getProperty(PREFIX + "shearingMask", "MB1_MENU"));
+
+  public static class Builder<
+      V, E, T extends ShearingGraphMousePlugin, B extends Builder<V, E, T, B>> {
+    protected int shearingMask =
+        Modifiers.masks.get(System.getProperty(PREFIX + "shearingMask", "MB1_MENU"));
+
+    protected Builder() {}
+
+    public B self() {
+      return (B) this;
+    }
+
+    public B shearingMask(int shearingMask) {
+      this.shearingMask = shearingMask;
+      return self();
+    }
+
+    public T build() {
+      return (T) new ShearingGraphMousePlugin<>(this);
+    }
+  }
+
+  public static <V, E> Builder<V, E, ?, ?> builder() {
+    return new Builder<>();
+  }
+
+  protected int shearingMask;
 
   /** create an instance with default modifier values */
-  public ShearingGraphMousePlugin() {}
+  public ShearingGraphMousePlugin() {
+    this(ShearingGraphMousePlugin.builder());
+  }
 
   /**
    * create an instance with passed modifier values
    *
-   * @param shearingMask the mouse modifiers to use
+   * @param builder the builder to use
    */
-  public ShearingGraphMousePlugin(int shearingMask) {
-    this.shearingMask = shearingMask;
+  public ShearingGraphMousePlugin(Builder<V, E, ?, ?> builder) {
+    this.shearingMask = builder.shearingMask;
     Dimension cd = Toolkit.getDefaultToolkit().getBestCursorSize(16, 16);
     BufferedImage cursorImage = new BufferedImage(cd.width, cd.height, BufferedImage.TYPE_INT_ARGB);
     Graphics2D g = cursorImage.createGraphics();
@@ -106,7 +133,7 @@ public class ShearingGraphMousePlugin extends AbstractGraphMousePlugin
 
   public void mousePressed(MouseEvent e) {
     log.trace("mousePressed in {}", this.getClass().getName());
-    VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
+    VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
     boolean accepted = e.getModifiersEx() == shearingMask;
     down = e.getPoint();
     if (accepted) {
@@ -116,7 +143,7 @@ public class ShearingGraphMousePlugin extends AbstractGraphMousePlugin
 
   public void mouseReleased(MouseEvent e) {
     log.trace("mouseReleased in {}", this.getClass().getName());
-    VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
+    VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
     down = null;
     vv.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
   }
@@ -125,7 +152,7 @@ public class ShearingGraphMousePlugin extends AbstractGraphMousePlugin
     if (down == null) {
       return;
     }
-    VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
+    VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
     boolean accepted = e.getModifiersEx() == shearingMask;
     if (accepted) {
       MutableTransformer modelTransformer =

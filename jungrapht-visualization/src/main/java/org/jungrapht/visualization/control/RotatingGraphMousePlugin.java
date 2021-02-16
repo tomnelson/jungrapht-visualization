@@ -40,24 +40,50 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tom Nelson
  */
-public class RotatingGraphMousePlugin extends AbstractGraphMousePlugin
+public class RotatingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     implements MouseListener, MouseMotionListener {
 
   private static final Logger log = LoggerFactory.getLogger(RotatingGraphMousePlugin.class);
 
-  protected int rotatingMask =
-      Modifiers.masks.get(System.getProperty(PREFIX + "rotatingMask", "MB1_SHIFT"));
+  public static class Builder<
+      V, E, T extends RotatingGraphMousePlugin, B extends Builder<V, E, T, B>> {
+    protected int rotatingMask =
+        Modifiers.masks.get(System.getProperty(PREFIX + "rotatingMask", "MB1_SHIFT"));
+
+    protected Builder() {}
+
+    public B self() {
+      return (B) this;
+    }
+
+    public B rotatingMask(int rotatingMask) {
+      this.rotatingMask = rotatingMask;
+      return self();
+    }
+
+    public T build() {
+      return (T) new RotatingGraphMousePlugin<>(this);
+    }
+  }
+
+  public static <V, E> Builder<V, E, ?, ?> builder() {
+    return new Builder<>();
+  }
+
+  protected int rotatingMask;
 
   /** create an instance with default modifier values */
-  public RotatingGraphMousePlugin() {}
+  public RotatingGraphMousePlugin() {
+    this(RotatingGraphMousePlugin.builder());
+  }
 
   /**
    * create an instance with passed zoom in/out values
    *
-   * @param rotatingMask the event modifiers to trigger rotation
+   * @param builder the builder to use
    */
-  public RotatingGraphMousePlugin(int rotatingMask) {
-    this.rotatingMask = rotatingMask;
+  public RotatingGraphMousePlugin(Builder<V, E, ?, ?> builder) {
+    this.rotatingMask = builder.rotatingMask;
     Dimension cd = Toolkit.getDefaultToolkit().getBestCursorSize(16, 16);
     BufferedImage cursorImage = new BufferedImage(cd.width, cd.height, BufferedImage.TYPE_INT_ARGB);
     Graphics2D g = cursorImage.createGraphics();
@@ -117,7 +143,7 @@ public class RotatingGraphMousePlugin extends AbstractGraphMousePlugin
   public void mousePressed(MouseEvent e) {
     log.trace("mousePressed in {}", this.getClass().getName());
 
-    VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
+    VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
     boolean accepted = e.getModifiersEx() == rotatingMask;
     down = e.getPoint();
     if (accepted) {
@@ -128,7 +154,7 @@ public class RotatingGraphMousePlugin extends AbstractGraphMousePlugin
   /** unset the down point and change the cursor back to the default */
   public void mouseReleased(MouseEvent e) {
     log.trace("mouseReleased in {}", this.getClass().getName());
-    VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
+    VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
     down = null;
     vv.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
   }
@@ -138,7 +164,7 @@ public class RotatingGraphMousePlugin extends AbstractGraphMousePlugin
     if (down == null) {
       return;
     }
-    VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
+    VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
     boolean accepted = e.getModifiersEx() == rotatingMask;
     if (accepted) {
       MutableTransformer modelTransformer =

@@ -148,7 +148,8 @@ public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> impleme
             toggleRegionSelectionMask,
             regionSelectionCompleteMask,
             toggleRegionSelectionCompleteMask);
-    this.translatingPlugin = new TranslatingGraphMousePlugin(translatingMask);
+    this.translatingPlugin =
+        TranslatingGraphMousePlugin.builder().translatingMask(translatingMask).build();
 
     add(lensKillingGraphMousePlugin);
     add(lensTranslatingGraphMousePlugin);

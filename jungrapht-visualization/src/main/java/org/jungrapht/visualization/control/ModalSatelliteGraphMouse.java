@@ -113,7 +113,8 @@ public class ModalSatelliteGraphMouse<V, E> extends DefaultModalGraphMouse<V, E>
             .build();
 
     //    animatedPickingPlugin = new SatelliteAnimatedPickingGraphMousePlugin();
-    translatingPlugin = new SatelliteTranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
+    translatingPlugin =
+        SatelliteTranslatingGraphMousePlugin.builder().translatingMask(translatingMask).build();
     scalingPlugin =
         new SatelliteScalingGraphMousePlugin(
             new CrossoverScalingControl(),

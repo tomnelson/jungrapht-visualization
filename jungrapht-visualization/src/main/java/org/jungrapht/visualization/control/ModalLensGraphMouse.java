@@ -89,7 +89,8 @@ public class ModalLensGraphMouse<V, E> extends DefaultModalGraphMouse<V, E>
     this.lensTranslatingGraphMousePlugin =
         new LensTranslatingGraphMousePlugin(builder.lensTranslatingMask);
     this.lensKillingGraphMousePlugin = new LensKillingGraphMousePlugin();
-    this.translatingPlugin = new TranslatingGraphMousePlugin(translatingMask);
+    this.translatingPlugin =
+        TranslatingGraphMousePlugin.builder().translatingMask(translatingMask).build();
   }
 
   public void setKillSwitch(Runnable killSwitch) {

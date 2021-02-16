@@ -29,13 +29,17 @@ import org.slf4j.LoggerFactory;
  * @see SatelliteTranslatingGraphMousePlugin
  * @author Tom Nelson
  */
-public class SatelliteTranslatingGraphMousePlugin extends TranslatingGraphMousePlugin {
+public class SatelliteTranslatingGraphMousePlugin<V, E> extends TranslatingGraphMousePlugin<V, E> {
 
   private static final Logger log =
       LoggerFactory.getLogger(SatelliteTranslatingGraphMousePlugin.class);
 
-  public SatelliteTranslatingGraphMousePlugin(int translatingMask) {
-    super(translatingMask);
+  public SatelliteTranslatingGraphMousePlugin() {
+    this(builder());
+  }
+
+  public SatelliteTranslatingGraphMousePlugin(Builder<V, E, ?, ?> builder) {
+    super(builder);
   }
 
   @Override

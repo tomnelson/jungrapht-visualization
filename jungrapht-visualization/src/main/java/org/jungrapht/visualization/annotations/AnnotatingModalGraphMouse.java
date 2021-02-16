@@ -24,7 +24,7 @@ import org.jungrapht.visualization.control.*;
  * @param <V> the vertex type
  * @param <E> the edge type
  */
-public class AnnotatingModalGraphMouse<V, E> extends AbstractModalGraphMouse
+public class AnnotatingModalGraphMouse<V, E> extends DefaultModalGraphMouse<V, E>
     implements ModalGraphMouse {
 
   /**
@@ -36,8 +36,8 @@ public class AnnotatingModalGraphMouse<V, E> extends AbstractModalGraphMouse
    * @param <B>
    */
   public static class Builder<
-          V, E, T extends AnnotatingModalGraphMouse, B extends Builder<V, E, T, B>>
-      extends AbstractModalGraphMouse.Builder<T, B> {
+          V, E, T extends AnnotatingModalGraphMouse<V, E>, B extends Builder<V, E, T, B>>
+      extends DefaultModalGraphMouse.Builder<V, E, T, B> {
 
     protected Supplier<MultiLayerTransformer> multiLayerTransformerSupplier;
     protected AnnotatingGraphMousePlugin<V, E> annotatingPlugin;
@@ -90,7 +90,8 @@ public class AnnotatingModalGraphMouse<V, E> extends AbstractModalGraphMouse
             .regionSelectionCompleteMask(0)
             .toggleRegionSelectionCompleteMask(InputEvent.SHIFT_DOWN_MASK)
             .build();
-    translatingPlugin = new TranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
+    translatingPlugin =
+        TranslatingGraphMousePlugin.builder().translatingMask(translatingMask).build();
     scalingPlugin =
         ScalingGraphMousePlugin.builder().scalingControl(new CrossoverScalingControl()).build();
     rotatingPlugin = new RotatingGraphMousePlugin();
