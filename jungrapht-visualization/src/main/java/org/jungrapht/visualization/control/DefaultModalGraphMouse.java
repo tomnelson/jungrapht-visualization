@@ -127,7 +127,7 @@ public class DefaultModalGraphMouse<V, E> extends AbstractModalGraphMouse
     }
 
     public T build() {
-      return (T) new DefaultModalGraphMouse(in, out, vertexSelectionOnly);
+      return (T) new DefaultModalGraphMouse<>(this);
     }
   }
 

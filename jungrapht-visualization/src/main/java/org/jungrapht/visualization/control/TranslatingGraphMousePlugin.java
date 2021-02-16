@@ -37,7 +37,7 @@ public class TranslatingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   private static final Logger log = LoggerFactory.getLogger(TranslatingGraphMousePlugin.class);
 
   public static class Builder<
-      V, E, T extends TranslatingGraphMousePlugin, B extends Builder<V, E, T, B>> {
+      V, E, T extends TranslatingGraphMousePlugin<V, E>, B extends Builder<V, E, T, B>> {
     protected int translatingMask =
         Modifiers.masks.get(System.getProperty(PREFIX + "translatingMask", "MB1"));
 

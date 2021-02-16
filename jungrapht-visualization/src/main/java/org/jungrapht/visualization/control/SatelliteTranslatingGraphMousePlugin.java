@@ -22,6 +22,7 @@ import org.jungrapht.visualization.util.VertexLocationAnimator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  * Overrides TranslatingGraphMousePlugin so that mouse events in the satellite view cause
  * translating of the main view
@@ -33,6 +34,21 @@ public class SatelliteTranslatingGraphMousePlugin<V, E> extends TranslatingGraph
 
   private static final Logger log =
       LoggerFactory.getLogger(SatelliteTranslatingGraphMousePlugin.class);
+
+  public static class Builder<
+          V, E, T extends SatelliteTranslatingGraphMousePlugin<V, E>, B extends Builder<V, E, T, B>>
+      extends TranslatingGraphMousePlugin.Builder<V, E, T, B> {
+
+    protected Builder() {}
+
+    public T build() {
+      return (T) new SatelliteTranslatingGraphMousePlugin<>(this);
+    }
+  }
+
+  public static <V, E> Builder<V, E, ?, ?> builder() {
+    return new Builder<>();
+  }
 
   public SatelliteTranslatingGraphMousePlugin() {
     this(builder());
