@@ -89,7 +89,7 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
   LayoutPaintable.LayoutBounds layoutBounds;
   JFileChooser fileChooser;
   Map<String, Map<String, Attribute>> vertexAttributes = new HashMap<>();
-  Map<String, Map<String, Attribute>> edgeAttributes = new HashMap<>();
+  Map<DefaultEdge, Map<String, Attribute>> edgeAttributes = new HashMap<>();
   VisualizationViewer<String, DefaultEdge> vv;
   Paint[] colorArray =
       new Paint[] {
@@ -307,10 +307,10 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
             File file = fileChooser.getSelectedFile();
             String fileName = file.getName();
             String suffix = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
-            GraphImporter importer;
+            GraphImporter<String, DefaultEdge> importer;
             switch (suffix) {
               case "graphml":
-                importer = new GraphMLImporter();
+                importer = new GraphMLImporter<>();
                 ((GraphMLImporter) importer).setSchemaValidation(false);
                 GraphMLImporter gmlImporter = (GraphMLImporter) importer;
                 gmlImporter.addVertexAttributeConsumer(
@@ -323,32 +323,32 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
                               .put(key, attribute);
                         });
                 gmlImporter.addEdgeAttributeConsumer(
-                    (BiConsumer<Pair<String, String>, Attribute>)
+                    (BiConsumer<Pair<DefaultEdge, String>, Attribute>)
                         (pair, attribute) -> {
-                          String vertex = pair.getFirst();
+                          DefaultEdge de = pair.getFirst();
                           String key = pair.getSecond();
                           edgeAttributes
-                              .computeIfAbsent(vertex, m -> new HashMap<>())
+                              .computeIfAbsent(de, m -> new HashMap<>())
                               .put(key, attribute);
                         });
                 break;
               case "gml":
-                importer = new GmlImporter();
+                importer = new GmlImporter<>();
                 break;
               case "dot":
               case "gv":
-                importer = new DOTImporter();
+                importer = new DOTImporter<>();
                 break;
               case "csv":
-                importer = new CSVImporter();
+                importer = new CSVImporter<>();
                 break;
               case "col":
-                importer = new DIMACSImporter();
+                importer = new DIMACSImporter<>();
                 break;
               case "json":
-                JSONImporter jsonImporter = new JSONImporter();
+                JSONImporter<String, DefaultEdge> jsonImporter = new JSONImporter<>();
                 jsonImporter.addVertexAttributeConsumer(
-                    (BiConsumer<Pair<String, String>, Attribute>)
+//                    (BiConsumer<Pair<String, String>, Attribute>)
                         (pair, attribute) -> {
                           String vertex = pair.getFirst();
                           String key = pair.getSecond();
@@ -357,12 +357,12 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
                               .put(key, attribute);
                         });
                 jsonImporter.addEdgeAttributeConsumer(
-                    (BiConsumer<Pair<String, String>, Attribute>)
+//                    (BiConsumer<Pair<String, String>, Attribute>)
                         (pair, attribute) -> {
-                          String vertex = pair.getFirst();
+                          DefaultEdge de = pair.getFirst();
                           String key = pair.getSecond();
-                          vertexAttributes
-                              .computeIfAbsent(vertex, m -> new HashMap<>())
+                          edgeAttributes
+                              .computeIfAbsent(de, m -> new HashMap<>())
                               .put(key, attribute);
                         });
 
