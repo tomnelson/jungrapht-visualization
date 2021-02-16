@@ -348,23 +348,21 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
               case "json":
                 JSONImporter<String, DefaultEdge> jsonImporter = new JSONImporter<>();
                 jsonImporter.addVertexAttributeConsumer(
-//                    (BiConsumer<Pair<String, String>, Attribute>)
-                        (pair, attribute) -> {
-                          String vertex = pair.getFirst();
-                          String key = pair.getSecond();
-                          vertexAttributes
-                              .computeIfAbsent(vertex, m -> new HashMap<>())
-                              .put(key, attribute);
-                        });
+                    //                    (BiConsumer<Pair<String, String>, Attribute>)
+                    (pair, attribute) -> {
+                      String vertex = pair.getFirst();
+                      String key = pair.getSecond();
+                      vertexAttributes
+                          .computeIfAbsent(vertex, m -> new HashMap<>())
+                          .put(key, attribute);
+                    });
                 jsonImporter.addEdgeAttributeConsumer(
-//                    (BiConsumer<Pair<String, String>, Attribute>)
-                        (pair, attribute) -> {
-                          DefaultEdge de = pair.getFirst();
-                          String key = pair.getSecond();
-                          edgeAttributes
-                              .computeIfAbsent(de, m -> new HashMap<>())
-                              .put(key, attribute);
-                        });
+                    //                    (BiConsumer<Pair<String, String>, Attribute>)
+                    (pair, attribute) -> {
+                      DefaultEdge de = pair.getFirst();
+                      String key = pair.getSecond();
+                      edgeAttributes.computeIfAbsent(de, m -> new HashMap<>()).put(key, attribute);
+                    });
 
                 importer = jsonImporter;
                 break;

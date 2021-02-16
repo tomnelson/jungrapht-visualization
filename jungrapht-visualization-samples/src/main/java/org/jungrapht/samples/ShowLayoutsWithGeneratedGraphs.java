@@ -1,5 +1,10 @@
 package org.jungrapht.samples;
 
+import java.awt.*;
+import java.awt.geom.Ellipse2D;
+import java.util.Map;
+import java.util.function.Supplier;
+import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jungrapht.samples.spatial.RTreeVisualization;
@@ -21,17 +26,10 @@ import org.jungrapht.visualization.util.LayoutPaintable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.geom.Ellipse2D;
-import java.util.Map;
-import java.util.function.Supplier;
-
 /**
- * Demonstrates several of the graph layout algorithms with generated graphs.
- * Allows the user to interactively select one
- * of several graphs, and one of several layouts, and visualizes the combination.
- *
+ * Demonstrates several of the graph layout algorithms with generated graphs. Allows the user to
+ * interactively select one of several graphs, and one of several layouts, and visualizes the
+ * combination.
  */
 public class ShowLayoutsWithGeneratedGraphs extends JPanel {
 
@@ -40,19 +38,19 @@ public class ShowLayoutsWithGeneratedGraphs extends JPanel {
   protected static Graph<String, Integer>[] graphArray;
   protected static int graphIndex;
 
-
   LayoutPaintable.BalloonRings balloonLayoutRings;
   LayoutPaintable.RadialRings radialLayoutRings;
   LayoutPaintable.LayoutBounds layoutBounds;
 
   public ShowLayoutsWithGeneratedGraphs() {
 
-      graphArray = new Graph[GeneratedGraphs.map.size()];
+    graphArray = new Graph[GeneratedGraphs.map.size()];
 
-      int i=0;
-      for (Map.Entry<String, Supplier<Graph<String, Integer>>> entry : GeneratedGraphs.map.entrySet()) {
-          graphArray[i++] = entry.getValue().get();
-      }
+    int i = 0;
+    for (Map.Entry<String, Supplier<Graph<String, Integer>>> entry :
+        GeneratedGraphs.map.entrySet()) {
+      graphArray[i++] = entry.getValue().get();
+    }
 
     Graph<String, Integer> initialGraph = graphArray[3]; // initial graph
 
@@ -139,7 +137,8 @@ public class ShowLayoutsWithGeneratedGraphs extends JPanel {
     control_panel.add(bottomControls);
     add(control_panel, BorderLayout.NORTH);
 
-    final JComboBox graphChooser = new JComboBox(GeneratedGraphs.map.keySet().toArray(new String[0]));
+    final JComboBox graphChooser =
+        new JComboBox(GeneratedGraphs.map.keySet().toArray(new String[0]));
     graphChooser.setSelectedIndex(3);
 
     graphChooser.addActionListener(
