@@ -69,8 +69,6 @@ public class EiglspergerStepsBackward<V, E> extends EiglspergerSteps<V, E> {
               pred = segment;
             }
           } else if (v instanceof SegmentVertex) {
-            SegmentVertex<V> segmentVertex = (SegmentVertex<V>) v;
-            //            Segment<V> segment = segmentVertex.getSegment();
             compactionGraph.addVertex(v);
             if (pred != null) {
               compactionGraph.addEdge(pred, v);
