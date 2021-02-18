@@ -15,6 +15,7 @@ import org.jungrapht.visualization.layout.algorithms.util.ComponentGrouping;
 import org.jungrapht.visualization.layout.algorithms.util.EdgeArticulationFunctionSupplier;
 import org.jungrapht.visualization.layout.algorithms.util.ExecutorConsumer;
 import org.jungrapht.visualization.layout.algorithms.util.LayeredRunnable;
+import org.jungrapht.visualization.layout.algorithms.util.PointSummaryStatistics;
 import org.jungrapht.visualization.layout.algorithms.util.Threaded;
 import org.jungrapht.visualization.layout.algorithms.util.VertexBoundsFunctionConsumer;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -375,6 +376,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
                       after.run();
                       layoutModel.setFireEvents(true);
                       appendAll(layoutModel, layoutModels);
+                      expandToFill(layoutModel);
                     }
                   });
         } else {
@@ -387,6 +389,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
                       after.run();
                       layoutModel.setFireEvents(true);
                       appendAll(layoutModel, layoutModels);
+                      expandToFill(layoutModel);
                     }
                   });
         }
@@ -398,6 +401,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
           after.run();
           layoutModel.setFireEvents(true);
           appendAll(layoutModel, layoutModels);
+          expandToFill(layoutModel);
         }
       }
     }
@@ -419,6 +423,73 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
   public void runAfter() {
     if (after != null) {
       after.run();
+    }
+  }
+
+  protected Rectangle computeLayoutExtent(LayoutModel<V> layoutModel) {
+    if (layoutModel.getLocations().size() == 0) {
+      return Rectangle.from(Point.ORIGIN, Point.ORIGIN);
+    }
+    // find the dimensions of the layout
+    PointSummaryStatistics pss = new PointSummaryStatistics();
+    layoutModel.getLocations().values().forEach(pss::accept);
+    return Rectangle.from(pss.getMin(), pss.getMax());
+  }
+
+  /** @param layoutModel */
+  protected void expandToFill(LayoutModel<V> layoutModel) {
+
+    // find the dimensions of the layout's occupied area
+    Rectangle vertexContainingRectangle = computeLayoutExtent(layoutModel);
+
+    // add the padding
+    //    vertexContainingRectangle =
+    //            Rectangle.from(
+    //                    vertexContainingRectangle.min().add(-horizontalVertexSpacing, -verticalVertexSpacing),
+    //                    vertexContainingRectangle.max().add(horizontalVertexSpacing, verticalVertexSpacing));
+
+    int maxDimension =
+        Math.max((int) vertexContainingRectangle.width, (int) vertexContainingRectangle.height);
+    layoutModel.setSize(maxDimension, maxDimension);
+
+    expandToFill(layoutModel, vertexContainingRectangle);
+  }
+
+  /**
+   * @param layoutModel
+   * @param occupiedRegion
+   */
+  protected void expandToFill(LayoutModel<V> layoutModel, Rectangle occupiedRegion) {
+    int regionX = (int) occupiedRegion.x;
+    int regionY = (int) occupiedRegion.y;
+    int regionWidth = (int) occupiedRegion.width;
+    int regionHeight = (int) occupiedRegion.height;
+    if (regionWidth > regionHeight) {
+      double expansion = (double) regionWidth / regionHeight;
+      Graph<V, ?> graph = layoutModel.getGraph();
+      graph
+          .vertexSet()
+          .stream()
+          .filter(v -> !layoutModel.isLocked(v))
+          .forEach(
+              v -> {
+                Point p = layoutModel.get(v);
+                p = Point.of(p.x, expansion * (p.y - regionY));
+                layoutModel.set(v, p);
+              });
+    } else if (regionWidth < regionHeight) {
+      double expansion = (double) regionHeight / regionWidth;
+      Graph<V, ?> graph = layoutModel.getGraph();
+      graph
+          .vertexSet()
+          .stream()
+          .filter(v -> !layoutModel.isLocked(v))
+          .forEach(
+              v -> {
+                Point p = layoutModel.get(v);
+                p = Point.of(expansion * (p.x - regionX), p.y);
+                layoutModel.set(v, p);
+              });
     }
   }
 
