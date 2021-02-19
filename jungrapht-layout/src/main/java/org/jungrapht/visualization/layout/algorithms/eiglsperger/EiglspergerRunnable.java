@@ -487,14 +487,6 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
       layerIndex++;
     }
 
-    if (favoredEdgePredicate != Layered.truePredicate) {
-      // normalize on favored edges
-      normalizeOnFavoredEdgesDownwards(
-          layersArray, favoredEdgePredicate, vertexPointMap, horizontalOffset / 2);
-      //      normalizeOnFavoredEdgesUpwards(
-      //          layersArray, favoredEdgePredicate, vertexPointMap, horizontalOffset / 4);
-    }
-
     int minX = Integer.MAX_VALUE;
     int minY = Integer.MAX_VALUE;
     int maxX = -1;
@@ -522,13 +514,6 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
 
     int maxDimension = Math.max(totalWidth, totalHeight);
 
-    //    if (favoredEdgePredicate != Layered.truePredicate) {
-    //      // normalize on favored edges
-    //      normalizeOnFavoredEdgesDownwards(
-    //          layersArray, favoredEdgePredicate, vertexPointMap, horizontalOffset / 2);
-    //      //      normalizeOnFavoredEdgesUpwards(
-    //      //          layersArray, favoredEdgePredicate, vertexPointMap, horizontalOffset / 4);
-    //    }
     layoutModel.setSize(
         multiComponent ? totalWidth : Math.max(maxDimension, layoutModel.getWidth()),
         Math.max(maxDimension, layoutModel.getHeight()));
@@ -542,13 +527,13 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
       entry.setValue(q);
     }
 
-    //    if (favoredEdgePredicate != Layered.truePredicate) {
-    //      // normalize on favored edges
-    //      normalizeOnFavoredEdgesDownwards(
-    //          layersArray, favoredEdgePredicate, vertexPointMap, horizontalOffset);
-    //      //      normalizeOnFavoredEdgesUpwards(
-    //      //          layersArray, favoredEdgePredicate, vertexPointMap, horizontalOffset / 4);
-    //    }
+    if (favoredEdgePredicate != Layered.truePredicate) {
+      // normalize on favored edges
+      normalizeOnFavoredEdgesDownwards(
+          layersArray, favoredEdgePredicate, vertexPointMap, horizontalOffset);
+      //      normalizeOnFavoredEdgesUpwards(
+      //          layersArray, favoredEdgePredicate, vertexPointMap, horizontalOffset / 4);
+    }
 
     // now all the vertices in layers (best) have points associated with them
     // every vertex in vertexMap has a point value
