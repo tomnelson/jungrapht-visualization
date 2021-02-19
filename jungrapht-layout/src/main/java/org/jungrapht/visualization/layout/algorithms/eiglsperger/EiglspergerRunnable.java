@@ -8,16 +8,13 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.LongSummaryStatistics;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.util.NeighborCache;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
@@ -178,7 +175,6 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
   protected Comparator<E> edgeComparator;
   protected boolean multiComponent;
   protected boolean cancelled;
-  protected Predicate<E> favoredEdgePredicate;
   protected Comparator<LE<V, E>> svComparator;
 
   protected EiglspergerRunnable(Builder<V, E, ?, ?> builder) {
@@ -192,7 +188,6 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
         builder.minimizeEdgeLength,
         builder.layering,
         builder.edgeComparator,
-        builder.favoredEdgePredicate,
         builder.multiComponent);
   }
 
@@ -206,7 +201,6 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
       boolean minimizeEdgeLength,
       Layering layering,
       Comparator<E> edgeComparator,
-      Predicate<E> favoredEdgePredicate,
       boolean multiComponent) {
     this.layoutModel = layoutModel;
     this.vertexShapeFunction = vertexShapeFunction;
@@ -222,7 +216,6 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
     this.multiComponent = multiComponent;
     this.edgeComparator = edgeComparator;
     this.svComparator = (e1, e2) -> edgeComparator.compare(e1.getEdge(), e2.getEdge());
-    this.favoredEdgePredicate = favoredEdgePredicate;
   }
 
   @Override
@@ -527,14 +520,6 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
       entry.setValue(q);
     }
 
-    if (favoredEdgePredicate != Layered.truePredicate) {
-      // normalize on favored edges
-      normalizeOnFavoredEdgesDownwards(
-          layersArray, favoredEdgePredicate, vertexPointMap, horizontalOffset);
-      //      normalizeOnFavoredEdgesUpwards(
-      //          layersArray, favoredEdgePredicate, vertexPointMap, horizontalOffset / 4);
-    }
-
     // now all the vertices in layers (best) have points associated with them
     // every vertex in vertexMap has a point value
     svGraph.vertexSet().forEach(v -> v.setPoint(vertexPointMap.get(v)));
@@ -590,130 +575,8 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
     }
   }
 
-  public void setFavoredEdgePredicate(Predicate<E> favoredEdgePredicate) {
-    this.favoredEdgePredicate = favoredEdgePredicate;
-  }
-
   public Map<E, List<Point>> getEdgePointMap() {
     return edgePointMap;
-  }
-
-  protected void normalizeOnFavoredEdgesDownwards(
-      LV<V>[][] layers,
-      Predicate<E> favoredEdgePredicate,
-      Map<LV<V>, Point> vertexPointMap,
-      int horizontalOffset) {
-
-    Predicate<LE<V, E>> svPredicate = e -> favoredEdgePredicate.test(e.getEdge());
-    log.info("before {}", layers);
-    for (int i = 0; i < layers.length; i++) {
-      Map<LV<V>, Point> verticesInThisRow = new LinkedHashMap<>();
-      for (int j = 0; j < layers[i].length; j++) {
-        // save off all the points for the vertices in this row
-        LV<V> v = layers[i][j];
-        verticesInThisRow.put(v, vertexPointMap.get(v));
-      }
-      for (int j = 0; j < layers[i].length; j++) {
-        // get a vertex and look at outgoing edges
-        LV<V> v = layers[i][j];
-        if (svGraph.containsVertex(v)) {
-          Collection<LE<V, E>> edges =
-              svGraph.outgoingEdgesOf(v).stream().sorted(svComparator).collect(Collectors.toList());
-          if (!edges.isEmpty()) {
-            Optional<LE<V, E>> maybeFavoredEdge = edges.stream().filter(svPredicate).findFirst();
-            if (maybeFavoredEdge.isPresent()) {
-              LV<V> favoredTarget = svGraph.getEdgeTarget(maybeFavoredEdge.get());
-              // compare points in vertexPointMap
-              Point sp = vertexPointMap.get(v);
-              Point tp = vertexPointMap.get(favoredTarget);
-              // if the x values are not the same, move the target to under the source
-              if (sp.x != tp.x) {
-                double offset = sp.x - tp.x;
-                vertexPointMap.put(favoredTarget, tp.add(offset, 0));
-                // see if i created an overlap
-                // get the row # (rank) for the vertex i moved
-                int movedVertexRow = favoredTarget.getRank();
-                // check everything else in that rank to see if there is an x overlap
-                Arrays.stream(layers[movedVertexRow])
-                    .filter(vInRank -> vInRank != favoredTarget)
-                    .forEach(
-                        vInRank -> {
-                          double vx = vertexPointMap.get(vInRank).x;
-                          if (vx == vertexPointMap.get(favoredTarget).x) {
-                            // move vInRank a little
-                            Point movedPoint = vertexPointMap.get(vInRank).add(horizontalOffset, 0);
-                            vertexPointMap.put(vInRank, movedPoint);
-                            vInRank.setPoint(movedPoint);
-                          }
-                        });
-              }
-            }
-          }
-        }
-      }
-    }
-    if (log.isTraceEnabled()) {
-      log.trace("after {}", layers);
-    }
-  }
-
-  protected void normalizeOnFavoredEdgesUpwards(
-      LV<V>[][] layers,
-      Predicate<E> favoredEdgePredicate,
-      Map<LV<V>, Point> vertexPointMap,
-      int horizontalOffset) {
-
-    Predicate<LE<V, E>> svPredicate = e -> favoredEdgePredicate.test(e.getEdge());
-    log.info("before {}", layers);
-    for (int i = layers.length - 1; i >= 0; i--) {
-      Map<LV<V>, Point> verticesInThisRow = new LinkedHashMap<>();
-      for (int j = 0; j < layers[i].length; j++) {
-        // save off all the points for the vertices in this row
-        LV<V> v = layers[i][j];
-        verticesInThisRow.put(v, vertexPointMap.get(v));
-      }
-      for (int j = 0; j < layers[i].length; j++) {
-        // get a vertex and look at outgoing edges
-        LV<V> v = layers[i][j];
-        if (svGraph.containsVertex(v)) {
-          Collection<LE<V, E>> edges =
-              svGraph.incomingEdgesOf(v).stream().sorted(svComparator).collect(Collectors.toList());
-          if (!edges.isEmpty()) {
-            Optional<LE<V, E>> maybeFavoredEdge = edges.stream().filter(svPredicate).findFirst();
-            if (maybeFavoredEdge.isPresent()) {
-              LV<V> favoredSource = svGraph.getEdgeSource(maybeFavoredEdge.get());
-              // compare points in vertexPointMap
-              Point sp = vertexPointMap.get(v);
-              Point tp = vertexPointMap.get(favoredSource);
-              // if the x values are not the same, move the source to above the target
-              if (sp.x != tp.x) {
-                double offset = sp.x - tp.x;
-                vertexPointMap.put(favoredSource, tp.add(offset, 0));
-                // see if i created an overlap
-                // get the row # (rank) for the vertex i moved
-                int movedVertexRow = favoredSource.getRank();
-                // check everything else in that rank to see if there is an x overlap
-                Arrays.stream(layers[movedVertexRow])
-                    .filter(vInRank -> vInRank != favoredSource)
-                    .forEach(
-                        vInRank -> {
-                          double vx = vertexPointMap.get(vInRank).x;
-                          if (vx == vertexPointMap.get(favoredSource).x) {
-                            // move vInRank a little
-                            Point movedPoint = vertexPointMap.get(vInRank).add(horizontalOffset, 0);
-                            vertexPointMap.put(vInRank, movedPoint);
-                            vInRank.setPoint(movedPoint);
-                          }
-                        });
-              }
-            }
-          }
-        }
-      }
-    }
-    if (log.isTraceEnabled()) {
-      log.trace("after {}", layers);
-    }
   }
 
   protected LV<V>[][] copy(LV<V>[][] in) {

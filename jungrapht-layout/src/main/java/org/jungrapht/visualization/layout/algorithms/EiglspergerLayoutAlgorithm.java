@@ -4,7 +4,6 @@ package org.jungrapht.visualization.layout.algorithms;
 import java.util.Comparator;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnable;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
@@ -98,7 +97,6 @@ public class EiglspergerLayoutAlgorithm<V, E>
         builder.threaded,
         builder.executor,
         builder.separateComponents,
-        builder.favoredEdgePredicate,
         builder.after);
   }
 
@@ -115,7 +113,6 @@ public class EiglspergerLayoutAlgorithm<V, E>
       boolean threaded,
       Executor executor,
       boolean separateComponents,
-      Predicate<E> favoredEdgePredicate,
       Runnable after) {
     super(
         vertexShapeFunction,
@@ -130,7 +127,6 @@ public class EiglspergerLayoutAlgorithm<V, E>
         threaded,
         executor,
         separateComponents,
-        favoredEdgePredicate,
         after);
   }
 
@@ -146,7 +142,6 @@ public class EiglspergerLayoutAlgorithm<V, E>
         .maxLevelCross(maxLevelCrossFunction.apply(layoutModel.getGraph()))
         .layering(layering)
         .edgeComparator(edgeComparator)
-        .favoredEdgePredicate(favoredEdgePredicate)
         .multiComponent(componentCount > 1)
         .build();
   }

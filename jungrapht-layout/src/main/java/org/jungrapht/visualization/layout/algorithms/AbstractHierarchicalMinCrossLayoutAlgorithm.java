@@ -7,7 +7,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
@@ -45,7 +44,6 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
         EdgeArticulationFunctionSupplier<E>,
         Layered<V, E>,
         EdgeSorting<E>,
-        NormalizesFavoredEdge<E>,
         AfterRunnable,
         Threaded,
         ExecutorConsumer {
@@ -99,7 +97,6 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
         Boolean.parseBoolean(System.getProperty(MINCROSS_THREADED, "true"));
     protected boolean separateComponents = true;
     protected Comparator<E> edgeComparator = noopComparator;
-    protected Predicate<E> favoredEdgePredicate = Layered.truePredicate;
 
     /** {@inheritDoc} */
     protected B self() {
@@ -167,11 +164,6 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
       return self();
     }
 
-    public B favoredEdgePredicate(Predicate<E> favoredEdgePredicate) {
-      this.favoredEdgePredicate = favoredEdgePredicate;
-      return self();
-    }
-
     public B separateComponents(boolean separateComponents) {
       this.separateComponents = separateComponents;
       return self();
@@ -200,7 +192,6 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
   protected LayoutModel<V> layoutModel; // ref used to switch events back on after cancel
   protected boolean cancelled;
   protected Comparator<E> edgeComparator;
-  protected Predicate<E> favoredEdgePredicate = Layered.truePredicate;
 
   protected AbstractHierarchicalMinCrossLayoutAlgorithm(Builder builder) {
     this(
@@ -216,7 +207,6 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
         builder.threaded,
         builder.executor,
         builder.separateComponents,
-        builder.favoredEdgePredicate,
         builder.after);
   }
 
@@ -233,7 +223,6 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
       boolean threaded,
       Executor executor,
       boolean separateComponents,
-      Predicate<E> favoredEdgePredicate,
       Runnable after) {
     this.vertexBoundsFunction = vertexBoundsFunction;
     this.straightenEdges = straightenEdges;
@@ -247,18 +236,12 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
     this.executor = executor;
     this.separateComponents = separateComponents;
     this.edgeComparator = edgeComparator;
-    this.favoredEdgePredicate = favoredEdgePredicate;
     this.after = after;
   }
 
   @Override
   public void setEdgeComparator(Comparator<E> edgeComparator) {
     this.edgeComparator = edgeComparator;
-  }
-
-  @Override
-  public void setFavoredEdgePredicate(Predicate<E> favoredEdgePredicate) {
-    this.favoredEdgePredicate = favoredEdgePredicate;
   }
 
   @Override
