@@ -45,7 +45,8 @@ public class DefaultModalGraphMouse<V, E> extends AbstractModalGraphMouse
    * @param <T>
    * @param <B>
    */
-  public static class Builder<V, E, T extends DefaultModalGraphMouse, B extends Builder<V, E, T, B>>
+  public static class Builder<
+          V, E, T extends DefaultModalGraphMouse<V, E>, B extends Builder<V, E, T, B>>
       extends AbstractModalGraphMouse.Builder<T, B> {
     // selection masks
     protected int singleSelectionMask =

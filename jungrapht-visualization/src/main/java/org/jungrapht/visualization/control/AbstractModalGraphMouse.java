@@ -42,9 +42,9 @@ public abstract class AbstractModalGraphMouse extends AbstractGraphMouse
       extends AbstractGraphMouse.Builder<T, B> {
     protected Mode mode = Mode.TRANSFORMING;
 
-    public Builder mode(Mode mode) {
+    public B mode(Mode mode) {
       this.mode = mode;
-      return this;
+      return (B) this;
     }
 
     public abstract T build();

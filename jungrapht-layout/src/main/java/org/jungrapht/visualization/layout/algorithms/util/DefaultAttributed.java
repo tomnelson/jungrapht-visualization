@@ -1,9 +1,6 @@
 package org.jungrapht.visualization.layout.algorithms.util;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -156,5 +153,18 @@ public class DefaultAttributed<T> implements Attributed<T> {
   @Override
   public void set(String key, String value) {
     this.delegate.put(key, value);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    DefaultAttributed<?> that = (DefaultAttributed<?>) o;
+    return Objects.equals(value, that.value);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(value);
   }
 }

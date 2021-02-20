@@ -31,7 +31,8 @@ public class ModalLensGraphMouse<V, E> extends DefaultModalGraphMouse<V, E>
    * @param <T>
    * @param <B>
    */
-  public static class Builder<V, E, T extends ModalLensGraphMouse, B extends Builder<V, E, T, B>>
+  public static class Builder<
+          V, E, T extends ModalLensGraphMouse<V, E>, B extends Builder<V, E, T, B>>
       extends DefaultModalGraphMouse.Builder<V, E, T, B> {
 
     protected LensMagnificationGraphMousePlugin magnificationPlugin;

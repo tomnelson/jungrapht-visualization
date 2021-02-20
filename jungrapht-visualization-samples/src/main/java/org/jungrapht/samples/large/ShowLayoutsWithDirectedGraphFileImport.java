@@ -151,7 +151,6 @@ public class ShowLayoutsWithDirectedGraphFileImport extends JFrame {
             .vertexSupplier(SupplierUtil.createStringSupplier(1))
             .allowingSelfLoops(true)
             .allowingMultipleEdges(true)
-            .vertexSupplier(SupplierUtil.createStringSupplier(1))
             .edgeSupplier(SupplierUtil.DEFAULT_EDGE_SUPPLIER)
             .buildGraph();
     JPanel container = new JPanel(new BorderLayout());
