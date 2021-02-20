@@ -37,6 +37,8 @@ public class HeavyweightEdgeRenderer<V, E> extends AbstractEdgeRenderer<V, E>
 
   protected EdgeArrowRenderingSupport<V, E> edgeArrowRenderingSupport =
       getPreferredEdgeArrowRenderingSupport();
+  protected float edgeArrowScaleThreshold =
+      Float.parseFloat(System.getProperty(PREFIX + "lightweightScaleThreshold", "0.3f"));
 
   private EdgeArrowRenderingSupport<V, E> getPreferredEdgeArrowRenderingSupport() {
     switch (System.getProperty(PREFIX + "edgeArrowPlacement", "ENDPOINTS")) {
@@ -125,7 +127,7 @@ public class HeavyweightEdgeRenderer<V, E> extends AbstractEdgeRenderer<V, E>
     float scalex = (float) g.getTransform().getScaleX();
     float scaley = (float) g.getTransform().getScaleY();
     // see if arrows are too small to bother drawing
-    if (scalex < .3 || scaley < .3) {
+    if (scalex < edgeArrowScaleThreshold || scaley < edgeArrowScaleThreshold) {
       return;
     }
 

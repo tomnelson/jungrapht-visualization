@@ -4,7 +4,6 @@ import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
 
 import java.util.concurrent.Executor;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnable;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
@@ -127,7 +126,6 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
         builder.threaded,
         builder.executor,
         builder.separateComponents,
-        builder.favoredEdgePredicate,
         builder.after);
   }
 
@@ -145,7 +143,6 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
       boolean threaded,
       Executor executor,
       boolean separateComponents,
-      Predicate<E> favoredEdgePredicate,
       Runnable after) {
     super(
         vertexShapeFunction,
@@ -160,7 +157,6 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
         threaded,
         executor,
         separateComponents,
-        favoredEdgePredicate,
         after);
     this.eiglspergerThreshold = eiglspergerThreshold;
     this.transposeLimit = transposeLimit;
