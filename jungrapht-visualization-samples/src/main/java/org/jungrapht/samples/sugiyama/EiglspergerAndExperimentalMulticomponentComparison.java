@@ -12,6 +12,7 @@ import org.jungrapht.samples.util.TitlePaintable;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.eiglsperger.experimental.ExpEiglspergerLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.renderers.Renderer;
 
@@ -36,17 +37,13 @@ public class EiglspergerAndExperimentalMulticomponentComparison extends JFrame {
     container.add(vv1.getComponent());
 
     VisualizationViewer<String, Integer> vv2 = configureVisualizationViewer(graph);
-    org.jungrapht.visualization.layout.algorithms.eiglsperger.experimental
-                .EiglspergerLayoutAlgorithm<
-            String, Integer>
-        layoutAlgorithm2 =
-            org.jungrapht.visualization.layout.algorithms.eiglsperger.experimental
-                .EiglspergerLayoutAlgorithm.<String, Integer>edgeAwareBuilder()
-                .postStraighten(true)
-                .threaded(false)
-                .layering(Layering.COFFMAN_GRAHAM)
-                //            .separateComponents(false)
-                .build();
+    ExpEiglspergerLayoutAlgorithm<String, Integer> layoutAlgorithm2 =
+        ExpEiglspergerLayoutAlgorithm.<String, Integer>edgeAwareBuilder()
+            .postStraighten(true)
+            .threaded(false)
+            .layering(Layering.COFFMAN_GRAHAM)
+            //            .separateComponents(false)
+            .build();
     layoutAlgorithm2.setVertexBoundsFunction(vv2.getRenderContext().getVertexBoundsFunction());
     vv2.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm2);
     container.add(vv2.getComponent());

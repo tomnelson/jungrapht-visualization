@@ -377,16 +377,18 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
 
     // figure out the avg size of rendered vertex
     Rectangle avgVertexBounds = maxVertexBounds(layersArray, vertexShapeFunction);
-
+    log.info("avgVertexBounds: {}", avgVertexBounds);
     int horizontalOffset =
         (int)
             Math.max(
                 avgVertexBounds.width,
                 Integer.getInteger(PREFIX + "mincross.horizontalOffset", 50));
+    log.info("horizontalOffset: {}", horizontalOffset);
     int verticalOffset =
         (int)
             Math.max(
                 avgVertexBounds.height, Integer.getInteger(PREFIX + "mincross.verticalOffset", 50));
+    log.info("verticalOffset: {}", verticalOffset);
     GraphLayers.checkLayers(layersArray);
     Map<LV<V>, Point> vertexPointMap = new HashMap<>();
 
@@ -401,6 +403,7 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
       return;
     }
 
+    // do the horizontal compaction
     if (straightenEdges) {
       HorizontalCoordinateAssignment<V, E> horizontalCoordinateAssignment =
           new HorizontalCoordinateAssignment<>(
@@ -421,6 +424,7 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
       }
 
     } else {
+      // just center the rows
       Unaligned.centerPoints(
           layersArray, vertexShapeFunction, horizontalOffset, verticalOffset, vertexPointMap);
     }
@@ -448,6 +452,8 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
       rowMaxHeightMap.put(layerIndex, maxHeight);
       layerIndex++;
     }
+    log.info("rowWidthMap: {}", rowWidthMap);
+    log.info("rowMaxHeightMap: {}", rowMaxHeightMap);
 
     int widestRowWidth = rowWidthMap.values().stream().mapToInt(v -> v).max().orElse(0);
     int x = horizontalOffset;
@@ -512,10 +518,19 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
     pointRangeWidth *= 1.1;
     pointRangeHeight *= 1.1;
 
+    log.info("minX: {}, maxX: {}, minY: {}, maxY: {}", minX, maxX, minY, maxY);
+
     int maxDimension = Math.max(totalWidth, totalHeight);
+    log.info("maxDimension: {}", maxDimension);
+
 
     layoutModel.setSize(
-        multiComponent ? totalWidth : Math.max(maxDimension, layoutModel.getWidth()),
+//        multiComponent
+//                ?
+                totalWidth
+//                :
+//                Math.max(maxDimension, layoutModel.getWidth())
+            ,
         Math.max(maxDimension, layoutModel.getHeight()));
     long pointsSetTime = System.currentTimeMillis();
     double scalex = (double) layoutModel.getWidth() / pointRangeWidth;

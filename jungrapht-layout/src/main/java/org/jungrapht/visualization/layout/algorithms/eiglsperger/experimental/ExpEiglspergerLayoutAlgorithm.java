@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * @param <V> vertex type
  * @param <E> edge type
  */
-public class EiglspergerLayoutAlgorithm<V, E>
+public class ExpEiglspergerLayoutAlgorithm<V, E>
     extends AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
     implements LayoutAlgorithm<V>,
         VertexBoundsFunctionConsumer<V>,
@@ -46,7 +46,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
         Threaded,
         ExecutorConsumer {
 
-  private static final Logger log = LoggerFactory.getLogger(EiglspergerLayoutAlgorithm.class);
+  private static final Logger log = LoggerFactory.getLogger(ExpEiglspergerLayoutAlgorithm.class);
 
   /**
    * a Builder to create a configured instance
@@ -59,13 +59,13 @@ public class EiglspergerLayoutAlgorithm<V, E>
   public static class Builder<
           V,
           E,
-          T extends EiglspergerLayoutAlgorithm<V, E> & EdgeAwareLayoutAlgorithm<V, E>,
+          T extends ExpEiglspergerLayoutAlgorithm<V, E> & EdgeAwareLayoutAlgorithm<V, E>,
           B extends Builder<V, E, T, B>>
       extends AbstractHierarchicalMinCrossLayoutAlgorithm.Builder<V, E, T, B>
       implements LayoutAlgorithm.Builder<V, T, B> {
     /** {@inheritDoc} */
     public T build() {
-      return (T) new EiglspergerLayoutAlgorithm<>(this);
+      return (T) new ExpEiglspergerLayoutAlgorithm<>(this);
     }
   }
 
@@ -82,11 +82,11 @@ public class EiglspergerLayoutAlgorithm<V, E>
     return new Builder<>();
   }
 
-  public EiglspergerLayoutAlgorithm() {
-    this(EiglspergerLayoutAlgorithm.edgeAwareBuilder());
+  public ExpEiglspergerLayoutAlgorithm() {
+    this(ExpEiglspergerLayoutAlgorithm.edgeAwareBuilder());
   }
 
-  protected EiglspergerLayoutAlgorithm(Builder<V, E, ?, ?> builder) {
+  protected ExpEiglspergerLayoutAlgorithm(Builder<V, E, ?, ?> builder) {
     this(
         builder.vertexBoundsFunction,
         builder.straightenEdges,
@@ -104,7 +104,7 @@ public class EiglspergerLayoutAlgorithm<V, E>
         builder.after);
   }
 
-  protected EiglspergerLayoutAlgorithm(
+  protected ExpEiglspergerLayoutAlgorithm(
       Function<V, Rectangle> vertexShapeFunction,
       boolean straightenEdges,
       boolean postStraighten,

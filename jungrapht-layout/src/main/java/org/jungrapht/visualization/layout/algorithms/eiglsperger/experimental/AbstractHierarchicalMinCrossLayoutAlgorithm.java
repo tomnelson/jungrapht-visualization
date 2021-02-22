@@ -388,6 +388,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
                       after.run();
                       layoutModel.setFireEvents(true);
                       appendAll(layoutModel, layoutModels);
+                      expandLayoutWidthOrHeight(layoutModel, edgePointMap.values());
                     }
                   });
         } else {
@@ -400,6 +401,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
                       after.run();
                       layoutModel.setFireEvents(true);
                       appendAll(layoutModel, layoutModels);
+                      expandLayoutWidthOrHeight(layoutModel, edgePointMap.values());
                     }
                   });
         }
@@ -411,9 +413,30 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
           after.run();
           layoutModel.setFireEvents(true);
           appendAll(layoutModel, layoutModels);
+          expandLayoutWidthOrHeight(layoutModel, edgePointMap.values());
         }
       }
     }
+  }
+
+  protected void expandLayoutWidthOrHeight(LayoutModel<V> layoutModel,
+                                           Collection<List<Point>> articulations) {
+    int maxSize = Math.max(layoutModel.getWidth(), layoutModel.getHeight());
+    double horizontalRatio = maxSize / layoutModel.getWidth();
+    double verticalRatio = maxSize / layoutModel.getHeight();
+
+    layoutModel.getLocations().forEach((v, p) -> {
+      p = Point.of(p.x * horizontalRatio, p.y * verticalRatio);
+      layoutModel.set(v, p);
+    });
+    for(List<Point> lp : articulations) {
+      for (int i=0; i<lp.size(); i++) {
+        Point p = lp.get(i);
+        p = Point.of(p.x * horizontalRatio, p.y * verticalRatio);
+        lp.set(i, p);
+      }
+    }
+    layoutModel.setSize(maxSize, maxSize);
   }
 
   private void appendAll(
