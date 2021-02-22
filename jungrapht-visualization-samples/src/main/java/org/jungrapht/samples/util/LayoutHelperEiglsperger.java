@@ -11,44 +11,29 @@ public class LayoutHelperEiglsperger {
 
   public enum Layouts {
     EIGLSPERGERTD(
-        "Eiglsperger TopDown", EiglspergerLayoutAlgorithm.builder()
-            .threaded(false)
-            .layering(Layering.TOP_DOWN)),
+        "Eiglsperger TopDown",
+        EiglspergerLayoutAlgorithm.builder().threaded(false).layering(Layering.TOP_DOWN)),
     EIGLSPERGERLP(
         "Eiglsperger LongestPath",
-        EiglspergerLayoutAlgorithm.builder()
-                .threaded(false)
-                .layering(Layering.LONGEST_PATH)),
+        EiglspergerLayoutAlgorithm.builder().threaded(false).layering(Layering.LONGEST_PATH)),
     EIGLSPERGERNS(
         "Eiglsperger NetworkSimplex",
-        EiglspergerLayoutAlgorithm.builder()
-                .threaded(false)
-                .layering(Layering.NETWORK_SIMPLEX)),
+        EiglspergerLayoutAlgorithm.builder().threaded(false).layering(Layering.NETWORK_SIMPLEX)),
     EIGLSPERGERCG(
         "EiglspergerCoffmanGraham",
-        EiglspergerLayoutAlgorithm.builder()
-                .threaded(false)
-                .layering(Layering.COFFMAN_GRAHAM)),
+        EiglspergerLayoutAlgorithm.builder().threaded(false).layering(Layering.COFFMAN_GRAHAM)),
     EXPEIGLSPERGERTD(
         "Exp Eiglsperger TopDown",
-        ExpEiglspergerLayoutAlgorithm.builder()
-                .threaded(false)
-                .layering(Layering.TOP_DOWN)),
+        ExpEiglspergerLayoutAlgorithm.builder().threaded(false).layering(Layering.TOP_DOWN)),
     EXPEIGLSPERGERLP(
         "Exp Eiglsperger LongestPath",
-        ExpEiglspergerLayoutAlgorithm.builder()
-                .threaded(false)
-                .layering(Layering.LONGEST_PATH)),
+        ExpEiglspergerLayoutAlgorithm.builder().threaded(false).layering(Layering.LONGEST_PATH)),
     EXPEIGLSPERGERNS(
         "Exp Eiglsperger NetworkSimplex",
-        ExpEiglspergerLayoutAlgorithm.builder()
-                .threaded(false)
-                .layering(Layering.NETWORK_SIMPLEX)),
+        ExpEiglspergerLayoutAlgorithm.builder().threaded(false).layering(Layering.NETWORK_SIMPLEX)),
     EXPEIGLSPERGERCG(
         "Exp EiglspergerCoffmanGraham",
-        ExpEiglspergerLayoutAlgorithm.builder()
-                .threaded(false)
-                .layering(Layering.COFFMAN_GRAHAM));
+        ExpEiglspergerLayoutAlgorithm.builder().threaded(false).layering(Layering.COFFMAN_GRAHAM));
 
     private static final Map<String, Layouts> BY_NAME = new HashMap<>();
 

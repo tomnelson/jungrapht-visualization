@@ -8,7 +8,6 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.TestGraphs;
-import org.jungrapht.samples.util.TitlePaintable;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
@@ -51,9 +50,9 @@ public class EiglspergerAndExperimentalComparison extends JFrame {
 
     vv2.setSelectedVertexState(vv1.getSelectedVertexState());
 
-//    vv1.addPreRenderPaintable(new TitlePaintable("Separated Components", vv1.getPreferredSize()));
-//    vv2.addPreRenderPaintable(
-//        new TitlePaintable("Not Separated Components", vv2.getPreferredSize()));
+    //    vv1.addPreRenderPaintable(new TitlePaintable("Separated Components", vv1.getPreferredSize()));
+    //    vv2.addPreRenderPaintable(
+    //        new TitlePaintable("Not Separated Components", vv2.getPreferredSize()));
 
     setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 

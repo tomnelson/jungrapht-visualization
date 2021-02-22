@@ -419,18 +419,21 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
     }
   }
 
-  protected void expandLayoutWidthOrHeight(LayoutModel<V> layoutModel,
-                                           Collection<List<Point>> articulations) {
+  protected void expandLayoutWidthOrHeight(
+      LayoutModel<V> layoutModel, Collection<List<Point>> articulations) {
     int maxSize = Math.max(layoutModel.getWidth(), layoutModel.getHeight());
     double horizontalRatio = maxSize / layoutModel.getWidth();
     double verticalRatio = maxSize / layoutModel.getHeight();
 
-    layoutModel.getLocations().forEach((v, p) -> {
-      p = Point.of(p.x * horizontalRatio, p.y * verticalRatio);
-      layoutModel.set(v, p);
-    });
-    for(List<Point> lp : articulations) {
-      for (int i=0; i<lp.size(); i++) {
+    layoutModel
+        .getLocations()
+        .forEach(
+            (v, p) -> {
+              p = Point.of(p.x * horizontalRatio, p.y * verticalRatio);
+              layoutModel.set(v, p);
+            });
+    for (List<Point> lp : articulations) {
+      for (int i = 0; i < lp.size(); i++) {
         Point p = lp.get(i);
         p = Point.of(p.x * horizontalRatio, p.y * verticalRatio);
         lp.set(i, p);

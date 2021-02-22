@@ -1,5 +1,40 @@
 package org.jungrapht.samples.experimental;
 
+import static java.util.Map.entry;
+
+import java.awt.BasicStroke;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.Paint;
+import java.awt.Stroke;
+import java.io.File;
+import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JToggleButton;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.alg.interfaces.VertexScoringAlgorithm;
@@ -53,45 +88,7 @@ import org.jungrapht.visualization.util.LayoutPaintable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.Box;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JToggleButton;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
-import java.awt.BasicStroke;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Paint;
-import java.awt.Stroke;
-import java.io.File;
-import java.io.FileReader;
-import java.io.InputStreamReader;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import static java.util.Map.entry;
-
-/**
- * @author Tom Nelson
- */
+/** @author Tom Nelson */
 public class ShowLayoutsWithGhidraGraphInputOneComponentsExp extends JFrame {
 
   private static final Logger log =
@@ -166,11 +163,11 @@ public class ShowLayoutsWithGhidraGraphInputOneComponentsExp extends JFrame {
     loadGraphFile(graph);
 
     //add a second component
-//    String v1 = graph.addVertex();
-//    String v2 = graph.addVertex();
-//    DefaultEdge ed = graph.addEdge(v1, v2);
-//    edgeAttributes.put(
-//        ed, Map.of("EdgeType", new DefaultAttribute("Fall-Through", AttributeType.STRING)));
+    //    String v1 = graph.addVertex();
+    //    String v2 = graph.addVertex();
+    //    DefaultEdge ed = graph.addEdge(v1, v2);
+    //    edgeAttributes.put(
+    //        ed, Map.of("EdgeType", new DefaultAttribute("Fall-Through", AttributeType.STRING)));
 
     vv.setVertexToolTipFunction(vertex -> vertex + " " + vertexAttributes.get(vertex));
     vv.getRenderContext()

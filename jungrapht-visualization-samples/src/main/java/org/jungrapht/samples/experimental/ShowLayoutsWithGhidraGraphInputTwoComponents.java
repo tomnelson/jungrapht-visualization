@@ -61,7 +61,6 @@ import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.samples.spatial.RTreeVisualization;
 import org.jungrapht.samples.util.Colors;
 import org.jungrapht.samples.util.ControlHelpers;
-import org.jungrapht.samples.util.LayoutHelperDirectedGraphs;
 import org.jungrapht.samples.util.LayoutHelperEiglsperger;
 import org.jungrapht.samples.util.LensControlHelper;
 import org.jungrapht.visualization.MultiLayerTransformer;
@@ -89,9 +88,7 @@ import org.jungrapht.visualization.util.LayoutPaintable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author Tom Nelson
- */
+/** @author Tom Nelson */
 public class ShowLayoutsWithGhidraGraphInputTwoComponents extends JFrame {
 
   private static final Logger log =
@@ -229,7 +226,7 @@ public class ShowLayoutsWithGhidraGraphInputTwoComponents extends JFrame {
         e ->
             SwingUtilities.invokeLater(
                 () -> {
-                    LayoutHelperEiglsperger.Layouts layoutType =
+                  LayoutHelperEiglsperger.Layouts layoutType =
                       (LayoutHelperEiglsperger.Layouts) layoutComboBox.getSelectedItem();
                   LayoutAlgorithm layoutAlgorithm = layoutType.getLayoutAlgorithm();
                   vv.removePreRenderPaintable(balloonLayoutRings);

@@ -523,14 +523,13 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
     int maxDimension = Math.max(totalWidth, totalHeight);
     log.info("maxDimension: {}", maxDimension);
 
-
     layoutModel.setSize(
-//        multiComponent
-//                ?
-                totalWidth
-//                :
-//                Math.max(maxDimension, layoutModel.getWidth())
-            ,
+        //        multiComponent
+        //                ?
+        totalWidth
+        //                :
+        //                Math.max(maxDimension, layoutModel.getWidth())
+        ,
         Math.max(maxDimension, layoutModel.getHeight()));
     long pointsSetTime = System.currentTimeMillis();
     double scalex = (double) layoutModel.getWidth() / pointRangeWidth;
