@@ -2,6 +2,7 @@ package org.jungrapht.visualization.layout.algorithms;
 
 import java.util.concurrent.Executor;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaRunnable;
@@ -101,6 +102,7 @@ public class SugiyamaLayoutAlgorithm<V, E> extends AbstractHierarchicalMinCrossL
         builder.threaded,
         builder.executor,
         builder.separateComponents,
+        builder.favoredEdgePredicate,
         builder.after);
   }
 
@@ -117,6 +119,7 @@ public class SugiyamaLayoutAlgorithm<V, E> extends AbstractHierarchicalMinCrossL
       boolean threaded,
       Executor executor,
       boolean separateComponents,
+      Predicate<E> favoredEdgePredicate,
       Runnable after) {
     super(
         vertexShapeFunction,
@@ -131,6 +134,7 @@ public class SugiyamaLayoutAlgorithm<V, E> extends AbstractHierarchicalMinCrossL
         threaded,
         executor,
         separateComponents,
+        favoredEdgePredicate,
         after);
     this.transposeLimit = transposeLimit;
   }
