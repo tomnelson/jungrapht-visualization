@@ -1,14 +1,27 @@
-package org.jungrapht.visualization.layout.algorithms;
+package org.jungrapht.visualization.layout.algorithms.eiglsperger.experimental;
 
 import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import org.jgrapht.Graph;
+import org.jungrapht.visualization.layout.algorithms.EdgeAwareLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.EdgeSorting;
+import org.jungrapht.visualization.layout.algorithms.Layered;
+import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.NormalizesFavoredEdge;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.ComponentGrouping;
@@ -354,16 +367,10 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
                 .height(layoutModel.getHeight())
                 .build();
         layoutModels.add(componentLayoutModel);
-        log.info(
-            "multiComponent model size: {}x{}",
-            componentLayoutModel.getWidth(),
-            componentLayoutModel.getHeight());
       }
     } else {
       graphs = Collections.singletonList(graph);
       layoutModels.add(layoutModel);
-      log.info(
-          "singleComponent model size: {}x{}", layoutModel.getWidth(), layoutModel.getHeight());
     }
 
     for (LayoutModel<V> componentLayoutModel : layoutModels) {

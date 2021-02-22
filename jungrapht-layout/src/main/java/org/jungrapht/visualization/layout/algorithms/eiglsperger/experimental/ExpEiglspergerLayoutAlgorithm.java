@@ -1,14 +1,15 @@
-package org.jungrapht.visualization.layout.algorithms;
 
-import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
+package org.jungrapht.visualization.layout.algorithms.eiglsperger.experimental;
 
+import java.util.Comparator;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import org.jgrapht.Graph;
-import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnable;
+import org.jungrapht.visualization.layout.algorithms.EdgeAwareLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.Layered;
+import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.SugiyamaRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.ExecutorConsumer;
 import org.jungrapht.visualization.layout.algorithms.util.LayeredRunnable;
@@ -16,14 +17,11 @@ import org.jungrapht.visualization.layout.algorithms.util.Threaded;
 import org.jungrapht.visualization.layout.algorithms.util.VertexBoundsFunctionConsumer;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Rectangle;
-import org.jungrapht.visualization.layout.util.PropertyLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A Hierarchical Minimum-Cross layout algorithm based on Sugiyama. Uses the Eiglsperger optimations
- * for large graphs. A threshold property may be used to control the decision to switch from the
- * standard Sugiyama algorithm to the faster Eiglsperger algorithm.
+ * The Sugiyama Hierarchical Minimum-Cross layout algorithm with Eiglsperger optimizations
  *
  * @see "Methods for Visual Understanding Hierarchical System Structures. KOZO SUGIYAMA, MEMBER,
  *     IEEE, SHOJIRO TAGAWA, AND MITSUHIKO TODA, MEMBER, IEEE"
@@ -39,23 +37,16 @@ import org.slf4j.LoggerFactory;
  * @param <V> vertex type
  * @param <E> edge type
  */
-public class HierarchicalMinCrossLayoutAlgorithm<V, E>
+public class ExpEiglspergerLayoutAlgorithm<V, E>
     extends AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
     implements LayoutAlgorithm<V>,
         VertexBoundsFunctionConsumer<V>,
         Layered<V, E>,
         AfterRunnable,
-        ExecutorConsumer,
-        Threaded {
+        Threaded,
+        ExecutorConsumer {
 
-  private static final Logger log =
-      LoggerFactory.getLogger(HierarchicalMinCrossLayoutAlgorithm.class);
-
-  static {
-    PropertyLoader.load();
-  }
-
-  protected static final String EIGLSPERGER_THRESHOLD = PREFIX + "mincross.eiglspergerThreshold";
+  private static final Logger log = LoggerFactory.getLogger(ExpEiglspergerLayoutAlgorithm.class);
 
   /**
    * a Builder to create a configured instance
@@ -68,26 +59,13 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
   public static class Builder<
           V,
           E,
-          T extends HierarchicalMinCrossLayoutAlgorithm<V, E> & EdgeAwareLayoutAlgorithm<V, E>,
+          T extends ExpEiglspergerLayoutAlgorithm<V, E> & EdgeAwareLayoutAlgorithm<V, E>,
           B extends Builder<V, E, T, B>>
       extends AbstractHierarchicalMinCrossLayoutAlgorithm.Builder<V, E, T, B>
       implements LayoutAlgorithm.Builder<V, T, B> {
-    protected int transposeLimit = Integer.getInteger(TRANSPOSE_LIMIT, 6);
-    protected int eiglspergerThreshold = Integer.getInteger(EIGLSPERGER_THRESHOLD, 500);
-
-    public B eiglspergerThreshold(int eiglspergerThreshold) {
-      this.eiglspergerThreshold = eiglspergerThreshold;
-      return self();
-    }
-
-    public B transposeLimit(int transposeLimit) {
-      this.transposeLimit = transposeLimit;
-      return self();
-    }
-
     /** {@inheritDoc} */
     public T build() {
-      return (T) new HierarchicalMinCrossLayoutAlgorithm<>(this);
+      return (T) new ExpEiglspergerLayoutAlgorithm<>(this);
     }
   }
 
@@ -104,26 +82,21 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
     return new Builder<>();
   }
 
-  protected int eiglspergerThreshold;
-
-  protected int transposeLimit;
-
-  public HierarchicalMinCrossLayoutAlgorithm() {
-    this(HierarchicalMinCrossLayoutAlgorithm.edgeAwareBuilder());
+  public ExpEiglspergerLayoutAlgorithm() {
+    this(ExpEiglspergerLayoutAlgorithm.edgeAwareBuilder());
   }
 
-  private HierarchicalMinCrossLayoutAlgorithm(Builder<V, E, ?, ?> builder) {
+  protected ExpEiglspergerLayoutAlgorithm(Builder<V, E, ?, ?> builder) {
     this(
         builder.vertexBoundsFunction,
-        builder.eiglspergerThreshold,
         builder.straightenEdges,
         builder.postStraighten,
         builder.transpose,
-        builder.transposeLimit,
         builder.maxLevelCross,
         builder.maxLevelCrossFunction,
         builder.expandLayout,
         builder.layering,
+        builder.edgeComparator,
         builder.threaded,
         builder.executor,
         builder.separateComponents,
@@ -131,17 +104,16 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
         builder.after);
   }
 
-  protected HierarchicalMinCrossLayoutAlgorithm(
+  protected ExpEiglspergerLayoutAlgorithm(
       Function<V, Rectangle> vertexShapeFunction,
-      int eiglspergerThreshold,
       boolean straightenEdges,
       boolean postStraighten,
       boolean transpose,
-      int transposeLimit,
       int maxLevelCross,
       Function<Graph<V, E>, Integer> maxLevelCrossFunction,
       boolean expandLayout,
       Layering layering,
+      Comparator<E> edgeComparator,
       boolean threaded,
       Executor executor,
       boolean separateComponents,
@@ -156,45 +128,28 @@ public class HierarchicalMinCrossLayoutAlgorithm<V, E>
         maxLevelCrossFunction,
         expandLayout,
         layering,
-        Layered.noopComparator,
+        edgeComparator,
         threaded,
         executor,
         separateComponents,
         favoredEdgePredicate,
         after);
-    this.eiglspergerThreshold = eiglspergerThreshold;
-    this.transposeLimit = transposeLimit;
   }
 
   @Override
   protected LayeredRunnable<E> getRunnable(
       int componentCount, LayoutModel<V> componentLayoutModel) {
-
-    Graph<V, E> graph = componentLayoutModel.getGraph();
-    if (graph.vertexSet().size() + graph.edgeSet().size() < eiglspergerThreshold) {
-
-      return EiglspergerRunnable.<V, E>builder()
-          .layoutModel(componentLayoutModel)
-          .vertexShapeFunction(vertexBoundsFunction)
-          .straightenEdges(straightenEdges)
-          .postStraighten(postStraighten)
-          .transpose(transpose)
-          .maxLevelCross(maxLevelCross)
-          .layering(layering)
-          .multiComponent(componentCount > 1)
-          .build();
-    } else {
-      return SugiyamaRunnable.<V, E>builder()
-          .layoutModel(componentLayoutModel)
-          .vertexShapeFunction(vertexBoundsFunction)
-          .straightenEdges(straightenEdges)
-          .postStraighten(postStraighten)
-          .transpose(transpose)
-          .transposeLimit(transposeLimit)
-          .maxLevelCross(maxLevelCross)
-          .layering(layering)
-          .multiComponent(componentCount > 1)
-          .build();
-    }
+    return EiglspergerRunnable.<V, E>builder()
+        .layoutModel(componentLayoutModel)
+        .vertexShapeFunction(vertexBoundsFunction)
+        .straightenEdges(straightenEdges)
+        .postStraighten(postStraighten)
+        .transpose(transpose)
+        .maxLevelCross(maxLevelCrossFunction.apply(layoutModel.getGraph()))
+        .layering(layering)
+        .edgeComparator(edgeComparator)
+        .favoredEdgePredicate(favoredEdgePredicate)
+        .multiComponent(componentCount > 1)
+        .build();
   }
 }

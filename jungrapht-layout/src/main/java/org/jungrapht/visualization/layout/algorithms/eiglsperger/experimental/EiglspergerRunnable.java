@@ -1,4 +1,4 @@
-package org.jungrapht.visualization.layout.algorithms.eiglsperger;
+package org.jungrapht.visualization.layout.algorithms.eiglsperger.experimental;
 
 import static org.jungrapht.visualization.layout.util.PropertyLoader.PREFIX;
 
@@ -21,7 +21,16 @@ import org.jgrapht.alg.util.NeighborCache;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.layout.algorithms.Layered;
-import org.jungrapht.visualization.layout.algorithms.sugiyama.*;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.ArticulatedEdge;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.ConstructiveFeedbackArcFunction;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.GraphLayers;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.GreedyFeedbackArcFunction;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.TransformedGraphSupplier;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.Unaligned;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.VertexMetadata;
 import org.jungrapht.visualization.layout.algorithms.util.Attributed;
 import org.jungrapht.visualization.layout.algorithms.util.LayeredRunnable;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -377,18 +386,16 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
 
     // figure out the avg size of rendered vertex
     Rectangle avgVertexBounds = maxVertexBounds(layersArray, vertexShapeFunction);
-    log.info("avgVertexBounds: {}", avgVertexBounds);
+
     int horizontalOffset =
         (int)
             Math.max(
                 avgVertexBounds.width,
                 Integer.getInteger(PREFIX + "mincross.horizontalOffset", 50));
-    log.info("horizontalOffset: {}", horizontalOffset);
     int verticalOffset =
         (int)
             Math.max(
                 avgVertexBounds.height, Integer.getInteger(PREFIX + "mincross.verticalOffset", 50));
-    log.info("verticalOffset: {}", verticalOffset);
     GraphLayers.checkLayers(layersArray);
     Map<LV<V>, Point> vertexPointMap = new HashMap<>();
 
@@ -403,7 +410,6 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
       return;
     }
 
-    // do the horizontal compaction
     if (straightenEdges) {
       HorizontalCoordinateAssignment<V, E> horizontalCoordinateAssignment =
           new HorizontalCoordinateAssignment<>(
@@ -424,7 +430,6 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
       }
 
     } else {
-      // just center the rows
       Unaligned.centerPoints(
           layersArray, vertexShapeFunction, horizontalOffset, verticalOffset, vertexPointMap);
     }
@@ -452,8 +457,6 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
       rowMaxHeightMap.put(layerIndex, maxHeight);
       layerIndex++;
     }
-    log.info("rowWidthMap: {}", rowWidthMap);
-    log.info("rowMaxHeightMap: {}", rowMaxHeightMap);
 
     int widestRowWidth = rowWidthMap.values().stream().mapToInt(v -> v).max().orElse(0);
     int x = horizontalOffset;
@@ -518,10 +521,7 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
     pointRangeWidth *= 1.1;
     pointRangeHeight *= 1.1;
 
-    log.info("minX: {}, maxX: {}, minY: {}, maxY: {}", minX, maxX, minY, maxY);
-
     int maxDimension = Math.max(totalWidth, totalHeight);
-    log.info("maxDimension: {}", maxDimension);
 
     layoutModel.setSize(
         //        multiComponent
@@ -541,11 +541,11 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
       entry.setValue(q);
     }
 
-    //    if (favoredEdgePredicate != Layered.truePredicate) {
-    // normalize on favored edges
-    //      normalizeOnFavoredEdges(
-    //          layersArray, favoredEdgePredicate, vertexPointMap, horizontalOffset / 4);
-    //    }
+    if (favoredEdgePredicate != Layered.truePredicate) {
+      //     normalize on favored edges
+      normalizeOnFavoredEdges(
+          layersArray, favoredEdgePredicate, vertexPointMap, horizontalOffset / 4);
+    }
 
     // now all the vertices in layers (best) have points associated with them
     // every vertex in vertexMap has a point value
