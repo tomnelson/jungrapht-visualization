@@ -97,7 +97,7 @@ public class ShowLayoutsWithGhidraGraphInput extends JFrame {
                 .entrySet()
                 .stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue()));
-        return Colors.getColor(map);
+        return Colors.getAttrColor(map);
       };
 
   Function<DefaultEdge, Paint> edgeDrawPaintFunction =
@@ -109,7 +109,7 @@ public class ShowLayoutsWithGhidraGraphInput extends JFrame {
                 .entrySet()
                 .stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue()));
-        return Colors.getColor(map);
+        return Colors.getAttrColor(map);
       };
 
   public ShowLayoutsWithGhidraGraphInput() {

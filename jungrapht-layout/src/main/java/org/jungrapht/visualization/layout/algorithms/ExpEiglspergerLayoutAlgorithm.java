@@ -1,14 +1,12 @@
 
-package org.jungrapht.visualization.layout.algorithms.eiglsperger.experimental;
+package org.jungrapht.visualization.layout.algorithms;
 
 import java.util.Comparator;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import org.jgrapht.Graph;
-import org.jungrapht.visualization.layout.algorithms.EdgeAwareLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.Layered;
-import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.eiglsperger.EiglspergerRunnable;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.ExecutorConsumer;

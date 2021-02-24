@@ -12,7 +12,7 @@ import org.jungrapht.samples.util.TitlePaintable;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.eiglsperger.experimental.ExpEiglspergerLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.ExpEiglspergerLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.renderers.Renderer;
 

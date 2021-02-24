@@ -1,13 +1,20 @@
-package org.jungrapht.samples.util;
+package org.jungrapht.samples.experimental;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.ExpEiglspergerLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
+import org.jungrapht.visualization.layout.algorithms.util.Attributed;
 
 public class LayoutHelperEiglsperger {
+
+  //  private static final Predicate<DefaultEdge>
+  static final Predicate<Attributed<Integer>> favoredEdgePredicate =
+      e ->
+          "Fall-Through".equals(e.get("EdgeType"))
+              || "Unconditional-Jump".equals(e.get("EdgeType"));
 
   public enum Layouts {
     EIGLSPERGERTD(
@@ -24,16 +31,28 @@ public class LayoutHelperEiglsperger {
         EiglspergerLayoutAlgorithm.builder().threaded(false).layering(Layering.COFFMAN_GRAHAM)),
     EXPEIGLSPERGERTD(
         "Exp Eiglsperger TopDown",
-        ExpEiglspergerLayoutAlgorithm.builder().threaded(false).layering(Layering.TOP_DOWN)),
+        EiglspergerLayoutAlgorithm.<Attributed<String>, Attributed<Integer>>builder()
+            .favoredEdgePredicate(favoredEdgePredicate)
+            .threaded(false)
+            .layering(Layering.TOP_DOWN)),
     EXPEIGLSPERGERLP(
         "Exp Eiglsperger LongestPath",
-        ExpEiglspergerLayoutAlgorithm.builder().threaded(false).layering(Layering.LONGEST_PATH)),
+        EiglspergerLayoutAlgorithm.<Attributed<String>, Attributed<Integer>>builder()
+            .favoredEdgePredicate(favoredEdgePredicate)
+            .threaded(false)
+            .layering(Layering.LONGEST_PATH)),
     EXPEIGLSPERGERNS(
         "Exp Eiglsperger NetworkSimplex",
-        ExpEiglspergerLayoutAlgorithm.builder().threaded(false).layering(Layering.NETWORK_SIMPLEX)),
+        EiglspergerLayoutAlgorithm.<Attributed<String>, Attributed<Integer>>builder()
+            .favoredEdgePredicate(favoredEdgePredicate)
+            .threaded(false)
+            .layering(Layering.NETWORK_SIMPLEX)),
     EXPEIGLSPERGERCG(
         "Exp EiglspergerCoffmanGraham",
-        ExpEiglspergerLayoutAlgorithm.builder().threaded(false).layering(Layering.COFFMAN_GRAHAM));
+        EiglspergerLayoutAlgorithm.<Attributed<String>, Attributed<Integer>>builder()
+            .favoredEdgePredicate(favoredEdgePredicate)
+            .threaded(false)
+            .layering(Layering.COFFMAN_GRAHAM));
 
     private static final Map<String, Layouts> BY_NAME = new HashMap<>();
 

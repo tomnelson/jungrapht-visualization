@@ -115,7 +115,7 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
                 .entrySet()
                 .stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue()));
-        return Colors.getColor(map);
+        return Colors.getAttrColor(map);
       };
 
   public ShowLayoutsWithGraphFileImport() {

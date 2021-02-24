@@ -39,10 +39,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** @author Tom Nelson */
-public class ShowLayoutsWithGhidraGraphInputTwoComponents extends JFrame {
+public class ShowLayoutsWithGhidraGraphInputThreeComponents extends JFrame {
 
   private static final Logger log =
-      LoggerFactory.getLogger(ShowLayoutsWithGhidraGraphInputTwoComponents.class);
+      LoggerFactory.getLogger(ShowLayoutsWithGhidraGraphInputThreeComponents.class);
 
   LayoutPaintable.BalloonRings balloonLayoutRings;
   LayoutPaintable.RadialRings radialLayoutRings;
@@ -76,7 +76,7 @@ public class ShowLayoutsWithGhidraGraphInputTwoComponents extends JFrame {
     }
   }
 
-  public ShowLayoutsWithGhidraGraphInputTwoComponents() {
+  public ShowLayoutsWithGhidraGraphInputThreeComponents() {
 
     Graph<Attributed<String>, Attributed<Integer>> graph =
         GraphTypeBuilder.<Attributed<String>, Attributed<Integer>>directed()
@@ -103,6 +103,24 @@ public class ShowLayoutsWithGhidraGraphInputTwoComponents extends JFrame {
     graph.addVertex(v2);
     Attributed<Integer> ed = graph.addEdge(v1, v2);
     ed.set("EdgeType", "Fall-Through");
+
+    //add a third component
+    Attributed<String> v3 = new DefaultAttributed<>("" + graph.vertexSet().size() + 1);
+    graph.addVertex(v3);
+    Attributed<String> v4 = new DefaultAttributed<>("" + graph.vertexSet().size() + 1);
+    graph.addVertex(v4);
+    Attributed<String> v5 = new DefaultAttributed<>("" + graph.vertexSet().size() + 1);
+    graph.addVertex(v5);
+    Attributed<String> v6 = new DefaultAttributed<>("" + graph.vertexSet().size() + 1);
+    graph.addVertex(v6);
+    Attributed<Integer> ed1 = graph.addEdge(v3, v4);
+    ed1.set("EdgeType", "Fall-Through");
+    Attributed<Integer> ed2 = graph.addEdge(v3, v5);
+    ed2.set("EdgeType", "Unconditional-Jump");
+    Attributed<Integer> ed3 = graph.addEdge(v4, v6);
+    ed3.set("EdgeType", "Fall-Through");
+    Attributed<Integer> ed4 = graph.addEdge(v3, v6);
+    ed4.set("EdgeType", "Conditional-Jump");
 
     loadGraphFile(graph);
 
@@ -334,7 +352,7 @@ public class ShowLayoutsWithGhidraGraphInputTwoComponents extends JFrame {
     vv.getRenderContext().setArrowDrawPaintFunction(edgeDrawPaintFunction);
     try (InputStreamReader inputStreamReader =
         new InputStreamReader(
-            ShowLayoutsWithGhidraGraphInputTwoComponents.class.getResourceAsStream(
+            ShowLayoutsWithGhidraGraphInputThreeComponents.class.getResourceAsStream(
                 "/" + fileName))) {
       importer.importGraph(graph, inputStreamReader);
     } catch (Exception ex) {
@@ -544,6 +562,6 @@ public class ShowLayoutsWithGhidraGraphInputTwoComponents extends JFrame {
   }
 
   public static void main(String[] args) {
-    new ShowLayoutsWithGhidraGraphInputTwoComponents();
+    new ShowLayoutsWithGhidraGraphInputThreeComponents();
   }
 }

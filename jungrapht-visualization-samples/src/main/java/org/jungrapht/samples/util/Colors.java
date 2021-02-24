@@ -180,7 +180,7 @@ public abstract class Colors {
     WEB_COLOR_MAP.keySet().forEach(k -> COLOR_MAP.put(k.toLowerCase(), WEB_COLOR_MAP.get(k)));
   }
 
-  public static <V> Paint getColor(Map<String, Attribute> map) {
+  public static <V> Paint getAttrColor(Map<String, Attribute> map) {
     // if there is a 'VertexType' attribute key, use its value to choose a predefined color
     if (map.containsKey("VertexType")) {
       String typeValue = map.get("VertexType").getValue();
@@ -207,6 +207,46 @@ public abstract class Colors {
       }
     } else if (map.containsKey("color")) {
       String colorName = map.get("color").getValue();
+      if (COLOR_MAP.containsKey(colorName)) {
+        return COLOR_MAP.get(colorName);
+      }
+      // if the value matches an RGB hex string, turn that into a color
+      Color c = getHexColor(colorName);
+      if (c != null) {
+        return c;
+      }
+    }
+    // default value when nothing else matches
+    return Color.red;
+  }
+
+  public static <V> Paint getColor(Map<String, String> map) {
+    // if there is a 'VertexType' attribute key, use its value to choose a predefined color
+    if (map.containsKey("VertexType")) {
+      String typeValue = map.get("VertexType");
+      return VERTEX_TYPE_TO_COLOR_MAP.getOrDefault(typeValue, Color.blue);
+    }
+    // if there is an 'EdgeType' attribute key, use its value to choose a predefined color
+    if (map.containsKey("EdgeType")) {
+      String typeValue = map.get("EdgeType");
+      return EDGE_TYPE_TO_COLOR_MAP.getOrDefault(typeValue, Color.green);
+    }
+
+    // if there is a 'Color' attribute key, use its value (either a color name or an RGB hex string)
+    // to choose a color
+    if (map.containsKey("Color")) {
+      String colorAttribute = map.get("Color");
+      String colorName = colorAttribute;
+      if (COLOR_MAP.containsKey(colorName)) {
+        return COLOR_MAP.get(colorName);
+      }
+      // if the value matches an RGB hex string, turn that into a color
+      Color c = getHexColor(colorName);
+      if (c != null) {
+        return c;
+      }
+    } else if (map.containsKey("color")) {
+      String colorName = map.get("color");
       if (COLOR_MAP.containsKey(colorName)) {
         return COLOR_MAP.get(colorName);
       }

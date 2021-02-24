@@ -2,84 +2,34 @@ package org.jungrapht.samples.experimental;
 
 import static java.util.Map.entry;
 
-import java.awt.BasicStroke;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Paint;
-import java.awt.Stroke;
-import java.io.File;
-import java.io.FileReader;
+import java.awt.*;
 import java.io.InputStreamReader;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import javax.swing.Box;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JToggleButton;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
+import java.util.function.Supplier;
+import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.alg.interfaces.VertexScoringAlgorithm;
-import org.jgrapht.alg.scoring.AlphaCentrality;
-import org.jgrapht.alg.scoring.BetweennessCentrality;
-import org.jgrapht.alg.scoring.ClosenessCentrality;
-import org.jgrapht.alg.scoring.ClusteringCoefficient;
-import org.jgrapht.alg.scoring.HarmonicCentrality;
-import org.jgrapht.alg.scoring.PageRank;
-import org.jgrapht.alg.util.Pair;
-import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.alg.scoring.*;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
-import org.jgrapht.nio.Attribute;
-import org.jgrapht.nio.AttributeType;
-import org.jgrapht.nio.DefaultAttribute;
 import org.jgrapht.nio.GraphImporter;
-import org.jgrapht.nio.csv.CSVImporter;
-import org.jgrapht.nio.dimacs.DIMACSImporter;
-import org.jgrapht.nio.dot.DOTImporter;
-import org.jgrapht.nio.gml.GmlImporter;
-import org.jgrapht.nio.graphml.GraphMLImporter;
-import org.jgrapht.nio.json.JSONImporter;
-import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.samples.spatial.RTreeVisualization;
 import org.jungrapht.samples.util.Colors;
 import org.jungrapht.samples.util.ControlHelpers;
-import org.jungrapht.samples.util.LayoutHelperEiglsperger;
 import org.jungrapht.samples.util.LensControlHelper;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.control.DefaultLensGraphMouse;
 import org.jungrapht.visualization.decorators.EdgeShape;
-import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.EdgePredicated;
-import org.jungrapht.visualization.layout.algorithms.EdgeSorting;
-import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.NormalizesFavoredEdge;
-import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.*;
+import org.jungrapht.visualization.layout.algorithms.util.Attributed;
+import org.jungrapht.visualization.layout.algorithms.util.DefaultAttributed;
 import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.jungrapht.visualization.transform.HyperbolicTransformer;
-import org.jungrapht.visualization.transform.LayoutLensSupport;
-import org.jungrapht.visualization.transform.Lens;
-import org.jungrapht.visualization.transform.LensSupport;
-import org.jungrapht.visualization.transform.MagnifyTransformer;
+import org.jungrapht.visualization.transform.*;
 import org.jungrapht.visualization.transform.shape.HyperbolicShapeTransformer;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
 import org.jungrapht.visualization.transform.shape.ViewLensSupport;
@@ -97,10 +47,7 @@ public class ShowLayoutsWithGhidraGraphInputOneComponents extends JFrame {
   LayoutPaintable.BalloonRings balloonLayoutRings;
   LayoutPaintable.RadialRings radialLayoutRings;
   LayoutPaintable.LayoutBounds layoutBounds;
-  JFileChooser fileChooser;
-  Map<String, Map<String, Attribute>> vertexAttributes = new HashMap<>();
-  Map<DefaultEdge, Map<String, Attribute>> edgeAttributes = new HashMap<>();
-  VisualizationViewer<String, DefaultEdge> vv;
+  VisualizationViewer<Attributed<String>, Attributed<Integer>> vv;
   Paint[] colorArray =
       new Paint[] {
         Color.red,
@@ -116,86 +63,44 @@ public class ShowLayoutsWithGhidraGraphInputOneComponents extends JFrame {
         Color.orange
       };
 
-  Function<String, Paint> vertexFillPaintFunction =
-      v -> {
-        // try to parse from attributemap
-        Map<String, Attribute> map =
-            vertexAttributes
-                .getOrDefault(v, Collections.emptyMap())
-                .entrySet()
-                .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue()));
-        return Colors.getColor(map);
-      };
+  Function<Attributed<String>, Paint> vertexFillPaintFunction = v -> Colors.getColor(v);
 
-  Function<DefaultEdge, Paint> edgeDrawPaintFunction =
-      e -> {
-        // try to parse from attributemap
-        Map<String, Attribute> map =
-            edgeAttributes
-                .getOrDefault(e, Collections.emptyMap())
-                .entrySet()
-                .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue()));
-        return Colors.getColor(map);
-      };
+  Function<Attributed<Integer>, Paint> edgeDrawPaintFunction = e -> Colors.getColor(e);
+
+  static class EdgeSupplier implements Supplier<Attributed<Integer>> {
+    int counter = 0;
+
+    @Override
+    public Attributed<Integer> get() {
+      return new DefaultAttributed<>(counter++);
+    }
+  }
 
   public ShowLayoutsWithGhidraGraphInputOneComponents() {
 
-    Graph<String, DefaultEdge> graph =
-        GraphTypeBuilder.directed()
-            .edgeClass(DefaultEdge.class)
-            .vertexSupplier(SupplierUtil.createStringSupplier(1))
+    Graph<Attributed<String>, Attributed<Integer>> graph =
+        GraphTypeBuilder.<Attributed<String>, Attributed<Integer>>directed()
             .allowingSelfLoops(true)
             .allowingMultipleEdges(true)
-            .edgeSupplier(SupplierUtil.DEFAULT_EDGE_SUPPLIER)
+            .edgeSupplier(new EdgeSupplier())
             .buildGraph();
     JPanel container = new JPanel(new BorderLayout());
 
-    final DefaultGraphMouse<Integer, DefaultEdge> graphMouse = new DefaultGraphMouse<>();
+    final DefaultGraphMouse<Attributed<String>, Attributed<Integer>> graphMouse =
+        new DefaultGraphMouse<>();
 
     vv =
-        VisualizationViewer.builder(graph)
+        VisualizationViewer.<Attributed<String>, Attributed<Integer>>builder(graph)
             .layoutSize(new Dimension(1800, 1800))
             .viewSize(new Dimension(900, 900))
             .graphMouse(graphMouse)
             .build();
     loadGraphFile(graph);
 
-    //    //add a second component
-    //    String v1 = graph.addVertex();
-    //    String v2 = graph.addVertex();
-    //    DefaultEdge ed = graph.addEdge(v1, v2);
-    //    edgeAttributes.put(
-    //        ed, Map.of("EdgeType", new DefaultAttribute("Fall-Through", AttributeType.STRING)));
-
-    vv.setVertexToolTipFunction(vertex -> vertex + " " + vertexAttributes.get(vertex));
-    vv.getRenderContext()
-        .setVertexLabelFunction(
-            vertex -> {
-              Map<String, Attribute> map =
-                  vertexAttributes.getOrDefault(vertex, Collections.emptyMap());
-              return map.getOrDefault(
-                      "Name",
-                      map.getOrDefault("ID", new DefaultAttribute(vertex, AttributeType.STRING)))
-                  .getValue();
-            });
-    vv.setEdgeToolTipFunction(edge -> edgeAttributes.get(edge).toString());
-    //    vv.getRenderContext().setVertexFillPaintFunction(v -> Colors.getColor(vertexAttributes.get(v)));
-
-    //    vv.getRenderContext()
-    //        .setVertexShapeFunction(
-    //            v -> {
-    //              Graph<String, DefaultEdge> g = vv.getVisualizationModel().getGraph();
-    //              if (!g.containsVertex(v)) {
-    //                log.error("shapeFunction {} was not in {}", v, g.vertexSet());
-    //              }
-    //              int size = Math.max(5, 2 * (g.containsVertex(v) ? g.degreeOf(v) : 20));
-    //              return new Ellipse2D.Float(-size / 2.f, -size / 2.f, size, size);
-    //            });
-    //    Function<String, Paint> vertexDrawPaintFunction =
-    //        v -> vv.getSelectedVertexState().isSelected(v) ? Color.pink : Color.black;
-    Function<String, Stroke> vertexStrokeFunction =
+    vv.setVertexToolTipFunction(vertex -> vertex.get("Name"));
+    vv.getRenderContext().setVertexLabelFunction(vertex -> vertex.get("ID"));
+    vv.setEdgeToolTipFunction(Object::toString);
+    Function<Attributed<String>, Stroke> vertexStrokeFunction =
         v ->
             vv.getSelectedVertexState().isSelected(v) ? new BasicStroke(8.f) : new BasicStroke(2.f);
     vv.getRenderContext().setVertexStrokeFunction(vertexStrokeFunction);
@@ -206,21 +111,6 @@ public class ShowLayoutsWithGhidraGraphInputOneComponents extends JFrame {
     LayoutHelperEiglsperger.Layouts[] combos = LayoutHelperEiglsperger.getCombos();
     final JToggleButton animateLayoutTransition = new JToggleButton("Animate Layout Transition");
 
-    final Predicate<DefaultEdge> favoredEdgePredicate =
-        e ->
-            "Fall-Through"
-                    .equals(
-                        edgeAttributes
-                            .getOrDefault(e, Collections.emptyMap())
-                            .get("EdgeType")
-                            .getValue())
-                || "Unconditional-Jump"
-                    .equals(
-                        edgeAttributes
-                            .getOrDefault(e, Collections.emptyMap())
-                            .get("EdgeType")
-                            .getValue());
-
     final JComboBox layoutComboBox = new JComboBox(combos);
     layoutComboBox.addActionListener(
         e ->
@@ -228,7 +118,8 @@ public class ShowLayoutsWithGhidraGraphInputOneComponents extends JFrame {
                 () -> {
                   LayoutHelperEiglsperger.Layouts layoutType =
                       (LayoutHelperEiglsperger.Layouts) layoutComboBox.getSelectedItem();
-                  LayoutAlgorithm layoutAlgorithm = layoutType.getLayoutAlgorithm();
+                  LayoutAlgorithm<Attributed<String>> layoutAlgorithm =
+                      layoutType.getLayoutAlgorithm();
                   vv.removePreRenderPaintable(balloonLayoutRings);
                   vv.removePreRenderPaintable(radialLayoutRings);
 
@@ -246,15 +137,10 @@ public class ShowLayoutsWithGhidraGraphInputOneComponents extends JFrame {
                                     "Indirection",
                                     "Unconditional-Jump",
                                     "Terminator",
-                                    "Conditional-Return"),
-                                edgeAttributes));
-                  }
-                  if (layoutAlgorithm instanceof NormalizesFavoredEdge) {
-                    ((NormalizesFavoredEdge<DefaultEdge>) layoutAlgorithm)
-                        .setFavoredEdgePredicate(favoredEdgePredicate);
+                                    "Conditional-Return")));
                   }
                   if (layoutAlgorithm instanceof EdgePredicated) {
-                    ((EdgePredicated<DefaultEdge>) layoutAlgorithm)
+                    ((EdgePredicated<Attributed<Integer>>) layoutAlgorithm)
                         .setEdgePredicate(new EdgePredicate(graph));
                   }
                   if (animateLayoutTransition.isSelected()) {
@@ -283,11 +169,11 @@ public class ShowLayoutsWithGhidraGraphInputOneComponents extends JFrame {
     layoutComboBox.setSelectedItem(LayoutHelperEiglsperger.Layouts.EIGLSPERGERTD);
 
     // create a lens to share between the two hyperbolic transformers
-    LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
+    LayoutModel<Attributed<String>> layoutModel = vv.getVisualizationModel().getLayoutModel();
     Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
     Lens lens = new Lens(); /* provides a Hyperbolic lens for the view */
     LensSupport<DefaultLensGraphMouse> hyperbolicViewSupport =
-        ViewLensSupport.<String, DefaultEdge, DefaultLensGraphMouse>builder(vv)
+        ViewLensSupport.<Attributed<String>, Attributed<Integer>, DefaultLensGraphMouse>builder(vv)
             .lensTransformer(
                 HyperbolicShapeTransformer.builder(lens)
                     .delegate(
@@ -299,7 +185,8 @@ public class ShowLayoutsWithGhidraGraphInputOneComponents extends JFrame {
             .build();
 
     LensSupport<DefaultLensGraphMouse> hyperbolicLayoutSupport =
-        LayoutLensSupport.<String, DefaultEdge, DefaultLensGraphMouse>builder(vv)
+        LayoutLensSupport.<Attributed<String>, Attributed<Integer>, DefaultLensGraphMouse>builder(
+                vv)
             .lensTransformer(
                 HyperbolicTransformer.builder(lens)
                     .delegate(
@@ -315,7 +202,7 @@ public class ShowLayoutsWithGhidraGraphInputOneComponents extends JFrame {
     lens = new Lens();
     lens.setMagnification(3.f);
     LensSupport<DefaultLensGraphMouse> magnifyViewSupport =
-        ViewLensSupport.<String, DefaultEdge, DefaultLensGraphMouse>builder(vv)
+        ViewLensSupport.<Attributed<String>, Attributed<Integer>, DefaultLensGraphMouse>builder(vv)
             .lensTransformer(
                 MagnifyShapeTransformer.builder(lens)
                     .delegate(
@@ -327,7 +214,8 @@ public class ShowLayoutsWithGhidraGraphInputOneComponents extends JFrame {
             .build();
 
     LensSupport<DefaultLensGraphMouse> magnifyLayoutSupport =
-        LayoutLensSupport.<String, DefaultEdge, DefaultLensGraphMouse>builder(vv)
+        LayoutLensSupport.<Attributed<String>, Attributed<Integer>, DefaultLensGraphMouse>builder(
+                vv)
             .lensTransformer(
                 MagnifyTransformer.builder(lens)
                     .delegate(
@@ -364,107 +252,6 @@ public class ShowLayoutsWithGhidraGraphInputOneComponents extends JFrame {
             .build()
             .container();
 
-    JPanel loadFilePanel = new JPanel();
-    JButton loadFileButton = new JButton("Load File");
-    loadFilePanel.add(loadFileButton);
-    loadFileButton.addActionListener(
-        e -> {
-          if (fileChooser == null) {
-            fileChooser = new JFileChooser();
-          }
-          int option = fileChooser.showOpenDialog(vv.getComponent());
-          if (option == JFileChooser.APPROVE_OPTION) {
-            File file = fileChooser.getSelectedFile();
-            String fileName = file.getName();
-            String suffix = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
-            GraphImporter importer;
-            switch (suffix) {
-              case "graphml":
-                importer = new GraphMLImporter();
-                ((GraphMLImporter) importer).setSchemaValidation(false);
-                GraphMLImporter gmlImporter = (GraphMLImporter) importer;
-                gmlImporter.addVertexAttributeConsumer(
-                    (BiConsumer<Pair<String, String>, Attribute>)
-                        (pair, attribute) -> {
-                          String vertex = pair.getFirst();
-                          String key = pair.getSecond();
-                          vertexAttributes
-                              .computeIfAbsent(vertex, m -> new HashMap<>())
-                              .put(key, attribute);
-                        });
-                gmlImporter.addEdgeAttributeConsumer(
-                    (BiConsumer<Pair<DefaultEdge, String>, Attribute>)
-                        (pair, attribute) -> {
-                          DefaultEdge edge = pair.getFirst();
-                          String key = pair.getSecond();
-                          edgeAttributes
-                              .computeIfAbsent(edge, m -> new HashMap<>())
-                              .put(key, attribute);
-                        });
-                break;
-              case "gml":
-                importer = new GmlImporter();
-                break;
-              case "dot":
-              case "gv":
-                importer = new DOTImporter();
-                break;
-              case "csv":
-                importer = new CSVImporter();
-                break;
-              case "col":
-                importer = new DIMACSImporter();
-                break;
-              case "json":
-                JSONImporter jsonImporter = new JSONImporter();
-                jsonImporter.addVertexAttributeConsumer(
-                    (BiConsumer<Pair<String, String>, Attribute>)
-                        (pair, attribute) -> {
-                          String vertex = pair.getFirst();
-                          String key = pair.getSecond();
-                          vertexAttributes
-                              .computeIfAbsent(vertex, m -> new HashMap<>())
-                              .put(key, attribute);
-                        });
-                jsonImporter.addEdgeAttributeConsumer(
-                    (BiConsumer<Pair<DefaultEdge, String>, Attribute>)
-                        (pair, attribute) -> {
-                          DefaultEdge edge = pair.getFirst();
-                          String key = pair.getSecond();
-                          edgeAttributes
-                              .computeIfAbsent(edge, m -> new HashMap<>())
-                              .put(key, attribute);
-                        });
-
-                importer = jsonImporter;
-                break;
-              default:
-                JOptionPane.showMessageDialog(vv.getComponent(), "Unable to open " + fileName);
-                return;
-            }
-            clear(graph);
-            vertexAttributes.clear();
-            vv.getRenderContext().setVertexFillPaintFunction(vertexFillPaintFunction);
-            vv.getRenderContext().setEdgeDrawPaintFunction(edgeDrawPaintFunction);
-            vv.getRenderContext().setArrowFillPaintFunction(edgeDrawPaintFunction);
-            vv.getRenderContext().setArrowDrawPaintFunction(edgeDrawPaintFunction);
-            try (InputStreamReader inputStreamReader = new FileReader(file)) {
-              importer.importGraph(graph, inputStreamReader);
-            } catch (Exception ex) {
-              ex.printStackTrace();
-            }
-            vv.getVisualizationModel().setGraph(graph);
-            setTitle(
-                "Graph of "
-                    + fileName
-                    + " with "
-                    + graph.vertexSet().size()
-                    + " vertices and "
-                    + graph.edgeSet().size()
-                    + " edges");
-          }
-        });
-
     JButton pageRankButton = new JButton("Page Rank");
     pageRankButton.addActionListener(event -> computeScores(new PageRank(graph)));
     JButton betweennessButton = new JButton("Betweenness");
@@ -499,7 +286,6 @@ public class ShowLayoutsWithGhidraGraphInputOneComponents extends JFrame {
     JComponent top =
         ControlHelpers.getContainer(
             Box.createHorizontalBox(),
-            ControlHelpers.getCenteredContainer("Graph Source", loadFilePanel),
             ControlHelpers.getCenteredContainer("Layouts", layoutComboBox),
             ControlHelpers.getCenteredContainer("Scoring", scoringGrid));
 
@@ -530,72 +316,9 @@ public class ShowLayoutsWithGhidraGraphInputOneComponents extends JFrame {
     setVisible(true);
   }
 
-  private void loadGraphFile(Graph<String, DefaultEdge> graph) {
+  private void loadGraphFile(Graph<Attributed<String>, Attributed<Integer>> graph) {
     String fileName = "graph.json";
-    String suffix = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
-    GraphImporter importer;
-    switch (suffix) {
-      case "graphml":
-        importer = new GraphMLImporter();
-        ((GraphMLImporter) importer).setSchemaValidation(false);
-        GraphMLImporter gmlImporter = (GraphMLImporter) importer;
-        gmlImporter.addVertexAttributeConsumer(
-            (BiConsumer<Pair<String, String>, Attribute>)
-                (pair, attribute) -> {
-                  String vertex = pair.getFirst();
-                  String key = pair.getSecond();
-                  vertexAttributes
-                      .computeIfAbsent(vertex, m -> new HashMap<>())
-                      .put(key, attribute);
-                });
-        gmlImporter.addEdgeAttributeConsumer(
-            (BiConsumer<Pair<DefaultEdge, String>, Attribute>)
-                (pair, attribute) -> {
-                  DefaultEdge edge = pair.getFirst();
-                  String key = pair.getSecond();
-                  edgeAttributes.computeIfAbsent(edge, m -> new HashMap<>()).put(key, attribute);
-                });
-        break;
-      case "gml":
-        importer = new GmlImporter();
-        break;
-      case "dot":
-      case "gv":
-        importer = new DOTImporter();
-        break;
-      case "csv":
-        importer = new CSVImporter();
-        break;
-      case "col":
-        importer = new DIMACSImporter();
-        break;
-      case "json":
-        JSONImporter jsonImporter = new JSONImporter();
-        jsonImporter.addVertexAttributeConsumer(
-            (BiConsumer<Pair<String, String>, Attribute>)
-                (pair, attribute) -> {
-                  String vertex = pair.getFirst();
-                  String key = pair.getSecond();
-                  vertexAttributes
-                      .computeIfAbsent(vertex, m -> new HashMap<>())
-                      .put(key, attribute);
-                });
-        jsonImporter.addEdgeAttributeConsumer(
-            (BiConsumer<Pair<DefaultEdge, String>, Attribute>)
-                (pair, attribute) -> {
-                  DefaultEdge edge = pair.getFirst();
-                  String key = pair.getSecond();
-                  edgeAttributes.computeIfAbsent(edge, m -> new HashMap<>()).put(key, attribute);
-                });
-
-        importer = jsonImporter;
-        break;
-      default:
-        JOptionPane.showMessageDialog(vv.getComponent(), "Unable to open " + fileName);
-        return;
-    }
-    clear(graph);
-    vertexAttributes.clear();
+    GraphImporter importer = new AttributedJSONImporter();
     vv.getRenderContext().setVertexFillPaintFunction(vertexFillPaintFunction);
     vv.getRenderContext().setEdgeDrawPaintFunction(edgeDrawPaintFunction);
     vv.getRenderContext().setArrowFillPaintFunction(edgeDrawPaintFunction);
@@ -619,8 +342,8 @@ public class ShowLayoutsWithGhidraGraphInputOneComponents extends JFrame {
             + " edges");
   }
 
-  private void computeScores(VertexScoringAlgorithm<String, Double> scoring) {
-    Map<String, Double> scores = scoring.getScores();
+  private void computeScores(VertexScoringAlgorithm<Attributed<String>, Double> scoring) {
+    Map<Attributed<String>, Double> scores = scoring.getScores();
     if (scores.isEmpty()) return;
     double min = scores.values().stream().min(Double::compare).get();
     double max = scores.values().stream().max(Double::compare).get();
@@ -646,32 +369,6 @@ public class ShowLayoutsWithGhidraGraphInputOneComponents extends JFrame {
     edges.forEach(graph::removeEdge);
     vertices.forEach(graph::removeVertex);
   }
-
-  //  LayoutModel getTreeLayoutPositions(
-  //      Graph tree, LayoutAlgorithm treeLayout, LayoutModel layoutModel) {
-  //    LayoutModel model =
-  //        LayoutModel.builder()
-  //            .size(layoutModel.getWidth(), layoutModel.getHeight())
-  //            .graph(tree)
-  //            .build();
-  ////    // connect any listeners from the layoutModel to the newly created model
-  ////    model
-  ////        .getLayoutStateChangeSupport()
-  ////        .getLayoutStateChangeListeners()
-  ////        .forEach(l -> model.getLayoutStateChangeSupport().addLayoutStateChangeListener(l));
-  ////    model
-  ////        .getLayoutSizeChangeSupport()
-  ////        .getLayoutSizeChangeListeners()
-  ////        .forEach(
-  ////            l ->
-  ////                model
-  ////                    .getLayoutSizeChangeSupport()
-  ////                    .addLayoutSizeChangeListener((LayoutSizeChange.Listener) l));
-  ////    //    layoutModel
-  ////    //    model.getLayoutStateChangeSupport().addLayoutStateChangeListener();
-  //    model.accept(treeLayout);
-  //    return model;
-  //  }
 
   /**
    * these are vertex or edge types that have defined colors (the keys are the property values for
@@ -746,24 +443,24 @@ public class ShowLayoutsWithGhidraGraphInputOneComponents extends JFrame {
     return roots;
   }
 
-  class EdgePredicate implements Predicate<DefaultEdge> {
-    Graph<String, DefaultEdge> graph;
+  class EdgePredicate implements Predicate<Attributed<Integer>> {
+    Graph<Attributed<String>, Attributed<Integer>> graph;
 
-    EdgePredicate(Graph<String, DefaultEdge> graph) {
+    EdgePredicate(Graph<Attributed<String>, Attributed<Integer>> graph) {
       this.graph = graph;
     }
 
     @Override
-    public boolean test(DefaultEdge defaultEdge) {
-      Map<String, Attribute> map = edgeAttributes.get(defaultEdge);
-      if ("Fall-Through".equals(edgeAttributes.get(defaultEdge).get("EdgeType").getValue())) {
+    public boolean test(Attributed<Integer> edge) {
+      //      Map<String, Attribute> map = edgeAttributes.get(Attributed<Integer>);
+      if ("Fall-Through".equals(edge.get("EdgeType"))) {
         return true;
       }
-      String target = graph.getEdgeTarget(defaultEdge);
-      Collection<DefaultEdge> incomingEdges = graph.incomingEdgesOf(target);
-      for (DefaultEdge e : incomingEdges) {
-        Map<String, Attribute> map2 = edgeAttributes.get(e);
-        if ("Fall-Through".equals(edgeAttributes.get(e).get("EdgeType").getValue())) {
+      Attributed<String> target = graph.getEdgeTarget(edge);
+      Collection<Attributed<Integer>> incomingEdges = graph.incomingEdgesOf(target);
+      for (Attributed<Integer> e : incomingEdges) {
+        //        Map<String, Attribute> map2 = edgeAttributes.get(e);
+        if ("Fall-Through".equals(edge.get("EdgeType"))) {
           return false;
         }
       }
@@ -771,64 +468,55 @@ public class ShowLayoutsWithGhidraGraphInputOneComponents extends JFrame {
     }
   }
 
-  static class EdgeComparator implements Comparator<DefaultEdge> {
+  static class EdgeComparator implements Comparator<Attributed<Integer>> {
     private List<String> edgePriorityList;
-    Map<DefaultEdge, Map<String, Attribute>> edgeAttributes;
 
-    public EdgeComparator(
-        List<String> edgePriorityList, Map<DefaultEdge, Map<String, Attribute>> edgeAttributes) {
+    public EdgeComparator(List<String> edgePriorityList) {
       this.edgePriorityList = edgePriorityList;
-      this.edgeAttributes = edgeAttributes;
     }
 
     @Override
-    public int compare(DefaultEdge o1, DefaultEdge o2) {
+    public int compare(Attributed<Integer> o1, Attributed<Integer> o2) {
       return priority(o1).compareTo(priority(o2));
     }
 
-    Integer priority(DefaultEdge e) {
-      return edgePriorityList.indexOf(edgeAttributes.get(e).get("EdgeType").getValue());
+    Integer priority(Attributed<Integer> e) {
+      return edgePriorityList.indexOf(e.get("EdgeType"));
     }
   }
 
-  static class VertexComparator implements Comparator<String> {
-    private Graph<String, DefaultEdge> graph;
-    private Map<DefaultEdge, Map<String, Attribute>> edgeAttributes;
+  static class VertexComparator implements Comparator<Attributed<String>> {
+    private Graph<Attributed<String>, Attributed<Integer>> graph;
 
-    public VertexComparator(
-        Graph<String, DefaultEdge> graph, Map<DefaultEdge, Map<String, Attribute>> edgeAttributes) {
+    public VertexComparator(Graph<Attributed<String>, Attributed<Integer>> graph) {
       this.graph = graph;
-      this.edgeAttributes = edgeAttributes;
+      //      this.edgeAttributes = edgeAttributes;
     }
 
     @Override
-    public int compare(String v1, String v2) {
+    public int compare(Attributed<String> v1, Attributed<String> v2) {
       boolean v1IsSpecial = false;
-      for (DefaultEdge edge : graph.incomingEdgesOf(v1)) {
-        if ("Fall-Through"
-            .equals(edgeAttributes.getOrDefault(edge, Collections.emptyMap()).get("EdgeType"))) {
+      for (Attributed<Integer> edge : graph.incomingEdgesOf(v1)) {
+        if ("Fall-Through".equals(edge.get("EdgeType"))) {
           v1IsSpecial = true;
           break;
         }
       }
-      for (DefaultEdge edge : graph.outgoingEdgesOf(v1)) {
-        if ("Fall-Through"
-            .equals(edgeAttributes.getOrDefault(edge, Collections.emptyMap()).get("EdgeType"))) {
+      for (Attributed<Integer> edge : graph.outgoingEdgesOf(v1)) {
+        if ("Fall-Through".equals(edge.get("EdgeType"))) {
           v1IsSpecial = true;
           break;
         }
       }
       boolean v2IsSpecial = false;
-      for (DefaultEdge edge : graph.incomingEdgesOf(v2)) {
-        if ("Fall-Through"
-            .equals(edgeAttributes.getOrDefault(edge, Collections.emptyMap()).get("EdgeType"))) {
+      for (Attributed<Integer> edge : graph.incomingEdgesOf(v2)) {
+        if ("Fall-Through".equals(edge.get("EdgeType"))) {
           v2IsSpecial = true;
           break;
         }
       }
-      for (DefaultEdge edge : graph.outgoingEdgesOf(v1)) {
-        if ("Fall-Through"
-            .equals(edgeAttributes.getOrDefault(edge, Collections.emptyMap()).get("EdgeType"))) {
+      for (Attributed<Integer> edge : graph.outgoingEdgesOf(v1)) {
+        if ("Fall-Through".equals(edge.get("EdgeType"))) {
           v2IsSpecial = true;
           break;
         }

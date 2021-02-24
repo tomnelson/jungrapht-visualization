@@ -541,11 +541,11 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
       entry.setValue(q);
     }
 
-    //    if (favoredEdgePredicate != Layered.truePredicate) {
-    // normalize on favored edges
-    //      normalizeOnFavoredEdges(
-    //          layersArray, favoredEdgePredicate, vertexPointMap, horizontalOffset / 4);
-    //    }
+    if (favoredEdgePredicate != Layered.truePredicate) {
+      //     normalize on favored edges
+      normalizeOnFavoredEdges(
+          layersArray, favoredEdgePredicate, vertexPointMap, horizontalOffset / 4);
+    }
 
     // now all the vertices in layers (best) have points associated with them
     // every vertex in vertexMap has a point value
