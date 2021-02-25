@@ -127,7 +127,7 @@ public class ShowLayoutsWithGhidraGraphTwo extends JFrame {
             .build();
     loadGraphFile(graph);
 
-    vv.setVertexToolTipFunction(vertex -> vertex.get("Name"));
+    vv.setVertexToolTipFunction(vertex -> vertex.get("ID"));
     vv.getRenderContext().setVertexLabelFunction(vertex -> vertex.get("ID"));
     vv.setEdgeToolTipFunction(Object::toString);
     Function<Attributed<String>, Stroke> vertexStrokeFunction =

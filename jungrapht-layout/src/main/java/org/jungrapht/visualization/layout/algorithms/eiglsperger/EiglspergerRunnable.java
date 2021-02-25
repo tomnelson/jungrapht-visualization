@@ -25,6 +25,7 @@ import org.jungrapht.visualization.layout.algorithms.Layered;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.*;
 import org.jungrapht.visualization.layout.algorithms.util.Attributed;
 import org.jungrapht.visualization.layout.algorithms.util.LayeredRunnable;
+import org.jungrapht.visualization.layout.algorithms.util.PointSummaryStatistics;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
@@ -453,8 +454,8 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
       rowMaxHeightMap.put(layerIndex, maxHeight);
       layerIndex++;
     }
-    log.info("rowWidthMap: {}", rowWidthMap);
-    log.info("rowMaxHeightMap: {}", rowMaxHeightMap);
+    log.trace("rowWidthMap: {}", rowWidthMap);
+    log.trace("rowMaxHeightMap: {}", rowMaxHeightMap);
 
     int widestRowWidth = rowWidthMap.values().stream().mapToInt(v -> v).max().orElse(0);
     int x = horizontalOffset;
@@ -493,6 +494,8 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
       totalHeight = y + rowMaxHeightMap.get(layerIndex) / 2;
       layerIndex++;
     }
+    log.trace("widestRowWidth: {}", widestRowWidth);
+    // end determine the max width and height
 
     int minX = Integer.MAX_VALUE;
     int minY = Integer.MAX_VALUE;
@@ -537,6 +540,10 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
         //                Math.max(maxDimension, layoutModel.getWidth())
         ,
         Math.max(maxDimension, layoutModel.getHeight()));
+
+    log.trace(
+        "set the layoutModel size to {} by {}", layoutModel.getWidth(), layoutModel.getHeight());
+
     long pointsSetTime = System.currentTimeMillis();
     double scalex = (double) layoutModel.getWidth() / pointRangeWidth;
     double scaley = (double) layoutModel.getHeight() / pointRangeHeight;
@@ -862,5 +869,24 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
       preds = neighborCache.predecessorsOf(pred);
     }
     return distance;
+  }
+
+  protected Rectangle computeLayoutExtent(Collection<Point> points) {
+    // find the dimensions of the layout
+    PointSummaryStatistics pss = new PointSummaryStatistics();
+    points.forEach(pss::accept);
+    return Rectangle.from(pss.getMin(), pss.getMax());
+  }
+
+  protected Rectangle computeLayoutExtent(LV[][] layers) {
+    return computeLayoutExtent(
+        Arrays.stream(layers)
+            .flatMap(Arrays::stream)
+            .map(LV::getPoint)
+            .collect(Collectors.toList()));
+    // find the dimensions of the layout
+    //    PointSummaryStatistics pss = new PointSummaryStatistics();
+    //    points.forEach(pss::accept);
+    //    return Rectangle.from(pss.getMin(), pss.getMax());
   }
 }
