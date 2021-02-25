@@ -545,6 +545,8 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
       //     normalize on favored edges
       normalizeOnFavoredEdges(
           layersArray, favoredEdgePredicate, vertexPointMap, horizontalOffset / 4);
+      //      svGraph.vertexSet().forEach(v -> v.setPoint(vertexPointMap.get(v)));
+      //      layoutModel.setSize(computeTotalWidth(layersArray, horizontalOffset, verticalOffset), layoutModel.getHeight());
     }
 
     // now all the vertices in layers (best) have points associated with them
@@ -600,6 +602,73 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
         va.set("rank", "" + v.getRank());
       }
     }
+  }
+
+  protected int computeTotalWidth(LV<V>[][] layersArray, int horizontalOffset, int verticalOffset) {
+    Map<Integer, Integer> rowWidthMap = new HashMap<>(); // all the row widths
+    //    Map<Integer, Integer> rowMaxHeightMap = new HashMap<>(); // all the row heights
+    int layerIndex = 0;
+    //    int totalHeight = 0;
+    int totalWidth = 0;
+
+    for (LV<V>[] lvs : layersArray) {
+
+      int width = horizontalOffset;
+      //      int maxHeight = 0;
+      for (LV<V> v : lvs) {
+        if (!(v instanceof SyntheticLV)) {
+          Rectangle bounds = vertexShapeFunction.apply(v.getVertex());
+          width += bounds.width + horizontalOffset;
+          //          maxHeight = Math.max(maxHeight, (int) bounds.height);
+        } else {
+          width += horizontalOffset;
+        }
+      }
+      rowWidthMap.put(layerIndex, width);
+      //      rowMaxHeightMap.put(layerIndex, maxHeight);
+      layerIndex++;
+    }
+    log.info("rowWidthMap: {}", rowWidthMap);
+    //    log.info("rowMaxHeightMap: {}", rowMaxHeightMap);
+
+    int widestRowWidth = rowWidthMap.values().stream().mapToInt(v -> v).max().orElse(0);
+    int x = horizontalOffset;
+    //    int y = verticalOffset;
+    layerIndex = 0;
+    //    if (log.isTraceEnabled()) {
+    //      log.trace("layerMaxHeights {}", rowMaxHeightMap);
+    //    }
+    for (LV<V>[] lvs : layersArray) {
+      int previousVertexWidth = 0;
+      // offset against widest row
+      x += (widestRowWidth - rowWidthMap.get(layerIndex)) / 2;
+
+      //      y += rowMaxHeightMap.get(layerIndex) / 2;
+      //      if (layerIndex > 0) {
+      //        y += rowMaxHeightMap.get(layerIndex - 1) / 2;
+      //      }
+
+      int rowWidth = 0;
+      for (LV<V> EiglspergerVertex : lvs) {
+        int vertexWidth = 0;
+        if (!(EiglspergerVertex instanceof SyntheticLV)) {
+          vertexWidth = (int) vertexShapeFunction.apply(EiglspergerVertex.getVertex()).width;
+        }
+
+        x += previousVertexWidth / 2 + vertexWidth / 2 + horizontalOffset;
+
+        rowWidth = x + vertexWidth / 2;
+        //        log.trace("layerIndex {} y is {}", layerIndex, y);
+        previousVertexWidth = vertexWidth;
+      }
+      totalWidth = Math.max(totalWidth, rowWidth);
+
+      x = horizontalOffset;
+      //      y += verticalOffset;
+      //      totalHeight = y + rowMaxHeightMap.get(layerIndex) / 2;
+      layerIndex++;
+    }
+    return totalWidth;
   }
 
   public void setFavoredEdgePredicate(Predicate<E> favoredEdgePredicate) {
