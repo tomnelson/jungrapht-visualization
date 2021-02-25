@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.util.NeighborCache;
 import org.jungrapht.visualization.layout.algorithms.Layered;
@@ -427,7 +428,6 @@ public class SugiyamaRunnable<V, E> implements LayeredRunnable<E> {
             Math.max(
                 avgVertexBounds.height, Integer.getInteger(PREFIX + "mincross.verticalOffset", 50));
     GraphLayers.checkLayers(layersArray);
-    Map<LV<V>, Point> vertexPointMap = new HashMap<>();
 
     if (cancelled || Thread.currentThread().isInterrupted()) {
       log.debug("interrupted before compaction, cancelled: {}", cancelled);
@@ -440,13 +440,6 @@ public class SugiyamaRunnable<V, E> implements LayeredRunnable<E> {
       horizontalCoordinateAssignment.horizontalCoordinateAssignment();
 
       GraphLayers.checkLayers(layersArray);
-
-      for (int i = 0; i < layersArray.length; i++) {
-        for (int j = 0; j < layersArray[i].length; j++) {
-          LV<V> v = layersArray[i][j];
-          vertexPointMap.put(v, v.getPoint());
-        }
-      }
 
     } else {
       Unaligned.centerPoints(layersArray, vertexShapeFunction, horizontalOffset, verticalOffset);
@@ -516,7 +509,11 @@ public class SugiyamaRunnable<V, E> implements LayeredRunnable<E> {
     int minY = Integer.MAX_VALUE;
     int maxX = -1;
     int maxY = -1;
-    for (Point p : vertexPointMap.values()) {
+    for (Point p :
+        Arrays.stream(layersArray)
+            .flatMap(Arrays::stream)
+            .map(LV::getPoint)
+            .collect(Collectors.toList())) {
       minX = Math.min((int) p.x, minX);
       maxX = Math.max((int) p.x, maxX);
       minY = Math.min((int) p.y, minY);
@@ -547,16 +544,11 @@ public class SugiyamaRunnable<V, E> implements LayeredRunnable<E> {
     double scalex = (double) layoutModel.getWidth() / pointRangeWidth;
     double scaley = (double) layoutModel.getHeight() / pointRangeHeight;
 
-    for (Map.Entry<LV<V>, Point> entry : vertexPointMap.entrySet()) {
-      Point p = entry.getValue();
+    for (LV v : Arrays.stream(layersArray).flatMap(Arrays::stream).collect(Collectors.toList())) {
+      Point p = v.getPoint();
       Point q = Point.of((offsetX + p.x) * scalex, (offsetY + p.y) * scaley);
-      entry.setValue(q);
+      v.setPoint(q);
     }
-
-    // now all the vertices in layers (best) have points associated with them
-    // every vertex in vertexMap has a point value
-
-    svGraph.vertexSet().forEach(v -> v.setPoint(vertexPointMap.get(v)));
 
     if (postStraighten) synthetics.alignArticulatedEdges();
     List<ArticulatedEdge<V, E>> articulatedEdges = synthetics.makeArticulatedEdges();
