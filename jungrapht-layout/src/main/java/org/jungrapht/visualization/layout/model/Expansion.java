@@ -2,6 +2,8 @@ package org.jungrapht.visualization.layout.model;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.util.PointSummaryStatistics;
 
@@ -26,6 +28,12 @@ public class Expansion {
     layoutModel.getLocations().values().forEach(pss::accept);
     locations.forEach(pss::accept);
     return Rectangle.from(pss.getMin(), pss.getMax());
+  }
+
+  public static <V> Rectangle computeLayoutExtent2(
+      LayoutModel<V> layoutModel, Collection<List<Point>> locations) {
+    return computeLayoutExtent(
+        layoutModel, locations.stream().flatMap(List::stream).collect(Collectors.toList()));
   }
 
   public static <V> Rectangle computeLayoutExtent(LayoutModel<V> layoutModel) {

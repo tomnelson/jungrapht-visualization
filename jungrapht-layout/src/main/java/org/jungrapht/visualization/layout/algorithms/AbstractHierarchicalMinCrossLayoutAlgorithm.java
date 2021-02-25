@@ -17,6 +17,7 @@ import org.jungrapht.visualization.layout.algorithms.util.ExecutorConsumer;
 import org.jungrapht.visualization.layout.algorithms.util.LayeredRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.Threaded;
 import org.jungrapht.visualization.layout.algorithms.util.VertexBoundsFunctionConsumer;
+import org.jungrapht.visualization.layout.model.Expansion;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
@@ -433,6 +434,30 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
       }
     }
     layoutModel.setSize(maxSize, maxSize);
+    centerIt(layoutModel, articulations);
+  }
+
+  protected void centerIt(LayoutModel<V> layoutModel, Collection<List<Point>> articulations) {
+    Rectangle extent = Expansion.computeLayoutExtent2(layoutModel, articulations);
+    // width of extent
+    double widthOfExtent = extent.width;
+    int widthOfLayoutModel = layoutModel.getWidth();
+    // move everything by widthOfLayoutModel/2 - widthOfExtent/2
+    double moveBy = extent.x + widthOfExtent / 2 - widthOfLayoutModel / 2;
+    layoutModel
+        .getLocations()
+        .forEach(
+            (v, p) -> {
+              p = Point.of(p.x - moveBy, p.y);
+              layoutModel.set(v, p);
+            });
+    for (List<Point> lp : articulations) {
+      for (int i = 0; i < lp.size(); i++) {
+        Point p = lp.get(i);
+        p = Point.of(p.x - moveBy, p.y);
+        lp.set(i, p);
+      }
+    }
   }
 
   private void appendAll(
