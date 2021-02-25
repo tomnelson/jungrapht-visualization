@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.util.NeighborCache;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
@@ -390,7 +391,7 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
                 avgVertexBounds.height, Integer.getInteger(PREFIX + "mincross.verticalOffset", 50));
     log.info("verticalOffset: {}", verticalOffset);
     GraphLayers.checkLayers(layersArray);
-    Map<LV<V>, Point> vertexPointMap = new HashMap<>();
+    //    Map<LV<V>, Point> vertexPointMap = new HashMap<>();
 
     // update the indices of the all layers
     for (LV<V>[] value : layersArray) {
@@ -417,16 +418,16 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
 
       GraphLayers.checkLayers(layersArray);
 
-      for (LV<V>[] lvs : layersArray) {
-        for (LV<V> EiglspergerVertex : lvs) {
-          vertexPointMap.put(EiglspergerVertex, EiglspergerVertex.getPoint());
-        }
-      }
+      //      for (LV<V>[] lvs : layersArray) {
+      //        for (LV<V> EiglspergerVertex : lvs) {
+      //          vertexPointMap.put(EiglspergerVertex, EiglspergerVertex.getPoint());
+      //        }
+      //      }
 
     } else {
       // just center the rows
       Unaligned.centerPoints(
-          layersArray, vertexShapeFunction, horizontalOffset, verticalOffset, vertexPointMap);
+          layersArray, vertexShapeFunction, horizontalOffset, verticalOffset); //, vertexPointMap);
     }
 
     Map<Integer, Integer> rowWidthMap = new HashMap<>(); // all the row widths
@@ -497,7 +498,12 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
     int minY = Integer.MAX_VALUE;
     int maxX = -1;
     int maxY = -1;
-    for (Point p : vertexPointMap.values()) {
+    for (Point p :
+        Arrays.stream(layersArray)
+            .flatMap(Arrays::stream)
+            .map(LV::getPoint)
+            .collect(Collectors.toList())) {
+      //vertexPointMap.values()) {
       minX = Math.min((int) p.x, minX);
       maxX = Math.max((int) p.x, maxX);
       minY = Math.min((int) p.y, minY);
@@ -535,23 +541,31 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
     double scalex = (double) layoutModel.getWidth() / pointRangeWidth;
     double scaley = (double) layoutModel.getHeight() / pointRangeHeight;
 
-    for (Map.Entry<LV<V>, Point> entry : vertexPointMap.entrySet()) {
-      Point p = entry.getValue();
+    //    for (Map.Entry<LV<V>, Point> entry : vertexPointMap.entrySet()) {
+    //      Point p = entry.getValue();
+    //      Point q = Point.of((offsetX + p.x) * scalex, (offsetY + p.y) * scaley);
+    //      entry.setValue(q);
+    //    }
+    for (LV v : Arrays.stream(layersArray).flatMap(Arrays::stream).collect(Collectors.toList())) {
+      Point p = v.getPoint();
       Point q = Point.of((offsetX + p.x) * scalex, (offsetY + p.y) * scaley);
-      entry.setValue(q);
+      v.setPoint(q);
     }
 
     if (favoredEdgePredicate != Layered.truePredicate) {
       //     normalize on favored edges
       normalizeOnFavoredEdges(
-          layersArray, favoredEdgePredicate, vertexPointMap, horizontalOffset / 4);
+          layersArray,
+          favoredEdgePredicate,
+          //              vertexPointMap,
+          horizontalOffset / 4);
       //      svGraph.vertexSet().forEach(v -> v.setPoint(vertexPointMap.get(v)));
       //      layoutModel.setSize(computeTotalWidth(layersArray, horizontalOffset, verticalOffset), layoutModel.getHeight());
     }
 
     // now all the vertices in layers (best) have points associated with them
     // every vertex in vertexMap has a point value
-    svGraph.vertexSet().forEach(v -> v.setPoint(vertexPointMap.get(v)));
+    //    svGraph.vertexSet().forEach(v -> v.setPoint(vertexPointMap.get(v)));
 
     if (postStraighten) {
       synthetics.alignArticulatedEdges();
@@ -683,7 +697,7 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
   protected void normalizeOnFavoredEdges(
       LV<V>[][] layers,
       Predicate<E> favoredEdgePredicate,
-      Map<LV<V>, Point> vertexPointMap,
+      //      Map<LV<V>, Point> vertexPointMap,
       int horizontalOffset) {
 
     Predicate<LE<V, E>> svPredicate = e -> favoredEdgePredicate.test(e.getEdge());
@@ -693,7 +707,8 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
       for (int j = 0; j < layers[i].length; j++) {
         // save off all the points for the vertices in this row
         LV<V> v = layers[i][j];
-        verticesInThisRow.put(v, vertexPointMap.get(v));
+        verticesInThisRow.put(v, v.getPoint());
+        //                vertexPointMap.get(v));
       }
       for (int j = 0; j < layers[i].length; j++) {
         // get a vertex and look at outgoing edges
@@ -705,12 +720,15 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
             if (maybeFavoredEdge.isPresent()) {
               LV<V> favoredTarget = svGraph.getEdgeTarget(maybeFavoredEdge.get());
               // compare points in vertexPointMap
-              Point sp = vertexPointMap.get(v);
-              Point tp = vertexPointMap.get(favoredTarget);
+              Point sp = v.getPoint();
+              Point tp = favoredTarget.getPoint();
+              //              Point sp = vertexPointMap.get(v);
+              //              Point tp = vertexPointMap.get(favoredTarget);
               // if the x values are not the same, move the target to under the source
               if (sp.x != tp.x) {
                 double offset = sp.x - tp.x;
-                vertexPointMap.put(favoredTarget, tp.add(offset, 0));
+                //                vertexPointMap.put(favoredTarget, tp.add(offset, 0));
+                favoredTarget.setPoint(tp.add(offset, 0));
                 // see if i created an overlap
                 // get the row # (rank) for the vertex i moved
                 int movedVertexRow = favoredTarget.getRank();
@@ -719,11 +737,14 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
                     .filter(vInRank -> vInRank != favoredTarget)
                     .forEach(
                         vInRank -> {
-                          double vx = vertexPointMap.get(vInRank).x;
-                          if (vx == vertexPointMap.get(favoredTarget).x) {
+                          double vx = vInRank.getPoint().x; //vertexPointMap.get(vInRank).x;
+                          if (vx
+                              == favoredTarget.getPoint()
+                                  .x) { //vertexPointMap.get(favoredTarget).x) {
                             // move vInRank a little
-                            Point movedPoint = vertexPointMap.get(vInRank).add(horizontalOffset, 0);
-                            vertexPointMap.put(vInRank, movedPoint);
+                            Point movedPoint = vInRank.getPoint().add(horizontalOffset, 0);
+                            //vertexPointMap.get(vInRank).add(horizontalOffset, 0);
+                            //                            vertexPointMap.put(vInRank, movedPoint);
                             vInRank.setPoint(movedPoint);
                           }
                         });

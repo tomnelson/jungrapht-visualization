@@ -315,8 +315,7 @@ public class ExtendedEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E>
       }
 
     } else {
-      Unaligned.centerPoints(
-          layersArray, vertexShapeFunction, horizontalOffset, verticalOffset, vertexPointMap);
+      Unaligned.centerPoints(layersArray, vertexShapeFunction, horizontalOffset, verticalOffset);
     }
 
     Map<Integer, Integer> rowWidthMap = new HashMap<>(); // all the row widths

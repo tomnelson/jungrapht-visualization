@@ -18,8 +18,9 @@ public class Unaligned {
       LV<V>[][] layers,
       Function<V, Rectangle> vertexShapeFunction,
       int horizontalOffset,
-      int verticalOffset,
-      Map<LV<V>, Point> vertexPointMap) {
+      int verticalOffset) {
+    //          ,
+    //      Map<LV<V>, Point> vertexPointMap) {
 
     Map<Integer, Integer> rowWidthMap = new HashMap<>();
     Map<Integer, Integer> rowMaxHeightMap = new HashMap<>();
@@ -68,9 +69,9 @@ public class Unaligned {
         log.trace("layerIndex {} y is {}", layerIndex, y);
         sugiyamaVertex.setPoint(Point.of(x, y));
 
-        if (vertexPointMap.containsKey(sugiyamaVertex)) {
-          vertexPointMap.put(sugiyamaVertex, sugiyamaVertex.getPoint());
-        }
+        //        if (vertexPointMap.containsKey(sugiyamaVertex)) {
+        //          vertexPointMap.put(sugiyamaVertex, sugiyamaVertex.getPoint());
+        //        }
         previousVertexWidth = vertexWidth;
       }
       x = horizontalOffset;
@@ -78,12 +79,12 @@ public class Unaligned {
       layerIndex++;
     }
 
-    for (int i = 0; i < layers.length; i++) {
-      for (int j = 0; j < layers[i].length; j++) {
-        LV<V> sugiyamaVertex = layers[i][j];
-        vertexPointMap.put(sugiyamaVertex, sugiyamaVertex.getPoint());
-      }
-    }
+    //    for (int i = 0; i < layers.length; i++) {
+    //      for (int j = 0; j < layers[i].length; j++) {
+    //        LV<V> sugiyamaVertex = layers[i][j];
+    //        vertexPointMap.put(sugiyamaVertex, sugiyamaVertex.getPoint());
+    //      }
+    //    }
   }
 
   public static <V> void setPoints(

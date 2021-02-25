@@ -269,8 +269,7 @@ public class TestSugiyamaRunnable<V, E> extends SugiyamaRunnable<V, E> implement
       }
 
     } else {
-      Unaligned.centerPoints(
-          layersArray, vertexShapeFunction, horizontalOffset, verticalOffset, vertexPointMap);
+      Unaligned.centerPoints(layersArray, vertexShapeFunction, horizontalOffset, verticalOffset);
     }
 
     Map<Integer, Integer> rowWidthMap = new HashMap<>(); // all the row widths
