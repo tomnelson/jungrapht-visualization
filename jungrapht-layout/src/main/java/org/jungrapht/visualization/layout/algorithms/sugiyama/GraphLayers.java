@@ -103,10 +103,6 @@ public class GraphLayers {
     if (edgeComparator == Layered.noopComparator) {
       return new LinkedHashSet<>(graph.vertexSet());
     } else {
-      //      List<E> sortedEdges = graph
-      //              .edgeSet()
-      //              .stream()
-      //              .sorted(edgeComparator).collect(Collectors.toList());
       Set<V> sortedVertices = new LinkedHashSet<>();
       graph
           .edgeSet()
@@ -119,8 +115,6 @@ public class GraphLayers {
               });
       // add any vertices with no edges
       graph.vertexSet().stream().filter(v -> graph.degreeOf(v) == 0).forEach(sortedVertices::add);
-      //          .map(graph::getEdgeTarget)
-      //          .collect(Collectors.toCollection(LinkedHashSet::new));
       return sortedVertices;
     }
   }
@@ -340,28 +334,6 @@ public class GraphLayers {
         new NetworkSimplexDevelopment<>(dag);
     return networkSimplexDevelopment.getTheBestSpanningTree().vertexSet().size();
   }
-
-  //  private static <V, E> Graph<LV<V>, LE<V,E>> feasibleTree(Graph<LV<V>, LE<V,E>> dag) {
-  //    List<List<LV<V>>> list = GraphLayers.longestPath(dag);
-  //    NetworkSimplex<LV<V>,LE<V,E>> networkSimplex = new NetworkSimplex<>(dag);
-  //    Graph<LV<V>,LE<V,E>> tree = networkSimplex.getTheBestSpanningTree();
-  //    Map<LE<V,E>, Integer> cutValueMap = networkSimplex.getEdgeCutValues(tree);
-  //    while (tree.vertexSet().size() < dag.vertexSet().size()) {
-  //      LE<V,E> le = dag.edgeSet().stream()
-  //              .filter(v -> !tree.containsEdge(v)).min(Comparator.comparingInt(cutValueMap::get)).get();
-  //
-  //
-  //
-  //      int delta = cutValueMap.get(le);
-  //
-  //
-  //      Pair<Set<V>> headAndTail = networkSimplex.getHeadAndTailComponents(tree, le);
-  //      spanningTree.removeEdge(edgeToCut);
-  //      Set<E> crossComponentEdges = getCrossComponentEdges(spanningTree, headAndTail);
-  //
-  //    }
-  //    return null;
-  //  }
 
   /**
    * Find all vertices that have no incoming edges by

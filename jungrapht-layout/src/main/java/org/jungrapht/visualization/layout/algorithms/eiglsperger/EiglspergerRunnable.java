@@ -379,20 +379,19 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
 
     // figure out the avg size of rendered vertex
     Rectangle avgVertexBounds = maxVertexBounds(layersArray, vertexShapeFunction);
-    log.info("avgVertexBounds: {}", avgVertexBounds);
+    log.trace("avgVertexBounds: {}", avgVertexBounds);
     int horizontalOffset =
         (int)
             Math.max(
                 avgVertexBounds.width,
                 Integer.getInteger(PREFIX + "mincross.horizontalOffset", 50));
-    log.info("horizontalOffset: {}", horizontalOffset);
+    log.trace("horizontalOffset: {}", horizontalOffset);
     int verticalOffset =
         (int)
             Math.max(
                 avgVertexBounds.height, Integer.getInteger(PREFIX + "mincross.verticalOffset", 50));
-    log.info("verticalOffset: {}", verticalOffset);
+    log.trace("verticalOffset: {}", verticalOffset);
     GraphLayers.checkLayers(layersArray);
-    //    Map<LV<V>, Point> vertexPointMap = new HashMap<>();
 
     // update the indices of the all layers
     for (LV<V>[] value : layersArray) {
@@ -418,12 +417,6 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
       horizontalCoordinateAssignment.horizontalCoordinateAssignment();
 
       GraphLayers.checkLayers(layersArray);
-
-      //      for (LV<V>[] lvs : layersArray) {
-      //        for (LV<V> EiglspergerVertex : lvs) {
-      //          vertexPointMap.put(EiglspergerVertex, EiglspergerVertex.getPoint());
-      //        }
-      //      }
 
     } else {
       // just center the rows
@@ -506,7 +499,6 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
             .flatMap(Arrays::stream)
             .map(LV::getPoint)
             .collect(Collectors.toList())) {
-      //vertexPointMap.values()) {
       minX = Math.min((int) p.x, minX);
       maxX = Math.max((int) p.x, maxX);
       minY = Math.min((int) p.y, minY);
@@ -527,19 +519,12 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
     pointRangeWidth *= 1.1;
     pointRangeHeight *= 1.1;
 
-    log.info("minX: {}, maxX: {}, minY: {}, maxY: {}", minX, maxX, minY, maxY);
+    log.trace("minX: {}, maxX: {}, minY: {}, maxY: {}", minX, maxX, minY, maxY);
 
     int maxDimension = Math.max(totalWidth, totalHeight);
-    log.info("maxDimension: {}", maxDimension);
+    log.trace("maxDimension: {}", maxDimension);
 
-    layoutModel.setSize(
-        //        multiComponent
-        //                ?
-        totalWidth
-        //                :
-        //                Math.max(maxDimension, layoutModel.getWidth())
-        ,
-        Math.max(maxDimension, layoutModel.getHeight()));
+    layoutModel.setSize(totalWidth, Math.max(maxDimension, layoutModel.getHeight()));
 
     log.trace(
         "set the layoutModel size to {} by {}", layoutModel.getWidth(), layoutModel.getHeight());
@@ -548,11 +533,6 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
     double scalex = (double) layoutModel.getWidth() / pointRangeWidth;
     double scaley = (double) layoutModel.getHeight() / pointRangeHeight;
 
-    //    for (Map.Entry<LV<V>, Point> entry : vertexPointMap.entrySet()) {
-    //      Point p = entry.getValue();
-    //      Point q = Point.of((offsetX + p.x) * scalex, (offsetY + p.y) * scaley);
-    //      entry.setValue(q);
-    //    }
     for (LV v : Arrays.stream(layersArray).flatMap(Arrays::stream).collect(Collectors.toList())) {
       Point p = v.getPoint();
       Point q = Point.of((offsetX + p.x) * scalex, (offsetY + p.y) * scaley);
@@ -561,18 +541,8 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
 
     if (favoredEdgePredicate != Layered.truePredicate) {
       //     normalize on favored edges
-      normalizeOnFavoredEdges(
-          layersArray,
-          favoredEdgePredicate,
-          //              vertexPointMap,
-          horizontalOffset / 4);
-      //      svGraph.vertexSet().forEach(v -> v.setPoint(vertexPointMap.get(v)));
-      //      layoutModel.setSize(computeTotalWidth(layersArray, horizontalOffset, verticalOffset), layoutModel.getHeight());
+      normalizeOnFavoredEdges(layersArray, favoredEdgePredicate, horizontalOffset / 4);
     }
-
-    // now all the vertices in layers (best) have points associated with them
-    // every vertex in vertexMap has a point value
-    //    svGraph.vertexSet().forEach(v -> v.setPoint(vertexPointMap.get(v)));
 
     if (postStraighten) {
       synthetics.alignArticulatedEdges();
@@ -625,73 +595,6 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
     }
   }
 
-  protected int computeTotalWidth(LV<V>[][] layersArray, int horizontalOffset, int verticalOffset) {
-    Map<Integer, Integer> rowWidthMap = new HashMap<>(); // all the row widths
-    //    Map<Integer, Integer> rowMaxHeightMap = new HashMap<>(); // all the row heights
-    int layerIndex = 0;
-    //    int totalHeight = 0;
-    int totalWidth = 0;
-
-    for (LV<V>[] lvs : layersArray) {
-
-      int width = horizontalOffset;
-      //      int maxHeight = 0;
-      for (LV<V> v : lvs) {
-        if (!(v instanceof SyntheticLV)) {
-          Rectangle bounds = vertexShapeFunction.apply(v.getVertex());
-          width += bounds.width + horizontalOffset;
-          //          maxHeight = Math.max(maxHeight, (int) bounds.height);
-        } else {
-          width += horizontalOffset;
-        }
-      }
-      rowWidthMap.put(layerIndex, width);
-      //      rowMaxHeightMap.put(layerIndex, maxHeight);
-      layerIndex++;
-    }
-    log.info("rowWidthMap: {}", rowWidthMap);
-    //    log.info("rowMaxHeightMap: {}", rowMaxHeightMap);
-
-    int widestRowWidth = rowWidthMap.values().stream().mapToInt(v -> v).max().orElse(0);
-    int x = horizontalOffset;
-    //    int y = verticalOffset;
-    layerIndex = 0;
-    //    if (log.isTraceEnabled()) {
-    //      log.trace("layerMaxHeights {}", rowMaxHeightMap);
-    //    }
-    for (LV<V>[] lvs : layersArray) {
-      int previousVertexWidth = 0;
-      // offset against widest row
-      x += (widestRowWidth - rowWidthMap.get(layerIndex)) / 2;
-
-      //      y += rowMaxHeightMap.get(layerIndex) / 2;
-      //      if (layerIndex > 0) {
-      //        y += rowMaxHeightMap.get(layerIndex - 1) / 2;
-      //      }
-
-      int rowWidth = 0;
-      for (LV<V> EiglspergerVertex : lvs) {
-        int vertexWidth = 0;
-        if (!(EiglspergerVertex instanceof SyntheticLV)) {
-          vertexWidth = (int) vertexShapeFunction.apply(EiglspergerVertex.getVertex()).width;
-        }
-
-        x += previousVertexWidth / 2 + vertexWidth / 2 + horizontalOffset;
-
-        rowWidth = x + vertexWidth / 2;
-        //        log.trace("layerIndex {} y is {}", layerIndex, y);
-        previousVertexWidth = vertexWidth;
-      }
-      totalWidth = Math.max(totalWidth, rowWidth);
-
-      x = horizontalOffset;
-      //      y += verticalOffset;
-      //      totalHeight = y + rowMaxHeightMap.get(layerIndex) / 2;
-      layerIndex++;
-    }
-    return totalWidth;
-  }
-
   public void setFavoredEdgePredicate(Predicate<E> favoredEdgePredicate) {
     this.favoredEdgePredicate = favoredEdgePredicate;
   }
@@ -702,20 +605,16 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
 
   // experimental
   protected void normalizeOnFavoredEdges(
-      LV<V>[][] layers,
-      Predicate<E> favoredEdgePredicate,
-      //      Map<LV<V>, Point> vertexPointMap,
-      int horizontalOffset) {
+      LV<V>[][] layers, Predicate<E> favoredEdgePredicate, int horizontalOffset) {
 
     Predicate<LE<V, E>> svPredicate = e -> favoredEdgePredicate.test(e.getEdge());
-    log.info("before {}", layers);
+    log.trace("before {}", layers);
     for (int i = 0; i < layers.length; i++) {
       Map<LV<V>, Point> verticesInThisRow = new HashMap<>();
       for (int j = 0; j < layers[i].length; j++) {
         // save off all the points for the vertices in this row
         LV<V> v = layers[i][j];
         verticesInThisRow.put(v, v.getPoint());
-        //                vertexPointMap.get(v));
       }
       for (int j = 0; j < layers[i].length; j++) {
         // get a vertex and look at outgoing edges
@@ -729,12 +628,9 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
               // compare points in vertexPointMap
               Point sp = v.getPoint();
               Point tp = favoredTarget.getPoint();
-              //              Point sp = vertexPointMap.get(v);
-              //              Point tp = vertexPointMap.get(favoredTarget);
               // if the x values are not the same, move the target to under the source
               if (sp.x != tp.x) {
                 double offset = sp.x - tp.x;
-                //                vertexPointMap.put(favoredTarget, tp.add(offset, 0));
                 favoredTarget.setPoint(tp.add(offset, 0));
                 // see if i created an overlap
                 // get the row # (rank) for the vertex i moved
@@ -744,14 +640,10 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
                     .filter(vInRank -> vInRank != favoredTarget)
                     .forEach(
                         vInRank -> {
-                          double vx = vInRank.getPoint().x; //vertexPointMap.get(vInRank).x;
-                          if (vx
-                              == favoredTarget.getPoint()
-                                  .x) { //vertexPointMap.get(favoredTarget).x) {
+                          double vx = vInRank.getPoint().x;
+                          if (vx == favoredTarget.getPoint().x) {
                             // move vInRank a little
                             Point movedPoint = vInRank.getPoint().add(horizontalOffset, 0);
-                            //vertexPointMap.get(vInRank).add(horizontalOffset, 0);
-                            //                            vertexPointMap.put(vInRank, movedPoint);
                             vInRank.setPoint(movedPoint);
                           }
                         });
@@ -795,7 +687,6 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
       for (int j = 0; j < layers[i].length; j++) {
         VertexMetadata<V> vertexMetadata = vertexMetadataMap.get(layers[i][j]);
         vertexMetadata.applyTo(layers[i][j]);
-        //        saved[i][j].applyTo(layers[i][j]);
       }
     }
     return layers;
@@ -876,17 +767,5 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
     PointSummaryStatistics pss = new PointSummaryStatistics();
     points.forEach(pss::accept);
     return Rectangle.from(pss.getMin(), pss.getMax());
-  }
-
-  protected Rectangle computeLayoutExtent(LV[][] layers) {
-    return computeLayoutExtent(
-        Arrays.stream(layers)
-            .flatMap(Arrays::stream)
-            .map(LV::getPoint)
-            .collect(Collectors.toList()));
-    // find the dimensions of the layout
-    //    PointSummaryStatistics pss = new PointSummaryStatistics();
-    //    points.forEach(pss::accept);
-    //    return Rectangle.from(pss.getMin(), pss.getMax());
   }
 }

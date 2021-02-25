@@ -355,7 +355,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
                 .height(layoutModel.getHeight())
                 .build();
         layoutModels.add(componentLayoutModel);
-        log.info(
+        log.trace(
             "multiComponent model size: {}x{}",
             componentLayoutModel.getWidth(),
             componentLayoutModel.getHeight());
@@ -363,7 +363,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
     } else {
       graphs = Collections.singletonList(graph);
       layoutModels.add(layoutModel);
-      log.info(
+      log.trace(
           "singleComponent model size: {}x{}", layoutModel.getWidth(), layoutModel.getHeight());
     }
 
