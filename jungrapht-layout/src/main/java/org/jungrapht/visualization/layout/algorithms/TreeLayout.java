@@ -27,7 +27,7 @@ public interface TreeLayout<V> extends LayoutAlgorithm<V>, VertexBoundsFunctionC
   void setRootComparator(Comparator<V> rootComparator);
 
   static <V, E> boolean isLoopVertex(Graph<V, E> graph, V v) {
-    return false; //graph.outgoingEdgesOf(v).equals(graph.incomingEdgesOf(v));
+    return graph.outgoingEdgesOf(v).equals(graph.incomingEdgesOf(v));
   }
 
   static <V, E> boolean isZeroDegreeVertex(Graph<V, E> graph, V v) {

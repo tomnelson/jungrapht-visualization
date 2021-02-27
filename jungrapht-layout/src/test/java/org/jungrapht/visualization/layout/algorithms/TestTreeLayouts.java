@@ -22,8 +22,8 @@ public class TestTreeLayouts {
     graph =
         GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.dag())
             .edgeSupplier(SupplierUtil.createIntegerSupplier())
-            .buildGraphBuilder()
-            .build();
+            .allowingSelfLoops(true)
+            .buildGraph();
   }
 
   @Test
@@ -113,5 +113,49 @@ public class TestTreeLayouts {
     log.info("edgeSortingTreeLayoutBounds: {}", layoutAlgorithmTwo.getBaseBounds());
     log.info("positions: {}", layoutModelOne.getLocations());
     log.info("positions: {}", layoutModelTwo.getLocations());
+  }
+
+  @Test
+  public void testTreeWithIsolatedVertices() {
+    graph.addVertex("I1"); // isolated vertex
+    graph.addVertex("I2"); // isolated vertex
+    graph.addVertex("L1"); // loop vertex
+    graph.addEdge("L1", "L1");
+    graph.addVertex("L2"); // loop vertex
+    graph.addEdge("L2", "L2");
+    graph.addVertex("R");
+    graph.addVertex("C1");
+    graph.addEdge("R", "C1");
+
+    LayoutModel<String> layoutModel =
+        LayoutModel.<String>builder().size(100, 100).graph(graph).build();
+
+    TreeLayoutAlgorithm<String> treeLayoutAlgorithm = TreeLayoutAlgorithm.<String>builder().build();
+    treeLayoutAlgorithm.visit(layoutModel);
+    testPositions(layoutModel);
+
+    TidierTreeLayoutAlgorithm<String, Integer> tidierTreeLayoutAlgorithm =
+        TidierTreeLayoutAlgorithm.<String, Integer>edgeAwareBuilder().build();
+    tidierTreeLayoutAlgorithm.visit(layoutModel);
+    testPositions(layoutModel);
+  }
+
+  private void testPositions(LayoutModel<String> layoutModel) {
+    // there should be 5 vertices in the top row, all with equal y values
+    log.info("Posisitions: {}", layoutModel.getLocations());
+    Assert.assertEquals(
+        "Y values should match", layoutModel.get("I1").y, layoutModel.get("I2").y, .1);
+    Assert.assertEquals(
+        "Y values should match", layoutModel.get("I2").y, layoutModel.get("L1").y, .1);
+    Assert.assertEquals(
+        "Y values should match", layoutModel.get("L1").y, layoutModel.get("L2").y, .1);
+    Assert.assertEquals(
+        "Y values should match", layoutModel.get("L2").y, layoutModel.get("R").y, .1);
+    Assert.assertNotEquals(
+        "Y values should not match", layoutModel.get("R").y, layoutModel.get("C1").y, .1);
+
+    // there should be one vertex in row 2 with x value the same as "P"
+    Assert.assertEquals(
+        "X values should match", layoutModel.get("R").x, layoutModel.get("C1").x, .1);
   }
 }

@@ -98,6 +98,7 @@ public class DemoTreeSupplier {
   public static Graph<String, Integer> createTreeTwo() {
     GraphBuilder<String, Integer, Graph<String, Integer>> builder =
         GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.dag())
+            .allowingSelfLoops(true)
             .edgeSupplier(SupplierUtil.createIntegerSupplier())
             .buildGraphBuilder();
 
