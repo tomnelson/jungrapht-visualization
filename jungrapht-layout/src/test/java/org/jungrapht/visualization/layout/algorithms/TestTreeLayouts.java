@@ -142,7 +142,7 @@ public class TestTreeLayouts {
 
   private void testPositions(LayoutModel<String> layoutModel) {
     // there should be 5 vertices in the top row, all with equal y values
-    log.info("Posisitions: {}", layoutModel.getLocations());
+    log.info("Positions: {}", layoutModel.getLocations());
     Assert.assertEquals(
         "Y values should match", layoutModel.get("I1").y, layoutModel.get("I2").y, .1);
     Assert.assertEquals(

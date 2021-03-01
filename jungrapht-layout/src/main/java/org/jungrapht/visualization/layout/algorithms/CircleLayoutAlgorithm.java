@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
@@ -351,7 +352,12 @@ public class CircleLayoutAlgorithm<V>
           // get back the graph for these vertices
           Graph<V, E> subGraph = GraphTypeBuilder.forGraph(graph).buildGraph();
           vertexSet.forEach(subGraph::addVertex);
-          for (V v : vertexSet) {
+          for (V v :
+              vertexSet
+                  .stream()
+                  // filter out any vertices with only loop edges
+                  .filter(v -> !TreeLayout.isLoopVertex(subGraph, v))
+                  .collect(Collectors.toSet())) {
             // get neighbors
             neighborCache.successorsOf(v).forEach(s -> subGraph.addEdge(v, s, graph.getEdge(v, s)));
             neighborCache

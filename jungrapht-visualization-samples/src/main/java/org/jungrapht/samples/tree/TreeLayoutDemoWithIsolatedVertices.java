@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Demonstrates TreeLayout and RadialTreeLayout.
+ * Demonstrates TreeLayout and other algorithms using a graph that has isolated vertices.
  *
  * @author Tom Nelson
  */
