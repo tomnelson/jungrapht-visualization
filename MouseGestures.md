@@ -12,18 +12,18 @@
  **Mouse Button One:**
 * press and drag to pan the graph visualization
 * CTRL+MouseButtonOne press over a Vertex or Edge to select a vertex or edge
-* SHIFT+CTRL+MouseButtonOne press to add another Vertex or Edge to the selection
+* SHIFT+CTRL+MouseButtonOne press to toggle the selection of a Vertex or Edge
 * CTRL+MouseButtonOne press not over a Vertex or Edge to clear selection
 
     **Rectangular Multi-Selection Mode (normal):**
     
 * CTRL+MouseButtonOne press and drag to define a rectangle. Vertices inside are selected.
-* SHIFT+CTRL+MouseButtonOne press and drag to define a rectangle. Vertices inside are added to the selection.
+* SHIFT+CTRL+MouseButtonOne press and drag to define a rectangle. Vertices inside have their selection state toggled.
 
     **Arbitrary Multi-Selection Mode:**
     
 * CTRL+MouseButtonOne press and drag to define an arbitrary shape. Vertices inside are selected.
-* SHIFT+CTRL+MouseButtonOne press and drag to define an arbitrary shape. Vertices inside are added to the selection.
+* SHIFT+CTRL+MouseButtonOne press and drag to define an arbitrary shape. Vertices inside have their selection state toggled.
 * Arbitrary selection mode is selected with the property:
 
      `jungrapht.arbitraryShapeSelection=true`
@@ -53,18 +53,18 @@
 **Mouse Button One:**
 
 * CTRL+MouseButtonOne press over a Vertex or Edge to select a vertex or edge
-* SHIFT+CTRL+MouseButtonOne press to add another Vertex or Edge to the selection
+* SHIFT+CTRL+MouseButtonOne press to toggle the selection of a Vertex or Edge.
 
     **Rectangular Multi-Selection Mode (normal):**
     
 * CTRL+MouseButtonOne press not over a Vertex or Edge to clear selection
-* CTRL+MouseButtonOne press and drag to define a rectangle. Vertices inside are selected.
+* CTRL+MouseButtonOne press and drag to define a rectangle. Vertices inside have their selection state toggled.
 * SHIFT+CTRL+MouseButtonOne press and drag to define a rectangle. Vertices inside are added to the selection.
  
    **Arbitrary Multi-Selection Mode:**
     
 * CTRL+MouseButtonOne press and drag to define an arbitrary shape. Vertices inside are selected.
-* SHIFT+CTRL+MouseButtonOne press and drag to define an arbitrary shape. Vertices inside are added to the selection.
+* SHIFT+CTRL+MouseButtonOne press and drag to define an arbitrary shape. Vertices inside have their selection state toggled.
 * Arbitrary selection mode is selected with the property:
 
 

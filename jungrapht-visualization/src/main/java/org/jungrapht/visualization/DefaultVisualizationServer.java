@@ -1007,6 +1007,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
                     SplitterContext.of(new QuadraticLeafSplitter(), new QuadraticSplitter()))
                 .reinsert(false)
                 .build();
+        break;
       case NONE:
       default:
         edgeSpatial = new Spatial.NoOp.Edge<>(visualizationModel);
