@@ -218,8 +218,7 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
 
       if (graphicsDecorator instanceof TransformingGraphics) {
         // get a copy of the current transform used by g2d
-        AffineTransform savedTransform = g2d.getTransform();
-        AffineTransform graphicsTransformCopy = new AffineTransform(g2d.getTransform());
+        AffineTransform graphicsTransformCopy = new AffineTransform(oldTransform);
 
         AffineTransform viewTransform =
             visualizationServer

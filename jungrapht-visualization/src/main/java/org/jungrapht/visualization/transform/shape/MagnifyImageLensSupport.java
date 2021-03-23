@@ -132,7 +132,7 @@ public class MagnifyImageLensSupport<V, E, M extends LensGraphMouse>
           .getMultiLayerTransformer()
           .setTransformer(MultiLayerTransformer.Layer.VIEW, lensTransformer);
       this.renderContext.setGraphicsContext(lensGraphicsDecorator);
-      vv.addPreRenderPaintable(lensPaintable);
+      vv.prependPreRenderPaintable(lensPaintable);
       vv.addPostRenderPaintable(lensControls);
       vv.setGraphMouse(lensGraphMouse);
       vv.setToolTipText(instructions);
