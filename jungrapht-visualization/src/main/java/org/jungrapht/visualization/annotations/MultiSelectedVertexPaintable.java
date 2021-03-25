@@ -8,6 +8,7 @@ import static org.jungrapht.visualization.renderers.BiModalRenderer.LIGHTWEIGHT;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -232,8 +233,8 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
         g2d.setTransform(graphicsTransformCopy);
         Stroke savedStroke = g2d.getStroke();
         float strokeWidth =
-            Math.max(
-                selectionStrokeMin, (int) (selectionStrokeMin / g2d.getTransform().getScaleX()));
+            (float)
+                Math.max(selectionStrokeMin, selectionStrokeMin / g2d.getTransform().getScaleX());
         g2d.setStroke(new BasicStroke(strokeWidth));
         selectedVertices
             .stream()
@@ -304,10 +305,7 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
   }
 
   protected Shape prepareFinalVertexShape(
-      RenderContext<V, ?> renderContext,
-      VisualizationModel<V, ?> visualizationModel,
-      V v,
-      int[] coords) {
+      RenderContext<V, ?> renderContext, VisualizationModel<V, ?> visualizationModel, V v) {
 
     // get the shape to be rendered
     Shape shape;
@@ -319,6 +317,25 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
     } else {
       shape = renderContext.getVertexShapeFunction().apply(v);
     }
+
+    // increase is 10% larger
+
+    double scalex = 1.1;
+    double scaley = 1.1;
+    Rectangle2D bounds = shape.getBounds2D();
+    double width = bounds.getWidth();
+    double height = bounds.getHeight();
+    if (width > height) {
+      // 10% of width
+      double dwidth = width / 10.0;
+      scaley = (height + dwidth) / height;
+    } else if (height > width) {
+      double dheight = height / 10;
+      scalex = (width + dheight) / width;
+    }
+    // make the shape a little larger
+    AffineTransform scaled = AffineTransform.getScaleInstance(scalex, scaley);
+    shape = scaled.createTransformedShape(shape);
     Point p = visualizationModel.getLayoutModel().apply(v);
     // p is the vertex location in layout coordinates
 
@@ -330,8 +347,6 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
     // graphics context
     double x = p2d.getX();
     double y = p2d.getY();
-    coords[0] = (int) x;
-    coords[1] = (int) y;
     // create a transform that translates to the location of
     // the vertex to be rendered
     AffineTransform xform = AffineTransform.getTranslateInstance(x, y);
@@ -361,25 +376,18 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
     //    g.setTransform(viewTransform);
     Paint drawPaint = selectionPaint;
     g.setPaint(drawPaint);
-    Stroke oldStroke = g.getStroke();
-    float strokeWidth =
-        Math.max(selectionStrokeMin, (int) (selectionStrokeMin / g2d.getTransform().getScaleX()));
-    Stroke stroke = new BasicStroke(strokeWidth);
     // anti-alias here??
     Object hint = g.getRenderingHint(KEY_ANTIALIASING);
     g.setRenderingHint(KEY_ANTIALIASING, VALUE_ANTIALIAS_ON);
-    g.setStroke(stroke);
-    g.draw(shape);
+    g.fill(shape);
     g.setRenderingHint(KEY_ANTIALIASING, hint);
     g.setPaint(oldPaint);
-    g.setStroke(oldStroke);
     g2d.setTransform(savedTransform);
   }
 
   protected void paintIconForVertex(
       RenderContext<V, ?> renderContext, VisualizationModel<V, ?> visualizationModel, V v) {
-    int[] coords = new int[2];
-    Shape shape = prepareFinalVertexShape(renderContext, visualizationModel, v, coords);
+    Shape shape = prepareFinalVertexShape(renderContext, visualizationModel, v);
     paintShapeForVertex(renderContext, v, shape);
   }
 
