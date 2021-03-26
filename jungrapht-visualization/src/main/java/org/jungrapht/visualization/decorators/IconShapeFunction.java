@@ -60,7 +60,7 @@ public class IconShapeFunction<T> implements Function<T, Shape> {
       Image image = ((ImageIcon) icon).getImage();
       Shape shape = shapeMap.get(image);
       if (shape == null) {
-        shape = ImageShapeUtils.getShape(image, 500);
+        shape = ImageShapeUtils.getShape(image);
         if (shape.getBounds().getWidth() > 0 && shape.getBounds().getHeight() > 0) {
           // don't cache a zero-sized shape, wait for the image
           // to be ready

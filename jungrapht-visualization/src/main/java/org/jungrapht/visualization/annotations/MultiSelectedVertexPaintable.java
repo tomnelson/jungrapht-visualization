@@ -7,6 +7,7 @@ import static org.jungrapht.visualization.renderers.BiModalRenderer.LIGHTWEIGHT;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
@@ -52,10 +53,17 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
         AffineTransform.getRotateInstance(3 * Math.PI / 4)
             .createTransformedShape(ArrowFactory.getNotchedArrow(20, 24, 8));
     private Icon selectionIcon;
-    private Paint selectionPaint = Color.red;
+    private Paint selectionPaint = Color.getColor(PREFIX + "selectionColor", Color.red);
     private float selectionStrokeMin =
-        Float.parseFloat(System.getProperty(PREFIX + "selectionStrokeMin", "2.f"));
-    private boolean useBounds = true;
+        Float.parseFloat(System.getProperty(PREFIX + "selectionStrokeMin", "10.f"));
+    private boolean useBounds =
+        Boolean.parseBoolean(System.getProperty(PREFIX + "selectionShapeUseBounds", "true"));
+    private boolean useOval =
+        Boolean.parseBoolean(System.getProperty(PREFIX + "selectionShapeUseOval", "false"));
+    private double highlightScale =
+        Double.parseDouble(System.getProperty(PREFIX + "selectionHighlightScale", "1.12"));
+    private boolean fillHighlight =
+        Boolean.parseBoolean(System.getProperty(PREFIX + "selectionShapeFill", "true"));
     private Function<VisualizationServer<V, E>, Collection<V>> selectedVertexFunction;
 
     protected B self() {
@@ -88,8 +96,23 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
       return self();
     }
 
+    public B highlightScale(double highlightScale) {
+      this.highlightScale = highlightScale;
+      return self();
+    }
+
     public B useBounds(boolean useBounds) {
       this.useBounds = useBounds;
+      return self();
+    }
+
+    public B useOval(boolean useOval) {
+      this.useOval = useOval;
+      return self();
+    }
+
+    public B fillHighlight(boolean fillHighlight) {
+      this.fillHighlight = fillHighlight;
       return self();
     }
 
@@ -130,6 +153,12 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
 
   private boolean useBounds;
 
+  private boolean useOval;
+
+  private double highlightScale;
+
+  private boolean fillHighlight;
+
   private float selectionStrokeMin;
 
   private BiModalSelectionRenderer<V, E> biModalRenderer;
@@ -146,6 +175,9 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
         builder.visualizationServer,
         builder.selectionShape,
         builder.useBounds,
+        builder.useOval,
+        builder.highlightScale,
+        builder.fillHighlight,
         builder.selectionPaint,
         builder.selectionIcon,
         builder.selectionStrokeMin,
@@ -164,6 +196,9 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
       VisualizationServer<V, E> visualizationServer,
       Shape shape,
       boolean useBounds,
+      boolean useOval,
+      double highlightScale,
+      boolean fillHighlight,
       Paint selectionPaint,
       Icon selectionIcon,
       float selectionStrokeMin,
@@ -171,6 +206,9 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
     this.visualizationServer = visualizationServer;
     this.selectionShape = shape;
     this.useBounds = useBounds;
+    this.useOval = useOval;
+    this.highlightScale = highlightScale;
+    this.fillHighlight = fillHighlight;
     this.selectionPaint = selectionPaint;
     this.selectionIcon = selectionIcon;
     this.selectionStrokeMin = selectionStrokeMin;
@@ -217,6 +255,10 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
       GraphicsDecorator graphicsDecorator =
           visualizationServer.getRenderContext().getGraphicsContext();
 
+      Stroke savedStroke = g2d.getStroke();
+      float strokeWidth =
+          (float) Math.max(selectionStrokeMin, selectionStrokeMin / g2d.getTransform().getScaleX());
+      g2d.setStroke(new BasicStroke(strokeWidth));
       if (graphicsDecorator instanceof TransformingGraphics) {
         // get a copy of the current transform used by g2d
         AffineTransform graphicsTransformCopy = new AffineTransform(oldTransform);
@@ -231,16 +273,10 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
         // don't mutate the viewTransform!
         graphicsTransformCopy.concatenate(viewTransform);
         g2d.setTransform(graphicsTransformCopy);
-        Stroke savedStroke = g2d.getStroke();
-        float strokeWidth =
-            (float)
-                Math.max(selectionStrokeMin, selectionStrokeMin / g2d.getTransform().getScaleX());
-        g2d.setStroke(new BasicStroke(strokeWidth));
         selectedVertices
             .stream()
             .filter(visualizationServer.getRenderContext().getVertexIncludePredicate()::test)
             .forEach(vertex -> paintTransformed(vertex));
-        g2d.setStroke(savedStroke);
 
       } else {
         selectedVertices
@@ -255,6 +291,7 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
       }
       // put back the old values
       g2d.setPaint(oldPaint);
+      g2d.setStroke(savedStroke);
       g2d.setTransform(oldTransform);
     }
   }
@@ -311,8 +348,14 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
     Shape shape;
     if (visualizationServer.getRenderer() instanceof BiModalRenderer) {
       shape = visualizationServer.getRenderContext().getVertexShapeFunction().apply(v);
-      if (useBounds) {
+      if (useBounds || useOval) {
         shape = shape.getBounds();
+        if (useOval) {
+          Rectangle2D bounds = (Rectangle2D) shape;
+          shape =
+              new Ellipse2D.Double(
+                  bounds.getMinX(), bounds.getMinY(), bounds.getWidth(), bounds.getHeight());
+        }
       }
     } else {
       shape = renderContext.getVertexShapeFunction().apply(v);
@@ -320,17 +363,17 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
 
     // increase is 10% larger
 
-    double scalex = 1.1;
-    double scaley = 1.1;
+    double scalex = highlightScale;
+    double scaley = highlightScale;
     Rectangle2D bounds = shape.getBounds2D();
     double width = bounds.getWidth();
     double height = bounds.getHeight();
     if (width > height) {
       // 10% of width
-      double dwidth = width / 10.0;
+      double dwidth = width * (highlightScale - 1);
       scaley = (height + dwidth) / height;
     } else if (height > width) {
-      double dheight = height / 10;
+      double dheight = height * (highlightScale - 1);
       scalex = (width + dheight) / width;
     }
     // make the shape a little larger
@@ -379,7 +422,11 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
     // anti-alias here??
     Object hint = g.getRenderingHint(KEY_ANTIALIASING);
     g.setRenderingHint(KEY_ANTIALIASING, VALUE_ANTIALIAS_ON);
-    g.fill(shape);
+    if (fillHighlight) {
+      g.fill(shape);
+    } else {
+      g.draw(shape);
+    }
     g.setRenderingHint(KEY_ANTIALIASING, hint);
     g.setPaint(oldPaint);
     g2d.setTransform(savedTransform);
