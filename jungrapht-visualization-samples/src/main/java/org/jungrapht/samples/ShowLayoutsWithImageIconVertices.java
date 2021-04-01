@@ -15,6 +15,7 @@ import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.util.function.Function;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
@@ -94,6 +95,11 @@ public class ShowLayoutsWithImageIconVertices extends JPanel {
 
     Graph<String, Integer> initialGraph = graphArray[3]; // initial graph
 
+    Function<String, String> randomGraphNameFunction =
+        v ->
+            "<html>"
+                + graphNames[(int) (Math.random() * graphNames.length)].replaceAll(" ", "<br>");
+
     final VisualizationViewer<String, Integer> vv =
         VisualizationViewer.builder(initialGraph)
             .layoutAlgorithm(new KKLayoutAlgorithm<>())
@@ -101,7 +107,7 @@ public class ShowLayoutsWithImageIconVertices extends JPanel {
             .build();
 
     IconCache<String> iconCache =
-        IconCache.<String>builder(n -> "<html>This<br>is a<br>multiline<br>label " + n + "</html>")
+        IconCache.builder(randomGraphNameFunction)
             .vertexShapeFunction(vv.getRenderContext().getVertexShapeFunction())
             .colorFunction(
                 n -> {
@@ -111,10 +117,10 @@ public class ShowLayoutsWithImageIconVertices extends JPanel {
                 })
             .stylist(
                 (label, vertex, colorFunction) -> {
-                  label.setFont(new Font("Serif", Font.BOLD, 20));
+                  label.setFont(new Font("Serif", Font.PLAIN, 20));
                   label.setForeground(Color.black);
-                  label.setBackground(Color.white);
-                  //                  label.setOpaque(true);
+                  //                  label.setBackground(Color.white);
+                  //                                    label.setOpaque(true);
                   Border lineBorder =
                       BorderFactory.createEtchedBorder(); //Border(BevelBorder.RAISED);
                   Border marginBorder = BorderFactory.createEmptyBorder(4, 4, 4, 4);
@@ -122,14 +128,14 @@ public class ShowLayoutsWithImageIconVertices extends JPanel {
                 })
             .preDecorator(
                 (graphics, vertex, labelBounds, vertexShapeFunction, colorFunction) -> {
-                  Color color = (Color) colorFunction.apply(vertex);
-                  color =
-                      new Color(
-                          color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha() / 4);
+                  //                  Color color = (Color) colorFunction.apply(vertex);
+                  //                  color =
+                  //                      new Color(
+                  //                          color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha() / 4);
                   // save off the old color
                   Color oldColor = graphics.getColor();
                   // fill the image background with white
-                  graphics.setPaint(Color.white);
+                  //                  graphics.setPaint(Color.white);
                   graphics.fill(labelBounds);
 
                   Shape shape = vertexShapeFunction.apply(vertex);
@@ -169,9 +175,10 @@ public class ShowLayoutsWithImageIconVertices extends JPanel {
     setLayout(new BorderLayout());
     add(vv.getComponent(), BorderLayout.CENTER);
 
-    vv.addPostRenderPaintable(
+    vv.addPreRenderPaintable(
         MultiSelectedVertexPaintable.builder(vv)
             .selectionPaint(Color.red)
+            .fillHighlight(false)
             .selectionStrokeMin(4.f)
             .build());
 

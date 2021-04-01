@@ -1,12 +1,6 @@
 package org.jungrapht.visualization.annotations;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Paint;
-import java.awt.Shape;
-import java.awt.Stroke;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -17,6 +11,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.MultiLayerTransformer;
+import org.jungrapht.visualization.PropertyLoader;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.decorators.EdgeShape;
@@ -28,6 +23,10 @@ import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 
 /** Paints a highlight under selected edges */
 public class SelectedEdgePaintable<V, E> implements VisualizationServer.Paintable {
+
+  static {
+    PropertyLoader.load();
+  }
 
   /**
    * builder for the {@code SelectedEdgePaintable}
