@@ -7,7 +7,6 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Paint;
 import java.awt.Stroke;
-import java.awt.geom.Ellipse2D;
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
@@ -121,7 +120,7 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
   public ShowLayoutsWithGraphFileImport() {
 
     Graph<String, DefaultEdge> graph =
-        GraphTypeBuilder.undirected()
+        GraphTypeBuilder.directed()
             .edgeClass(DefaultEdge.class)
             .vertexSupplier(SupplierUtil.createStringSupplier(1))
             .allowingSelfLoops(true)
@@ -153,16 +152,6 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
     vv.setEdgeToolTipFunction(edge -> edgeAttributes.get(edge).toString());
     vv.getRenderContext().setVertexFillPaintFunction(vertexFillPaintFunction);
 
-    vv.getRenderContext()
-        .setVertexShapeFunction(
-            v -> {
-              Graph<String, DefaultEdge> g = vv.getVisualizationModel().getGraph();
-              if (!g.containsVertex(v)) {
-                log.error("shapeFunction {} was not in {}", v, g.vertexSet());
-              }
-              int size = Math.max(5, 2 * (g.containsVertex(v) ? g.degreeOf(v) : 20));
-              return new Ellipse2D.Float(-size / 2.f, -size / 2.f, size, size);
-            });
     Function<String, Paint> vertexDrawPaintFunction =
         v -> vv.getSelectedVertexState().isSelected(v) ? Color.pink : Color.black;
     Function<String, Stroke> vertexStrokeFunction =

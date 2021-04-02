@@ -3,6 +3,7 @@ package org.jungrapht.visualization.util;
 import static org.jungrapht.visualization.renderers.BiModalRenderer.HEAVYWEIGHT;
 
 import java.awt.*;
+import java.awt.geom.Ellipse2D;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import javax.swing.*;
@@ -75,7 +76,7 @@ public class VertexStyleConfiguration<V, E> {
   private VisualizationServer<V, E> vv;
   private VertexLabelAsShapeRenderer<V, E> vlasr;
   private IconShapeFunction<V> vertexImageShapeFunction =
-      new IconShapeFunction<>(new EllipseShapeFunction<>());
+      new IconShapeFunction(v -> new Ellipse2D.Float(-20, -20, 40, 40));
   private Supplier<Boolean> showVertexIconSupplier;
   private Supplier<Boolean> showVertexLabelSupplier;
   private Supplier<Position> labelPositionSupplier;

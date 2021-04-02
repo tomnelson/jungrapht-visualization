@@ -12,12 +12,7 @@ import java.awt.Stroke;
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -175,21 +170,6 @@ public class ShowLayoutsWithDirectedGraphFileImport extends JFrame {
                       map.getOrDefault("ID", new DefaultAttribute(vertex, AttributeType.STRING)))
                   .getValue();
             });
-    vv.setEdgeToolTipFunction(edge -> edgeAttributes.get(edge).toString());
-    //    vv.getRenderContext().setVertexFillPaintFunction(v -> Colors.getColor(vertexAttributes.get(v)));
-
-    //    vv.getRenderContext()
-    //        .setVertexShapeFunction(
-    //            v -> {
-    //              Graph<String, DefaultEdge> g = vv.getVisualizationModel().getGraph();
-    //              if (!g.containsVertex(v)) {
-    //                log.error("shapeFunction {} was not in {}", v, g.vertexSet());
-    //              }
-    //              int size = Math.max(5, 2 * (g.containsVertex(v) ? g.degreeOf(v) : 20));
-    //              return new Ellipse2D.Float(-size / 2.f, -size / 2.f, size, size);
-    //            });
-    //    Function<String, Paint> vertexDrawPaintFunction =
-    //        v -> vv.getSelectedVertexState().isSelected(v) ? Color.pink : Color.black;
     Function<String, Stroke> vertexStrokeFunction =
         v ->
             vv.getSelectedVertexState().isSelected(v) ? new BasicStroke(8.f) : new BasicStroke(2.f);
@@ -407,6 +387,14 @@ public class ShowLayoutsWithDirectedGraphFileImport extends JFrame {
             } catch (Exception ex) {
               ex.printStackTrace();
             }
+            List<String> sorted =
+                graph
+                    .vertexSet()
+                    .stream()
+                    .sorted(Comparator.comparingInt(v -> graph.degreeOf(v)))
+                    .collect(Collectors.toList());
+            sorted.forEach(v -> log.info("V: {} degree: {}", v, graph.degreeOf(v)));
+
             vv.getVisualizationModel().setGraph(graph);
             setTitle(
                 "Graph of "
@@ -429,16 +417,9 @@ public class ShowLayoutsWithDirectedGraphFileImport extends JFrame {
     closenessButton.addActionListener(event -> computeScores(new ClosenessCentrality<>(graph)));
     JButton clusteringButton = new JButton("Clustering");
     clusteringButton.addActionListener(event -> computeScores(new ClusteringCoefficient<>(graph)));
-    //    JButton corenessButton = new JButton("Coreness");
-    //        corenessButton.addActionListener(event -> computeScores(new Coreness<>(graph)));
     JButton harmonicButton = new JButton("Harmonic");
     harmonicButton.addActionListener(event -> computeScores(new HarmonicCentrality<>(graph)));
     JButton noScores = new JButton("None");
-    //    noScores.addActionListener(
-    //        event -> {
-    //          vv.getRenderContext().setVertexFillPaintFunction(vertexFillPaintFunction);
-    //          vv.repaint();
-    //        });
 
     JPanel scoringGrid = new JPanel(new GridLayout(0, 2));
     scoringGrid.add(pageRankButton);
@@ -493,15 +474,6 @@ public class ShowLayoutsWithDirectedGraphFileImport extends JFrame {
     log.info("min:{}, max:{}, range:{}", min, max, range);
     double delta = range / colorArray.length;
     log.info("delta:{}", delta);
-    //    vv.getRenderContext()
-    //        .setVertexFillPaintFunction(
-    //            v -> {
-    //              if (scores.isEmpty() || !scores.containsKey(v)) return Color.red;
-    //              double score = scores.get(v);
-    //              double index = score / delta;
-    //              int idx = (int) Math.max(0, Math.min(colorArray.length - 1, index));
-    //              return colorArray[idx];
-    //            });
     vv.repaint();
   }
 
@@ -511,32 +483,6 @@ public class ShowLayoutsWithDirectedGraphFileImport extends JFrame {
     edges.forEach(graph::removeEdge);
     vertices.forEach(graph::removeVertex);
   }
-
-  //  LayoutModel getTreeLayoutPositions(
-  //      Graph tree, LayoutAlgorithm treeLayout, LayoutModel layoutModel) {
-  //    LayoutModel model =
-  //        LayoutModel.builder()
-  //            .size(layoutModel.getWidth(), layoutModel.getHeight())
-  //            .graph(tree)
-  //            .build();
-  ////    // connect any listeners from the layoutModel to the newly created model
-  ////    model
-  ////        .getLayoutStateChangeSupport()
-  ////        .getLayoutStateChangeListeners()
-  ////        .forEach(l -> model.getLayoutStateChangeSupport().addLayoutStateChangeListener(l));
-  ////    model
-  ////        .getLayoutSizeChangeSupport()
-  ////        .getLayoutSizeChangeListeners()
-  ////        .forEach(
-  ////            l ->
-  ////                model
-  ////                    .getLayoutSizeChangeSupport()
-  ////                    .addLayoutSizeChangeListener((LayoutSizeChange.Listener) l));
-  ////    //    layoutModel
-  ////    //    model.getLayoutStateChangeSupport().addLayoutStateChangeListener();
-  //    model.accept(treeLayout);
-  //    return model;
-  //  }
 
   /**
    * these are vertex or edge types that have defined colors (the keys are the property values for
