@@ -1,4 +1,4 @@
-package org.jungrapht.visualization.layout.algorithms.util;
+package org.jungrapht.visualization.util;
 
 import java.util.*;
 import java.util.function.BiConsumer;

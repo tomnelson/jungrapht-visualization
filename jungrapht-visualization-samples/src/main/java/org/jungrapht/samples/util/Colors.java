@@ -195,8 +195,8 @@ public abstract class Colors {
     // if there is a 'Color' attribute key, use its value (either a color name or an RGB hex string)
     // to choose a color
     if (map.containsKey("Color")) {
-      Attribute colorAttribute = map.get("Color");
-      String colorName = colorAttribute.getValue();
+      String colorName = map.get("Color").getValue();
+      //      String colorName = colorAttribute;
       if (COLOR_MAP.containsKey(colorName)) {
         return COLOR_MAP.get(colorName);
       }

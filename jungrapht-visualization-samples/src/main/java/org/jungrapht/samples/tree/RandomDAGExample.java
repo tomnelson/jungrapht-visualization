@@ -22,6 +22,7 @@ import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.samples.util.TreeLayoutSelector;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
+import org.jungrapht.visualization.annotations.SelectedEdgePaintable;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.decorators.IconShapeFunction;
@@ -138,6 +139,11 @@ public class RandomDAGExample extends JPanel {
                         .filter(edgePredicate)
                         .map(e -> graph.getEdgeSource(e)))
                 .collect(Collectors.toList()));
+
+    vv.getRenderContext().setEdgeDrawPaintFunction(e -> Color.black);
+    SelectedEdgePaintable<String, Integer> selectedEdgePaintable =
+        SelectedEdgePaintable.builder(vv).selectionStrokeMultiplier(5).build();
+    vv.addPreRenderPaintable(selectedEdgePaintable);
 
     TreeLayoutSelector<String, Integer> treeLayoutSelector =
         TreeLayoutSelector.<String, Integer>builder(vv)

@@ -18,7 +18,6 @@ import org.jgrapht.Graph;
 import org.jgrapht.alg.util.NeighborCache;
 import org.jungrapht.visualization.layout.algorithms.Layered;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.*;
-import org.jungrapht.visualization.layout.algorithms.util.Attributed;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
 import org.jungrapht.visualization.layout.util.PropertyLoader;
@@ -464,15 +463,6 @@ public class ExtendedEiglspergerRunnable<V, E> extends EiglspergerRunnable<V, E>
       return;
     }
     svGraph.vertexSet().forEach(v -> layoutModel.set(v.getVertex(), v.getPoint()));
-    for (LV<V> v : svGraph.vertexSet()) {
-      if (v.getVertex() instanceof Attributed) {
-        @SuppressWarnings("unchecked")
-        Attributed<V> va = (Attributed<V>) v.getVertex();
-        va.set("pos", "" + v.getPos());
-        va.set("idx", "" + v.getIndex());
-        va.set("rank", "" + v.getRank());
-      }
-    }
   }
 
   private static <V> Rectangle maxVertexBounds(

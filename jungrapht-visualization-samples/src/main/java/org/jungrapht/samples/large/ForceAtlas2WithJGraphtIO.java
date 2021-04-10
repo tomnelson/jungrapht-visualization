@@ -1,5 +1,7 @@
 package org.jungrapht.samples.large;
 
+import static org.jungrapht.visualization.util.Attributed.*;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.io.InputStream;
@@ -17,10 +19,8 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.nio.gml.GmlImporter;
-import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.ForceAtlas2ControlPanel;
 import org.jungrapht.visualization.VisualizationViewer;
@@ -55,8 +55,8 @@ public class ForceAtlas2WithJGraphtIO extends JFrame {
     }
   }
 
-  BarnesHutFA2Repulsion.Builder<String> repulsion = BarnesHutFA2Repulsion.builder();
-  ForceAtlas2LayoutAlgorithm.Builder<String, ?, ?> builder = ForceAtlas2LayoutAlgorithm.builder();
+  BarnesHutFA2Repulsion.Builder<AS> repulsion = BarnesHutFA2Repulsion.builder();
+  ForceAtlas2LayoutAlgorithm.Builder<AS, ?, ?> builder = ForceAtlas2LayoutAlgorithm.builder();
 
   public static GraphLinks[] getCombos() {
     return GraphLinks.values();
@@ -64,31 +64,33 @@ public class ForceAtlas2WithJGraphtIO extends JFrame {
 
   public ForceAtlas2WithJGraphtIO() {
 
-    Graph<String, DefaultEdge> graph =
+    Graph<AS, AI> graph =
         GraphTypeBuilder.undirected()
-            .edgeClass(DefaultEdge.class)
-            .vertexSupplier(SupplierUtil.createStringSupplier(1))
+            .vertexSupplier(new ASSupplier())
+            .allowingSelfLoops(true)
+            .allowingMultipleEdges(true)
+            .edgeSupplier(new AISupplier())
             .buildGraph();
 
     JPanel container = new JPanel(new BorderLayout());
 
-    final DefaultGraphMouse<Integer, DefaultEdge> graphMouse = new DefaultGraphMouse<>();
+    final DefaultGraphMouse<AS, AI> graphMouse = new DefaultGraphMouse<>();
 
-    final VisualizationViewer<String, DefaultEdge> vv =
+    final VisualizationViewer<AS, AI> vv =
         VisualizationViewer.builder(graph)
             .layoutSize(new Dimension(3000, 3000))
             .viewSize(new Dimension(900, 900))
             .graphMouse(graphMouse)
             .build();
 
-    ForceAtlas2LayoutAlgorithm layoutAlgorithm =
+    ForceAtlas2LayoutAlgorithm<AS> layoutAlgorithm =
         builder.repulsionContractBuilder(repulsion).build();
     vv.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm);
 
     final JComboBox graphComboBox = new JComboBox(getCombos());
     graphComboBox.addActionListener(
         e -> {
-          LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
+          LayoutModel<AS> layoutModel = vv.getVisualizationModel().getLayoutModel();
           layoutModel.stop();
           SwingUtilities.invokeLater(
               () -> {

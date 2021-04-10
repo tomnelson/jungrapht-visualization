@@ -65,7 +65,7 @@
         <jar.plugin.version>2.6</jar.plugin.version>
         <java.version>11</java.version>
         <javadoc.plugin.version>3.1.0</javadoc.plugin.version>
-        <jgrapht.version>1.5.0</jgrapht.version>
+        <jgrapht.version>1.5.1</jgrapht.version>
         <junit.version>4.13.1</junit.version>
         <jxr.plugin.version>2.5</jxr.plugin.version>
         <pmd.plugin.version>3.12.0</pmd.plugin.version>

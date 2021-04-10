@@ -16,9 +16,9 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.SugiyamaLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.util.Attributed;
-import org.jungrapht.visualization.layout.algorithms.util.DefaultAttributed;
 import org.jungrapht.visualization.renderers.Renderer;
+import org.jungrapht.visualization.util.Attributed;
+import org.jungrapht.visualization.util.DefaultAttributed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

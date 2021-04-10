@@ -7,11 +7,10 @@ import java.util.function.Predicate;
 import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
-import org.jungrapht.visualization.layout.algorithms.util.Attributed;
+import org.jungrapht.visualization.util.Attributed;
 
 public class LayoutHelperEiglsperger {
 
-  //  private static final Predicate<DefaultEdge>
   static final Predicate<Attributed<Integer>> favoredEdgePredicate =
       e -> "Fall-Through".equals(e.get("EdgeType"));
   //              || "Unconditional-Jump".equals(e.get("EdgeType"));

@@ -11,38 +11,23 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.alg.interfaces.VertexScoringAlgorithm;
-import org.jgrapht.alg.scoring.AlphaCentrality;
-import org.jgrapht.alg.scoring.BetweennessCentrality;
-import org.jgrapht.alg.scoring.ClosenessCentrality;
-import org.jgrapht.alg.scoring.ClusteringCoefficient;
-import org.jgrapht.alg.scoring.HarmonicCentrality;
-import org.jgrapht.alg.scoring.PageRank;
-import org.jgrapht.alg.util.Pair;
-import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.alg.scoring.*;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
-import org.jgrapht.nio.Attribute;
-import org.jgrapht.nio.AttributeType;
-import org.jgrapht.nio.DefaultAttribute;
-import org.jgrapht.nio.GraphImporter;
+import org.jgrapht.nio.*;
 import org.jgrapht.nio.csv.CSVImporter;
 import org.jgrapht.nio.dimacs.DIMACSImporter;
 import org.jgrapht.nio.dot.DOTImporter;
 import org.jgrapht.nio.gml.GmlImporter;
 import org.jgrapht.nio.graphml.GraphMLImporter;
 import org.jgrapht.nio.json.JSONImporter;
-import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.samples.spatial.RTreeVisualization;
 import org.jungrapht.samples.util.Colors;
 import org.jungrapht.samples.util.ControlHelpers;
@@ -64,6 +49,7 @@ import org.jungrapht.visualization.transform.MagnifyTransformer;
 import org.jungrapht.visualization.transform.shape.HyperbolicShapeTransformer;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
 import org.jungrapht.visualization.transform.shape.ViewLensSupport;
+import org.jungrapht.visualization.util.Attributed.*;
 import org.jungrapht.visualization.util.LayoutAlgorithmTransition;
 import org.jungrapht.visualization.util.LayoutPaintable;
 import org.slf4j.Logger;
@@ -87,9 +73,8 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
   LayoutPaintable.RadialRings radialLayoutRings;
   LayoutPaintable.LayoutBounds layoutBounds;
   JFileChooser fileChooser;
-  Map<String, Map<String, Attribute>> vertexAttributes = new HashMap<>();
-  Map<DefaultEdge, Map<String, Attribute>> edgeAttributes = new HashMap<>();
-  VisualizationViewer<String, DefaultEdge> vv;
+
+  VisualizationViewer<AS, AI> vv;
   Paint[] colorArray =
       new Paint[] {
         Color.red,
@@ -105,31 +90,21 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
         Color.orange
       };
 
-  Function<String, Paint> vertexFillPaintFunction =
-      v -> {
-        // try to parse from attributemap
-        Map<String, Attribute> map =
-            vertexAttributes
-                .getOrDefault(v, Collections.emptyMap())
-                .entrySet()
-                .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue()));
-        return Colors.getAttrColor(map);
-      };
+  Function<AS, Paint> vertexFillPaintFunction = v -> Colors.getColor(v.getAttributeMap());
+
+  Graph<AS, AI> graph =
+      GraphTypeBuilder.directed()
+          .vertexSupplier(new ASSupplier())
+          .allowingSelfLoops(true)
+          .allowingMultipleEdges(true)
+          .edgeSupplier(new AISupplier())
+          .buildGraph();
 
   public ShowLayoutsWithGraphFileImport() {
 
-    Graph<String, DefaultEdge> graph =
-        GraphTypeBuilder.directed()
-            .edgeClass(DefaultEdge.class)
-            .vertexSupplier(SupplierUtil.createStringSupplier(1))
-            .allowingSelfLoops(true)
-            .allowingMultipleEdges(true)
-            .edgeSupplier(SupplierUtil.DEFAULT_EDGE_SUPPLIER)
-            .buildGraph();
     JPanel container = new JPanel(new BorderLayout());
 
-    final DefaultGraphMouse<Integer, DefaultEdge> graphMouse = new DefaultGraphMouse<>();
+    final DefaultGraphMouse<AS, AI> graphMouse = new DefaultGraphMouse<>();
 
     vv =
         VisualizationViewer.builder(graph)
@@ -138,23 +113,19 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
             .graphMouse(graphMouse)
             .build();
 
-    vv.setVertexToolTipFunction(vertex -> vertex + " " + vertexAttributes.get(vertex));
+    vv.setVertexToolTipFunction(Object::toString);
     vv.getRenderContext()
         .setVertexLabelFunction(
             vertex -> {
-              Map<String, Attribute> map =
-                  vertexAttributes.getOrDefault(vertex, Collections.emptyMap());
-              return map.getOrDefault(
-                      "label",
-                      map.getOrDefault("ID", new DefaultAttribute(vertex, AttributeType.STRING)))
-                  .getValue();
+              Map<String, String> map = vertex.getAttributeMap();
+              return map.getOrDefault("label", map.getOrDefault("ID", "NONE"));
             });
-    vv.setEdgeToolTipFunction(edge -> edgeAttributes.get(edge).toString());
+    vv.setEdgeToolTipFunction(Object::toString);
     vv.getRenderContext().setVertexFillPaintFunction(vertexFillPaintFunction);
 
-    Function<String, Paint> vertexDrawPaintFunction =
+    Function<AS, Paint> vertexDrawPaintFunction =
         v -> vv.getSelectedVertexState().isSelected(v) ? Color.pink : Color.black;
-    Function<String, Stroke> vertexStrokeFunction =
+    Function<AS, Stroke> vertexStrokeFunction =
         v ->
             vv.getSelectedVertexState().isSelected(v) ? new BasicStroke(8.f) : new BasicStroke(2.f);
     vv.getRenderContext().setVertexStrokeFunction(vertexStrokeFunction);
@@ -172,7 +143,7 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
                 () -> {
                   LayoutHelper.Layouts layoutType =
                       (LayoutHelper.Layouts) layoutComboBox.getSelectedItem();
-                  LayoutAlgorithm layoutAlgorithm = layoutType.getLayoutAlgorithm();
+                  LayoutAlgorithm<AS> layoutAlgorithm = layoutType.getLayoutAlgorithm();
                   vv.removePreRenderPaintable(balloonLayoutRings);
                   vv.removePreRenderPaintable(radialLayoutRings);
                   if (animateLayoutTransition.isSelected()) {
@@ -201,11 +172,11 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
     layoutComboBox.setSelectedItem(LayoutHelper.Layouts.FR_BH_VISITOR);
 
     // create a lens to share between the two hyperbolic transformers
-    LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
+    LayoutModel<AS> layoutModel = vv.getVisualizationModel().getLayoutModel();
     Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
     Lens lens = new Lens(); /* provides a Hyperbolic lens for the view */
     LensSupport<DefaultLensGraphMouse> hyperbolicViewSupport =
-        ViewLensSupport.<String, DefaultEdge, DefaultLensGraphMouse>builder(vv)
+        ViewLensSupport.<AS, AI, DefaultLensGraphMouse>builder(vv)
             .lensTransformer(
                 HyperbolicShapeTransformer.builder(lens)
                     .delegate(
@@ -217,7 +188,7 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
             .build();
 
     LensSupport<DefaultLensGraphMouse> hyperbolicLayoutSupport =
-        LayoutLensSupport.<String, DefaultEdge, DefaultLensGraphMouse>builder(vv)
+        LayoutLensSupport.<AS, AI, DefaultLensGraphMouse>builder(vv)
             .lensTransformer(
                 HyperbolicTransformer.builder(lens)
                     .delegate(
@@ -233,7 +204,7 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
     lens = new Lens();
     lens.setMagnification(3.f);
     LensSupport<DefaultLensGraphMouse> magnifyViewSupport =
-        ViewLensSupport.<String, DefaultEdge, DefaultLensGraphMouse>builder(vv)
+        ViewLensSupport.<AS, AI, DefaultLensGraphMouse>builder(vv)
             .lensTransformer(
                 MagnifyShapeTransformer.builder(lens)
                     .delegate(
@@ -245,7 +216,7 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
             .build();
 
     LensSupport<DefaultLensGraphMouse> magnifyLayoutSupport =
-        LayoutLensSupport.<String, DefaultEdge, DefaultLensGraphMouse>builder(vv)
+        LayoutLensSupport.<AS, AI, DefaultLensGraphMouse>builder(vv)
             .lensTransformer(
                 MagnifyTransformer.builder(lens)
                     .delegate(
@@ -295,30 +266,11 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
             File file = fileChooser.getSelectedFile();
             String fileName = file.getName();
             String suffix = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
-            GraphImporter<String, DefaultEdge> importer;
+            GraphImporter<AS, AI> importer;
             switch (suffix) {
               case "graphml":
                 importer = new GraphMLImporter<>();
                 ((GraphMLImporter) importer).setSchemaValidation(false);
-                GraphMLImporter gmlImporter = (GraphMLImporter) importer;
-                gmlImporter.addVertexAttributeConsumer(
-                    (BiConsumer<Pair<String, String>, Attribute>)
-                        (pair, attribute) -> {
-                          String vertex = pair.getFirst();
-                          String key = pair.getSecond();
-                          vertexAttributes
-                              .computeIfAbsent(vertex, m -> new HashMap<>())
-                              .put(key, attribute);
-                        });
-                gmlImporter.addEdgeAttributeConsumer(
-                    (BiConsumer<Pair<DefaultEdge, String>, Attribute>)
-                        (pair, attribute) -> {
-                          DefaultEdge de = pair.getFirst();
-                          String key = pair.getSecond();
-                          edgeAttributes
-                              .computeIfAbsent(de, m -> new HashMap<>())
-                              .put(key, attribute);
-                        });
                 break;
               case "gml":
                 importer = new GmlImporter<>();
@@ -334,32 +286,29 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
                 importer = new DIMACSImporter<>();
                 break;
               case "json":
-                JSONImporter<String, DefaultEdge> jsonImporter = new JSONImporter<>();
-                jsonImporter.addVertexAttributeConsumer(
-                    //                    (BiConsumer<Pair<String, String>, Attribute>)
-                    (pair, attribute) -> {
-                      String vertex = pair.getFirst();
-                      String key = pair.getSecond();
-                      vertexAttributes
-                          .computeIfAbsent(vertex, m -> new HashMap<>())
-                          .put(key, attribute);
-                    });
-                jsonImporter.addEdgeAttributeConsumer(
-                    //                    (BiConsumer<Pair<String, String>, Attribute>)
-                    (pair, attribute) -> {
-                      DefaultEdge de = pair.getFirst();
-                      String key = pair.getSecond();
-                      edgeAttributes.computeIfAbsent(de, m -> new HashMap<>()).put(key, attribute);
-                    });
-
-                importer = jsonImporter;
+                importer = new JSONImporter<>();
                 break;
               default:
                 JOptionPane.showMessageDialog(vv.getComponent(), "Unable to open " + fileName);
                 return;
             }
             clear(graph);
-            vertexAttributes.clear();
+            if (importer instanceof BaseEventDrivenImporter) {
+              BaseEventDrivenImporter<AS, AI> baseEventDrivenImporter =
+                  (BaseEventDrivenImporter<AS, AI>) importer;
+              baseEventDrivenImporter.addVertexAttributeConsumer(
+                  (pair, attribute) -> {
+                    AS vertex = pair.getFirst();
+                    String key = pair.getSecond();
+                    vertex.put(key, attribute.getValue());
+                  });
+              baseEventDrivenImporter.addEdgeAttributeConsumer(
+                  (pair, attribute) -> {
+                    AI edge = pair.getFirst();
+                    String key = pair.getSecond();
+                    edge.put(key, attribute.getValue());
+                  });
+            }
             vv.getRenderContext().setVertexFillPaintFunction(vertexFillPaintFunction);
             try (InputStreamReader inputStreamReader = new FileReader(file)) {
               importer.importGraph(graph, inputStreamReader);
@@ -382,14 +331,14 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
     pageRankButton.addActionListener(event -> computeScores(new PageRank(graph)));
     JButton betweennessButton = new JButton("Betweenness");
     betweennessButton.addActionListener(event -> computeScores(new BetweennessCentrality<>(graph)));
-    JButton alphaButton = new JButton("Alpha");
-    alphaButton.addActionListener(event -> computeScores(new AlphaCentrality<>(graph)));
     JButton closenessButton = new JButton("Closeness");
     closenessButton.addActionListener(event -> computeScores(new ClosenessCentrality<>(graph)));
     JButton clusteringButton = new JButton("Clustering");
     clusteringButton.addActionListener(event -> computeScores(new ClusteringCoefficient<>(graph)));
-    //    JButton corenessButton = new JButton("Coreness");
-    //        corenessButton.addActionListener(event -> computeScores(new Coreness<>(graph)));
+    JButton eigenvectorButton = new JButton("Eigenvector");
+    eigenvectorButton.addActionListener(event -> computeScores(new EigenvectorCentrality<>(graph)));
+    JButton katzButton = new JButton("Katz");
+    katzButton.addActionListener(event -> computeScores(new KatzCentrality<>(graph)));
     JButton harmonicButton = new JButton("Harmonic");
     harmonicButton.addActionListener(event -> computeScores(new HarmonicCentrality<>(graph)));
     JButton noScores = new JButton("None");
@@ -402,10 +351,11 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
     JPanel scoringGrid = new JPanel(new GridLayout(0, 2));
     scoringGrid.add(pageRankButton);
     scoringGrid.add(betweennessButton);
-    //    scoringGrid.add(alphaButton);
     scoringGrid.add(closenessButton);
     scoringGrid.add(clusteringButton);
     scoringGrid.add(harmonicButton);
+    scoringGrid.add(eigenvectorButton);
+    scoringGrid.add(katzButton);
     scoringGrid.add(noScores);
 
     JPanel controlPanel = new JPanel(new GridLayout(2, 1));
@@ -443,15 +393,15 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
     setVisible(true);
   }
 
-  private void computeScores(VertexScoringAlgorithm<String, Double> scoring) {
-    Map<String, Double> scores = scoring.getScores();
+  private void computeScores(VertexScoringAlgorithm<AS, Double> scoring) {
+    Map<AS, Double> scores = scoring.getScores();
     if (scores.isEmpty()) return;
     double min = scores.values().stream().min(Double::compare).get();
     double max = scores.values().stream().max(Double::compare).get();
     double range = max - min;
-    log.trace("min:{}, max:{}, range:{}", min, max, range);
+    log.info("min:{}, max:{}, range:{}", min, max, range);
     double delta = range / colorArray.length;
-    log.trace("delta:{}", delta);
+    log.info("delta:{}", delta);
     vv.getRenderContext()
         .setVertexFillPaintFunction(
             v -> {

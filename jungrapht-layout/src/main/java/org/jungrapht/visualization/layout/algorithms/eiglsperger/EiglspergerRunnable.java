@@ -23,7 +23,6 @@ import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.layout.algorithms.Layered;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.*;
-import org.jungrapht.visualization.layout.algorithms.util.Attributed;
 import org.jungrapht.visualization.layout.algorithms.util.LayeredRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.PointSummaryStatistics;
 import org.jungrapht.visualization.layout.model.LayoutModel;
@@ -584,15 +583,6 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
       return;
     }
     svGraph.vertexSet().forEach(v -> layoutModel.set(v.getVertex(), v.getPoint()));
-    for (LV<V> v : svGraph.vertexSet()) {
-      if (v.getVertex() instanceof Attributed) {
-        @SuppressWarnings("unchecked")
-        Attributed<V> va = (Attributed<V>) v.getVertex();
-        va.set("pos", "" + v.getPos());
-        va.set("idx", "" + v.getIndex());
-        va.set("rank", "" + v.getRank());
-      }
-    }
   }
 
   public void setFavoredEdgePredicate(Predicate<E> favoredEdgePredicate) {

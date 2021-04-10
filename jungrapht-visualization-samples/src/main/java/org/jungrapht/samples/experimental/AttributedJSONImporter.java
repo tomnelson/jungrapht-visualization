@@ -14,8 +14,8 @@ import org.jgrapht.nio.GraphImporter;
 import org.jgrapht.nio.ImportException;
 import org.jgrapht.nio.json.JSONEventDrivenImporter;
 import org.jgrapht.nio.json.JSONImporter;
-import org.jungrapht.visualization.layout.algorithms.util.Attributed;
-import org.jungrapht.visualization.layout.algorithms.util.DefaultAttributed;
+import org.jungrapht.visualization.util.Attributed;
+import org.jungrapht.visualization.util.DefaultAttributed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

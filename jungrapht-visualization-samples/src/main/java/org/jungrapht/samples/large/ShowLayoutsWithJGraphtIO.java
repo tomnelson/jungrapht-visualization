@@ -19,10 +19,8 @@ import java.util.zip.ZipInputStream;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
-import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.nio.gml.GmlImporter;
-import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.samples.spatial.RTreeVisualization;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.LayoutHelper;
@@ -44,6 +42,7 @@ import org.jungrapht.visualization.transform.MagnifyTransformer;
 import org.jungrapht.visualization.transform.shape.HyperbolicShapeTransformer;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
 import org.jungrapht.visualization.transform.shape.ViewLensSupport;
+import org.jungrapht.visualization.util.Attributed.*;
 import org.jungrapht.visualization.util.GraphImage;
 import org.jungrapht.visualization.util.LayoutAlgorithmTransition;
 import org.jungrapht.visualization.util.LayoutPaintable;
@@ -86,16 +85,18 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
 
   public ShowLayoutsWithJGraphtIO() {
 
-    Graph<String, DefaultEdge> graph =
+    Graph<AS, AI> graph =
         GraphTypeBuilder.undirected()
-            .edgeClass(DefaultEdge.class)
-            .vertexSupplier(SupplierUtil.createStringSupplier(1))
+            .vertexSupplier(new ASSupplier())
+            .allowingSelfLoops(true)
+            .allowingMultipleEdges(true)
+            .edgeSupplier(new AISupplier())
             .buildGraph();
     JPanel container = new JPanel(new BorderLayout());
 
-    final DefaultModalGraphMouse<Integer, DefaultEdge> graphMouse = new DefaultModalGraphMouse<>();
+    final DefaultModalGraphMouse<AS, AI> graphMouse = new DefaultModalGraphMouse<>();
 
-    final VisualizationViewer<String, DefaultEdge> vv =
+    final VisualizationViewer<AS, AI> vv =
         VisualizationViewer.builder(graph)
             .layoutSize(new Dimension(3000, 3000))
             .viewSize(new Dimension(800, 800))
@@ -104,11 +105,13 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
 
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
 
-    vv.setVertexToolTipFunction(
-        vertex ->
-            vertex
-                + ". with neighbors:"
-                + Graphs.neighborListOf(vv.getVisualizationModel().getGraph(), vertex));
+    vv.setVertexToolTipFunction(Object::toString);
+    vv.setEdgeToolTipFunction(Object::toString);
+    vv.getRenderContext().setEdgeLabelFunction(Object::toString);
+    //        vertex ->
+    //            vertex
+    //                + ". with neighbors:"
+    //                + Graphs.neighborListOf(vv.getVisualizationModel().getGraph(), vertex));
 
     // for the first layout
     vv.scaleToLayout();
@@ -121,7 +124,20 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
                   clear(graph);
                   String urlString = ((GraphLinks) graphComboBox.getSelectedItem()).url;
                   try (InputStreamReader inputStreamReader = get(urlString)) {
-                    GmlImporter gmlImporter = new GmlImporter();
+                    GmlImporter<AS, AI> gmlImporter = new GmlImporter<>();
+                    gmlImporter.addVertexAttributeConsumer(
+                        (pair, attribute) -> {
+                          AS vertex = pair.getFirst();
+                          String key = pair.getSecond();
+                          vertex.put(key, attribute.getValue());
+                        });
+                    gmlImporter.addEdgeAttributeConsumer(
+                        (pair, attribute) -> {
+                          AI edge = pair.getFirst();
+                          String key = pair.getSecond();
+                          edge.put(key, attribute.getValue());
+                        });
+
                     gmlImporter.importGraph(graph, inputStreamReader);
                   } catch (Exception ex) {
                     ex.printStackTrace();
@@ -156,7 +172,7 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
                     ((AbstractIterativeLayoutAlgorithm.Builder) layoutAlgorithmBuilder)
                         .executor(executorService);
                   }
-                  LayoutAlgorithm layoutAlgorithm = layoutAlgorithmBuilder.build();
+                  LayoutAlgorithm<AS> layoutAlgorithm = layoutAlgorithmBuilder.build();
                   vv.removePreRenderPaintable(balloonLayoutRings);
                   vv.removePreRenderPaintable(radialLayoutRings);
                   layoutAlgorithm.setAfter(vv::scaleToLayout);
@@ -194,11 +210,11 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
     layoutComboBox.setSelectedItem(LayoutHelper.Layouts.FR_BH_VISITOR);
 
     // create a lens to share between the two hyperbolic transformers
-    LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
+    LayoutModel<AS> layoutModel = vv.getVisualizationModel().getLayoutModel();
     Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
     Lens lens = new Lens(); /* provides a Hyperbolic lens for the view */
     LensSupport<ModalLensGraphMouse> hyperbolicViewSupport =
-        ViewLensSupport.<String, DefaultEdge, ModalLensGraphMouse>builder(vv)
+        ViewLensSupport.<AS, AI, ModalLensGraphMouse>builder(vv)
             .lensTransformer(
                 HyperbolicShapeTransformer.builder(lens)
                     .delegate(
@@ -208,7 +224,7 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
             .build();
 
     LensSupport<ModalLensGraphMouse> hyperbolicLayoutSupport =
-        LayoutLensSupport.<String, DefaultEdge, ModalLensGraphMouse>builder(vv)
+        LayoutLensSupport.<AS, AI, ModalLensGraphMouse>builder(vv)
             .lensTransformer(
                 HyperbolicTransformer.builder(lens)
                     .delegate(
@@ -224,7 +240,7 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
     lens = new Lens();
     lens.setMagnification(3.f);
     LensSupport<ModalLensGraphMouse> magnifyViewSupport =
-        ViewLensSupport.<String, DefaultEdge, ModalLensGraphMouse>builder(vv)
+        ViewLensSupport.<AS, AI, ModalLensGraphMouse>builder(vv)
             .lensTransformer(
                 MagnifyShapeTransformer.builder(lens)
                     .delegate(
@@ -234,7 +250,7 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
             .build();
 
     LensSupport<ModalLensGraphMouse> magnifyLayoutSupport =
-        LayoutLensSupport.<String, DefaultEdge, ModalLensGraphMouse>builder(vv)
+        LayoutLensSupport.<AS, AI, ModalLensGraphMouse>builder(vv)
             .lensTransformer(
                 MagnifyTransformer.builder(lens)
                     .delegate(

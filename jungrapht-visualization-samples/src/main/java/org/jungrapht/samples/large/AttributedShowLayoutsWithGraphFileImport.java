@@ -1,42 +1,20 @@
 package org.jungrapht.samples.large;
 
-import static java.util.Map.entry;
-import static org.jungrapht.visualization.util.Attributed.*;
-
-import java.awt.BasicStroke;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Paint;
-import java.awt.Stroke;
+import java.awt.*;
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-import javax.swing.Box;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JToggleButton;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import org.jgrapht.Graph;
-import org.jgrapht.Graphs;
 import org.jgrapht.alg.interfaces.VertexScoringAlgorithm;
-import org.jgrapht.alg.scoring.BetweennessCentrality;
-import org.jgrapht.alg.scoring.ClosenessCentrality;
-import org.jgrapht.alg.scoring.ClusteringCoefficient;
-import org.jgrapht.alg.scoring.HarmonicCentrality;
-import org.jgrapht.alg.scoring.PageRank;
+import org.jgrapht.alg.scoring.*;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
-import org.jgrapht.nio.*;
+import org.jgrapht.nio.BaseEventDrivenImporter;
+import org.jgrapht.nio.GraphImporter;
 import org.jgrapht.nio.csv.CSVImporter;
 import org.jgrapht.nio.dimacs.DIMACSImporter;
 import org.jgrapht.nio.dot.DOTImporter;
@@ -46,51 +24,47 @@ import org.jgrapht.nio.json.JSONImporter;
 import org.jungrapht.samples.spatial.RTreeVisualization;
 import org.jungrapht.samples.util.Colors;
 import org.jungrapht.samples.util.ControlHelpers;
-import org.jungrapht.samples.util.LayoutHelperDirectedGraphs;
+import org.jungrapht.samples.util.LayoutHelper;
 import org.jungrapht.samples.util.LensControlHelper;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.control.DefaultLensGraphMouse;
-import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.jungrapht.visualization.transform.HyperbolicTransformer;
-import org.jungrapht.visualization.transform.LayoutLensSupport;
-import org.jungrapht.visualization.transform.Lens;
-import org.jungrapht.visualization.transform.LensSupport;
-import org.jungrapht.visualization.transform.MagnifyTransformer;
+import org.jungrapht.visualization.transform.*;
 import org.jungrapht.visualization.transform.shape.HyperbolicShapeTransformer;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
 import org.jungrapht.visualization.transform.shape.ViewLensSupport;
+import org.jungrapht.visualization.util.Attributed.*;
 import org.jungrapht.visualization.util.LayoutAlgorithmTransition;
 import org.jungrapht.visualization.util.LayoutPaintable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Demonstrates several of the graph layout algorithms. Allows the user to interactively select one
- * of several graphs, loaded from files using JGrapht io, and one of several layouts, and visualizes
- * the combination.
+ * Demonstrates several of the graph layout algorithms. Allows the user to interactively select
+ * graphs loaded from files using JGrapht io, and one of several layouts, and visualizes the
+ * combination.
  *
  * <p>This application has been tested with the graphml sample files in
  * https://github.com/melaniewalsh/sample-social-network-datasets
  *
  * @author Tom Nelson
  */
-public class ShowLayoutsWithDirectedGraphFileImport extends JFrame {
+public class AttributedShowLayoutsWithGraphFileImport extends JFrame {
 
   private static final Logger log =
-      LoggerFactory.getLogger(ShowLayoutsWithDirectedGraphFileImport.class);
+      LoggerFactory.getLogger(AttributedShowLayoutsWithGraphFileImport.class);
 
   LayoutPaintable.BalloonRings balloonLayoutRings;
   LayoutPaintable.RadialRings radialLayoutRings;
   LayoutPaintable.LayoutBounds layoutBounds;
   JFileChooser fileChooser;
-
   VisualizationViewer<AS, AI> vv;
+
   Paint[] colorArray =
       new Paint[] {
         Color.red,
@@ -108,17 +82,15 @@ public class ShowLayoutsWithDirectedGraphFileImport extends JFrame {
 
   Function<AS, Paint> vertexFillPaintFunction = v -> Colors.getColor(v.getAttributeMap());
 
-  Function<AI, Paint> edgeDrawPaintFunction = e -> Colors.getColor(e.getAttributeMap());
+  public AttributedShowLayoutsWithGraphFileImport() {
 
-  Graph<AS, AI> graph =
-      GraphTypeBuilder.directed()
-          .vertexSupplier(new ASSupplier())
-          .allowingSelfLoops(true)
-          .allowingMultipleEdges(true)
-          .edgeSupplier(new AISupplier())
-          .buildGraph();
-
-  public ShowLayoutsWithDirectedGraphFileImport() {
+    Graph<AS, AI> graph =
+        GraphTypeBuilder.directed()
+            .vertexSupplier(new ASSupplier())
+            .allowingSelfLoops(true)
+            .allowingMultipleEdges(true)
+            .edgeSupplier(new AISupplier())
+            .buildGraph();
     JPanel container = new JPanel(new BorderLayout());
 
     final DefaultGraphMouse<AS, AI> graphMouse = new DefaultGraphMouse<>();
@@ -137,15 +109,20 @@ public class ShowLayoutsWithDirectedGraphFileImport extends JFrame {
               Map<String, String> map = vertex.getAttributeMap();
               return map.getOrDefault("label", map.getOrDefault("ID", "NONE"));
             });
+    vv.setEdgeToolTipFunction(Object::toString);
+    vv.getRenderContext().setVertexFillPaintFunction(vertexFillPaintFunction);
+
+    Function<AS, Paint> vertexDrawPaintFunction =
+        v -> vv.getSelectedVertexState().isSelected(v) ? Color.pink : Color.black;
     Function<AS, Stroke> vertexStrokeFunction =
         v ->
             vv.getSelectedVertexState().isSelected(v) ? new BasicStroke(8.f) : new BasicStroke(2.f);
     vv.getRenderContext().setVertexStrokeFunction(vertexStrokeFunction);
-    vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
+
     vv.scaleToLayout();
 
     container.add(vv.getComponent(), BorderLayout.CENTER);
-    LayoutHelperDirectedGraphs.Layouts[] combos = LayoutHelperDirectedGraphs.getCombos();
+    LayoutHelper.Layouts[] combos = LayoutHelper.getCombos();
     final JToggleButton animateLayoutTransition = new JToggleButton("Animate Layout Transition");
 
     final JComboBox layoutComboBox = new JComboBox(combos);
@@ -153,9 +130,9 @@ public class ShowLayoutsWithDirectedGraphFileImport extends JFrame {
         e ->
             SwingUtilities.invokeLater(
                 () -> {
-                  LayoutHelperDirectedGraphs.Layouts layoutType =
-                      (LayoutHelperDirectedGraphs.Layouts) layoutComboBox.getSelectedItem();
-                  LayoutAlgorithm<AS> layoutAlgorithm = layoutType.getLayoutAlgorithm();
+                  LayoutHelper.Layouts layoutType =
+                      (LayoutHelper.Layouts) layoutComboBox.getSelectedItem();
+                  LayoutAlgorithm layoutAlgorithm = layoutType.getLayoutAlgorithm();
                   vv.removePreRenderPaintable(balloonLayoutRings);
                   vv.removePreRenderPaintable(radialLayoutRings);
                   if (animateLayoutTransition.isSelected()) {
@@ -181,11 +158,11 @@ public class ShowLayoutsWithDirectedGraphFileImport extends JFrame {
                   vv.addPreRenderPaintable(new LayoutPaintable.LayoutBounds(vv));
                 }));
 
-    layoutComboBox.setSelectedItem(LayoutHelperDirectedGraphs.Layouts.FR_BH_VISITOR);
+    layoutComboBox.setSelectedItem(LayoutHelper.Layouts.FR_BH_VISITOR);
 
     // create a lens to share between the two hyperbolic transformers
     LayoutModel<AS> layoutModel = vv.getVisualizationModel().getLayoutModel();
-    Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
+    //    Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
     Lens lens = new Lens(); /* provides a Hyperbolic lens for the view */
     LensSupport<DefaultLensGraphMouse> hyperbolicViewSupport =
         ViewLensSupport.<AS, AI, DefaultLensGraphMouse>builder(vv)
@@ -278,21 +255,28 @@ public class ShowLayoutsWithDirectedGraphFileImport extends JFrame {
             File file = fileChooser.getSelectedFile();
             String fileName = file.getName();
             String suffix = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
-            GraphImporter importer;
+            GraphImporter<AS, AI> importer;
             switch (suffix) {
               case "graphml":
                 importer = new GraphMLImporter<>();
-                ((GraphMLImporter) importer).setSchemaValidation(false);
+                GraphMLImporter<AS, AI> graphMLImporter = (GraphMLImporter) importer;
+                graphMLImporter.setSchemaValidation(false);
                 break;
               case "gml":
                 importer = new GmlImporter<>();
+                GmlImporter<AS, AI> gmlImporter = (GmlImporter) importer;
+                gmlImporter.setVertexFactory(i -> new AS("" + i));
                 break;
               case "dot":
               case "gv":
                 importer = new DOTImporter<>();
+                DOTImporter<AS, AI> dotImporter = (DOTImporter) importer;
+                dotImporter.setVertexFactory(i -> new AS("" + i));
                 break;
               case "csv":
                 importer = new CSVImporter<>();
+                CSVImporter<AS, AI> csvImporter = (CSVImporter) importer;
+                csvImporter.setVertexFactory(i -> new AS("" + i));
                 break;
               case "col":
                 importer = new DIMACSImporter<>();
@@ -321,24 +305,12 @@ public class ShowLayoutsWithDirectedGraphFileImport extends JFrame {
                     edge.put(key, attribute.getValue());
                   });
             }
-            clear(graph);
             vv.getRenderContext().setVertexFillPaintFunction(vertexFillPaintFunction);
-            vv.getRenderContext().setEdgeDrawPaintFunction(edgeDrawPaintFunction);
-            vv.getRenderContext().setArrowFillPaintFunction(edgeDrawPaintFunction);
-            vv.getRenderContext().setArrowDrawPaintFunction(edgeDrawPaintFunction);
             try (InputStreamReader inputStreamReader = new FileReader(file)) {
               importer.importGraph(graph, inputStreamReader);
             } catch (Exception ex) {
               ex.printStackTrace();
             }
-            List<AS> sorted =
-                graph
-                    .vertexSet()
-                    .stream()
-                    .sorted(Comparator.comparingInt(v -> graph.degreeOf(v)))
-                    .collect(Collectors.toList());
-            sorted.forEach(v -> log.info("V: {} degree: {}", v, graph.degreeOf(v)));
-
             vv.getVisualizationModel().setGraph(graph);
             setTitle(
                 "Graph of "
@@ -359,9 +331,18 @@ public class ShowLayoutsWithDirectedGraphFileImport extends JFrame {
     closenessButton.addActionListener(event -> computeScores(new ClosenessCentrality<>(graph)));
     JButton clusteringButton = new JButton("Clustering");
     clusteringButton.addActionListener(event -> computeScores(new ClusteringCoefficient<>(graph)));
+    JButton eigenvectorButton = new JButton("Eigenvector");
+    eigenvectorButton.addActionListener(event -> computeScores(new EigenvectorCentrality<>(graph)));
+    JButton katzButton = new JButton("Katz");
+    katzButton.addActionListener(event -> computeScores(new KatzCentrality<>(graph)));
     JButton harmonicButton = new JButton("Harmonic");
     harmonicButton.addActionListener(event -> computeScores(new HarmonicCentrality<>(graph)));
     JButton noScores = new JButton("None");
+    noScores.addActionListener(
+        event -> {
+          vv.getRenderContext().setVertexFillPaintFunction(vertexFillPaintFunction);
+          vv.repaint();
+        });
 
     JPanel scoringGrid = new JPanel(new GridLayout(0, 2));
     scoringGrid.add(pageRankButton);
@@ -369,6 +350,8 @@ public class ShowLayoutsWithDirectedGraphFileImport extends JFrame {
     scoringGrid.add(closenessButton);
     scoringGrid.add(clusteringButton);
     scoringGrid.add(harmonicButton);
+    scoringGrid.add(eigenvectorButton);
+    scoringGrid.add(katzButton);
     scoringGrid.add(noScores);
 
     JPanel controlPanel = new JPanel(new GridLayout(2, 1));
@@ -387,7 +370,6 @@ public class ShowLayoutsWithDirectedGraphFileImport extends JFrame {
     JComponent bottom =
         ControlHelpers.getContainer(
             Box.createHorizontalBox(),
-            //            ControlHelpers.getZoomControls("Scale", vv),
             lensBox,
             ControlHelpers.getCenteredContainer(
                 "Effects", Box.createVerticalBox(), showRTree, animateLayoutTransition));
@@ -415,6 +397,15 @@ public class ShowLayoutsWithDirectedGraphFileImport extends JFrame {
     log.info("min:{}, max:{}, range:{}", min, max, range);
     double delta = range / colorArray.length;
     log.info("delta:{}", delta);
+    vv.getRenderContext()
+        .setVertexFillPaintFunction(
+            v -> {
+              if (scores.isEmpty() || !scores.containsKey(v)) return Color.red;
+              double score = scores.get(v);
+              double index = score / delta;
+              int idx = (int) Math.max(0, Math.min(colorArray.length - 1, index));
+              return colorArray[idx];
+            });
     vv.repaint();
   }
 
@@ -425,80 +416,7 @@ public class ShowLayoutsWithDirectedGraphFileImport extends JFrame {
     vertices.forEach(graph::removeVertex);
   }
 
-  /**
-   * these are vertex or edge types that have defined colors (the keys are the property values for
-   * the vertex/edge keys: VertexType and EdgeType)
-   */
-  public static Map<String, Paint> VERTEX_TYPE_TO_COLOR_MAP =
-      Map.ofEntries(
-          entry("Body", Color.blue),
-          entry("Entry", Colors.WEB_COLOR_MAP.get("DarkOrange")),
-          entry("Exit", Color.magenta),
-          entry("Switch", Color.cyan),
-          entry("Bad", Color.red),
-          entry("Entry-Nexus", Color.white),
-          entry("External", Color.green),
-          entry("Folder", Colors.WEB_COLOR_MAP.get("DarkOrange")),
-          entry("Fragment", Colors.WEB_COLOR_MAP.get("Purple")),
-          entry("Data", Color.pink));
-
-  /**
-   * these are vertex or edge types that have defined colors (the keys are the property values for
-   * the vertex/edge keys: VertexType and EdgeType)
-   */
-  public static Map<String, Paint> EDGE_TYPE_TO_COLOR_MAP =
-      Map.ofEntries(
-          entry("Entry", Color.gray), // white??
-          entry("Fall-Through", Color.blue),
-          entry("Conditional-Call", Colors.WEB_COLOR_MAP.get("DarkOrange")),
-          entry("Unconditional-Call", Colors.WEB_COLOR_MAP.get("DarkOrange")),
-          entry("Computed", Color.cyan),
-          entry("Indirection", Color.pink),
-          entry("Unconditional-Jump", Color.green),
-          entry("Conditional-Jump", Color.yellow.darker()),
-          entry("Terminator", Colors.WEB_COLOR_MAP.get("Purple")),
-          entry("Conditional-Return", Colors.WEB_COLOR_MAP.get("Purple")));
-
-  public static Paint getColor(Map<String, String> map) {
-    //        Map<String, String> map = attributed.getAttributeMap();
-    // if there is a 'VertexType' attribute key, use its value to choose a predefined color
-    if (map.containsKey("VertexType")) {
-      String typeValue = map.get("VertexType");
-      return VERTEX_TYPE_TO_COLOR_MAP.getOrDefault(typeValue, Color.blue);
-    }
-    // if there is an 'EdgeType' attribute key, use its value to choose a predefined color
-    if (map.containsKey("EdgeType")) {
-      String typeValue = map.get("EdgeType");
-      return EDGE_TYPE_TO_COLOR_MAP.getOrDefault(typeValue, Color.green);
-    }
-    // if there is a 'Color' attribute key, use its value (either a color name or an RGB hex string)
-    // to choose a color
-    if (map.containsKey("Color")) {
-      String colorName = map.get("Color");
-      if (Colors.WEB_COLOR_MAP.containsKey(colorName)) {
-        return Colors.WEB_COLOR_MAP.get(colorName);
-      }
-      // if the value matches an RGB hex string, turn that into a color
-      Color c = Colors.getHexColor(colorName);
-      if (c != null) {
-        return c;
-      }
-    }
-    // default value when nothing else matches
-    return Color.green;
-  }
-
-  private Collection getRoots(Graph graph) {
-    Set roots = new HashSet<>();
-    for (Object v : graph.vertexSet()) {
-      if (Graphs.predecessorListOf(graph, v).isEmpty()) {
-        roots.add(v);
-      }
-    }
-    return roots;
-  }
-
   public static void main(String[] args) {
-    new ShowLayoutsWithDirectedGraphFileImport();
+    new AttributedShowLayoutsWithGraphFileImport();
   }
 }

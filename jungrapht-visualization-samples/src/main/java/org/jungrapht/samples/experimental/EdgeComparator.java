@@ -5,7 +5,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.jungrapht.visualization.layout.algorithms.util.Attributed;
+import org.jungrapht.visualization.util.Attributed;
 
 public class EdgeComparator implements Comparator<Attributed<Integer>> {
 

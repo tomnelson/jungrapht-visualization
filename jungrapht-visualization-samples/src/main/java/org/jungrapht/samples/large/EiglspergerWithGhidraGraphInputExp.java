@@ -1,55 +1,23 @@
 package org.jungrapht.samples.large;
 
 import static java.util.Map.entry;
+import static org.jungrapht.visualization.util.Attributed.*;
 
-import java.awt.BasicStroke;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Paint;
-import java.awt.Stroke;
+import java.awt.*;
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import javax.swing.Box;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JToggleButton;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.alg.interfaces.VertexScoringAlgorithm;
-import org.jgrapht.alg.scoring.AlphaCentrality;
-import org.jgrapht.alg.scoring.BetweennessCentrality;
-import org.jgrapht.alg.scoring.ClosenessCentrality;
-import org.jgrapht.alg.scoring.ClusteringCoefficient;
-import org.jgrapht.alg.scoring.HarmonicCentrality;
-import org.jgrapht.alg.scoring.PageRank;
-import org.jgrapht.alg.util.Pair;
-import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.alg.scoring.*;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
-import org.jgrapht.nio.Attribute;
-import org.jgrapht.nio.AttributeType;
-import org.jgrapht.nio.DefaultAttribute;
+import org.jgrapht.nio.BaseEventDrivenImporter;
 import org.jgrapht.nio.GraphImporter;
 import org.jgrapht.nio.csv.CSVImporter;
 import org.jgrapht.nio.dimacs.DIMACSImporter;
@@ -57,7 +25,6 @@ import org.jgrapht.nio.dot.DOTImporter;
 import org.jgrapht.nio.gml.GmlImporter;
 import org.jgrapht.nio.graphml.GraphMLImporter;
 import org.jgrapht.nio.json.JSONImporter;
-import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.samples.spatial.RTreeVisualization;
 import org.jungrapht.samples.util.Colors;
 import org.jungrapht.samples.util.ControlHelpers;
@@ -68,18 +35,9 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.control.DefaultLensGraphMouse;
 import org.jungrapht.visualization.decorators.EdgeShape;
-import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.EdgePredicated;
-import org.jungrapht.visualization.layout.algorithms.EdgeSorting;
-import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.NormalizesFavoredEdge;
-import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.*;
 import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.jungrapht.visualization.transform.HyperbolicTransformer;
-import org.jungrapht.visualization.transform.LayoutLensSupport;
-import org.jungrapht.visualization.transform.Lens;
-import org.jungrapht.visualization.transform.LensSupport;
-import org.jungrapht.visualization.transform.MagnifyTransformer;
+import org.jungrapht.visualization.transform.*;
 import org.jungrapht.visualization.transform.shape.HyperbolicShapeTransformer;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
 import org.jungrapht.visualization.transform.shape.ViewLensSupport;
@@ -107,9 +65,7 @@ public class EiglspergerWithGhidraGraphInputExp extends JFrame {
   LayoutPaintable.RadialRings radialLayoutRings;
   LayoutPaintable.LayoutBounds layoutBounds;
   JFileChooser fileChooser;
-  Map<String, Map<String, Attribute>> vertexAttributes = new HashMap<>();
-  Map<DefaultEdge, Map<String, Attribute>> edgeAttributes = new HashMap<>();
-  VisualizationViewer<String, DefaultEdge> vv;
+  VisualizationViewer<AS, AI> vv;
   Paint[] colorArray =
       new Paint[] {
         Color.red,
@@ -125,43 +81,28 @@ public class EiglspergerWithGhidraGraphInputExp extends JFrame {
         Color.orange
       };
 
-  Function<String, Paint> vertexFillPaintFunction =
+  Function<AS, Paint> vertexFillPaintFunction =
       v -> {
         // try to parse from attributemap
-        Map<String, Attribute> map =
-            vertexAttributes
-                .getOrDefault(v, Collections.emptyMap())
-                .entrySet()
-                .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue()));
-        return Colors.getAttrColor(map);
+        Map<String, String> map = v.getAttributeMap();
+        return Colors.getColor(map);
       };
 
-  Function<DefaultEdge, Paint> edgeDrawPaintFunction =
-      e -> {
-        // try to parse from attributemap
-        Map<String, Attribute> map =
-            edgeAttributes
-                .getOrDefault(e, Collections.emptyMap())
-                .entrySet()
-                .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue()));
-        return Colors.getAttrColor(map);
-      };
+  Function<AI, Paint> edgeDrawPaintFunction = e -> Colors.getColor(e.getAttributeMap());
 
   public EiglspergerWithGhidraGraphInputExp() {
 
-    Graph<String, DefaultEdge> graph =
+    Graph<AS, AI> graph =
         GraphTypeBuilder.directed()
-            .edgeClass(DefaultEdge.class)
-            .vertexSupplier(SupplierUtil.createStringSupplier(1))
+            .vertexSupplier(new ASSupplier())
             .allowingSelfLoops(true)
             .allowingMultipleEdges(true)
-            .edgeSupplier(SupplierUtil.DEFAULT_EDGE_SUPPLIER)
+            .edgeSupplier(new AISupplier())
             .buildGraph();
+
     JPanel container = new JPanel(new BorderLayout());
 
-    final DefaultGraphMouse<Integer, DefaultEdge> graphMouse = new DefaultGraphMouse<>();
+    final DefaultGraphMouse<AS, AI> graphMouse = new DefaultGraphMouse<>();
 
     vv =
         VisualizationViewer.builder(graph)
@@ -171,33 +112,15 @@ public class EiglspergerWithGhidraGraphInputExp extends JFrame {
             .build();
     loadGraphFile(graph);
 
-    vv.setVertexToolTipFunction(vertex -> vertex + " " + vertexAttributes.get(vertex));
+    vv.setVertexToolTipFunction(Object::toString);
     vv.getRenderContext()
         .setVertexLabelFunction(
             vertex -> {
-              Map<String, Attribute> map =
-                  vertexAttributes.getOrDefault(vertex, Collections.emptyMap());
-              return map.getOrDefault(
-                      "Name",
-                      map.getOrDefault("ID", new DefaultAttribute(vertex, AttributeType.STRING)))
-                  .getValue();
+              Map<String, String> map = vertex.getAttributeMap();
+              return map.getOrDefault("Name", map.getOrDefault("ID", "NONE"));
             });
-    vv.setEdgeToolTipFunction(edge -> edgeAttributes.get(edge).toString());
-    //    vv.getRenderContext().setVertexFillPaintFunction(v -> Colors.getColor(vertexAttributes.get(v)));
-
-    //    vv.getRenderContext()
-    //        .setVertexShapeFunction(
-    //            v -> {
-    //              Graph<String, DefaultEdge> g = vv.getVisualizationModel().getGraph();
-    //              if (!g.containsVertex(v)) {
-    //                log.error("shapeFunction {} was not in {}", v, g.vertexSet());
-    //              }
-    //              int size = Math.max(5, 2 * (g.containsVertex(v) ? g.degreeOf(v) : 20));
-    //              return new Ellipse2D.Float(-size / 2.f, -size / 2.f, size, size);
-    //            });
-    //    Function<String, Paint> vertexDrawPaintFunction =
-    //        v -> vv.getSelectedVertexState().isSelected(v) ? Color.pink : Color.black;
-    Function<String, Stroke> vertexStrokeFunction =
+    vv.setEdgeToolTipFunction(Object::toString);
+    Function<AS, Stroke> vertexStrokeFunction =
         v ->
             vv.getSelectedVertexState().isSelected(v) ? new BasicStroke(8.f) : new BasicStroke(2.f);
     vv.getRenderContext().setVertexStrokeFunction(vertexStrokeFunction);
@@ -208,20 +131,10 @@ public class EiglspergerWithGhidraGraphInputExp extends JFrame {
     LayoutHelperDirectedGraphs.Layouts[] combos = LayoutHelperDirectedGraphs.getCombos();
     final JToggleButton animateLayoutTransition = new JToggleButton("Animate Layout Transition");
 
-    final Predicate<DefaultEdge> favoredEdgePredicate =
+    final Predicate<AI> favoredEdgePredicate =
         e ->
-            "Fall-Through"
-                    .equals(
-                        edgeAttributes
-                            .getOrDefault(e, Collections.emptyMap())
-                            .get("EdgeType")
-                            .getValue())
-                || "Unconditional-Jump"
-                    .equals(
-                        edgeAttributes
-                            .getOrDefault(e, Collections.emptyMap())
-                            .get("EdgeType")
-                            .getValue());
+            "Fall-Through".equals(e.get("EdgeType"))
+                || "Unconditional-Jump".equals(e.get("EdgeType"));
 
     final JComboBox layoutComboBox = new JComboBox(combos);
     layoutComboBox.addActionListener(
@@ -248,15 +161,14 @@ public class EiglspergerWithGhidraGraphInputExp extends JFrame {
                                     "Indirection",
                                     "Unconditional-Jump",
                                     "Terminator",
-                                    "Conditional-Return"),
-                                edgeAttributes));
+                                    "Conditional-Return")));
                   }
                   if (layoutAlgorithm instanceof NormalizesFavoredEdge) {
-                    ((NormalizesFavoredEdge<DefaultEdge>) layoutAlgorithm)
+                    ((NormalizesFavoredEdge<AI>) layoutAlgorithm)
                         .setFavoredEdgePredicate(favoredEdgePredicate);
                   }
                   if (layoutAlgorithm instanceof EdgePredicated) {
-                    ((EdgePredicated<DefaultEdge>) layoutAlgorithm)
+                    ((EdgePredicated<AI>) layoutAlgorithm)
                         .setEdgePredicate(new EdgePredicate(graph));
                   }
                   if (animateLayoutTransition.isSelected()) {
@@ -285,11 +197,11 @@ public class EiglspergerWithGhidraGraphInputExp extends JFrame {
     layoutComboBox.setSelectedItem(LayoutHelperDirectedGraphs.Layouts.FR_BH_VISITOR);
 
     // create a lens to share between the two hyperbolic transformers
-    LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
+    LayoutModel<AS> layoutModel = vv.getVisualizationModel().getLayoutModel();
     Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
     Lens lens = new Lens(); /* provides a Hyperbolic lens for the view */
     LensSupport<DefaultLensGraphMouse> hyperbolicViewSupport =
-        ViewLensSupport.<String, DefaultEdge, DefaultLensGraphMouse>builder(vv)
+        ViewLensSupport.<AS, AI, DefaultLensGraphMouse>builder(vv)
             .lensTransformer(
                 HyperbolicShapeTransformer.builder(lens)
                     .delegate(
@@ -301,7 +213,7 @@ public class EiglspergerWithGhidraGraphInputExp extends JFrame {
             .build();
 
     LensSupport<DefaultLensGraphMouse> hyperbolicLayoutSupport =
-        LayoutLensSupport.<String, DefaultEdge, DefaultLensGraphMouse>builder(vv)
+        LayoutLensSupport.<AS, AI, DefaultLensGraphMouse>builder(vv)
             .lensTransformer(
                 HyperbolicTransformer.builder(lens)
                     .delegate(
@@ -317,7 +229,7 @@ public class EiglspergerWithGhidraGraphInputExp extends JFrame {
     lens = new Lens();
     lens.setMagnification(3.f);
     LensSupport<DefaultLensGraphMouse> magnifyViewSupport =
-        ViewLensSupport.<String, DefaultEdge, DefaultLensGraphMouse>builder(vv)
+        ViewLensSupport.<AS, AI, DefaultLensGraphMouse>builder(vv)
             .lensTransformer(
                 MagnifyShapeTransformer.builder(lens)
                     .delegate(
@@ -329,7 +241,7 @@ public class EiglspergerWithGhidraGraphInputExp extends JFrame {
             .build();
 
     LensSupport<DefaultLensGraphMouse> magnifyLayoutSupport =
-        LayoutLensSupport.<String, DefaultEdge, DefaultLensGraphMouse>builder(vv)
+        LayoutLensSupport.<AS, AI, DefaultLensGraphMouse>builder(vv)
             .lensTransformer(
                 MagnifyTransformer.builder(lens)
                     .delegate(
@@ -382,70 +294,47 @@ public class EiglspergerWithGhidraGraphInputExp extends JFrame {
             GraphImporter importer;
             switch (suffix) {
               case "graphml":
-                importer = new GraphMLImporter();
+                importer = new GraphMLImporter<>();
                 ((GraphMLImporter) importer).setSchemaValidation(false);
-                GraphMLImporter gmlImporter = (GraphMLImporter) importer;
-                gmlImporter.addVertexAttributeConsumer(
-                    (BiConsumer<Pair<String, String>, Attribute>)
-                        (pair, attribute) -> {
-                          String vertex = pair.getFirst();
-                          String key = pair.getSecond();
-                          vertexAttributes
-                              .computeIfAbsent(vertex, m -> new HashMap<>())
-                              .put(key, attribute);
-                        });
-                gmlImporter.addEdgeAttributeConsumer(
-                    (BiConsumer<Pair<DefaultEdge, String>, Attribute>)
-                        (pair, attribute) -> {
-                          DefaultEdge edge = pair.getFirst();
-                          String key = pair.getSecond();
-                          edgeAttributes
-                              .computeIfAbsent(edge, m -> new HashMap<>())
-                              .put(key, attribute);
-                        });
                 break;
               case "gml":
-                importer = new GmlImporter();
+                importer = new GmlImporter<>();
                 break;
               case "dot":
               case "gv":
-                importer = new DOTImporter();
+                importer = new DOTImporter<>();
                 break;
               case "csv":
-                importer = new CSVImporter();
+                importer = new CSVImporter<>();
                 break;
               case "col":
-                importer = new DIMACSImporter();
+                importer = new DIMACSImporter<>();
                 break;
               case "json":
-                JSONImporter jsonImporter = new JSONImporter();
-                jsonImporter.addVertexAttributeConsumer(
-                    (BiConsumer<Pair<String, String>, Attribute>)
-                        (pair, attribute) -> {
-                          String vertex = pair.getFirst();
-                          String key = pair.getSecond();
-                          vertexAttributes
-                              .computeIfAbsent(vertex, m -> new HashMap<>())
-                              .put(key, attribute);
-                        });
-                jsonImporter.addEdgeAttributeConsumer(
-                    (BiConsumer<Pair<DefaultEdge, String>, Attribute>)
-                        (pair, attribute) -> {
-                          DefaultEdge edge = pair.getFirst();
-                          String key = pair.getSecond();
-                          edgeAttributes
-                              .computeIfAbsent(edge, m -> new HashMap<>())
-                              .put(key, attribute);
-                        });
-
-                importer = jsonImporter;
+                importer = new JSONImporter<>();
                 break;
               default:
                 JOptionPane.showMessageDialog(vv.getComponent(), "Unable to open " + fileName);
                 return;
             }
             clear(graph);
-            vertexAttributes.clear();
+            if (importer instanceof BaseEventDrivenImporter) {
+              BaseEventDrivenImporter<AS, AI> baseEventDrivenImporter =
+                  (BaseEventDrivenImporter<AS, AI>) importer;
+              baseEventDrivenImporter.addVertexAttributeConsumer(
+                  (pair, attribute) -> {
+                    AS vertex = pair.getFirst();
+                    String key = pair.getSecond();
+                    vertex.put(key, attribute.getValue());
+                  });
+              baseEventDrivenImporter.addEdgeAttributeConsumer(
+                  (pair, attribute) -> {
+                    AI edge = pair.getFirst();
+                    String key = pair.getSecond();
+                    edge.put(key, attribute.getValue());
+                  });
+            }
+            clear(graph);
             vv.getRenderContext().setVertexFillPaintFunction(vertexFillPaintFunction);
             vv.getRenderContext().setEdgeDrawPaintFunction(edgeDrawPaintFunction);
             vv.getRenderContext().setArrowFillPaintFunction(edgeDrawPaintFunction);
@@ -471,8 +360,6 @@ public class EiglspergerWithGhidraGraphInputExp extends JFrame {
     pageRankButton.addActionListener(event -> computeScores(new PageRank(graph)));
     JButton betweennessButton = new JButton("Betweenness");
     betweennessButton.addActionListener(event -> computeScores(new BetweennessCentrality<>(graph)));
-    JButton alphaButton = new JButton("Alpha");
-    alphaButton.addActionListener(event -> computeScores(new AlphaCentrality<>(graph)));
     JButton closenessButton = new JButton("Closeness");
     closenessButton.addActionListener(event -> computeScores(new ClosenessCentrality<>(graph)));
     JButton clusteringButton = new JButton("Clustering");
@@ -491,7 +378,6 @@ public class EiglspergerWithGhidraGraphInputExp extends JFrame {
     JPanel scoringGrid = new JPanel(new GridLayout(0, 2));
     scoringGrid.add(pageRankButton);
     scoringGrid.add(betweennessButton);
-    //    scoringGrid.add(alphaButton);
     scoringGrid.add(closenessButton);
     scoringGrid.add(clusteringButton);
     scoringGrid.add(harmonicButton);
@@ -532,72 +418,54 @@ public class EiglspergerWithGhidraGraphInputExp extends JFrame {
     setVisible(true);
   }
 
-  private void loadGraphFile(Graph<String, DefaultEdge> graph) {
+  private void loadGraphFile(Graph<AS, AI> graph) {
     String fileName = "graph.json";
     String suffix = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
     GraphImporter importer;
     switch (suffix) {
       case "graphml":
-        importer = new GraphMLImporter();
+        importer = new GraphMLImporter<>();
         ((GraphMLImporter) importer).setSchemaValidation(false);
-        GraphMLImporter gmlImporter = (GraphMLImporter) importer;
-        gmlImporter.addVertexAttributeConsumer(
-            (BiConsumer<Pair<String, String>, Attribute>)
-                (pair, attribute) -> {
-                  String vertex = pair.getFirst();
-                  String key = pair.getSecond();
-                  vertexAttributes
-                      .computeIfAbsent(vertex, m -> new HashMap<>())
-                      .put(key, attribute);
-                });
-        gmlImporter.addEdgeAttributeConsumer(
-            (BiConsumer<Pair<DefaultEdge, String>, Attribute>)
-                (pair, attribute) -> {
-                  DefaultEdge edge = pair.getFirst();
-                  String key = pair.getSecond();
-                  edgeAttributes.computeIfAbsent(edge, m -> new HashMap<>()).put(key, attribute);
-                });
         break;
       case "gml":
-        importer = new GmlImporter();
+        importer = new GmlImporter<>();
         break;
       case "dot":
       case "gv":
-        importer = new DOTImporter();
+        importer = new DOTImporter<>();
         break;
       case "csv":
-        importer = new CSVImporter();
+        importer = new CSVImporter<>();
         break;
       case "col":
-        importer = new DIMACSImporter();
+        importer = new DIMACSImporter<>();
         break;
       case "json":
-        JSONImporter jsonImporter = new JSONImporter();
-        jsonImporter.addVertexAttributeConsumer(
-            (BiConsumer<Pair<String, String>, Attribute>)
-                (pair, attribute) -> {
-                  String vertex = pair.getFirst();
-                  String key = pair.getSecond();
-                  vertexAttributes
-                      .computeIfAbsent(vertex, m -> new HashMap<>())
-                      .put(key, attribute);
-                });
-        jsonImporter.addEdgeAttributeConsumer(
-            (BiConsumer<Pair<DefaultEdge, String>, Attribute>)
-                (pair, attribute) -> {
-                  DefaultEdge edge = pair.getFirst();
-                  String key = pair.getSecond();
-                  edgeAttributes.computeIfAbsent(edge, m -> new HashMap<>()).put(key, attribute);
-                });
-
-        importer = jsonImporter;
+        importer = new JSONImporter<>();
         break;
       default:
         JOptionPane.showMessageDialog(vv.getComponent(), "Unable to open " + fileName);
         return;
     }
     clear(graph);
-    vertexAttributes.clear();
+    if (importer instanceof BaseEventDrivenImporter) {
+      BaseEventDrivenImporter<AS, AI> baseEventDrivenImporter =
+          (BaseEventDrivenImporter<AS, AI>) importer;
+      baseEventDrivenImporter.addVertexAttributeConsumer(
+          (pair, attribute) -> {
+            AS vertex = pair.getFirst();
+            String key = pair.getSecond();
+            vertex.put(key, attribute.getValue());
+          });
+      baseEventDrivenImporter.addEdgeAttributeConsumer(
+          (pair, attribute) -> {
+            AI edge = pair.getFirst();
+            String key = pair.getSecond();
+            edge.put(key, attribute.getValue());
+          });
+    }
+    clear(graph);
+    //    vertexAttributes.clear();
     vv.getRenderContext().setVertexFillPaintFunction(vertexFillPaintFunction);
     vv.getRenderContext().setEdgeDrawPaintFunction(edgeDrawPaintFunction);
     vv.getRenderContext().setArrowFillPaintFunction(edgeDrawPaintFunction);
@@ -620,8 +488,8 @@ public class EiglspergerWithGhidraGraphInputExp extends JFrame {
             + " edges");
   }
 
-  private void computeScores(VertexScoringAlgorithm<String, Double> scoring) {
-    Map<String, Double> scores = scoring.getScores();
+  private void computeScores(VertexScoringAlgorithm<AS, Double> scoring) {
+    Map<AS, Double> scores = scoring.getScores();
     if (scores.isEmpty()) return;
     double min = scores.values().stream().min(Double::compare).get();
     double max = scores.values().stream().max(Double::compare).get();
@@ -747,24 +615,23 @@ public class EiglspergerWithGhidraGraphInputExp extends JFrame {
     return roots;
   }
 
-  class EdgePredicate implements Predicate<DefaultEdge> {
-    Graph<String, DefaultEdge> graph;
+  class EdgePredicate implements Predicate<AI> {
+    Graph<AS, AI> graph;
 
-    EdgePredicate(Graph<String, DefaultEdge> graph) {
+    EdgePredicate(Graph<AS, AI> graph) {
       this.graph = graph;
     }
 
     @Override
-    public boolean test(DefaultEdge defaultEdge) {
-      Map<String, Attribute> map = edgeAttributes.get(defaultEdge);
-      if ("Fall-Through".equals(edgeAttributes.get(defaultEdge).get("EdgeType").getValue())) {
+    public boolean test(AI defaultEdge) {
+      if ("Fall-Through".equals(defaultEdge.get("EdgeType"))) {
         return true;
       }
-      String target = graph.getEdgeTarget(defaultEdge);
-      Collection<DefaultEdge> incomingEdges = graph.incomingEdgesOf(target);
-      for (DefaultEdge e : incomingEdges) {
-        Map<String, Attribute> map2 = edgeAttributes.get(e);
-        if ("Fall-Through".equals(edgeAttributes.get(e).get("EdgeType").getValue())) {
+      AS target = graph.getEdgeTarget(defaultEdge);
+      Collection<AI> incomingEdges = graph.incomingEdgesOf(target);
+      for (AI e : incomingEdges) {
+        //        Map<String, Attribute> map2 = edgeAttributes.get(e);
+        if ("Fall-Through".equals(e.get("EdgeType"))) {
           return false;
         }
       }
@@ -772,64 +639,56 @@ public class EiglspergerWithGhidraGraphInputExp extends JFrame {
     }
   }
 
-  static class EdgeComparator implements Comparator<DefaultEdge> {
+  static class EdgeComparator implements Comparator<AI> {
     private List<String> edgePriorityList;
-    Map<DefaultEdge, Map<String, Attribute>> edgeAttributes;
 
-    public EdgeComparator(
-        List<String> edgePriorityList, Map<DefaultEdge, Map<String, Attribute>> edgeAttributes) {
+    public EdgeComparator(List<String> edgePriorityList) {
       this.edgePriorityList = edgePriorityList;
-      this.edgeAttributes = edgeAttributes;
     }
 
     @Override
-    public int compare(DefaultEdge o1, DefaultEdge o2) {
+    public int compare(AI o1, AI o2) {
       return priority(o1).compareTo(priority(o2));
     }
 
-    Integer priority(DefaultEdge e) {
-      return edgePriorityList.indexOf(edgeAttributes.get(e).get("EdgeType").getValue());
+    Integer priority(AI e) {
+      return edgePriorityList.indexOf(e.get("EdgeType"));
     }
   }
 
-  static class VertexComparator implements Comparator<String> {
-    private Graph<String, DefaultEdge> graph;
-    private Map<DefaultEdge, Map<String, Attribute>> edgeAttributes;
+  static class VertexComparator implements Comparator<AS> {
+    private Graph<AS, AI> graph;
+    //    private Map<AI, Map<String, Attribute>> edgeAttributes;
 
-    public VertexComparator(
-        Graph<String, DefaultEdge> graph, Map<DefaultEdge, Map<String, Attribute>> edgeAttributes) {
+    public VertexComparator(Graph<AS, AI> graph) {
       this.graph = graph;
-      this.edgeAttributes = edgeAttributes;
+      //      this.edgeAttributes = edgeAttributes;
     }
 
     @Override
-    public int compare(String v1, String v2) {
+    public int compare(AS v1, AS v2) {
       boolean v1IsSpecial = false;
-      for (DefaultEdge edge : graph.incomingEdgesOf(v1)) {
-        if ("Fall-Through"
-            .equals(edgeAttributes.getOrDefault(edge, Collections.emptyMap()).get("EdgeType"))) {
+      for (AI edge : graph.incomingEdgesOf(v1)) {
+        if ("Fall-Through".equals(edge.get("EdgeType"))) {
           v1IsSpecial = true;
           break;
         }
       }
-      for (DefaultEdge edge : graph.outgoingEdgesOf(v1)) {
-        if ("Fall-Through"
-            .equals(edgeAttributes.getOrDefault(edge, Collections.emptyMap()).get("EdgeType"))) {
+      for (AI edge : graph.outgoingEdgesOf(v1)) {
+        if ("Fall-Through".equals(edge.get("EdgeType"))) {
           v1IsSpecial = true;
           break;
         }
       }
       boolean v2IsSpecial = false;
-      for (DefaultEdge edge : graph.incomingEdgesOf(v2)) {
-        if ("Fall-Through"
-            .equals(edgeAttributes.getOrDefault(edge, Collections.emptyMap()).get("EdgeType"))) {
+      for (AI edge : graph.incomingEdgesOf(v2)) {
+        if ("Fall-Through".equals(edge.get("EdgeType"))) {
           v2IsSpecial = true;
           break;
         }
       }
-      for (DefaultEdge edge : graph.outgoingEdgesOf(v1)) {
-        if ("Fall-Through"
-            .equals(edgeAttributes.getOrDefault(edge, Collections.emptyMap()).get("EdgeType"))) {
+      for (AI edge : graph.outgoingEdgesOf(v1)) {
+        if ("Fall-Through".equals(edge.get("EdgeType"))) {
           v2IsSpecial = true;
           break;
         }
