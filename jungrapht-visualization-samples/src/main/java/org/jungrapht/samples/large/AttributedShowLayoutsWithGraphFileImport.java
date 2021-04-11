@@ -2,8 +2,6 @@ package org.jungrapht.samples.large;
 
 import java.awt.*;
 import java.io.File;
-import java.io.FileReader;
-import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -13,19 +11,8 @@ import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.VertexScoringAlgorithm;
 import org.jgrapht.alg.scoring.*;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
-import org.jgrapht.nio.BaseEventDrivenImporter;
-import org.jgrapht.nio.GraphImporter;
-import org.jgrapht.nio.csv.CSVImporter;
-import org.jgrapht.nio.dimacs.DIMACSImporter;
-import org.jgrapht.nio.dot.DOTImporter;
-import org.jgrapht.nio.gml.GmlImporter;
-import org.jgrapht.nio.graphml.GraphMLImporter;
-import org.jgrapht.nio.json.JSONImporter;
 import org.jungrapht.samples.spatial.RTreeVisualization;
-import org.jungrapht.samples.util.Colors;
-import org.jungrapht.samples.util.ControlHelpers;
-import org.jungrapht.samples.util.LayoutHelper;
-import org.jungrapht.samples.util.LensControlHelper;
+import org.jungrapht.samples.util.*;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultGraphMouse;
@@ -253,68 +240,16 @@ public class AttributedShowLayoutsWithGraphFileImport extends JFrame {
           int option = fileChooser.showOpenDialog(vv.getComponent());
           if (option == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
-            String fileName = file.getName();
-            String suffix = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
-            GraphImporter<AS, AI> importer;
-            switch (suffix) {
-              case "graphml":
-                importer = new GraphMLImporter<>();
-                GraphMLImporter<AS, AI> graphMLImporter = (GraphMLImporter) importer;
-                graphMLImporter.setSchemaValidation(false);
-                break;
-              case "gml":
-                importer = new GmlImporter<>();
-                GmlImporter<AS, AI> gmlImporter = (GmlImporter) importer;
-                gmlImporter.setVertexFactory(i -> new AS("" + i));
-                break;
-              case "dot":
-              case "gv":
-                importer = new DOTImporter<>();
-                DOTImporter<AS, AI> dotImporter = (DOTImporter) importer;
-                dotImporter.setVertexFactory(i -> new AS("" + i));
-                break;
-              case "csv":
-                importer = new CSVImporter<>();
-                CSVImporter<AS, AI> csvImporter = (CSVImporter) importer;
-                csvImporter.setVertexFactory(i -> new AS("" + i));
-                break;
-              case "col":
-                importer = new DIMACSImporter<>();
-                break;
-              case "json":
-                importer = new JSONImporter<>();
-                break;
-              default:
-                JOptionPane.showMessageDialog(vv.getComponent(), "Unable to open " + fileName);
-                return;
-            }
-            clear(graph);
-            if (importer instanceof BaseEventDrivenImporter) {
-              BaseEventDrivenImporter<AS, AI> baseEventDrivenImporter =
-                  (BaseEventDrivenImporter<AS, AI>) importer;
-              baseEventDrivenImporter.addVertexAttributeConsumer(
-                  (pair, attribute) -> {
-                    AS vertex = pair.getFirst();
-                    String key = pair.getSecond();
-                    vertex.put(key, attribute.getValue());
-                  });
-              baseEventDrivenImporter.addEdgeAttributeConsumer(
-                  (pair, attribute) -> {
-                    AI edge = pair.getFirst();
-                    String key = pair.getSecond();
-                    edge.put(key, attribute.getValue());
-                  });
+            boolean loaded = ASAILoader.load(file, graph);
+            if (!loaded) {
+              JOptionPane.showMessageDialog(vv.getComponent(), "Unable to open " + file.getName());
+              return;
             }
             vv.getRenderContext().setVertexFillPaintFunction(vertexFillPaintFunction);
-            try (InputStreamReader inputStreamReader = new FileReader(file)) {
-              importer.importGraph(graph, inputStreamReader);
-            } catch (Exception ex) {
-              ex.printStackTrace();
-            }
             vv.getVisualizationModel().setGraph(graph);
             setTitle(
                 "Graph of "
-                    + fileName
+                    + file.getName()
                     + " with "
                     + graph.vertexSet().size()
                     + " vertices and "

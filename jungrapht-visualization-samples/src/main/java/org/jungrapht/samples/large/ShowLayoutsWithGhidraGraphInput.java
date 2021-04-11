@@ -5,8 +5,6 @@ import static org.jungrapht.visualization.util.Attributed.*;
 
 import java.awt.*;
 import java.io.File;
-import java.io.FileReader;
-import java.io.InputStreamReader;
 import java.util.*;
 import java.util.List;
 import java.util.function.Function;
@@ -17,19 +15,8 @@ import org.jgrapht.Graphs;
 import org.jgrapht.alg.interfaces.VertexScoringAlgorithm;
 import org.jgrapht.alg.scoring.*;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
-import org.jgrapht.nio.BaseEventDrivenImporter;
-import org.jgrapht.nio.GraphImporter;
-import org.jgrapht.nio.csv.CSVImporter;
-import org.jgrapht.nio.dimacs.DIMACSImporter;
-import org.jgrapht.nio.dot.DOTImporter;
-import org.jgrapht.nio.gml.GmlImporter;
-import org.jgrapht.nio.graphml.GraphMLImporter;
-import org.jgrapht.nio.json.JSONImporter;
 import org.jungrapht.samples.spatial.RTreeVisualization;
-import org.jungrapht.samples.util.Colors;
-import org.jungrapht.samples.util.ControlHelpers;
-import org.jungrapht.samples.util.LayoutHelperDirectedGraphs;
-import org.jungrapht.samples.util.LensControlHelper;
+import org.jungrapht.samples.util.*;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultGraphMouse;
@@ -104,7 +91,18 @@ public class ShowLayoutsWithGhidraGraphInput extends JFrame {
             .viewSize(new Dimension(900, 900))
             .graphMouse(graphMouse)
             .build();
-    loadGraphFile(graph);
+    if (!ASAILoader.load("graph.json", graph)) {
+      return;
+    }
+    vv.getVisualizationModel().setGraph(graph);
+    setTitle(
+        "Graph of "
+            + "graph.json"
+            + " with "
+            + graph.vertexSet().size()
+            + " vertices and "
+            + graph.edgeSet().size()
+            + " edges");
 
     vv.setVertexToolTipFunction(Object::toString);
     vv.getRenderContext()
@@ -284,65 +282,19 @@ public class ShowLayoutsWithGhidraGraphInput extends JFrame {
           int option = fileChooser.showOpenDialog(vv.getComponent());
           if (option == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
-            String fileName = file.getName();
-            String suffix = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
-            GraphImporter importer;
-            switch (suffix) {
-              case "graphml":
-                importer = new GraphMLImporter<>();
-                ((GraphMLImporter) importer).setSchemaValidation(false);
-                break;
-              case "gml":
-                importer = new GmlImporter<>();
-                break;
-              case "dot":
-              case "gv":
-                importer = new DOTImporter<>();
-                break;
-              case "csv":
-                importer = new CSVImporter<>();
-                break;
-              case "col":
-                importer = new DIMACSImporter<>();
-                break;
-              case "json":
-                importer = new JSONImporter<>();
-                break;
-              default:
-                JOptionPane.showMessageDialog(vv.getComponent(), "Unable to open " + fileName);
-                return;
+
+            if (!ASAILoader.load(file, graph)) {
+              JOptionPane.showMessageDialog(vv.getComponent(), "Unable to open " + file.getName());
+              return;
             }
-            clear(graph);
-            if (importer instanceof BaseEventDrivenImporter) {
-              BaseEventDrivenImporter<AS, AI> baseEventDrivenImporter =
-                  (BaseEventDrivenImporter<AS, AI>) importer;
-              baseEventDrivenImporter.addVertexAttributeConsumer(
-                  (pair, attribute) -> {
-                    AS vertex = pair.getFirst();
-                    String key = pair.getSecond();
-                    vertex.put(key, attribute.getValue());
-                  });
-              baseEventDrivenImporter.addEdgeAttributeConsumer(
-                  (pair, attribute) -> {
-                    AI edge = pair.getFirst();
-                    String key = pair.getSecond();
-                    edge.put(key, attribute.getValue());
-                  });
-            }
-            clear(graph);
             vv.getRenderContext().setVertexFillPaintFunction(vertexFillPaintFunction);
             vv.getRenderContext().setEdgeDrawPaintFunction(edgeDrawPaintFunction);
             vv.getRenderContext().setArrowFillPaintFunction(edgeDrawPaintFunction);
             vv.getRenderContext().setArrowDrawPaintFunction(edgeDrawPaintFunction);
-            try (InputStreamReader inputStreamReader = new FileReader(file)) {
-              importer.importGraph(graph, inputStreamReader);
-            } catch (Exception ex) {
-              ex.printStackTrace();
-            }
             vv.getVisualizationModel().setGraph(graph);
             setTitle(
                 "Graph of "
-                    + fileName
+                    + file.getName()
                     + " with "
                     + graph.vertexSet().size()
                     + " vertices and "
@@ -413,75 +365,6 @@ public class ShowLayoutsWithGhidraGraphInput extends JFrame {
     setVisible(true);
   }
 
-  private void loadGraphFile(Graph<AS, AI> graph) {
-    String fileName = "graph.json";
-    String suffix = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
-    GraphImporter importer;
-    switch (suffix) {
-      case "graphml":
-        importer = new GraphMLImporter<>();
-        ((GraphMLImporter) importer).setSchemaValidation(false);
-        break;
-      case "gml":
-        importer = new GmlImporter<>();
-        break;
-      case "dot":
-      case "gv":
-        importer = new DOTImporter<>();
-        break;
-      case "csv":
-        importer = new CSVImporter<>();
-        break;
-      case "col":
-        importer = new DIMACSImporter<>();
-        break;
-      case "json":
-        importer = new JSONImporter<>();
-        break;
-      default:
-        JOptionPane.showMessageDialog(vv.getComponent(), "Unable to open " + fileName);
-        return;
-    }
-    clear(graph);
-    if (importer instanceof BaseEventDrivenImporter) {
-      BaseEventDrivenImporter<AS, AI> baseEventDrivenImporter =
-          (BaseEventDrivenImporter<AS, AI>) importer;
-      baseEventDrivenImporter.addVertexAttributeConsumer(
-          (pair, attribute) -> {
-            AS vertex = pair.getFirst();
-            String key = pair.getSecond();
-            vertex.put(key, attribute.getValue());
-          });
-      baseEventDrivenImporter.addEdgeAttributeConsumer(
-          (pair, attribute) -> {
-            AI edge = pair.getFirst();
-            String key = pair.getSecond();
-            edge.put(key, attribute.getValue());
-          });
-    }
-    clear(graph);
-    vv.getRenderContext().setVertexFillPaintFunction(vertexFillPaintFunction);
-    vv.getRenderContext().setEdgeDrawPaintFunction(edgeDrawPaintFunction);
-    vv.getRenderContext().setArrowFillPaintFunction(edgeDrawPaintFunction);
-    vv.getRenderContext().setArrowDrawPaintFunction(edgeDrawPaintFunction);
-    try (InputStreamReader inputStreamReader =
-        new InputStreamReader(
-            ShowLayoutsWithGhidraGraphInput.class.getResourceAsStream("/" + fileName))) {
-      importer.importGraph(graph, inputStreamReader);
-    } catch (Exception ex) {
-      ex.printStackTrace();
-    }
-    vv.getVisualizationModel().setGraph(graph);
-    setTitle(
-        "Graph of "
-            + fileName
-            + " with "
-            + graph.vertexSet().size()
-            + " vertices and "
-            + graph.edgeSet().size()
-            + " edges");
-  }
-
   private void computeScores(VertexScoringAlgorithm<AS, Double> scoring) {
     Map<AS, Double> scores = scoring.getScores();
     if (scores.isEmpty()) return;
@@ -509,32 +392,6 @@ public class ShowLayoutsWithGhidraGraphInput extends JFrame {
     edges.forEach(graph::removeEdge);
     vertices.forEach(graph::removeVertex);
   }
-
-  //  LayoutModel getTreeLayoutPositions(
-  //      Graph tree, LayoutAlgorithm treeLayout, LayoutModel layoutModel) {
-  //    LayoutModel model =
-  //        LayoutModel.builder()
-  //            .size(layoutModel.getWidth(), layoutModel.getHeight())
-  //            .graph(tree)
-  //            .build();
-  ////    // connect any listeners from the layoutModel to the newly created model
-  ////    model
-  ////        .getLayoutStateChangeSupport()
-  ////        .getLayoutStateChangeListeners()
-  ////        .forEach(l -> model.getLayoutStateChangeSupport().addLayoutStateChangeListener(l));
-  ////    model
-  ////        .getLayoutSizeChangeSupport()
-  ////        .getLayoutSizeChangeListeners()
-  ////        .forEach(
-  ////            l ->
-  ////                model
-  ////                    .getLayoutSizeChangeSupport()
-  ////                    .addLayoutSizeChangeListener((LayoutSizeChange.Listener) l));
-  ////    //    layoutModel
-  ////    //    model.getLayoutStateChangeSupport().addLayoutStateChangeListener();
-  //    model.accept(treeLayout);
-  //    return model;
-  //  }
 
   /**
    * these are vertex or edge types that have defined colors (the keys are the property values for
