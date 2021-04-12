@@ -1,1 +1,1804 @@
-{"creator":"JGraphT JSON Exporter","version":"1","nodes":[{"id":"004035c0","Name":"FUN_004035c0","VertexType":"Entry"},{"id":"004035f7","Name":"LAB_004035f7","VertexType":"Body"},{"id":"004035ea","Name":"004035ea","VertexType":"Body"},{"id":"00403607","Name":"00403607","VertexType":"Body"},{"id":"004036e4","Name":"LAB_004036e4","VertexType":"Body"},{"id":"00403614","Name":"00403614","VertexType":"Body"},{"id":"00403720","Name":"LAB_00403720","VertexType":"Exit"},{"id":"00403632","Name":"LAB_00403632","VertexType":"Body"},{"id":"004036c4","Name":"LAB_004036c4","VertexType":"Body"},{"id":"00403649","Name":"00403649","VertexType":"Body"},{"id":"00403650","Name":"00403650","VertexType":"Body"},{"id":"004036db","Name":"LAB_004036db","VertexType":"Body"},{"id":"0040365d","Name":"0040365d","VertexType":"Body"},{"id":"004036c7","Name":"LAB_004036c7","VertexType":"Body"},{"id":"0040365f","Name":"0040365f","VertexType":"Body"},{"id":"00403692","Name":"LAB_00403692","VertexType":"Body"},{"id":"0040366a","Name":"0040366a","VertexType":"Body"},{"id":"00403673","Name":"00403673","VertexType":"Body"},{"id":"0040367d","Name":"0040367d","VertexType":"Body"},{"id":"00403684","Name":"00403684","VertexType":"Switch"},{"id":"0040368f","Name":"0040368f","VertexType":"Body"},{"id":"0040369d","Name":"0040369d","VertexType":"Body"},{"id":"004036b8","Name":"LAB_004036b8","VertexType":"Body"},{"id":"004036a8","Name":"004036a8","VertexType":"Body"},{"id":"004036b5","Name":"004036b5","VertexType":"Body"},{"id":"00403737","Name":"LAB_00403737","VertexType":"Body"},{"id":"004036c2","Name":"004036c2","VertexType":"Body"},{"id":"0040372a","Name":"LAB_0040372a","VertexType":"Body"},{"id":"004036d5","Name":"004036d5","VertexType":"Body"},{"id":"004036d9","Name":"004036d9","VertexType":"Body"},{"id":"004036fc","Name":"LAB_004036fc","VertexType":"Body"},{"id":"004036ea","Name":"004036ea","VertexType":"Body"},{"id":"00403710","Name":"LAB_00403710","VertexType":"Body"},{"id":"00403703","Name":"00403703","VertexType":"Body"},{"id":"00403747","Name":"00403747","VertexType":"Body"},{"id":"00403754","Name":"00403754","VertexType":"Exit"}],"edges":[{"id":"1","source":"004035c0","target":"004035f7","EdgeType":"Conditional-Jump","Name":"4"},{"id":"2","source":"004035c0","target":"004035ea","EdgeType":"Fall-Through","Name":"1"},{"id":"3","source":"004035ea","target":"004035f7","EdgeType":"Fall-Through","Name":"1"},{"id":"4","source":"004035f7","target":"00403607","EdgeType":"Fall-Through","Name":"1"},{"id":"5","source":"00403607","target":"004036e4","EdgeType":"Conditional-Jump","Name":"4"},{"id":"6","source":"00403607","target":"00403614","EdgeType":"Fall-Through","Name":"1"},{"id":"7","source":"00403614","target":"00403720","EdgeType":"Conditional-Jump","Name":"4"},{"id":"8","source":"00403614","target":"00403632","EdgeType":"Fall-Through","Name":"1"},{"id":"9","source":"00403632","target":"004036c4","EdgeType":"Conditional-Jump","Name":"4"},{"id":"10","source":"00403632","target":"00403649","EdgeType":"Fall-Through","Name":"1"},{"id":"11","source":"00403649","target":"00403650","EdgeType":"Fall-Through","Name":"1"},{"id":"12","source":"00403650","target":"004036db","EdgeType":"Conditional-Jump","Name":"4"},{"id":"13","source":"00403650","target":"0040365d","EdgeType":"Fall-Through","Name":"1"},{"id":"14","source":"0040365d","target":"004036c7","EdgeType":"Conditional-Jump","Name":"4"},{"id":"15","source":"0040365d","target":"0040365f","EdgeType":"Fall-Through","Name":"1"},{"id":"16","source":"0040365f","target":"00403692","EdgeType":"Conditional-Jump","Name":"4"},{"id":"17","source":"0040365f","target":"0040366a","EdgeType":"Fall-Through","Name":"1"},{"id":"18","source":"0040366a","target":"00403692","EdgeType":"Conditional-Jump","Name":"4"},{"id":"19","source":"0040366a","target":"00403673","EdgeType":"Fall-Through","Name":"1"},{"id":"20","source":"00403673","target":"0040367d","EdgeType":"Fall-Through","Name":"1"},{"id":"21","source":"0040367d","target":"00403692","EdgeType":"Conditional-Jump","Name":"4"},{"id":"22","source":"0040367d","target":"00403684","EdgeType":"Fall-Through","Name":"1"},{"id":"23","source":"00403684","target":"0040368f","EdgeType":"Fall-Through","Name":"1"},{"id":"24","source":"0040368f","target":"00403692","EdgeType":"Fall-Through","Name":"1"},{"id":"25","source":"00403692","target":"0040369d","EdgeType":"Fall-Through","Name":"1"},{"id":"26","source":"0040369d","target":"004036b8","EdgeType":"Conditional-Jump","Name":"4"},{"id":"27","source":"0040369d","target":"004036a8","EdgeType":"Fall-Through","Name":"1"},{"id":"28","source":"004036a8","target":"004036b5","EdgeType":"Fall-Through","Name":"1"},{"id":"29","source":"004036b5","target":"004036b8","EdgeType":"Fall-Through","Name":"1"},{"id":"30","source":"004036b8","target":"00403737","EdgeType":"Conditional-Jump","Name":"4"},{"id":"31","source":"004036b8","target":"004036c2","EdgeType":"Fall-Through","Name":"1"},{"id":"32","source":"004036c2","target":"0040372a","EdgeType":"Unconditional-Jump","Name":"3"},{"id":"33","source":"004036c4","target":"004036c7","EdgeType":"Fall-Through","Name":"1"},{"id":"34","source":"004036c7","target":"00403632","EdgeType":"Conditional-Jump","Name":"4"},{"id":"35","source":"004036c7","target":"004036d5","EdgeType":"Fall-Through","Name":"1"},{"id":"36","source":"004036d5","target":"00403720","EdgeType":"Conditional-Jump","Name":"4"},{"id":"37","source":"004036d5","target":"004036d9","EdgeType":"Fall-Through","Name":"1"},{"id":"38","source":"004036d9","target":"004036fc","EdgeType":"Unconditional-Jump","Name":"3"},{"id":"39","source":"004036db","target":"004036fc","EdgeType":"Unconditional-Jump","Name":"3"},{"id":"40","source":"004036e4","target":"00403720","EdgeType":"Conditional-Jump","Name":"4"},{"id":"41","source":"004036e4","target":"004036ea","EdgeType":"Fall-Through","Name":"1"},{"id":"42","source":"004036ea","target":"004036fc","EdgeType":"Fall-Through","Name":"1"},{"id":"43","source":"004036fc","target":"00403710","EdgeType":"Conditional-Jump","Name":"4"},{"id":"44","source":"004036fc","target":"00403703","EdgeType":"Fall-Through","Name":"1"},{"id":"45","source":"00403703","target":"00403710","EdgeType":"Fall-Through","Name":"1"},{"id":"46","source":"00403710","target":"00403720","EdgeType":"Fall-Through","Name":"1"},{"id":"47","source":"0040372a","target":"00403737","EdgeType":"Fall-Through","Name":"1"},{"id":"48","source":"00403737","target":"00403747","EdgeType":"Fall-Through","Name":"1"},{"id":"49","source":"00403747","target":"00403754","EdgeType":"Fall-Through","Name":"1"}]}
+{
+  "nodes" : [
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 0,
+      "label" : "Salah Abdeslam",
+      "type" : "person",
+      "alias" : "",
+      "born" : 1989,
+      "status" : "prison",
+      "role" : "",
+      "nationality" : "French",
+      "address" : "",
+      "rented_by" : "",
+      "rental_period" : "",
+      "discovered" : "",
+      "text" : "In the months before the attack, Abdeslam leads candidate terrorists from Budapest and the German Ulm, rents the safehouse in Alfortville and also buys the materials to make the bomb belts. On November 13 he is at the wheel of the Renault Clio that takes the terrorists to the Stade de France. It was probably his intention to have his bombshell explode in the 18th arrondissement, but a technical defect strikes a spanner in the works. His Brussels friends Mohamed Amri & lt; / span & gt; and Hamza Attou come to pick him up in Paris that night. For a long time Abdeslam was the most wanted man in Europe. Eventually, on 18 March of this year, he was wounded and arrested during a police raid in Sint-Jans-Molenbeek.",
+      "image" : "salah.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 1,
+      "label" : "Mohamed Belkaïd",
+      "type" : "person",
+      "alias" : "Samir Bouzid",
+      "born" : 1980,
+      "status" : "deceased",
+      "role" : "",
+      "nationality" : "Algerian",
+      "address" : "",
+      "rented_by" : "",
+      "rental_period" : "",
+      "discovered" : "",
+      "text" : "In early September, the Keleti station in Budapest will be flooded by refugees from the Middle East. In this refugee mass are also Mohamed Belkaid and bomb maker Najim Laachraoui. On 9 September, Salah Abdeslam picks up the two in Budapest and brings them to our country. In the days following the attacks, Belkaid transfers money through an intermediary to coordinator Abdelhamid Abaaoud who is still in Paris. On 15 March Belkaid is killed by a sniper of the police during a raid in the safe house of. In that raid, Salah Abdeslam and Sofiane Ayari can escape.",
+      "image" : "belkaid.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 2,
+      "label" : "Najim Laachraoui",
+      "type" : "person",
+      "alias" : "Soufiane Kayal",
+      "born" : 1991,
+      "status" : "deceased",
+      "role" : "bomb_maker",
+      "nationality" : "Belgian-Morocan",
+      "address" : "",
+      "rented_by" : "",
+      "rental_period" : "",
+      "discovered" : "",
+      "text" : "Laachraoui will go to Syria in 2013. Two years later he travels together with Mohamed Belkaid in September between the flow of refugees from Syria to the Keleti station in Budapest, where he is picked up by Salah Abdeslam in a Mercedes C200. Najim Laachraoui is the bomb maker of the terror cell - the bomb belts used in the attacks in Paris and Brussels are by his hand. On March 22, 2016, Najim Laachraoui detonates his bombbelt in the departure hall of Zaventem.",
+      "image" : "laachraoui.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 3,
+      "label" : "Mohamed Bakkali",
+      "type" : "person",
+      "alias" : "Fernando Castillo",
+      "born" : 1987,
+      "status" : "prison",
+      "role" : "",
+      "nationality" : "Belgian",
+      "address" : "",
+      "rented_by" : "",
+      "rental_period" : "",
+      "discovered" : "",
+      "text" : "Mohamed Bakkali plays an important logistical role in the terror cell. He is the tenant of the safe houses in Auvelais and Schaerbeek, and also provides many nightly transports of people from the terror cell. The BMW that Bakkali rents is regularly spotted at the safehouses of the group. On November 26, the police charges Bakkali. In his home, the investigators find a video that shows that the house of a nuclear top man is being filmed. The terrorist cell probably played with the idea of kidnapping the man.",
+      "image" : "bakkali.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 4,
+      "label" : "Osama Krayem",
+      "type" : "person",
+      "alias" : "Samir Sakire, NaÃ¯m Al-Hamed",
+      "born" : 1992,
+      "status" : "prison",
+      "role" : "",
+      "nationality" : "Swedish",
+      "address" : "",
+      "rented_by" : "",
+      "rental_period" : "",
+      "discovered" : "",
+      "text" : "Krayem, together with Sofiane Ayari and Ahmad Alkald by Salah Abdeslam, is picked up in Ulm in Germany. On the day of the attacks in Paris he travels to Amsterdam together with the same Ayari. What they were going to do there is still unclear. Krayem's DNA has been found in various safehouses of the terror cell. The Swedish Krayem also plays a role in the attacks in Brussels. On surveillance footage you can see that he is talking to Khalid El Bakraoui in Petillon metro station, who takes the metro a little later and blows himself up in the Maalbeek metro station. Police forces can pick up Osama Krayem in Laeken on 8 April this year.",
+      "image" : "krayem.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 5,
+      "label" : "Sofiane Ayari",
+      "type" : "person",
+      "alias" : "Amine Choukri, Monir Alhaj Hamed",
+      "born" : 1987,
+      "status" : "prison",
+      "role" : "",
+      "nationality" : "Belgian",
+      "address" : "",
+      "rented_by" : "",
+      "rental_period" : "",
+      "discovered" : "",
+      "text" : "It is Salah Abdeslam who brings Sofiane Ayari with Osama Krayem and Ahmad Alkahld to Belgium from the German Ulm. On the crucial 13th of November Ayari and Krayem are also spotted together in Amsterdam. After the attacks in Paris Ayari stays under the radar for a long time and travels in the wake of Salah Abdeslam. The two escape the raid on the safe house of Vorst - where Mohamed Belkaïd lives. Abdeslam and Ayari are finally picked up together in Molenbeek on 19 March.",
+      "image" : "x.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 6,
+      "label" : "Brahim Abdeslam",
+      "type" : "person",
+      "alias" : "",
+      "born" : 1984,
+      "status" : "deceased",
+      "role" : "kamikaze terrassen",
+      "nationality" : "French",
+      "address" : "",
+      "rented_by" : "",
+      "rental_period" : "",
+      "discovered" : "",
+      "text" : "In the early morning of 12 November, Brahim Abdeslam drives to Paris via the safe house. Salah's older brother is at the wheel of the Seat Leon that he has rented and will be used during the attacks. Brahim, together with Abaaoud and Akrouh, is in command of the raid on the Paris bars and terraces on 13 November. He is the only one of his group to detonate a bombing belt in one of the bars, Comptoir Voltaire.",
+      "image" : "brahim.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 7,
+      "label" : "Abdelhamid Abaaoud",
+      "type" : "person",
+      "alias" : "",
+      "born" : 1987,
+      "status" : "deceased",
+      "role" : "kamikaze terrassen",
+      "nationality" : "Belgian-Morocan",
+      "address" : "",
+      "rented_by" : "",
+      "rental_period" : "",
+      "discovered" : "",
+      "text" : "Abaaoud is the coordinator of the attacks in Paris. Since 2014, the security services all over the world had the suspicion that he would be the 'evil genius' behind a series of attacks from Syria Europe. He is also the one who planned the foiled attacks in Verviers. And yet Abaaoud remained elusive all that time. In January 2015, he can escape from Athens in an ambush of the Greek and Belgian police, who received back support from the CIA. Abaaoud flees back to Syria. In August 2015 he briefly turns up in Hungary, to travel to our country from there. On 13 November, Abaaoud will take part in the raid on the Parisian terraces, together with Brahim Abdeslam and his Molenbeek companion Chakib Akrouh. After the attacks, he joined forces with Akrouh in a safe house in Saint-Denis, where they were killed on 18 November by a raid of the French special forces.",
+      "image" : "abaaoud.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 8,
+      "label" : "Chakib Akrouh",
+      "type" : "person",
+      "alias" : "",
+      "born" : 1990,
+      "status" : "deceased",
+      "role" : "kamikaze terrassen",
+      "nationality" : "Belgian-Morocan",
+      "address" : "",
+      "rented_by" : "",
+      "rental_period" : "",
+      "discovered" : "",
+      "text" : "Together with Brahim Abdeslam and Abdelhamid Abaaoud, Chakib Akrouh is responsible for the attacks on the Paris bars and terraces on 13 November. Akrouh manages to escape and is killed a few days later, on November 18, with Abaaoud at a French police raid on a safe house in Saint-Denis.",
+      "image" : "akrouh.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 9,
+      "label" : "Omar Ismail Mostefai",
+      "type" : "person",
+      "alias" : "",
+      "born" : 1985,
+      "status" : "deceased",
+      "role" : "kamikaze Bataclan",
+      "nationality" : "French",
+      "address" : "",
+      "rented_by" : "",
+      "rental_period" : "",
+      "discovered" : "",
+      "text" : "On 12 November, a VW Polo will travel from Brussels to Paris. He was hired there Salah Abdeslam. At the wheel is Omar IsmaÃ «l Mostefai. He will commit the attack on concert hall Le Bataclan the next day. Drive along too: Samy Amimour and Foued Mohamed-Aggad the two other terrorists from Le Bataclan. The Bataclan trio will be brought to Belgium in the middle of September by Salah Abdeslam from Budapest.",
+      "image" : "mostefai.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 10,
+      "label" : "Samy Amimour",
+      "type" : "person",
+      "alias" : "",
+      "born" : 1987,
+      "status" : "deceased",
+      "role" : "kamikaze Bataclan",
+      "nationality" : "French",
+      "address" : "",
+      "rented_by" : "",
+      "rental_period" : "",
+      "discovered" : "",
+      "text" : "In 2012, Samy Amimour was arrested for the first time and placed under supervision by the police because he wanted to go to Yemen for a jihadist training camp. A year later, Amimour still manages to travel to Syria and join IS. It is not until the middle of September 2015 that he returns to our regions when he and Mohamed-Aggad are picked up at the Budapest station by Salah Abdeslam. On 13 November, Amimour will enter the concert hall Le Bataclan with the other two returning Syrians, where he will eventually detonate his bombs.",
+      "image" : "amimour.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 11,
+      "label" : "Foued Mohamed-Aggad",
+      "type" : "person",
+      "alias" : "",
+      "born" : 1992,
+      "status" : "deceased",
+      "role" : "kamikaze Bataclan",
+      "nationality" : "French",
+      "address" : "",
+      "rented_by" : "",
+      "rental_period" : "",
+      "discovered" : "",
+      "text" : "On 17 September, Foued Mohammed-Aggad is picked up at the Keleti station in Budapest by Salah Abdeslam, together with Samy Amimour and Omar IsmaÃ «l Mostefai. Mohamed-Aggad, a Frenchman from Strasbourg, has been in Syria for two years at the time. He is part of the command that enters the Le Bataclan concert hall on 13 November.",
+      "image" : "aggad.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 12,
+      "label" : "Bilal Hadfi",
+      "type" : "person",
+      "alias" : "",
+      "born" : 1995,
+      "status" : "deceased",
+      "role" : "kamikaze Stade de France",
+      "nationality" : "French",
+      "address" : "",
+      "rented_by" : "",
+      "rental_period" : "",
+      "discovered" : "",
+      "text" : "Bilal Hadfi, a Frenchman who lives in Neder-over-Heembeek, leaves for Syria in January 2015. His radicalization would have been very fast. On November 13, he is one of the terrorists who has a bombing belt sent to the Stade de France. At the Brussels school of Hadfi, the Anneessens-Funck Institute, a riot arises afterwards about whether or not to correctly signal the signs of radicalization at Hadfi.",
+      "image" : "hadfi.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 13,
+      "label" : "˜Mohammed al-Mahmod",
+      "type" : "person",
+      "alias" : "",
+      "born" : "",
+      "status" : "deceased",
+      "role" : "kamikaze Stade de France",
+      "nationality" : "Iraqi",
+      "address" : "",
+      "rented_by" : "",
+      "rental_period" : "",
+      "discovered" : "",
+      "text" : "We do not know much about the two Iraqis who on November 13 together with Bilal Hadfi blow up at the Stade de France. A fake Syrian passport is found, and the fingerprints found by searchers correspond to this Mohammed al-Mahmod who enters Europe through Greece in early October.",
+      "image" : "almahmod.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 14,
+      "label" : "Ahmad Almuhammada",
+      "type" : "person",
+      "alias" : "",
+      "born" : "",
+      "status" : "deceased",
+      "role" : "kamikaze Stade de France",
+      "nationality" : "Iraqi",
+      "address" : "",
+      "rented_by" : "",
+      "rental_period" : "",
+      "discovered" : "",
+      "text" : "We do not know much about the two Iraqis who on November 13 together with Bilal Hadfi blow up at the Stade de France. A false Syrian passport is found at the body of this Ahmad Almuhammad, and the fingerprints show that he will enter Europe through Greece at the beginning of October.",
+      "image" : "almohammad.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 15,
+      "label" : "Mohamed Abrini",
+      "type" : "person",
+      "alias" : "",
+      "born" : 1984,
+      "status" : "prison",
+      "role" : "",
+      "nationality" : "Belgian-Morocan",
+      "address" : "",
+      "rented_by" : "",
+      "rental_period" : "",
+      "discovered" : "",
+      "text" : "Mohamed Abrini is perhaps better known as 'the man with the hat' of the attack on Zaventem in March. On 8 April of this year, he is arrested in Anderlecht by the police. He confesses. But Abrini is also involved in the attacks in Paris. For example, several days before the attacks, together with his childhood friend Salah Abdeslam, he can be seen on security cameras at a gas station in Ressons, north of the French capital. Abrini is at the wheel of the Renault Clio that is used two days later in the attacks. On the day itself, according to his brothers, he is at home in Molenbeek.",
+      "image" : "abrini.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 16,
+      "label" : "Ali Oulkadi",
+      "type" : "person",
+      "alias" : "",
+      "born" : 1984,
+      "status" : "prison",
+      "role" : "",
+      "nationality" : "French",
+      "address" : "",
+      "rented_by" : "",
+      "rental_period" : "",
+      "discovered" : "",
+      "text" : "According to certain sources, Oulkadi is the best friend of Brahim Abdeslam. But Oulkadi also has good contact with his younger brother Salah. Between the summer of 2015 and the moment of the attacks in Paris, there are dozens of contacts of Oulkadi with Salah and Brahim. Moreover, fingerprints of Oulkadi are found in the safe house in the Henri Berge street. Oulkadi brings the fugitive Salah Abdeslam on November 14 from Laeken to Schaarbeek.",
+      "image" : "x.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 17,
+      "label" : "Mohamed Amri",
+      "type" : "person",
+      "alias" : "",
+      "born" : 1988,
+      "status" : "prison",
+      "role" : "",
+      "nationality" : "French",
+      "address" : "",
+      "rented_by" : "",
+      "rental_period" : "",
+      "discovered" : "",
+      "text" : "Together with Hamza Attou, Mohamed Amri drives to the French capital on 13 November to pick up Salah Abdeslam. Abdeslam left his Renault Clio in the XVIIIth arrondissement.",
+      "image" : "amri.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 18,
+      "label" : "Hamza Attou",
+      "type" : "person",
+      "alias" : "",
+      "born" : 1995,
+      "status" : "prison",
+      "role" : "",
+      "nationality" : "French",
+      "address" : "",
+      "rented_by" : "",
+      "rental_period" : "",
+      "discovered" : "",
+      "text" : "Together with Mohamed Amri, Hamza Attou will drive to the French capital on 13 November to pick up Salah Abdeslam who has left his Renault Clio in the XVIIIth arrondissement.",
+      "image" : "attou.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 19,
+      "label" : "Khalid El Bakraoui",
+      "type" : "person",
+      "alias" : "Ibrahim Maaroufi, Mehdi Vandenbus",
+      "born" : 1989,
+      "status" : "deceased",
+      "role" : "",
+      "nationality" : "Belgian",
+      "address" : "",
+      "rented_by" : "",
+      "rental_period" : "",
+      "discovered" : "",
+      "text" : "The brothers El Bakraoui are mainly linked to the attacks on Zaventem and in Maalbeek. Khalid commits the attack in the metro station, his brother Ibrahim blows himself up in Zaventem. But Khalid El Bakraoui also plays a significant role in the attack in Paris. He rents the safe houses in Charleroi and in Vorst. After Paris it is Khalid El Bakraoui who takes control of the terror cell and plans the Brussels attacks of 22 March.",
+      "image" : "elbakraoui.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 20,
+      "label" : "Budapest",
+      "type" : "place",
+      "alias" : "",
+      "born" : "",
+      "status" : "",
+      "role" : "",
+      "nationality" : "",
+      "address" : "",
+      "rented_by" : "",
+      "rental_period" : "",
+      "discovered" : "",
+      "text" : "In the autumn of 2015, the Keleti station in Budapest is being flooded by refugees from the Middle East. Among the refugee mass also a number of terrorists (Belkaïd, Laachraoui, Mostefai, Amimour, Mohamed-Aggad, Hadfi, the two rascals of the Stade de France) who are picked up at different times by Salah Abdeslam.",
+      "image" : "boedapest.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 21,
+      "label" : "Schaarbeek",
+      "type" : "place",
+      "alias" : "",
+      "born" : "",
+      "status" : "",
+      "role" : "",
+      "nationality" : "",
+      "address" : "Henri Berge straat 86, Schaarbeek",
+      "rented_by" : "Mohammed Bakkali",
+      "rental_period" : "september tot December 2015",
+      "discovered" : "10 December 2015",
+      "text" : "The safehouse on the Henri Berge street is for a long time one of the most important gathering and work places for the terror cell. Investigators will find traces of TATP, a torn sketch of a man wearing a bomb belt and a wig that various terrorists used to stay under the radar. Fingerprints and DNA are found of, among others, Abdeslam, Hadfi, Abrini, Ayari, Krayem and Laachraoui.",
+      "image" : "schaarbeek.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 22,
+      "label" : "Charleroi",
+      "type" : "place",
+      "alias" : "",
+      "born" : "",
+      "status" : "",
+      "role" : "",
+      "nationality" : "",
+      "address" : "Rue du Fort 29, Charleroi",
+      "rented_by" : "Khalid El Bakraoui",
+      "rental_period" : "september tot November 2015",
+      "discovered" : "8 December 2015",
+      "text" : "In this safe house, coordinator Abdelhamid Abaaoud has probably stayed for more than two months. Mohamed Bakkali also regularly passes by. It is rented by Khalid El Bakraoui, who uses the alias Ibrahim Maaroufi. Detectors will find fingerprints and DNA from Abaaoud, Bilal Hadfi, Chakib Akrouh and the Iraqi Mohammed al-Mahmod.",
+      "image" : "charleroi.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 23,
+      "label" : "Auvelais",
+      "type" : "place",
+      "alias" : "",
+      "born" : "",
+      "status" : "",
+      "role" : "",
+      "nationality" : "",
+      "address" : "Rue Radache 115, Auvelais",
+      "rented_by" : "Najim Laachraoui",
+      "rental_period" : "vanaf 7 oktober 2015",
+      "discovered" : "26 November 2015",
+      "text" : "On 29 September, Mohamed Bakkali and bomb maker Najim Laachraoui have an appointment in Auvelais, a village between Charleroi and Namur, to discuss a rented house. The owner will cancel the appointment at the last minute, and the duo will return the next day to arrange the rental contract. The twenty fingerprints found there do not yield any results. This indicates that the terrorists have also thoroughly cleaned up here. DNA is found from Najim Laachraoui (who rented the apartment), Mohamed Belkaïd and Osama Krayem. It is suspected that the explosives were being worked on here.",
+      "image" : "auvelais.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 24,
+      "label" : "Ulm (Germany)",
+      "type" : "place",
+      "alias" : "",
+      "born" : "",
+      "status" : "",
+      "role" : "",
+      "nationality" : "",
+      "address" : "",
+      "rented_by" : "",
+      "rental_period" : "",
+      "discovered" : "",
+      "text" : "On 2 October, Salah Abdeslam, with a rented BMW 118, arrests three terrorists at an Ibishotel in the German town of Ulm: Osama Krayem, Sofiane Ayari and the still fugitive Ahmad Alkahldâ. Presumably this trio was also traveled via Budapest and hit Germany in its own right.",
+      "image" : "ulm.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 25,
+      "label" : "Bobigny",
+      "type" : "place",
+      "alias" : "",
+      "born" : "",
+      "status" : "",
+      "role" : "",
+      "nationality" : "",
+      "address" : "Rue Georges Taral 48, Bobigny (Frankrijk)",
+      "rented_by" : "Brahim Abdeslam",
+      "rental_period" : "10 tot 17 November 2015",
+      "discovered" : "",
+      "text" : "A hotel room in Bobigny, 10 km from Paris, is the first base for the attacks on 13 November. She was hired by Brahim Abdeslam through Homelidays from 10 to 17 November. In the hotel room locals find DNA and fingerprints of Chakib Akrouh, Abdelhamid Abaaoud, Salah Abdeslam, Brahim Abdeslam, Bilal Hadfi and Ahmad Almuhammad.",
+      "image" : "bobigny.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 26,
+      "label" : "Alfortville",
+      "type" : "place",
+      "alias" : "",
+      "born" : "",
+      "status" : "",
+      "role" : "",
+      "nationality" : "",
+      "address" : "Quai de la rÃ©volution 29, Alfortville (Frankrijk)",
+      "rented_by" : "Salah Abdeslam",
+      "rental_period" : "11 tot 17 November 2015",
+      "discovered" : "",
+      "text" : "Salah Abdeslam leases two rooms in the hotel Appart'City to prepare the attacks. He arrives two days in advance with his companions, including Mohamed Abrini and the Bataclan command. They leave empty pizza boxes, needles, wiring for bombs and detonators, and their DNA behind for the investigators.",
+      "image" : "alfortville.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 27,
+      "label" : "Jette",
+      "type" : "place",
+      "alias" : "",
+      "born" : "",
+      "status" : "",
+      "role" : "",
+      "nationality" : "",
+      "address" : "Tentoonstellingslaan 408, Jette",
+      "rented_by" : "Mohamed Bakkali ",
+      "rental_period" : "tot 8 March 2016",
+      "discovered" : "22 March 2016",
+      "text" : "On the night of the attacks in Paris, the terrorists from Le Bataclan were in contact with telephone numbers from the vicinity of this safe house. It is only discovered after the attacks in Brussels, but there is not much found outside of TATP. After using this apartment, there is thorough cleaning.",
+      "image" : "",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 28,
+      "label" : "Vorst",
+      "type" : "place",
+      "alias" : "",
+      "born" : "",
+      "status" : "",
+      "role" : "",
+      "nationality" : "",
+      "address" : "Driesstraat 60, Vorst",
+      "rented_by" : "Khalid El Bakraoui",
+      "rental_period" : "1 December 2015 tot 15 March 2016",
+      "discovered" : "",
+      "text" : "On March 15, the police carry out a search in Vorst. They expect an abandoned safe house, but are attacked by Kalashnikovs. A terrorist, later identified as Mohamed Belkaïd, is killed by a sniper of the police during the subsequent firefight. In the home heavy weapons, an IS-flag and ignition mechanisms for bombs are found.",
+      "image" : "vorst.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 29,
+      "label" : "BMW 118 (1)",
+      "type" : "transport",
+      "alias" : "",
+      "born" : "",
+      "status" : "",
+      "role" : "",
+      "nationality" : "",
+      "address" : "",
+      "rented_by" : "",
+      "rental_period" : "",
+      "discovered" : "",
+      "text" : "This BMW is rented by Salah Abdeslam from August 24 to September 5 to take it to Hungary. On 30 August the car will be flashed on the motorway between Vienna and Budapest.",
+      "image" : "bmw118.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 30,
+      "label" : "Mercedes C200",
+      "type" : "transport",
+      "alias" : "",
+      "born" : "",
+      "status" : "",
+      "role" : "",
+      "nationality" : "",
+      "address" : "",
+      "rented_by" : "",
+      "rental_period" : "",
+      "discovered" : "",
+      "text" : "On September 9 Salah Abdeslam parks his rented Mercedes C200 at the Keleti station in Budapest. He picks up Mohamed Belkaid and Najim Laachraoui and drives them to the safe house on the Henri Berge street in Schaerbeek. On the way, the three are stopped by the Austrian security services. Their identity is checked. We went on a city trip to Viennaa, their explanation.",
+      "image" : "mercedesc200.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 31,
+      "label" : "Audi A6",
+      "type" : "transport",
+      "alias" : "",
+      "born" : "",
+      "status" : "",
+      "role" : "",
+      "nationality" : "",
+      "address" : "",
+      "rented_by" : "",
+      "rental_period" : "",
+      "discovered" : "",
+      "text" : "During the last two weeks of September, from the fourteenth to the twenty-eighth, Salah rents an Audi A6. The car is used very intensively: on 16 September, it will be driven to the Netherlands, from there to travel to - again - the Keleti station in Budapest. Abdeslam picks up the Bataclan trio (Mostefai, Amimour and Mohamed-Aggad) and drives them to the Emile Bockstael square in Laeken, the Henri Berge street in Schaarbeek and the Rue du Fort in Charleroi. Eventually the car also goes to Verviers.",
+      "image" : "audia6.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 32,
+      "label" : "BMW 318",
+      "type" : "transport",
+      "alias" : "",
+      "born" : "",
+      "status" : "",
+      "role" : "",
+      "nationality" : "",
+      "address" : "",
+      "rented_by" : "",
+      "rental_period" : "",
+      "discovered" : "",
+      "text" : "For the search for a safe house to make the bomb belts, Mohamed Bakkali hires a BMW 318. On September 29, he drives from the Henri Bergé street in Schaarbeek to the Ardennes town of Libin, in the province of Luxembourg. Also on board: Bombmaker Najim Lachraaoui. In Libin the duo looks at a rented house, but they decide not to rent it. They rent a house in Auvelais. The same BMW also passes a number of times in Jette and in the Henri Berge street. It will be driven to Charleroi on two and three October.",
+      "image" : "bmw318.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 33,
+      "label" : "Seat Leon",
+      "type" : "transport",
+      "alias" : "",
+      "born" : "",
+      "status" : "",
+      "role" : "",
+      "nationality" : "",
+      "address" : "",
+      "rented_by" : "",
+      "rental_period" : "",
+      "discovered" : "",
+      "text" : "Just before the attacks, Salah and his brother Brahim Abdeslam hire three cars to carry out the terrorist act: a Seat Leon, a Renault Clio and a VW Polo. The Seat Leon is rented by Brahim Abdeslam. Before he drives to Paris in the early morning of November 12, he passes by the safehouse in Charleroi. In the Seat, three Kalashnikovs and fifteen loaders are found after the attack.",
+      "image" : "seat.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 34,
+      "label" : "Renault Clio",
+      "type" : "transport",
+      "alias" : "",
+      "born" : "",
+      "status" : "",
+      "role" : "",
+      "nationality" : "",
+      "address" : "",
+      "rented_by" : "",
+      "rental_period" : "",
+      "discovered" : "",
+      "text" : "Just before the attacks, Salah and his brother Brahim Abdeslamdrie rent a car to carry out the terrorist act: a Seat Leon, a Renault Clio and a VW Polo. In the days before 13 November, Salah Abdeslam and Mohamed Abrini drive with the Clio to safe houses in the periphery of Paris: one in Bobigny and one in Alfortville. On the day itself, Salah Abdeslam uses the Clio to bring the suicide bombers to the Stade de France. The car is found in the 18th arrondissement in Paris, where an attack should also have taken place.",
+      "image" : "clio.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 35,
+      "label" : "VW Polo",
+      "type" : "transport",
+      "alias" : "",
+      "born" : "",
+      "status" : "",
+      "role" : "",
+      "nationality" : "",
+      "address" : "",
+      "rented_by" : "",
+      "rental_period" : "",
+      "discovered" : "",
+      "text" : "Just before the attacks, Salah and his brother Brahim Abdeslam hire three cars to carry out the terrorist act: a Seat Leon, a Renault Clio and a VW Polo. With that Polo, one group of the terror cell is driving from Jette to Paris on 12 November. At the wheel is Omar Ismail Mostefai. He will commit the attack on concert hall Le Bataclan the next day. Drive along too: Samy Amimour and Foued Mohamed-Aggad, the two other terrorists from Le Bataclan.",
+      "image" : "polo.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 36,
+      "label" : "BMW 118 (2)",
+      "type" : "transport",
+      "alias" : "",
+      "born" : "",
+      "status" : "",
+      "role" : "",
+      "nationality" : "",
+      "address" : "",
+      "rented_by" : "",
+      "rental_period" : "",
+      "discovered" : "",
+      "text" : "With this car, Salah Abdeslam drives to Ulm in Germany on 2 October to pick up Osama Krayem, Sofiane Ayari and Ahmad Alkahldâ. A few days later, on 8 October, this BMW is also used to drive to the French Beauvais and to buy fifteen liters of oxygen water in the garden shop Irrijardin, part of the explosive TATP.",
+      "image" : "bmw1.png",
+      "links" : ""
+    },
+    {
+      "x" : 450,
+      "y" : 300,
+      "id" : 37,
+      "label" : "Ahmad AlKhaled",
+      "type" : "person",
+      "alias" : "Yassine Noure",
+      "born" : "",
+      "status" : "",
+      "role" : "",
+      "nationality" : "",
+      "address" : "",
+      "rented_by" : "",
+      "rental_period" : "",
+      "discovered" : "",
+      "text" : "One terrorist who came to Syria from Syria in October 2015 with a false name to help prepare for the Paris attacks, remains without trace until today. How he really is called, does not know anyone for the time being. His share in the attacks is also unclear. What we do know is that Ahmad Alkahldâ / Yassine Noure was picked up by Abdeslam in October 2015 in Ulm together with Krayem and Ayari and then stayed in the safe house of Auvelais. In the safehouses of Schaerbeek and Vorst, his fingerprints are also found, just like in the Clio and the Polo that were used to carry out the attacks on 13 November.",
+      "image" : "x.png",
+      "links" : ""
+    }
+  ],
+  "edges" : [
+    {
+      "source" : 0,
+      "target" : 1
+    },
+    {
+      "source" : 0,
+      "target" : 2
+    },
+    {
+      "source" : 0,
+      "target" : 3
+    },
+    {
+      "source" : 0,
+      "target" : 4
+    },
+    {
+      "source" : 0,
+      "target" : 5
+    },
+    {
+      "source" : 0,
+      "target" : 6
+    },
+    {
+      "source" : 0,
+      "target" : 9
+    },
+    {
+      "source" : 0,
+      "target" : 10
+    },
+    {
+      "source" : 0,
+      "target" : 11
+    },
+    {
+      "source" : 0,
+      "target" : 12
+    },
+    {
+      "source" : 0,
+      "target" : 15
+    },
+    {
+      "source" : 0,
+      "target" : 16
+    },
+    {
+      "source" : 0,
+      "target" : 17
+    },
+    {
+      "source" : 0,
+      "target" : 18
+    },
+    {
+      "source" : 0,
+      "target" : 20
+    },
+    {
+      "source" : 0,
+      "target" : 21
+    },
+    {
+      "source" : 0,
+      "target" : 24
+    },
+    {
+      "source" : 0,
+      "target" : 25
+    },
+    {
+      "source" : 0,
+      "target" : 26
+    },
+    {
+      "source" : 0,
+      "target" : 28
+    },
+    {
+      "source" : 0,
+      "target" : 29
+    },
+    {
+      "source" : 0,
+      "target" : 30
+    },
+    {
+      "source" : 0,
+      "target" : 31
+    },
+    {
+      "source" : 0,
+      "target" : 33
+    },
+    {
+      "source" : 0,
+      "target" : 34
+    },
+    {
+      "source" : 0,
+      "target" : 36
+    },
+    {
+      "source" : 1,
+      "target" : 0
+    },
+    {
+      "source" : 1,
+      "target" : 2
+    },
+    {
+      "source" : 1,
+      "target" : 5
+    },
+    {
+      "source" : 1,
+      "target" : 19
+    },
+    {
+      "source" : 1,
+      "target" : 20
+    },
+    {
+      "source" : 1,
+      "target" : 21
+    },
+    {
+      "source" : 1,
+      "target" : 22
+    },
+    {
+      "source" : 1,
+      "target" : 23
+    },
+    {
+      "source" : 1,
+      "target" : 28
+    },
+    {
+      "source" : 1,
+      "target" : 30
+    },
+    {
+      "source" : 2,
+      "target" : 0
+    },
+    {
+      "source" : 2,
+      "target" : 1
+    },
+    {
+      "source" : 2,
+      "target" : 15
+    },
+    {
+      "source" : 2,
+      "target" : 20
+    },
+    {
+      "source" : 2,
+      "target" : 21
+    },
+    {
+      "source" : 2,
+      "target" : 23
+    },
+    {
+      "source" : 2,
+      "target" : 30
+    },
+    {
+      "source" : 2,
+      "target" : 32
+    },
+    {
+      "source" : 3,
+      "target" : 0
+    },
+    {
+      "source" : 3,
+      "target" : 2
+    },
+    {
+      "source" : 3,
+      "target" : 21
+    },
+    {
+      "source" : 3,
+      "target" : 22
+    },
+    {
+      "source" : 3,
+      "target" : 23
+    },
+    {
+      "source" : 3,
+      "target" : 27
+    },
+    {
+      "source" : 3,
+      "target" : 32
+    },
+    {
+      "source" : 4,
+      "target" : 0
+    },
+    {
+      "source" : 4,
+      "target" : 5
+    },
+    {
+      "source" : 4,
+      "target" : 21
+    },
+    {
+      "source" : 4,
+      "target" : 23
+    },
+    {
+      "source" : 4,
+      "target" : 24
+    },
+    {
+      "source" : 4,
+      "target" : 36
+    },
+    {
+      "source" : 5,
+      "target" : 0
+    },
+    {
+      "source" : 5,
+      "target" : 1
+    },
+    {
+      "source" : 5,
+      "target" : 4
+    },
+    {
+      "source" : 5,
+      "target" : 21
+    },
+    {
+      "source" : 5,
+      "target" : 23
+    },
+    {
+      "source" : 5,
+      "target" : 24
+    },
+    {
+      "source" : 5,
+      "target" : 36
+    },
+    {
+      "source" : 6,
+      "target" : 0
+    },
+    {
+      "source" : 6,
+      "target" : 7
+    },
+    {
+      "source" : 6,
+      "target" : 8
+    },
+    {
+      "source" : 6,
+      "target" : 15
+    },
+    {
+      "source" : 6,
+      "target" : 16
+    },
+    {
+      "source" : 6,
+      "target" : 22
+    },
+    {
+      "source" : 6,
+      "target" : 25
+    },
+    {
+      "source" : 6,
+      "target" : 33
+    },
+    {
+      "source" : 7,
+      "target" : 6
+    },
+    {
+      "source" : 7,
+      "target" : 8
+    },
+    {
+      "source" : 7,
+      "target" : 22
+    },
+    {
+      "source" : 7,
+      "target" : 25
+    },
+    {
+      "source" : 7,
+      "target" : 33
+    },
+    {
+      "source" : 7,
+      "target" : 34
+    },
+    {
+      "source" : 8,
+      "target" : 6
+    },
+    {
+      "source" : 8,
+      "target" : 7
+    },
+    {
+      "source" : 8,
+      "target" : 22
+    },
+    {
+      "source" : 8,
+      "target" : 25
+    },
+    {
+      "source" : 8,
+      "target" : 33
+    },
+    {
+      "source" : 8,
+      "target" : 34
+    },
+    {
+      "source" : 9,
+      "target" : 0
+    },
+    {
+      "source" : 9,
+      "target" : 10
+    },
+    {
+      "source" : 9,
+      "target" : 11
+    },
+    {
+      "source" : 9,
+      "target" : 12
+    },
+    {
+      "source" : 9,
+      "target" : 20
+    },
+    {
+      "source" : 9,
+      "target" : 26
+    },
+    {
+      "source" : 9,
+      "target" : 27
+    },
+    {
+      "source" : 9,
+      "target" : 31
+    },
+    {
+      "source" : 9,
+      "target" : 35
+    },
+    {
+      "source" : 10,
+      "target" : 0
+    },
+    {
+      "source" : 10,
+      "target" : 9
+    },
+    {
+      "source" : 10,
+      "target" : 11
+    },
+    {
+      "source" : 10,
+      "target" : 12
+    },
+    {
+      "source" : 10,
+      "target" : 20
+    },
+    {
+      "source" : 10,
+      "target" : 26
+    },
+    {
+      "source" : 10,
+      "target" : 27
+    },
+    {
+      "source" : 10,
+      "target" : 31
+    },
+    {
+      "source" : 10,
+      "target" : 35
+    },
+    {
+      "source" : 11,
+      "target" : 0
+    },
+    {
+      "source" : 11,
+      "target" : 9
+    },
+    {
+      "source" : 11,
+      "target" : 10
+    },
+    {
+      "source" : 11,
+      "target" : 12
+    },
+    {
+      "source" : 11,
+      "target" : 20
+    },
+    {
+      "source" : 11,
+      "target" : 26
+    },
+    {
+      "source" : 11,
+      "target" : 27
+    },
+    {
+      "source" : 11,
+      "target" : 31
+    },
+    {
+      "source" : 11,
+      "target" : 35
+    },
+    {
+      "source" : 12,
+      "target" : 0
+    },
+    {
+      "source" : 12,
+      "target" : 9
+    },
+    {
+      "source" : 12,
+      "target" : 10
+    },
+    {
+      "source" : 12,
+      "target" : 11
+    },
+    {
+      "source" : 12,
+      "target" : 13
+    },
+    {
+      "source" : 12,
+      "target" : 14
+    },
+    {
+      "source" : 12,
+      "target" : 21
+    },
+    {
+      "source" : 12,
+      "target" : 22
+    },
+    {
+      "source" : 12,
+      "target" : 25
+    },
+    {
+      "source" : 12,
+      "target" : 26
+    },
+    {
+      "source" : 12,
+      "target" : 27
+    },
+    {
+      "source" : 12,
+      "target" : 34
+    },
+    {
+      "source" : 13,
+      "target" : 12
+    },
+    {
+      "source" : 13,
+      "target" : 14
+    },
+    {
+      "source" : 13,
+      "target" : 22
+    },
+    {
+      "source" : 13,
+      "target" : 34
+    },
+    {
+      "source" : 14,
+      "target" : 12
+    },
+    {
+      "source" : 14,
+      "target" : 13
+    },
+    {
+      "source" : 14,
+      "target" : 25
+    },
+    {
+      "source" : 14,
+      "target" : 34
+    },
+    {
+      "source" : 15,
+      "target" : 0
+    },
+    {
+      "source" : 15,
+      "target" : 2
+    },
+    {
+      "source" : 15,
+      "target" : 6
+    },
+    {
+      "source" : 15,
+      "target" : 21
+    },
+    {
+      "source" : 15,
+      "target" : 25
+    },
+    {
+      "source" : 15,
+      "target" : 26
+    },
+    {
+      "source" : 15,
+      "target" : 34
+    },
+    {
+      "source" : 16,
+      "target" : 0
+    },
+    {
+      "source" : 16,
+      "target" : 6
+    },
+    {
+      "source" : 16,
+      "target" : 21
+    },
+    {
+      "source" : 17,
+      "target" : 0
+    },
+    {
+      "source" : 17,
+      "target" : 18
+    },
+    {
+      "source" : 18,
+      "target" : 0
+    },
+    {
+      "source" : 18,
+      "target" : 17
+    },
+    {
+      "source" : 19,
+      "target" : 1
+    },
+    {
+      "source" : 19,
+      "target" : 22
+    },
+    {
+      "source" : 19,
+      "target" : 28
+    },
+    {
+      "source" : 20,
+      "target" : 0
+    },
+    {
+      "source" : 20,
+      "target" : 1
+    },
+    {
+      "source" : 20,
+      "target" : 2
+    },
+    {
+      "source" : 20,
+      "target" : 9
+    },
+    {
+      "source" : 20,
+      "target" : 10
+    },
+    {
+      "source" : 20,
+      "target" : 11
+    },
+    {
+      "source" : 20,
+      "target" : 29
+    },
+    {
+      "source" : 20,
+      "target" : 30
+    },
+    {
+      "source" : 20,
+      "target" : 31
+    },
+    {
+      "source" : 21,
+      "target" : 0
+    },
+    {
+      "source" : 21,
+      "target" : 1
+    },
+    {
+      "source" : 21,
+      "target" : 2
+    },
+    {
+      "source" : 21,
+      "target" : 3
+    },
+    {
+      "source" : 21,
+      "target" : 4
+    },
+    {
+      "source" : 21,
+      "target" : 5
+    },
+    {
+      "source" : 21,
+      "target" : 12
+    },
+    {
+      "source" : 21,
+      "target" : 15
+    },
+    {
+      "source" : 21,
+      "target" : 16
+    },
+    {
+      "source" : 21,
+      "target" : 30
+    },
+    {
+      "source" : 21,
+      "target" : 31
+    },
+    {
+      "source" : 21,
+      "target" : 32
+    },
+    {
+      "source" : 22,
+      "target" : 1
+    },
+    {
+      "source" : 22,
+      "target" : 3
+    },
+    {
+      "source" : 22,
+      "target" : 6
+    },
+    {
+      "source" : 22,
+      "target" : 7
+    },
+    {
+      "source" : 22,
+      "target" : 8
+    },
+    {
+      "source" : 22,
+      "target" : 12
+    },
+    {
+      "source" : 22,
+      "target" : 13
+    },
+    {
+      "source" : 22,
+      "target" : 19
+    },
+    {
+      "source" : 22,
+      "target" : 31
+    },
+    {
+      "source" : 22,
+      "target" : 32
+    },
+    {
+      "source" : 22,
+      "target" : 33
+    },
+    {
+      "source" : 23,
+      "target" : 1
+    },
+    {
+      "source" : 23,
+      "target" : 2
+    },
+    {
+      "source" : 23,
+      "target" : 3
+    },
+    {
+      "source" : 23,
+      "target" : 4
+    },
+    {
+      "source" : 23,
+      "target" : 5
+    },
+    {
+      "source" : 23,
+      "target" : 32
+    },
+    {
+      "source" : 24,
+      "target" : 0
+    },
+    {
+      "source" : 24,
+      "target" : 4
+    },
+    {
+      "source" : 24,
+      "target" : 5
+    },
+    {
+      "source" : 24,
+      "target" : 36
+    },
+    {
+      "source" : 25,
+      "target" : 0
+    },
+    {
+      "source" : 25,
+      "target" : 6
+    },
+    {
+      "source" : 25,
+      "target" : 7
+    },
+    {
+      "source" : 25,
+      "target" : 8
+    },
+    {
+      "source" : 25,
+      "target" : 12
+    },
+    {
+      "source" : 25,
+      "target" : 14
+    },
+    {
+      "source" : 25,
+      "target" : 15
+    },
+    {
+      "source" : 25,
+      "target" : 34
+    },
+    {
+      "source" : 26,
+      "target" : 0
+    },
+    {
+      "source" : 26,
+      "target" : 9
+    },
+    {
+      "source" : 26,
+      "target" : 10
+    },
+    {
+      "source" : 26,
+      "target" : 11
+    },
+    {
+      "source" : 26,
+      "target" : 12
+    },
+    {
+      "source" : 26,
+      "target" : 15
+    },
+    {
+      "source" : 26,
+      "target" : 34
+    },
+    {
+      "source" : 27,
+      "target" : 3
+    },
+    {
+      "source" : 27,
+      "target" : 9
+    },
+    {
+      "source" : 27,
+      "target" : 10
+    },
+    {
+      "source" : 27,
+      "target" : 11
+    },
+    {
+      "source" : 27,
+      "target" : 12
+    },
+    {
+      "source" : 27,
+      "target" : 32
+    },
+    {
+      "source" : 27,
+      "target" : 35
+    },
+    {
+      "source" : 28,
+      "target" : 0
+    },
+    {
+      "source" : 28,
+      "target" : 1
+    },
+    {
+      "source" : 28,
+      "target" : 19
+    },
+    {
+      "source" : 29,
+      "target" : 0
+    },
+    {
+      "source" : 29,
+      "target" : 20
+    },
+    {
+      "source" : 30,
+      "target" : 0
+    },
+    {
+      "source" : 30,
+      "target" : 1
+    },
+    {
+      "source" : 30,
+      "target" : 2
+    },
+    {
+      "source" : 30,
+      "target" : 20
+    },
+    {
+      "source" : 30,
+      "target" : 21
+    },
+    {
+      "source" : 31,
+      "target" : 0
+    },
+    {
+      "source" : 31,
+      "target" : 9
+    },
+    {
+      "source" : 31,
+      "target" : 10
+    },
+    {
+      "source" : 31,
+      "target" : 11
+    },
+    {
+      "source" : 31,
+      "target" : 20
+    },
+    {
+      "source" : 31,
+      "target" : 21
+    },
+    {
+      "source" : 31,
+      "target" : 23
+    },
+    {
+      "source" : 32,
+      "target" : 2
+    },
+    {
+      "source" : 32,
+      "target" : 3
+    },
+    {
+      "source" : 32,
+      "target" : 21
+    },
+    {
+      "source" : 32,
+      "target" : 22
+    },
+    {
+      "source" : 32,
+      "target" : 23
+    },
+    {
+      "source" : 32,
+      "target" : 27
+    },
+    {
+      "source" : 33,
+      "target" : 0
+    },
+    {
+      "source" : 33,
+      "target" : 6
+    },
+    {
+      "source" : 33,
+      "target" : 7
+    },
+    {
+      "source" : 33,
+      "target" : 8
+    },
+    {
+      "source" : 33,
+      "target" : 22
+    },
+    {
+      "source" : 34,
+      "target" : 0
+    },
+    {
+      "source" : 34,
+      "target" : 6
+    },
+    {
+      "source" : 34,
+      "target" : 7
+    },
+    {
+      "source" : 34,
+      "target" : 12
+    },
+    {
+      "source" : 34,
+      "target" : 13
+    },
+    {
+      "source" : 34,
+      "target" : 14
+    },
+    {
+      "source" : 34,
+      "target" : 15
+    },
+    {
+      "source" : 34,
+      "target" : 25
+    },
+    {
+      "source" : 34,
+      "target" : 26
+    },
+    {
+      "source" : 35,
+      "target" : 9
+    },
+    {
+      "source" : 35,
+      "target" : 10
+    },
+    {
+      "source" : 35,
+      "target" : 11
+    },
+    {
+      "source" : 35,
+      "target" : 27
+    },
+    {
+      "source" : 36,
+      "target" : 0
+    },
+    {
+      "source" : 36,
+      "target" : 4
+    },
+    {
+      "source" : 36,
+      "target" : 5
+    },
+    {
+      "source" : 36,
+      "target" : 24
+    },
+    {
+      "source" : 37,
+      "target" : 23
+    },
+    {
+      "source" : 37,
+      "target" : 0
+    },
+    {
+      "source" : 37,
+      "target" : 4
+    },
+    {
+      "source" : 37,
+      "target" : 5
+    },
+    {
+      "source" : 37,
+      "target" : 21
+    },
+    {
+      "source" : 37,
+      "target" : 23
+    },
+    {
+      "source" : 37,
+      "target" : 24
+    },
+    {
+      "source" : 37,
+      "target" : 25
+    },
+    {
+      "source" : 37,
+      "target" : 28
+    },
+    {
+      "source" : 37,
+      "target" : 34
+    },
+    {
+      "source" : 37,
+      "target" : 35
+    },
+    {
+      "source" : 37,
+      "target" : 36
+    }
+  ]
+}

@@ -1,6 +1,5 @@
 package org.jungrapht.visualization.util;
 
-
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -27,7 +26,7 @@ public interface Attributed<T> extends Map<String, String> {
   }
 
   class AISupplier implements Supplier<AI> {
-    private static int i = 0;
+    private static int i = 1;
 
     @Override
     public AI get() {
@@ -36,7 +35,7 @@ public interface Attributed<T> extends Map<String, String> {
   }
 
   class ASSupplier implements Supplier<AS> {
-    private static int i = 0;
+    private static int i = 1;
 
     @Override
     public AS get() {

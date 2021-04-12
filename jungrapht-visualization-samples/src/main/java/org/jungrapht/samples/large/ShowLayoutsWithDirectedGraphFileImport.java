@@ -97,10 +97,10 @@ public class ShowLayoutsWithDirectedGraphFileImport extends JFrame {
 
   Function<AS, Paint> vertexFillPaintFunction = v -> Colors.getColor(v.getAttributeMap());
 
-  Function<AI, Paint> edgeDrawPaintFunction = e -> Colors.getColor(e.getAttributeMap());
+  Function<AI, Paint> edgeDrawPaintFunction = e -> Color.black;
 
   Graph<AS, AI> graph =
-      GraphTypeBuilder.directed()
+      GraphTypeBuilder.<AS, AI>directed()
           .vertexSupplier(new ASSupplier())
           .allowingSelfLoops(true)
           .allowingMultipleEdges(true)
@@ -119,13 +119,13 @@ public class ShowLayoutsWithDirectedGraphFileImport extends JFrame {
             .graphMouse(graphMouse)
             .build();
 
-    vv.setVertexToolTipFunction(Object::toString);
-    vv.getRenderContext()
-        .setVertexLabelFunction(
-            vertex -> {
-              Map<String, String> map = vertex.getAttributeMap();
-              return map.getOrDefault("label", map.getOrDefault("ID", "NONE"));
-            });
+    vv.setVertexToolTipFunction(v -> v.toHtml());
+    vv.setEdgeToolTipFunction(e -> e.toHtml());
+    vv.getRenderContext().setVertexLabelFunction(v -> v.getValue());
+    //            vertex -> {
+    //              Map<String, String> map = vertex.getAttributeMap();
+    //              return map.getOrDefault("label", map.getOrDefault("ID", "NONE"));
+    //            });
     Function<AS, Stroke> vertexStrokeFunction =
         v ->
             vv.getSelectedVertexState().isSelected(v) ? new BasicStroke(8.f) : new BasicStroke(2.f);

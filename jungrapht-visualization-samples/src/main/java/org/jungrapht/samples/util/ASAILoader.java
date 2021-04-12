@@ -2,20 +2,27 @@ package org.jungrapht.samples.util;
 
 import static org.jungrapht.visualization.util.Attributed.*;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.jgrapht.Graph;
-import org.jgrapht.nio.BaseEventDrivenImporter;
-import org.jgrapht.nio.GraphImporter;
+import org.jgrapht.nio.*;
+import org.jgrapht.nio.csv.CSVExporter;
 import org.jgrapht.nio.csv.CSVImporter;
+import org.jgrapht.nio.dimacs.DIMACSExporter;
 import org.jgrapht.nio.dimacs.DIMACSImporter;
+import org.jgrapht.nio.dot.DOTExporter;
 import org.jgrapht.nio.dot.DOTImporter;
+import org.jgrapht.nio.gml.GmlExporter;
 import org.jgrapht.nio.gml.GmlImporter;
+import org.jgrapht.nio.graphml.GraphMLExporter;
 import org.jgrapht.nio.graphml.GraphMLImporter;
+import org.jgrapht.nio.json.JSONExporter;
 import org.jgrapht.nio.json.JSONImporter;
+import org.jungrapht.visualization.util.Attributed;
 
 public final class ASAILoader {
 
@@ -50,13 +57,84 @@ public final class ASAILoader {
     return true;
   }
 
+  public static boolean export(String fileName, Graph<AS, AI> graph) {
+    BaseExporter<AS, AI> exporter = setupExporter(fileName);
+    if (exporter != null) {
+      try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(fileName))) {
+        ((GraphExporter) exporter).exportGraph(graph, writer);
+      } catch (Exception ex) {
+        ex.printStackTrace();
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private static BaseExporter<AS, AI> setupExporter(String fileName) {
+    String suffix = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
+    BaseExporter<AS, AI> exporter;
+    switch (suffix) {
+      case "graphml":
+        exporter = new GraphMLExporter<>();
+        break;
+      case "gml":
+        exporter = new GmlExporter<>();
+        break;
+      case "dot":
+      case "gv":
+        exporter = new DOTExporter<>();
+        break;
+      case "csv":
+        exporter = new CSVExporter<>();
+        break;
+      case "col":
+        exporter = new DIMACSExporter<>();
+        break;
+      case "json":
+        exporter = new JSONExporter<>();
+        break;
+      default:
+        return null;
+    }
+    exporter.setVertexIdProvider(v -> v.getValue());
+    exporter.setVertexAttributeProvider(
+        as ->
+            as.entrySet()
+                .stream()
+                .collect(
+                    Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> new DefaultAttribute(entry.getValue(), AttributeType.STRING))));
+    exporter.setEdgeIdProvider(edge -> edge.getValue().toString());
+    exporter.setEdgeAttributeProvider(
+        ai ->
+            ai.entrySet()
+                .stream()
+                .collect(
+                    Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> new DefaultAttribute<>(entry.getValue(), AttributeType.STRING))));
+    return exporter;
+  }
+
+  protected Function<Attributed<Object>, Map<String, Attribute>> attributeProvider =
+      ai ->
+          ai.entrySet()
+              .stream()
+              .filter(entry -> null != entry.getValue() && !entry.getValue().isEmpty())
+              .collect(
+                  Collectors.toMap(
+                      Map.Entry::getKey,
+                      entry -> new DefaultAttribute<>(entry.getValue(), AttributeType.STRING)));
+
   private static GraphImporter setupImporter(String fileName) {
     String suffix = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
-    GraphImporter importer;
+    GraphImporter<AS, AI> importer;
     switch (suffix) {
       case "graphml":
         importer = new GraphMLImporter<>();
-        ((GraphMLImporter) importer).setSchemaValidation(false);
+        ((GraphMLImporter<AS, AI>) importer).setSchemaValidation(false);
+        ((GraphMLImporter<AS, AI>) importer).setVertexFactory(s -> new AS(s));
         break;
       case "gml":
         importer = new GmlImporter<>();
@@ -73,6 +151,7 @@ public final class ASAILoader {
         break;
       case "json":
         importer = new JSONImporter<>();
+        ((JSONImporter<AS, AI>) importer).setVertexFactory(s -> new AS(s));
         break;
       default:
         return null;
@@ -84,13 +163,17 @@ public final class ASAILoader {
           (pair, attribute) -> {
             AS vertex = pair.getFirst();
             String key = pair.getSecond();
-            vertex.put(key, attribute.getValue());
+            if (!attribute.getValue().isEmpty()) {
+              vertex.put(key, attribute.getValue());
+            }
           });
       baseEventDrivenImporter.addEdgeAttributeConsumer(
           (pair, attribute) -> {
             AI edge = pair.getFirst();
             String key = pair.getSecond();
-            edge.put(key, attribute.getValue());
+            if (!attribute.getValue().isEmpty()) {
+              edge.put(key, attribute.getValue());
+            }
           });
     }
     return importer;

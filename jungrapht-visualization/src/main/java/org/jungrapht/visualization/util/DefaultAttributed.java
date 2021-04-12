@@ -9,6 +9,10 @@ public class DefaultAttributed<T> implements Attributed<T> {
 
   protected T value;
 
+  protected String html;
+
+  protected Map<String, String> delegate = new HashMap<>();
+
   public DefaultAttributed(T value) {
     this.value = value;
   }
@@ -17,8 +21,6 @@ public class DefaultAttributed<T> implements Attributed<T> {
   public T getValue() {
     return value;
   }
-
-  protected Map<String, String> delegate = new HashMap<>();
 
   @Override
   public Map<String, String> getAttributeMap() {
@@ -47,21 +49,25 @@ public class DefaultAttributed<T> implements Attributed<T> {
 
   @Override
   public String get(Object key) {
+    this.html = null;
     return delegate.get(key);
   }
 
   @Override
   public String put(String key, String value) {
+    this.html = null;
     return delegate.put(key, value);
   }
 
   @Override
   public String remove(Object key) {
+    this.html = null;
     return delegate.remove(key);
   }
 
   @Override
   public void putAll(Map<? extends String, ? extends String> m) {
+    this.html = null;
     delegate.putAll(m);
   }
 
@@ -97,44 +103,52 @@ public class DefaultAttributed<T> implements Attributed<T> {
 
   @Override
   public void replaceAll(BiFunction<? super String, ? super String, ? extends String> function) {
+    this.html = null;
     delegate.replaceAll(function);
   }
 
   @Override
   public String putIfAbsent(String key, String value) {
+    this.html = null;
     return delegate.putIfAbsent(key, value);
   }
 
   @Override
   public boolean remove(Object key, Object value) {
+    this.html = null;
     return delegate.remove(key, value);
   }
 
   @Override
   public boolean replace(String key, String oldValue, String newValue) {
+    this.html = null;
     return delegate.replace(key, oldValue, newValue);
   }
 
   @Override
   public String replace(String key, String value) {
+    this.html = null;
     return delegate.replace(key, value);
   }
 
   @Override
   public String computeIfAbsent(
       String key, Function<? super String, ? extends String> mappingFunction) {
+    this.html = null;
     return delegate.computeIfAbsent(key, mappingFunction);
   }
 
   @Override
   public String computeIfPresent(
       String key, BiFunction<? super String, ? super String, ? extends String> remappingFunction) {
+    this.html = null;
     return delegate.computeIfPresent(key, remappingFunction);
   }
 
   @Override
   public String compute(
       String key, BiFunction<? super String, ? super String, ? extends String> remappingFunction) {
+    this.html = null;
     return delegate.compute(key, remappingFunction);
   }
 
@@ -143,16 +157,35 @@ public class DefaultAttributed<T> implements Attributed<T> {
       String key,
       String value,
       BiFunction<? super String, ? super String, ? extends String> remappingFunction) {
+    this.html = null;
     return delegate.merge(key, value, remappingFunction);
   }
 
   public String toString() {
-    return value + ":" + delegate.toString();
+    return "value:" + value + "," + delegate.toString();
+  }
+
+  public String toHtml() {
+    if (html == null) {
+      html = "<html>" + "value:" + value + "<br>";
+      delegate
+          .entrySet()
+          .forEach(
+              entry -> {
+                String value = entry.getValue();
+                if (value.length() > 20) {
+                  value = value.substring(0, 20) + "...";
+                }
+                html += entry.getKey() + ":" + value + "<br>";
+              });
+    }
+    return html;
   }
 
   @Override
   public void set(String key, String value) {
     this.delegate.put(key, value);
+    this.html = null;
   }
 
   @Override
