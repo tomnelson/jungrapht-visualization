@@ -1,8 +1,14 @@
 package org.jungrapht.visualization.util;
 
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
+/**
+ * wraps a delegate class and provides Map semantics for attributes
+ *
+ * @param <T>
+ */
 public interface Attributed<T> extends Map<String, String> {
 
   T getValue();
@@ -42,4 +48,8 @@ public interface Attributed<T> extends Map<String, String> {
       return new AS("" + i++);
     }
   }
+
+  Function<String, AS> AS_FUNCTION = t -> new AS(t);
+
+  Function<Integer, AI> AI_FUNCTION = t -> new AI(t);
 }

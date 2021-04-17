@@ -42,6 +42,7 @@ public class SelectedEdgePaintable<V, E> implements VisualizationServer.Paintabl
         new BasicStroke(
             1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] {20, 5, 10, 5}, 0);
     private Function<VisualizationServer<V, E>, Collection<E>> selectedEdgeFunction;
+    private double minScale = 0.2;
 
     protected B self() {
       return (B) this;
@@ -89,6 +90,10 @@ public class SelectedEdgePaintable<V, E> implements VisualizationServer.Paintabl
       return self();
     }
 
+    public B minScale(double minScale) {
+      this.minScale = minScale;
+      return self();
+    }
     /** @return a new instance of a {@code SelectedEdgePaintable} */
     public SelectedEdgePaintable<V, E> build() {
       return new SelectedEdgePaintable<>(this);
@@ -123,6 +128,8 @@ public class SelectedEdgePaintable<V, E> implements VisualizationServer.Paintabl
 
   private boolean useTransform = true;
 
+  private double minScale;
+
   /**
    * Create an instance of a {@code SelectedEdgePaintable}
    *
@@ -134,6 +141,7 @@ public class SelectedEdgePaintable<V, E> implements VisualizationServer.Paintabl
         builder.selectionPaintFunction,
         builder.selectionStrokeMultiplier,
         builder.selectionStroke,
+        builder.minScale,
         builder.selectedEdgeFunction);
   }
 
@@ -151,11 +159,13 @@ public class SelectedEdgePaintable<V, E> implements VisualizationServer.Paintabl
       Function<E, Paint> selectionPaintFunction,
       float selectionStrokeMultiplier,
       BasicStroke selectionStroke,
+      double minScale,
       Function<VisualizationServer<V, E>, Collection<E>> selectedEdgeFunction) {
     this.visualizationServer = visualizationServer;
     this.selectionPaintFunction = selectionPaintFunction;
     this.selectionStrokeMultiplier = selectionStrokeMultiplier;
     this.selectionStroke = selectionStroke;
+    this.minScale = minScale;
     this.selectedEdgeFunction =
         selectedEdgeFunction != null ? selectedEdgeFunction : vs -> getSelectedEdges(vs);
   }

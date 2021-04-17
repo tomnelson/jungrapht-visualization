@@ -1,8 +1,10 @@
 package org.jungrapht.samples.util;
 
+import static org.jgrapht.nio.graphml.GraphMLExporter.*;
 import static org.jungrapht.visualization.util.Attributed.*;
 
 import java.io.*;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -45,7 +47,6 @@ public final class ASAILoader {
   public static boolean load(String fileName, Graph<AS, AI> graph) {
     GraphImporter importer = setupImporter(fileName);
     if (importer != null) {
-      clear(graph);
       try (InputStreamReader inputStreamReader =
           new InputStreamReader(ASAILoader.class.getResourceAsStream("/" + fileName))) {
         importer.importGraph(graph, inputStreamReader);
@@ -57,8 +58,36 @@ public final class ASAILoader {
     return true;
   }
 
+  /**
+   * from a collection of Attributed (vertices or edges) gather and return all the attribute keys
+   * from all of the vertex or edge attribute maps
+   *
+   * @param in
+   * @return
+   */
+  private static Set<String> collectKeys(Collection<? extends Attributed<?>> in) {
+    return in.stream()
+        .map(a -> a.getAttributeMap())
+        .flatMap(m -> m.entrySet().stream())
+        .map(e -> e.getKey())
+        .collect(Collectors.toSet());
+  }
+
   public static boolean export(String fileName, Graph<AS, AI> graph) {
     BaseExporter<AS, AI> exporter = setupExporter(fileName);
+    if (exporter instanceof GraphMLExporter) {
+      collectKeys(graph.vertexSet())
+          .forEach(
+              key ->
+                  ((GraphMLExporter) exporter)
+                      .registerAttribute(key, AttributeCategory.NODE, AttributeType.STRING));
+
+      collectKeys(graph.edgeSet())
+          .forEach(
+              key ->
+                  ((GraphMLExporter) exporter)
+                      .registerAttribute(key, AttributeCategory.EDGE, AttributeType.STRING));
+    }
     if (exporter != null) {
       try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(fileName))) {
         ((GraphExporter) exporter).exportGraph(graph, writer);
@@ -134,7 +163,7 @@ public final class ASAILoader {
       case "graphml":
         importer = new GraphMLImporter<>();
         ((GraphMLImporter<AS, AI>) importer).setSchemaValidation(false);
-        ((GraphMLImporter<AS, AI>) importer).setVertexFactory(s -> new AS(s));
+        ((GraphMLImporter<AS, AI>) importer).setVertexFactory(AS_FUNCTION);
         break;
       case "gml":
         importer = new GmlImporter<>();
@@ -151,7 +180,7 @@ public final class ASAILoader {
         break;
       case "json":
         importer = new JSONImporter<>();
-        ((JSONImporter<AS, AI>) importer).setVertexFactory(s -> new AS(s));
+        ((JSONImporter<AS, AI>) importer).setVertexFactory(AS_FUNCTION);
         break;
       default:
         return null;

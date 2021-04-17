@@ -67,6 +67,17 @@ public class ModeControls {
     return comboBox;
   }
 
+  public static JComboBox getEditingDefaultModeComboBox(ModalGraphMouse... graphMice) {
+    ModeComboBox comboBox =
+        ModeComboBox.builder()
+            .modes(Mode.DEFAULT, Mode.EDITING, Mode.ANNOTATING)
+            .mode(Mode.EDITING)
+            .modals(graphMice)
+            .build()
+            .buildUI();
+    return comboBox;
+  }
+
   public static JComboBox getAnnotationModeComboBox(ModalGraphMouse... graphMice) {
     ModeComboBox comboBox =
         ModeComboBox.builder()

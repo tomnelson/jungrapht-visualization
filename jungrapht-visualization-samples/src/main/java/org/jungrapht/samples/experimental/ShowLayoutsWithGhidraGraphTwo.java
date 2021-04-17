@@ -1,6 +1,7 @@
 package org.jungrapht.samples.experimental;
 
 import static java.util.Map.entry;
+import static org.jungrapht.visualization.util.Attributed.*;
 
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
@@ -9,7 +10,6 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Paint;
 import java.awt.Stroke;
-import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -37,8 +37,8 @@ import org.jgrapht.alg.scoring.ClusteringCoefficient;
 import org.jgrapht.alg.scoring.HarmonicCentrality;
 import org.jgrapht.alg.scoring.PageRank;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
-import org.jgrapht.nio.GraphImporter;
 import org.jungrapht.samples.spatial.RTreeVisualization;
+import org.jungrapht.samples.util.ASAILoader;
 import org.jungrapht.samples.util.Colors;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.LensControlHelper;
@@ -61,8 +61,6 @@ import org.jungrapht.visualization.transform.MagnifyTransformer;
 import org.jungrapht.visualization.transform.shape.HyperbolicShapeTransformer;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
 import org.jungrapht.visualization.transform.shape.ViewLensSupport;
-import org.jungrapht.visualization.util.Attributed;
-import org.jungrapht.visualization.util.DefaultAttributed;
 import org.jungrapht.visualization.util.LayoutAlgorithmTransition;
 import org.jungrapht.visualization.util.LayoutPaintable;
 import org.slf4j.Logger;
@@ -76,7 +74,7 @@ public class ShowLayoutsWithGhidraGraphTwo extends JFrame {
   LayoutPaintable.BalloonRings balloonLayoutRings;
   LayoutPaintable.RadialRings radialLayoutRings;
   LayoutPaintable.LayoutBounds layoutBounds;
-  VisualizationViewer<Attributed<String>, Attributed<Integer>> vv;
+  VisualizationViewer<AS, AI> vv;
   Paint[] colorArray =
       new Paint[] {
         Color.red,
@@ -92,44 +90,43 @@ public class ShowLayoutsWithGhidraGraphTwo extends JFrame {
         Color.orange
       };
 
-  Function<Attributed<String>, Paint> vertexFillPaintFunction = v -> Colors.getColor(v);
+  Function<AS, Paint> vertexFillPaintFunction = v -> Colors.getColor(v);
 
-  Function<Attributed<Integer>, Paint> edgeDrawPaintFunction = e -> Colors.getColor(e);
+  Function<AI, Paint> edgeDrawPaintFunction = e -> Colors.getColor(e);
 
-  static class EdgeSupplier implements Supplier<Attributed<Integer>> {
+  static class EdgeSupplier implements Supplier<AI> {
     int counter = 0;
 
     @Override
-    public Attributed<Integer> get() {
-      return new DefaultAttributed<>(counter++);
+    public AI get() {
+      return new AI(counter++);
     }
   }
 
   public ShowLayoutsWithGhidraGraphTwo() {
 
-    Graph<Attributed<String>, Attributed<Integer>> graph =
-        GraphTypeBuilder.<Attributed<String>, Attributed<Integer>>directed()
+    Graph<AS, AI> graph =
+        GraphTypeBuilder.<AS, AI>directed()
             .allowingSelfLoops(true)
             .allowingMultipleEdges(true)
             .edgeSupplier(new EdgeSupplier())
             .buildGraph();
     JPanel container = new JPanel(new BorderLayout());
 
-    final DefaultGraphMouse<Attributed<String>, Attributed<Integer>> graphMouse =
-        new DefaultGraphMouse<>();
+    final DefaultGraphMouse<AS, AI> graphMouse = new DefaultGraphMouse<>();
 
     vv =
-        VisualizationViewer.<Attributed<String>, Attributed<Integer>>builder(graph)
+        VisualizationViewer.<AS, AI>builder(graph)
             .layoutSize(new Dimension(1800, 1800))
             .viewSize(new Dimension(900, 900))
             .graphMouse(graphMouse)
             .build();
     loadGraphFile(graph);
 
-    vv.setVertexToolTipFunction(vertex -> vertex.get("ID"));
+    vv.setVertexToolTipFunction(vertex -> vertex.toHtml());
     vv.getRenderContext().setVertexLabelFunction(vertex -> vertex.get("ID"));
-    vv.setEdgeToolTipFunction(Object::toString);
-    Function<Attributed<String>, Stroke> vertexStrokeFunction =
+    vv.setEdgeToolTipFunction(e -> e.toHtml());
+    Function<AS, Stroke> vertexStrokeFunction =
         v ->
             vv.getSelectedVertexState().isSelected(v) ? new BasicStroke(8.f) : new BasicStroke(2.f);
     vv.getRenderContext().setVertexStrokeFunction(vertexStrokeFunction);
@@ -147,8 +144,7 @@ public class ShowLayoutsWithGhidraGraphTwo extends JFrame {
                 () -> {
                   LayoutHelperEiglsperger.Layouts layoutType =
                       (LayoutHelperEiglsperger.Layouts) layoutComboBox.getSelectedItem();
-                  LayoutAlgorithm<Attributed<String>> layoutAlgorithm =
-                      layoutType.getLayoutAlgorithm();
+                  LayoutAlgorithm<AS> layoutAlgorithm = layoutType.getLayoutAlgorithm();
                   vv.removePreRenderPaintable(balloonLayoutRings);
                   vv.removePreRenderPaintable(radialLayoutRings);
 
@@ -169,7 +165,7 @@ public class ShowLayoutsWithGhidraGraphTwo extends JFrame {
                                     "Conditional-Return")));
                   }
                   if (layoutAlgorithm instanceof EdgePredicated) {
-                    ((EdgePredicated<Attributed<Integer>>) layoutAlgorithm)
+                    ((EdgePredicated<AI>) layoutAlgorithm)
                         .setEdgePredicate(new EdgePredicate(graph));
                   }
                   if (animateLayoutTransition.isSelected()) {
@@ -198,11 +194,11 @@ public class ShowLayoutsWithGhidraGraphTwo extends JFrame {
     layoutComboBox.setSelectedItem(LayoutHelperEiglsperger.Layouts.EIGLSPERGERTD);
 
     // create a lens to share between the two hyperbolic transformers
-    LayoutModel<Attributed<String>> layoutModel = vv.getVisualizationModel().getLayoutModel();
+    LayoutModel<AS> layoutModel = vv.getVisualizationModel().getLayoutModel();
     Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
     Lens lens = new Lens(); /* provides a Hyperbolic lens for the view */
     LensSupport<DefaultLensGraphMouse> hyperbolicViewSupport =
-        ViewLensSupport.<Attributed<String>, Attributed<Integer>, DefaultLensGraphMouse>builder(vv)
+        ViewLensSupport.<AS, AI, DefaultLensGraphMouse>builder(vv)
             .lensTransformer(
                 HyperbolicShapeTransformer.builder(lens)
                     .delegate(
@@ -214,8 +210,7 @@ public class ShowLayoutsWithGhidraGraphTwo extends JFrame {
             .build();
 
     LensSupport<DefaultLensGraphMouse> hyperbolicLayoutSupport =
-        LayoutLensSupport.<Attributed<String>, Attributed<Integer>, DefaultLensGraphMouse>builder(
-                vv)
+        LayoutLensSupport.<AS, AI, DefaultLensGraphMouse>builder(vv)
             .lensTransformer(
                 HyperbolicTransformer.builder(lens)
                     .delegate(
@@ -231,7 +226,7 @@ public class ShowLayoutsWithGhidraGraphTwo extends JFrame {
     lens = new Lens();
     lens.setMagnification(3.f);
     LensSupport<DefaultLensGraphMouse> magnifyViewSupport =
-        ViewLensSupport.<Attributed<String>, Attributed<Integer>, DefaultLensGraphMouse>builder(vv)
+        ViewLensSupport.<AS, AI, DefaultLensGraphMouse>builder(vv)
             .lensTransformer(
                 MagnifyShapeTransformer.builder(lens)
                     .delegate(
@@ -243,8 +238,7 @@ public class ShowLayoutsWithGhidraGraphTwo extends JFrame {
             .build();
 
     LensSupport<DefaultLensGraphMouse> magnifyLayoutSupport =
-        LayoutLensSupport.<Attributed<String>, Attributed<Integer>, DefaultLensGraphMouse>builder(
-                vv)
+        LayoutLensSupport.<AS, AI, DefaultLensGraphMouse>builder(vv)
             .lensTransformer(
                 MagnifyTransformer.builder(lens)
                     .delegate(
@@ -342,33 +336,27 @@ public class ShowLayoutsWithGhidraGraphTwo extends JFrame {
     setVisible(true);
   }
 
-  private void loadGraphFile(Graph<Attributed<String>, Attributed<Integer>> graph) {
-    String fileName = "004018c0graph.json";
-    GraphImporter importer = new AttributedJSONImporter();
-    vv.getRenderContext().setVertexFillPaintFunction(vertexFillPaintFunction);
-    vv.getRenderContext().setEdgeDrawPaintFunction(edgeDrawPaintFunction);
-    vv.getRenderContext().setArrowFillPaintFunction(edgeDrawPaintFunction);
-    vv.getRenderContext().setArrowDrawPaintFunction(edgeDrawPaintFunction);
-    try (InputStreamReader inputStreamReader =
-        new InputStreamReader(
-            ShowLayoutsWithGhidraGraphTwo.class.getResourceAsStream("/" + fileName))) {
-      importer.importGraph(graph, inputStreamReader);
-    } catch (Exception ex) {
-      ex.printStackTrace();
+  private void loadGraphFile(Graph<AS, AI> graph) {
+    String fileName = "004018c0ghidra.json";
+    if (ASAILoader.load("ghidra.json", graph)) {
+      vv.getRenderContext().setVertexFillPaintFunction(vertexFillPaintFunction);
+      vv.getRenderContext().setEdgeDrawPaintFunction(edgeDrawPaintFunction);
+      vv.getRenderContext().setArrowFillPaintFunction(edgeDrawPaintFunction);
+      vv.getRenderContext().setArrowDrawPaintFunction(edgeDrawPaintFunction);
+      vv.getVisualizationModel().setGraph(graph);
+      setTitle(
+          "Graph of "
+              + fileName
+              + " with "
+              + graph.vertexSet().size()
+              + " vertices and "
+              + graph.edgeSet().size()
+              + " edges");
     }
-    vv.getVisualizationModel().setGraph(graph);
-    setTitle(
-        "Graph of "
-            + fileName
-            + " with "
-            + graph.vertexSet().size()
-            + " vertices and "
-            + graph.edgeSet().size()
-            + " edges");
   }
 
-  private void computeScores(VertexScoringAlgorithm<Attributed<String>, Double> scoring) {
-    Map<Attributed<String>, Double> scores = scoring.getScores();
+  private void computeScores(VertexScoringAlgorithm<AS, Double> scoring) {
+    Map<AS, Double> scores = scoring.getScores();
     if (scores.isEmpty()) return;
     double min = scores.values().stream().min(Double::compare).get();
     double max = scores.values().stream().max(Double::compare).get();
@@ -468,22 +456,22 @@ public class ShowLayoutsWithGhidraGraphTwo extends JFrame {
     return roots;
   }
 
-  class EdgePredicate implements Predicate<Attributed<Integer>> {
-    Graph<Attributed<String>, Attributed<Integer>> graph;
+  class EdgePredicate implements Predicate<AI> {
+    Graph<AS, AI> graph;
 
-    EdgePredicate(Graph<Attributed<String>, Attributed<Integer>> graph) {
+    EdgePredicate(Graph<AS, AI> graph) {
       this.graph = graph;
     }
 
     @Override
-    public boolean test(Attributed<Integer> edge) {
-      //      Map<String, Attribute> map = edgeAttributes.get(Attributed<Integer>);
+    public boolean test(AI edge) {
+      //      Map<String, Attribute> map = edgeAttributes.get(AI);
       if ("Fall-Through".equals(edge.get("EdgeType"))) {
         return true;
       }
-      Attributed<String> target = graph.getEdgeTarget(edge);
-      Collection<Attributed<Integer>> incomingEdges = graph.incomingEdgesOf(target);
-      for (Attributed<Integer> e : incomingEdges) {
+      AS target = graph.getEdgeTarget(edge);
+      Collection<AI> incomingEdges = graph.incomingEdgesOf(target);
+      for (AI e : incomingEdges) {
         //        Map<String, Attribute> map2 = edgeAttributes.get(e);
         if ("Fall-Through".equals(edge.get("EdgeType"))) {
           return false;
@@ -493,7 +481,7 @@ public class ShowLayoutsWithGhidraGraphTwo extends JFrame {
     }
   }
 
-  static class EdgeComparator implements Comparator<Attributed<Integer>> {
+  static class EdgeComparator implements Comparator<AI> {
     private List<String> edgePriorityList;
 
     public EdgeComparator(List<String> edgePriorityList) {
@@ -501,46 +489,51 @@ public class ShowLayoutsWithGhidraGraphTwo extends JFrame {
     }
 
     @Override
-    public int compare(Attributed<Integer> o1, Attributed<Integer> o2) {
+    public int compare(AI o1, AI o2) {
       return priority(o1).compareTo(priority(o2));
     }
 
-    Integer priority(Attributed<Integer> e) {
-      return edgePriorityList.indexOf(e.get("EdgeType"));
+    Integer priority(AI e) {
+      String edgeType = e.getOrDefault("EdgeType", "");
+      int index = edgePriorityList.indexOf(edgeType);
+      if (index != -1) {
+        return edgePriorityList.indexOf(e.get("EdgeType"));
+      }
+      return 0;
     }
   }
 
-  static class VertexComparator implements Comparator<Attributed<String>> {
-    private Graph<Attributed<String>, Attributed<Integer>> graph;
+  static class VertexComparator implements Comparator<AS> {
+    private Graph<AS, AI> graph;
 
-    public VertexComparator(Graph<Attributed<String>, Attributed<Integer>> graph) {
+    public VertexComparator(Graph<AS, AI> graph) {
       this.graph = graph;
       //      this.edgeAttributes = edgeAttributes;
     }
 
     @Override
-    public int compare(Attributed<String> v1, Attributed<String> v2) {
+    public int compare(AS v1, AS v2) {
       boolean v1IsSpecial = false;
-      for (Attributed<Integer> edge : graph.incomingEdgesOf(v1)) {
+      for (AI edge : graph.incomingEdgesOf(v1)) {
         if ("Fall-Through".equals(edge.get("EdgeType"))) {
           v1IsSpecial = true;
           break;
         }
       }
-      for (Attributed<Integer> edge : graph.outgoingEdgesOf(v1)) {
+      for (AI edge : graph.outgoingEdgesOf(v1)) {
         if ("Fall-Through".equals(edge.get("EdgeType"))) {
           v1IsSpecial = true;
           break;
         }
       }
       boolean v2IsSpecial = false;
-      for (Attributed<Integer> edge : graph.incomingEdgesOf(v2)) {
+      for (AI edge : graph.incomingEdgesOf(v2)) {
         if ("Fall-Through".equals(edge.get("EdgeType"))) {
           v2IsSpecial = true;
           break;
         }
       }
-      for (Attributed<Integer> edge : graph.outgoingEdgesOf(v1)) {
+      for (AI edge : graph.outgoingEdgesOf(v1)) {
         if ("Fall-Through".equals(edge.get("EdgeType"))) {
           v2IsSpecial = true;
           break;

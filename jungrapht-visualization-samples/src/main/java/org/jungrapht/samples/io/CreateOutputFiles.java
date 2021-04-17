@@ -20,12 +20,18 @@ public class CreateOutputFiles {
             .edgeSupplier(new AISupplier())
             .buildGraph();
 
-    // load from json
-    ASAILoader.load("marvel-movie-graph.graphml", graph);
-    // write to a format
-    String location = "jungrapht-visualization-samples/src/main/resources";
-    String name = "outfile";
-    String[] suffix = {"graphml", "gml", "csv", "col", "json"};
-    Stream.of(suffix).forEach(s -> ASAILoader.export(location + "/" + name + "." + s, graph));
+    String[] infiles = {"marvel-movie-graph.graphml", "ghidra.json"};
+    Stream.of(infiles)
+        .forEach(
+            f -> {
+              // load from json
+              ASAILoader.load(f, graph);
+              // write to a format
+              String location = "generated";
+              String name = f.substring(0, f.indexOf('.'));
+              String[] suffix = {"graphml", "gml", "csv", "col", "json", "visio"};
+              Stream.of(suffix)
+                  .forEach(s -> ASAILoader.export(location + "/" + name + "." + s, graph));
+            });
   }
 }

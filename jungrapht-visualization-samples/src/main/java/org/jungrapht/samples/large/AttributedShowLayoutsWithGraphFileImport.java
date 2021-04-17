@@ -89,14 +89,14 @@ public class AttributedShowLayoutsWithGraphFileImport extends JFrame {
             .graphMouse(graphMouse)
             .build();
 
-    vv.setVertexToolTipFunction(Object::toString);
+    vv.setVertexToolTipFunction(v -> v.toHtml());
     vv.getRenderContext()
         .setVertexLabelFunction(
             vertex -> {
               Map<String, String> map = vertex.getAttributeMap();
               return map.getOrDefault("label", map.getOrDefault("ID", "NONE"));
             });
-    vv.setEdgeToolTipFunction(Object::toString);
+    vv.setEdgeToolTipFunction(e -> e.toHtml());
     vv.getRenderContext().setVertexFillPaintFunction(vertexFillPaintFunction);
 
     Function<AS, Paint> vertexDrawPaintFunction =

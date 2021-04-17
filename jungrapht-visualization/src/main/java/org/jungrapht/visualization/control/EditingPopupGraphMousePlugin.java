@@ -11,7 +11,9 @@ import javax.swing.JPopupMenu;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.layout.model.LayoutModel;
+import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.selection.MutableSelectedState;
+import org.jungrapht.visualization.util.PointUtils;
 
 /**
  * a plugin that uses popup menus to create vertices, undirected edges, and directed edges.
@@ -36,11 +38,13 @@ public class EditingPopupGraphMousePlugin<V, E> extends AbstractPopupGraphMouseP
 
     final Graph<V, E> graph = vv.getVisualizationModel().getGraph();
     final Point2D p = e.getPoint();
+    final Point lp =
+        PointUtils.convert(vv.getRenderContext().getMultiLayerTransformer().inverseTransform(p));
     GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
     if (pickSupport != null) {
 
-      final V vertex = pickSupport.getVertex(layoutModel, p.getX(), p.getY());
-      final E edge = pickSupport.getEdge(layoutModel, p.getX(), p.getY());
+      final V vertex = pickSupport.getVertex(layoutModel, lp);
+      final E edge = pickSupport.getEdge(layoutModel, lp);
       final MutableSelectedState<V> pickedVertexState = vv.getSelectedVertexState();
       final MutableSelectedState<E> pickedEdgeState = vv.getSelectedEdgeState();
 

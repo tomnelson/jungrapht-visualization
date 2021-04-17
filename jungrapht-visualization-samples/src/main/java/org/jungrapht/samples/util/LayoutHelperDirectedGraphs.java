@@ -50,16 +50,17 @@ public class LayoutHelperDirectedGraphs {
     BALLOON("Balloon", BalloonLayoutAlgorithm.builder()),
     RADIAL("Radial", RadialTreeLayoutAlgorithm.builder()),
     EIGLSPERGERTD(
-        "Eiglsperger TopDown", EiglspergerLayoutAlgorithm.builder().layering(Layering.TOP_DOWN)),
+        "Eiglsperger TopDown",
+        EiglspergerLayoutAlgorithm.edgeAwareBuilder().layering(Layering.TOP_DOWN)),
     EIGLSPERGERLP(
         "Eiglsperger LongestPath",
-        EiglspergerLayoutAlgorithm.builder().layering(Layering.LONGEST_PATH)),
+        EiglspergerLayoutAlgorithm.edgeAwareBuilder().layering(Layering.LONGEST_PATH)),
     EIGLSPERGERNS(
         "Eiglsperger NetworkSimplex",
-        EiglspergerLayoutAlgorithm.builder().layering(Layering.NETWORK_SIMPLEX)),
+        EiglspergerLayoutAlgorithm.edgeAwareBuilder().layering(Layering.NETWORK_SIMPLEX)),
     EIGLSPERGERCG(
         "EiglspergerCoffmanGraham",
-        EiglspergerLayoutAlgorithm.builder().layering(Layering.COFFMAN_GRAHAM)),
+        EiglspergerLayoutAlgorithm.edgeAwareBuilder().layering(Layering.COFFMAN_GRAHAM)),
     SUGIYAMATD("Sugiyama TopDown", SugiyamaLayoutAlgorithm.builder().layering(Layering.TOP_DOWN)),
     SUGIYAMALP(
         "Sugiyama LongestPath", SugiyamaLayoutAlgorithm.builder().layering(Layering.LONGEST_PATH)),

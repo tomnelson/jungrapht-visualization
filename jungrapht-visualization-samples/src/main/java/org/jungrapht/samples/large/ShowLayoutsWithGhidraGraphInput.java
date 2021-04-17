@@ -91,20 +91,20 @@ public class ShowLayoutsWithGhidraGraphInput extends JFrame {
             .viewSize(new Dimension(900, 900))
             .graphMouse(graphMouse)
             .build();
-    if (!ASAILoader.load("graph.json", graph)) {
+    if (!ASAILoader.load("ghidra.json", graph)) {
       return;
     }
     vv.getVisualizationModel().setGraph(graph);
     setTitle(
         "Graph of "
-            + "graph.json"
+            + "ghidra.json"
             + " with "
             + graph.vertexSet().size()
             + " vertices and "
             + graph.edgeSet().size()
             + " edges");
 
-    vv.setVertexToolTipFunction(Object::toString);
+    vv.setVertexToolTipFunction(v -> v.toHtml());
     vv.getRenderContext()
         .setVertexLabelFunction(
             vertex -> {
@@ -112,7 +112,7 @@ public class ShowLayoutsWithGhidraGraphInput extends JFrame {
               //                  vertexAttributes.getOrDefault(vertex, Collections.emptyMap());
               return map.getOrDefault("Name", map.getOrDefault("ID", "NONE"));
             });
-    vv.setEdgeToolTipFunction(Object::toString);
+    vv.setEdgeToolTipFunction(e -> e.toHtml());
 
     Function<AS, Stroke> vertexStrokeFunction =
         v ->
@@ -502,7 +502,12 @@ public class ShowLayoutsWithGhidraGraphInput extends JFrame {
     }
 
     Integer priority(AI e) {
-      return edgePriorityList.indexOf(e.get("EdgeType"));
+      String edgeType = e.getOrDefault("EdgeType", "");
+      int index = edgePriorityList.indexOf(edgeType);
+      if (index != -1) {
+        return edgePriorityList.indexOf(e.get("EdgeType"));
+      }
+      return 0;
     }
   }
 

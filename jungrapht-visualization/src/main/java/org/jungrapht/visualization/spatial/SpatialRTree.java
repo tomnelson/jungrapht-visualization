@@ -176,9 +176,9 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
   }
 
   protected void recalculate(Collection<T> elements) {
-    //    if (!SwingUtilities.isEventDispatchThread()) {
-    //      log.warn("NOT AWT Thread");
-    //    }
+    if (!SwingUtilities.isEventDispatchThread()) {
+      log.warn("NOT AWT Thread");
+    }
     try {
       log.trace("start recalculate");
       clear();

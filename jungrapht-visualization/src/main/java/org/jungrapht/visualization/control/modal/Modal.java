@@ -8,6 +8,7 @@ public interface Modal {
 
   /** */
   enum Mode {
+    DEFAULT,
     TRANSFORMING,
     PICKING,
     ANNOTATING,

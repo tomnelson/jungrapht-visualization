@@ -35,3 +35,4 @@ pom.xml.releaseBackup
 **/dependency-reduced-pom.xml
 docs/javadoc*
 docs/_site
+generated

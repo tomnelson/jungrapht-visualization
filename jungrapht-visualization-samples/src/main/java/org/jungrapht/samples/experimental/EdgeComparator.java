@@ -43,6 +43,7 @@ public class EdgeComparator implements Comparator<Attributed<Integer>> {
   }
 
   private Integer priority(Attributed<Integer> e) {
+
     return edgePriorityMap.getOrDefault(e.get("EdgeType"), 0);
   }
 
