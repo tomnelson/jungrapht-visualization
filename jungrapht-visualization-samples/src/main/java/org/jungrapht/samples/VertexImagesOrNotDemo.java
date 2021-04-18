@@ -9,13 +9,9 @@
 package org.jungrapht.samples;
 
 import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.geom.Ellipse2D;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.TestGraphs;
@@ -28,7 +24,6 @@ import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.util.RandomLocationTransformer;
-import org.jungrapht.visualization.renderers.Checkmark;
 import org.jungrapht.visualization.renderers.JLabelEdgeLabelRenderer;
 import org.jungrapht.visualization.renderers.JLabelVertexLabelRenderer;
 import org.jungrapht.visualization.renderers.Renderer.VertexLabel.Position;
@@ -195,41 +190,6 @@ public class VertexImagesOrNotDemo extends JPanel {
             .vertexShapeFunction(vv.getRenderContext().getVertexShapeFunction())
             .build();
     vertexStyleConfiguration.configure();
-  }
-
-  /**
-   * When Vertices are selected, add a checkmark icon to the imager. Remove the icon when a Vertex
-   * is unpicked
-   *
-   * @author Tom Nelson
-   */
-  public static class PickWithIconListener<V> implements ItemListener {
-    Function<V, Icon> imager;
-    Icon checked;
-
-    public PickWithIconListener(Function<V, Icon> imager) {
-      this.imager = imager;
-      checked = new Checkmark();
-    }
-
-    public void itemStateChanged(ItemEvent e) {
-      if (e.getItem() instanceof Collection) {
-        ((Collection<V>) e.getItem()).forEach(n -> updatePickIcon(n, e.getStateChange()));
-      } else {
-        updatePickIcon((V) e.getItem(), e.getStateChange());
-      }
-    }
-
-    private void updatePickIcon(V n, int stateChange) {
-      Icon icon = imager.apply(n);
-      if (icon instanceof LayeredIcon) {
-        if (stateChange == ItemEvent.SELECTED) {
-          ((LayeredIcon) icon).add(checked);
-        } else {
-          ((LayeredIcon) icon).remove(checked);
-        }
-      }
-    }
   }
 
   public static void main(String[] args) {

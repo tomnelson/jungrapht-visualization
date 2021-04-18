@@ -1,25 +1,13 @@
-/*
- * Copyright (c) 2003, The JUNG Authors
- * All rights reserved.
- *
- * This software is open-source under the BSD license; see either "license.txt"
- * or https://github.com/tomnelson/jungrapht-visualization/blob/master/LICENSE for a description.
- *
- */
 package org.jungrapht.samples;
 
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.awt.dnd.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
 import java.awt.print.Printable;
 import java.awt.print.PrinterJob;
 import java.io.File;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -31,19 +19,19 @@ import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.IconPalette;
-import org.jungrapht.visualization.LayeredIcon;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.annotations.AnnotationControls;
 import org.jungrapht.visualization.control.EditingModalGraphMouse;
 import org.jungrapht.visualization.control.ModalGraphMouse;
+import org.jungrapht.visualization.control.SelectionIconListener;
+import org.jungrapht.visualization.control.dnd.VertexImageDropTargetListener;
 import org.jungrapht.visualization.control.modal.ModeControls;
 import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.decorators.IconShapeFunction;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
-import org.jungrapht.visualization.renderers.Checkmark;
 import org.jungrapht.visualization.renderers.JLabelEdgeLabelRenderer;
 import org.jungrapht.visualization.renderers.JLabelVertexLabelRenderer;
 import org.jungrapht.visualization.selection.MutableSelectedState;
@@ -52,13 +40,7 @@ import org.jungrapht.visualization.util.ParallelEdgeIndexFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Shows how to create a graph editor with JUNG. Mouse modes and actions are explained in the help
- * text. GraphEditorDemo provides a File menu with an option to save the visible graph as a jpeg
- * file.
- *
- * @author Tom Nelson
- */
+/** @author Tom Nelson */
 public class GraphEditorDemoWithPalette extends JPanel implements Printable {
 
   /** */
@@ -217,7 +199,7 @@ public class GraphEditorDemoWithPalette extends JPanel implements Printable {
     // Get the pickedState and add a listener that will decorate the
     //Vertex images with a checkmark icon when they are selected
     MutableSelectedState<Integer> ps = vv.getSelectedVertexState();
-    ps.addItemListener(new PickWithIconListener<Integer>(vertexIconFunction));
+    ps.addItemListener(new SelectionIconListener<>(vertexIconFunction));
 
     vv.getRenderContext()
         .setEdgeLabelFunction(
@@ -264,7 +246,7 @@ public class GraphEditorDemoWithPalette extends JPanel implements Printable {
         ControlHelpers.getCenteredContainer("Drag icons to create vertices", new IconPalette()),
         BorderLayout.EAST);
 
-    new MyDropTargetListener(vv, iconMap);
+    new VertexImageDropTargetListener(vv, iconMap);
   }
 
   /**
@@ -354,78 +336,5 @@ public class GraphEditorDemoWithPalette extends JPanel implements Printable {
     frame.getContentPane().add(demo);
     frame.pack();
     frame.setVisible(true);
-  }
-
-  static class MyDropTargetListener<V, E> extends DropTargetAdapter {
-
-    private DropTarget dropTarget;
-    private VisualizationViewer<V, E> viewer;
-    private Map<V, Icon> iconMap; // holds the icons for vertices created here
-
-    public MyDropTargetListener(VisualizationViewer<V, E> viewer, Map<V, Icon> iconMap) {
-      this.viewer = viewer;
-      this.iconMap = iconMap;
-      dropTarget =
-          new DropTarget(viewer.getComponent(), DnDConstants.ACTION_COPY, this, true, null);
-    }
-
-    @Override
-    public void drop(DropTargetDropEvent event) {
-      try {
-        DropTarget dropTarget = (DropTarget) event.getSource();
-        Component component = dropTarget.getComponent();
-        Point dropPoint = component.getMousePosition();
-        Transferable transferable = event.getTransferable();
-
-        if (event.isDataFlavorSupported(DataFlavor.imageFlavor)) {
-          Image image = (Image) transferable.getTransferData(DataFlavor.imageFlavor);
-          ImageIcon icon = new LayeredIcon(image);
-
-          if (icon != null) {
-
-            V vertex = viewer.getVisualizationModel().getGraph().addVertex();
-            viewer.getVertexSpatial().recalculate();
-            iconMap.put(vertex, icon);
-            viewer.getVisualizationModel().getLayoutModel().set(vertex, dropPoint.x, dropPoint.y);
-
-            event.dropComplete(true);
-          }
-        } else {
-          event.rejectDrop();
-        }
-      } catch (Exception e) {
-        e.printStackTrace();
-        event.rejectDrop();
-      }
-    }
-  }
-
-  public static class PickWithIconListener<V> implements ItemListener {
-    Function<V, Icon> imager;
-    Icon checked;
-
-    public PickWithIconListener(Function<V, Icon> imager) {
-      this.imager = imager;
-      checked = new Checkmark(Color.red);
-    }
-
-    public void itemStateChanged(ItemEvent e) {
-      if (e.getItem() instanceof Collection) {
-        ((Collection<V>) e.getItem()).forEach(n -> updatePickIcon(n, e.getStateChange()));
-      } else {
-        updatePickIcon((V) e.getItem(), e.getStateChange());
-      }
-    }
-
-    private void updatePickIcon(V n, int stateChange) {
-      Icon icon = imager.apply(n);
-      if (icon instanceof LayeredIcon) {
-        if (stateChange == ItemEvent.SELECTED) {
-          ((LayeredIcon) icon).add(checked);
-        } else {
-          ((LayeredIcon) icon).remove(checked);
-        }
-      }
-    }
   }
 }

@@ -261,7 +261,6 @@ public class EiglspergerRunnable<V, E> implements LayeredRunnable<E> {
           new ConstructiveFeedbackArcFunction<>(svComparator);
       feedbackArcs = constructiveFeedbackArcFunction.apply(svGraph);
     }
-    log.info("there are {} feedbackArcs", feedbackArcs.size());
 
     // reverse the direction of feedback arcs so that they no longer introduce cycles in the graph
     // the feedback arcs will be processed later to draw with the correct direction and correct articulation points

@@ -1,16 +1,11 @@
 package org.jungrapht.samples.util;
 
 import java.awt.*;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DragGestureEvent;
-import java.awt.dnd.DragGestureListener;
 import java.awt.dnd.DragSource;
-import java.io.IOException;
 import javax.swing.*;
 import org.jungrapht.visualization.LayeredIcon;
+import org.jungrapht.visualization.control.dnd.VertexImageDragGestureListener;
 
 public class IconPalette extends JPanel {
 
@@ -30,7 +25,7 @@ public class IconPalette extends JPanel {
       "privacy"
     };
 
-    var listener = new MyDragGestureListener();
+    var listener = new VertexImageDragGestureListener();
     for (int i = 0; i < iconNames.length; i++) {
       String name = "/images/topic" + iconNames[i] + ".gif";
       try {
@@ -43,38 +38,6 @@ public class IconPalette extends JPanel {
       } catch (Exception ex) {
         System.err.println("You need slashdoticons.jar in your classpath to see the image " + name);
       }
-    }
-  }
-
-  static class MyDragGestureListener implements DragGestureListener {
-
-    @Override
-    public void dragGestureRecognized(DragGestureEvent event) {
-      JLabel label = (JLabel) event.getComponent();
-      final ImageIcon ico = (ImageIcon) label.getIcon();
-
-      Transferable transferable =
-          new Transferable() {
-            @Override
-            public DataFlavor[] getTransferDataFlavors() {
-              return new DataFlavor[] {DataFlavor.imageFlavor};
-            }
-
-            @Override
-            public boolean isDataFlavorSupported(DataFlavor flavor) {
-              if (!isDataFlavorSupported(flavor)) {
-                return false;
-              }
-              return true;
-            }
-
-            @Override
-            public Object getTransferData(DataFlavor flavor)
-                throws UnsupportedFlavorException, IOException {
-              return ico.getImage();
-            }
-          };
-      event.startDrag(null, transferable);
     }
   }
 }

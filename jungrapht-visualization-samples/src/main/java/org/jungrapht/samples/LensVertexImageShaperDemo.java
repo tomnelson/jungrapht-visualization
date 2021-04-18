@@ -9,9 +9,6 @@
 package org.jungrapht.samples;
 
 import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -28,13 +25,13 @@ import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.ModalLensGraphMouse;
+import org.jungrapht.visualization.control.SelectionIconListener;
 import org.jungrapht.visualization.control.modal.Modal;
 import org.jungrapht.visualization.control.modal.ModeComboBox;
 import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.decorators.IconShapeFunction;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
-import org.jungrapht.visualization.renderers.Checkmark;
 import org.jungrapht.visualization.renderers.JLabelEdgeLabelRenderer;
 import org.jungrapht.visualization.renderers.JLabelVertexLabelRenderer;
 import org.jungrapht.visualization.selection.MutableSelectedState;
@@ -146,7 +143,7 @@ public class LensVertexImageShaperDemo extends JPanel {
     // Get the pickedState and add a listener that will decorate the
     //Vertex images with a checkmark icon when they are selected
     MutableSelectedState<Number> ps = vv.getSelectedVertexState();
-    ps.addItemListener(new PickWithIconListener(vertexIconFunction));
+    ps.addItemListener(new SelectionIconListener(vertexIconFunction));
 
     vv.addPostRenderPaintable(
         new VisualizationViewer.Paintable() {
@@ -268,35 +265,6 @@ public class LensVertexImageShaperDemo extends JPanel {
     graph.addEdge(10, 4, Math.random());
 
     return graph;
-  }
-
-  public static class PickWithIconListener implements ItemListener {
-    Function<Number, Icon> imager;
-    Icon checked;
-
-    public PickWithIconListener(Function<Number, Icon> imager) {
-      this.imager = imager;
-      checked = new Checkmark(Color.red);
-    }
-
-    public void itemStateChanged(ItemEvent e) {
-      if (e.getItem() instanceof Collection) {
-        ((Collection<Number>) e.getItem()).forEach(n -> updatePickIcon(n, e.getStateChange()));
-      } else {
-        updatePickIcon((Number) e.getItem(), e.getStateChange());
-      }
-    }
-
-    private void updatePickIcon(Number n, int stateChange) {
-      Icon icon = imager.apply(n);
-      if (icon instanceof LayeredIcon) {
-        if (stateChange == ItemEvent.SELECTED) {
-          ((LayeredIcon) icon).add(checked);
-        } else {
-          ((LayeredIcon) icon).remove(checked);
-        }
-      }
-    }
   }
 
   public static void main(String[] args) {

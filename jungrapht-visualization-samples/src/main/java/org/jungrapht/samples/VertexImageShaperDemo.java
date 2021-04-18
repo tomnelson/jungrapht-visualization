@@ -20,11 +20,9 @@ import java.awt.Image;
 import java.awt.Paint;
 import java.awt.Shape;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -41,6 +39,7 @@ import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
+import org.jungrapht.visualization.control.SelectionIconListener;
 import org.jungrapht.visualization.control.modal.ModeControls;
 import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.decorators.IconShapeFunction;
@@ -50,7 +49,6 @@ import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.util.RandomLocationTransformer;
-import org.jungrapht.visualization.renderers.Checkmark;
 import org.jungrapht.visualization.renderers.HeavyweightVertexRenderer;
 import org.jungrapht.visualization.renderers.JLabelEdgeLabelRenderer;
 import org.jungrapht.visualization.renderers.JLabelVertexLabelRenderer;
@@ -167,7 +165,7 @@ public class VertexImageShaperDemo extends JPanel {
     // Get the selectedState and add a listener that will decorate the
     // Vertex images with a checkmark icon when they are selected
     MutableSelectedState<Number> ps = vv.getSelectedVertexState();
-    ps.addItemListener(new PickWithIconListener<>(vertexIconTransformer));
+    ps.addItemListener(new SelectionIconListener<>(vertexIconTransformer));
 
     vv.addPostRenderPaintable(
         new VisualizationViewer.Paintable() {
@@ -250,40 +248,6 @@ public class VertexImageShaperDemo extends JPanel {
     add(controls, BorderLayout.SOUTH);
   }
 
-  /**
-   * When Vertices are selected, add a checkmark icon to the imager. Remove the icon when a Vertex
-   * is unpicked
-   *
-   * @author Tom Nelson
-   */
-  public static class PickWithIconListener<V> implements ItemListener {
-    Function<V, Icon> imager;
-    Icon checked;
-
-    public PickWithIconListener(Function<V, Icon> imager) {
-      this.imager = imager;
-      checked = new Checkmark();
-    }
-
-    public void itemStateChanged(ItemEvent e) {
-      if (e.getItem() instanceof Collection) {
-        ((Collection<V>) e.getItem()).forEach(n -> updatePickIcon(n, e.getStateChange()));
-      } else {
-        updatePickIcon((V) e.getItem(), e.getStateChange());
-      }
-    }
-
-    private void updatePickIcon(V n, int stateChange) {
-      Icon icon = imager.apply(n);
-      if (icon instanceof LayeredIcon) {
-        if (stateChange == ItemEvent.SELECTED) {
-          ((LayeredIcon) icon).add(checked);
-        } else {
-          ((LayeredIcon) icon).remove(checked);
-        }
-      }
-    }
-  }
   /**
    * A simple implementation of Function that gets Vertex labels from a Map
    *
