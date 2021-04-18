@@ -250,12 +250,6 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
     add(controls, BorderLayout.SOUTH);
   }
 
-  //  LayoutModel getTreeLayoutPositions(Graph tree, LayoutAlgorithm treeLayout) {
-  //    LayoutModel model = LayoutModel.builder().size(600, 600).graph(tree).build();
-  //    model.accept(treeLayout);
-  //    return model;
-  //  }
-
   /**
    * a demo class that will create a vertex shape that is either a polygon or star. The number of
    * sides corresponds to the number of vertices that were collapsed into the vertex represented by

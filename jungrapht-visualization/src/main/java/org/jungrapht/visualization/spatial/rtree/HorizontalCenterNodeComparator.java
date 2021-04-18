@@ -34,9 +34,4 @@ public class HorizontalCenterNodeComparator<T> implements Comparator<Map.Entry<T
   public int compare(Map.Entry<T, Rectangle2D> leftVertex, Map.Entry<T, Rectangle2D> rightVertex) {
     return compare(leftVertex.getValue(), rightVertex.getValue());
   }
-
-  //  @Override
-  //  public int compare(Node<T> leftVertex, Node<T> rightVertex) {
-  //    return compare(leftVertex.getBounds(), rightVertex.getBounds());
-  //  }
 }

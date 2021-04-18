@@ -501,9 +501,6 @@ public class MultipleLayoutSelector<V, E> extends JPanel {
     @Override
     public void itemStateChanged(ItemEvent e) {
       if (e.getStateChange() == ItemEvent.SELECTED) {
-        //                if (!(layoutAlgorithm instanceof EdgeArticulationFunctionSupplier)) {
-        //                  vv.getRenderContext().setEdgeShapeFunction(originalEdgeShapeFunction);
-        //                }
         if (layoutAlgorithm instanceof Layered) {
           ((Layered) layoutAlgorithm)
               .setLayering(layeringComboBox.getItemAt(layeringComboBox.getSelectedIndex()));

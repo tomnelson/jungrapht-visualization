@@ -9,7 +9,6 @@
 **/lib
 **/.idea?
 *.iml
-**/*.prefs
 *.o
 *.orig
 *~

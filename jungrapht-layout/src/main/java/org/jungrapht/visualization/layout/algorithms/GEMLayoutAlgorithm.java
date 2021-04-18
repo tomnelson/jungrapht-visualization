@@ -259,7 +259,7 @@ public class GEMLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorithm<V
   private Random rand = new Random();
 
   // map used for current random set of nodes
-  private int map[];
+  private int[] map;
 
   // priority queue for BFS
   private Queue<Integer> q;

@@ -13,7 +13,6 @@ package org.jungrapht.visualization;
 import java.awt.*;
 import java.util.Objects;
 import java.util.function.Function;
-import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.util.Pair;

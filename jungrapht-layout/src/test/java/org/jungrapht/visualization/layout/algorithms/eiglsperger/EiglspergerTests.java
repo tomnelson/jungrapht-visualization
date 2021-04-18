@@ -76,14 +76,6 @@ public class EiglspergerTests {
                 edgesKeyedOnTarget.put(targetRank, list);
               }
             });
-    //    EiglspergerRunnable<String, Integer> runnable =
-    //            EiglspergerRunnable.<String, Integer>builder().build();
-    //    Map<LV<String>, Integer> pos = new HashMap<>();
-    //    Map<LV<String>, Integer> measure = new HashMap<>();
-    //    EiglspergerStepsForward<String, Integer> stepsForward =
-    //            new EiglspergerStepsForward<>(svGraph, layersArray);
-    //    EiglspergerStepsBackward<String, Integer> stepsBackward =
-    //            new EiglspergerStepsBackward<>(svGraph, layersArray);
 
     stepsForward.sweep(layersArray);
 
@@ -117,8 +109,6 @@ public class EiglspergerTests {
               }
             });
 
-    //    Map<LV<String>, Integer> pos = new HashMap<>();
-    //    Map<LV<String>, Integer> measure = new HashMap<>();
     stepsForward.sweep(layersArray);
   }
 
@@ -140,8 +130,6 @@ public class EiglspergerTests {
               }
             });
 
-    //    Map<LV<String>, Integer> pos = new HashMap<>();
-    //    Map<LV<String>, Integer> measure = new HashMap<>();
     stepsBackward.sweep(layersArray);
   }
 
@@ -198,28 +186,6 @@ public class EiglspergerTests {
     layersArray[7] =
         new LV[] {layer[3], layer[5], layer[2], layer[0], layer[4], layer[1], layer[6]};
   }
-
-  //  private <V> void swapLayers(LV<V>[][] layersArray) {
-  //    // fix the layer orders so that they match the paper
-  //    // 0 is fine
-  //    swap(layersArray[1], 0, 1);
-  //
-  //    //        LV<String>[] row = new LV[] {}
-  //
-  //    swap(layersArray[2], 3, 0);
-  //    swap(layersArray[2], 3, 2);
-  //    swap(layersArray[2], 3, 4);
-  //
-  //    swap(layersArray[3], 3, 0);
-  //    swap(layersArray[3], 2, 1);
-  //    swap(layersArray[3], 5, 1);
-  //  }
-  //
-  //  private <T> void swap(T[] array, int a, int b) {
-  //    T temp = array[a];
-  //    array[a] = array[b];
-  //    array[b] = temp;
-  //  }
 
   private void buildGraph() {
     graph =

@@ -309,16 +309,9 @@ public class EiglspergerWithGhidraGraphInputExp extends JFrame {
     closenessButton.addActionListener(event -> computeScores(new ClosenessCentrality<>(graph)));
     JButton clusteringButton = new JButton("Clustering");
     clusteringButton.addActionListener(event -> computeScores(new ClusteringCoefficient<>(graph)));
-    //    JButton corenessButton = new JButton("Coreness");
-    //        corenessButton.addActionListener(event -> computeScores(new Coreness<>(graph)));
     JButton harmonicButton = new JButton("Harmonic");
     harmonicButton.addActionListener(event -> computeScores(new HarmonicCentrality<>(graph)));
     JButton noScores = new JButton("None");
-    //    noScores.addActionListener(
-    //        event -> {
-    //          vv.getRenderContext().setVertexFillPaintFunction(vertexFillPaintFunction);
-    //          vv.repaint();
-    //        });
 
     JPanel scoringGrid = new JPanel(new GridLayout(0, 2));
     scoringGrid.add(pageRankButton);
@@ -390,32 +383,6 @@ public class EiglspergerWithGhidraGraphInputExp extends JFrame {
     edges.forEach(graph::removeEdge);
     vertices.forEach(graph::removeVertex);
   }
-
-  //  LayoutModel getTreeLayoutPositions(
-  //      Graph tree, LayoutAlgorithm treeLayout, LayoutModel layoutModel) {
-  //    LayoutModel model =
-  //        LayoutModel.builder()
-  //            .size(layoutModel.getWidth(), layoutModel.getHeight())
-  //            .graph(tree)
-  //            .build();
-  ////    // connect any listeners from the layoutModel to the newly created model
-  ////    model
-  ////        .getLayoutStateChangeSupport()
-  ////        .getLayoutStateChangeListeners()
-  ////        .forEach(l -> model.getLayoutStateChangeSupport().addLayoutStateChangeListener(l));
-  ////    model
-  ////        .getLayoutSizeChangeSupport()
-  ////        .getLayoutSizeChangeListeners()
-  ////        .forEach(
-  ////            l ->
-  ////                model
-  ////                    .getLayoutSizeChangeSupport()
-  ////                    .addLayoutSizeChangeListener((LayoutSizeChange.Listener) l));
-  ////    //    layoutModel
-  ////    //    model.getLayoutStateChangeSupport().addLayoutStateChangeListener();
-  //    model.accept(treeLayout);
-  //    return model;
-  //  }
 
   /**
    * these are vertex or edge types that have defined colors (the keys are the property values for

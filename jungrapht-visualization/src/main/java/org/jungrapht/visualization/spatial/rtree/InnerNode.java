@@ -293,11 +293,6 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
     updateBounds(bounds);
     Optional<Node<T>> pathToFollow = splitterContext.splitter.chooseSubtree(this, element, bounds);
     if (pathToFollow.isPresent()) {
-      // is pathToFollow the same as this?
-      //      if (pathToFollow.get().equals(this)) {
-      //        log.trace("pathToFollow is this");
-      //        return this.getParent().orElse(this);
-      //      }
       Node<T> node = pathToFollow.get().add(splitterContext, element, bounds);
       return node.getParent().orElse(node);
     } else {

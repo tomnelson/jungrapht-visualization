@@ -283,16 +283,9 @@ public class ShowLayoutsWithGhidraGraphTwo extends JFrame {
     closenessButton.addActionListener(event -> computeScores(new ClosenessCentrality<>(graph)));
     JButton clusteringButton = new JButton("Clustering");
     clusteringButton.addActionListener(event -> computeScores(new ClusteringCoefficient<>(graph)));
-    //    JButton corenessButton = new JButton("Coreness");
-    //        corenessButton.addActionListener(event -> computeScores(new Coreness<>(graph)));
     JButton harmonicButton = new JButton("Harmonic");
     harmonicButton.addActionListener(event -> computeScores(new HarmonicCentrality<>(graph)));
     JButton noScores = new JButton("None");
-    //    noScores.addActionListener(
-    //        event -> {
-    //          vv.getRenderContext().setVertexFillPaintFunction(vertexFillPaintFunction);
-    //          vv.repaint();
-    //        });
 
     JPanel scoringGrid = new JPanel(new GridLayout(0, 2));
     scoringGrid.add(pageRankButton);

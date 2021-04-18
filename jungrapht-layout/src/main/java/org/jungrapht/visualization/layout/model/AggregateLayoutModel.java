@@ -133,11 +133,6 @@ public class AggregateLayoutModel<V> implements LayoutModel<V> {
     return delegate.isRelaxing();
   }
 
-  //  @Override
-  //  public Future getTheFuture() {
-  //    return delegate.getTheFuture();
-  //  }
-
   @Override
   public void set(V vertex, Point location) {
     delegate.set(vertex, location);
@@ -272,8 +267,6 @@ public class AggregateLayoutModel<V> implements LayoutModel<V> {
         int height = layoutModel.getHeight();
         double deltaX = center.x - width / 2;
         double deltaY = center.y - height / 2;
-        //        AffineTransform at =
-        //            AffineTransform.getTranslateInstance(center.x - width / 2, center.y - height / 2);
         Point vertexCenter = layoutModel.apply(vertex);
         log.trace("sublayout center is {}", vertexCenter);
         double[] srcPoints = new double[] {vertexCenter.x, vertexCenter.y};

@@ -34,7 +34,6 @@ import org.jgrapht.alg.scoring.ClusteringCoefficient;
 import org.jgrapht.alg.scoring.HarmonicCentrality;
 import org.jgrapht.alg.scoring.PageRank;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
-import org.jgrapht.nio.*;
 import org.jungrapht.samples.spatial.RTreeVisualization;
 import org.jungrapht.samples.util.*;
 import org.jungrapht.visualization.MultiLayerTransformer;

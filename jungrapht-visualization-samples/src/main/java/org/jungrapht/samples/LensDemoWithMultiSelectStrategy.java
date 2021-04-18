@@ -116,10 +116,6 @@ public class LensDemoWithMultiSelectStrategy extends JPanel {
     final DefaultGraphMouse<String, Integer> graphMouse = new DefaultGraphMouse<>();
     vv.setGraphMouse(graphMouse);
 
-    //    String propValue = System.getProperty("jungrapht." + "singleSelectionMask");
-    //    Modifiers modifier = Modifiers.valueOf(propValue);
-    //    int value = modifier.getValue();
-
     MutableSelectedState<String> ps = vv.getSelectedVertexState();
     MutableSelectedState<Integer> pes = vv.getSelectedEdgeState();
     vv.getRenderContext()

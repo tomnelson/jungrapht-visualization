@@ -50,24 +50,5 @@ public class TestNetworkSimplexFive {
     int cd = dag.addEdge("c", "d");
     int gh = dag.addEdge("g", "h");
     int dh = dag.addEdge("d", "h");
-
-    //        spanningTree = GraphTypeBuilder.<String, Integer>undirected()
-    //                .buildGraph();
-    //        spanningTree.addVertex("a");
-    //        spanningTree.addVertex("b");
-    //        spanningTree.addVertex("c");
-    //        spanningTree.addVertex("d");
-    //        spanningTree.addVertex("e");
-    //        spanningTree.addVertex("f");
-    //        spanningTree.addVertex("g");
-    //        spanningTree.addVertex("h");
-    //
-    //        spanningTree.addEdge("a", "b", ab);
-    //        spanningTree.addEdge("b", "c", bc);
-    //        spanningTree.addEdge("e", "g", eg);
-    //        spanningTree.addEdge("f", "g", fg);
-    //        spanningTree.addEdge("c", "d", cd);
-    //        spanningTree.addEdge("g", "h", gh);
-    //        spanningTree.addEdge("d", "h", dh);
   }
 }

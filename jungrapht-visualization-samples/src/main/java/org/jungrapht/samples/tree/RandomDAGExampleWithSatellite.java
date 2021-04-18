@@ -284,8 +284,6 @@ public class RandomDAGExampleWithSatellite extends JPanel {
     rightControls.add(spatialPanel);
     controls.add(rightControls);
     add(controls, BorderLayout.SOUTH);
-    //    pack();
-    //    setVisible(true);
   }
 
   private void resetGraph(

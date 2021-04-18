@@ -244,11 +244,6 @@ public class RTreeTest2 {
       Assert.assertTrue(Math.abs(rootBounds.getMinY() - unionBounds.getMinY()) < 1.0E-3);
       Assert.assertTrue(Math.abs(rootBounds.getMaxX() - unionBounds.getMaxX()) < 1.0E-3);
       Assert.assertTrue(Math.abs(rootBounds.getMaxY() - unionBounds.getMaxY()) < 1.0E-3);
-
-      //      assertThat(rootBounds.getMinX()).isWithin(1.0E-3).of(unionBounds.getMinX());
-      //      assertThat(rootBounds.getMinY()).isWithin(1.0E-3).of(unionBounds.getMinY());
-      //      assertThat(rootBounds.getMaxX()).isWithin(1.0E-3).of(unionBounds.getMaxX());
-      //      assertThat(rootBounds.getMaxY()).isWithin(1.0E-3).of(unionBounds.getMaxY());
     }
 
     for (TreeNode rt : rootVertex.getChildren()) {

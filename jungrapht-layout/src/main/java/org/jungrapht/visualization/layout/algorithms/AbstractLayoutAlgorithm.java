@@ -78,12 +78,6 @@ public abstract class AbstractLayoutAlgorithm<V> implements LayoutAlgorithm<V> {
     // find the dimensions of the layout's occupied area
     Rectangle vertexContainingRectangle = computeLayoutExtent(layoutModel);
 
-    // add the padding
-    //    vertexContainingRectangle =
-    //            Rectangle.from(
-    //                    vertexContainingRectangle.min().add(-horizontalVertexSpacing, -verticalVertexSpacing),
-    //                    vertexContainingRectangle.max().add(horizontalVertexSpacing, verticalVertexSpacing));
-
     int maxDimension =
         Math.max((int) vertexContainingRectangle.width, (int) vertexContainingRectangle.height);
     layoutModel.setSize(maxDimension, maxDimension);

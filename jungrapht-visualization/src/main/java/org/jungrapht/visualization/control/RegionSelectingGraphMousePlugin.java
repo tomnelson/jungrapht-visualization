@@ -333,7 +333,6 @@ public class RegionSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
    *
    * @param vv the viewer containing the layout and selected state
    * @param pickTarget - the shape to pick vertices in (layout coordinate system)
-   * @param clear whether to reset existing selected state
    */
   protected Collection<V> pickContainedVertices(VisualizationViewer<V, E> vv, Shape pickTarget) {
     MutableSelectedState<V> selectedVertexState = vv.getSelectedVertexState();

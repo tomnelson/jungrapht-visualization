@@ -275,16 +275,9 @@ public class EiglspergerSteps<V, E> {
     if (log.isTraceEnabled()) {
       log.trace("listS measures: {}", listS);
     }
-    //    if (listS.size() > 0
-    //        && listS.stream().mapToDouble(Container::getMeasure).min().getAsDouble() < 0) {
-    //      log.debug("something missing");
-    //    }
     if (log.isTraceEnabled()) {
       log.trace("listV measures: {}", listV);
     }
-    //    if (listV.size() > 0 && listV.stream().mapToDouble(LV::getMeasure).min().getAsDouble() < 0) {
-    //      log.debug("something missing");
-    //    }
     try {
       listS.sort(Comparator.comparingDouble(Container::getMeasure));
       listV.sort(Comparator.comparingDouble(LV::getMeasure));
@@ -510,14 +503,6 @@ public class EiglspergerSteps<V, E> {
       }
     }
 
-    // remove any empty containers from the currentLayer and reset the index metadata
-    // for the currentLayer vertices
-    //    for (int i = 0; i < currentLayer.size(); i++) {
-    //      LV<V> v = currentLayer.get(i);
-    //      if (isEmptyContainer(v)) {
-    //        currentLayer.remove(i);
-    //      }
-    //    }
     for (Iterator<LV<V>> iterator = currentLayer.iterator(); iterator.hasNext(); ) {
       if (isEmptyContainer(iterator.next())) {
         iterator.remove();
@@ -528,12 +513,6 @@ public class EiglspergerSteps<V, E> {
 
     // remove any empty containers from the downstreamLayer and reset the index metadata
     // for the currentLayer vertices
-    //    for (int i = 0; i < downstreamLayer.size(); i++) {
-    //      LV<V> v = downstreamLayer.get(i);
-    //      if (isEmptyContainer(v)) {
-    //        downstreamLayer.remove(i);
-    //      }
-    //    }
     for (Iterator<LV<V>> iterator = downstreamLayer.iterator(); iterator.hasNext(); ) {
       if (isEmptyContainer(iterator.next())) {
         iterator.remove();

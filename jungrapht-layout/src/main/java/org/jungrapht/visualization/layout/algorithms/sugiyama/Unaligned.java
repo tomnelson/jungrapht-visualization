@@ -68,23 +68,12 @@ public class Unaligned {
 
         log.trace("layerIndex {} y is {}", layerIndex, y);
         sugiyamaVertex.setPoint(Point.of(x, y));
-
-        //        if (vertexPointMap.containsKey(sugiyamaVertex)) {
-        //          vertexPointMap.put(sugiyamaVertex, sugiyamaVertex.getPoint());
-        //        }
         previousVertexWidth = vertexWidth;
       }
       x = horizontalOffset;
       y += verticalOffset;
       layerIndex++;
     }
-
-    //    for (int i = 0; i < layers.length; i++) {
-    //      for (int j = 0; j < layers[i].length; j++) {
-    //        LV<V> sugiyamaVertex = layers[i][j];
-    //        vertexPointMap.put(sugiyamaVertex, sugiyamaVertex.getPoint());
-    //      }
-    //    }
   }
 
   public static <V> void setPoints(

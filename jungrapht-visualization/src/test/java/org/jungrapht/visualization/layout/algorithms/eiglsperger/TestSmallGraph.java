@@ -57,10 +57,7 @@ public class TestSmallGraph {
         new EiglspergerStepsBackward<>(svGraph, neighborCache, layersArray, true);
 
     int forwardCrossCount = stepsForward.sweep(layersArray);
-    //        int backwardCrossCount = stepsBackward.sweep(layersArray);
 
-    //        Graph<LV<Integer>, Integer> compactionGraph =
-    //                stepsForward.compactionGraph;
     HorizontalCoordinateAssignmentDeprecated<Integer, Integer> horizontalCoordinateAssignment =
         new HorizontalCoordinateAssignmentDeprecated<>(
             layersArray, svGraph, new HashSet<>(), 100, 100);

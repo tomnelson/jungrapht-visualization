@@ -208,13 +208,6 @@ public class TestLevelCross {
   }
 
   private int go() {
-    //        SVTransformedGraphSupplier<String,Integer> transformedGraphSupplier = new SVTransformedGraphSupplier<>(graph);
-    //        this.svGraph = transformedGraphSupplier.get();
-    //
-    //        RemoveCycles<SV<String>,SE<String,Integer>> removeCycles = new RemoveCycles<>(svGraph);
-    //        svGraph = removeCycles.removeCycles();
-    //
-    //        AssignLayers<String,Integer> assignLayers = new AssignLayers<>(svGraph);
     List<List<LV<String>>> layers = List.of(topLevel, botLevel);
     log.info("layer 0: {}", layers.get(0));
     log.info("layer 1: {}", layers.get(1));

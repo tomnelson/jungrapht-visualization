@@ -71,9 +71,6 @@ public class GraphEditorDemoWithPaletteDefaultMouse extends JPanel implements Pr
   Map<Integer, String> map = new HashMap<>();
   Map<Integer, Icon> iconMap = new HashMap<>();
 
-  //  Supplier<Number> vertexFactory = new VertexFactory();
-  //  Supplier<Number> edgeFactory = new EdgeFactory();
-
   String instructions =
       "<html>"
           + "<h3>All Modes:</h3>"

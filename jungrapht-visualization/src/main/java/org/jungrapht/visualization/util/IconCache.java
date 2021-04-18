@@ -137,11 +137,6 @@ public class IconCache<V> implements Function<V, Icon> {
     return iconMap.get(n);
   }
 
-  //  @Override
-  //  public Icon apply(V in) {
-  //    return get(in);
-  //  }
-
   /**
    * allows for functional interface method to set the font, colors, etc for the vertex JLabel.
    *

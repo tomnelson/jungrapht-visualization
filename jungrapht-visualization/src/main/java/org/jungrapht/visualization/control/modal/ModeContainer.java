@@ -65,8 +65,6 @@ public class ModeContainer {
     this.buttonSupplier = buttonSupplier;
     this.modes = modes;
     this.modals = modals;
-    //        this.setLayout(new GridLayout(0,1));
-    //        buildUI();
   }
 
   public JComponent getContainer() {

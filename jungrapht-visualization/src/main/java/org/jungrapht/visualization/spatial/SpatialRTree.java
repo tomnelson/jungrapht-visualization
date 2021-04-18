@@ -48,11 +48,6 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
       return this;
     }
 
-    //    public Builder<T, NT> layoutModel(LayoutModel<NT> layoutModel) {
-    //      this.layoutModel = layoutModel;
-    //      return this;
-    //    }
-    //
     public Builder<T, NT> splitterContext(SplitterContext<T> splitterContext) {
       this.splitterContext = splitterContext;
       return this;

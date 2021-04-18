@@ -143,17 +143,6 @@ public class EditingDefaultGraphMouse<V, E> extends DefaultGraphMouse<V, E>
     add(scalingPlugin);
   }
 
-  ////  @Override
-  //  protected void setTransformingMode() {
-  //    clear();
-  //    add(scalingPlugin);
-  //    add(translatingPlugin);
-  ////    add(rotatingPlugin);
-  ////    add(shearingPlugin);
-  //    add(labelEditingPlugin);
-  //    add(popupEditingPlugin);
-  //  }
-
   protected void setEditingMode() {
     clear();
     add(scalingPlugin);
@@ -170,8 +159,6 @@ public class EditingDefaultGraphMouse<V, E> extends DefaultGraphMouse<V, E>
 
   public static class ModeKeyAdapter extends KeyAdapter {
     private char d = 'd';
-    //    private char t = 't';
-    //    private char p = 'p';
     private char e = 'e';
     private char a = 'a';
     protected ModalGraphMouse graphMouse;

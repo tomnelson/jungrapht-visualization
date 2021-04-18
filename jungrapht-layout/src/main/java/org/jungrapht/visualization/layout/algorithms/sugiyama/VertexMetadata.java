@@ -43,22 +43,6 @@ public class VertexMetadata<V> {
     this.measure = vertex.getMeasure();
   }
 
-  //  @Override
-  //  public boolean equals(Object o) {
-  //    if (this == o) return true;
-  //    if (o == null || getClass() != o.getClass()) return false;
-  //    VertexMetadata<?> sugiyamaVertex = (VertexMetadata<?>) o;
-  //    if (o instanceof SyntheticLV) {
-  //      return false;
-  //    }
-  //    return Objects.equals(vertex, sugiyamaVertex.vertex);
-  //  }
-  //
-  //  @Override
-  //  public int hashCode() {
-  //    return Objects.hash(vertex);
-  //  }
-
   @Override
   public String toString() {
     return "VertexMetadata{"

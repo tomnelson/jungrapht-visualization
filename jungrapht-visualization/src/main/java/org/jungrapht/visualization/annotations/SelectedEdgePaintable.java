@@ -222,14 +222,16 @@ public class SelectedEdgePaintable<V, E> implements VisualizationServer.Paintabl
       BasicStroke savedBasicStroke = (BasicStroke) savedStroke;
       // if the viewScale is small, the highlight will be difficult to see
       // use the viewScale below to enhance the highlight
-      float viewScale = (float)renderContext.getMultiLayerTransformer()
-              .getTransformer(MultiLayerTransformer.Layer.VIEW)
-              .getScale();
+      float viewScale =
+          (float)
+              renderContext
+                  .getMultiLayerTransformer()
+                  .getTransformer(MultiLayerTransformer.Layer.VIEW)
+                  .getScale();
 
       Stroke stroke =
           new BasicStroke(
-              savedBasicStroke.getLineWidth() *
-                      selectionStrokeMultiplier / viewScale,
+              savedBasicStroke.getLineWidth() * selectionStrokeMultiplier / viewScale,
               selectionStroke.getEndCap(),
               selectionStroke.getLineJoin(),
               selectionStroke.getMiterLimit(),

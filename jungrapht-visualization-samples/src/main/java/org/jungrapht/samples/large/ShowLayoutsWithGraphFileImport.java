@@ -19,7 +19,6 @@ import org.jgrapht.Graphs;
 import org.jgrapht.alg.interfaces.VertexScoringAlgorithm;
 import org.jgrapht.alg.scoring.*;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
-import org.jgrapht.nio.*;
 import org.jungrapht.samples.spatial.RTreeVisualization;
 import org.jungrapht.samples.util.*;
 import org.jungrapht.visualization.MultiLayerTransformer;

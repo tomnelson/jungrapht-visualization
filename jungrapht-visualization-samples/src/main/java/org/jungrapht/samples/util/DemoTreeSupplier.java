@@ -227,9 +227,6 @@ public class DemoTreeSupplier {
             .edgeSupplier(SupplierUtil.createIntegerSupplier())
             .buildGraphBuilder();
 
-    //    tree.addEdge("R", "V0");
-    //    tree.addEdge("R", "A0");
-    //    tree.addEdge("R", "B0");
     tree.addEdge("V0", "V1");
     tree.addEdge("V0", "V2");
     tree.addEdge("V1", "V4");
@@ -273,24 +270,9 @@ public class DemoTreeSupplier {
     Integer edgeId = 0;
     builder.addEdge("A0", "A1");
     builder.addEdge("A0", "A2");
-    //    builder.addEdge("A1", "A4");
-    //    builder.addEdge("A2", "A3");
-    //    builder.addEdge("A2", "A5");
-    //    builder.addEdge("A4", "A6");
-    //    builder.addEdge("A4", "A7");
-    //    builder.addEdge("A3", "A8");
-    //    builder.addEdge("A6", "A9");
-    //    builder.addEdge("A4", "A10");
 
     builder.addEdge("G0", "G1");
     builder.addEdge("G0", "G2");
-    //    builder.addEdge("G1", "G4");
-    //    builder.addEdge("G2", "G3");
-    //    builder.addEdge("G2", "G5");
-    //    builder.addEdge("G4", "G6");
-    //    builder.addEdge("G4", "G7");
-    //    builder.addEdge("G3", "G8");
-    //    builder.addEdge("G6", "G9");
 
     builder.addEdge("B0", "B1");
     builder.addEdge("B0", "B2");

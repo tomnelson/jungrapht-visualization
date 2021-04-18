@@ -119,8 +119,6 @@ public class ShowLayoutsWithImageIconVertices extends JPanel {
                 (label, vertex, colorFunction) -> {
                   label.setFont(new Font("Serif", Font.PLAIN, 20));
                   label.setForeground(Color.black);
-                  //                  label.setBackground(Color.white);
-                  //                                    label.setOpaque(true);
                   Border lineBorder =
                       BorderFactory.createEtchedBorder(); //Border(BevelBorder.RAISED);
                   Border marginBorder = BorderFactory.createEmptyBorder(4, 4, 4, 4);
@@ -128,14 +126,9 @@ public class ShowLayoutsWithImageIconVertices extends JPanel {
                 })
             .preDecorator(
                 (graphics, vertex, labelBounds, vertexShapeFunction, colorFunction) -> {
-                  //                  Color color = (Color) colorFunction.apply(vertex);
-                  //                  color =
-                  //                      new Color(
-                  //                          color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha() / 4);
                   // save off the old color
                   Color oldColor = graphics.getColor();
                   // fill the image background with white
-                  //                  graphics.setPaint(Color.white);
                   graphics.fill(labelBounds);
 
                   Shape shape = vertexShapeFunction.apply(vertex);

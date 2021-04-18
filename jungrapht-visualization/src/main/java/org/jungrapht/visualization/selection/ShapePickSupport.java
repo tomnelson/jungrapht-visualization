@@ -600,10 +600,6 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
     MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
     MutableTransformer viewTransformer = multiLayerTransformer.getTransformer(Layer.VIEW);
 
-    //    Spatial<E> edgeSpatial = vv.getEdgeSpatial();
-    //    if (!(viewTransformer instanceof LensTransformer) && edgeSpatial instanceof SpatialRTree.Edges && edgeSpatial.isActive()) {
-    //      return getEdge((SpatialRTree.Edges<E, V>) edgeSpatial, layoutModel, pickFootprint);
-    //    }
     while (true) {
       try {
         // this checks every edge.

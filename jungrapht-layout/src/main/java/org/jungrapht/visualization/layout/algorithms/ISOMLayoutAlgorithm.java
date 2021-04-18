@@ -117,12 +117,6 @@ public class ISOMLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
 
     //factor = 0; //Will be set later on
     coolingFactor = 2;
-
-    //temperature = 0.03;
-    //initialJumpRadius = 100;
-    //jumpRadius = initialJumpRadius;
-
-    //delay = 100;
   }
 
   /** Advances the current positions of the graph elements. */
@@ -168,8 +162,6 @@ public class ISOMLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
     epoch++;
     double factor = Math.exp(-1 * coolingFactor * (1.0 * epoch / maxEpoch));
     adaption = Math.max(minAdaption, factor * initialAdaption);
-    //jumpRadius = (int) factor * jumpRadius;
-    //temperature = factor * temperature;
     if ((radius > minRadius) && (epoch % radiusConstantTime == 0)) {
       radius--;
     }

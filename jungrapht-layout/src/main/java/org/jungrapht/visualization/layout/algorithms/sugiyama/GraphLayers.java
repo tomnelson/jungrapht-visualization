@@ -46,9 +46,6 @@ public class GraphLayers {
       // remove any vertices that have been added to the row
       vertices.removeIf(fstart::contains);
       start = getVerticesWithoutIncomingEdges(dag, edges, vertices);
-      //      if (componentVertices.size() > 1) {
-      //        start = groupByComponentMembership(componentVertices, start);
-      //      }
       rank++;
     }
     return sorted;
