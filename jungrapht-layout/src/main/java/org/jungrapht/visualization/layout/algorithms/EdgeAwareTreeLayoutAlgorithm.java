@@ -1,5 +1,6 @@
 package org.jungrapht.visualization.layout.algorithms;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -179,6 +180,17 @@ public class EdgeAwareTreeLayoutAlgorithm<V, E> extends TreeLayoutAlgorithm<V>
    */
   protected Set<V> buildTree(LayoutModel<V> layoutModel) {
     Set<V> roots;
+    Graph<V, ?> graph = layoutModel.getGraph();
+    if (graph == null || graph.vertexSet().isEmpty()) {
+      correctOverlap = expandLayout = false;
+      return Collections.emptySet();
+    }
+    if (graph.vertexSet().size() == 1) {
+      V loner = graph.vertexSet().stream().findFirst().get();
+      layoutModel.set(loner, layoutModel.getWidth() / 2, layoutModel.getHeight() / 2);
+      correctOverlap = expandLayout = false;
+      return graph.vertexSet();
+    }
     if (alignFavoredEdges) {
       // builds without expanding
       roots = alignBuildTree(layoutModel);

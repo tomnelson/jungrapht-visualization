@@ -1,11 +1,3 @@
-/*
- * Copyright (c) 2003, The JUNG Authors
- * All rights reserved.
- *
- * This software is open-source under the BSD license; see either "license.txt"
- * or https://github.com/tomnelson/jungrapht-visualization/blob/master/LICENSE for a description.
- *
- */
 package org.jungrapht.samples;
 
 import java.awt.*;
@@ -31,10 +23,8 @@ import org.jungrapht.visualization.util.VertexStyleConfiguration;
 
 /** @author Tom Nelson */
 public class VertexImagesOrNotDemo extends JPanel {
-  /** the graph */
   Graph<String, Integer> graph;
 
-  /** the visual component and renderer for the graph */
   VisualizationViewer<String, Integer> vv;
 
   VertexStyleConfiguration<String, Integer> vertexStyleConfiguration;

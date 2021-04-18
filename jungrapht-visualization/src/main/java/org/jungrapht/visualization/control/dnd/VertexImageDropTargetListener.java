@@ -8,7 +8,7 @@ import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetAdapter;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.geom.Point2D;
-import java.util.Map;
+import java.util.function.BiConsumer;
 import javax.swing.*;
 import org.jungrapht.visualization.LayeredIcon;
 import org.jungrapht.visualization.VisualizationViewer;
@@ -19,11 +19,12 @@ public class VertexImageDropTargetListener<V, E> extends DropTargetAdapter {
 
   private DropTarget dropTarget;
   private VisualizationViewer<V, E> viewer;
-  private Map<V, Icon> iconMap; // holds the icons for vertices created here
+  private BiConsumer<V, Icon> iconConsumer; // holds the icons for vertices created here
 
-  public VertexImageDropTargetListener(VisualizationViewer<V, E> viewer, Map<V, Icon> iconMap) {
+  public VertexImageDropTargetListener(
+      VisualizationViewer<V, E> viewer, BiConsumer<V, Icon> iconConsumer) {
     this.viewer = viewer;
-    this.iconMap = iconMap;
+    this.iconConsumer = iconConsumer;
     dropTarget = new DropTarget(viewer.getComponent(), DnDConstants.ACTION_COPY, this, true, null);
   }
 
@@ -46,9 +47,8 @@ public class VertexImageDropTargetListener<V, E> extends DropTargetAdapter {
 
           V vertex = viewer.getVisualizationModel().getGraph().addVertex();
           viewer.getVertexSpatial().recalculate();
-          iconMap.put(vertex, icon);
+          iconConsumer.accept(vertex, icon);
           viewer.getVisualizationModel().getLayoutModel().set(vertex, layoutDropPoint);
-
           event.dropComplete(true);
         }
       } else {

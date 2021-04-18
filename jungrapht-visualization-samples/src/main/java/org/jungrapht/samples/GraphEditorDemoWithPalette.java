@@ -40,7 +40,12 @@ import org.jungrapht.visualization.util.ParallelEdgeIndexFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** @author Tom Nelson */
+/**
+ * This one uses the Modal graph mouse with picking and transforming modes, also with rotate and
+ * shear
+ *
+ * @author Tom Nelson
+ */
 public class GraphEditorDemoWithPalette extends JPanel implements Printable {
 
   /** */
@@ -135,10 +140,6 @@ public class GraphEditorDemoWithPalette extends JPanel implements Printable {
             .build();
 
     vv.getRenderContext().setParallelEdgeIndexFunction(new ParallelEdgeIndexFunction<>());
-
-    //    new MyDropTargetListener((JPanel)vv.getComponent());
-
-    ////
 
     Function<Integer, Paint> vpf =
         new PickableElementPaintFunction<>(vv.getSelectedVertexState(), Color.white, Color.yellow);
@@ -246,7 +247,7 @@ public class GraphEditorDemoWithPalette extends JPanel implements Printable {
         ControlHelpers.getCenteredContainer("Drag icons to create vertices", new IconPalette()),
         BorderLayout.EAST);
 
-    new VertexImageDropTargetListener(vv, iconMap);
+    new VertexImageDropTargetListener<>(vv, iconMap::put);
   }
 
   /**

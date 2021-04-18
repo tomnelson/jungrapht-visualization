@@ -41,15 +41,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Shows how to create a graph editor. Mouse modes and actions are explained in the help text.
- * GraphEditorDemo provides a File menu with an option to save the visible graph as a jpeg file.
+ * This one uses the EditingDefaultGraphMouse with default, editing, and annotating modes. No rotate
+ * or shear. Selection and transformation are both available in the default mode. Shows how to
+ * create a graph editor. Mouse modes and actions are explained in the help text. GraphEditorDemo
+ * provides a File menu with an option to save the visible graph as a jpeg file.
  *
  * @author Tom Nelson
  */
-public class GraphEditorDemoWithPalette2 extends JPanel implements Printable {
+public class GraphEditorDemoWithPaletteDefaultMouse extends JPanel implements Printable {
 
   /** */
-  private static final Logger log = LoggerFactory.getLogger(GraphEditorDemoWithPalette2.class);
+  private static final Logger log =
+      LoggerFactory.getLogger(GraphEditorDemoWithPaletteDefaultMouse.class);
   /** the graph */
   Graph<Integer, Integer> graph;
 
@@ -121,7 +124,7 @@ public class GraphEditorDemoWithPalette2 extends JPanel implements Printable {
           + "</html>";
 
   /** create an instance of a simple graph with popup controls to create a graph. */
-  public GraphEditorDemoWithPalette2() {
+  public GraphEditorDemoWithPaletteDefaultMouse() {
 
     setLayout(new BorderLayout());
     // create a simple graph for the demo
@@ -140,10 +143,6 @@ public class GraphEditorDemoWithPalette2 extends JPanel implements Printable {
             .build();
 
     vv.getRenderContext().setParallelEdgeIndexFunction(new ParallelEdgeIndexFunction<>());
-
-    //    new MyDropTargetListener((JPanel)vv.getComponent());
-
-    ////
 
     Function<Integer, Paint> vpf =
         new PickableElementPaintFunction<>(vv.getSelectedVertexState(), Color.white, Color.yellow);
@@ -251,7 +250,7 @@ public class GraphEditorDemoWithPalette2 extends JPanel implements Printable {
         ControlHelpers.getCenteredContainer("Drag icons to create vertices", new IconPalette()),
         BorderLayout.EAST);
 
-    new VertexImageDropTargetListener<>(vv, iconMap);
+    new VertexImageDropTargetListener<>(vv, iconMap::put);
   }
 
   /**
@@ -306,7 +305,8 @@ public class GraphEditorDemoWithPalette2 extends JPanel implements Printable {
   public static void main(String[] args) {
     JFrame frame = new JFrame();
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-    final GraphEditorDemoWithPalette2 demo = new GraphEditorDemoWithPalette2();
+    final GraphEditorDemoWithPaletteDefaultMouse demo =
+        new GraphEditorDemoWithPaletteDefaultMouse();
 
     JMenu menu = new JMenu("File");
     menu.add(

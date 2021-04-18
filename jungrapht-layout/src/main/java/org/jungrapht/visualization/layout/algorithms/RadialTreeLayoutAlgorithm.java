@@ -140,7 +140,7 @@ public class RadialTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
     maxx = Math.max(maxx, width);
     double theta = 2 * Math.PI / maxx;
 
-    double deltaRadius = 1; //width / 2 / maxy;
+    double deltaRadius = 1;
     double offset = 0;
     if (roots.size() > 1) {
       offset = verticalVertexSpacing;
