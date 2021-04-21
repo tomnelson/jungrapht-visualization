@@ -17,6 +17,7 @@ import org.jungrapht.visualization.layout.algorithms.repulsion.StandardSpringRep
 import org.jungrapht.visualization.layout.algorithms.util.IterativeContext;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
+import org.jungrapht.visualization.layout.util.RandomLocationTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -131,7 +132,13 @@ public class SpringLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorith
     this.force_multiplier = force;
   }
 
-  public void initialize() {}
+  public void initialize() {
+    Graph<V, ?> graph = layoutModel.getGraph();
+    // KKLayoutAlgorithm will fail if all vertices start at the same location
+    layoutModel.setInitializer(
+        new RandomLocationTransformer<>(
+            layoutModel.getWidth(), layoutModel.getHeight(), graph.vertexSet().size()));
+  }
 
   public void step() {
     this.repulsionContract.step();

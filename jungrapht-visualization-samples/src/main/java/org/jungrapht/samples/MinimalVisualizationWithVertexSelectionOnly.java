@@ -24,7 +24,9 @@ import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
  * A demo that shows a minimal visualization configuration
  *
  * <p>Use the mouse wheel to scale Use Mouse Button 1 to pan Use CTRL-Mouse Button 1 to select
- * (select individual vertices/edges or drag a rectangular area to select contained vertices)
+ * (select individual vertices or drag a rectangular area to select contained vertices) When
+ * multiple vertices are selected, any shared edges are also highlighted but edge selection with the
+ * mouse is not enabled.
  *
  * @author Tom Nelson
  */
@@ -38,6 +40,8 @@ public class MinimalVisualizationWithVertexSelectionOnly {
             .layoutAlgorithm(new KKLayoutAlgorithm<>())
             .build();
 
+    // configures the mouse plugin that allows only vertex selection with the mouse
+    // but connecting edges are also selected when multiple vertices are selected.
     VertexSelectingGraphMousePlugin.configure(vv);
 
     // create a frame to hold the graph visualization

@@ -15,7 +15,7 @@ import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Point2D;
-import java.util.Map;
+import java.util.function.BiConsumer;
 import javax.swing.JOptionPane;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationViewer;
@@ -39,15 +39,16 @@ public class LabelEditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   protected E edge;
 
   /** Holds vertex String associations that may be used in the vertex label function */
-  protected Map<V, String> vertexLabelMap;
+  protected BiConsumer<V, String> vertexLabelMap;
 
   /** Holds edge to String associations that may be used in the edge label function */
-  protected Map<E, String> edgeLabelMap;
+  protected BiConsumer<E, String> edgeLabelMap;
 
   protected int selectionModifiers;
 
   /** create an instance with default settings */
-  public LabelEditingGraphMousePlugin(Map<V, String> vertexLabelMap, Map<E, String> edgeLabelMap) {
+  public LabelEditingGraphMousePlugin(
+      BiConsumer<V, String> vertexLabelMap, BiConsumer<E, String> edgeLabelMap) {
     this(vertexLabelMap, edgeLabelMap, 0);
   }
 
@@ -57,7 +58,9 @@ public class LabelEditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    * @param selectionModifiers for primary selection
    */
   public LabelEditingGraphMousePlugin(
-      Map<V, String> vertexLabelMap, Map<E, String> edgeLabelMap, int selectionModifiers) {
+      BiConsumer<V, String> vertexLabelMap,
+      BiConsumer<E, String> edgeLabelMap,
+      int selectionModifiers) {
     this.selectionModifiers = selectionModifiers;
     this.vertexLabelMap = vertexLabelMap;
     this.edgeLabelMap = edgeLabelMap;
@@ -85,7 +88,7 @@ public class LabelEditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
         if (vertex != null) {
           String newLabel = JOptionPane.showInputDialog("New Vertex Label for " + vertex);
           if (newLabel != null) {
-            vertexLabelMap.put(vertex, newLabel);
+            vertexLabelMap.accept(vertex, newLabel);
             vv.repaint();
           }
           e.consume();
@@ -102,7 +105,7 @@ public class LabelEditingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
         if (edge != null) {
           String newLabel = JOptionPane.showInputDialog("New Edge Label for " + edge);
           if (newLabel != null) {
-            edgeLabelMap.put(edge, newLabel);
+            edgeLabelMap.accept(edge, newLabel);
             vv.repaint();
             e.consume();
           }

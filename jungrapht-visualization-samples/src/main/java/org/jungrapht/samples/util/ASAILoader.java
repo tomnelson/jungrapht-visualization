@@ -161,6 +161,7 @@ public final class ASAILoader {
     GraphImporter<AS, AI> importer;
     switch (suffix) {
       case "graphml":
+      case "xml":
         importer = new GraphMLImporter<>();
         ((GraphMLImporter<AS, AI>) importer).setSchemaValidation(false);
         ((GraphMLImporter<AS, AI>) importer).setVertexFactory(AS_FUNCTION);

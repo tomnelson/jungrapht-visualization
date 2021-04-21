@@ -126,7 +126,7 @@ public class EditingModalGraphMouse<V, E> extends DefaultModalGraphMouse<V, E>
     rotatingPlugin = new RotatingGraphMousePlugin();
     shearingPlugin = new ShearingGraphMousePlugin();
     editingPlugin = EditingGraphMousePlugin.builder(vertexFactory, edgeFactory).build();
-    labelEditingPlugin = new LabelEditingGraphMousePlugin<>(vertexLabelMap, edgeLabelMap);
+    labelEditingPlugin = new LabelEditingGraphMousePlugin<>(vertexLabelMap::put, edgeLabelMap::put);
     annotatingPlugin = new AnnotatingGraphMousePlugin<>(rc);
     popupEditingPlugin = new EditingPopupGraphMousePlugin<>(vertexFactory, edgeFactory);
     setMode(this.mode);

@@ -113,7 +113,7 @@ public class EditingDefaultGraphMouse<V, E> extends DefaultGraphMouse<V, E>
     super.loadPlugins();
 
     editingPlugin = EditingGraphMousePlugin.builder(vertexFactory, edgeFactory).build();
-    labelEditingPlugin = new LabelEditingGraphMousePlugin<>(vertexLabelMap, edgeLabelMap);
+    labelEditingPlugin = new LabelEditingGraphMousePlugin<>(vertexLabelMap::put, edgeLabelMap::put);
     annotatingPlugin = new AnnotatingGraphMousePlugin<>(rc);
     popupEditingPlugin = new EditingPopupGraphMousePlugin<>(vertexFactory, edgeFactory);
     setMode(this.mode);

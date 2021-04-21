@@ -184,12 +184,12 @@ public class KKLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
   @SuppressWarnings("unchecked")
   public void initialize() {
     currentIteration = 0;
-    Graph<V, ?> graph = layoutModel.getGraph();
-    // KKLayoutAlgorithm will fail if all vertices start at the same location
-    layoutModel.setInitializer(
-        new RandomLocationTransformer<>(
-            layoutModel.getWidth(), layoutModel.getHeight(), graph.vertexSet().size()));
     if (layoutModel != null) {
+      Graph<V, ?> graph = layoutModel.getGraph();
+      // KKLayoutAlgorithm will fail if all vertices start at the same location
+      layoutModel.setInitializer(
+          new RandomLocationTransformer<>(
+              layoutModel.getWidth(), layoutModel.getHeight(), graph.vertexSet().size()));
 
       double height = layoutModel.getHeight();
       double width = layoutModel.getWidth();
