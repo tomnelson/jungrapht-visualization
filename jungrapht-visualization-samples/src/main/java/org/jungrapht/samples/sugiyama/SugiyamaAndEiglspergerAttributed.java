@@ -8,10 +8,12 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.IntStream;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
@@ -128,70 +130,68 @@ public class SugiyamaAndEiglspergerAttributed extends JFrame {
    * @return
    */
   Graph<Attributed<Integer>, Attributed<Integer>> createInitialGraph() {
-
+    Supplier<Integer> integerSupplier = SupplierUtil.createIntegerSupplier(); // for edges
     Graph<Attributed<Integer>, Attributed<Integer>> graph =
         GraphTypeBuilder.<Attributed<Integer>, Attributed<Integer>>directed()
-            //            .edgeSupplier(SupplierUtil.createIntegerSupplier())
-            //            .vertexSupplier(SupplierUtil.createIntegerSupplier())
+                .edgeSupplier(() -> (Attributed<Integer>)new DefaultAttributed<>(integerSupplier.get()))
             .buildGraph();
 
     List<Attributed<Integer>> list = new ArrayList<>();
-    IntStream.rangeClosed(1, 24).forEach(n -> list.add(new DefaultAttributed(n)));
+    IntStream.rangeClosed(1, 24).forEach(n -> list.add(new DefaultAttributed<>(n)));
     list.forEach(graph::addVertex);
-    int j = 0;
-    graph.addEdge(list.get(1), list.get(3), new DefaultAttributed<>(j++));
-    graph.addEdge(list.get(1), list.get(4), new DefaultAttributed<>(j++));
-    graph.addEdge(list.get(1), list.get(13), new DefaultAttributed<>(j++));
-    graph.addEdge(list.get(1), list.get(21), new DefaultAttributed<>(j++));
+    graph.addEdge(list.get(1), list.get(3));
+    graph.addEdge(list.get(1), list.get(4));
+    graph.addEdge(list.get(1), list.get(13));
+    graph.addEdge(list.get(1), list.get(21));
 
-    graph.addEdge(list.get(2), list.get(3), new DefaultAttributed<>(j++));
-    graph.addEdge(list.get(2), list.get(20), new DefaultAttributed<>(j++));
+    graph.addEdge(list.get(2), list.get(3));
+    graph.addEdge(list.get(2), list.get(20));
 
-    graph.addEdge(list.get(3), list.get(4), new DefaultAttributed<>(j++));
-    graph.addEdge(list.get(3), list.get(5), new DefaultAttributed<>(j++));
-    graph.addEdge(list.get(3), list.get(23), new DefaultAttributed<>(j++));
+    graph.addEdge(list.get(3), list.get(4));
+    graph.addEdge(list.get(3), list.get(5));
+    graph.addEdge(list.get(3), list.get(23));
 
-    graph.addEdge(list.get(4), list.get(6), new DefaultAttributed<>(j++));
+    graph.addEdge(list.get(4), list.get(6));
 
-    graph.addEdge(list.get(5), list.get(7), new DefaultAttributed<>(j++));
+    graph.addEdge(list.get(5), list.get(7));
 
-    graph.addEdge(list.get(6), list.get(8), new DefaultAttributed<>(j++));
-    graph.addEdge(list.get(6), list.get(16), new DefaultAttributed<>(j++));
-    graph.addEdge(list.get(6), list.get(23), new DefaultAttributed<>(j++));
+    graph.addEdge(list.get(6), list.get(8));
+    graph.addEdge(list.get(6), list.get(16));
+    graph.addEdge(list.get(6), list.get(23));
 
-    graph.addEdge(list.get(7), list.get(9), new DefaultAttributed<>(j++));
+    graph.addEdge(list.get(7), list.get(9));
 
-    graph.addEdge(list.get(8), list.get(10), new DefaultAttributed<>(j++));
-    graph.addEdge(list.get(8), list.get(11), new DefaultAttributed<>(j++));
+    graph.addEdge(list.get(8), list.get(10));
+    graph.addEdge(list.get(8), list.get(11));
 
-    graph.addEdge(list.get(9), list.get(12), new DefaultAttributed<>(j++));
+    graph.addEdge(list.get(9), list.get(12));
 
-    graph.addEdge(list.get(10), list.get(13), new DefaultAttributed<>(j++));
-    graph.addEdge(list.get(10), list.get(14), new DefaultAttributed<>(j++));
-    graph.addEdge(list.get(10), list.get(15), new DefaultAttributed<>(j++));
+    graph.addEdge(list.get(10), list.get(13));
+    graph.addEdge(list.get(10), list.get(14));
+    graph.addEdge(list.get(10), list.get(15));
 
-    graph.addEdge(list.get(11), list.get(15), new DefaultAttributed<>(j++));
-    graph.addEdge(list.get(11), list.get(16), new DefaultAttributed<>(j++));
+    graph.addEdge(list.get(11), list.get(15));
+    graph.addEdge(list.get(11), list.get(16));
 
-    graph.addEdge(list.get(12), list.get(20), new DefaultAttributed<>(j++));
+    graph.addEdge(list.get(12), list.get(20));
 
-    graph.addEdge(list.get(13), list.get(17), new DefaultAttributed<>(j++));
+    graph.addEdge(list.get(13), list.get(17));
 
-    graph.addEdge(list.get(14), list.get(17), new DefaultAttributed<>(j++));
-    graph.addEdge(list.get(14), list.get(18), new DefaultAttributed<>(j++));
+    graph.addEdge(list.get(14), list.get(17));
+    graph.addEdge(list.get(14), list.get(18));
     // no 15 targets
 
-    graph.addEdge(list.get(16), list.get(18), new DefaultAttributed<>(j++));
-    graph.addEdge(list.get(16), list.get(19), new DefaultAttributed<>(j++));
-    graph.addEdge(list.get(16), list.get(20), new DefaultAttributed<>(j++));
+    graph.addEdge(list.get(16), list.get(18));
+    graph.addEdge(list.get(16), list.get(19));
+    graph.addEdge(list.get(16), list.get(20));
 
-    graph.addEdge(list.get(18), list.get(21), new DefaultAttributed<>(j++));
+    graph.addEdge(list.get(18), list.get(21));
 
-    graph.addEdge(list.get(19), list.get(22), new DefaultAttributed<>(j++));
+    graph.addEdge(list.get(19), list.get(22));
 
-    graph.addEdge(list.get(21), list.get(23), new DefaultAttributed<>(j++));
+    graph.addEdge(list.get(21), list.get(23));
 
-    graph.addEdge(list.get(22), list.get(23), new DefaultAttributed<>(j++));
+    graph.addEdge(list.get(22), list.get(23));
     return graph;
   }
 

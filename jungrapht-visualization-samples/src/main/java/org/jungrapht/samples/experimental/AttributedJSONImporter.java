@@ -30,7 +30,7 @@ public class AttributedJSONImporter extends JSONImporter<Attributed<String>, Att
   public void importGraph(Graph<Attributed<String>, Attributed<Integer>> graph, Reader input) {
     GraphType graphType = graph.getType();
     Map<String, Attributed<String>> map = new HashMap<>();
-    Function<String, Attributed<String>> vertexFactory = v -> new DefaultAttributed(v);
+    Function<String, Attributed<String>> vertexFactory = v -> new DefaultAttributed<>(v);
 
     JSONEventDrivenImporter importer = new JSONEventDrivenImporter();
     importer.addVertexConsumer(
