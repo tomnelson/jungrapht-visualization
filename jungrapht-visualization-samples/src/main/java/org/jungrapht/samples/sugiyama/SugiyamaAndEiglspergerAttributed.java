@@ -133,7 +133,8 @@ public class SugiyamaAndEiglspergerAttributed extends JFrame {
     Supplier<Integer> integerSupplier = SupplierUtil.createIntegerSupplier(); // for edges
     Graph<Attributed<Integer>, Attributed<Integer>> graph =
         GraphTypeBuilder.<Attributed<Integer>, Attributed<Integer>>directed()
-                .edgeSupplier(() -> (Attributed<Integer>)new DefaultAttributed<>(integerSupplier.get()))
+            .edgeSupplier(
+                () -> (Attributed<Integer>) new DefaultAttributed<>(integerSupplier.get()))
             .buildGraph();
 
     List<Attributed<Integer>> list = new ArrayList<>();

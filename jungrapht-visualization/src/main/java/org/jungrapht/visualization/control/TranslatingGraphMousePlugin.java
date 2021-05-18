@@ -47,7 +47,7 @@ public class TranslatingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
       return (B) this;
     }
 
-    public B translatingMask(int rotatingMask) {
+    public B translatingMask(int translatingMask) {
       this.translatingMask = translatingMask;
       return self();
     }

@@ -84,12 +84,16 @@ public class AffineTransformer implements BidirectionalTransformer, ShapeTransfo
 
   /** @return the transform's x scale value */
   public double getScaleX() {
-    return transform.getScaleX();
+    Point2D p = new Point2D.Double(1, 0);
+    p = transform.deltaTransform(p, p);
+    return p.distance(0, 0);
   }
 
   /** @return the transform's y scale value */
   public double getScaleY() {
-    return transform.getScaleY();
+    Point2D p = new Point2D.Double(0, 1);
+    p = transform.deltaTransform(p, p);
+    return p.distance(0, 0);
   }
 
   /** @return the transform's overall scale magnitude */
