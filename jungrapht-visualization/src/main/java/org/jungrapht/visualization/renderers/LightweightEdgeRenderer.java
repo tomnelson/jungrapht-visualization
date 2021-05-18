@@ -22,6 +22,9 @@ import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 
 /**
+ * LightweightEdgeRenderer omits some rendering for performance gains.
+ * Edge shapes are lines (not curves). Articulated edges are drawn with
+ * articulations. No arrows are computed or drawn on edge endpoints
  * @param <V> vertex type
  * @param <E> edge type
  */

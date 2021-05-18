@@ -112,7 +112,7 @@ public class Rectangle {
    * Fail fast for the most common case where the point coordinates are not contained.
    * Implementation leaves space for debug breakpoints
    *
-   * @param ox coodinate to test
+   * @param ox coordinate to test
    * @param oy coordinate to test
    * @return true if the coordinate is contained, false otherwise
    */

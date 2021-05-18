@@ -25,6 +25,8 @@ import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 
 /**
+ * Draws edges with complete features: Edge shapes may be curved, edge arrows, when
+ * specified, are computed and drawn.
  * @param <V> vertex type
  * @param <E> edge type
  */
