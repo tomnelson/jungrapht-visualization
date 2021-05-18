@@ -6,9 +6,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.util.PointSummaryStatistics;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Expansion {
 
+  private static Logger log = LoggerFactory.getLogger(Expansion.class);
   /**
    * Uses all of the points in the {@code LayoutModel} plus any additional points (for example,
    * articulated edge points) in the locations Collection
@@ -94,4 +97,45 @@ public class Expansion {
               });
     }
   }
+
+  public static <V> void expandToFillBothAxes(LayoutModel<V> layoutModel, Collection<Point> locations) {
+
+    // find the dimensions of the layout's occupied area
+    Rectangle vertexContainingRectangle = computeLayoutExtent(layoutModel, locations);
+    log.info("vertexContainingRectangle: {}", vertexContainingRectangle);
+
+//    layoutModel.setSize((int)Math.max(layoutModel.getWidth(), vertexContainingRectangle.width),
+//            (int)Math.max(layoutModel.getHeight(), vertexContainingRectangle.height));
+
+
+    expandToFillBothAxes(layoutModel, vertexContainingRectangle);
+    log.info("filled locations:\n{}", layoutModel.getLocations());
+  }
+
+
+  public static <V, E> void expandToFillBothAxes(LayoutModel<V> layoutModel, Rectangle occupiedRegion) {
+    int regionX = (int) occupiedRegion.x;
+    int regionY = (int) occupiedRegion.y;
+    int regionWidth = (int) occupiedRegion.width;
+    int regionHeight = (int) occupiedRegion.height;
+      double horizontalExpansion = (double) layoutModel.getWidth() / regionWidth;
+      double verticalExpansion = (double) layoutModel.getHeight() / regionHeight;
+      log.info("horizontalExpansion: {}", horizontalExpansion);
+      log.info("verticalExpansion: {}", verticalExpansion);
+      Graph<V, E> graph = layoutModel.getGraph();
+      graph
+              .vertexSet()
+              .stream()
+              .filter(v -> !layoutModel.isLocked(v))
+              .forEach(
+                      v -> {
+                        Point p = layoutModel.get(v);
+                        p = Point.of(horizontalExpansion * (p.x - regionX),
+                                verticalExpansion * (p.y - regionY));
+                        layoutModel.set(v, p);
+                      });
+
+
+  }
+
 }

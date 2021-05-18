@@ -59,6 +59,7 @@ import org.jungrapht.visualization.spatial.rtree.QuadraticSplitter;
 import org.jungrapht.visualization.spatial.rtree.RStarLeafSplitter;
 import org.jungrapht.visualization.spatial.rtree.RStarSplitter;
 import org.jungrapht.visualization.spatial.rtree.SplitterContext;
+import org.jungrapht.visualization.transform.MutableTransformer;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 import org.jungrapht.visualization.util.BoundingRectangleCollector;
 import org.jungrapht.visualization.util.ChangeEventSupport;
@@ -958,14 +959,14 @@ class DefaultVisualizationServer<V, E> extends JPanel
                                 shape -> {
                                   // use the inverse of the scales from the layoutTransform to fix the rectangle when
                                   // layout scale has been applied (> 1.0 or when single axis scaling has been applied)
-                                  AffineTransform layoutTransform =
+                                  MutableTransformer layoutTransformer =
                                       renderContext
                                           .getMultiLayerTransformer()
-                                          .getTransformer(Layer.LAYOUT)
-                                          .getTransform();
+                                          .getTransformer(Layer.LAYOUT);
+//                                          .getTransform();
                                   return AffineTransform.getScaleInstance(
-                                          1 / layoutTransform.getScaleX(),
-                                          1 / layoutTransform.getScaleY())
+                                          1 / layoutTransformer.getScaleX(),
+                                          1 / layoutTransformer.getScaleY())
                                       .createTransformedShape(shape);
                                 }),
                         visualizationModel.getLayoutModel()))

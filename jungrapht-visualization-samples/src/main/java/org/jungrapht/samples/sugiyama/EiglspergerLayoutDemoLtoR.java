@@ -1,67 +1,77 @@
 package org.jungrapht.samples.sugiyama;
 
-import java.awt.*;
-import java.util.stream.IntStream;
-import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
-import org.jungrapht.samples.util.ControlHelpers;
-import org.jungrapht.samples.util.TreeLayoutSelector;
+import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
-import org.jungrapht.visualization.layout.algorithms.SugiyamaLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
+import org.jungrapht.visualization.layout.model.Point;
+import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.renderers.Renderer;
+import org.jungrapht.visualization.transform.MutableTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BrandesKopfSugiyamaGraphExampleWithLayouts extends JFrame {
+import javax.swing.*;
+import java.awt.*;
+import java.util.stream.IntStream;
 
-  private static final Logger log =
-      LoggerFactory.getLogger(BrandesKopfSugiyamaGraphExampleWithLayouts.class);
+public class EiglspergerLayoutDemoLtoR extends JFrame {
 
-  public BrandesKopfSugiyamaGraphExampleWithLayouts() {
+  private static final Logger log = LoggerFactory.getLogger(EiglspergerLayoutDemoLtoR.class);
+
+  VisualizationViewer<Integer, Integer> vv;
+
+  public EiglspergerLayoutDemoLtoR() {
 
     JPanel container = new JPanel(new BorderLayout());
 
     Graph<Integer, Integer> graph = createInitialGraph();
 
-    VisualizationViewer<Integer, Integer> vv = configureVisualizationViewer(graph);
-    vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
+    this.vv = configureVisualizationViewer(graph);
 
-    TreeLayoutSelector<String, Integer> treeLayoutSelector =
-        TreeLayoutSelector.<String, Integer>builder(vv)
-            .initialSelection(2)
-            .vertexShapeFunction(vv.getRenderContext().getVertexShapeFunction())
-            .alignFavoredEdges(false)
-                .columns(3)
+    vv.getRenderContext().setEdgeLabelFunction(Object::toString);
+
+    EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm3 =
+        EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+            .postStraighten(true)
+            .threaded(false)
             .build();
-
-    SugiyamaLayoutAlgorithm<Integer, Integer> layoutAlgorithm =
-        SugiyamaLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder().build();
-    layoutAlgorithm.setVertexBoundsFunction(vv.getRenderContext().getVertexBoundsFunction());
-    vv.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm);
-
+    layoutAlgorithm3.setVertexBoundsFunction(vv.getRenderContext().getVertexBoundsFunction());
+    vv.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm3);
     container.add(vv.getComponent());
 
     setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
     add(container);
-
-    Box controls = Box.createHorizontalBox();
-    controls.add(ControlHelpers.getCenteredContainer("Layout Controls", treeLayoutSelector));
-    add(controls, BorderLayout.SOUTH);
-
     pack();
     setVisible(true);
+    setLtoR();
   }
+
+  private void setLtoR() {
+
+    MutableTransformer modelTransformer =
+            vv.getRenderContext()
+                    .getMultiLayerTransformer()
+                    .getTransformer(MultiLayerTransformer.Layer.LAYOUT);
+    // get center of layout
+    LayoutModel layoutModel = vv.getVisualizationModel().getLayoutModel();
+    Point center = layoutModel.getCenter();
+
+    modelTransformer.rotate(
+            -Math.PI / 2, center.x, center.y);
+  }
+
 
   private VisualizationViewer<Integer, Integer> configureVisualizationViewer(
       Graph<Integer, Integer> graph) {
     VisualizationViewer<Integer, Integer> vv =
         VisualizationViewer.builder(graph)
             .layoutSize(new Dimension(600, 600))
-            .viewSize(new Dimension(600, 600))
+            .viewSize(new Dimension(700, 500))
             .build();
 
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
@@ -146,6 +156,6 @@ public class BrandesKopfSugiyamaGraphExampleWithLayouts extends JFrame {
   }
 
   public static void main(String[] args) {
-    new BrandesKopfSugiyamaGraphExampleWithLayouts();
+    new EiglspergerLayoutDemoLtoR();
   }
 }

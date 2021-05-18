@@ -408,6 +408,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
           layoutModel.setFireEvents(true);
           appendAll(layoutModel, layoutModels);
           expandLayoutWidthOrHeight(layoutModel, edgePointMap.values());
+//          after.run();
         }
       }
     }

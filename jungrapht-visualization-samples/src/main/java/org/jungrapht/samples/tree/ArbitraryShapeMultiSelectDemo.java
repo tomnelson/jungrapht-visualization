@@ -69,10 +69,10 @@ public class ArbitraryShapeMultiSelectDemo extends JPanel {
 
     JPanel layoutPanel = new JPanel(new GridLayout(0, 1));
     layoutPanel.add(
-        ControlHelpers.getCenteredContainer("Layouts", TreeLayoutSelector.builder(vv).build()));
+        ControlHelpers.getCenteredContainer("Layouts", TreeLayoutSelector.builder(vv).columns(3).build()));
     Box controls = Box.createHorizontalBox();
     controls.add(layoutPanel);
-    controls.add(ControlHelpers.getCenteredContainer("Zoom", ControlHelpers.getZoomControls(vv)));
+//    controls.add(ControlHelpers.getCenteredContainer("Zoom", ControlHelpers.getZoomControls(vv)));
     add(controls, BorderLayout.SOUTH);
   }
 

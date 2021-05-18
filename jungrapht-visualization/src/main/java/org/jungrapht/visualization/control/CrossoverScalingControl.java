@@ -33,8 +33,8 @@ public class CrossoverScalingControl implements ScalingControl {
   private static final double RESET_THRESHOLD = 0.002;
 
   public static class Builder {
-    double minScale = Double.parseDouble(System.getProperty(MIN_SCALE, "0.05"));
-    double maxScale = Double.parseDouble(System.getProperty(MAX_SCALE, "5.0"));
+    double minScale = Double.parseDouble(System.getProperty(MIN_SCALE, "0.0001"));
+    double maxScale = Double.parseDouble(System.getProperty(MAX_SCALE, "20000.0"));
     double crossover = Double.parseDouble(System.getProperty(CROSSOVER, "1.0"));
     boolean enableSingleAxisScaling =
         Boolean.parseBoolean(System.getProperty(ENABLE_SINGLE_AXIS_SCALING, "true"));

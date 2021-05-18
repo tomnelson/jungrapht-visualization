@@ -26,6 +26,8 @@ import org.jungrapht.visualization.annotations.SelectedEdgePaintable;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.decorators.IconShapeFunction;
+import org.jungrapht.visualization.layout.model.LayoutModel;
+import org.jungrapht.visualization.layout.util.Caching;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.util.IconCache;
 import org.jungrapht.visualization.util.LayoutPaintable;
@@ -257,7 +259,11 @@ public class RandomDAGExample extends JPanel {
     this.graph =
         TestGraphs.createDirectedAcyclicGraph(
             layers, maxVerticesPerLayer, linkProbability, randomSeed);
-    vv.getVisualizationModel().getLayoutModel().setSize(600, 600); // put back original size
+    LayoutModel layoutModel = vv.getVisualizationModel().getLayoutModel();
+    if (layoutModel instanceof Caching) {
+      ((Caching)layoutModel).clear();
+    }
+    vv.getVisualizationModel().getLayoutModel().setSize(600, 600);// put back original size
     vv.getRenderContext().getMultiLayerTransformer().setToIdentity();
     vv.getVisualizationModel().setGraph(this.graph, true);
   }
