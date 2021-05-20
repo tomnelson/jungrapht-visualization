@@ -41,6 +41,9 @@ import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.PolarPoint;
 import org.jungrapht.visualization.spatial.Spatial;
 import org.jungrapht.visualization.transform.MutableTransformer;
+import org.jungrapht.visualization.util.LayoutPaintable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A variant of TidierTreeLayoutDemo that rotates the view by 90 degrees from the default
@@ -50,6 +53,7 @@ import org.jungrapht.visualization.transform.MutableTransformer;
  */
 public class TidierL2RTreeLayoutDemo extends JPanel {
 
+  private static Logger log = LoggerFactory.getLogger(TidierL2RTreeLayoutDemo.class);
   Graph<String, Integer> graph;
 
   VisualizationViewer<String, Integer> vv;
@@ -68,7 +72,6 @@ public class TidierL2RTreeLayoutDemo extends JPanel {
 
     treeLayoutAlgorithm =
         TidierTreeLayoutAlgorithm.<String, Integer>edgeAwareBuilder()
-            .after(this::setLtoR)
             .expandLayout(true)
             .build();
     radialLayoutAlgorithm =
@@ -90,9 +93,23 @@ public class TidierL2RTreeLayoutDemo extends JPanel {
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.setVertexToolTipFunction(Object::toString);
     vv.getRenderContext().setArrowFillPaintFunction(a -> Color.lightGray);
+
+    vv.getVisualizationModel().getLayoutModel().getLayoutStateChangeSupport()
+            .addLayoutStateChangeListener(evt -> {
+              if (!evt.active) {
+                LayoutModel<String> layoutModel = evt.layoutModel;
+                layoutModel.getLocations()
+                        .forEach((v,p)  -> layoutModel.set(v, Point.of(p.y, layoutModel.getWidth()-p.x)));
+              }
+            });
+
     vv.getVisualizationModel()
         .setLayoutAlgorithm(treeLayoutAlgorithm); // after the vertexShapeFunction is set
-    vv.setVertexSpatial(new Spatial.NoOp.Vertex(vv.getVisualizationModel().getLayoutModel()));
+    if (log.isTraceEnabled()) {
+      vv.addPreRenderPaintable(
+            new LayoutPaintable.LayoutBounds(
+                    vv.getVisualizationModel(), vv.getRenderContext().getMultiLayerTransformer()));
+    }
 
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);
@@ -122,20 +139,6 @@ public class TidierL2RTreeLayoutDemo extends JPanel {
     controls.add(ControlHelpers.getCenteredContainer("Layout Control", radial));
     controls.add(ControlHelpers.getCenteredContainer("Scale", ControlHelpers.getZoomControls(vv)));
     add(controls, BorderLayout.SOUTH);
-  }
-
-  private void setLtoR() {
-
-    MutableTransformer modelTransformer =
-        vv.getRenderContext()
-            .getMultiLayerTransformer()
-            .getTransformer(MultiLayerTransformer.Layer.LAYOUT);
-    Point2D center = vv.getCenter();
-    modelTransformer.rotate(
-        -Math.PI / 2,
-        vv.getRenderContext()
-            .getMultiLayerTransformer()
-            .inverseTransform(MultiLayerTransformer.Layer.VIEW, center));
   }
 
   class Rings implements VisualizationServer.Paintable {
