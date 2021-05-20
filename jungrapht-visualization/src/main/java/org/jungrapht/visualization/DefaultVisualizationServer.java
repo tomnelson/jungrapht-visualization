@@ -963,7 +963,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
                                       renderContext
                                           .getMultiLayerTransformer()
                                           .getTransformer(Layer.LAYOUT);
-//                                          .getTransform();
+                                  //                                          .getTransform();
                                   return AffineTransform.getScaleInstance(
                                           1 / layoutTransformer.getScaleX(),
                                           1 / layoutTransformer.getScaleY())

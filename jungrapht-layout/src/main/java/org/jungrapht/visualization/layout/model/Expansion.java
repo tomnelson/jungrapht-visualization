@@ -98,44 +98,42 @@ public class Expansion {
     }
   }
 
-  public static <V> void expandToFillBothAxes(LayoutModel<V> layoutModel, Collection<Point> locations) {
+  public static <V> void expandToFillBothAxes(
+      LayoutModel<V> layoutModel, Collection<Point> locations) {
 
     // find the dimensions of the layout's occupied area
     Rectangle vertexContainingRectangle = computeLayoutExtent(layoutModel, locations);
     log.info("vertexContainingRectangle: {}", vertexContainingRectangle);
 
-//    layoutModel.setSize((int)Math.max(layoutModel.getWidth(), vertexContainingRectangle.width),
-//            (int)Math.max(layoutModel.getHeight(), vertexContainingRectangle.height));
-
+    //    layoutModel.setSize((int)Math.max(layoutModel.getWidth(), vertexContainingRectangle.width),
+    //            (int)Math.max(layoutModel.getHeight(), vertexContainingRectangle.height));
 
     expandToFillBothAxes(layoutModel, vertexContainingRectangle);
     log.info("filled locations:\n{}", layoutModel.getLocations());
   }
 
-
-  public static <V, E> void expandToFillBothAxes(LayoutModel<V> layoutModel, Rectangle occupiedRegion) {
+  public static <V, E> void expandToFillBothAxes(
+      LayoutModel<V> layoutModel, Rectangle occupiedRegion) {
     int regionX = (int) occupiedRegion.x;
     int regionY = (int) occupiedRegion.y;
     int regionWidth = (int) occupiedRegion.width;
     int regionHeight = (int) occupiedRegion.height;
-      double horizontalExpansion = (double) layoutModel.getWidth() / regionWidth;
-      double verticalExpansion = (double) layoutModel.getHeight() / regionHeight;
-      log.info("horizontalExpansion: {}", horizontalExpansion);
-      log.info("verticalExpansion: {}", verticalExpansion);
-      Graph<V, E> graph = layoutModel.getGraph();
-      graph
-              .vertexSet()
-              .stream()
-              .filter(v -> !layoutModel.isLocked(v))
-              .forEach(
-                      v -> {
-                        Point p = layoutModel.get(v);
-                        p = Point.of(horizontalExpansion * (p.x - regionX),
-                                verticalExpansion * (p.y - regionY));
-                        layoutModel.set(v, p);
-                      });
-
-
+    double horizontalExpansion = (double) layoutModel.getWidth() / regionWidth;
+    double verticalExpansion = (double) layoutModel.getHeight() / regionHeight;
+    log.info("horizontalExpansion: {}", horizontalExpansion);
+    log.info("verticalExpansion: {}", verticalExpansion);
+    Graph<V, E> graph = layoutModel.getGraph();
+    graph
+        .vertexSet()
+        .stream()
+        .filter(v -> !layoutModel.isLocked(v))
+        .forEach(
+            v -> {
+              Point p = layoutModel.get(v);
+              p =
+                  Point.of(
+                      horizontalExpansion * (p.x - regionX), verticalExpansion * (p.y - regionY));
+              layoutModel.set(v, p);
+            });
   }
-
 }

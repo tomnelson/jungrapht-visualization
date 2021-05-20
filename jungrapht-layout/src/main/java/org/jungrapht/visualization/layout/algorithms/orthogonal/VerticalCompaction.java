@@ -1,16 +1,15 @@
 package org.jungrapht.visualization.layout.algorithms.orthogonal;
 
-import org.jgrapht.Graph;
-import org.jungrapht.visualization.layout.model.Rectangle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.*;
-
 import static org.jungrapht.visualization.layout.algorithms.eiglsperger.VerticalAlignment.HDirection;
 import static org.jungrapht.visualization.layout.algorithms.eiglsperger.VerticalAlignment.HDirection.LtoR;
 import static org.jungrapht.visualization.layout.algorithms.eiglsperger.VerticalAlignment.HDirection.RtoL;
 import static org.jungrapht.visualization.layout.algorithms.eiglsperger.VerticalAlignment.VDirection;
+
+import java.util.*;
+import org.jgrapht.Graph;
+import org.jungrapht.visualization.layout.model.Rectangle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @see "Fast and Simple Horizontal Coordinate Assignment, Ulrik Brandes and Boris Köpf, Department
@@ -54,19 +53,18 @@ public class VerticalCompaction<V, E> {
     this.deltaX = deltaX;
     this.deltaY = deltaY;
 
-    layers
-            .forEach(
-                    v -> {
-                      sink.put(v, v);
-                      shift.put(v, Integer.MAX_VALUE);
-                    });
-
+    layers.forEach(
+        v -> {
+          sink.put(v, v);
+          shift.put(v, Integer.MAX_VALUE);
+        });
   }
 
   public void horizontalCompaction() {
 
     if (log.isTraceEnabled()) {
-              layers.stream()
+      layers
+          .stream()
           .forEach(v -> log.trace("v:{}, root(v):{} equal: {}", v, root(v), (v == root(v))));
       log.trace("compactionGraph vertices: {}", compactionGraph.vertexSet());
     }
@@ -74,9 +72,9 @@ public class VerticalCompaction<V, E> {
     Set<Rectangle> verticesInCompactionGraphAndSegmentEnds = new HashSet<>();
     for (Rectangle v : compactionGraph.vertexSet()) {
       Rectangle root = root(v);
-        if (root == v) {
-          verticesInCompactionGraphAndSegmentEnds.add(v);
-        }
+      if (root == v) {
+        verticesInCompactionGraphAndSegmentEnds.add(v);
+      }
     }
     if (log.isTraceEnabled()) {
       log.trace(
@@ -84,24 +82,24 @@ public class VerticalCompaction<V, E> {
     }
     for (Rectangle v : compactionGraph.vertexSet()) {
       Rectangle root = root(v);
-        if (root == v) {
-          if (log.isTraceEnabled()) {
-            log.trace("(v) will placeBlock({})", v);
-          }
-          placeBlock(v);
+      if (root == v) {
+        if (log.isTraceEnabled()) {
+          log.trace("(v) will placeBlock({})", v);
         }
+        placeBlock(v);
+      }
     }
 
-      for (Rectangle v : layers) {
-        // x[v] <- x[root[v]]
-        x(v, x(root(v)));
-        y(v, (int)v.y * deltaY); // 'i' is the rank
-        // if shift[sink[root[v]]] < infinity
-        if (shift(sink(root(v))) < Integer.MAX_VALUE) {
-          // x[v] <- x[v] + shift[sink[root[v]]]
-          x(v, x(v) + shift(sink(root(v))));
-        }
+    for (Rectangle v : layers) {
+      // x[v] <- x[root[v]]
+      x(v, x(root(v)));
+      y(v, (int) v.y * deltaY); // 'i' is the rank
+      // if shift[sink[root[v]]] < infinity
+      if (shift(sink(root(v))) < Integer.MAX_VALUE) {
+        // x[v] <- x[v] + shift[sink[root[v]]]
+        x(v, x(v) + shift(sink(root(v))));
       }
+    }
   }
 
   protected void placeBlock(Rectangle v) {
@@ -116,7 +114,7 @@ public class VerticalCompaction<V, E> {
           log.trace("look for predecessor of {}", w);
         }
         Rectangle cw;
-          cw = w;
+        cw = w;
         if (compactionGraph.containsVertex(cw)) {
           if (log.isTraceEnabled()) {
             log.trace("inDegree of {} is {}", cw, compactionGraph.inDegreeOf(cw));
@@ -135,7 +133,7 @@ public class VerticalCompaction<V, E> {
                   hDirection == LtoR
                       ? compactionGraph.getEdgeSource(edge)
                       : compactionGraph.getEdgeTarget(edge);
-                u = root(pred);
+              u = root(pred);
               if (log.isTraceEnabled()) {
                 log.trace("(u) will placeBlock({})", u);
               }
@@ -159,22 +157,22 @@ public class VerticalCompaction<V, E> {
             }
           }
         }
-          w = align(w);
+        w = align(w);
       } while (w != v);
     }
   }
 
-  public Map<Rectangle,Integer> getXMap() {
+  public Map<Rectangle, Integer> getXMap() {
     return x;
   }
 
-//  protected int pos(Rectangle v) {
-//    return (int)v.y;
-//  }
-//
-//  protected int idx(Rectangle v) {
-//    return (int)v.y;
-//  }
+  //  protected int pos(Rectangle v) {
+  //    return (int)v.y;
+  //  }
+  //
+  //  protected int idx(Rectangle v) {
+  //    return (int)v.y;
+  //  }
 
   void checkValuesInLayersForSameX(Rectangle[][] layers) {
     for (Rectangle[] layer : layers) {
@@ -209,12 +207,12 @@ public class VerticalCompaction<V, E> {
   }
 
   protected int x(Rectangle v) {
-//    return (int)v.x;
+    //    return (int)v.x;
     return x.get(v);
   }
 
   protected void x(Rectangle v, int d) {
-//    v. = d;
+    //    v. = d;
     x.put(v, d);
   }
 
@@ -241,6 +239,4 @@ public class VerticalCompaction<V, E> {
   protected void align(Rectangle k, Rectangle v) {
     alignMap.put(k, v);
   }
-
-
 }

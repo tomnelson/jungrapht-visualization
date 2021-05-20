@@ -189,7 +189,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
         builder.edgeComparator,
         builder.alignFavoredEdges,
         builder.rows,
-            builder.columns,
+        builder.columns,
         builder.after);
   }
 
@@ -362,7 +362,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
 
     SpringLayoutAlgorithm<V, E> springLayoutAlgorithm = new SpringLayoutAlgorithm<>();
     OrthogonalLayoutAlgorithm<V, E> orthogonalLayoutAlgorithm =
-            OrthogonalLayoutAlgorithm.<V, E>builder().build();
+        OrthogonalLayoutAlgorithm.<V, E>builder().build();
 
     JRadioButton treeButton = new JRadioButton("Tree");
     treeButton.addItemListener(new LayoutItemListener(treeLayoutAlgorithm, vv));

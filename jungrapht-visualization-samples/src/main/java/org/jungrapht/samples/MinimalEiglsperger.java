@@ -8,18 +8,16 @@
  */
 package org.jungrapht.samples;
 
+import java.awt.*;
+import java.util.stream.IntStream;
+import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.orthogonal.OrthogonalLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.stream.IntStream;
 
 /**
  * A demo that shows a minimal visualization configuration
@@ -36,12 +34,11 @@ public class MinimalEiglsperger {
     VisualizationViewer<Integer, Integer> vv =
         VisualizationViewer.builder(createGraph())
             .viewSize(new Dimension(700, 700))
-            .layoutAlgorithm(EiglspergerLayoutAlgorithm.<Integer,Integer>builder()
-                    .build())
+            .layoutAlgorithm(EiglspergerLayoutAlgorithm.<Integer, Integer>builder().build())
             .build();
 
     LayoutModel<Integer> layoutModel = vv.getVisualizationModel().getLayoutModel();
-    vv.setVertexToolTipFunction(v -> v+" p:"+layoutModel.apply(v));
+    vv.setVertexToolTipFunction(v -> v + " p:" + layoutModel.apply(v));
     // create a frame to hold the graph visualization
     final JFrame frame = new JFrame();
     frame.getContentPane().add(vv.getComponent());

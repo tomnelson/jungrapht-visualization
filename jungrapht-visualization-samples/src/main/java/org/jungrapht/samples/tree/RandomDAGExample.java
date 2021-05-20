@@ -261,9 +261,9 @@ public class RandomDAGExample extends JPanel {
             layers, maxVerticesPerLayer, linkProbability, randomSeed);
     LayoutModel layoutModel = vv.getVisualizationModel().getLayoutModel();
     if (layoutModel instanceof Caching) {
-      ((Caching)layoutModel).clear();
+      ((Caching) layoutModel).clear();
     }
-    vv.getVisualizationModel().getLayoutModel().setSize(600, 600);// put back original size
+    vv.getVisualizationModel().getLayoutModel().setSize(600, 600); // put back original size
     vv.getRenderContext().getMultiLayerTransformer().setToIdentity();
     vv.getVisualizationModel().setGraph(this.graph, true);
   }

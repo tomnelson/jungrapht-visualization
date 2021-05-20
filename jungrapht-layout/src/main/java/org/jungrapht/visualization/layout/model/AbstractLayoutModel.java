@@ -262,7 +262,7 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
                 this.viewChangeSupport.fireViewChanged();
                 // fire an event to say that the layout relax is done
                 this.layoutStateChangeSupport.fireLayoutStateChanged(this, false);
-               });
+              });
     } else {
       log.debug("start visRunner thread");
       CompletableFuture.runAsync(visRunnable)

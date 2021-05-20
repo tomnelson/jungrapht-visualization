@@ -1,26 +1,19 @@
 package org.jungrapht.samples.sugiyama;
 
+import java.awt.*;
+import java.util.stream.IntStream;
+import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
-import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
-import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.LayoutModel;
+import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.renderers.Renderer;
-import org.jungrapht.visualization.transform.MutableTransformer;
-import org.jungrapht.visualization.util.PointUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
-import java.util.function.Function;
-import java.util.stream.IntStream;
 
 public class EiglspergerLayoutDemoLtoR extends JFrame {
 
@@ -38,12 +31,17 @@ public class EiglspergerLayoutDemoLtoR extends JFrame {
 
     vv.getRenderContext().setEdgeLabelFunction(Object::toString);
 
-    vv.getVisualizationModel().getLayoutModel().getLayoutStateChangeSupport()
-            .addLayoutStateChangeListener(evt -> {
+    vv.getVisualizationModel()
+        .getLayoutModel()
+        .getLayoutStateChangeSupport()
+        .addLayoutStateChangeListener(
+            evt -> {
               if (!evt.active) {
                 LayoutModel<Integer> layoutModel = evt.layoutModel;
-                layoutModel.getLocations()
-                        .forEach((v,p)  -> layoutModel.set(v, Point.of(p.y, layoutModel.getWidth()-p.x)));
+                layoutModel
+                    .getLocations()
+                    .forEach(
+                        (v, p) -> layoutModel.set(v, Point.of(p.y, layoutModel.getWidth() - p.x)));
               }
             });
 
