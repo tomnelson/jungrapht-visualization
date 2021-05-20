@@ -45,7 +45,11 @@ public class MultiMutableSelectedState<T> extends AbstractMutableSelectedState<T
     if (selected.add(element)) {
       if (fireEvents) {
         fireItemStateChanged(
-            new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, element, ItemEvent.SELECTED));
+            new ItemEvent(
+                this,
+                ItemEvent.ITEM_STATE_CHANGED,
+                Collections.singleton(element),
+                ItemEvent.SELECTED));
       }
       return true;
     }
@@ -63,7 +67,11 @@ public class MultiMutableSelectedState<T> extends AbstractMutableSelectedState<T
     if (this.selected.remove(t)) {
       if (fireEvents) {
         fireItemStateChanged(
-            new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, t, ItemEvent.DESELECTED));
+            new ItemEvent(
+                this,
+                ItemEvent.ITEM_STATE_CHANGED,
+                Collections.singleton(t),
+                ItemEvent.DESELECTED));
       }
       return true; // mutated the collection
     }

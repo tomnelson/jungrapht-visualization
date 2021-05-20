@@ -16,8 +16,9 @@ import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 
 /**
- * Renders graph vertices with optimizations for performance.
- * Vertex Icon images are not drawn, instead simple shapes are used.
+ * Renders graph vertices with optimizations for performance. Vertex Icon images are not drawn,
+ * instead simple shapes are used.
+ *
  * @param <V> vertex type
  * @param <E> edge type
  */

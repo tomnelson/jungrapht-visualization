@@ -27,8 +27,9 @@ import org.jungrapht.visualization.transform.shape.ShapeTransformer;
 import org.jungrapht.visualization.transform.shape.TransformingGraphics;
 
 /**
- * Renders vertex labels when requested and supplied.
- * Lightweight rendering does not draw vertex labels.
+ * Renders vertex labels when requested and supplied. Lightweight rendering does not draw vertex
+ * labels.
+ *
  * @param <V> vertex type
  * @param <E> edge type
  */
