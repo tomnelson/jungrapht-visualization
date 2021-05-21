@@ -61,7 +61,7 @@ public class MagnifyImageLensSupport<V, E, M extends LensGraphMouse>
   protected MagnifyImageLensSupport(Builder<V, E, M, ?, ?> builder) {
     super(builder);
     this.renderContext = vv.getRenderContext();
-    this.pickSupport = renderContext.getPickSupport();
+    this.pickSupport = renderContext.getSelectionSupport();
     this.renderer = vv.getRenderer();
     this.transformingRenderer = Renderer.<V, E>builder().build();
     this.savedGraphicsDecorator = renderContext.getGraphicsContext();
@@ -86,7 +86,7 @@ public class MagnifyImageLensSupport<V, E, M extends LensGraphMouse>
       VisualizationViewer<V, E> vv, LensTransformer lensTransformer, M lensGraphMouse) {
     super(vv, lensGraphMouse);
     this.renderContext = vv.getRenderContext();
-    this.pickSupport = renderContext.getPickSupport();
+    this.pickSupport = renderContext.getSelectionSupport();
     this.renderer = vv.getRenderer();
     this.transformingRenderer = Renderer.<V, E>builder().build();
     this.savedGraphicsDecorator = renderContext.getGraphicsContext();
@@ -143,7 +143,7 @@ public class MagnifyImageLensSupport<V, E, M extends LensGraphMouse>
 
   public void deactivate() {
     super.deactivate();
-    renderContext.setPickSupport(pickSupport);
+    renderContext.setSelectionSupport(pickSupport);
     vv.getRenderContext()
         .getMultiLayerTransformer()
         .setTransformer(MultiLayerTransformer.Layer.VIEW, lensTransformer.getDelegate());

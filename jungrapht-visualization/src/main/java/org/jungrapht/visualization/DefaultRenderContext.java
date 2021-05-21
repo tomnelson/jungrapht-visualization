@@ -88,9 +88,11 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
   private static final String VERTEX_SHAPE = PREFIX + "vertexShape";
   private static final String VERTEX_SIZE = PREFIX + "vertexSize";
   private static final String VERTEX_DRAW_COLOR = PREFIX + "vertexDrawColor";
+  private static final String SELECTED_VERTEX_DRAW_COLOR = PREFIX + "selectedVertexDrawColor";
   private static final String VERTEX_FILL_COLOR = PREFIX + "vertexFillColor";
-  private static final String PICKED_VERTEX_COLOR = PREFIX + "pickedVertexFillColor";
+  private static final String SELECTED_VERTEX_COLOR = PREFIX + "selectedVertexFillColor";
   private static final String VERTEX_STROKE_WIDTH = PREFIX + "vertexStrokeWidth";
+  private static final String SELECTED_VERTEX_STROKE_WIDTH = PREFIX + "selectedVertexStrokeWidth";
 
   // vertex label visual property symbols
   private static final String VERTEX_LABEL_FONT = PREFIX + "vertexLabelFont";
@@ -100,9 +102,11 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
   // edge visual property symbols
   private static final String EDGE_SHAPE = PREFIX + "edgeShape";
   private static final String EDGE_COLOR = PREFIX + "edgeColor";
-  private static final String PICKED_EDGE_COLOR = PREFIX + "pickedEdgeColor";
+  private static final String SELECTED_EDGE_COLOR = PREFIX + "selectedEdgeColor";
   public static final String EDGE_WIDTH = PREFIX + "edgeWidth";
   private static final String EDGE_STROKE = PREFIX + "edgeStroke";
+  public static final String SELECTED_EDGE_WIDTH = PREFIX + "selectedEdgeWidth";
+  private static final String SELECTED_EDGE_STROKE = PREFIX + "selectedEdgeStroke";
 
   // edge label visual property symbols
   private static final String EDGE_LABEL_FONT = PREFIX + "edgeLabelFont";
@@ -126,13 +130,16 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
   protected Stroke edgeStroke;
 
   protected float edgeStrokeWidth = Float.parseFloat(System.getProperty(EDGE_WIDTH, "1.0f"));
+  protected float selectedEdgeStrokeWidth =
+      Float.parseFloat(System.getProperty(SELECTED_EDGE_WIDTH, "1.0f"));
 
   // vertex properties
   private int vertexSize = Integer.getInteger(VERTEX_SIZE, 20);
   private String vertexShapeString = System.getProperty(VERTEX_SHAPE, "CIRCLE");
   private Paint vertexDrawPaint = Color.getColor(VERTEX_DRAW_COLOR, Color.BLACK);
+  private Paint selectedVertexDrawPaint = Color.getColor(SELECTED_VERTEX_DRAW_COLOR, Color.BLACK);
   private Paint vertexFillPaint = Color.getColor(VERTEX_FILL_COLOR, Color.RED);
-  private Paint selectedVertexFillPaint = Color.getColor(PICKED_VERTEX_COLOR, Color.YELLOW);
+  private Paint selectedVertexFillPaint = Color.getColor(SELECTED_VERTEX_COLOR, Color.YELLOW);
   private Shape vertexShape = getVertexShape(vertexShapeString, vertexSize);
 
   // vertex functions
@@ -141,20 +148,26 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
   /** the {@link Stroke} used to draw (outline) vertex shapes */
   protected Function<V, Stroke> vertexStrokeFunction =
       n -> new BasicStroke(Float.parseFloat(System.getProperty(VERTEX_STROKE_WIDTH, "1.0")));
+
+  protected Function<V, Stroke> selectedVertexStrokeFunction =
+      n ->
+          new BasicStroke(
+              Float.parseFloat(System.getProperty(SELECTED_VERTEX_STROKE_WIDTH, "1.0")));
   /** implement to provide Shapes for vertices */
   protected Function<V, Shape> vertexShapeFunction = v -> vertexShape;
 
   /** implement to provide outline color for vertices */
   protected Function<V, Paint> vertexDrawPaintFunction = n -> vertexDrawPaint;
+
+  protected Function<V, Paint> selectedVertexDrawPaintFunction = n -> selectedVertexDrawPaint;
+
   /**
    * implement to provide fill color for vertices. Default version uses default fill paint and
    * selected vertex fill paing
    */
-  protected Function<V, Paint> vertexFillPaintFunction =
-      n ->
-          selectedVertexState != null && selectedVertexState.isSelected(n)
-              ? selectedVertexFillPaint
-              : vertexFillPaint;
+  protected Function<V, Paint> vertexFillPaintFunction = n -> vertexFillPaint;
+
+  protected Function<V, Paint> selectedVertexFillPaintFunction = n -> selectedVertexFillPaint;
 
   // vertex label properties
   private Font vertexFont = Font.getFont(VERTEX_LABEL_FONT, new Font("Helvetica", Font.PLAIN, 12));
@@ -170,7 +183,7 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
 
   // edge properties
   private float edgeWidth = Float.parseFloat(System.getProperty(EDGE_WIDTH, "1.0f"));
-  private Color pickedEdgePaint = Color.getColor(PICKED_EDGE_COLOR, Color.CYAN);
+  private Color selectedEdgePaint = Color.getColor(SELECTED_EDGE_COLOR, Color.CYAN);
   private Color edgePaint = Color.getColor(EDGE_COLOR, Color.BLACK);
 
   // edge functions
@@ -178,12 +191,12 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
   protected Function<E, Stroke> edgeStrokeFunction = e -> edgeStroke;
   /** implement to provide fill color for edges (rarely useful) */
   protected Function<E, Paint> edgeFillPaintFunction = n -> null;
+  /** implement to provide fill color for selected edges (rarely useful) */
+  protected Function<E, Paint> selectedEdgeFillPaintFunction = n -> null;
   /** implement to provide draw {@Paint}s for edges */
-  protected Function<E, Paint> edgeDrawPaintFunction =
-      e ->
-          selectedEdgeState != null && selectedEdgeState.isSelected(e)
-              ? pickedEdgePaint
-              : edgePaint;
+  protected Function<E, Paint> edgeDrawPaintFunction = e -> edgePaint;
+  /** implement to provide draw {@Paint}s for selected edges */
+  protected Function<E, Paint> selectedEdgeDrawPaintFunction = e -> selectedEdgePaint;
 
   // edge label properties
   private Font edgeLabelFont = Font.getFont(EDGE_LABEL_FONT, new Font("Helvetica", Font.PLAIN, 12));
@@ -212,13 +225,13 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
   protected Function<E, Paint> arrowFillPaintFunction =
       e ->
           selectedEdgeState != null && selectedEdgeState.isSelected(e)
-              ? pickedEdgePaint
+              ? selectedEdgePaint
               : edgePaint;
   /** implement to provide {@code Paint}s for edge arrow outline */
   protected Function<E, Paint> arrowDrawPaintFunction =
       e ->
           selectedEdgeState != null && selectedEdgeState.isSelected(e)
-              ? pickedEdgePaint
+              ? selectedEdgePaint
               : edgePaint;
   /**
    * when {@code true}, draws arrows at both ends of undirected edges default is {@code false} - no
@@ -245,8 +258,8 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
 
   protected MultiLayerTransformer multiLayerTransformer = new DefaultTransformer();
 
-  /** pluggable support for picking graph elements by finding them based on their coordinates. */
-  protected GraphElementAccessor<V, E> pickSupport;
+  /** pluggable support for selecting graph elements by finding them based on their coordinates. */
+  protected GraphElementAccessor<V, E> selectionSupport;
 
   protected int labelOffset = LABEL_OFFSET;
 
@@ -313,6 +326,16 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
   /** @param vertexStrokeFunction the vertexStrokeFunction to set */
   public void setVertexStrokeFunction(Function<V, Stroke> vertexStrokeFunction) {
     this.vertexStrokeFunction = vertexStrokeFunction;
+  }
+
+  @Override
+  public Function<V, Stroke> getSelectedVertexStrokeFunction() {
+    return this.selectedVertexStrokeFunction;
+  }
+
+  @Override
+  public void setSelectedVertexStrokeFunction(Function<V, Stroke> selectedVertexStrokeFunction) {
+    this.selectedVertexStrokeFunction = selectedVertexStrokeFunction;
   }
 
   public static float[] getDashing() {
@@ -409,10 +432,6 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
     this.edgeLabelRenderer = edgeLabelRenderer;
   }
 
-  public Function<E, Paint> getEdgeFillPaintFunction() {
-    return edgeFillPaintFunction;
-  }
-
   public void setEdgeDrawPaintFunction(Function<E, Paint> edgeDrawPaintFunction) {
     this.edgeDrawPaintFunction = edgeDrawPaintFunction;
   }
@@ -421,8 +440,30 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
     return edgeDrawPaintFunction;
   }
 
+  @Override
+  public Function<E, Paint> getSelectedEdgeDrawPaintFunction() {
+    return this.selectedEdgeDrawPaintFunction;
+  }
+
+  @Override
+  public void setSelectedEdgeDrawPaintFunction(Function<E, Paint> selectedEdgeDrawPaintFunction) {
+    this.selectedEdgeDrawPaintFunction = selectedEdgeDrawPaintFunction;
+  }
+
   public void setEdgeFillPaintFunction(Function<E, Paint> edgeFillPaintFunction) {
     this.edgeFillPaintFunction = edgeFillPaintFunction;
+  }
+
+  public Function<E, Paint> getEdgeFillPaintFunction() {
+    return edgeFillPaintFunction;
+  }
+
+  public void setSelectedEdgeFillPaintFunction(Function<E, Paint> selectedEdgeFillPaintFunction) {
+    this.selectedEdgeFillPaintFunction = selectedEdgeFillPaintFunction;
+  }
+
+  public Function<E, Paint> getSelectedEdgeFillPaintFunction() {
+    return this.selectedEdgeFillPaintFunction;
   }
 
   public BiFunction<Graph<V, E>, E, Shape> getEdgeShapeFunction() {
@@ -455,7 +496,7 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
     this.edgeLabelFunction = edgeLabelFunction;
   }
 
-  public Function<E, Stroke> edgeStrokeFunction() {
+  public Function<E, Stroke> getEdgeStrokeFunction() {
     return edgeStrokeFunction;
   }
 
@@ -469,6 +510,14 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
 
   public float getEdgeWidth() {
     return edgeWidth;
+  }
+
+  @Override
+  public void setSelectedEdgeWidth(float selectedEdgeWidth) {}
+
+  @Override
+  public float getSelectedEdgeWidth() {
+    return 0;
   }
 
   public Function<E, Stroke> getEdgeArrowStrokeFunction() {
@@ -510,16 +559,16 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
     return selectedEdgeState;
   }
 
-  public void setSelectedEdgeState(MutableSelectedState<E> pickedEdgeState) {
-    this.selectedEdgeState = pickedEdgeState;
+  public void setSelectedEdgeState(MutableSelectedState<E> selectedEdgeState) {
+    this.selectedEdgeState = selectedEdgeState;
   }
 
   public MutableSelectedState<V> getSelectedVertexState() {
     return selectedVertexState;
   }
 
-  public void setSelectedVertexState(MutableSelectedState<V> pickedVertexState) {
-    this.selectedVertexState = pickedVertexState;
+  public void setSelectedVertexState(MutableSelectedState<V> selectedVertexState) {
+    this.selectedVertexState = selectedVertexState;
   }
 
   public CellRendererPane getRendererPane() {
@@ -579,12 +628,34 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
     this.vertexFillPaintFunction = vertexFillPaintFunction;
   }
 
+  @Override
+  public Function<V, Paint> getSelectedVertexFillPaintFunction() {
+    return this.selectedVertexFillPaintFunction;
+  }
+
+  @Override
+  public void setSelectedVertexFillPaintFunction(
+      Function<V, Paint> selectedVertexFillPaintFunction) {
+    this.selectedVertexFillPaintFunction = selectedVertexFillPaintFunction;
+  }
+
   public Function<V, Paint> getVertexDrawPaintFunction() {
     return vertexDrawPaintFunction;
   }
 
   public void setVertexDrawPaintFunction(Function<V, Paint> vertexDrawPaintFunction) {
     this.vertexDrawPaintFunction = vertexDrawPaintFunction;
+  }
+
+  @Override
+  public Function<V, Paint> getSelectedVertexDrawPaintFunction() {
+    return this.selectedVertexDrawPaintFunction;
+  }
+
+  @Override
+  public void setSelectedVertexDrawPaintFunction(
+      Function<V, Paint> selectedVertexDrawPaintFunction) {
+    this.selectedVertexDrawPaintFunction = selectedVertexDrawPaintFunction;
   }
 
   public Function<V, String> getVertexLabelFunction() {
@@ -603,13 +674,13 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
     return vertexLabelDrawPaintFunction;
   }
 
-  public GraphElementAccessor<V, E> getPickSupport() {
-    return pickSupport;
+  public GraphElementAccessor<V, E> getSelectionSupport() {
+    return selectionSupport;
   }
 
-  public void setPickSupport(GraphElementAccessor<V, E> pickSupport) {
-    Objects.requireNonNull(pickSupport);
-    this.pickSupport = pickSupport;
+  public void setSelectionSupport(GraphElementAccessor<V, E> selectionSupport) {
+    Objects.requireNonNull(selectionSupport);
+    this.selectionSupport = selectionSupport;
   }
 
   public MultiLayerTransformer getMultiLayerTransformer() {

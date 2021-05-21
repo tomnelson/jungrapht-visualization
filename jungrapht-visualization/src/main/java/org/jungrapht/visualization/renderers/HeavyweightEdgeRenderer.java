@@ -22,7 +22,10 @@ import org.jgrapht.Graph;
 import org.jungrapht.visualization.PropertyLoader;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.layout.model.LayoutModel;
+import org.jungrapht.visualization.selection.SelectedState;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Draws edges with complete features: Edge shapes may be curved, edge arrows, when specified, are
@@ -33,6 +36,8 @@ import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
  */
 public class HeavyweightEdgeRenderer<V, E> extends AbstractEdgeRenderer<V, E>
     implements Renderer.Edge<V, E> {
+
+  private static Logger log = LoggerFactory.getLogger(HeavyweightEdgeRenderer.class);
 
   static {
     PropertyLoader.load();
@@ -80,14 +85,13 @@ public class HeavyweightEdgeRenderer<V, E> extends AbstractEdgeRenderer<V, E>
       RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, E e) {
 
     Graphics2D g2d = renderContext.getGraphicsContext().getDelegate();
-    Stroke savedStroke = (BasicStroke) g2d.getStroke();
-    float savedStrokeWidth = renderContext.getEdgeWidth();
-    float wider = Math.max(savedStrokeWidth, (int) (1.0 / g2d.getTransform().getScaleX()));
+    Stroke savedStroke = g2d.getStroke();
+    float widenessFactor = (float) (1.0 / g2d.getTransform().getScaleX());
     if (savedStroke instanceof BasicStroke) {
       BasicStroke basicStroke = (BasicStroke) savedStroke;
       Stroke widerStroke =
           new BasicStroke(
-              wider,
+              basicStroke.getLineWidth() * widenessFactor,
               basicStroke.getEndCap(),
               basicStroke.getLineJoin(),
               basicStroke.getMiterLimit(),
@@ -96,7 +100,7 @@ public class HeavyweightEdgeRenderer<V, E> extends AbstractEdgeRenderer<V, E>
       // if the transform scale is small, make the stroke wider so it is still visible
       g2d.setStroke(widerStroke);
     } else {
-      g2d.setStroke(new BasicStroke(wider));
+      g2d.setStroke(new BasicStroke(renderContext.getEdgeWidth() * widenessFactor));
     }
 
     int[] coords = new int[4];
@@ -114,16 +118,29 @@ public class HeavyweightEdgeRenderer<V, E> extends AbstractEdgeRenderer<V, E>
 
     Paint oldPaint = g.getPaint();
 
+    Paint fillPaint;
+    Paint drawPaint;
+    //    Stroke drawStroke;
+    SelectedState<E> edgeSelectedState = renderContext.getSelectedEdgeState();
+    if (edgeSelectedState.isSelected(e)) {
+      fillPaint = renderContext.getSelectedEdgeFillPaintFunction().apply(e);
+      drawPaint = renderContext.getSelectedEdgeDrawPaintFunction().apply(e);
+      //      drawStroke = renderContext.getSelectedEdgeStrokeFunction().apply(e);
+    } else {
+      fillPaint = renderContext.getEdgeFillPaintFunction().apply(e);
+      drawPaint = renderContext.getEdgeDrawPaintFunction().apply(e);
+      //      drawStroke = renderContext.getEdgeStrokeFunction().apply(e);
+    }
     // get Paints for filling and drawing
     // (filling is done first so that drawing and label use same Paint)
-    Paint fill_paint = renderContext.getEdgeFillPaintFunction().apply(e);
-    if (fill_paint != null) {
-      g.setPaint(fill_paint);
+    //    Paint fill_paint = renderContext.getEdgeFillPaintFunction().apply(e);
+    if (fillPaint != null) {
+      g.setPaint(fillPaint);
       g.fill(edgeShape);
     }
-    Paint draw_paint = renderContext.getEdgeDrawPaintFunction().apply(e);
-    if (draw_paint != null) {
-      g.setPaint(draw_paint);
+    //    Paint drawPaint = renderContext.getEdgeDrawPaintFunction().apply(e);
+    if (drawPaint != null) {
+      g.setPaint(drawPaint);
       g.draw(edgeShape);
     }
 

@@ -125,17 +125,17 @@ public class SingleSelectedVertexPaintable<V, E> implements VisualizationServer.
   }
 
   /** the (required) {@code VisualizationServer} */
-  private final VisualizationServer<V, E> visualizationServer;
+  protected final VisualizationServer<V, E> visualizationServer;
   /** the {@code Shape} to paint to indicate selected vertices */
-  private Shape selectionShape;
+  protected Shape selectionShape;
   /** the {@code Paint} to use to draw the selected vertex indicating {@code Shape} */
-  private Paint selectionPaint;
+  protected Paint selectionPaint;
 
-  private Icon selectionIcon;
+  protected Icon selectionIcon;
 
-  private float selectionStrokeMin;
+  protected float selectionStrokeMin;
 
-  private BiModalSelectionRenderer<V, E> biModalRenderer;
+  protected BiModalSelectionRenderer<V, E> biModalRenderer;
 
   protected Function<VisualizationServer<V, E>, V> selectedVertexFunction;
 
@@ -144,7 +144,7 @@ public class SingleSelectedVertexPaintable<V, E> implements VisualizationServer.
    *
    * @param builder the {@code Builder} to provide parameters to the {@code SelectedVertexPaintable}
    */
-  private SingleSelectedVertexPaintable(Builder<V, E, ?> builder) {
+  protected SingleSelectedVertexPaintable(Builder<V, E, ?> builder) {
     this(
         builder.visualizationServer,
         builder.selectionShape,

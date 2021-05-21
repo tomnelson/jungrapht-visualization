@@ -64,7 +64,7 @@ public class LightweightEdgeRenderer<V, E> extends AbstractEdgeRenderer<V, E>
     Graphics2D g2d = renderContext.getGraphicsContext().getDelegate();
     Stroke savedStroke = (BasicStroke) g2d.getStroke();
     float savedStrokeWidth = renderContext.getEdgeWidth();
-    float wider = Math.max(savedStrokeWidth, (int) (1.0 / g2d.getTransform().getScaleX()));
+    float wider = Math.max(savedStrokeWidth, (float) (1.0 / g2d.getTransform().getScaleX()));
     if (savedStroke instanceof BasicStroke) {
       BasicStroke basicStroke = (BasicStroke) savedStroke;
       Stroke widerStroke =

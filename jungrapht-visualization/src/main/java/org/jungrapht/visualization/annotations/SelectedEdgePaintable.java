@@ -217,7 +217,7 @@ public class SelectedEdgePaintable<V, E> implements VisualizationServer.Paintabl
   protected void paintEdgeHighlight(
       RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, E e) {
     Graphics2D g2d = renderContext.getGraphicsContext().getDelegate();
-    Stroke savedStroke = visualizationServer.getRenderContext().edgeStrokeFunction().apply(e);
+    Stroke savedStroke = visualizationServer.getRenderContext().getEdgeStrokeFunction().apply(e);
     if (savedStroke instanceof BasicStroke) {
       BasicStroke savedBasicStroke = (BasicStroke) savedStroke;
       // if the viewScale is small, the highlight will be difficult to see

@@ -79,9 +79,17 @@ public interface RenderContext<V, E> extends RenderContextStateChange.Producer {
 
   void setEdgeFillPaintFunction(Function<E, Paint> edgePaintFunction);
 
+  Function<E, Paint> getSelectedEdgeFillPaintFunction();
+
+  void setSelectedEdgeFillPaintFunction(Function<E, Paint> selectedEdgePaintFunction);
+
   Function<E, Paint> getEdgeDrawPaintFunction();
 
-  void setEdgeDrawPaintFunction(Function<E, Paint> edgeDrawPaintFunction);
+  void setEdgeDrawPaintFunction(Function<E, Paint> selectedEdgeDrawPaintFunction);
+
+  Function<E, Paint> getSelectedEdgeDrawPaintFunction();
+
+  void setSelectedEdgeDrawPaintFunction(Function<E, Paint> selectedEdgeDrawPaintFunction);
 
   Function<E, Paint> getArrowDrawPaintFunction();
 
@@ -107,13 +115,28 @@ public interface RenderContext<V, E> extends RenderContextStateChange.Producer {
 
   void setEdgeLabelFunction(Function<E, String> edgeStringer);
 
-  Function<E, Stroke> edgeStrokeFunction();
+  Function<E, Stroke> getEdgeStrokeFunction();
+
+  @Deprecated
+  default Function<E, Stroke> edgeStrokeFunction() {
+    return getEdgeStrokeFunction();
+  }
 
   void setEdgeStrokeFunction(Function<E, Stroke> edgeStrokeFunction);
+
+  default Function<E, Stroke> getSelectedEdgeStrokeFunction() {
+    return getEdgeStrokeFunction();
+  }
+
+  default void setSelectedEdgeStrokeFunction(Function<E, Stroke> selectedEdgeStrokeFunction) {}
 
   void setEdgeWidth(float edgeWidth);
 
   float getEdgeWidth();
+
+  void setSelectedEdgeWidth(float selectedEdgeWidth);
+
+  float getSelectedEdgeWidth();
 
   void setEdgeArrowWidth(int edgeArrowWidth);
 
@@ -169,11 +192,19 @@ public interface RenderContext<V, E> extends RenderContextStateChange.Producer {
 
   Function<V, Paint> getVertexFillPaintFunction();
 
-  void setVertexFillPaintFunction(Function<V, Paint> vertexFillPaintFunction);
+  void setVertexFillPaintFunction(Function<V, Paint> selectedVertexFillPaintFunction);
+
+  Function<V, Paint> getSelectedVertexFillPaintFunction();
+
+  void setSelectedVertexFillPaintFunction(Function<V, Paint> selectedVertexFillPaintFunction);
 
   Function<V, Paint> getVertexDrawPaintFunction();
 
-  void setVertexDrawPaintFunction(Function<V, Paint> vertexDrawPaintFunction);
+  void setVertexDrawPaintFunction(Function<V, Paint> selectedertexDrawPaintFunction);
+
+  Function<V, Paint> getSelectedVertexDrawPaintFunction();
+
+  void setSelectedVertexDrawPaintFunction(Function<V, Paint> selectedVertexDrawPaintFunction);
 
   Function<V, Shape> getVertexShapeFunction();
 
@@ -193,7 +224,11 @@ public interface RenderContext<V, E> extends RenderContextStateChange.Producer {
 
   Function<V, Stroke> getVertexStrokeFunction();
 
-  void setVertexStrokeFunction(Function<V, Stroke> vertexStrokeFunction);
+  void setVertexStrokeFunction(Function<V, Stroke> selectedVertexStrokeFunction);
+
+  Function<V, Stroke> getSelectedVertexStrokeFunction();
+
+  void setSelectedVertexStrokeFunction(Function<V, Stroke> selectedVertexStrokeFunction);
 
   class DirectedEdgeArrowPredicate implements Predicate<Graph<?, ?>> {
 
@@ -214,10 +249,22 @@ public interface RenderContext<V, E> extends RenderContextStateChange.Producer {
   void setMultiLayerTransformer(MultiLayerTransformer basicTransformer);
 
   /** @return the pickSupport */
-  GraphElementAccessor<V, E> getPickSupport();
+  @Deprecated
+  default GraphElementAccessor<V, E> getPickSupport() {
+    return getSelectionSupport();
+  }
 
-  /** @param pickSupport the pickSupport to set */
-  void setPickSupport(GraphElementAccessor<V, E> pickSupport);
+  /** @param selectionSupport the selectionSupport to set */
+  @Deprecated
+  default void setPickSupport(GraphElementAccessor<V, E> selectionSupport) {
+    this.setSelectionSupport(selectionSupport);
+  }
+
+  /** @return the selectionSupport */
+  GraphElementAccessor<V, E> getSelectionSupport();
+
+  /** @param selectionSupport the selectionSupport to set */
+  void setSelectionSupport(GraphElementAccessor<V, E> selectionSupport);
 
   Renderer.VertexLabel.Position getVertexLabelPosition();
 

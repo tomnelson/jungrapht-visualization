@@ -40,19 +40,22 @@ public abstract class AbstractEdgeRenderer<V, E> implements Renderer.Edge<V, E> 
     if (!vertexIncludePredicate.test(u) || !vertexIncludePredicate.test(v)) {
       return;
     }
-
-    Stroke new_stroke = renderContext.edgeStrokeFunction().apply(e);
-    Stroke old_stroke = g2d.getStroke();
-    if (new_stroke != null) {
-      g2d.setStroke(new_stroke);
+    Stroke newStroke =
+        renderContext.getSelectedEdgeState().isSelected(e)
+            ? renderContext.getSelectedEdgeStrokeFunction().apply(e)
+            : renderContext.getEdgeStrokeFunction().apply(e);
+    //    Stroke new_stroke = renderContext.getEdgeStrokeFunction().apply(e);
+    Stroke oldStroke = g2d.getStroke();
+    if (newStroke != null) {
+      g2d.setStroke(newStroke);
     }
 
     drawSimpleEdge(renderContext, layoutModel, e);
 
     // restore paint and stroke
-    if (new_stroke != null) {
-      g2d.setStroke(old_stroke);
-    }
+    //    if (newStroke != null) {
+    g2d.setStroke(oldStroke);
+    //    }
   }
 
   protected Shape prepareFinalEdgeShape(

@@ -56,7 +56,7 @@ public class ViewLensSupport<V, E, M extends LensGraphMouse> extends AbstractLen
   protected ViewLensSupport(Builder<V, E, M, ?, ?> builder) {
     super(builder);
     this.renderContext = vv.getRenderContext();
-    this.pickSupport = renderContext.getPickSupport();
+    this.pickSupport = renderContext.getSelectionSupport();
     this.savedGraphicsDecorator = renderContext.getGraphicsContext();
     this.lensGraphicsDecorator = new TransformingFlatnessGraphics(lensTransformer);
     this.savedEdgeRenderer = vv.getRenderer().getEdgeRenderer();
@@ -75,7 +75,7 @@ public class ViewLensSupport<V, E, M extends LensGraphMouse> extends AbstractLen
       VisualizationViewer<V, E> vv, LensTransformer lensTransformer, M lensGraphMouse) {
     super(vv, lensGraphMouse);
     this.renderContext = vv.getRenderContext();
-    this.pickSupport = renderContext.getPickSupport();
+    this.pickSupport = renderContext.getSelectionSupport();
     this.savedGraphicsDecorator = renderContext.getGraphicsContext();
     this.lensTransformer = lensTransformer;
     this.lensGraphicsDecorator = new TransformingFlatnessGraphics(lensTransformer);

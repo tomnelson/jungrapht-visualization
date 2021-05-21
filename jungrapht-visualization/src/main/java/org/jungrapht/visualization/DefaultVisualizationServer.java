@@ -832,12 +832,12 @@ class DefaultVisualizationServer<V, E> extends JPanel
 
   @Override
   public GraphElementAccessor<V, E> getPickSupport() {
-    return renderContext.getPickSupport();
+    return renderContext.getSelectionSupport();
   }
 
   @Override
   public void setPickSupport(GraphElementAccessor<V, E> pickSupport) {
-    renderContext.setPickSupport(pickSupport);
+    renderContext.setSelectionSupport(pickSupport);
   }
 
   @Override

@@ -121,7 +121,7 @@ public class SatelliteViewTreeDemo extends JPanel {
     MultiSelectedVertexPaintable<String, Integer> multiSelectedVertexPaintable =
         MultiSelectedVertexPaintable.builder(mainVisualizationViewer).build();
 
-    mainVisualizationViewer.addPostRenderPaintable(multiSelectedVertexPaintable);
+    mainVisualizationViewer.addPreRenderPaintable(multiSelectedVertexPaintable);
 
     SingleSelectedVertexPaintable<String, Integer> singleSelectedVertexPaintable =
         SingleSelectedVertexPaintable.builder(mainVisualizationViewer)
@@ -142,7 +142,9 @@ public class SatelliteViewTreeDemo extends JPanel {
                   return roots.isEmpty() ? null : roots.get(0);
                 })
             .build();
-    mainVisualizationViewer.addPostRenderPaintable(singleSelectedVertexPaintable);
+    mainVisualizationViewer.addPreRenderPaintable(singleSelectedVertexPaintable);
+
+    mainVisualizationViewer.getRenderContext().setEdgeStrokeFunction(e -> new BasicStroke(e));
 
     mainVisualizationViewer
         .getRenderContext()
