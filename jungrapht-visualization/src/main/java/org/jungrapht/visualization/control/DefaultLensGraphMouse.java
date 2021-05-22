@@ -29,9 +29,13 @@ public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> impleme
     protected int lensTranslatingMask =
         Modifiers.masks.get(System.getProperty(PREFIX + "lensTranslatingMask", "MB1"));
 
-    protected float magnificationFloor = 1.0f;
-    protected float magnificationCeiling = 4.0f;
-    protected float magnificationDelta = 0.2f;
+    protected float magnificationDelta = 0.05f;
+    // values for hyperbolic transform lens
+    protected float magnificationFloor = 0.45f;
+    protected float magnificationCeiling = 1.0f;
+    // values for magnify transform lens
+    //    protected float magnificationFloor = 1.0f;
+    //    protected float magnificationCeiling = 4.0f;
 
     public B lensTranslatingMask(int lensTranslatingMask) {
       this.lensTranslatingMask = lensTranslatingMask;
@@ -71,7 +75,6 @@ public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> impleme
 
   public DefaultLensGraphMouse() {
     this(new Builder<>());
-    //    this.magnificationPlugin = new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f);
   }
 
   DefaultLensGraphMouse(Builder<V, E, ?, ?> builder) {

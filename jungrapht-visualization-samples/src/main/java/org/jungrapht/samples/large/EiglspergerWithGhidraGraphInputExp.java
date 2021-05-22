@@ -200,7 +200,12 @@ public class EiglspergerWithGhidraGraphInputExp extends JFrame {
                             .getMultiLayerTransformer()
                             .getTransformer(MultiLayerTransformer.Layer.VIEW))
                     .build())
-            .lensGraphMouse(new DefaultLensGraphMouse<>())
+            .lensGraphMouse(
+                DefaultLensGraphMouse.builder()
+                    .magnificationFloor(0.4f)
+                    .magnificationCeiling(1.0f)
+                    .magnificationDelta(0.05f)
+                    .build())
             .build();
 
     LensSupport<DefaultLensGraphMouse> hyperbolicLayoutSupport =
@@ -212,7 +217,12 @@ public class EiglspergerWithGhidraGraphInputExp extends JFrame {
                             .getMultiLayerTransformer()
                             .getTransformer(MultiLayerTransformer.Layer.LAYOUT))
                     .build())
-            .lensGraphMouse(new DefaultLensGraphMouse<>())
+            .lensGraphMouse(
+                DefaultLensGraphMouse.builder()
+                    .magnificationFloor(0.4f)
+                    .magnificationCeiling(1.0f)
+                    .magnificationDelta(0.05f)
+                    .build())
             .build();
 
     // the magnification lens uses a different magnification than the hyperbolic lens
@@ -228,7 +238,12 @@ public class EiglspergerWithGhidraGraphInputExp extends JFrame {
                             .getMultiLayerTransformer()
                             .getTransformer(MultiLayerTransformer.Layer.VIEW))
                     .build())
-            .lensGraphMouse(new DefaultLensGraphMouse<>())
+            .lensGraphMouse(
+                DefaultLensGraphMouse.builder()
+                    .magnificationFloor(1.0f)
+                    .magnificationCeiling(4.0f)
+                    .magnificationDelta(0.05f)
+                    .build())
             .build();
 
     LensSupport<DefaultLensGraphMouse> magnifyLayoutSupport =
@@ -240,7 +255,12 @@ public class EiglspergerWithGhidraGraphInputExp extends JFrame {
                             .getMultiLayerTransformer()
                             .getTransformer(MultiLayerTransformer.Layer.LAYOUT))
                     .build())
-            .lensGraphMouse(new DefaultLensGraphMouse<>())
+            .lensGraphMouse(
+                DefaultLensGraphMouse.builder()
+                    .magnificationFloor(1.0f)
+                    .magnificationCeiling(4.0f)
+                    .magnificationDelta(0.05f)
+                    .build())
             .build();
 
     hyperbolicLayoutSupport

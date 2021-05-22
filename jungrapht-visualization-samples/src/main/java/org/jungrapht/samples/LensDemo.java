@@ -12,6 +12,7 @@ import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
 import javax.swing.*;
@@ -140,12 +141,7 @@ public class LensDemo extends JPanel {
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
-            .lensGraphMouse(
-                ModalLensGraphMouse.builder()
-                    .magnificationFloor(0.4f)
-                    .magnificationCeiling(1.0f)
-                    .magnificationDelta(0.05f)
-                    .build())
+            .lensGraphMouse(new ModalLensGraphMouse<>()) // use default for hyperbolic projection
             .useGradient(true)
             .build();
 
@@ -158,12 +154,7 @@ public class LensDemo extends JPanel {
                             .getMultiLayerTransformer()
                             .getTransformer(Layer.LAYOUT))
                     .build())
-            .lensGraphMouse(
-                ModalLensGraphMouse.builder()
-                    .magnificationFloor(0.4f)
-                    .magnificationCeiling(1.0f)
-                    .magnificationDelta(0.05f)
-                    .build())
+            .lensGraphMouse(new ModalLensGraphMouse<>()) // use default for hyperbolic projection
             .useGradient(true)
             .build();
 
@@ -176,7 +167,11 @@ public class LensDemo extends JPanel {
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
-            .lensGraphMouse(new ModalLensGraphMouse())
+            .lensGraphMouse( // override with range for magnificaion
+                ModalLensGraphMouse.builder()
+                    .magnificationFloor(1.0f)
+                    .magnificationCeiling(4.0f)
+                    .build())
             .build();
 
     magnifyLayoutSupport =
@@ -189,7 +184,11 @@ public class LensDemo extends JPanel {
                             .getMultiLayerTransformer()
                             .getTransformer(Layer.LAYOUT))
                     .build())
-            .lensGraphMouse(new ModalLensGraphMouse())
+            .lensGraphMouse(
+                ModalLensGraphMouse.builder()
+                    .magnificationFloor(1.0f)
+                    .magnificationCeiling(4.0f)
+                    .build())
             .build();
 
     JLabel modeLabel = new JLabel("Mode >>");
@@ -252,17 +251,13 @@ public class LensDemo extends JPanel {
 
     Box controls = Box.createHorizontalBox();
     controls.add(ControlHelpers.getZoomControls("Zoom", vv));
+    Map<String, LensSupport> lensSupportMap = new LinkedHashMap<>();
+    lensSupportMap.put("Hyperbolic View", hyperbolicViewSupport);
+    lensSupportMap.put("Hyperbolic Layout", hyperbolicLayoutSupport);
+    lensSupportMap.put("Magnified View", magnifyViewSupport);
+    lensSupportMap.put("Magnified Layout", magnifyLayoutSupport);
     controls.add(
-        LensControlHelper.builder(
-                Map.of(
-                    "Hyperbolic View",
-                    hyperbolicViewSupport,
-                    "Hyperbolic Layout",
-                    hyperbolicLayoutSupport,
-                    "Magnified View",
-                    magnifyViewSupport,
-                    "Magnified Layout",
-                    magnifyLayoutSupport))
+        LensControlHelper.builder(lensSupportMap)
             .containerSupplier(JPanel::new)
             .containerLayoutManager(new GridLayout(0, 2))
             .title("Lens Controls")

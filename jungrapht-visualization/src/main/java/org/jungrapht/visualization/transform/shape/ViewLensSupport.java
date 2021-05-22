@@ -12,10 +12,7 @@ import java.awt.geom.Point2D;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.GraphElementAccessor;
-import org.jungrapht.visualization.control.LensGraphMouse;
-import org.jungrapht.visualization.control.LensTransformSupport;
-import org.jungrapht.visualization.control.TransformSupport;
+import org.jungrapht.visualization.control.*;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.transform.AbstractLensSupport;
 import org.jungrapht.visualization.transform.LensSupport;
@@ -41,6 +38,13 @@ public class ViewLensSupport<V, E, M extends LensGraphMouse> extends AbstractLen
 
     protected Builder(VisualizationViewer<V, E> vv) {
       super(vv);
+      this.lensGraphMouse =
+          (M)
+              DefaultLensGraphMouse.builder()
+                  .magnificationFloor(0.4f)
+                  .magnificationCeiling(1.0f)
+                  .magnificationDelta(0.05f)
+                  .build();
     }
 
     public T build() {

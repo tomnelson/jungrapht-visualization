@@ -35,9 +35,13 @@ public class ModalLensGraphMouse<V, E> extends DefaultModalGraphMouse<V, E>
           V, E, T extends ModalLensGraphMouse<V, E>, B extends Builder<V, E, T, B>>
       extends DefaultModalGraphMouse.Builder<V, E, T, B> {
 
-    protected float magnificationFloor = 1.0f;
-    protected float magnificationCeiling = 4.0f;
-    protected float magnificationDelta = 0.2f;
+    protected float magnificationDelta = 0.05f;
+    // values for hyperbolic transform lens
+    protected float magnificationFloor = 0.45f;
+    protected float magnificationCeiling = 1.0f;
+    // values for magnify transform lens
+    //    protected float magnificationFloor = 1.0f;
+    //    protected float magnificationCeiling = 4.0f;
 
     // translation mask
     protected int lensTranslatingMask =

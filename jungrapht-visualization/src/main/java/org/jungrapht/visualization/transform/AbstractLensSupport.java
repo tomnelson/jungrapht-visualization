@@ -24,7 +24,6 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.GraphElementAccessor;
 import org.jungrapht.visualization.control.LensGraphMouse;
 import org.jungrapht.visualization.control.LensTransformSupport;
-import org.jungrapht.visualization.control.ModalLensGraphMouse;
 import org.jungrapht.visualization.util.ItemSupport;
 
 /**
@@ -55,16 +54,13 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse> extend
 
     protected VisualizationViewer<V, E> vv;
     protected VisualizationViewer.GraphMouse graphMouse;
-    protected M lensGraphMouse = (M) new ModalLensGraphMouse();
+    protected M lensGraphMouse;
     protected String defaultToolTipText;
     protected Runnable killSwitch;
     protected LensTransformer lensTransformer;
     protected GraphElementAccessor<V, E> pickSupport;
     protected boolean useGradient;
     protected ItemListener itemListener;
-    //    protected float magnificationFloor = 0.5f;
-    //    protected float magnificationCeiling = 4.0f;
-    //    protected float magnificationDelta = 0.2f;
 
     public B self() {
       return (B) this;
@@ -113,20 +109,6 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse> extend
       this.itemListener = itemListener;
       return self();
     }
-    //
-    //    public B magnificationFloor(float magnificationFloor) {
-    //      this.magnificationFloor = magnificationFloor;
-    //      return self();
-    //    }
-    //
-    //    public B magnificationCeiling(float magnificationCeiling) {
-    //      this.magnificationCeiling = magnificationCeiling;
-    //      return self();
-    //    }
-    //    public B magnificationDelta(float magnificationDelta) {
-    //      this.magnificationDelta = magnificationDelta;
-    //      return self();
-    //    }
 
     public abstract T build();
   }
@@ -162,6 +144,7 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse> extend
     this.useGradient = builder.useGradient;
     this.addItemListener(builder.itemListener);
   }
+
   /**
    * create the base class, setting common members and creating a custom GraphMouse
    *
