@@ -29,16 +29,27 @@ public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> impleme
     protected int lensTranslatingMask =
         Modifiers.masks.get(System.getProperty(PREFIX + "lensTranslatingMask", "MB1"));
 
-    protected LensMagnificationGraphMousePlugin magnificationPlugin =
-        new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f);
-
-    public B magnificationPlugin(LensMagnificationGraphMousePlugin magnificationPlugin) {
-      this.magnificationPlugin = magnificationPlugin;
-      return self();
-    }
+    protected float magnificationFloor = 1.0f;
+    protected float magnificationCeiling = 4.0f;
+    protected float magnificationDelta = 0.2f;
 
     public B lensTranslatingMask(int lensTranslatingMask) {
       this.lensTranslatingMask = lensTranslatingMask;
+      return self();
+    }
+
+    public B magnificationFloor(float magnificationFloor) {
+      this.magnificationFloor = magnificationFloor;
+      return self();
+    }
+
+    public B magnificationCeiling(float magnificationCeiling) {
+      this.magnificationCeiling = magnificationCeiling;
+      return self();
+    }
+
+    public B magnificationDelta(float magnificationDelta) {
+      this.magnificationDelta = magnificationDelta;
       return self();
     }
 
@@ -60,7 +71,7 @@ public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> impleme
 
   public DefaultLensGraphMouse() {
     this(new Builder<>());
-    this.magnificationPlugin = new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f);
+    //    this.magnificationPlugin = new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f);
   }
 
   DefaultLensGraphMouse(Builder<V, E, ?, ?> builder) {
@@ -79,7 +90,9 @@ public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> impleme
         builder.scalingMask,
         builder.xAxisScalingMask,
         builder.yAxisScalingMask,
-        builder.magnificationPlugin);
+        builder.magnificationFloor,
+        builder.magnificationCeiling,
+        builder.magnificationDelta);
   }
 
   DefaultLensGraphMouse(
@@ -97,7 +110,9 @@ public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> impleme
       int scalingMask,
       int xAxisScalingMask,
       int yAxisScalingMask,
-      LensMagnificationGraphMousePlugin magnificationPlugin) {
+      float magnificationFloor,
+      float magnificationCeiling,
+      float magnificationDelta) {
     super(
         in,
         out,
@@ -112,7 +127,9 @@ public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> impleme
         scalingMask,
         xAxisScalingMask,
         yAxisScalingMask);
-    this.magnificationPlugin = magnificationPlugin;
+    this.magnificationPlugin =
+        new LensMagnificationGraphMousePlugin(
+            magnificationFloor, magnificationCeiling, magnificationDelta);
     this.lensTranslatingGraphMousePlugin = new LensTranslatingGraphMousePlugin(lensTranslatingMask);
     this.lensKillingGraphMousePlugin = new LensKillingGraphMousePlugin();
     this.lensTranslatingGraphMousePlugin = new LensTranslatingGraphMousePlugin();

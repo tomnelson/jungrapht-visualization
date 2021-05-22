@@ -62,6 +62,9 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse> extend
     protected GraphElementAccessor<V, E> pickSupport;
     protected boolean useGradient;
     protected ItemListener itemListener;
+    //    protected float magnificationFloor = 0.5f;
+    //    protected float magnificationCeiling = 4.0f;
+    //    protected float magnificationDelta = 0.2f;
 
     public B self() {
       return (B) this;
@@ -110,6 +113,20 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse> extend
       this.itemListener = itemListener;
       return self();
     }
+    //
+    //    public B magnificationFloor(float magnificationFloor) {
+    //      this.magnificationFloor = magnificationFloor;
+    //      return self();
+    //    }
+    //
+    //    public B magnificationCeiling(float magnificationCeiling) {
+    //      this.magnificationCeiling = magnificationCeiling;
+    //      return self();
+    //    }
+    //    public B magnificationDelta(float magnificationDelta) {
+    //      this.magnificationDelta = magnificationDelta;
+    //      return self();
+    //    }
 
     public abstract T build();
   }
