@@ -222,7 +222,11 @@ public class ShowLayoutsWithDirectedGraphFileImport extends JFrame {
                             .getMultiLayerTransformer()
                             .getTransformer(MultiLayerTransformer.Layer.VIEW))
                     .build())
-            .lensGraphMouse(new DefaultLensGraphMouse<>())
+            .lensGraphMouse( // override with range for magnificaion
+                DefaultLensGraphMouse.builder()
+                    .magnificationFloor(1.0f)
+                    .magnificationCeiling(4.0f)
+                    .build())
             .build();
 
     LensSupport<DefaultLensGraphMouse> magnifyLayoutSupport =
@@ -234,7 +238,11 @@ public class ShowLayoutsWithDirectedGraphFileImport extends JFrame {
                             .getMultiLayerTransformer()
                             .getTransformer(MultiLayerTransformer.Layer.LAYOUT))
                     .build())
-            .lensGraphMouse(new DefaultLensGraphMouse<>())
+            .lensGraphMouse( // override with range for magnificaion
+                DefaultLensGraphMouse.builder()
+                    .magnificationFloor(1.0f)
+                    .magnificationCeiling(4.0f)
+                    .build())
             .build();
 
     hyperbolicLayoutSupport

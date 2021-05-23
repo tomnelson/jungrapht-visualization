@@ -154,8 +154,11 @@ public class SpatialLensLargeGraphDemo extends JPanel {
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
-            .lensGraphMouse(ModalLensGraphMouse.builder().build())
-            //                new ModalLensGraphMouse(new LensMagnificationGraphMousePlugin(1.f, 6.f, .2f)))
+            .lensGraphMouse( // override with range for magnificaion
+                ModalLensGraphMouse.builder()
+                    .magnificationFloor(1.0f)
+                    .magnificationCeiling(4.0f)
+                    .build())
             .build();
 
     magnifyLayoutSupport =

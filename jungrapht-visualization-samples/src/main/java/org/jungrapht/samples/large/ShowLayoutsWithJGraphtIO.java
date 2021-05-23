@@ -251,7 +251,11 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
-            .lensGraphMouse(new ModalLensGraphMouse<>())
+            .lensGraphMouse( // override with range for magnificaion
+                ModalLensGraphMouse.builder()
+                    .magnificationFloor(1.0f)
+                    .magnificationCeiling(4.0f)
+                    .build())
             .build();
 
     LensSupport<ModalLensGraphMouse> magnifyLayoutSupport =
@@ -263,7 +267,11 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
                             .getMultiLayerTransformer()
                             .getTransformer(Layer.LAYOUT))
                     .build())
-            .lensGraphMouse(new ModalLensGraphMouse<>())
+            .lensGraphMouse( // override with range for magnificaion
+                ModalLensGraphMouse.builder()
+                    .magnificationFloor(1.0f)
+                    .magnificationCeiling(4.0f)
+                    .build())
             .build();
 
     hyperbolicLayoutSupport
