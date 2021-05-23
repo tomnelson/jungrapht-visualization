@@ -44,7 +44,6 @@ import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
-import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.transform.HyperbolicTransformer;
 import org.jungrapht.visualization.transform.LayoutLensSupport;
 import org.jungrapht.visualization.transform.Lens;
@@ -172,8 +171,6 @@ public class ShowLayoutsWithDirectedGraphFileImport extends JFrame {
     layoutComboBox.setSelectedItem(LayoutHelperDirectedGraphs.Layouts.FR_BH_VISITOR);
 
     // create a lens to share between the two hyperbolic transformers
-    LayoutModel<AS> layoutModel = vv.getVisualizationModel().getLayoutModel();
-    Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
     Lens lens = new Lens(); /* provides a Hyperbolic lens for the view */
     LensSupport<DefaultLensGraphMouse> hyperbolicViewSupport =
         ViewLensSupport.<AS, AI, DefaultLensGraphMouse>builder(vv)

@@ -210,8 +210,6 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
     layoutComboBox.setSelectedItem(LayoutHelper.Layouts.FR_BH_VISITOR);
 
     // create a lens to share between the two hyperbolic transformers
-    LayoutModel<AS> layoutModel = vv.getVisualizationModel().getLayoutModel();
-    Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
     Lens lens = new Lens(); /* provides a Hyperbolic lens for the view */
     LensSupport<ModalLensGraphMouse> hyperbolicViewSupport =
         ViewLensSupport.<AS, AI, ModalLensGraphMouse>builder(vv)

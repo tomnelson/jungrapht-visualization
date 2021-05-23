@@ -31,7 +31,6 @@ import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.control.DefaultLensGraphMouse;
 import org.jungrapht.visualization.layout.algorithms.CircleLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
-import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.transform.HyperbolicTransformer;
 import org.jungrapht.visualization.transform.LayoutLensSupport;
 import org.jungrapht.visualization.transform.Lens;
@@ -118,7 +117,6 @@ public class SpatialLensDemoWithThreeStarVertices extends JPanel {
     add(visualizationScrollPane);
 
     // create a lens to share between the two hyperbolic transformers
-    LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
     Lens lens = new Lens();
     hyperbolicViewSupport =
         ViewLensSupport.<String, Integer, DefaultLensGraphMouse>builder(vv)
@@ -152,7 +150,7 @@ public class SpatialLensDemoWithThreeStarVertices extends JPanel {
             .build();
 
     // the magnification lens uses a different magnification than the hyperbolic lens
-    // create a new one to share between the two magnigy transformers
+    // create a new one to share between the two magnify transformers
     lens = new Lens();
     lens.setMagnification(3.f);
 
