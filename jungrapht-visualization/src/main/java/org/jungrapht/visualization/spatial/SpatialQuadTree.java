@@ -492,6 +492,12 @@ public class SpatialQuadTree<V> extends AbstractSpatial<V, V>
     return closest;
   }
 
+  @Override
+  public V getClosestElement(V element) {
+    Point p = layoutModel.get(element);
+    return getClosestElement(p.x, p.y);
+  }
+
   /**
    * reset the side of this structure
    *

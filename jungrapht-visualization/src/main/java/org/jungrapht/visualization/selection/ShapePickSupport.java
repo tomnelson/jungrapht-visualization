@@ -412,6 +412,11 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
     return getVertex(layoutModel, pickFootprint);
   }
 
+  @Override
+  public V getClosestVertex(LayoutModel<V> layoutModel, V v) {
+    return null;
+  }
+
   /**
    * Returns the vertices whose layout coordinates are contained in <code>Shape</code>. The shape is
    * in screen coordinates, and the graph vertices are transformed to screen coordinates before they

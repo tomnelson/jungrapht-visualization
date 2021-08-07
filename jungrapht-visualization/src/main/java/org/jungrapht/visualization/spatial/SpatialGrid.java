@@ -388,6 +388,13 @@ public class SpatialGrid<V> extends AbstractSpatial<V, V>
 
     return null;
   }
+
+  @Override
+  public V getClosestElement(V element) {
+    Point p = layoutModel.get(element);
+    return getClosestElement(p.x, p.y);
+  }
+
   /**
    * given a rectangular area and an offset, return the tile numbers that are contained in it
    *

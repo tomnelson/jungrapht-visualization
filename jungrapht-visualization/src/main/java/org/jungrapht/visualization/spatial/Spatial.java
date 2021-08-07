@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import org.jgrapht.Graph;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.layout.event.LayoutStateChange;
 import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
@@ -118,6 +119,8 @@ public interface Spatial<T, NT>
    * @return the closest element to the passed coordinates
    */
   T getClosestElement(double x, double y);
+
+  T getClosestElement(T element);
 
   LayoutModel getLayoutModel();
 
@@ -281,7 +284,12 @@ public interface Spatial<T, NT>
 
       @Override
       public V getClosestElement(double x, double y) {
-        return null; //use radius node accessor
+        return accessor.getVertex(layoutModel, x, y); //use radius node accessor
+      }
+
+      @Override
+      public V getClosestElement(V element) {
+        return accessor.getClosestVertex(layoutModel, element);
       }
     }
 
@@ -314,6 +322,14 @@ public interface Spatial<T, NT>
       @Override
       public E getClosestElement(double x, double y) {
         return accessor.getEdge(layoutModel, x, y);
+      }
+
+      @Override
+      public E getClosestElement(E element) {
+        Graph<V, E> graph = layoutModel.getGraph();
+        Point sp = layoutModel.get(graph.getEdgeSource(element));
+        Point tp = layoutModel.get(graph.getEdgeTarget(element));
+        return accessor.getEdge(layoutModel, Point.centroidOf(sp, tp));
       }
     }
   }

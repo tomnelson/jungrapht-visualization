@@ -34,4 +34,6 @@ public interface VertexAccessor<V> {
    * @return the vertex associated with (x, y)
    */
   V getVertex(LayoutModel<V> layoutModel, double x, double y);
+
+  V getClosestVertex(LayoutModel<V> layoutModel, V v);
 }

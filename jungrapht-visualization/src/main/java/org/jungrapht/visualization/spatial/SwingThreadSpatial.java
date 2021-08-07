@@ -140,6 +140,11 @@ public class SwingThreadSpatial<T, NT> implements Spatial<T, NT> {
   }
 
   @Override
+  public T getClosestElement(T element) {
+    return spatial.getClosestElement(element);
+  }
+
+  @Override
   public LayoutModel getLayoutModel() {
     return spatial.getLayoutModel();
   }

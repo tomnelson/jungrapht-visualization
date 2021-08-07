@@ -88,4 +88,31 @@ public class RadiusVertexAccessor<V> implements VertexAccessor<V> {
     }
     return closest;
   }
+
+  @Override
+  public V getClosestVertex(LayoutModel<V> layoutModel, V v) {
+
+    Point vp = layoutModel.get(v);
+    double minDistance = maxDistance * maxDistance * maxDistance;
+    V closest = null;
+    while (true) {
+      try {
+        for (V vertex : layoutModel.getGraph().vertexSet()) {
+          if (vertex != v) {
+            Point p = layoutModel.apply(vertex);
+            double dx = p.x - vp.x;
+            double dy = p.y - vp.y;
+            double dist = dx * dx + dy * dy;
+            if (dist < minDistance) {
+              minDistance = dist;
+              closest = vertex;
+            }
+          }
+        }
+        break;
+      } catch (ConcurrentModificationException cme) {
+      }
+    }
+    return closest;
+  }
 }
