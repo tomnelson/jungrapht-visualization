@@ -1,8 +1,7 @@
 package org.jungrapht.visualization.spatial;
 
+import java.awt.Rectangle;
 import java.util.Arrays;
-
-import org.jungrapht.visualization.layout.model.Rectangle;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +14,7 @@ public class SpatialGridTest {
   @Test
   public void testBoxLocations() {
 
-    SpatialGrid spatial = new SpatialGrid(null, Rectangle.of(0, 0, 100, 100), 4, 4);
+    SpatialGrid spatial = new SpatialGrid(null, new Rectangle(0, 0, 100, 100), 4, 4);
     log.trace("grid is " + spatial.getGrid());
     showBoxIndex(spatial, 10, 10);
     showBoxIndex(spatial, 49, 49);

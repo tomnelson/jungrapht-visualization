@@ -94,10 +94,11 @@ public class Rectangle {
 
   public Rectangle intersect(Rectangle other) {
     if (this.intersects(other)) {
-      return Rectangle.from(Point.of(Math.max(this.x, other.x), Math.max(this.y, other.y)),
-              Point.of(Math.min(this.maxX, other.maxX), Math.min(this.maxY, other.maxY)));
+      return Rectangle.from(
+          Point.of(Math.max(this.x, other.x), Math.max(this.y, other.y)),
+          Point.of(Math.min(this.maxX, other.maxX), Math.min(this.maxY, other.maxY)));
     } else {
-      return Rectangle.of(0,0);
+      return Rectangle.of(0, 0);
     }
   }
 
@@ -173,7 +174,7 @@ public class Rectangle {
   }
 
   public Dimension getSize() {
-    return Dimension.of((int)this.width, (int)this.height);
+    return Dimension.of((int) this.width, (int) this.height);
   }
 
   /**

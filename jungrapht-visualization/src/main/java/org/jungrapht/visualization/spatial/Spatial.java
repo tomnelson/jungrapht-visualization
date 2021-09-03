@@ -1,5 +1,8 @@
 package org.jungrapht.visualization.spatial;
 
+import java.awt.*;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -10,7 +13,6 @@ import org.jungrapht.visualization.layout.event.LayoutStateChange;
 import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
-import org.jungrapht.visualization.layout.model.Rectangle;
 import org.jungrapht.visualization.layout.util.RadiusVertexAccessor;
 import org.jungrapht.visualization.spatial.rtree.TreeNode;
 import org.jungrapht.visualization.util.RadiusGraphElementAccessor;
@@ -34,7 +36,7 @@ public interface Spatial<T, NT>
   boolean isActive();
 
   /** @return a geometic representation of the spatial structure */
-  List<Rectangle> getGrid();
+  List<Shape> getGrid();
 
   /**
    * a short-lived collection of recent pick target areas
