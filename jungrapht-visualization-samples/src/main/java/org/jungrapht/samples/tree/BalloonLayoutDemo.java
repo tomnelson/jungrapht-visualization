@@ -83,7 +83,12 @@ public class BalloonLayoutDemo extends JPanel {
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
-            .lensGraphMouse(new DefaultLensGraphMouse<>())
+            .lensGraphMouse(
+                DefaultLensGraphMouse.builder()
+                    .magnificationFloor(0.4f)
+                    .magnificationCeiling(1.0f)
+                    .magnificationDelta(0.05f)
+                    .build())
             .useGradient(true)
             .build();
     hyperbolicSupport =

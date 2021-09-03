@@ -93,6 +93,7 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
   Function<V, Rectangle> identityVertexDimensionFunction = v -> Rectangle.IDENTITY;
   Function<V, Rectangle> realVertexDimensionFunction;
   Function<V, Rectangle> vertexDimensionFunction;
+  int cellSize = 1;
 
   @Override
   public void visit(LayoutModel<V> layoutModel) {
@@ -103,7 +104,7 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
     int gridSize = 200; //this.initialGridSize();
     int vertexCount = graph.vertexSet().size();
     this.placeVerticesRandomlyInGridSpace(graph, gridSize);
-    boolean compactionDirection = false;
+    Compaction.Direction compactionDirection = Compaction.Direction.HORIZONTAL;
     double sqrtVertexCount = Math.sqrt(vertexCount);
     int iterationCount = (int) (90 * sqrtVertexCount);
     double temperature = 2 * sqrtVertexCount;
@@ -121,12 +122,12 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
         int x = (int) neighborsMedian.x;
         int y = (int) neighborsMedian.y;
         // see if the cell at x,y is free
-        Rectangle rectangle = Rectangle.of(x, y, 1, 1);
+        Rectangle rectangle = Rectangle.of(x, y, cellSize, cellSize);
         Set<Rectangle> occupiedRectangles = occupiedRectangles();
         if (occupiedRectangles.contains(rectangle)) {
           // need a different cell
           Collection<Rectangle> potentialCells =
-              this.findNearbyEmptyCells(rectangle, 1, occupiedRectangles);
+              this.findNearbyEmptyCells(rectangle, cellSize, occupiedRectangles);
           // find which one has the least edge len to neighbors
           double min = Double.MAX_VALUE;
           Rectangle winner = null;
@@ -158,13 +159,13 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
 
       if (iteration % 9 == 0) {
         compact(compactionDirection, 3, false);
-        compactionDirection = !compactionDirection;
+        compactionDirection = compactionDirection.toggle();
       }
       temperature = temperature * k;
     }
 
-    compact(true, 3, true);
-    compact(false, 3, true);
+    compact(Compaction.Direction.HORIZONTAL, 3, true);
+    compact(Compaction.Direction.VERTICAL, 3, true);
 
     vertexDimensionFunction = realVertexDimensionFunction;
 
@@ -180,12 +181,12 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
         int x = (int) neighborsMedian.x;
         int y = (int) neighborsMedian.y;
         // see if the cell at x,y is free
-        Rectangle rectangle = Rectangle.of(x, y, 1, 1);
+        Rectangle rectangle = Rectangle.of(x, y, cellSize, cellSize);
         Set<Rectangle> occupiedRectangles = occupiedRectangles();
         if (occupiedRectangles.contains(rectangle)) {
           // need a different cell
           Collection<Rectangle> potentialCells =
-              this.findNearbyEmptyCells(rectangle, 1, occupiedRectangles);
+              this.findNearbyEmptyCells(rectangle, cellSize, occupiedRectangles);
           // find which one has the least edge len to neighbors
           double min = Double.MAX_VALUE;
           Rectangle winner = null;
@@ -219,7 +220,7 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
             compactionDirection,
             Math.max(1, 1 + 2 * (iterationCount - i - 30) / 0.5 * iterationCount),
             false);
-        compactionDirection = !compactionDirection;
+        compactionDirection = compactionDirection.toggle();
       }
       temperature = temperature * k;
     }
@@ -274,7 +275,7 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
     this.rectangleToVertexMap.put(r, v);
   }
 
-  private void compact(boolean direction, double gamma, boolean expand) {
+  private void compact(Compaction.Direction direction, double gamma, boolean expand) {
 
     List<Cell<V>> cells = new ArrayList<>();
     graph

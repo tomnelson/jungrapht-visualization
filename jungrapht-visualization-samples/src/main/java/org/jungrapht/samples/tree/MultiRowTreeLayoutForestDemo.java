@@ -28,7 +28,6 @@ import org.jungrapht.visualization.control.DefaultLensGraphMouse;
 import org.jungrapht.visualization.control.LensGraphMouse;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
-import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.selection.SelectedState;
 import org.jungrapht.visualization.transform.HyperbolicTransformer;
 import org.jungrapht.visualization.transform.LayoutLensSupport;
@@ -96,8 +95,6 @@ public class MultiRowTreeLayoutForestDemo extends JPanel {
     vv.getSelectedVertexState()
         .addItemListener(new SelectedState.StateChangeListener<>(this::selected, this::deselected));
 
-    LayoutModel layoutModel = vv.getVisualizationModel().getLayoutModel();
-    Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
     Lens lens = new Lens();
     hyperbolicViewSupport =
         ViewLensSupport.builder(vv)
@@ -106,7 +103,12 @@ public class MultiRowTreeLayoutForestDemo extends JPanel {
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
-            .lensGraphMouse(new DefaultLensGraphMouse<>())
+            .lensGraphMouse(
+                DefaultLensGraphMouse.builder()
+                    .magnificationFloor(0.4f)
+                    .magnificationCeiling(1.0f)
+                    .magnificationDelta(0.05f)
+                    .build())
             .build();
     hyperbolicSupport =
         LayoutLensSupport.builder(vv)
@@ -117,7 +119,12 @@ public class MultiRowTreeLayoutForestDemo extends JPanel {
                             .getMultiLayerTransformer()
                             .getTransformer(Layer.LAYOUT))
                     .build())
-            .lensGraphMouse(new DefaultLensGraphMouse<>())
+            .lensGraphMouse(
+                DefaultLensGraphMouse.builder()
+                    .magnificationFloor(0.4f)
+                    .magnificationCeiling(1.0f)
+                    .magnificationDelta(0.05f)
+                    .build())
             .build();
 
     vv.scaleToLayout();

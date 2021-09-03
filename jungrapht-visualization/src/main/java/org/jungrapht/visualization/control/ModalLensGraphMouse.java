@@ -35,18 +35,35 @@ public class ModalLensGraphMouse<V, E> extends DefaultModalGraphMouse<V, E>
           V, E, T extends ModalLensGraphMouse<V, E>, B extends Builder<V, E, T, B>>
       extends DefaultModalGraphMouse.Builder<V, E, T, B> {
 
-    protected LensMagnificationGraphMousePlugin magnificationPlugin;
+    protected float magnificationDelta = 0.05f;
+    // values for hyperbolic transform lens
+    protected float magnificationFloor = 0.45f;
+    protected float magnificationCeiling = 1.0f;
+    // values for magnify transform lens
+    //    protected float magnificationFloor = 1.0f;
+    //    protected float magnificationCeiling = 4.0f;
+
     // translation mask
     protected int lensTranslatingMask =
         Modifiers.masks.get(System.getProperty(PREFIX + "lensTranslatingMask", "MB1"));
 
-    public B magnificationPlugin(LensMagnificationGraphMousePlugin magnificationPlugin) {
-      this.magnificationPlugin = magnificationPlugin;
+    public B lensTranslatingMask(int lensTranslatingMask) {
+      this.lensTranslatingMask = lensTranslatingMask;
       return self();
     }
 
-    public B lensTranslatingMask(int lensTranslatingMask) {
-      this.lensTranslatingMask = lensTranslatingMask;
+    public B magnificationFloor(float magnificationFloor) {
+      this.magnificationFloor = magnificationFloor;
+      return self();
+    }
+
+    public B magnificationCeiling(float magnificationCeiling) {
+      this.magnificationCeiling = magnificationCeiling;
+      return self();
+    }
+
+    public B magnificationDelta(float magnificationDelta) {
+      this.magnificationDelta = magnificationDelta;
       return self();
     }
 
@@ -71,7 +88,7 @@ public class ModalLensGraphMouse<V, E> extends DefaultModalGraphMouse<V, E>
   }
 
   ModalLensGraphMouse(Builder<V, E, ?, ?> builder) {
-    super(
+    this(
         builder.mode,
         builder.in,
         builder.out,
@@ -83,12 +100,53 @@ public class ModalLensGraphMouse<V, E> extends DefaultModalGraphMouse<V, E>
         builder.regionSelectionCompleteMask,
         builder.toggleRegionSelectionCompleteMask,
         builder.translatingMask,
+        builder.lensTranslatingMask,
         builder.scalingMask,
         builder.xAxisScalingMask,
-        builder.yAxisScalingMask);
-    this.magnificationPlugin = builder.magnificationPlugin;
-    this.lensTranslatingGraphMousePlugin =
-        new LensTranslatingGraphMousePlugin(builder.lensTranslatingMask);
+        builder.yAxisScalingMask,
+        builder.magnificationFloor,
+        builder.magnificationCeiling,
+        builder.magnificationDelta);
+  }
+
+  public ModalLensGraphMouse(
+      Mode mode,
+      float in,
+      float out,
+      boolean vertexSelectionOnly,
+      int singleSelectionMask,
+      int toggleSingleSelectionMask,
+      int regionSelectionMask,
+      int toggleRegionSelectionMask,
+      int regionSelectionCompleteMask,
+      int toggleRegionSelectionCompleteMask,
+      int translatingMask,
+      int lensTranslatingMask,
+      int scalingMask,
+      int xAxisScalingMask,
+      int yAxisScalingMask,
+      float magnificationFloor,
+      float magnificationCeiling,
+      float magnificationDelta) {
+    super(
+        mode,
+        in,
+        out,
+        vertexSelectionOnly,
+        singleSelectionMask,
+        toggleSingleSelectionMask,
+        regionSelectionMask,
+        toggleRegionSelectionMask,
+        regionSelectionCompleteMask,
+        toggleRegionSelectionCompleteMask,
+        translatingMask,
+        scalingMask,
+        xAxisScalingMask,
+        yAxisScalingMask);
+    this.magnificationPlugin =
+        new LensMagnificationGraphMousePlugin(
+            magnificationFloor, magnificationCeiling, magnificationDelta);
+    this.lensTranslatingGraphMousePlugin = new LensTranslatingGraphMousePlugin(lensTranslatingMask);
     this.lensKillingGraphMousePlugin = new LensKillingGraphMousePlugin();
     this.translatingPlugin =
         TranslatingGraphMousePlugin.builder().translatingMask(translatingMask).build();

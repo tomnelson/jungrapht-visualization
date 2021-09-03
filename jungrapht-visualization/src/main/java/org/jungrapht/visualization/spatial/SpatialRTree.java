@@ -7,6 +7,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.control.GraphElementAccessor;
@@ -369,6 +370,44 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
       return closest;
     }
 
+    @Override
+    public V getClosestElement(V v) {
+      if (!isActive() || rtree.getRoot().isEmpty()) {
+        // use the fallback VertexAccessor
+        return fallback.getClosestVertex(layoutModel, v);
+      }
+
+      Point vp = layoutModel.get(v);
+      double radius = layoutModel.getWidth() / 20;
+
+      V closest = null;
+      while (closest == null) {
+
+        double diameter = radius * 2;
+
+        Ellipse2D searchArea =
+            new Ellipse2D.Double(vp.x - radius, vp.y - radius, diameter, diameter);
+
+        Collection<V> nodes =
+            getVisibleElements(searchArea)
+                .stream()
+                .filter(vertex -> vertex != v)
+                .collect(Collectors.toSet());
+        closest = getClosest(nodes, vp.x, vp.y, radius);
+
+        // if i found a winner or
+        // if I have already considered all of the nodes in the graph
+        // (in the spatialtree) there is no reason to enlarge the
+        // area and try again
+        if (closest != null || nodes.size() >= layoutModel.getGraph().vertexSet().size()) {
+          break;
+        }
+        // double the search area size and try again
+        radius *= 2;
+      }
+      return closest;
+    }
+
     protected List<Shape> collectGrids(List<Shape> list, RTree<V> tree) {
       if (tree.getRoot().isPresent()) {
         Node<V> root = tree.getRoot().get();
@@ -596,6 +635,44 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
 
         Collection<E> edges = getVisibleElements(searchArea);
         closest = getClosestEdge(edges, x, y, radius);
+
+        // If i found a winner, break. also
+        // if I have already considered all of the nodes in the graph
+        // (in the spatialquadtree) there is no reason to enlarge the
+        // area and try again
+        if (closest != null || edges.size() >= layoutModel.getGraph().edgeSet().size()) {
+          break;
+        }
+        // double the search area size and try again
+        radius *= 2;
+      }
+      return closest;
+    }
+
+    @Override
+    public E getClosestElement(E element) {
+      // cop-out to just use the midpoint
+      Graph<V, E> graph = layoutModel.getGraph();
+      Point sp = layoutModel.get(graph.getEdgeSource(element));
+      Point tp = layoutModel.get(graph.getEdgeSource(element));
+      Point p = Point.centroidOf(sp, tp);
+      if (!isActive() || rtree.getRoot().isEmpty()) {
+        // not active or empty
+        // use the fallback VertexAccessor
+        return graphElementAccessor.getEdge(layoutModel, p);
+      }
+      Node<E> root = rtree.getRoot().get();
+      double radius = layoutModel.getWidth() / 20;
+
+      E closest = null;
+      while (closest == null) {
+
+        double diameter = radius * 2;
+
+        Ellipse2D searchArea = new Ellipse2D.Double(p.x - radius, p.y - radius, diameter, diameter);
+
+        Collection<E> edges = getVisibleElements(searchArea);
+        closest = getClosestEdge(edges, p.x, p.y, radius);
 
         // If i found a winner, break. also
         // if I have already considered all of the nodes in the graph

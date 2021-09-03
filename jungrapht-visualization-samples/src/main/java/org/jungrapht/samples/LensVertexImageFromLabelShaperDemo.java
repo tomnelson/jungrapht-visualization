@@ -31,7 +31,6 @@ import org.jungrapht.visualization.decorators.EllipseShapeFunction;
 import org.jungrapht.visualization.decorators.IconShapeFunction;
 import org.jungrapht.visualization.decorators.PickableElementPaintFunction;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
-import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.renderers.JLabelEdgeLabelRenderer;
 import org.jungrapht.visualization.renderers.JLabelVertexLabelRenderer;
 import org.jungrapht.visualization.renderers.LightweightVertexRenderer;
@@ -181,9 +180,6 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
     controls.add(ControlHelpers.getZoomControls("Zoom", vv));
     add(controls, BorderLayout.SOUTH);
 
-    LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
-    Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
-
     Lens lens = new Lens();
     lens.setMagnification(2.f);
     magnifyViewSupport =
@@ -194,7 +190,11 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
-            .lensGraphMouse(new DefaultLensGraphMouse<>())
+            .lensGraphMouse(
+                DefaultLensGraphMouse.builder()
+                    .magnificationFloor(1.0f)
+                    .magnificationCeiling(4.0f)
+                    .build())
             .build();
 
     lens = new Lens();
@@ -209,7 +209,11 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
                             .getMultiLayerTransformer()
                             .getTransformer(Layer.LAYOUT))
                     .build())
-            .lensGraphMouse(new DefaultLensGraphMouse<>())
+            .lensGraphMouse(
+                DefaultLensGraphMouse.builder()
+                    .magnificationFloor(1.0f)
+                    .magnificationCeiling(4.0f)
+                    .build())
             .build();
 
     controls.add(

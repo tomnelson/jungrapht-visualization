@@ -9,6 +9,7 @@ import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
+import org.jungrapht.visualization.selection.SelectedState;
 import org.jungrapht.visualization.transform.shape.GraphicsDecorator;
 
 /**
@@ -69,19 +70,30 @@ public abstract class AbstractVertexRenderer<V, E> implements Renderer.Vertex<V,
   protected void paintShapeForVertex(RenderContext<V, E> renderContext, V v, Shape shape) {
     GraphicsDecorator g = renderContext.getGraphicsContext();
     Paint oldPaint = g.getPaint();
-    Paint fillPaint = renderContext.getVertexFillPaintFunction().apply(v);
+    SelectedState<V> vertexSelectedState = renderContext.getSelectedVertexState();
+    Paint fillPaint;
+    Paint drawPaint;
+    Stroke drawStroke;
+    if (vertexSelectedState.isSelected(v)) {
+      // selected colors and stroke
+      fillPaint = renderContext.getSelectedVertexFillPaintFunction().apply(v);
+      drawPaint = renderContext.getSelectedVertexDrawPaintFunction().apply(v);
+      drawStroke = renderContext.getSelectedVertexStrokeFunction().apply(v);
+    } else {
+      fillPaint = renderContext.getVertexFillPaintFunction().apply(v);
+      drawPaint = renderContext.getVertexDrawPaintFunction().apply(v);
+      drawStroke = renderContext.getVertexStrokeFunction().apply(v);
+    }
     if (fillPaint != null) {
       g.setPaint(fillPaint);
       g.fill(shape);
       g.setPaint(oldPaint);
     }
-    Paint drawPaint = renderContext.getVertexDrawPaintFunction().apply(v);
     if (drawPaint != null) {
       g.setPaint(drawPaint);
       Stroke oldStroke = g.getStroke();
-      Stroke stroke = renderContext.getVertexStrokeFunction().apply(v);
-      if (stroke != null) {
-        g.setStroke(stroke);
+      if (drawStroke != null) {
+        g.setStroke(drawStroke);
       }
       g.draw(shape);
       g.setPaint(oldPaint);

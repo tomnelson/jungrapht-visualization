@@ -6,12 +6,14 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
+import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.renderers.Renderer;
+import org.jungrapht.visualization.transform.MutableTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,20 +33,6 @@ public class EiglspergerLayoutDemoLtoR extends JFrame {
 
     vv.getRenderContext().setEdgeLabelFunction(Object::toString);
 
-    vv.getVisualizationModel()
-        .getLayoutModel()
-        .getLayoutStateChangeSupport()
-        .addLayoutStateChangeListener(
-            evt -> {
-              if (!evt.active) {
-                LayoutModel<Integer> layoutModel = evt.layoutModel;
-                layoutModel
-                    .getLocations()
-                    .forEach(
-                        (v, p) -> layoutModel.set(v, Point.of(p.y, layoutModel.getWidth() - p.x)));
-              }
-            });
-
     EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm3 =
         EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .postStraighten(true)
@@ -59,6 +47,20 @@ public class EiglspergerLayoutDemoLtoR extends JFrame {
     add(container);
     pack();
     setVisible(true);
+    setLtoR();
+  }
+
+  private void setLtoR() {
+
+    MutableTransformer modelTransformer =
+        vv.getRenderContext()
+            .getMultiLayerTransformer()
+            .getTransformer(MultiLayerTransformer.Layer.LAYOUT);
+    // get center of layout
+    LayoutModel layoutModel = vv.getVisualizationModel().getLayoutModel();
+    Point center = layoutModel.getCenter();
+
+    modelTransformer.rotate(-Math.PI / 2, center.x, center.y);
   }
 
   private VisualizationViewer<Integer, Integer> configureVisualizationViewer(

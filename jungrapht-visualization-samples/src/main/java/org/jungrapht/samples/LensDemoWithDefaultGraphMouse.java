@@ -16,6 +16,7 @@ import java.awt.Shape;
 import java.awt.event.ItemEvent;
 import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
 import javax.swing.*;
@@ -168,7 +169,11 @@ public class LensDemoWithDefaultGraphMouse extends JPanel {
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
-            .lensGraphMouse(new DefaultLensGraphMouse<>())
+            .lensGraphMouse(
+                DefaultLensGraphMouse.builder()
+                    .magnificationFloor(1.0f)
+                    .magnificationCeiling(4.0f)
+                    .build())
             .build();
 
     magnifyLayoutSupport =
@@ -181,7 +186,11 @@ public class LensDemoWithDefaultGraphMouse extends JPanel {
                             .getMultiLayerTransformer()
                             .getTransformer(Layer.LAYOUT))
                     .build())
-            .lensGraphMouse(new DefaultLensGraphMouse<>())
+            .lensGraphMouse(
+                DefaultLensGraphMouse.builder()
+                    .magnificationFloor(1.0f)
+                    .magnificationCeiling(4.0f)
+                    .build())
             .build();
 
     ButtonGroup graphRadio = new ButtonGroup();
@@ -224,17 +233,13 @@ public class LensDemoWithDefaultGraphMouse extends JPanel {
 
     Box controls = Box.createHorizontalBox();
     controls.add(ControlHelpers.getZoomControls("Zoom", vv));
+    Map<String, LensSupport> lensSupportMap = new LinkedHashMap<>();
+    lensSupportMap.put("Hyperbolic View", hyperbolicViewSupport);
+    lensSupportMap.put("Hyperbolic Layout", hyperbolicLayoutSupport);
+    lensSupportMap.put("Magnified View", magnifyViewSupport);
+    lensSupportMap.put("Magnified Layout", magnifyLayoutSupport);
     controls.add(
-        LensControlHelper.builder(
-                Map.of(
-                    "Hyperbolic View",
-                    hyperbolicViewSupport,
-                    "Hyperbolic Layout",
-                    hyperbolicLayoutSupport,
-                    "Magnified View",
-                    magnifyViewSupport,
-                    "Magnified Layout",
-                    magnifyLayoutSupport))
+        LensControlHelper.builder(lensSupportMap)
             .containerSupplier(JPanel::new)
             .containerLayoutManager(new GridLayout(0, 2))
             .title("Lens Controls")

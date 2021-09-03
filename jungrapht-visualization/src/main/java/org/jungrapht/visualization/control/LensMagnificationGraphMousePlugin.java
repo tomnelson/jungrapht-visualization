@@ -109,6 +109,10 @@ public class LensMagnificationGraphMousePlugin extends AbstractGraphMousePlugin
               .getMultiLayerTransformer()
               .getTransformer(MultiLayerTransformer.Layer.VIEW);
       int amount = e.getWheelRotation();
+      if (amount == 0) {
+        e.consume();
+        return;
+      }
       if (amount < 0) {
         delta = -delta;
       }

@@ -1,7 +1,5 @@
 package org.jungrapht.visualization.layout.algorithms.orthogonal;
 
-
-
 class Grid<V> {
   //
   //    int width;

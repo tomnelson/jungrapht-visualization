@@ -28,7 +28,6 @@ import org.jungrapht.visualization.control.ModalLensGraphMouse;
 import org.jungrapht.visualization.control.modal.ModeControls;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
-import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.transform.HyperbolicTransformer;
 import org.jungrapht.visualization.transform.LayoutLensSupport;
 import org.jungrapht.visualization.transform.Lens;
@@ -99,8 +98,6 @@ public class SpatialLensDemo extends JPanel {
     add(visualizationScrollPane);
 
     // create a lens to share between the two hyperbolic transformers
-    LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
-    Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
     Lens lens = new Lens();
     hyperbolicViewSupport =
         ViewLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
@@ -109,7 +106,12 @@ public class SpatialLensDemo extends JPanel {
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
-            .lensGraphMouse(new ModalLensGraphMouse())
+            .lensGraphMouse(
+                ModalLensGraphMouse.builder()
+                    .magnificationFloor(0.4f)
+                    .magnificationCeiling(1.0f)
+                    .magnificationDelta(0.05f)
+                    .build())
             .build();
     hyperbolicLayoutSupport =
         LayoutLensSupport.<String, Integer, ModalLensGraphMouse>builder(vv)
@@ -134,7 +136,11 @@ public class SpatialLensDemo extends JPanel {
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
-            .lensGraphMouse(new ModalLensGraphMouse<>())
+            .lensGraphMouse( // override with range for magnificaion
+                ModalLensGraphMouse.builder()
+                    .magnificationFloor(1.0f)
+                    .magnificationCeiling(4.0f)
+                    .build())
             .build();
 
     magnifyLayoutSupport =
@@ -146,7 +152,11 @@ public class SpatialLensDemo extends JPanel {
                             .getMultiLayerTransformer()
                             .getTransformer(Layer.LAYOUT))
                     .build())
-            .lensGraphMouse(new ModalLensGraphMouse<>())
+            .lensGraphMouse( // override with range for magnificaion
+                ModalLensGraphMouse.builder()
+                    .magnificationFloor(1.0f)
+                    .magnificationCeiling(4.0f)
+                    .build())
             .build();
     hyperbolicLayoutSupport
         .getLensTransformer()

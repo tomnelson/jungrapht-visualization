@@ -13,10 +13,7 @@ package org.jungrapht.visualization.transform;
 import java.awt.geom.Point2D;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.GraphElementAccessor;
-import org.jungrapht.visualization.control.LensGraphMouse;
-import org.jungrapht.visualization.control.LensTransformSupport;
-import org.jungrapht.visualization.control.TransformSupport;
+import org.jungrapht.visualization.control.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +41,12 @@ public class LayoutLensSupport<V, E, M extends LensGraphMouse> extends AbstractL
     }
 
     protected GraphElementAccessor<V, E> pickSupport;
+
+    @Override
+    public B lensGraphMouse(M lensGraphMouse) {
+      this.lensGraphMouse = lensGraphMouse;
+      return self();
+    }
 
     public T build() {
       return (T) new LayoutLensSupport(this);

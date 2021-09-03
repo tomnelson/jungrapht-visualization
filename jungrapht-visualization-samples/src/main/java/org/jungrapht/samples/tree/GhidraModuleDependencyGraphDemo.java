@@ -31,7 +31,6 @@ import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.control.DefaultLensGraphMouse;
 import org.jungrapht.visualization.control.LensGraphMouse;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
-import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.transform.HyperbolicTransformer;
 import org.jungrapht.visualization.transform.LayoutLensSupport;
 import org.jungrapht.visualization.transform.Lens;
@@ -90,7 +89,6 @@ public class GhidraModuleDependencyGraphDemo extends JPanel {
         new LayoutPaintable.LayoutBounds(
             vv.getVisualizationModel(), vv.getRenderContext().getMultiLayerTransformer()));
 
-    LayoutModel<ModuleVertex> layoutModel = vv.getVisualizationModel().getLayoutModel();
     Lens lens = new Lens();
     hyperbolicViewSupport =
         ViewLensSupport.builder(vv)
@@ -99,7 +97,12 @@ public class GhidraModuleDependencyGraphDemo extends JPanel {
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
-            .lensGraphMouse(new DefaultLensGraphMouse<>())
+            .lensGraphMouse(
+                DefaultLensGraphMouse.builder()
+                    .magnificationFloor(0.4f)
+                    .magnificationCeiling(1.0f)
+                    .magnificationDelta(0.05f)
+                    .build())
             .useGradient(true)
             .build();
     hyperbolicSupport =
@@ -111,7 +114,12 @@ public class GhidraModuleDependencyGraphDemo extends JPanel {
                             .getMultiLayerTransformer()
                             .getTransformer(Layer.LAYOUT))
                     .build())
-            .lensGraphMouse(new DefaultLensGraphMouse<>())
+            .lensGraphMouse(
+                DefaultLensGraphMouse.builder()
+                    .magnificationFloor(0.4f)
+                    .magnificationCeiling(1.0f)
+                    .magnificationDelta(0.05f)
+                    .build())
             .useGradient(true)
             .build();
 

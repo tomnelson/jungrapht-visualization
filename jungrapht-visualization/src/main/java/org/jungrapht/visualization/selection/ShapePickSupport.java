@@ -412,6 +412,11 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
     return getVertex(layoutModel, pickFootprint);
   }
 
+  @Override
+  public V getClosestVertex(LayoutModel<V> layoutModel, V v) {
+    return null;
+  }
+
   /**
    * Returns the vertices whose layout coordinates are contained in <code>Shape</code>. The shape is
    * in screen coordinates, and the graph vertices are transformed to screen coordinates before they
@@ -645,7 +650,7 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
 
     MultiLayerTransformer mlt = vv.getRenderContext().getMultiLayerTransformer();
 
-    // x and y anre in layout coordinates. Translate to view and make a footprint
+    // x and y are in layout coordinates. Translate to view and make a footprint
     Point2D layoutPoint = new Point2D.Double(x, y);
     Point2D viewPoint = mlt.transform(layoutPoint);
     Rectangle2D pickFootprint =

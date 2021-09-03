@@ -1,6 +1,5 @@
 package org.jungrapht.visualization.spatial;
 
-import java.awt.*;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
@@ -8,8 +7,10 @@ import java.awt.geom.Rectangle2D;
 import java.util.*;
 import java.util.List;
 import org.jungrapht.visualization.layout.event.LayoutVertexPositionChange;
+import org.jungrapht.visualization.layout.model.Dimension;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
+import org.jungrapht.visualization.layout.model.Rectangle;
 import org.jungrapht.visualization.spatial.rtree.TreeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,10 +50,10 @@ public class SpatialGrid<V> extends AbstractSpatial<V, V>
   private double boxHeight;
 
   /** the overall area of the layout (x,y,width,height) */
-  private Rectangle2D layoutArea;
+  private Rectangle layoutArea;
 
   /** a cache of grid cell rectangles for performance */
-  private List<Shape> gridCache;
+  private List<Rectangle> gridCache;
 
   /**
    * Create an instance
@@ -74,7 +75,7 @@ public class SpatialGrid<V> extends AbstractSpatial<V, V>
    * @param verticalCount how many tiles in a column
    */
   public SpatialGrid(
-      LayoutModel<V> layoutModel, Rectangle2D bounds, int horizontalCount, int verticalCount) {
+      LayoutModel<V> layoutModel, Rectangle bounds, int horizontalCount, int verticalCount) {
     super(layoutModel);
     this.horizontalCount = horizontalCount;
     this.verticalCount = verticalCount;
@@ -87,8 +88,8 @@ public class SpatialGrid<V> extends AbstractSpatial<V, V>
    *
    * @param bounds recalculate the size of the spatial area
    */
-  public void setBounds(Rectangle2D bounds) {
-    this.size = bounds.getBounds().getSize();
+  public void setBounds(Rectangle bounds) {
+    this.size = bounds.getSize();
     this.layoutArea = bounds;
     this.boxWidth = size.getWidth() / horizontalCount;
     this.boxHeight = size.getHeight() / verticalCount;
@@ -98,7 +99,7 @@ public class SpatialGrid<V> extends AbstractSpatial<V, V>
   @Override
   public Set<TreeNode> getContainingLeafs(Point2D p) {
     int boxNumber = this.getBoxNumberFromLocation(p.getX(), p.getY());
-    Rectangle2D r = (Rectangle2D) this.gridCache.get(boxNumber);
+    Rectangle r = this.gridCache.get(boxNumber);
     SpatialGrid grid = new SpatialGrid(layoutModel, r, 1, 1);
     return Collections.singleton(grid);
   }
@@ -132,15 +133,15 @@ public class SpatialGrid<V> extends AbstractSpatial<V, V>
    * @return the boxes in the grid
    */
   @Override
-  public List<Shape> getGrid() {
+  public List<Rectangle> getGrid() {
     if (gridCache == null) {
       gridCache = new ArrayList<>();
       for (int j = 0; j < verticalCount; j++) {
         for (int i = 0; i < horizontalCount; i++) {
           gridCache.add(
-              new Rectangle2D.Double(
-                  layoutArea.getX() + i * boxWidth,
-                  layoutArea.getY() + j * boxHeight,
+              Rectangle.of(
+                  layoutArea.x + i * boxWidth,
+                  layoutArea.y + j * boxHeight,
                   boxWidth,
                   boxHeight));
         }
@@ -388,15 +389,22 @@ public class SpatialGrid<V> extends AbstractSpatial<V, V>
 
     return null;
   }
+
+  @Override
+  public V getClosestElement(V element) {
+    Point p = layoutModel.get(element);
+    return getClosestElement(p.x, p.y);
+  }
+
   /**
    * given a rectangular area and an offset, return the tile numbers that are contained in it
    *
    * @param visibleArea the (possibly) non-rectangular area of interest
    * @return the tile numbers that intersect with the visibleArea
    */
-  protected Collection<Integer> getVisibleTiles(Shape visibleArea) {
+  protected Collection<Integer> getVisibleTiles(Rectangle visibleArea) {
     Set<Integer> visibleTiles = new HashSet<>();
-    List<Shape> grid = getGrid();
+    List<Rectangle> grid = getGrid();
     for (int i = 0; i < this.horizontalCount * this.verticalCount; i++) {
       if (visibleArea.intersects(grid.get(i).getBounds2D())) {
         visibleTiles.add(i);

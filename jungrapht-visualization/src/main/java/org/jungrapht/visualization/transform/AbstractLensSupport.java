@@ -24,7 +24,6 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.GraphElementAccessor;
 import org.jungrapht.visualization.control.LensGraphMouse;
 import org.jungrapht.visualization.control.LensTransformSupport;
-import org.jungrapht.visualization.control.ModalLensGraphMouse;
 import org.jungrapht.visualization.util.ItemSupport;
 
 /**
@@ -55,7 +54,7 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse> extend
 
     protected VisualizationViewer<V, E> vv;
     protected VisualizationViewer.GraphMouse graphMouse;
-    protected M lensGraphMouse = (M) new ModalLensGraphMouse();
+    protected M lensGraphMouse;
     protected String defaultToolTipText;
     protected Runnable killSwitch;
     protected LensTransformer lensTransformer;
@@ -145,6 +144,7 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse> extend
     this.useGradient = builder.useGradient;
     this.addItemListener(builder.itemListener);
   }
+
   /**
    * create the base class, setting common members and creating a custom GraphMouse
    *

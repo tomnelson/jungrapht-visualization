@@ -210,8 +210,6 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
     layoutComboBox.setSelectedItem(LayoutHelper.Layouts.FR_BH_VISITOR);
 
     // create a lens to share between the two hyperbolic transformers
-    LayoutModel<AS> layoutModel = vv.getVisualizationModel().getLayoutModel();
-    Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
     Lens lens = new Lens(); /* provides a Hyperbolic lens for the view */
     LensSupport<ModalLensGraphMouse> hyperbolicViewSupport =
         ViewLensSupport.<AS, AI, ModalLensGraphMouse>builder(vv)
@@ -220,7 +218,12 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
-            .lensGraphMouse(new ModalLensGraphMouse())
+            .lensGraphMouse(
+                ModalLensGraphMouse.builder()
+                    .magnificationFloor(0.4f)
+                    .magnificationCeiling(1.0f)
+                    .magnificationDelta(0.05f)
+                    .build())
             .build();
 
     LensSupport<ModalLensGraphMouse> hyperbolicLayoutSupport =
@@ -246,7 +249,11 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
-            .lensGraphMouse(new ModalLensGraphMouse<>())
+            .lensGraphMouse( // override with range for magnificaion
+                ModalLensGraphMouse.builder()
+                    .magnificationFloor(1.0f)
+                    .magnificationCeiling(4.0f)
+                    .build())
             .build();
 
     LensSupport<ModalLensGraphMouse> magnifyLayoutSupport =
@@ -258,7 +265,11 @@ public class ShowLayoutsWithJGraphtIO extends JFrame {
                             .getMultiLayerTransformer()
                             .getTransformer(Layer.LAYOUT))
                     .build())
-            .lensGraphMouse(new ModalLensGraphMouse<>())
+            .lensGraphMouse( // override with range for magnificaion
+                ModalLensGraphMouse.builder()
+                    .magnificationFloor(1.0f)
+                    .magnificationCeiling(4.0f)
+                    .build())
             .build();
 
     hyperbolicLayoutSupport

@@ -12,6 +12,15 @@ import org.jungrapht.visualization.layout.model.Rectangle;
 
 public abstract class Compaction<V> {
 
+  public enum Direction {
+    HORIZONTAL,
+    VERTICAL;
+
+    Direction toggle() {
+      return this.equals(HORIZONTAL) ? VERTICAL : HORIZONTAL;
+    }
+  }
+
   double gamma;
 
   ToDoubleFunction<Cell<V>> toDoubleFunction;
@@ -24,8 +33,9 @@ public abstract class Compaction<V> {
 
   Graph<Cell<V>, Integer> compactionGraph;
 
-  public static <V> Compaction<V> of(Collection<Cell<V>> cells, boolean direction, double gamma) {
-    Compaction<V> compaction = direction ? new Horizontal<>(gamma) : new Vertical<>(gamma);
+  public static <V> Compaction<V> of(Collection<Cell<V>> cells, Direction direction, double gamma) {
+    Compaction<V> compaction =
+        direction == Direction.HORIZONTAL ? new Horizontal<>(gamma) : new Vertical<>(gamma);
     Graph<Cell<V>, Integer> compactionGraph = compaction.makeCompactionGraph(cells);
     compaction.compact(compactionGraph);
     return compaction;

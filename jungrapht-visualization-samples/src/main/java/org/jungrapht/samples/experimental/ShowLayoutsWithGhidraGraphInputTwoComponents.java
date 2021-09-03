@@ -26,7 +26,6 @@ import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.control.DefaultLensGraphMouse;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.*;
-import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.transform.*;
 import org.jungrapht.visualization.transform.shape.HyperbolicShapeTransformer;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
@@ -174,8 +173,6 @@ public class ShowLayoutsWithGhidraGraphInputTwoComponents extends JFrame {
     layoutComboBox.setSelectedItem(LayoutHelperEiglsperger.Layouts.EIGLSPERGERTD);
 
     // create a lens to share between the two hyperbolic transformers
-    LayoutModel<AS> layoutModel = vv.getVisualizationModel().getLayoutModel();
-    Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
     Lens lens = new Lens(); /* provides a Hyperbolic lens for the view */
     LensSupport<DefaultLensGraphMouse> hyperbolicViewSupport =
         ViewLensSupport.<AS, AI, DefaultLensGraphMouse>builder(vv)
@@ -186,7 +183,12 @@ public class ShowLayoutsWithGhidraGraphInputTwoComponents extends JFrame {
                             .getMultiLayerTransformer()
                             .getTransformer(MultiLayerTransformer.Layer.VIEW))
                     .build())
-            .lensGraphMouse(new DefaultLensGraphMouse<>())
+            .lensGraphMouse(
+                DefaultLensGraphMouse.builder()
+                    .magnificationFloor(0.4f)
+                    .magnificationCeiling(1.0f)
+                    .magnificationDelta(0.05f)
+                    .build())
             .build();
 
     LensSupport<DefaultLensGraphMouse> hyperbolicLayoutSupport =
@@ -198,7 +200,12 @@ public class ShowLayoutsWithGhidraGraphInputTwoComponents extends JFrame {
                             .getMultiLayerTransformer()
                             .getTransformer(MultiLayerTransformer.Layer.LAYOUT))
                     .build())
-            .lensGraphMouse(new DefaultLensGraphMouse<>())
+            .lensGraphMouse(
+                DefaultLensGraphMouse.builder()
+                    .magnificationFloor(0.4f)
+                    .magnificationCeiling(1.0f)
+                    .magnificationDelta(0.05f)
+                    .build())
             .build();
 
     // the magnification lens uses a different magnification than the hyperbolic lens
@@ -214,7 +221,11 @@ public class ShowLayoutsWithGhidraGraphInputTwoComponents extends JFrame {
                             .getMultiLayerTransformer()
                             .getTransformer(MultiLayerTransformer.Layer.VIEW))
                     .build())
-            .lensGraphMouse(new DefaultLensGraphMouse<>())
+            .lensGraphMouse( // override with range for magnificaion
+                DefaultLensGraphMouse.builder()
+                    .magnificationFloor(1.0f)
+                    .magnificationCeiling(4.0f)
+                    .build())
             .build();
 
     LensSupport<DefaultLensGraphMouse> magnifyLayoutSupport =
@@ -226,7 +237,11 @@ public class ShowLayoutsWithGhidraGraphInputTwoComponents extends JFrame {
                             .getMultiLayerTransformer()
                             .getTransformer(MultiLayerTransformer.Layer.LAYOUT))
                     .build())
-            .lensGraphMouse(new DefaultLensGraphMouse<>())
+            .lensGraphMouse( // override with range for magnificaion
+                DefaultLensGraphMouse.builder()
+                    .magnificationFloor(1.0f)
+                    .magnificationCeiling(4.0f)
+                    .build())
             .build();
 
     hyperbolicLayoutSupport

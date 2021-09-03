@@ -121,7 +121,6 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
     // create a lens to share between the two hyperbolic transformers
     LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
     layoutModel.set("A", 300, 300);
-    Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
     Lens lens = new Lens();
     hyperbolicViewSupport =
         ViewLensSupport.<String, Integer, DefaultLensGraphMouse>builder(vv)
@@ -130,7 +129,12 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
-            .lensGraphMouse(new DefaultLensGraphMouse<>())
+            .lensGraphMouse(
+                DefaultLensGraphMouse.builder()
+                    .magnificationFloor(0.4f)
+                    .magnificationCeiling(1.0f)
+                    .magnificationDelta(0.05f)
+                    .build())
             .build();
     hyperbolicLayoutSupport =
         LayoutLensSupport.<String, Integer, DefaultLensGraphMouse>builder(vv)
@@ -141,7 +145,12 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
                             .getMultiLayerTransformer()
                             .getTransformer(Layer.LAYOUT))
                     .build())
-            .lensGraphMouse(new DefaultLensGraphMouse<>())
+            .lensGraphMouse(
+                DefaultLensGraphMouse.builder()
+                    .magnificationFloor(0.4f)
+                    .magnificationCeiling(1.0f)
+                    .magnificationDelta(0.05f)
+                    .build())
             .build();
 
     // the magnification lens uses a different magnification than the hyperbolic lens
@@ -156,7 +165,11 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
                     .delegate(
                         vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW))
                     .build())
-            .lensGraphMouse(new DefaultLensGraphMouse<>())
+            .lensGraphMouse( // override with range for magnificaion
+                DefaultLensGraphMouse.builder()
+                    .magnificationFloor(1.0f)
+                    .magnificationCeiling(4.0f)
+                    .build())
             .build();
 
     magnifyLayoutSupport =
@@ -168,7 +181,11 @@ public class SpatialLensDemoWithOneStarVertex extends JPanel {
                             .getMultiLayerTransformer()
                             .getTransformer(Layer.LAYOUT))
                     .build())
-            .lensGraphMouse(new DefaultLensGraphMouse<>())
+            .lensGraphMouse( // override with range for magnificaion
+                DefaultLensGraphMouse.builder()
+                    .magnificationFloor(1.0f)
+                    .magnificationCeiling(4.0f)
+                    .build())
             .build();
 
     hyperbolicLayoutSupport
