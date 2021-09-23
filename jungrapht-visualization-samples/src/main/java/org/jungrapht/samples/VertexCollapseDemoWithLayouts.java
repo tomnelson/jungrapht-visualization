@@ -82,7 +82,7 @@ public class VertexCollapseDemoWithLayouts extends JPanel {
   Supplier<String> vertexFactory = () -> "COL" + counter++;
 
   /** the graph */
-  Graph<String, Integer> graph = TestGraphs.getOneComponentGraph(vertexFactory);
+  Graph<String, Integer> graph = TestGraphs.getDemoGraph(true);
 
   /** the visual component and renderer for the graph */
   VisualizationViewer<String, Integer> vv;

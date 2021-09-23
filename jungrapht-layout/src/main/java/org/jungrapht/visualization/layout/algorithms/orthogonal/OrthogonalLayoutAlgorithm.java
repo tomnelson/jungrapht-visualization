@@ -101,7 +101,7 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
     this.rectangleToVertexMap = new HashMap<>();
     this.layoutModel = layoutModel;
     this.graph = layoutModel.getGraph();
-    int gridSize = 200; //this.initialGridSize();
+    int gridSize = this.initialGridSize();
     int vertexCount = graph.vertexSet().size();
     this.placeVerticesRandomlyInGridSpace(graph, gridSize);
     Compaction.Direction compactionDirection = Compaction.Direction.HORIZONTAL;
