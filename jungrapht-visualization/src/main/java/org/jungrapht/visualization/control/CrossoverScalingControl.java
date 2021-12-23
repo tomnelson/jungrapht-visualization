@@ -33,11 +33,17 @@ public class CrossoverScalingControl implements ScalingControl {
   private static final double RESET_THRESHOLD = 0.002;
 
   public static class Builder {
+    boolean bounded;
     double minScale = Double.parseDouble(System.getProperty(MIN_SCALE, "0.0001"));
     double maxScale = Double.parseDouble(System.getProperty(MAX_SCALE, "20000.0"));
     double crossover = Double.parseDouble(System.getProperty(CROSSOVER, "1.0"));
     boolean enableSingleAxisScaling =
         Boolean.parseBoolean(System.getProperty(ENABLE_SINGLE_AXIS_SCALING, "true"));
+
+    public Builder bounded(boolean bounded) {
+      this.bounded = bounded;
+      return this;
+    }
 
     public Builder minScale(double minScale) {
       this.minScale = minScale;
@@ -69,6 +75,7 @@ public class CrossoverScalingControl implements ScalingControl {
   }
 
   CrossoverScalingControl(Builder builder) {
+    this.bounded = builder.bounded;
     this.minScale = builder.minScale;
     this.maxScale = builder.maxScale;
     this.singleAxisMin = minScale / 200;
@@ -80,6 +87,8 @@ public class CrossoverScalingControl implements ScalingControl {
   public CrossoverScalingControl() {
     this(CrossoverScalingControl.builder());
   }
+
+  protected boolean bounded;
 
   protected double minScale;
 
@@ -273,6 +282,16 @@ public class CrossoverScalingControl implements ScalingControl {
     viewTransformer.scale(inverseViewScaleX, inverseViewScaleY, at);
   }
 
+  /**
+   * If the scaler is bounded, test the bounds
+   * @param scaleX
+   * @param scaleY
+   * @param minScale
+   * @param maxScale
+   * @param horizontalAmount
+   * @param verticalAmount
+   * @return whether the scaler is bounded and also within bounds
+   */
   protected boolean withinScaleBounds(
       double scaleX,
       double scaleY,
@@ -280,6 +299,9 @@ public class CrossoverScalingControl implements ScalingControl {
       double maxScale,
       double horizontalAmount,
       double verticalAmount) {
+
+    if (!bounded) return true;
+
     if (scaleX > maxScale && horizontalAmount > 1.0) {
       return false;
     }

@@ -380,13 +380,6 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
                     this.edgePointMap.putAll(runnable.getEdgePointMap());
                     if (!cancelled && isComplete(graphs.size())) {
                       fillAndCenter(layoutModel, layoutModels);
-                      //                      after.run();
-                      //                      layoutModel.setFireEvents(true);
-                      //                      appendAll(layoutModel, layoutModels);
-                      //                      expandLayoutWidthOrHeight(layoutModel, edgePointMap.values());
-                      //                      layoutModel
-                      //                          .getLayoutStateChangeSupport()
-                      //                          .fireLayoutStateChanged(layoutModel, false);
                     }
                   });
         } else {
@@ -397,14 +390,6 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
                     this.edgePointMap.putAll(runnable.getEdgePointMap());
                     if (!cancelled && isComplete(graphs.size())) {
                       fillAndCenter(layoutModel, layoutModels);
-
-                      //                      after.run();
-                      //                      layoutModel.setFireEvents(true);
-                      //                      appendAll(layoutModel, layoutModels);
-                      //                      expandLayoutWidthOrHeight(layoutModel, edgePointMap.values());
-                      //                      layoutModel
-                      //                          .getLayoutStateChangeSupport()
-                      //                          .fireLayoutStateChanged(layoutModel, false);
                     }
                   });
         }
@@ -414,18 +399,12 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
         this.edgePointMap.putAll(runnable.getEdgePointMap());
         if (!cancelled && isComplete(graphs.size())) {
           fillAndCenter(layoutModel, layoutModels);
-          //          layoutModel.setFireEvents(true);
-          //          appendAll(layoutModel, layoutModels);
-          //          expandLayoutWidthOrHeight(layoutModel, edgePointMap.values());
-          //          layoutModel.getLayoutStateChangeSupport().fireLayoutStateChanged(layoutModel, false);
-          //          after.run();
         }
       }
     }
   }
 
   protected void fillAndCenter(LayoutModel<V> layoutModel, List<LayoutModel<V>> layoutModels) {
-
     layoutModel.setFireEvents(true);
     appendAll(layoutModel, layoutModels);
     expandLayoutWidthOrHeight(layoutModel, edgePointMap.values());

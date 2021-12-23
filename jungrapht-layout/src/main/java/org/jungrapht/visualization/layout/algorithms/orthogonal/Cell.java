@@ -20,7 +20,7 @@ public class Cell<V> {
    * @return a new Rectangle with the passed properties
    */
   public static <V> Cell of(V v, double x, double y, double width, double height) {
-    return new Cell(null, Rectangle.of(x, y, width, height));
+    return new Cell(v, Rectangle.of(x, y, width, height));
   }
 
   public static Cell of(double width, double height) {
@@ -57,5 +57,13 @@ public class Cell<V> {
 
   public double getHeight() {
     return rectangle.height;
+  }
+
+  @Override
+  public String toString() {
+    return "Cell{" +
+            "occupant=" + occupant +
+            ", rectangle=" + rectangle +
+            '}';
   }
 }

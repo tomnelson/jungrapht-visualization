@@ -1,10 +1,5 @@
 package org.jungrapht.visualization.layout.algorithms.orthogonal;
 
-import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.DoubleStream;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
@@ -18,66 +13,29 @@ import org.jungrapht.visualization.layout.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
+import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
+
+public class OrthogonalLayoutAlgorithmThreaded<V, E> extends AbstractLayoutAlgorithm<V>
     implements LayoutAlgorithm<V>, VertexBoundsFunctionConsumer<V> {
 
-  private static final Logger log = LoggerFactory.getLogger(OrthogonalLayoutAlgorithm.class);
+  private static final Logger log = LoggerFactory.getLogger(OrthogonalLayoutAlgorithmThreaded.class);
   protected static final Rectangle IDENTITY_SHAPE = Rectangle.IDENTITY;
 
   public static class Builder<
-          V, E, T extends OrthogonalLayoutAlgorithm<V, E>, B extends Builder<V, E, T, B>>
+          V, E, T extends OrthogonalLayoutAlgorithmThreaded<V, E>, B extends Builder<V, E, T, B>>
       extends AbstractLayoutAlgorithm.Builder<V, T, B> implements LayoutAlgorithm.Builder<V, T, B> {
-    protected Function<V, Rectangle> vertexBoundsFunction = v ->
-            Rectangle.of(0,0,1,1);
+    protected Function<V, Rectangle> vertexBoundsFunction = v -> IDENTITY_SHAPE;
 
-    //        private int maxIterations = 700;
-    //        private int multi = 3;
-    //        private int verticalSpacing = 75;
-    //        private int horizontalSpacing = 75;
-    //        private boolean clustered = true;
-    //        protected boolean adjustToFit = true;
-    //
-    //        public B multi(int multi) {
-    //            this.multi = multi;
-    //            return self();
-    //        }
-    //
     public B vertexBoundsFunction(Function<V, Rectangle> vertexBoundsFunction) {
       this.vertexBoundsFunction = vertexBoundsFunction;
       return self();
     }
-
-    //        public B maxIterations(int maxIterations) {
-    //            this.maxIterations = maxIterations;
-    //            return self();
-    //        }
-    //
-    //        public B verticalSpacing(int verticalSpacing) {
-    //            this.verticalSpacing = verticalSpacing;
-    //            return self();
-    //        }
-    //
-    //        public B horizontalSpacing(int horizontalSpacing) {
-    //            this.horizontalSpacing = horizontalSpacing;
-    //            return self();
-    //        }
-    //
-    //        public B clustered(boolean clustered) {
-    //            this.clustered = clustered;
-    //            return self();
-    //        }
-    //
-    //        /**
-    //         * @param adjustToFit adjust the points to fit in the layoutModel area
-    //         * @return the Builder
-    //         */
-    //        public B adjustToFit(boolean adjustToFit) {
-    //            this.adjustToFit = adjustToFit;
-    //            return self();
-    //        }
-
     public T build() {
-      return (T) new OrthogonalLayoutAlgorithm(this);
+      return (T) new OrthogonalLayoutAlgorithmThreaded(this);
     }
   }
 
@@ -85,11 +43,10 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
     return new Builder<>();
   }
 
-  protected OrthogonalLayoutAlgorithm(Builder builder) {
+  protected OrthogonalLayoutAlgorithmThreaded(Builder builder) {
     super(builder);
     this.realVertexDimensionFunction = builder.vertexBoundsFunction;
   }
-
 
   Mappings<V> mappings;
 
@@ -97,6 +54,20 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
   Function<V, Rectangle> realVertexDimensionFunction;
   Function<V, Rectangle> vertexDimensionFunction;
   int cellSize = 1;
+  int iteration;
+  int iterationCount;
+  V v;
+  boolean firstLoop = true;
+  boolean secondLoop = false;
+  boolean horizontalCompaction = true;
+  boolean verticalCompaction = false;
+  boolean done = false;
+
+  List<V> vertexList;
+  int vertexIndex = 0; // index into vertexList
+  Compaction.Direction compactionDirection = Compaction.Direction.HORIZONTAL;
+  double temperature;
+  double k;
 
   @Override
   public void visit(LayoutModel<V> layoutModel) {
@@ -107,153 +78,207 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
     log.info("initialGridSize: {}", gridSize);
     layoutModel.setSize(gridSize, gridSize);
     int vertexCount = graph.vertexSet().size();
+    this.vertexList = new ArrayList<>(graph.vertexSet());
     this.placeVerticesRandomlyInGridSpace(graph, gridSize);
 //    printGrid();
     Compaction.Direction compactionDirection = Compaction.Direction.HORIZONTAL;
     double sqrtVertexCount = Math.sqrt(vertexCount);
-    int iterationCount = (int) (90 * sqrtVertexCount);
-    double temperature = 2 * sqrtVertexCount;
-    log.info("temperature: {}", temperature);
+    this.iterationCount = (int) (90 * sqrtVertexCount);
+    this.temperature = 2 * sqrtVertexCount;
     //        k=(0.2/T)1/iterationCount ;
-    double k = Math.pow(0.2 / temperature, 1.0 / iterationCount);
-    log.info("k: {}", k);
+    this.k = Math.pow(0.2 / temperature, 1.0 / iterationCount);
+
     vertexDimensionFunction = identityVertexDimensionFunction;
 
-    int iteration = 0;
-    for (; iteration < iterationCount / 2; iteration++) {
-      for (V v : graph.vertexSet()) {
-//        printGrid();
+    this.iteration = 0;
 
-        Point neighborsMedian =
-            neighborsMedianPoint(v)
-                .add(randomTemp(-temperature, temperature), randomTemp(-temperature, temperature));
-        int x = (int) neighborsMedian.x;
-        int y = (int) neighborsMedian.y;
-        // see if the cell at x,y is free
-        Rectangle rectangle = Rectangle.of(x, y, cellSize, cellSize);
-        Set<Rectangle> occupiedRectangles = occupiedRectangles();
-        if (occupiedRectangles.contains(rectangle)) {
-          // need a different cell
-          Collection<Rectangle> potentialCells =
-              this.findNearbyEmptyCells(rectangle, cellSize, occupiedRectangles);
-          // find which one has the least edge len to neighbors
-          double min = Double.MAX_VALUE;
-          Rectangle winner = null;
-          for (Rectangle potential : potentialCells) {
-            double sum = sumOfDistToNeighbors(v, potential);
-            if (sum < min) {
-              min = sum;
-              winner = potential;
-            }
-          }
-          if (winner == rectangle) {
-            // try to swap with nearby cell
-            Rectangle closest = closestTo(rectangle, occupiedRectangles);
-            // the vertex in the closest cell
-            V closestCellVertex = mappings.get(closest);
-            mappings.update(closestCellVertex, rectangle);
-            mappings.update(v, closest);
+    Thread thread = new Thread() {
+      public void run() {
+        try { Thread.sleep(5000); }
+        catch (InterruptedException ex) {}
+        layoutModel.getLayoutStateChangeSupport().fireLayoutStateChanged(layoutModel, true);
+        while (!done) {
+          log.info("step");
+          step();
+          setPoints();
+//          layoutModel.getModelChangeSupport().fireModelChanged();
+          try { Thread.sleep(2); }
+          catch (InterruptedException ex) {}
 
-          } else if (winner != null) {
-            mappings.update(v, winner);
-          } else {
-            log.error("no winner");
-          }
-        } else {
-          mappings.update(v, rectangle);
         }
+        layoutModel.getLayoutStateChangeSupport().fireLayoutStateChanged(layoutModel, false);
       }
-      //            log.info("cells size: {}", vertexToRectangleMap.size());
+    };
+    thread.start();
+  }
 
-      if (iteration % 9 == 0) {
-        compact(compactionDirection, 3, false);
-        compactionDirection = compactionDirection.toggle();
-      }
-      temperature = temperature * k;
-    }
-
-    compact(Compaction.Direction.HORIZONTAL, 3, true);
-    compact(Compaction.Direction.VERTICAL, 3, true);
-
-    vertexDimensionFunction = realVertexDimensionFunction;
-
-    for (int i = iterationCount / 2 + 1; i < iterationCount; i++) {
-
-      for (V v : graph.vertexSet()) {
-        Rectangle vd = vertexDimensionFunction.apply(v);
-        Point neighborsMedian =
-            neighborsMedianPoint(v)
-                .add(
-                    randomTemp(-temperature * vd.width, temperature * vd.width),
-                    randomTemp(-temperature * vd.height, temperature * vd.height));
-        int x = (int) neighborsMedian.x;
-        int y = (int) neighborsMedian.y;
-        // see if the cell at x,y is free
-        Rectangle rectangle = Rectangle.of(x, y, cellSize, cellSize);
-        Set<Rectangle> occupiedRectangles = occupiedRectangles();
-        if (occupiedRectangles.contains(rectangle)) {
-          // need a different cell
-          Collection<Rectangle> potentialCells =
-              this.findNearbyEmptyCells(rectangle, cellSize, occupiedRectangles);
-          // find which one has the least edge len to neighbors
-          double min = Double.MAX_VALUE;
-          Rectangle winner = null;
-          for (Rectangle potential : potentialCells) {
-            double sum = sumOfDistToNeighbors(v, potential);
-            if (sum < min) {
-              min = sum;
-              winner = potential;
-            }
-          }
-          if (winner == rectangle) {
-            // try to swap with nearby cell
-            Rectangle closest = closestTo(rectangle, occupiedRectangles);
-            // the vertex in the closest cell
-            V closestCellVertex = mappings.get(closest);
-            mappings.update(closestCellVertex, rectangle);
-            mappings.update(v, closest);
-          } else if (winner != null) {
-            mappings.update(v, winner);
-          } else {
-            log.error("no winner");
-          }
-        } else {
-          mappings.update(v, rectangle);
-        }
-        //                log.info("cells size: {}", cells.size());
-      }
-      //            log.info("cells size: {}", vertexToRectangleMap.size());
-      if (iterationCount % 9 == 0) {
-        compact(
-            compactionDirection,
-            Math.max(1, 1 + 2 * (iterationCount - i - 30) / 0.5 * iterationCount),
-            false);
-        compactionDirection = compactionDirection.toggle();
-      }
-      temperature = temperature * k;
-    }
-//
-//    // get the range of points and normalize to fit
-//    //        PointSummaryStatistics pss = new PointSummaryStatistics();
-//    log.info("layoutModel size is {} x {}", layoutModel.getWidth(), layoutModel.getHeight());
-////    for (Map.Entry<V, Rectangle> entry : vertexToRectangleMap.entrySet()) {
-////      layoutModel.set(entry.getKey(), 1 * entry.getValue().x, 1 * entry.getValue().y);
-////    }
+  private void setPoints() {
     for (V v : graph.vertexSet()) {
       Rectangle r = mappings.get(v);
       layoutModel.set(v, r.min());
     }
-//
-//    log.info("layoutModel locations: {}", layoutModel.getLocations());
-//    Expansion.expandToFillBothAxes(layoutModel, Collections.emptyList());
-//
-//    PointSummaryStatistics pss = new PointSummaryStatistics();
-//    layoutModel.getLocations().values().forEach(pss::accept);
-//    Rectangle newExtent = Rectangle.from(pss.getMin(), pss.getMax());
-//
-//    log.info("newRectangle: {}", newExtent);
-//
-           centerIt(layoutModel, Collections.emptyList());
+    centerIt(layoutModel, Collections.emptyList());
+  }
+
+  public void step() {
+    // first loop is until iteration >= iterationCount/2
+    if (done) {
+      for (V v : graph.vertexSet()) {
+        Rectangle r = mappings.get(v);
+        layoutModel.set(v, r.min());
+      }
+      centerIt(layoutModel, Collections.emptyList());
+      return;
+    }
+    if (this.firstLoop && iteration < iterationCount / 2) {
+      if (vertexIndex < vertexList.size()) {
+        this.v = vertexList.get(vertexIndex);
+        this.insideLoopOne();
+        vertexIndex++;
+        return;
+      } else {
+        if (iteration % 9 == 0) {
+          compact(compactionDirection, 3, false);
+          compactionDirection = compactionDirection.toggle();
+        }
+        vertexIndex = 0;
+        iteration++;
+        this.temperature *= k;
+        return;
+      }
+
+    } else if (horizontalCompaction) {
+      // iteration has reached iterationCount/2
+
+      // do the compactions
+      compact(Compaction.Direction.HORIZONTAL, 3, true);
+      horizontalCompaction = false;
+      verticalCompaction = true;
+      return;
+    } else if (verticalCompaction) {
+
+      compact(Compaction.Direction.VERTICAL, 3, true);
+      this.verticalCompaction = false;
+      // ready for secondLoop
+      this.firstLoop = false;
+      this.secondLoop = true;
+      this.vertexDimensionFunction = this.realVertexDimensionFunction;
+
+      // vertexIndex should be 0
+      // iteration should be iterationCount / 2
+      return;
+    }
+
+    if (this.secondLoop && iteration < iterationCount) {
+      if (vertexIndex < vertexList.size()) {
+        this.v = vertexList.get(vertexIndex);
+        this.insideLoopTwo();
+        vertexIndex++;
+        return;
+      } else {
+        if (iterationCount % 9 == 0) {
+          compact(
+                  compactionDirection,
+                  Math.max(1, 1 + 2 * (iterationCount - iteration - 30) / 0.5 * iterationCount),
+                  false);
+          this.compactionDirection = compactionDirection.toggle();
+        }
+        vertexIndex = 0;
+        iteration++;
+        this.temperature *= k;
+        return;
+      }
+
+    } else {
+      // done with iteration loop
+      this.secondLoop = false;
+      this.done = true;
+    }
+
+  }
+
+  private void insideLoopOne() {
+    Point neighborsMedian =
+            neighborsMedianPoint(v)
+                    .add(randomTemp(-temperature, temperature), randomTemp(-temperature, temperature));
+    int x = (int) neighborsMedian.x;
+    int y = (int) neighborsMedian.y;
+    // see if the cell at x,y is free
+    Rectangle rectangle = Rectangle.of(x, y, cellSize, cellSize);
+    Set<Rectangle> occupiedRectangles = occupiedRectangles();
+    if (occupiedRectangles.contains(rectangle)) {
+      // need a different cell
+      Collection<Rectangle> potentialCells =
+              this.findNearbyEmptyCells(rectangle, cellSize, occupiedRectangles);
+      // find which one has the least edge len to neighbors
+      double min = Double.MAX_VALUE;
+      Rectangle winner = null;
+      for (Rectangle potential : potentialCells) {
+        double sum = sumOfDistToNeighbors(v, potential);
+        if (sum < min) {
+          min = sum;
+          winner = potential;
+        }
+      }
+      if (winner == rectangle) {
+        // try to swap with nearby cell
+        Rectangle closest = closestTo(rectangle, occupiedRectangles);
+        // the vertex in the closest cell
+        V closestCellVertex = mappings.get(closest);
+        mappings.update(closestCellVertex, rectangle);
+        mappings.update(v, closest);
+
+      } else if (winner != null) {
+        mappings.update(v, winner);
+      } else {
+        log.error("no winner");
+      }
+    } else {
+      mappings.update(v, rectangle);
+    }
+  }
+
+  private void insideLoopTwo() {
+    Rectangle vd = vertexDimensionFunction.apply(v);
+    Point neighborsMedian =
+            neighborsMedianPoint(v)
+                    .add(
+                            randomTemp(-temperature * vd.width, temperature * vd.width),
+                            randomTemp(-temperature * vd.height, temperature * vd.height));
+    int x = (int) neighborsMedian.x;
+    int y = (int) neighborsMedian.y;
+    // see if the cell at x,y is free
+    Rectangle rectangle = Rectangle.of(x, y, cellSize, cellSize);
+    Set<Rectangle> occupiedRectangles = occupiedRectangles();
+    if (occupiedRectangles.contains(rectangle)) {
+      // need a different cell
+      Collection<Rectangle> potentialCells =
+              this.findNearbyEmptyCells(rectangle, cellSize, occupiedRectangles);
+      // find which one has the least edge len to neighbors
+      double min = Double.MAX_VALUE;
+      Rectangle winner = null;
+      for (Rectangle potential : potentialCells) {
+        double sum = sumOfDistToNeighbors(v, potential);
+        if (sum < min) {
+          min = sum;
+          winner = potential;
+        }
+      }
+      if (winner == rectangle) {
+        // try to swap with nearby cell
+        Rectangle closest = closestTo(rectangle, occupiedRectangles);
+        // the vertex in the closest cell
+        V closestCellVertex = mappings.get(closest);
+        mappings.update(closestCellVertex, rectangle);
+        mappings.update(v, closest);
+      } else if (winner != null) {
+        mappings.update(v, winner);
+      } else {
+        log.error("no winner");
+      }
+    } else {
+      mappings.update(v, rectangle);
+    }
   }
 
   private void printGrid() {

@@ -8,10 +8,6 @@
  */
 package org.jungrapht.samples;
 
-import java.awt.*;
-import java.awt.geom.Ellipse2D;
-import java.util.stream.IntStream;
-import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
@@ -21,6 +17,11 @@ import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.layout.algorithms.orthogonal.OrthogonalLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.Ellipse2D;
+import java.util.stream.IntStream;
+
 /**
  * A demo that shows a minimal visualization configuration
  *
@@ -29,12 +30,13 @@ import org.jungrapht.visualization.layout.model.LayoutModel;
  *
  * @author Tom Nelson
  */
-public class MinimalOrthogonal2 {
+public class MinimalOrthogonal3 {
 
-  private MinimalOrthogonal2() {
+  private MinimalOrthogonal3() {
 
     VisualizationViewer<String, Integer> vv =
-        VisualizationViewer.builder(TestGraphs.createDirectedAcyclicGraph(9, 3, .2, 5L))
+        VisualizationViewer.builder(TestGraphs.createSmallGraph(true))
+//    VisualizationViewer.builder(TestGraphs.createDirectedAcyclicGraph(9, 3, .2, 5L))
             .viewSize(new Dimension(700, 700))
             .layoutAlgorithm(OrthogonalLayoutAlgorithm.<String, Integer>builder().build())
             .build();
@@ -42,6 +44,8 @@ public class MinimalOrthogonal2 {
 //    vv.getRenderContext().setVertexShapeFunction(v -> new Ellipse2D.Double(-1, -1, 2, 2));
     LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
     vv.setVertexToolTipFunction(v -> v + " p:" + layoutModel.apply(v));
+    vv.getRenderContext().setVertexLabelFunction(v ->
+            layoutModel.apply(v).toString());
     // create a frame to hold the graph visualization
     final JFrame frame = new JFrame();
     frame.getContentPane().add(vv.getComponent());
@@ -51,7 +55,7 @@ public class MinimalOrthogonal2 {
   }
 
   public static void main(String[] args) {
-    new MinimalOrthogonal2();
+    new MinimalOrthogonal3();
   }
 
   private Graph<Integer, Integer> createGraph() {

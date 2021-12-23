@@ -1,6 +1,7 @@
 package org.jungrapht.visualization.layout.algorithms.orthogonal;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.ToDoubleFunction;
@@ -9,8 +10,12 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.layout.model.Rectangle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class Compaction<V> {
+
+  private static Logger log = LoggerFactory.getLogger(Compaction.class);
 
   public enum Direction {
     HORIZONTAL,
@@ -33,11 +38,14 @@ public abstract class Compaction<V> {
 
   Graph<Cell<V>, Integer> compactionGraph;
 
-  public static <V> Compaction<V> of(Collection<Cell<V>> cells, Direction direction, double gamma) {
+  Function<Integer, Double> edgeLengthFunction;
+
+  public static <V> Compaction<V> of(Collection<Cell<V>> cells, Direction direction,
+                                     double gamma, BiConsumer<V, Rectangle> updateMaps) {
     Compaction<V> compaction =
         direction == Direction.HORIZONTAL ? new Horizontal<>(gamma) : new Vertical<>(gamma);
     Graph<Cell<V>, Integer> compactionGraph = compaction.makeCompactionGraph(cells);
-    compaction.compact(compactionGraph);
+    compaction.compact(compactionGraph, updateMaps);
     return compaction;
   }
 
@@ -70,7 +78,8 @@ public abstract class Compaction<V> {
     return compactionGraph;
   }
 
-  void compact(Graph<Cell<V>, Integer> compactionGraph) {
+  void compact(Graph<Cell<V>, Integer> compactionGraph,
+               BiConsumer<V, Rectangle> updateMaps) {
     // for every edge in the compaction graph, move the trailing (sink) vertex
     // closer to its source vertex
     // update the Rectangles in the Graph which will update the original
@@ -86,15 +95,18 @@ public abstract class Compaction<V> {
       for (Cell<V> root : roots) {
         // process the outgoing edges of the roots
         for (Integer edge : compactionGraph.outgoingEdgesOf(root)) {
+          log.trace("length of edge {} was {}", edge, edgeLengthFunction.apply(edge));
           Cell<V> target = compactionGraph.getEdgeTarget(edge);
           // move target so it is closer to root
-          double newX = offsetFunction.apply(root);
+          double newXorY = offsetFunction.apply(root);
           //                                root.getX() + root.getWidth() + delta;
-          Rectangle newRectangle = movedRectangleFunction.apply(newX, target.getRectangle());
+          Rectangle newRectangle = movedRectangleFunction.apply(newXorY, target.getRectangle());
           //                                Rectangle.of (newX, target.getY(), target.getWidth(), target.getHeight());
           target.setRectangle(newRectangle);
+          updateMaps.accept(target.occupant, newRectangle);
           // move each sink closer to its source
           // remove the roots from the compactionGraph then repeat
+          log.trace("length of edge {} now {}", edge, edgeLengthFunction.apply(edge));
         }
       }
       compactionGraph.removeAllVertices(roots);
@@ -133,6 +145,12 @@ public abstract class Compaction<V> {
       this.spannerFunction = r -> Span.of(r.getY(), r.getY() + r.getHeight());
       this.movedRectangleFunction = (z, r) -> Rectangle.of(z, r.y, r.width, r.height);
       this.offsetFunction = cell -> cell.getX() + cell.getWidth() + gamma;
+      this.edgeLengthFunction =
+              e -> {
+        Cell<V> source = compactionGraph.getEdgeSource(e);
+        Cell<V> target = compactionGraph.getEdgeTarget(e);
+        return target.getX() - source.getX();
+              };
     }
   }
 
@@ -144,6 +162,12 @@ public abstract class Compaction<V> {
       this.spannerFunction = r -> Span.of(r.getX(), r.getX() + r.getWidth());
       this.movedRectangleFunction = (z, r) -> Rectangle.of(r.x, z, r.width, r.height);
       this.offsetFunction = cell -> cell.getY() + cell.getHeight() + gamma;
+      this.edgeLengthFunction =
+              e -> {
+                Cell<V> source = compactionGraph.getEdgeSource(e);
+                Cell<V> target = compactionGraph.getEdgeTarget(e);
+                return target.getY() - source.getY();
+              };
     }
   }
 }
