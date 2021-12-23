@@ -31,3 +31,20 @@ VisRunnable in new Thread will do the following:
 * Run the VisRunnable in a new thread
 * When the VisRUnnable thread completes, fire an event to cause a repaint
 * Fire an event to say that the LayoutModel is no longer busy (so RTrees can update)
+
+
+jungrapht-layout is designed so that it can be used independently of the jungrapht-visualization system. It uses no java.awt classses so it is not tied to any particular visualization framework.
+Here is an example of how to use classes in the jungrapht-layout jar to apply a layout algorithm to a graph, then access the layout points. 
+
+    Graph<String, Integer> graph =     // make your graph
+
+    TidierTreeLayoutAlgorithm<String, Integer> layoutAlgorithm =
+            TidierTreeLayoutAlgorithm.<String, Integer>edgeAwareBuilder().expandLayout(false).build();
+    LayoutModel<String> layoutModel = LayoutModel.<String>builder().size(100, 100).graph(graph).build();
+    layoutAlgorithm.visit(layoutModel);
+
+    System.out.println("points are "+layoutModel.getLocations());
+    
+If you need the edge articulations (where they bend) for a layout like Sugiyama, you can get the articulation points for each edge using the layout's edgeArticulationFunction
+
+If you choose a layout algorithm that is threaded, you will not get your layout points immediately. Either make the layout not-threaded or wait for it to finish.
