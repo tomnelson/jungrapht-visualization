@@ -9,7 +9,6 @@
 package org.jungrapht.samples;
 
 import java.awt.*;
-import java.awt.geom.Ellipse2D;
 import java.util.stream.IntStream;
 import javax.swing.*;
 import org.jgrapht.Graph;
@@ -39,7 +38,7 @@ public class MinimalOrthogonal2 {
             .layoutAlgorithm(OrthogonalLayoutAlgorithm.<String, Integer>builder().build())
             .build();
 
-//    vv.getRenderContext().setVertexShapeFunction(v -> new Ellipse2D.Double(-1, -1, 2, 2));
+    //    vv.getRenderContext().setVertexShapeFunction(v -> new Ellipse2D.Double(-1, -1, 2, 2));
     LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
     vv.setVertexToolTipFunction(v -> v + " p:" + layoutModel.apply(v));
     // create a frame to hold the graph visualization

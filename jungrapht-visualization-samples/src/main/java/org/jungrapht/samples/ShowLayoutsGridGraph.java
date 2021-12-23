@@ -7,6 +7,9 @@
  */
 package org.jungrapht.samples;
 
+import java.awt.*;
+import java.awt.geom.Ellipse2D;
+import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultGraphType;
@@ -28,10 +31,6 @@ import org.jungrapht.visualization.util.LayoutAlgorithmTransition;
 import org.jungrapht.visualization.util.LayoutPaintable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.geom.Ellipse2D;
 
 /**
  * Demonstrates several of the graph layout algorithms. Allows the user to interactively select one
@@ -56,7 +55,7 @@ public class ShowLayoutsGridGraph extends JPanel {
     "Trivial (disconnected) graph",
     "Little Graph",
     "Bipartite Graph",
-          "Grid Graph"
+    "Grid Graph"
   };
 
   LayoutPaintable.BalloonRings balloonLayoutRings;

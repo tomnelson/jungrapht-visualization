@@ -1,5 +1,9 @@
 package org.jungrapht.visualization.layout.algorithms.orthogonal;
 
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
@@ -13,16 +17,11 @@ import org.jungrapht.visualization.layout.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.DoubleStream;
-
 public class OrthogonalLayoutAlgorithmThreaded<V, E> extends AbstractLayoutAlgorithm<V>
     implements LayoutAlgorithm<V>, VertexBoundsFunctionConsumer<V> {
 
-  private static final Logger log = LoggerFactory.getLogger(OrthogonalLayoutAlgorithmThreaded.class);
+  private static final Logger log =
+      LoggerFactory.getLogger(OrthogonalLayoutAlgorithmThreaded.class);
   protected static final Rectangle IDENTITY_SHAPE = Rectangle.IDENTITY;
 
   public static class Builder<
@@ -34,6 +33,7 @@ public class OrthogonalLayoutAlgorithmThreaded<V, E> extends AbstractLayoutAlgor
       this.vertexBoundsFunction = vertexBoundsFunction;
       return self();
     }
+
     public T build() {
       return (T) new OrthogonalLayoutAlgorithmThreaded(this);
     }
@@ -80,7 +80,7 @@ public class OrthogonalLayoutAlgorithmThreaded<V, E> extends AbstractLayoutAlgor
     int vertexCount = graph.vertexSet().size();
     this.vertexList = new ArrayList<>(graph.vertexSet());
     this.placeVerticesRandomlyInGridSpace(graph, gridSize);
-//    printGrid();
+    //    printGrid();
     Compaction.Direction compactionDirection = Compaction.Direction.HORIZONTAL;
     double sqrtVertexCount = Math.sqrt(vertexCount);
     this.iterationCount = (int) (90 * sqrtVertexCount);
@@ -92,23 +92,27 @@ public class OrthogonalLayoutAlgorithmThreaded<V, E> extends AbstractLayoutAlgor
 
     this.iteration = 0;
 
-    Thread thread = new Thread() {
-      public void run() {
-        try { Thread.sleep(5000); }
-        catch (InterruptedException ex) {}
-        layoutModel.getLayoutStateChangeSupport().fireLayoutStateChanged(layoutModel, true);
-        while (!done) {
-          log.info("step");
-          step();
-          setPoints();
-//          layoutModel.getModelChangeSupport().fireModelChanged();
-          try { Thread.sleep(2); }
-          catch (InterruptedException ex) {}
-
-        }
-        layoutModel.getLayoutStateChangeSupport().fireLayoutStateChanged(layoutModel, false);
-      }
-    };
+    Thread thread =
+        new Thread() {
+          public void run() {
+            try {
+              Thread.sleep(5000);
+            } catch (InterruptedException ex) {
+            }
+            layoutModel.getLayoutStateChangeSupport().fireLayoutStateChanged(layoutModel, true);
+            while (!done) {
+              log.info("step");
+              step();
+              setPoints();
+              //          layoutModel.getModelChangeSupport().fireModelChanged();
+              try {
+                Thread.sleep(2);
+              } catch (InterruptedException ex) {
+              }
+            }
+            layoutModel.getLayoutStateChangeSupport().fireLayoutStateChanged(layoutModel, false);
+          }
+        };
     thread.start();
   }
 
@@ -178,9 +182,9 @@ public class OrthogonalLayoutAlgorithmThreaded<V, E> extends AbstractLayoutAlgor
       } else {
         if (iterationCount % 9 == 0) {
           compact(
-                  compactionDirection,
-                  Math.max(1, 1 + 2 * (iterationCount - iteration - 30) / 0.5 * iterationCount),
-                  false);
+              compactionDirection,
+              Math.max(1, 1 + 2 * (iterationCount - iteration - 30) / 0.5 * iterationCount),
+              false);
           this.compactionDirection = compactionDirection.toggle();
         }
         vertexIndex = 0;
@@ -194,13 +198,12 @@ public class OrthogonalLayoutAlgorithmThreaded<V, E> extends AbstractLayoutAlgor
       this.secondLoop = false;
       this.done = true;
     }
-
   }
 
   private void insideLoopOne() {
     Point neighborsMedian =
-            neighborsMedianPoint(v)
-                    .add(randomTemp(-temperature, temperature), randomTemp(-temperature, temperature));
+        neighborsMedianPoint(v)
+            .add(randomTemp(-temperature, temperature), randomTemp(-temperature, temperature));
     int x = (int) neighborsMedian.x;
     int y = (int) neighborsMedian.y;
     // see if the cell at x,y is free
@@ -209,7 +212,7 @@ public class OrthogonalLayoutAlgorithmThreaded<V, E> extends AbstractLayoutAlgor
     if (occupiedRectangles.contains(rectangle)) {
       // need a different cell
       Collection<Rectangle> potentialCells =
-              this.findNearbyEmptyCells(rectangle, cellSize, occupiedRectangles);
+          this.findNearbyEmptyCells(rectangle, cellSize, occupiedRectangles);
       // find which one has the least edge len to neighbors
       double min = Double.MAX_VALUE;
       Rectangle winner = null;
@@ -241,10 +244,10 @@ public class OrthogonalLayoutAlgorithmThreaded<V, E> extends AbstractLayoutAlgor
   private void insideLoopTwo() {
     Rectangle vd = vertexDimensionFunction.apply(v);
     Point neighborsMedian =
-            neighborsMedianPoint(v)
-                    .add(
-                            randomTemp(-temperature * vd.width, temperature * vd.width),
-                            randomTemp(-temperature * vd.height, temperature * vd.height));
+        neighborsMedianPoint(v)
+            .add(
+                randomTemp(-temperature * vd.width, temperature * vd.width),
+                randomTemp(-temperature * vd.height, temperature * vd.height));
     int x = (int) neighborsMedian.x;
     int y = (int) neighborsMedian.y;
     // see if the cell at x,y is free
@@ -253,7 +256,7 @@ public class OrthogonalLayoutAlgorithmThreaded<V, E> extends AbstractLayoutAlgor
     if (occupiedRectangles.contains(rectangle)) {
       // need a different cell
       Collection<Rectangle> potentialCells =
-              this.findNearbyEmptyCells(rectangle, cellSize, occupiedRectangles);
+          this.findNearbyEmptyCells(rectangle, cellSize, occupiedRectangles);
       // find which one has the least edge len to neighbors
       double min = Double.MAX_VALUE;
       Rectangle winner = null;
@@ -285,18 +288,18 @@ public class OrthogonalLayoutAlgorithmThreaded<V, E> extends AbstractLayoutAlgor
     System.err.println("-------");
     // imagine a grid that is width / height
     PointSummaryStatistics ps = new PointSummaryStatistics();
-    Collection<Point> locations = graph.vertexSet().stream()
-                    .map(v -> mappings.get(v).min()).collect(Collectors.toSet());
-//            vertexToRectangleMap.values()
-//                    .stream().map(r -> Point.of(r.x, r.y)).collect(Collectors.toSet());
-    locations.forEach( p -> ps.accept(Point.of(p.x, p.y)));
+    Collection<Point> locations =
+        graph.vertexSet().stream().map(v -> mappings.get(v).min()).collect(Collectors.toSet());
+    //            vertexToRectangleMap.values()
+    //                    .stream().map(r -> Point.of(r.x, r.y)).collect(Collectors.toSet());
+    locations.forEach(p -> ps.accept(Point.of(p.x, p.y)));
     Point min = ps.getMin();
     Point max = ps.getMax();
-//    int width = (int) (max.x - min.x);
-//    int height = (int) (max.y - min.y);
-    for (int i = (int) min.y; i<=max.y; i++) {
-      for (int j = (int) min.x; j<=max.x; j++) {
-        if (locations.contains(Point.of(j,i))) {
+    //    int width = (int) (max.x - min.x);
+    //    int height = (int) (max.y - min.y);
+    for (int i = (int) min.y; i <= max.y; i++) {
+      for (int j = (int) min.x; j <= max.x; j++) {
+        if (locations.contains(Point.of(j, i))) {
           System.err.print("x");
         } else {
           System.err.print("-");
@@ -333,14 +336,14 @@ public class OrthogonalLayoutAlgorithmThreaded<V, E> extends AbstractLayoutAlgor
     return Rectangle.from(pss.getMin(), pss.getMax());
   }
 
-//  void updateMaps(V v, Rectangle r) {
-//    this.rectangleToVertexMap.remove(vertexToRectangleMap.get(v));
-//    this.vertexToRectangleMap.put(v, r);
-//    this.rectangleToVertexMap.put(r, v);
-//  }
+  //  void updateMaps(V v, Rectangle r) {
+  //    this.rectangleToVertexMap.remove(vertexToRectangleMap.get(v));
+  //    this.vertexToRectangleMap.put(v, r);
+  //    this.rectangleToVertexMap.put(r, v);
+  //  }
 
   private void compact(Compaction.Direction direction, double gamma, boolean expand) {
-//return;
+    //return;
     log.info("compact with gamma:{}", gamma);
     List<Cell<V>> cells = new ArrayList<>();
     graph
@@ -355,7 +358,7 @@ public class OrthogonalLayoutAlgorithmThreaded<V, E> extends AbstractLayoutAlgor
     log.info("mappings are {}", mappings.getVertexToRectangleMap());
     log.info("cells are {}", cells);
     Expansion.expandToFillBothAxes(
-            Rectangle.of(0, 0, layoutModel.getWidth(), layoutModel.getHeight()), mappings);
+        Rectangle.of(0, 0, layoutModel.getWidth(), layoutModel.getHeight()), mappings);
   }
 
   /**
@@ -462,7 +465,7 @@ public class OrthogonalLayoutAlgorithmThreaded<V, E> extends AbstractLayoutAlgor
   int delta;
   LayoutModel<V> layoutModel;
   double TMin = 0.2;
-//  Grid grid;
+  //  Grid grid;
   //    Function<V, Point> upperLeftCornerFunction =
   //            v ->
   //                    layoutModel

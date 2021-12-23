@@ -941,9 +941,9 @@ public class GEMLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorithm<V
       double tmpX = 0;
 
       // offset all nodes of local layout
-      Iterator<Map.Entry<V,Point>> entries = coords.entrySet().iterator();
+      Iterator<Map.Entry<V, Point>> entries = coords.entrySet().iterator();
       while (entries.hasNext()) {
-        Map.Entry<V,Point> entry = entries.next();
+        Map.Entry<V, Point> entry = entries.next();
         Point coord = entry.getValue();
         //				 centre at 0,0 and offset
         double newX = offsetX + coord.x - min.x;

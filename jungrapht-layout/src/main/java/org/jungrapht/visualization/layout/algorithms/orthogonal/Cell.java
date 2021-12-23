@@ -61,9 +61,6 @@ public class Cell<V> {
 
   @Override
   public String toString() {
-    return "Cell{" +
-            "occupant=" + occupant +
-            ", rectangle=" + rectangle +
-            '}';
+    return "Cell{" + "occupant=" + occupant + ", rectangle=" + rectangle + '}';
   }
 }

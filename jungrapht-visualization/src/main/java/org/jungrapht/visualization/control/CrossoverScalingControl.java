@@ -284,6 +284,7 @@ public class CrossoverScalingControl implements ScalingControl {
 
   /**
    * If the scaler is bounded, test the bounds
+   *
    * @param scaleX
    * @param scaleY
    * @param minScale

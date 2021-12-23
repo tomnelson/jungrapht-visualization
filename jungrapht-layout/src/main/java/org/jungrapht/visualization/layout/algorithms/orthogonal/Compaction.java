@@ -40,8 +40,11 @@ public abstract class Compaction<V> {
 
   Function<Integer, Double> edgeLengthFunction;
 
-  public static <V> Compaction<V> of(Collection<Cell<V>> cells, Direction direction,
-                                     double gamma, BiConsumer<V, Rectangle> updateMaps) {
+  public static <V> Compaction<V> of(
+      Collection<Cell<V>> cells,
+      Direction direction,
+      double gamma,
+      BiConsumer<V, Rectangle> updateMaps) {
     Compaction<V> compaction =
         direction == Direction.HORIZONTAL ? new Horizontal<>(gamma) : new Vertical<>(gamma);
     Graph<Cell<V>, Integer> compactionGraph = compaction.makeCompactionGraph(cells);
@@ -78,8 +81,7 @@ public abstract class Compaction<V> {
     return compactionGraph;
   }
 
-  void compact(Graph<Cell<V>, Integer> compactionGraph,
-               BiConsumer<V, Rectangle> updateMaps) {
+  void compact(Graph<Cell<V>, Integer> compactionGraph, BiConsumer<V, Rectangle> updateMaps) {
     // for every edge in the compaction graph, move the trailing (sink) vertex
     // closer to its source vertex
     // update the Rectangles in the Graph which will update the original
@@ -146,11 +148,11 @@ public abstract class Compaction<V> {
       this.movedRectangleFunction = (z, r) -> Rectangle.of(z, r.y, r.width, r.height);
       this.offsetFunction = cell -> cell.getX() + cell.getWidth() + gamma;
       this.edgeLengthFunction =
-              e -> {
-        Cell<V> source = compactionGraph.getEdgeSource(e);
-        Cell<V> target = compactionGraph.getEdgeTarget(e);
-        return target.getX() - source.getX();
-              };
+          e -> {
+            Cell<V> source = compactionGraph.getEdgeSource(e);
+            Cell<V> target = compactionGraph.getEdgeTarget(e);
+            return target.getX() - source.getX();
+          };
     }
   }
 
@@ -163,11 +165,11 @@ public abstract class Compaction<V> {
       this.movedRectangleFunction = (z, r) -> Rectangle.of(r.x, z, r.width, r.height);
       this.offsetFunction = cell -> cell.getY() + cell.getHeight() + gamma;
       this.edgeLengthFunction =
-              e -> {
-                Cell<V> source = compactionGraph.getEdgeSource(e);
-                Cell<V> target = compactionGraph.getEdgeTarget(e);
-                return target.getY() - source.getY();
-              };
+          e -> {
+            Cell<V> source = compactionGraph.getEdgeSource(e);
+            Cell<V> target = compactionGraph.getEdgeTarget(e);
+            return target.getY() - source.getY();
+          };
     }
   }
 }

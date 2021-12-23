@@ -1,7 +1,6 @@
 package org.jungrapht.visualization.layout.algorithms.orthogonal;
 
 import java.util.*;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
@@ -27,8 +26,7 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
   public static class Builder<
           V, E, T extends OrthogonalLayoutAlgorithm<V, E>, B extends Builder<V, E, T, B>>
       extends AbstractLayoutAlgorithm.Builder<V, T, B> implements LayoutAlgorithm.Builder<V, T, B> {
-    protected Function<V, Rectangle> vertexBoundsFunction = v ->
-            Rectangle.of(0,0,1,1);
+    protected Function<V, Rectangle> vertexBoundsFunction = v -> Rectangle.of(0, 0, 1, 1);
 
     //        private int maxIterations = 700;
     //        private int multi = 3;
@@ -90,7 +88,6 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
     this.realVertexDimensionFunction = builder.vertexBoundsFunction;
   }
 
-
   Mappings<V> mappings;
 
   Function<V, Rectangle> identityVertexDimensionFunction = v -> Rectangle.IDENTITY;
@@ -108,7 +105,7 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
     layoutModel.setSize(gridSize, gridSize);
     int vertexCount = graph.vertexSet().size();
     this.placeVerticesRandomlyInGridSpace(graph, gridSize);
-//    printGrid();
+    //    printGrid();
     Compaction.Direction compactionDirection = Compaction.Direction.HORIZONTAL;
     double sqrtVertexCount = Math.sqrt(vertexCount);
     int iterationCount = (int) (90 * sqrtVertexCount);
@@ -122,7 +119,7 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
     int iteration = 0;
     for (; iteration < iterationCount / 2; iteration++) {
       for (V v : graph.vertexSet()) {
-//        printGrid();
+        //        printGrid();
 
         Point neighborsMedian =
             neighborsMedianPoint(v)
@@ -232,46 +229,46 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
       }
       temperature = temperature * k;
     }
-//
-//    // get the range of points and normalize to fit
-//    //        PointSummaryStatistics pss = new PointSummaryStatistics();
-//    log.info("layoutModel size is {} x {}", layoutModel.getWidth(), layoutModel.getHeight());
-////    for (Map.Entry<V, Rectangle> entry : vertexToRectangleMap.entrySet()) {
-////      layoutModel.set(entry.getKey(), 1 * entry.getValue().x, 1 * entry.getValue().y);
-////    }
+    //
+    //    // get the range of points and normalize to fit
+    //    //        PointSummaryStatistics pss = new PointSummaryStatistics();
+    //    log.info("layoutModel size is {} x {}", layoutModel.getWidth(), layoutModel.getHeight());
+    ////    for (Map.Entry<V, Rectangle> entry : vertexToRectangleMap.entrySet()) {
+    ////      layoutModel.set(entry.getKey(), 1 * entry.getValue().x, 1 * entry.getValue().y);
+    ////    }
     for (V v : graph.vertexSet()) {
       Rectangle r = mappings.get(v);
       layoutModel.set(v, r.min());
     }
-//
-//    log.info("layoutModel locations: {}", layoutModel.getLocations());
-//    Expansion.expandToFillBothAxes(layoutModel, Collections.emptyList());
-//
-//    PointSummaryStatistics pss = new PointSummaryStatistics();
-//    layoutModel.getLocations().values().forEach(pss::accept);
-//    Rectangle newExtent = Rectangle.from(pss.getMin(), pss.getMax());
-//
-//    log.info("newRectangle: {}", newExtent);
-//
-           centerIt(layoutModel, Collections.emptyList());
+    //
+    //    log.info("layoutModel locations: {}", layoutModel.getLocations());
+    //    Expansion.expandToFillBothAxes(layoutModel, Collections.emptyList());
+    //
+    //    PointSummaryStatistics pss = new PointSummaryStatistics();
+    //    layoutModel.getLocations().values().forEach(pss::accept);
+    //    Rectangle newExtent = Rectangle.from(pss.getMin(), pss.getMax());
+    //
+    //    log.info("newRectangle: {}", newExtent);
+    //
+    centerIt(layoutModel, Collections.emptyList());
   }
 
   private void printGrid() {
     System.err.println("-------");
     // imagine a grid that is width / height
     PointSummaryStatistics ps = new PointSummaryStatistics();
-    Collection<Point> locations = graph.vertexSet().stream()
-                    .map(v -> mappings.get(v).min()).collect(Collectors.toSet());
-//            vertexToRectangleMap.values()
-//                    .stream().map(r -> Point.of(r.x, r.y)).collect(Collectors.toSet());
-    locations.forEach( p -> ps.accept(Point.of(p.x, p.y)));
+    Collection<Point> locations =
+        graph.vertexSet().stream().map(v -> mappings.get(v).min()).collect(Collectors.toSet());
+    //            vertexToRectangleMap.values()
+    //                    .stream().map(r -> Point.of(r.x, r.y)).collect(Collectors.toSet());
+    locations.forEach(p -> ps.accept(Point.of(p.x, p.y)));
     Point min = ps.getMin();
     Point max = ps.getMax();
-//    int width = (int) (max.x - min.x);
-//    int height = (int) (max.y - min.y);
-    for (int i = (int) min.y; i<=max.y; i++) {
-      for (int j = (int) min.x; j<=max.x; j++) {
-        if (locations.contains(Point.of(j,i))) {
+    //    int width = (int) (max.x - min.x);
+    //    int height = (int) (max.y - min.y);
+    for (int i = (int) min.y; i <= max.y; i++) {
+      for (int j = (int) min.x; j <= max.x; j++) {
+        if (locations.contains(Point.of(j, i))) {
           System.err.print("x");
         } else {
           System.err.print("-");
@@ -308,14 +305,14 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
     return Rectangle.from(pss.getMin(), pss.getMax());
   }
 
-//  void updateMaps(V v, Rectangle r) {
-//    this.rectangleToVertexMap.remove(vertexToRectangleMap.get(v));
-//    this.vertexToRectangleMap.put(v, r);
-//    this.rectangleToVertexMap.put(r, v);
-//  }
+  //  void updateMaps(V v, Rectangle r) {
+  //    this.rectangleToVertexMap.remove(vertexToRectangleMap.get(v));
+  //    this.vertexToRectangleMap.put(v, r);
+  //    this.rectangleToVertexMap.put(r, v);
+  //  }
 
   private void compact(Compaction.Direction direction, double gamma, boolean expand) {
-//return;
+    //return;
     log.info("compact with gamma:{}", gamma);
     List<Cell<V>> cells = new ArrayList<>();
     graph
@@ -330,7 +327,7 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
     log.info("mappings are {}", mappings.getVertexToRectangleMap());
     log.info("cells are {}", cells);
     Expansion.expandToFillBothAxes(
-            Rectangle.of(0, 0, layoutModel.getWidth(), layoutModel.getHeight()), mappings);
+        Rectangle.of(0, 0, layoutModel.getWidth(), layoutModel.getHeight()), mappings);
   }
 
   /**
@@ -437,7 +434,7 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
   int delta;
   LayoutModel<V> layoutModel;
   double TMin = 0.2;
-//  Grid grid;
+  //  Grid grid;
   //    Function<V, Point> upperLeftCornerFunction =
   //            v ->
   //                    layoutModel

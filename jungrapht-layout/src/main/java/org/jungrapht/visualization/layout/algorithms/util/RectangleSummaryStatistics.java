@@ -1,9 +1,8 @@
 package org.jungrapht.visualization.layout.algorithms.util;
 
+import java.util.DoubleSummaryStatistics;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
-
-import java.util.DoubleSummaryStatistics;
 
 public class RectangleSummaryStatistics implements RectangleConsumer {
 
