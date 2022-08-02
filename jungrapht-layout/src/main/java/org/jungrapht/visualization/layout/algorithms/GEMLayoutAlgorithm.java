@@ -941,10 +941,10 @@ public class GEMLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorithm<V
       double tmpX = 0;
 
       // offset all nodes of local layout
-      Iterator<V> keys = coords.keySet().iterator();
-      while (keys.hasNext()) {
-        V n = keys.next();
-        Point coord = coords.get(n);
+      Iterator<Map.Entry<V, Point>> entries = coords.entrySet().iterator();
+      while (entries.hasNext()) {
+        Map.Entry<V, Point> entry = entries.next();
+        Point coord = entry.getValue();
         //				 centre at 0,0 and offset
         double newX = offsetX + coord.x - min.x;
         double newY = offsetY + coord.y - min.y;
@@ -952,8 +952,8 @@ public class GEMLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorithm<V
         // calculate maximum boundaries
         if (newX > tmpX) tmpX = newX;
         if (newY > tmpY) tmpY = newY;
-        localLayouts.get(subgraph).put(n, Point.of(newX, newY));
-        layoutModel.set(n, Point.of(newX, newY));
+        localLayouts.get(subgraph).put(entry.getKey(), Point.of(newX, newY));
+        layoutModel.set(entry.getKey(), Point.of(newX, newY));
       }
 
       // shift horizontally keep track of vertical

@@ -40,6 +40,7 @@ import org.jungrapht.visualization.layout.algorithms.TidierRadialTreeLayoutAlgor
 import org.jungrapht.visualization.layout.algorithms.TidierTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TreeLayout;
 import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.orthogonal.OrthogonalLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFA2Repulsion;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.layout.model.Rectangle;
@@ -74,6 +75,8 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     Comparator<E> edgeComparator = Layered.noopComparator;
     Predicate<V> vertexPredicate = Layered.truePredicate;
     Comparator<V> vertexComparator = Layered.noopComparator;
+    int rows = 0;
+    int columns = 3;
     boolean alignFavoredEdges = true;
 
     /** @param visualizationServer required {@link VisualizationServer} */
@@ -144,6 +147,16 @@ public class TreeLayoutSelector<V, E> extends JPanel {
       return this;
     }
 
+    public Builder rows(int rows) {
+      this.rows = rows;
+      return this;
+    }
+
+    public Builder columns(int columns) {
+      this.columns = columns;
+      return this;
+    }
+
     /** @return a configured {@link TreeLayoutSelector} */
     public TreeLayoutSelector<V, E> build() {
       return new TreeLayoutSelector<>(this);
@@ -175,6 +188,8 @@ public class TreeLayoutSelector<V, E> extends JPanel {
         builder.vertexComparator,
         builder.edgeComparator,
         builder.alignFavoredEdges,
+        builder.rows,
+        builder.columns,
         builder.after);
   }
 
@@ -202,6 +217,10 @@ public class TreeLayoutSelector<V, E> extends JPanel {
 
   BiFunction<Graph<V, E>, E, Shape> originalEdgeShapeFunction;
 
+  int rows;
+
+  int columns;
+
   JComboBox<Layering> layeringComboBox =
       new JComboBox<>(
           new Layering[] {
@@ -218,8 +237,10 @@ public class TreeLayoutSelector<V, E> extends JPanel {
       Comparator<V> vertexComparator,
       Comparator<E> edgeComparator,
       boolean alignFavoredEdges,
+      int rows,
+      int columns,
       Runnable after) {
-    super(new GridLayout(0, 2));
+    super(new GridLayout(rows, columns));
     this.vv = vv;
     this.vertexBoundsFunction = vertexBoundsFunction;
     this.vertexPredicate = vertexPredicate;
@@ -229,6 +250,8 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     this.alignFavoredEdgess = alignFavoredEdges;
     Objects.requireNonNull(after);
     this.after = after;
+    this.rows = rows;
+    this.columns = columns;
     this.originalEdgeShapeFunction = vv.getRenderContext().getEdgeShapeFunction();
 
     TreeLayoutAlgorithm<V> treeLayoutAlgorithm =
@@ -338,6 +361,8 @@ public class TreeLayoutSelector<V, E> extends JPanel {
             .build();
 
     SpringLayoutAlgorithm<V, E> springLayoutAlgorithm = new SpringLayoutAlgorithm<>();
+    OrthogonalLayoutAlgorithm<V, E> orthogonalLayoutAlgorithm =
+        OrthogonalLayoutAlgorithm.<V, E>builder().build();
 
     JRadioButton treeButton = new JRadioButton("Tree");
     treeButton.addItemListener(new LayoutItemListener(treeLayoutAlgorithm, vv));
@@ -419,6 +444,8 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     springButton.addItemListener(new LayoutItemListener(springLayoutAlgorithm, vv));
     springButton.setSelected(initialSelection == layoutNumber++);
 
+    JRadioButton orthogonalButton = new JRadioButton("Orthogonal");
+    orthogonalButton.addItemListener(new LayoutItemListener(orthogonalLayoutAlgorithm, vv));
     ButtonGroup layoutRadio = new ButtonGroup();
     layoutRadio.add(treeButton);
     layoutRadio.add(tidierTreeButton);
@@ -439,6 +466,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     layoutRadio.add(frButton);
     layoutRadio.add(fa2Button);
     layoutRadio.add(springButton);
+    layoutRadio.add(orthogonalButton);
 
     layeringComboBox.addItemListener(
         item -> {
@@ -472,6 +500,7 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     this.add(frButton);
     this.add(fa2Button);
     this.add(springButton);
+    this.add(orthogonalButton);
     this.add(animateTransition);
     this.add(layeringComboBox);
   }

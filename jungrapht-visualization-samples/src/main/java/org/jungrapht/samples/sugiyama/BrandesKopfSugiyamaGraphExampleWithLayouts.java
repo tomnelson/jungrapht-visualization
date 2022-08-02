@@ -34,6 +34,7 @@ public class BrandesKopfSugiyamaGraphExampleWithLayouts extends JFrame {
             .initialSelection(2)
             .vertexShapeFunction(vv.getRenderContext().getVertexShapeFunction())
             .alignFavoredEdges(false)
+            .columns(3)
             .build();
 
     SugiyamaLayoutAlgorithm<Integer, Integer> layoutAlgorithm =

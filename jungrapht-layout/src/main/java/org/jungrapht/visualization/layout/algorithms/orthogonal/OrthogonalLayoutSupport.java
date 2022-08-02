@@ -52,6 +52,7 @@ public class OrthogonalLayoutSupport<V, E> {
     return Math.max(max.width, max.height);
   }
 
+  // 'c' in paper
   int computeGridCell() {
     DimensionSummaryStatistics dss = prepare();
     int elMax = computeElMax(dss);
@@ -121,6 +122,10 @@ public class OrthogonalLayoutSupport<V, E> {
   int yci(V v) {
     return (int) layoutModel.apply(v).y; // the center y of v's rectangle
   }
+
+  //                           1          |xci - xcj|   |yci - ycj|
+  // d(vi, vj) = de(vi, vj) + ----  min ( ----------- , ----------- )
+  //                           20          w'i + w'j     h'i + h'j
 
   int distance(V vi, V vj) {
     int c = computeGridCell();

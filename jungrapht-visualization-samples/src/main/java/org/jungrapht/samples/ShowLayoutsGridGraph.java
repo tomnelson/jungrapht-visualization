@@ -20,7 +20,10 @@ import org.jungrapht.samples.util.LayoutFunction;
 import org.jungrapht.samples.util.LayoutHelper;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.layout.algorithms.*;
+import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.RadialTreeLayout;
 import org.jungrapht.visualization.layout.algorithms.util.InitialDimensionFunction;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.util.GraphImage;
@@ -37,9 +40,9 @@ import org.slf4j.LoggerFactory;
  * @author Joshua O'Madadhain
  * @author Tom Nelson - extensive modification
  */
-public class ShowLayouts extends JPanel {
+public class ShowLayoutsGridGraph extends JPanel {
 
-  private static final Logger log = LoggerFactory.getLogger(ShowLayouts.class);
+  private static final Logger log = LoggerFactory.getLogger(ShowLayoutsGridGraph.class);
 
   protected static Graph<String, Integer>[] graphArray;
   protected static int graphIndex;
@@ -51,15 +54,15 @@ public class ShowLayouts extends JPanel {
     "Chain+isolate graph",
     "Trivial (disconnected) graph",
     "Little Graph",
-    "Bipartite Graph"
+    "Bipartite Graph",
+    "Grid Graph"
   };
 
   LayoutPaintable.BalloonRings balloonLayoutRings;
   LayoutPaintable.RadialRings radialLayoutRings;
   LayoutPaintable.LayoutBounds layoutBounds;
-  LayoutPaintable.Grid layoutGrid;
 
-  public ShowLayouts() {
+  public ShowLayoutsGridGraph() {
 
     graphArray = new Graph[graphNames.length];
 
@@ -81,6 +84,7 @@ public class ShowLayouts extends JPanel {
 
     graphArray[6] = graph;
     graphArray[7] = TestGraphs.getGeneratedBipartiteGraph();
+    graphArray[8] = TestGraphs.gridGraph(9);
 
     Graph<String, Integer> initialGraph =
         //                    TreeLayoutAlgorithm.getSpanningTree(graphArray[3]);
@@ -114,7 +118,7 @@ public class ShowLayouts extends JPanel {
     vv.setInitialDimensionFunction(
         InitialDimensionFunction.builder(vv.getRenderContext().getVertexBoundsFunction()).build());
 
-    layoutBounds = new LayoutPaintable.LayoutBounds(vv, 1, 1);
+    layoutBounds = new LayoutPaintable.LayoutBounds(vv);
     vv.addPreRenderPaintable(layoutBounds);
     // for the initial layout
     vv.scaleToLayout();
@@ -214,7 +218,7 @@ public class ShowLayouts extends JPanel {
   }
 
   public static void main(String[] args) {
-    JPanel jp = new ShowLayouts();
+    JPanel jp = new ShowLayoutsGridGraph();
 
     JFrame jf = new JFrame();
     jf.setTitle(jp.getClass().getSimpleName());

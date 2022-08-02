@@ -1,9 +1,6 @@
 package org.jungrapht.visualization.layout.model;
 
-import java.util.ConcurrentModificationException;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
@@ -87,9 +84,9 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
   protected int preferredWidth;
   protected int preferredHeight;
   protected boolean createVisRunnable;
-
   protected Graph<V, ?> graph;
   protected VisRunnable visRunnable = VisRunnable.noop();
+
   /** @value relaxing true is this layout model is being accessed by a running relaxer */
   protected boolean relaxing;
 

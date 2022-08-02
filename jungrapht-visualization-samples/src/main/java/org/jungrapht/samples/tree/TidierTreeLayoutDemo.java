@@ -17,12 +17,11 @@ import java.awt.Shape;
 import java.util.function.Function;
 import javax.swing.*;
 import org.jgrapht.Graph;
-import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.DemoTreeSupplier;
 import org.jungrapht.samples.util.TreeLayoutSelector;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.DefaultGraphMouse;
+import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.TidierTreeLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.Renderer;
@@ -51,7 +50,7 @@ public class TidierTreeLayoutDemo extends JPanel {
 
     vv = VisualizationViewer.builder(graph).viewSize(new Dimension(600, 600)).build();
     vv.setGraphMouse(
-        new DefaultGraphMouse()); // after VisualizationViewer is loaded so that properties are loaded
+        new DefaultModalGraphMouse()); // after VisualizationViewer is loaded so that properties are loaded
     Function<String, Shape> vertexShapeFunction = vv.getRenderContext().getVertexShapeFunction();
     TidierTreeLayoutAlgorithm<String, Integer> layoutAlgorithm =
         TidierTreeLayoutAlgorithm.<String, Integer>edgeAwareBuilder()
@@ -85,10 +84,11 @@ public class TidierTreeLayoutDemo extends JPanel {
         TreeLayoutSelector.<String, Integer>builder(vv)
             .vertexShapeFunction(vertexShapeFunction)
             .initialSelection(1)
+            .columns(3)
             .build());
     JPanel controls = new JPanel();
     controls.add(layoutPanel);
-    controls.add(ControlHelpers.getZoomControls(vv));
+    //    controls.add(ControlHelpers.getZoomControls(vv));
 
     add(controls, BorderLayout.SOUTH);
   }

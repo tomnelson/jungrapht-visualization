@@ -379,10 +379,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
                     log.trace("MinCross layout done");
                     this.edgePointMap.putAll(runnable.getEdgePointMap());
                     if (!cancelled && isComplete(graphs.size())) {
-                      after.run();
-                      layoutModel.setFireEvents(true);
-                      appendAll(layoutModel, layoutModels);
-                      expandLayoutWidthOrHeight(layoutModel, edgePointMap.values());
+                      fillAndCenter(layoutModel, layoutModels);
                     }
                   });
         } else {
@@ -392,10 +389,7 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
                     log.trace("MinCross layout done");
                     this.edgePointMap.putAll(runnable.getEdgePointMap());
                     if (!cancelled && isComplete(graphs.size())) {
-                      after.run();
-                      layoutModel.setFireEvents(true);
-                      appendAll(layoutModel, layoutModels);
-                      expandLayoutWidthOrHeight(layoutModel, edgePointMap.values());
+                      fillAndCenter(layoutModel, layoutModels);
                     }
                   });
         }
@@ -404,13 +398,18 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
         log.trace("MinCross layout done");
         this.edgePointMap.putAll(runnable.getEdgePointMap());
         if (!cancelled && isComplete(graphs.size())) {
-          after.run();
-          layoutModel.setFireEvents(true);
-          appendAll(layoutModel, layoutModels);
-          expandLayoutWidthOrHeight(layoutModel, edgePointMap.values());
+          fillAndCenter(layoutModel, layoutModels);
         }
       }
     }
+  }
+
+  protected void fillAndCenter(LayoutModel<V> layoutModel, List<LayoutModel<V>> layoutModels) {
+    layoutModel.setFireEvents(true);
+    appendAll(layoutModel, layoutModels);
+    expandLayoutWidthOrHeight(layoutModel, edgePointMap.values());
+    layoutModel.getLayoutStateChangeSupport().fireLayoutStateChanged(layoutModel, false);
+    after.run();
   }
 
   protected void expandLayoutWidthOrHeight(
@@ -466,9 +465,6 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
     if (!cancelled) {
       log.trace("appending: {} child layout models", childLayoutModels.size());
       childLayoutModels.forEach(parentLayoutModel::appendLayoutModel);
-      parentLayoutModel
-          .getLayoutStateChangeSupport()
-          .fireLayoutStateChanged(parentLayoutModel, false);
     }
   }
 

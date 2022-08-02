@@ -2,20 +2,7 @@ package org.jungrapht.samples.util;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.CircleLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.ForceAtlas2LayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.GEMLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.ISOMLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.MultiRowTreeLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.RadialTreeLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.SpringLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.TidierRadialTreeLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.TidierTreeLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.*;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFA2Repulsion;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFRRepulsion;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutSpringRepulsion;
@@ -59,6 +46,7 @@ public class LayoutHelper {
     TIDY_TREE("Tidy Tree", TidierTreeLayoutAlgorithm.edgeAwareBuilder()),
     TIDY_RADIAL_TREE("Tidy Radial Tree", TidierRadialTreeLayoutAlgorithm.edgeAwareBuilder()),
     BALLOON("Balloon", BalloonLayoutAlgorithm.builder()),
+    SUGIYAMA("Sugiyama", EiglspergerLayoutAlgorithm.edgeAwareBuilder().threaded(false)),
     RADIAL("Radial", RadialTreeLayoutAlgorithm.builder());
 
     private static final Map<String, Layouts> BY_NAME = new HashMap<>();

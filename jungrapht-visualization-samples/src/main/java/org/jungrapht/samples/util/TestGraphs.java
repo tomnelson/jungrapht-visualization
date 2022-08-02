@@ -378,4 +378,33 @@ public class TestGraphs {
       return Character.toString(a++);
     }
   }
+
+  public static Graph<String, Integer> gridGraph(int size) {
+    Graph<String, Integer> graph =
+        GraphTypeBuilder.forGraphType(DefaultGraphType.multigraph())
+            .vertexSupplier(SupplierUtil.createStringSupplier())
+            .edgeSupplier(SupplierUtil.createIntegerSupplier())
+            .buildGraph();
+    String[][] vertexBox = new String[size][size];
+    for (int i = 0; i < size; i++) {
+      for (int j = 0; j < size; j++) {
+        vertexBox[i][j] = graph.addVertex();
+      }
+    }
+    for (int i = 0; i < size; i++) {
+      // if we are not on the last row, connect all in row to next row
+      if (i < size - 1) {
+        for (int jj = 0; jj < size; jj++) {
+          graph.addEdge(vertexBox[i][jj], vertexBox[i + 1][jj]);
+        }
+      }
+      for (int j = 0; j < size; j++) {
+        // if we are not in the last column, connect to next column
+        if (j < size - 1) {
+          graph.addEdge(vertexBox[i][j], vertexBox[i][j + 1]);
+        }
+      }
+    }
+    return graph;
+  }
 }

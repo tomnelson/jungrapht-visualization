@@ -92,6 +92,16 @@ public class Rectangle {
     return maxX >= other.x && other.maxX >= x && maxY >= other.y && other.maxY >= y;
   }
 
+  public Rectangle intersect(Rectangle other) {
+    if (this.intersects(other)) {
+      return Rectangle.from(
+          Point.of(Math.max(this.x, other.x), Math.max(this.y, other.y)),
+          Point.of(Math.min(this.maxX, other.maxX), Math.min(this.maxY, other.maxY)));
+    } else {
+      return Rectangle.of(0, 0);
+    }
+  }
+
   /**
    * @param p point to test
    * @return true if the coordinate is contained, false otherwise
@@ -161,6 +171,10 @@ public class Rectangle {
     double maxX = Math.max(this.maxX, other.maxX);
     double maxY = Math.max(this.maxY, other.maxY);
     return Rectangle.of(minX, minY, maxX - minX, maxY - minY);
+  }
+
+  public Dimension getSize() {
+    return Dimension.of((int) this.width, (int) this.height);
   }
 
   /**

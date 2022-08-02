@@ -18,7 +18,6 @@ import java.awt.GridLayout;
 import java.awt.Shape;
 import java.awt.event.ItemEvent;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
@@ -27,7 +26,6 @@ import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.DemoTreeSupplier;
-import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
 import org.jungrapht.visualization.VisualizationScrollPane;
 import org.jungrapht.visualization.VisualizationServer;
@@ -39,7 +37,6 @@ import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.PolarPoint;
-import org.jungrapht.visualization.transform.MutableTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +67,7 @@ public class L2RTreeLayoutDemo extends JPanel {
     // create a simple graph for the demo
     graph = DemoTreeSupplier.createTreeOne();
 
-    treeLayoutAlgorithm = TreeLayoutAlgorithm.<String>builder().after(this::setLtoR).build();
+    treeLayoutAlgorithm = new TreeLayoutAlgorithm();
     radialLayoutAlgorithm = new RadialTreeLayoutAlgorithm<>();
     final DefaultGraphMouse<String, Integer> graphMouse = new DefaultGraphMouse<>();
 
@@ -85,6 +82,21 @@ public class L2RTreeLayoutDemo extends JPanel {
     // add a listener for ToolTips
     vv.setVertexToolTipFunction(Object::toString);
     vv.getRenderContext().setArrowFillPaintFunction(a -> Color.lightGray);
+
+    vv.getVisualizationModel()
+        .getLayoutModel()
+        .getLayoutStateChangeSupport()
+        .addLayoutStateChangeListener(
+            evt -> {
+              if (!evt.active) {
+                LayoutModel<String> layoutModel = evt.layoutModel;
+                layoutModel
+                    .getLocations()
+                    .forEach(
+                        (v, p) -> layoutModel.set(v, Point.of(p.y, layoutModel.getWidth() - p.x)));
+              }
+            });
+
     vv.getVisualizationModel().setLayoutAlgorithm(treeLayoutAlgorithm);
 
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
@@ -115,20 +127,6 @@ public class L2RTreeLayoutDemo extends JPanel {
     controls.add(ControlHelpers.getCenteredContainer("Layout Control", radial));
     controls.add(ControlHelpers.getCenteredContainer("Scale", ControlHelpers.getZoomControls(vv)));
     add(controls, BorderLayout.SOUTH);
-  }
-
-  private void setLtoR() {
-
-    MutableTransformer modelTransformer =
-        vv.getRenderContext()
-            .getMultiLayerTransformer()
-            .getTransformer(MultiLayerTransformer.Layer.LAYOUT);
-    Point2D center = vv.getCenter();
-    modelTransformer.rotate(
-        -Math.PI / 2,
-        vv.getRenderContext()
-            .getMultiLayerTransformer()
-            .inverseTransform(MultiLayerTransformer.Layer.VIEW, center));
   }
 
   class Rings implements VisualizationServer.Paintable {
