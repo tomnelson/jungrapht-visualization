@@ -57,6 +57,7 @@ public class ShowLayouts extends JPanel {
   LayoutPaintable.BalloonRings balloonLayoutRings;
   LayoutPaintable.RadialRings radialLayoutRings;
   LayoutPaintable.LayoutBounds layoutBounds;
+  LayoutPaintable.Grid layoutGrid;
 
   public ShowLayouts() {
 
@@ -113,7 +114,7 @@ public class ShowLayouts extends JPanel {
     vv.setInitialDimensionFunction(
         InitialDimensionFunction.builder(vv.getRenderContext().getVertexBoundsFunction()).build());
 
-    layoutBounds = new LayoutPaintable.LayoutBounds(vv);
+    layoutBounds = new LayoutPaintable.LayoutBounds(vv, 1, 1);
     vv.addPreRenderPaintable(layoutBounds);
     // for the initial layout
     vv.scaleToLayout();

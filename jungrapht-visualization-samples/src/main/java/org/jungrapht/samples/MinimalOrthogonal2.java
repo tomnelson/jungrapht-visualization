@@ -16,9 +16,11 @@ import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.samples.util.TestGraphs;
+import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.layout.algorithms.orthogonal.OrthogonalLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
+import org.jungrapht.visualization.util.LayoutPaintable;
 
 /**
  * A demo that shows a minimal visualization configuration
@@ -41,6 +43,9 @@ public class MinimalOrthogonal2 {
     //    vv.getRenderContext().setVertexShapeFunction(v -> new Ellipse2D.Double(-1, -1, 2, 2));
     LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
     vv.setVertexToolTipFunction(v -> v + " p:" + layoutModel.apply(v));
+    VisualizationServer.Paintable layoutBounds = new LayoutPaintable.LayoutBounds(vv, 1, 1);
+
+    vv.addPreRenderPaintable(layoutBounds);
     // create a frame to hold the graph visualization
     final JFrame frame = new JFrame();
     frame.getContentPane().add(vv.getComponent());

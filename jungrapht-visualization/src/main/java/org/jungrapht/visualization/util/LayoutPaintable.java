@@ -27,6 +27,8 @@ public interface LayoutPaintable {
   class LayoutBounds implements VisualizationServer.Paintable {
     private VisualizationModel visualizationModel;
     private ShapeTransformer transformer;
+    private int cellWidth = 0;
+    private int cellHeight = 0;
     Color color;
 
     public LayoutBounds(VisualizationServer visualizationServer) {
@@ -35,14 +37,36 @@ public interface LayoutPaintable {
           visualizationServer.getRenderContext().getMultiLayerTransformer());
     }
 
+    public LayoutBounds(VisualizationServer visualizationServer, int cellWidth, int cellHeight) {
+      this(
+          visualizationServer.getVisualizationModel(),
+          visualizationServer.getRenderContext().getMultiLayerTransformer(),
+          cellWidth,
+          cellHeight,
+          Color.cyan);
+    }
+
     public LayoutBounds(VisualizationModel visualizationModel, ShapeTransformer transformer) {
-      this(visualizationModel, transformer, Color.blue);
+      this(visualizationModel, transformer, 0, 0, Color.blue);
     }
 
     public LayoutBounds(
         VisualizationModel visualizationModel, ShapeTransformer transformer, Color color) {
       this.visualizationModel = visualizationModel;
       this.transformer = transformer;
+      this.color = color;
+    }
+
+    public LayoutBounds(
+        VisualizationModel visualizationModel,
+        ShapeTransformer transformer,
+        int cellWidth,
+        int cellHeight,
+        Color color) {
+      this.visualizationModel = visualizationModel;
+      this.transformer = transformer;
+      this.cellWidth = cellWidth;
+      this.cellHeight = cellHeight;
       this.color = color;
     }
 
@@ -62,6 +86,21 @@ public interface LayoutPaintable {
       layoutRectangle = transformer.transform(layoutRectangle);
       g2d.draw(layoutRectangle);
       g2d.drawString(width + " x " + height, 20, 20);
+      paintGrid(g);
+    }
+
+    public void paintGrid(Graphics g) {
+      int horizontalCount = visualizationModel.getLayoutSize().width / cellWidth;
+      int verticalCount = visualizationModel.getLayoutSize().height / cellHeight;
+      Graphics2D g2d = (Graphics2D) g;
+      for (int i = 0; i < verticalCount; i++) {
+        for (int j = 0; j < horizontalCount; j++) {
+          Shape r = new Rectangle2D.Double(i * cellWidth, j * cellHeight, cellWidth, cellHeight);
+          r = transformer.transform(r);
+          g2d.setPaint(color);
+          g2d.draw(r);
+        }
+      }
     }
 
     @Override

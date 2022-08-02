@@ -16,9 +16,11 @@ import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.samples.util.TestGraphs;
+import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.layout.algorithms.orthogonal.OrthogonalLayoutAlgorithmThreaded;
+import org.jungrapht.visualization.layout.algorithms.orthogonal.OrthogonalLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
+import org.jungrapht.visualization.util.LayoutPaintable;
 
 /**
  * A demo that shows a minimal visualization configuration
@@ -36,13 +38,18 @@ public class MinimalOrthogonal4 {
         VisualizationViewer.builder(TestGraphs.gridGraph(9))
             //    VisualizationViewer.builder(TestGraphs.createDirectedAcyclicGraph(9, 3, .2, 5L))
             .viewSize(new Dimension(700, 700))
-            .layoutAlgorithm(OrthogonalLayoutAlgorithmThreaded.<String, Integer>builder().build())
+            //            .layoutAlgorithm(OrthogonalLayoutAlgorithmThreaded.<String, Integer>builder().build())
+            .layoutAlgorithm(OrthogonalLayoutAlgorithm.<String, Integer>builder().build())
             .build();
 
     //    vv.getRenderContext().setVertexShapeFunction(v -> new Ellipse2D.Double(-1, -1, 2, 2));
     LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
     vv.setVertexToolTipFunction(v -> v + " p:" + layoutModel.apply(v));
     vv.getRenderContext().setVertexLabelFunction(v -> layoutModel.apply(v).toString());
+
+    VisualizationServer.Paintable layoutBounds = new LayoutPaintable.LayoutBounds(vv, 1, 1);
+
+    vv.addPreRenderPaintable(layoutBounds);
     // create a frame to hold the graph visualization
     final JFrame frame = new JFrame();
     frame.getContentPane().add(vv.getComponent());

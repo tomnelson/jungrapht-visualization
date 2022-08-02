@@ -95,20 +95,20 @@ public class OrthogonalLayoutAlgorithmThreaded<V, E> extends AbstractLayoutAlgor
     Thread thread =
         new Thread() {
           public void run() {
-            try {
-              Thread.sleep(5000);
-            } catch (InterruptedException ex) {
-            }
+            //            try {
+            //              Thread.sleep(5000);
+            //            } catch (InterruptedException ex) {
+            //            }
             layoutModel.getLayoutStateChangeSupport().fireLayoutStateChanged(layoutModel, true);
             while (!done) {
-              log.info("step");
+              //              log.info("step");
               step();
               setPoints();
               //          layoutModel.getModelChangeSupport().fireModelChanged();
-              try {
-                Thread.sleep(2);
-              } catch (InterruptedException ex) {
-              }
+              //              try {
+              //                Thread.sleep(2);
+              //              } catch (InterruptedException ex) {
+              //              }
             }
             layoutModel.getLayoutStateChangeSupport().fireLayoutStateChanged(layoutModel, false);
           }

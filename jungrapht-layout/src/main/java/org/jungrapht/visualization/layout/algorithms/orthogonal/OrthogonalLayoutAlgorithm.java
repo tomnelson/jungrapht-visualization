@@ -115,7 +115,7 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
     double k = Math.pow(0.2 / temperature, 1.0 / iterationCount);
     log.info("k: {}", k);
     vertexDimensionFunction = identityVertexDimensionFunction;
-
+    iterationCount = 0; ////////
     int iteration = 0;
     for (; iteration < iterationCount / 2; iteration++) {
       for (V v : graph.vertexSet()) {

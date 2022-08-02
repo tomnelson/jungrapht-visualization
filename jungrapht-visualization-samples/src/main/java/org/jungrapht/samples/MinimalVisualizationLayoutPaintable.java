@@ -15,12 +15,10 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
-import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.layout.algorithms.orthogonal.OrthogonalLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.jungrapht.visualization.util.LayoutPaintable;
 
 /**
  * A demo that shows a minimal visualization configuration
@@ -30,24 +28,38 @@ import org.jungrapht.visualization.util.LayoutPaintable;
  *
  * @author Tom Nelson
  */
-public class MinimalOrthogonal3 {
+public class MinimalVisualizationLayoutPaintable {
 
-  private MinimalOrthogonal3() {
+  static class LayoutPaintable<V> implements VisualizationServer.Paintable {
 
-    VisualizationViewer<String, Integer> vv =
-        VisualizationViewer.builder(TestGraphs.createSmallGraph(true))
-            //    VisualizationViewer.builder(TestGraphs.createDirectedAcyclicGraph(9, 3, .2, 5L))
+    LayoutModel<V> layoutModel;
+    int horizontalCellCount;
+    int verticalCellCount;
+
+    public LayoutPaintable(
+        LayoutModel<V> layoutModel, int horizontalCellCount, int verticalCellCount) {
+      this.layoutModel = layoutModel;
+      this.horizontalCellCount = horizontalCellCount;
+      this.verticalCellCount = verticalCellCount;
+    }
+
+    @Override
+    public void paint(Graphics g) {}
+
+    @Override
+    public boolean useTransform() {
+      return false;
+    }
+  }
+
+  private MinimalVisualizationLayoutPaintable() {
+
+    VisualizationViewer<Integer, Integer> vv =
+        VisualizationViewer.builder(createGraph())
             .viewSize(new Dimension(700, 700))
-            .layoutAlgorithm(OrthogonalLayoutAlgorithm.<String, Integer>builder().build())
+            .layoutAlgorithm(new KKLayoutAlgorithm<>())
             .build();
 
-    //    vv.getRenderContext().setVertexShapeFunction(v -> new Ellipse2D.Double(-1, -1, 2, 2));
-    LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
-    vv.setVertexToolTipFunction(v -> v + " p:" + layoutModel.apply(v));
-    vv.getRenderContext().setVertexLabelFunction(v -> layoutModel.apply(v).toString());
-    VisualizationServer.Paintable layoutBounds = new LayoutPaintable.LayoutBounds(vv, 1, 1);
-
-    vv.addPreRenderPaintable(layoutBounds);
     // create a frame to hold the graph visualization
     final JFrame frame = new JFrame();
     frame.getContentPane().add(vv.getComponent());
@@ -57,7 +69,7 @@ public class MinimalOrthogonal3 {
   }
 
   public static void main(String[] args) {
-    new MinimalOrthogonal3();
+    new MinimalVisualizationLayoutPaintable();
   }
 
   private Graph<Integer, Integer> createGraph() {
