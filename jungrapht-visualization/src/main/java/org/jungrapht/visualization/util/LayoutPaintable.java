@@ -86,7 +86,7 @@ public interface LayoutPaintable {
       layoutRectangle = transformer.transform(layoutRectangle);
       g2d.draw(layoutRectangle);
       g2d.drawString(width + " x " + height, 20, 20);
-      paintGrid(g);
+      //paintGrid(g);
     }
 
     public void paintGrid(Graphics g) {

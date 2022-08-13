@@ -1,5 +1,8 @@
 package org.jungrapht.visualization.layout.model;
 
+/**
+ * Utility to use where mutable points were required in older code
+ */
 public class LocationUtil {
 
   public static <V> void set(LayoutModel<V> layoutModel, V v, Point p) {
