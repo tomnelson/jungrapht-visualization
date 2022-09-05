@@ -96,6 +96,16 @@ public class GraphLayers {
     return groupedRow;
   }
 
+  /**
+   * If there is an edge comparator (not a noop), then sort the edges, then
+   * add the source and target of each edge to a sorted collection to return.
+   * Any degree zero vertices are added at the end.
+   * @param graph
+   * @param edgeComparator
+   * @return
+   * @param <V>
+   * @param <E>
+   */
   private static <V, E> Set<V> getVertices(Graph<V, E> graph, Comparator<E> edgeComparator) {
     if (edgeComparator == Layered.noopComparator) {
       return new LinkedHashSet<>(graph.vertexSet());
