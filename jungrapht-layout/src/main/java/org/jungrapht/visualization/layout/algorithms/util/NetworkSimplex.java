@@ -1,14 +1,6 @@
 package org.jungrapht.visualization.layout.algorithms.util;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Random;
-import java.util.Stack;
+import java.util.*;
 import java.util.function.Function;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.Layered;
@@ -160,15 +152,27 @@ public class NetworkSimplex<V, E> {
     }
 
     shiftLayerToZero();
-    //    Collections.reverse(layerList);
 
-    for (int i = 0; i < layerList.size(); i++) {
+    //    Collections.reverse(layerList);
+    Set<LV<V>> wrongRow = new HashSet<>();
+
+    for (int i = layerList.size()-1; i >= 0; i--) {
       List<LV<V>> layer = layerList.get(i);
-      for (int j = 0; j < layer.size(); j++) {
+      for (int j = layer.size()-1; j >=0; j--) {
         LV<V> v = layer.get(j);
-        v.setRank(i);
-        v.setIndex(j);
+        if (v.getRank() != i) {
+          layer.remove(v);
+          wrongRow.add(v);
+        }
+//        v.setRank(layers.get(v));
+//        v.setIndex(j);
       }
+    }
+    for (LV<V> v : wrongRow) {
+      int rank = v.getRank();
+      int idx = v.getIndex();
+      List<LV<V>> li = layerList.get(rank);
+      layerList.get(rank).add(idx, v);
     }
     if (log.isTraceEnabled()) {
       log.trace("layersArray are {}", layerList);
@@ -185,18 +189,19 @@ public class NetworkSimplex<V, E> {
 
   private void initLayers() {
     layerList = GraphLayers.longestPathReverse(svGraph, edgeComparator);
+    // ranks and indices are assigned in each vertex
     svGraph.vertexSet().forEach(v -> layers.put(v, v.getRank()));
   }
 
   private void feasibleTree() {
     initLayers();
 
-    while (tightTree() < this.svGraph.vertexSet().size()) {
+    while (tightTree() < this.svGraph.vertexSet().size()) {//checked
 
       LE<V, E> e = getNonTreeEdgeIncidentToTheTreeWithMinimalAmountOfSlack();
       if (e == null) break; //all edges are tree edges
       int slack = slack(e);
-      if (slack == 0) throw new IllegalArgumentException(); //"the tree should be tight");
+      if (slack == 0) throw new IllegalArgumentException("the tree should be tight");
 
       if (vertexInTreeMap.get(e.getSource())) slack = -slack;
 
@@ -211,7 +216,7 @@ public class NetworkSimplex<V, E> {
     initCutValues();
   }
 
-  private int tightTree() {
+  private int tightTree() { // checked
     treeVertices.clear();
     for (LE<V, E> ie : svGraph.edgeSet()) {
       edgeInTreeMap.put(ie, false);
@@ -234,7 +239,8 @@ public class NetworkSimplex<V, E> {
         if (vertexInTreeMap.get(e.getTarget())) {
           continue;
         }
-        if (e.getSource().getRank() - e.getTarget().getRank() == separationFunction.apply(e)) {
+        if (layers.get(e.getSource()) - layers.get(e.getTarget()) == separationFunction.apply(e)) {
+//                e.getSource().getRank() - e.getTarget().getRank() == separationFunction.apply(e)) {
           queue.push(e.getTarget());
           vertexInTreeMap.put(e.getTarget(), true);
           treeVertices.add(e.getTarget());
@@ -248,7 +254,7 @@ public class NetworkSimplex<V, E> {
         if (vertexInTreeMap.get(e.getSource())) {
           continue;
         }
-        if (e.getSource().getRank() - e.getTarget().getRank() == separationFunction.apply(e)) {
+        if (layers.get(e.getSource()) - layers.get(e.getTarget()) == separationFunction.apply(e)) {
           queue.push(e.getSource());
           vertexInTreeMap.put(e.getSource(), true);
           treeVertices.add(e.getSource());
@@ -442,27 +448,30 @@ public class NetworkSimplex<V, E> {
     }
   }
 
-  private void updateLayersUnderNode(LV<V> l) {
+  private void updateLayersUnderNode(LV<V> l) { // checked
     Stack<LV<V>> front = new Stack<>();
     front.push(l);
 
     for (LV<V> v : svGraph.vertexSet()) {
       if (low.get(l) <= lim.get(v) && lim.get(v) <= lim.get(l) && v != l) {
         v.setRank(Integer.MAX_VALUE);
+        layers.put(v, Integer.MAX_VALUE);
       }
     }
 
     while (front.size() > 0) {
       LV<V> u = front.pop();
       for (LE<V, E> oe : svGraph.outgoingEdgesOf(u)) {
-        if (edgeInTreeMap.get(oe) && oe.getTarget().getRank() == Integer.MAX_VALUE) {
+        if (edgeInTreeMap.get(oe) && layers.get(oe.getTarget()) == Integer.MAX_VALUE) {
           oe.getTarget().setRank(u.getRank() - separationFunction.apply(oe));
+          layers.put(oe.getTarget(), layers.get(u) - separationFunction.apply(oe));
           front.push(oe.getTarget());
         }
       }
       for (LE<V, E> ie : svGraph.incomingEdgesOf(u)) {
-        if (edgeInTreeMap.get(ie) && ie.getSource().getRank() == Integer.MAX_VALUE) {
-          ie.getSource().setRank(u.getRank() + 1);
+        if (edgeInTreeMap.get(ie) && layers.get(ie.getSource()) == Integer.MAX_VALUE) {
+          ie.getSource().setRank(u.getRank() + separationFunction.apply(ie));
+          layers.put(ie.getSource(), layers.get(u) + separationFunction.apply(ie));
           front.push(ie.getSource());
         }
       }
