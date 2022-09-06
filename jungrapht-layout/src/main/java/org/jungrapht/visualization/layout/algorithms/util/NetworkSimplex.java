@@ -129,7 +129,7 @@ public class NetworkSimplex<V, E> {
   protected Function<LE<V, E>, Integer> weightFunction;
   protected Function<LE<V, E>, Integer> separationFunction;
   protected Map<LV<V>, Integer> layers = new HashMap<>();
-  protected Map<LE<V, E>, Integer> cutValues = new HashMap<>();
+//  protected Map<LE<V, E>, Integer> cutValues = new HashMap<>();
   protected Map<LE<V, E>, Integer> cutMap = new HashMap<>();
   protected List<List<LV<V>>> layerList;
   protected Map<LV<V>, Integer> lim = new HashMap<>();
@@ -183,9 +183,13 @@ public class NetworkSimplex<V, E> {
     }
   }
 
-  private void feasibleTree() {
+  private void initLayers() {
     layerList = GraphLayers.longestPathReverse(svGraph, edgeComparator);
     svGraph.vertexSet().forEach(v -> layers.put(v, v.getRank()));
+  }
+
+  private void feasibleTree() {
+    initLayers();
 
     while (tightTree() < this.svGraph.vertexSet().size()) {
 
@@ -235,6 +239,8 @@ public class NetworkSimplex<V, E> {
           vertexInTreeMap.put(e.getTarget(), true);
           treeVertices.add(e.getTarget());
           edgeInTreeMap.put(e, true);
+        } else {
+          log.info("did not add {}", e);
         }
       }
 
@@ -247,9 +253,12 @@ public class NetworkSimplex<V, E> {
           vertexInTreeMap.put(e.getSource(), true);
           treeVertices.add(e.getSource());
           edgeInTreeMap.put(e, true);
+        } else {
+          log.info("didn't add {}", e);
         }
       }
     }
+    log.info("treeVertices size = {}", treeVertices.size());
     return treeVertices.size();
   }
 
@@ -258,7 +267,11 @@ public class NetworkSimplex<V, E> {
   }
 
   private int slack(LE<V, E> edge) {
-    return edge.getSource().getRank() - edge.getTarget().getRank() - separationFunction.apply(edge);
+    int ret = edge.getSource().getRank() - edge.getTarget().getRank() - separationFunction.apply(edge);
+    if (ret < 0) {
+      throw new RuntimeException("separation is not satisfied");
+    }
+    return ret;
   }
 
   public List<LV<V>> getTreeVertices() {
@@ -279,8 +292,8 @@ public class NetworkSimplex<V, E> {
     int minCut = 0;
     for (LE<V, E> e : svGraph.edgeSet()) {
       if (edgeInTreeMap.get(e)) {
-        if (cutValues.getOrDefault(e, 0) < minCut) {
-          minCut = cutValues.get(e);
+        if (cutMap.getOrDefault(e, 0) < minCut) {
+          minCut = cutMap.get(e);
           leavingEdge = e;
         }
       }
@@ -288,18 +301,20 @@ public class NetworkSimplex<V, E> {
     if (leavingEdge == null) return null;
 
     //now we are looking for a non-tree edge with a minimal slack belonging to TS
-    //    boolean continuation = false;
+    boolean continuation = false;
     int minSlack = Integer.MAX_VALUE;
     for (LE<V, E> f : svGraph.edgeSet()) {
+      int got = random.nextInt(2);
       int slack = slack(f);
-      boolean continuation = random.nextInt(2) == 1;
+//      continuation = random.nextInt(2) == 1;
       if (!edgeInTreeMap.get(f)
-          && edgeSourceTargetVal(f, leavingEdge) == -1
-          && (slack < minSlack || (slack == minSlack && continuation))) {
+              && edgeSourceTargetVal(f, leavingEdge) == -1
+              && (slack < minSlack || (slack == minSlack &&
+              (continuation = random.nextInt(2) == 1)))) {
         minSlack = slack;
         enteringEdge = f;
         if (minSlack == 0 && !continuation) break;
-        //        continuation = false;
+        continuation = false;
       }
     }
 
@@ -507,7 +522,9 @@ public class NetworkSimplex<V, E> {
     for (LE<V, E> ie : svGraph.edgesOf(v))
       if (edgeInTreeMap.get(ie)
           && cutMap.getOrDefault(ie, 0) == Integer.MAX_VALUE
-          && ie != parent.get(v)) return false;
+          && ie != parent.get(v)) {
+        return false;
+      }
     return true;
   }
 
@@ -706,7 +723,7 @@ public class NetworkSimplex<V, E> {
     //so just start walking up from the source
     LV<V> l = f.getSource();
 
-    while (!(low.get(l) <= fMin && fmax <= lim.get(l))) {
+    while ((low.get(l) <= fMin && fmax <= lim.get(l)) == false) {
       LE<V, E> p = parent.get(l);
 
       cutMap.put(p, Integer.MAX_VALUE);

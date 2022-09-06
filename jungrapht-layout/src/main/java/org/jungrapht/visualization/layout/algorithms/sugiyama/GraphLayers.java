@@ -238,7 +238,8 @@ public class GraphLayers {
     List<Graph<LV<V>, LE<V, E>>> componentList = ComponentGrouping.getComponentGraphs(dag);
     componentList.sort(Comparator.comparingInt(l -> -componentList.size()));
     for (Graph<LV<V>, LE<V, E>> sub : componentList) {
-      NetworkSimplex<V, E> ns = NetworkSimplex.builder(sub).edgeComparator(comparator).build();
+      NetworkSimplex<V, E> ns = NetworkSimplex.builder(sub).edgeComparator(comparator)
+              .build();
       ns.run();
       List<List<LV<V>>> layers = ns.getLayerList();
       for (int i = 0; i < layers.size(); i++) {
