@@ -121,7 +121,6 @@ public class NetworkSimplex<V, E> {
   protected Function<LE<V, E>, Integer> weightFunction;
   protected Function<LE<V, E>, Integer> separationFunction;
   protected Map<LV<V>, Integer> layers = new HashMap<>();
-//  protected Map<LE<V, E>, Integer> cutValues = new HashMap<>();
   protected Map<LE<V, E>, Integer> cutMap = new HashMap<>();
   protected List<List<LV<V>>> layerList;
   protected Map<LV<V>, Integer> lim = new HashMap<>();
@@ -154,25 +153,26 @@ public class NetworkSimplex<V, E> {
     shiftLayerToZero();
 
     //    Collections.reverse(layerList);
+    // any vertices that are in the wrong rank go here
     Set<LV<V>> wrongRow = new HashSet<>();
 
-    for (int i = layerList.size()-1; i >= 0; i--) {
+    // iterate in reverse so i can remove ones that are in the wrong row
+    // and insert them in a later step
+    for (int i = layerList.size() - 1; i >= 0; i--) {
       List<LV<V>> layer = layerList.get(i);
-      for (int j = layer.size()-1; j >=0; j--) {
+      for (int j = layer.size() - 1; j >= 0; j--) {
         LV<V> v = layer.get(j);
         if (v.getRank() != i) {
           layer.remove(v);
           wrongRow.add(v);
         }
-//        v.setRank(layers.get(v));
-//        v.setIndex(j);
       }
     }
+    // put these in the correct rank
     for (LV<V> v : wrongRow) {
       int rank = v.getRank();
       int idx = v.getIndex();
-      List<LV<V>> li = layerList.get(rank);
-      layerList.get(rank).add(idx, v);
+      layerList.get(rank).add(v);
     }
     if (log.isTraceEnabled()) {
       log.trace("layersArray are {}", layerList);
@@ -196,7 +196,7 @@ public class NetworkSimplex<V, E> {
   private void feasibleTree() {
     initLayers();
 
-    while (tightTree() < this.svGraph.vertexSet().size()) {//checked
+    while (tightTree() < this.svGraph.vertexSet().size()) { //checked
 
       LE<V, E> e = getNonTreeEdgeIncidentToTheTreeWithMinimalAmountOfSlack();
       if (e == null) break; //all edges are tree edges
@@ -240,7 +240,7 @@ public class NetworkSimplex<V, E> {
           continue;
         }
         if (layers.get(e.getSource()) - layers.get(e.getTarget()) == separationFunction.apply(e)) {
-//                e.getSource().getRank() - e.getTarget().getRank() == separationFunction.apply(e)) {
+          //                e.getSource().getRank() - e.getTarget().getRank() == separationFunction.apply(e)) {
           queue.push(e.getTarget());
           vertexInTreeMap.put(e.getTarget(), true);
           treeVertices.add(e.getTarget());
@@ -273,7 +273,8 @@ public class NetworkSimplex<V, E> {
   }
 
   private int slack(LE<V, E> edge) {
-    int ret = edge.getSource().getRank() - edge.getTarget().getRank() - separationFunction.apply(edge);
+    int ret =
+        edge.getSource().getRank() - edge.getTarget().getRank() - separationFunction.apply(edge);
     if (ret < 0) {
       throw new RuntimeException("separation is not satisfied");
     }
@@ -312,11 +313,10 @@ public class NetworkSimplex<V, E> {
     for (LE<V, E> f : svGraph.edgeSet()) {
       int got = random.nextInt(2);
       int slack = slack(f);
-//      continuation = random.nextInt(2) == 1;
+      //      continuation = random.nextInt(2) == 1;
       if (!edgeInTreeMap.get(f)
-              && edgeSourceTargetVal(f, leavingEdge) == -1
-              && (slack < minSlack || (slack == minSlack &&
-              (continuation = random.nextInt(2) == 1)))) {
+          && edgeSourceTargetVal(f, leavingEdge) == -1
+          && (slack < minSlack || (slack == minSlack && (continuation = random.nextInt(2) == 1)))) {
         minSlack = slack;
         enteringEdge = f;
         if (minSlack == 0 && !continuation) break;

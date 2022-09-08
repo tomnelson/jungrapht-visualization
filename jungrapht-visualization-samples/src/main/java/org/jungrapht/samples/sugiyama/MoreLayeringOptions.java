@@ -1,5 +1,8 @@
 package org.jungrapht.samples.sugiyama;
 
+import java.awt.*;
+import java.awt.event.ItemEvent;
+import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
@@ -7,17 +10,11 @@ import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.LayeringConfiguration;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
-import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.SugiyamaLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.util.stream.IntStream;
 
 /**
  * Demonstrates 4 layering algorithms with the SugiyamaLayoutAlgoithm
@@ -44,7 +41,7 @@ public class MoreLayeringOptions extends JFrame {
         e -> {
           if (e.getStateChange() == ItemEvent.SELECTED) {
             SugiyamaLayoutAlgorithm<String, Integer> layoutAlgorithm =
-                    SugiyamaLayoutAlgorithm.<String, Integer>edgeAwareBuilder()
+                SugiyamaLayoutAlgorithm.<String, Integer>edgeAwareBuilder()
                     .postStraighten(true)
                     .threaded(false)
                     .layering((Layering) e.getItem())
@@ -56,7 +53,7 @@ public class MoreLayeringOptions extends JFrame {
         });
 
     SugiyamaLayoutAlgorithm<String, Integer> layoutAlgorithm3 =
-            SugiyamaLayoutAlgorithm.<String, Integer>edgeAwareBuilder()
+        SugiyamaLayoutAlgorithm.<String, Integer>edgeAwareBuilder()
             .postStraighten(true)
             .threaded(false)
             .layering(layeringConfiguration.getLayeringPreference())
@@ -76,8 +73,7 @@ public class MoreLayeringOptions extends JFrame {
     setVisible(true);
   }
 
-  private <V, E> VisualizationViewer<V, E> configureVisualizationViewer(
-      Graph<V, E> graph) {
+  private <V, E> VisualizationViewer<V, E> configureVisualizationViewer(Graph<V, E> graph) {
     VisualizationViewer<V, E> vv =
         VisualizationViewer.builder(graph)
             .layoutSize(new Dimension(600, 600))

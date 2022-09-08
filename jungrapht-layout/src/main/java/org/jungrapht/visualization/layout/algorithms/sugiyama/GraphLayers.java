@@ -97,9 +97,10 @@ public class GraphLayers {
   }
 
   /**
-   * If there is an edge comparator (not a noop), then sort the edges, then
-   * add the source and target of each edge to a sorted collection to return.
-   * Any degree zero vertices are added at the end.
+   * If there is an edge comparator (not a noop), then sort the edges, then add the source and
+   * target of each edge to a sorted collection to return. Any degree zero vertices are added at the
+   * end.
+   *
    * @param graph
    * @param edgeComparator
    * @return
@@ -238,8 +239,7 @@ public class GraphLayers {
     List<Graph<LV<V>, LE<V, E>>> componentList = ComponentGrouping.getComponentGraphs(dag);
     componentList.sort(Comparator.comparingInt(l -> -componentList.size()));
     for (Graph<LV<V>, LE<V, E>> sub : componentList) {
-      NetworkSimplex<V, E> ns = NetworkSimplex.builder(sub).edgeComparator(comparator)
-              .build();
+      NetworkSimplex<V, E> ns = NetworkSimplex.builder(sub).edgeComparator(comparator).build();
       ns.run();
       List<List<LV<V>>> layers = ns.getLayerList();
       for (int i = 0; i < layers.size(); i++) {
