@@ -3,7 +3,6 @@ package org.jungrapht.samples.util;
 import java.util.HashMap;
 import java.util.Map;
 import org.jungrapht.visualization.layout.algorithms.*;
-import org.jungrapht.visualization.layout.algorithms.orthogonal.OrthogonalLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFA2Repulsion;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFRRepulsion;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutSpringRepulsion;
@@ -72,7 +71,6 @@ public class LayoutHelperDirectedGraphs {
         "Sugiyama CoffmanGraham",
         SugiyamaLayoutAlgorithm.builder().layering(Layering.COFFMAN_GRAHAM)),
     SUGIYAMA("Sugiyama", SugiyamaLayoutAlgorithm.builder()),
-    ORTHOGONAL("Orthogonal", OrthogonalLayoutAlgorithm.builder()),
     MINCROSS("MinCross", HierarchicalMinCrossLayoutAlgorithm.builder());
 
     private static final Map<String, Layouts> BY_NAME = new HashMap<>();

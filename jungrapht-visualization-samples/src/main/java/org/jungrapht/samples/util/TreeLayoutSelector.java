@@ -40,7 +40,6 @@ import org.jungrapht.visualization.layout.algorithms.TidierRadialTreeLayoutAlgor
 import org.jungrapht.visualization.layout.algorithms.TidierTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TreeLayout;
 import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
-import org.jungrapht.visualization.layout.algorithms.orthogonal.OrthogonalLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFA2Repulsion;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.layout.model.Rectangle;
@@ -361,8 +360,6 @@ public class TreeLayoutSelector<V, E> extends JPanel {
             .build();
 
     SpringLayoutAlgorithm<V, E> springLayoutAlgorithm = new SpringLayoutAlgorithm<>();
-    OrthogonalLayoutAlgorithm<V, E> orthogonalLayoutAlgorithm =
-        OrthogonalLayoutAlgorithm.<V, E>builder().build();
 
     JRadioButton treeButton = new JRadioButton("Tree");
     treeButton.addItemListener(new LayoutItemListener(treeLayoutAlgorithm, vv));
@@ -444,8 +441,6 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     springButton.addItemListener(new LayoutItemListener(springLayoutAlgorithm, vv));
     springButton.setSelected(initialSelection == layoutNumber++);
 
-    JRadioButton orthogonalButton = new JRadioButton("Orthogonal");
-    orthogonalButton.addItemListener(new LayoutItemListener(orthogonalLayoutAlgorithm, vv));
     ButtonGroup layoutRadio = new ButtonGroup();
     layoutRadio.add(treeButton);
     layoutRadio.add(tidierTreeButton);
@@ -466,7 +461,6 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     layoutRadio.add(frButton);
     layoutRadio.add(fa2Button);
     layoutRadio.add(springButton);
-    layoutRadio.add(orthogonalButton);
 
     layeringComboBox.addItemListener(
         item -> {
@@ -500,7 +494,6 @@ public class TreeLayoutSelector<V, E> extends JPanel {
     this.add(frButton);
     this.add(fa2Button);
     this.add(springButton);
-    this.add(orthogonalButton);
     this.add(animateTransition);
     this.add(layeringComboBox);
   }
