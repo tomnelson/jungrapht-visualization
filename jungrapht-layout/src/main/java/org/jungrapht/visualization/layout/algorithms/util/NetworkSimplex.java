@@ -168,6 +168,14 @@ public class NetworkSimplex<V, E> {
         }
       }
     }
+    int maxWrongRank =
+            wrongRow.stream().mapToInt(LV::getRank).filter(v -> v >= 0).max().orElse(0);
+    if (maxWrongRank > layerList.size()) {
+      while (layerList.size() < maxWrongRank+1) {
+//      for (int i=ælayerList.size(); i< maxWrongRank; i++) {
+        layerList.add(new ArrayList<>());
+      }
+    }
     // put these in the correct rank
     for (LV<V> v : wrongRow) {
       int rank = v.getRank();
@@ -245,8 +253,6 @@ public class NetworkSimplex<V, E> {
           vertexInTreeMap.put(e.getTarget(), true);
           treeVertices.add(e.getTarget());
           edgeInTreeMap.put(e, true);
-        } else {
-          log.info("did not add {}", e);
         }
       }
 
@@ -259,12 +265,10 @@ public class NetworkSimplex<V, E> {
           vertexInTreeMap.put(e.getSource(), true);
           treeVertices.add(e.getSource());
           edgeInTreeMap.put(e, true);
-        } else {
-          log.info("didn't add {}", e);
         }
       }
     }
-    log.info("treeVertices size = {}", treeVertices.size());
+    log.trace("treeVertices size = {}", treeVertices.size());
     return treeVertices.size();
   }
 
