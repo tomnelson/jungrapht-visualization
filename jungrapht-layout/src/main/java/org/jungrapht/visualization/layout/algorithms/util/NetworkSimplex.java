@@ -120,7 +120,6 @@ public class NetworkSimplex<V, E> {
   protected Graph<LV<V>, LE<V, E>> svGraph;
   protected Function<LE<V, E>, Integer> weightFunction;
   protected Function<LE<V, E>, Integer> separationFunction;
-  protected Map<LV<V>, Integer> layers = new HashMap<>();
   protected Map<LE<V, E>, Integer> cutMap = new HashMap<>();
   protected List<List<LV<V>>> layerList;
   protected Map<LV<V>, Integer> lim = new HashMap<>();
@@ -139,7 +138,6 @@ public class NetworkSimplex<V, E> {
   }
 
   public void run() {
-    if (svGraph.edgeSet().size() == 0 && svGraph.vertexSet().size() == 0) layers = new HashMap<>();
 
     svGraph.edgeSet().forEach(e -> cutMap.put(e, Integer.MAX_VALUE));
 
@@ -152,9 +150,8 @@ public class NetworkSimplex<V, E> {
 
     shiftLayerToZero();
 
-    //    Collections.reverse(layerList);
     // any vertices that are in the wrong rank go here
-    Set<LV<V>> wrongRow = new HashSet<>();
+    List<LV<V>> wrongRow = new ArrayList<>();
 
     // iterate in reverse so i can remove ones that are in the wrong row
     // and insert them in a later step
@@ -168,25 +165,19 @@ public class NetworkSimplex<V, E> {
         }
       }
     }
-    int maxWrongRank =
-            wrongRow.stream().mapToInt(LV::getRank).filter(v -> v >= 0).max().orElse(0);
-    if (maxWrongRank > layerList.size()) {
-      while (layerList.size() < maxWrongRank+1) {
-//      for (int i=ælayerList.size(); i< maxWrongRank; i++) {
-        layerList.add(new ArrayList<>());
-      }
-    }
+    // reverse the list so i encounter the lowest new ranks first
+    // and can add a single row to layerList for each one below
+    Collections.reverse(wrongRow);
     // put these in the correct rank
     for (LV<V> v : wrongRow) {
       int rank = v.getRank();
-      int idx = v.getIndex();
+      if (layerList.size() < rank + 1) {
+        layerList.add(new ArrayList<>());
+      }
       layerList.get(rank).add(v);
     }
     if (log.isTraceEnabled()) {
       log.trace("layersArray are {}", layerList);
-
-      log.trace("layers are {}", layers);
-
       log.trace("vinTreeMap: {}", vertexInTreeMap);
       log.trace("einTreeMap: {}", edgeInTreeMap);
       for (Map.Entry<LE<V, E>, Boolean> entry : edgeInTreeMap.entrySet()) {
@@ -197,14 +188,12 @@ public class NetworkSimplex<V, E> {
 
   private void initLayers() {
     layerList = GraphLayers.longestPathReverse(svGraph, edgeComparator);
-    // ranks and indices are assigned in each vertex
-    svGraph.vertexSet().forEach(v -> layers.put(v, v.getRank()));
   }
 
   private void feasibleTree() {
     initLayers();
 
-    while (tightTree() < this.svGraph.vertexSet().size()) { //checked
+    while (tightTree() < this.svGraph.vertexSet().size()) {
 
       LE<V, E> e = getNonTreeEdgeIncidentToTheTreeWithMinimalAmountOfSlack();
       if (e == null) break; //all edges are tree edges
@@ -216,15 +205,13 @@ public class NetworkSimplex<V, E> {
       //shift the tree rigidly up or down and make e tight ; since the slack is the minimum of slacks
       //the layering will still remain feasible
       for (LV<V> v : treeVertices) {
-        int newRank = layers.get(v) + slack;
-        v.setRank(newRank);
-        layers.put(v, newRank);
+        v.setRank(v.getRank() + slack);
       }
     }
     initCutValues();
   }
 
-  private int tightTree() { // checked
+  private int tightTree() {
     treeVertices.clear();
     for (LE<V, E> ie : svGraph.edgeSet()) {
       edgeInTreeMap.put(ie, false);
@@ -247,8 +234,7 @@ public class NetworkSimplex<V, E> {
         if (vertexInTreeMap.get(e.getTarget())) {
           continue;
         }
-        if (layers.get(e.getSource()) - layers.get(e.getTarget()) == separationFunction.apply(e)) {
-          //                e.getSource().getRank() - e.getTarget().getRank() == separationFunction.apply(e)) {
+        if (e.getSource().getRank() - e.getTarget().getRank() == separationFunction.apply(e)) {
           queue.push(e.getTarget());
           vertexInTreeMap.put(e.getTarget(), true);
           treeVertices.add(e.getTarget());
@@ -260,7 +246,7 @@ public class NetworkSimplex<V, E> {
         if (vertexInTreeMap.get(e.getSource())) {
           continue;
         }
-        if (layers.get(e.getSource()) - layers.get(e.getTarget()) == separationFunction.apply(e)) {
+        if (e.getSource().getRank() - e.getTarget().getRank() == separationFunction.apply(e)) {
           queue.push(e.getSource());
           vertexInTreeMap.put(e.getSource(), true);
           treeVertices.add(e.getSource());
@@ -452,30 +438,29 @@ public class NetworkSimplex<V, E> {
     }
   }
 
-  private void updateLayersUnderNode(LV<V> l) { // checked
+  private void updateLayersUnderNode(LV<V> l) {
     Stack<LV<V>> front = new Stack<>();
     front.push(l);
 
     for (LV<V> v : svGraph.vertexSet()) {
       if (low.get(l) <= lim.get(v) && lim.get(v) <= lim.get(l) && v != l) {
         v.setRank(Integer.MAX_VALUE);
-        layers.put(v, Integer.MAX_VALUE);
       }
     }
 
     while (front.size() > 0) {
       LV<V> u = front.pop();
       for (LE<V, E> oe : svGraph.outgoingEdgesOf(u)) {
-        if (edgeInTreeMap.get(oe) && layers.get(oe.getTarget()) == Integer.MAX_VALUE) {
+        if (edgeInTreeMap.get(oe) && oe.getTarget().getRank() == Integer.MAX_VALUE) {
           oe.getTarget().setRank(u.getRank() - separationFunction.apply(oe));
-          layers.put(oe.getTarget(), layers.get(u) - separationFunction.apply(oe));
+          oe.getTarget().setRank((u.getRank() - separationFunction.apply(oe)));
           front.push(oe.getTarget());
         }
       }
       for (LE<V, E> ie : svGraph.incomingEdgesOf(u)) {
-        if (edgeInTreeMap.get(ie) && layers.get(ie.getSource()) == Integer.MAX_VALUE) {
+        if (edgeInTreeMap.get(ie) && ie.getSource().getRank() == Integer.MAX_VALUE) {
           ie.getSource().setRank(u.getRank() + separationFunction.apply(ie));
-          layers.put(ie.getSource(), layers.get(u) + separationFunction.apply(ie));
+          ie.getSource().setRank(u.getRank() + separationFunction.apply(ie));
           front.push(ie.getSource());
         }
       }
@@ -618,14 +603,10 @@ public class NetworkSimplex<V, E> {
   }
 
   private void shiftLayerToZero() {
-    int minLayer = Integer.MAX_VALUE;
-    for (LV<V> v : layers.keySet()) if (layers.get(v) < minLayer) minLayer = layers.get(v);
+    int minLayer =
+        svGraph.vertexSet().stream().mapToInt(LV::getRank).min().orElse(Integer.MAX_VALUE);
 
-    for (LV<V> v : svGraph.vertexSet()) {
-      int newRank = layers.get(v) - minLayer;
-      v.setRank(newRank);
-      layers.put(v, newRank);
-    }
+    svGraph.vertexSet().forEach(v -> v.setRank(v.getRank() - minLayer));
   }
 
   private void exchange(LE<V, E> e, LE<V, E> f) {
