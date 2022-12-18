@@ -80,5 +80,4 @@ Snapshots of JUNGRAPHT-VISUALIZATION built from the `master` branch are availabl
 
 * [GitHub project](https://github.com/tomnelson/jungrapht-visualization)
 * [Issue tracker: report a defect or make a feature request](https://github.com/tomnelson/jungrapht-visualization/issues/new)
-* [StackOverflow: Ask questions](https://stackoverflow.com/questions/ask?tags=jungrapht+java)
 
