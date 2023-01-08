@@ -27,52 +27,10 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
           V, E, T extends OrthogonalLayoutAlgorithm<V, E>, B extends Builder<V, E, T, B>>
       extends AbstractLayoutAlgorithm.Builder<V, T, B> implements LayoutAlgorithm.Builder<V, T, B> {
     protected Function<V, Rectangle> vertexBoundsFunction = v -> Rectangle.of(0, 0, 1, 1);
-
-    //        private int maxIterations = 700;
-    //        private int multi = 3;
-    //        private int verticalSpacing = 75;
-    //        private int horizontalSpacing = 75;
-    //        private boolean clustered = true;
-    //        protected boolean adjustToFit = true;
-    //
-    //        public B multi(int multi) {
-    //            this.multi = multi;
-    //            return self();
-    //        }
-    //
     public B vertexBoundsFunction(Function<V, Rectangle> vertexBoundsFunction) {
       this.vertexBoundsFunction = vertexBoundsFunction;
       return self();
     }
-
-    //        public B maxIterations(int maxIterations) {
-    //            this.maxIterations = maxIterations;
-    //            return self();
-    //        }
-    //
-    //        public B verticalSpacing(int verticalSpacing) {
-    //            this.verticalSpacing = verticalSpacing;
-    //            return self();
-    //        }
-    //
-    //        public B horizontalSpacing(int horizontalSpacing) {
-    //            this.horizontalSpacing = horizontalSpacing;
-    //            return self();
-    //        }
-    //
-    //        public B clustered(boolean clustered) {
-    //            this.clustered = clustered;
-    //            return self();
-    //        }
-    //
-    //        /**
-    //         * @param adjustToFit adjust the points to fit in the layoutModel area
-    //         * @return the Builder
-    //         */
-    //        public B adjustToFit(boolean adjustToFit) {
-    //            this.adjustToFit = adjustToFit;
-    //            return self();
-    //        }
 
     public T build() {
       return (T) new OrthogonalLayoutAlgorithm(this);
@@ -89,6 +47,17 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
   }
 
   Mappings<V> mappings;
+  /**
+   * CTOR only for unit tests
+   * @param layoutModel
+   */
+  OrthogonalLayoutAlgorithm(LayoutModel<V> layoutModel) {
+    super(OrthogonalLayoutAlgorithm.builder());
+    this.graph = layoutModel.getGraph();
+    this.layoutModel = layoutModel;
+    this.realVertexDimensionFunction = v -> Rectangle.of(0, 0, 1, 1);
+    this.mappings = new Mappings<>();
+  }
 
   Function<V, Rectangle> identityVertexDimensionFunction = v -> Rectangle.IDENTITY;
   Function<V, Rectangle> realVertexDimensionFunction;
@@ -97,12 +66,11 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
 
   @Override
   public void visit(LayoutModel<V> layoutModel) {
-    this.mappings = new Mappings<>();
     this.layoutModel = layoutModel;
     this.graph = layoutModel.getGraph();
     int gridSize = this.initialGridSize();
     log.info("initialGridSize: {}", gridSize);
-    layoutModel.setSize(gridSize, gridSize);
+    layoutModel.setSize(600, 600);
     int vertexCount = graph.vertexSet().size();
     this.placeVerticesRandomlyInGridSpace(graph, gridSize);
     //    printGrid();
@@ -115,24 +83,34 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
     double k = Math.pow(0.2 / temperature, 1.0 / iterationCount);
     log.info("k: {}", k);
     vertexDimensionFunction = identityVertexDimensionFunction;
-    iterationCount = 0; ////////
+//    iterationCount = 0; ////////
     int iteration = 0;
+
     for (; iteration < iterationCount / 2; iteration++) {
       for (V v : graph.vertexSet()) {
         //        printGrid();
 
+        /*
+        We calculate an initial estimate to node’s position (x,y) that minimizes the Manhattan distance
+        to the adjacent nodes. Such point is found as a median of the neighbors’ centers.
+        A random displacement proportional to the temperature T is added to that point.
+         */
         Point neighborsMedian =
             neighborsMedianPoint(v)
                 .add(randomTemp(-temperature, temperature), randomTemp(-temperature, temperature));
-        int x = (int) neighborsMedian.x;
-        int y = (int) neighborsMedian.y;
+        double x = neighborsMedian.x;
+        double y = neighborsMedian.y;
+
+        // closest free space to (x,y)
+
         // see if the cell at x,y is free
         Rectangle rectangle = Rectangle.of(x, y, cellSize, cellSize);
-        Set<Rectangle> occupiedRectangles = occupiedRectangles();
-        if (occupiedRectangles.contains(rectangle)) {
+        if (!mappings.empty(rectangle)) {
+//          Set<Rectangle> occupiedRectangles = occupiedRectangles();
+//        if (occupiedRectangles.contains(rectangle)) {
           // need a different cell
           Collection<Rectangle> potentialCells =
-              this.findNearbyEmptyCells(rectangle, cellSize, occupiedRectangles);
+              this.findNearbyEmptyCells(rectangle, cellSize);
           // find which one has the least edge len to neighbors
           double min = Double.MAX_VALUE;
           Rectangle winner = null;
@@ -145,19 +123,19 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
           }
           if (winner == rectangle) {
             // try to swap with nearby cell
-            Rectangle closest = closestTo(rectangle, occupiedRectangles);
+            Rectangle closest = closestTo(rectangle, potentialCells);
             // the vertex in the closest cell
             V closestCellVertex = mappings.get(closest);
-            mappings.update(closestCellVertex, rectangle);
-            mappings.update(v, closest);
+            mappings.accept(closestCellVertex, rectangle);
+            mappings.accept(v, closest);
 
           } else if (winner != null) {
-            mappings.update(v, winner);
+            mappings.accept(v, winner);
           } else {
             log.error("no winner");
           }
         } else {
-          mappings.update(v, rectangle);
+          mappings.accept(v, rectangle);
         }
       }
       //            log.info("cells size: {}", vertexToRectangleMap.size());
@@ -187,11 +165,12 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
         int y = (int) neighborsMedian.y;
         // see if the cell at x,y is free
         Rectangle rectangle = Rectangle.of(x, y, cellSize, cellSize);
-        Set<Rectangle> occupiedRectangles = occupiedRectangles();
-        if (occupiedRectangles.contains(rectangle)) {
+        if (!mappings.empty(rectangle)) {
+//        Set<Rectangle> occupiedRectangles = occupiedRectangles();
+//        if (occupiedRectangles.contains(rectangle)) {
           // need a different cell
           Collection<Rectangle> potentialCells =
-              this.findNearbyEmptyCells(rectangle, cellSize, occupiedRectangles);
+              this.findNearbyEmptyCells(rectangle, cellSize);
           // find which one has the least edge len to neighbors
           double min = Double.MAX_VALUE;
           Rectangle winner = null;
@@ -204,18 +183,18 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
           }
           if (winner == rectangle) {
             // try to swap with nearby cell
-            Rectangle closest = closestTo(rectangle, occupiedRectangles);
+            Rectangle closest = closestTo(rectangle, potentialCells);
             // the vertex in the closest cell
             V closestCellVertex = mappings.get(closest);
-            mappings.update(closestCellVertex, rectangle);
-            mappings.update(v, closest);
+            mappings.accept(closestCellVertex, rectangle);
+            mappings.accept(v, closest);
           } else if (winner != null) {
-            mappings.update(v, winner);
+            mappings.accept(v, winner);
           } else {
             log.error("no winner");
           }
         } else {
-          mappings.update(v, rectangle);
+          mappings.accept(v, rectangle);
         }
         //                log.info("cells size: {}", cells.size());
       }
@@ -236,9 +215,11 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
     ////    for (Map.Entry<V, Rectangle> entry : vertexToRectangleMap.entrySet()) {
     ////      layoutModel.set(entry.getKey(), 1 * entry.getValue().x, 1 * entry.getValue().y);
     ////    }
+
+    normalize(layoutModel);
     for (V v : graph.vertexSet()) {
       Rectangle r = mappings.get(v);
-      layoutModel.set(v, r.min());
+      layoutModel.set(v, r.min().multiply(layoutModel.getWidth() / gridSize));
     }
     //
     //    log.info("layoutModel locations: {}", layoutModel.getLocations());
@@ -279,6 +260,32 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
     System.err.println("-------");
   }
 
+  /**
+   * move over so there are no negative values
+   * @param layoutModel
+   */
+  protected void normalize(LayoutModel<V> layoutModel) {
+    Collection<Point> mins = mappings.rectangles().stream().map(Rectangle::min)
+            .collect(Collectors.toSet());
+    Rectangle extent = computeLayoutExtent(mins);
+    log.info("extent was {}", extent);
+    int offsetX = extent.x < 0 ? -(int)extent.x : 0;
+    int offsetY = extent.y < 0 ? -(int)extent.y : 0;
+    mappings.entries().forEach(e -> mappings.accept(e.getKey(),
+            e.getValue().offset(offsetX, offsetY)));
+    log.info("with {}, {}, normalized to {}", offsetX, offsetY,
+            mappings.rectangles().stream().map(Rectangle::min)
+                    .collect(Collectors.toSet()));
+
+  }
+
+  protected void expand(int gridSize) {
+    for (V v : graph.vertexSet()) {
+      Rectangle r = mappings.get(v);
+      layoutModel.set(v, r.min().multiply(layoutModel.getWidth() / gridSize));
+    }
+
+  }
   protected void centerIt(LayoutModel<V> layoutModel, Collection<List<Point>> articulations) {
     Rectangle extent = Expansion.computeLayoutExtent2(layoutModel, articulations);
     // width of extent
@@ -322,12 +329,58 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
               Rectangle r = mappings.get(v);
               cells.add(Cell.of(v, r.x, r.y, r.width, r.height));
             });
-    Compaction.of(cells, direction, gamma, mappings::update);
+    Compaction.of(cells, direction, gamma, mappings::accept);
 
     log.info("mappings are {}", mappings.getVertexToRectangleMap());
     log.info("cells are {}", cells);
-    Expansion.expandToFillBothAxes(
-        Rectangle.of(0, 0, layoutModel.getWidth(), layoutModel.getHeight()), mappings);
+    if (expand) {
+      Expansion.expandToFillBothAxes(
+              Rectangle.of(0, 0, layoutModel.getWidth(), layoutModel.getHeight()), mappings);
+    }
+  }
+
+  Rectangle closestFreeRectangleTo(double x, double y) {
+    return closestFreeRectangleTo(x, y, 1);
+  }
+
+  /**
+   * Find the closest free rectangle to the provided (x, y)
+   * @param x
+   * @param y
+   * @param i
+   * @return
+   */
+  Rectangle closestFreeRectangleTo(double x, double y, int i) {
+    Set<Rectangle> rectangles = new HashSet<>();
+    Rectangle r = Rectangle.of((int)x, (int)y);
+    if (!mappings.rectangles().contains(r)) {
+      rectangles.add(r);
+    }
+    r = Rectangle.of((int)x, (int)(y+i));
+    if (!mappings.rectangles().contains(r)) {
+      rectangles.add(r);
+    }
+    r = Rectangle.of((int)(x+i), (int)y);
+    if (!mappings.rectangles().contains(r)) {
+      rectangles.add(r);
+    }
+    r = Rectangle.of((int)(x+i), (int)(y+i));
+    if (!mappings.rectangles().contains(r)) {
+      rectangles.add(r);
+    }
+
+    if (rectangles.isEmpty()) {
+      // no free rectangles within 'i', increment i and go again
+      return closestFreeRectangleTo(x, y, i+1);
+    }
+    Rectangle closestRectangle = null;
+    double leastManhattanDistance = Double.MAX_VALUE;
+    for (Rectangle rec : rectangles) {
+      if (manhattanDistance(rec.min(), Point.of(x, y)) < leastManhattanDistance) {
+        closestRectangle = rec;
+      }
+    }
+    return closestRectangle;
   }
 
   /**
@@ -372,7 +425,7 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
                 y = (int) (Math.random() * gridSize);
                 rectangle = Rectangle.of(x, y, 1, 1);
               }
-              mappings.update(v, rectangle);
+              mappings.accept(v, rectangle);
               //            cells.put(v, cell);
               //            cell.setOccupant(v);
               //            cells.add(cell);
@@ -398,22 +451,19 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
   }
 
   Collection<Rectangle> findNearbyEmptyCells(
-      Rectangle cell, int dist, Set<Rectangle> occupiedRectangles) {
-    // compute once
-    if (occupiedRectangles == null) {
-      occupiedRectangles = occupiedRectangles();
-    }
-    Set<Rectangle> occupied = occupiedRectangles;
+      Rectangle cell, int dist) {
     // remove any neighbors whose Rectangles are already occupied
-    List<Rectangle> neighbors =
-        neighborsOf(cell, dist)
+    List<Rectangle> neighbors = // neighbors that are empty
+        neighborsOf(cell, dist);
+    neighbors
             .stream()
-            .filter(c -> !occupied.contains(c))
+//                .filter(c -> !mappings.empty(c))
+            .filter(c -> !occupiedRectangles().contains(c))
             .collect(Collectors.toList());
     if (!neighbors.isEmpty()) {
       return neighbors;
     } else {
-      return findNearbyEmptyCells(cell, ++dist, occupiedRectangles);
+      return findNearbyEmptyCells(cell, ++dist);
     }
   }
 
@@ -482,6 +532,16 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
     }
   }
 
+  /**
+   *
+   * @param v
+   * @param x
+   * @param y
+   */
+  void putVertexNearXY(V v, int x, int y) {
+
+  }
+
   // w'(i)
   int widthInGrid(V v, int c) {
     return (int) Math.ceil((vertexDimensionFunction.apply(v).width + delta) / c);
@@ -537,7 +597,7 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
     return (int) Math.sqrt(a * a + b * b);
   }
 
-  Point vcp(V v) {
+   Point vcp(V v) {
     // find the upper-left for the Rectangle containing v
 
     Rectangle r = mappings.get(v);
@@ -589,6 +649,17 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
     double distance = euclideanDistance(vi, vj) + Math.min(lhn / lhd, rhn / rhd) / 20.0;
     return (int) distance;
   }
+
+  double manhattanDistance(V vi, V vj) {
+    Point vcpi = vcp(vi);
+    Point vcpj = vcp(vj);
+    return Math.abs(vcpi.x - vcpj.x) + Math.abs(vcpi.y - vcpj.y);
+  }
+
+  double manhattanDistance(Point pi, Point pj) {
+    return Math.abs(pi.x - pj.x) + Math.abs(pi.y - pj.y);
+  }
+
 
   int distance(Rectangle cell, V vi, V vj) {
     int c = computeGridCell();
@@ -648,17 +719,21 @@ public class OrthogonalLayoutAlgorithm<V, E> extends AbstractLayoutAlgorithm<V>
                 .map(w -> mappings.get(w))
                 .map(ce -> Point.of(ce.x, ce.y))
                 .collect(Collectors.toList())
-            :
+            : Collections.emptyList();
             // all other vertices
-            graph
-                .vertexSet()
-                .stream()
-                .filter(vertex -> vertex != v)
-                .map(w -> mappings.get(w))
-                .map(ce -> Point.of(ce.x, ce.y))
-                .collect(Collectors.toList());
+//            graph
+//                .vertexSet()
+//                .stream()
+//                .filter(vertex -> vertex != v)
+//                .map(w -> mappings.get(w))
+//                .map(ce -> Point.of(ce.x, ce.y))
+//                .collect(Collectors.toList());
 
     int count = points.size();
+    if (count == 0) {
+      Rectangle r = mappings.get(v);
+      return Point.of(r.x, r.y);
+    }
     int medianIndex = (count - 1) / 2;
     // sort the list by x, get median, sort by y, get median
     points.sort(Comparator.comparingDouble(p -> p.x));

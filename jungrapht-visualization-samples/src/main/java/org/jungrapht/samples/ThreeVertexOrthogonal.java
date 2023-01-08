@@ -8,19 +8,17 @@
  */
 package org.jungrapht.samples;
 
-import java.awt.*;
-import java.util.stream.IntStream;
-import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
-import org.jungrapht.samples.util.TestGraphs;
-import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.layout.algorithms.orthogonal.OrthogonalLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.jungrapht.visualization.util.LayoutPaintable;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.stream.IntStream;
 
 /**
  * A demo that shows a minimal visualization configuration
@@ -30,23 +28,18 @@ import org.jungrapht.visualization.util.LayoutPaintable;
  *
  * @author Tom Nelson
  */
-public class MinimalOrthogonal2 {
+public class ThreeVertexOrthogonal {
 
-  private MinimalOrthogonal2() {
+  private ThreeVertexOrthogonal() {
 
-    VisualizationViewer<String, Integer> vv =
-        VisualizationViewer.builder(TestGraphs.createDirectedAcyclicGraph(9, 3, .2, 5L))
+    VisualizationViewer<Integer, Integer> vv =
+        VisualizationViewer.builder(createGraph())
             .viewSize(new Dimension(700, 700))
-            .layoutAlgorithm(OrthogonalLayoutAlgorithm.<String, Integer>builder()
-                    .build())
+            .layoutAlgorithm(OrthogonalLayoutAlgorithm.<Integer, Integer>builder().build())
             .build();
 
-    //    vv.getRenderContext().setVertexShapeFunction(v -> new Ellipse2D.Double(-1, -1, 2, 2));
-    LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
+    LayoutModel<Integer> layoutModel = vv.getVisualizationModel().getLayoutModel();
     vv.setVertexToolTipFunction(v -> v + " p:" + layoutModel.apply(v));
-    VisualizationServer.Paintable layoutBounds = new LayoutPaintable.LayoutBounds(vv, 1, 1);
-
-    vv.addPreRenderPaintable(layoutBounds);
     // create a frame to hold the graph visualization
     final JFrame frame = new JFrame();
     frame.getContentPane().add(vv.getComponent());
@@ -56,7 +49,7 @@ public class MinimalOrthogonal2 {
   }
 
   public static void main(String[] args) {
-    new MinimalOrthogonal2();
+    new ThreeVertexOrthogonal();
   }
 
   private Graph<Integer, Integer> createGraph() {
@@ -65,26 +58,9 @@ public class MinimalOrthogonal2 {
             .edgeSupplier(SupplierUtil.createIntegerSupplier())
             .buildGraph();
 
-    IntStream.rangeClosed(0, 10).forEach(graph::addVertex);
+    IntStream.rangeClosed(0, 2).forEach(graph::addVertex);
     graph.addEdge(0, 1);
-    graph.addEdge(3, 0);
-    graph.addEdge(0, 4);
-    graph.addEdge(4, 5);
-    graph.addEdge(5, 3);
-    graph.addEdge(2, 1);
-    graph.addEdge(4, 1);
-    graph.addEdge(8, 2);
-    graph.addEdge(3, 8);
-    graph.addEdge(6, 7);
-    graph.addEdge(7, 5);
-    graph.addEdge(0, 9);
-    graph.addEdge(9, 8);
-    graph.addEdge(7, 6);
-    graph.addEdge(6, 5);
-    graph.addEdge(4, 2);
-    graph.addEdge(5, 4);
-    graph.addEdge(4, 10);
-    graph.addEdge(10, 4);
+    graph.addEdge(1, 2);
 
     return graph;
   }

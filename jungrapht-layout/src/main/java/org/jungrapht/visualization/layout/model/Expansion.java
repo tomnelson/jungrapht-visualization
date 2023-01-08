@@ -144,7 +144,7 @@ public class Expansion {
     double verticalDelta = layoutRectangle.y - mappingRectangle.y;
 
     // move each mapping
-    for (V v : mappings.vertices()) {
+    for (V v : mappings.vertices().stream().collect(Collectors.toList())) {
       Rectangle r = mappings.get(v);
       Rectangle newr =
           Rectangle.of(
@@ -152,7 +152,7 @@ public class Expansion {
               (r.y + verticalDelta) * verticalExpansion,
               r.width,
               r.height);
-      mappings.update(v, newr);
+      mappings.accept(v, newr);
       log.info("updated for {} from {} to {}", v, r.min(), newr.min());
     }
 

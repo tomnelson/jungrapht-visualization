@@ -76,7 +76,7 @@ public class OrthogonalLayoutAlgorithmThreaded<V, E> extends AbstractLayoutAlgor
     this.graph = layoutModel.getGraph();
     int gridSize = this.initialGridSize();
     log.info("initialGridSize: {}", gridSize);
-    layoutModel.setSize(gridSize, gridSize);
+    layoutModel.setSize(600, 600);
     int vertexCount = graph.vertexSet().size();
     this.vertexList = new ArrayList<>(graph.vertexSet());
     this.placeVerticesRandomlyInGridSpace(graph, gridSize);
@@ -212,7 +212,7 @@ public class OrthogonalLayoutAlgorithmThreaded<V, E> extends AbstractLayoutAlgor
     if (occupiedRectangles.contains(rectangle)) {
       // need a different cell
       Collection<Rectangle> potentialCells =
-          this.findNearbyEmptyCells(rectangle, cellSize, occupiedRectangles);
+          this.findNearbyEmptyCells(rectangle, cellSize);
       // find which one has the least edge len to neighbors
       double min = Double.MAX_VALUE;
       Rectangle winner = null;
@@ -228,16 +228,16 @@ public class OrthogonalLayoutAlgorithmThreaded<V, E> extends AbstractLayoutAlgor
         Rectangle closest = closestTo(rectangle, occupiedRectangles);
         // the vertex in the closest cell
         V closestCellVertex = mappings.get(closest);
-        mappings.update(closestCellVertex, rectangle);
-        mappings.update(v, closest);
+        mappings.accept(closestCellVertex, rectangle);
+        mappings.accept(v, closest);
 
       } else if (winner != null) {
-        mappings.update(v, winner);
+        mappings.accept(v, winner);
       } else {
         log.error("no winner");
       }
     } else {
-      mappings.update(v, rectangle);
+      mappings.accept(v, rectangle);
     }
   }
 
@@ -252,11 +252,10 @@ public class OrthogonalLayoutAlgorithmThreaded<V, E> extends AbstractLayoutAlgor
     int y = (int) neighborsMedian.y;
     // see if the cell at x,y is free
     Rectangle rectangle = Rectangle.of(x, y, cellSize, cellSize);
-    Set<Rectangle> occupiedRectangles = occupiedRectangles();
-    if (occupiedRectangles.contains(rectangle)) {
-      // need a different cell
+    if (!mappings.empty(rectangle)) {
+//        // need a different cell
       Collection<Rectangle> potentialCells =
-          this.findNearbyEmptyCells(rectangle, cellSize, occupiedRectangles);
+          this.findNearbyEmptyCells(rectangle, cellSize);
       // find which one has the least edge len to neighbors
       double min = Double.MAX_VALUE;
       Rectangle winner = null;
@@ -269,18 +268,18 @@ public class OrthogonalLayoutAlgorithmThreaded<V, E> extends AbstractLayoutAlgor
       }
       if (winner == rectangle) {
         // try to swap with nearby cell
-        Rectangle closest = closestTo(rectangle, occupiedRectangles);
+        Rectangle closest = closestTo(rectangle, potentialCells);
         // the vertex in the closest cell
         V closestCellVertex = mappings.get(closest);
-        mappings.update(closestCellVertex, rectangle);
-        mappings.update(v, closest);
+        mappings.accept(closestCellVertex, rectangle);
+        mappings.accept(v, closest);
       } else if (winner != null) {
-        mappings.update(v, winner);
+        mappings.accept(v, winner);
       } else {
         log.error("no winner");
       }
     } else {
-      mappings.update(v, rectangle);
+      mappings.accept(v, rectangle);
     }
   }
 
@@ -353,12 +352,14 @@ public class OrthogonalLayoutAlgorithmThreaded<V, E> extends AbstractLayoutAlgor
               Rectangle r = mappings.get(v);
               cells.add(Cell.of(v, r.x, r.y, r.width, r.height));
             });
-    Compaction.of(cells, direction, gamma, mappings::update);
+    Compaction.of(cells, direction, gamma, mappings::accept);
 
     log.info("mappings are {}", mappings.getVertexToRectangleMap());
     log.info("cells are {}", cells);
-    Expansion.expandToFillBothAxes(
-        Rectangle.of(0, 0, layoutModel.getWidth(), layoutModel.getHeight()), mappings);
+    if (expand) {
+      Expansion.expandToFillBothAxes(
+              Rectangle.of(0, 0, layoutModel.getWidth(), layoutModel.getHeight()), mappings);
+    }
   }
 
   /**
@@ -403,7 +404,7 @@ public class OrthogonalLayoutAlgorithmThreaded<V, E> extends AbstractLayoutAlgor
                 y = (int) (Math.random() * gridSize);
                 rectangle = Rectangle.of(x, y, 1, 1);
               }
-              mappings.update(v, rectangle);
+              mappings.accept(v, rectangle);
               //            cells.put(v, cell);
               //            cell.setOccupant(v);
               //            cells.add(cell);
@@ -429,22 +430,18 @@ public class OrthogonalLayoutAlgorithmThreaded<V, E> extends AbstractLayoutAlgor
   }
 
   Collection<Rectangle> findNearbyEmptyCells(
-      Rectangle cell, int dist, Set<Rectangle> occupiedRectangles) {
-    // compute once
-    if (occupiedRectangles == null) {
-      occupiedRectangles = occupiedRectangles();
-    }
-    Set<Rectangle> occupied = occupiedRectangles;
+      Rectangle cell, int dist) {
     // remove any neighbors whose Rectangles are already occupied
-    List<Rectangle> neighbors =
+    List<Rectangle> neighbors = // neighbors that are empty
         neighborsOf(cell, dist)
             .stream()
-            .filter(c -> !occupied.contains(c))
+                .filter(c -> !mappings.empty(c))
+//            .filter(c -> !occupied.contains(c))
             .collect(Collectors.toList());
     if (!neighbors.isEmpty()) {
       return neighbors;
     } else {
-      return findNearbyEmptyCells(cell, ++dist, occupiedRectangles);
+      return findNearbyEmptyCells(cell, ++dist);
     }
   }
 
