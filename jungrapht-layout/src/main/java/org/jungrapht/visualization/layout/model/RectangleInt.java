@@ -7,23 +7,23 @@ import java.util.Objects;
  *
  * @author Tom Nelson
  */
-public class Rectangle {
+public class RectangleInt {
 
   /** x location of upper-left corner */
-  public final double x;
+  public final int x;
   /** y location of upper left corner */
-  public final double y;
+  public final int y;
   /** width (x dimension) */
-  public final double width;
+  public final int width;
   /** height (y dimension */
-  public final double height;
+  public final int height;
   /** x location of lower right corner */
-  public final double maxX;
+  public final int maxX;
   /** y location of lower right corner */
-  public final double maxY;
+  public final int maxY;
 
   /** identity rectangle of zero size at origin */
-  public static Rectangle IDENTITY = new Rectangle(0, 0, 0, 0);
+  public static RectangleInt IDENTITY = new RectangleInt(0, 0, 0, 0);
 
   /**
    * @param x location of upper left corner
@@ -32,16 +32,16 @@ public class Rectangle {
    * @param height size in y dimension
    * @return a new Rectangle with the passed properties
    */
-  public static Rectangle of(int x, int y, int width, int height) {
-    return new Rectangle(x, y, width, height);
+  public static RectangleInt of(int x, int y, int width, int height) {
+    return new RectangleInt(x, y, width, height);
   }
 
-  public static Rectangle of(Point p, int width, int height) {
-    return new Rectangle(p.x, p.y, width, height);
+  public static RectangleInt of(Point p, int width, int height) {
+    return new RectangleInt(p.x, p.y, width, height);
   }
 
-  public static Rectangle of(int width, int height) {
-    return new Rectangle(0, 0, width, height);
+  public static RectangleInt of(int width, int height) {
+    return new RectangleInt(0, 0, width, height);
   }
 
   /**
@@ -51,12 +51,12 @@ public class Rectangle {
    * @param height size in y dimension
    * @return a new Rectangle with the passed properties
    */
-  public static Rectangle of(double x, double y, double width, double height) {
-    return new Rectangle(x, y, width, height);
+  public static RectangleInt of(double x, double y, double width, double height) {
+    return new RectangleInt(x, y, width, height);
   }
 
-  public static Rectangle from(Point min, Point max) {
-    return new Rectangle(min.x, min.y, max.x - min.x, max.y - min.y);
+  public static RectangleInt from(Point min, Point max) {
+    return new RectangleInt(min.x, min.y, max.x - min.x, max.y - min.y);
   }
 
   /**
@@ -65,15 +65,15 @@ public class Rectangle {
    * @param width horizontal size of rectangle when aligned
    * @param height vertical size of rectangle when aligned
    */
-  public Rectangle(double x, double y, double width, double height) {
+  public RectangleInt(double x, double y, double width, double height) {
     if (width < 0 || height < 0)
       throw new IllegalArgumentException("width and height must be non-negative");
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
-    this.maxX = x + width;
-    this.maxY = y + height;
+    this.x = (int)x;
+    this.y = (int)y;
+    this.width = (int)width;
+    this.height = (int)height;
+    this.maxX = this.x + this.width;
+    this.maxY = this.y + this.height;
   }
 
   /** @return the x coordinate of the center of this Rectangle */
@@ -92,17 +92,17 @@ public class Rectangle {
    * @param other another Rectangle to compare
    * @return whether there is a non-zero intersection of the 2 shapes
    */
-  public boolean intersects(Rectangle other) {
+  public boolean intersects(RectangleInt other) {
     return maxX >= other.x && other.maxX >= x && maxY >= other.y && other.maxY >= y;
   }
 
-  public Rectangle intersect(Rectangle other) {
+  public RectangleInt intersect(RectangleInt other) {
     if (this.intersects(other)) {
-      return Rectangle.from(
+      return RectangleInt.from(
           Point.of(Math.max(this.x, other.x), Math.max(this.y, other.y)),
           Point.of(Math.min(this.maxX, other.maxX), Math.min(this.maxY, other.maxY)));
     } else {
-      return Rectangle.of(0, 0);
+      return RectangleInt.of(0, 0);
     }
   }
 
@@ -144,8 +144,8 @@ public class Rectangle {
    * @param y vertical offset
    * @return a new Rectangle offset by the passed coordinates
    */
-  public Rectangle offset(double x, double y) {
-    return new Rectangle(this.x + x, this.y + y, this.width, this.height);
+  public RectangleInt offset(double x, double y) {
+    return new RectangleInt(this.x + x, this.y + y, this.width, this.height);
   }
 
   /**
@@ -155,12 +155,12 @@ public class Rectangle {
    * @param newY y coordinate of expansion point
    * @return a new Rectangle that was expanded to include the passed coordinates
    */
-  public Rectangle union(double newX, double newY) {
+  public RectangleInt union(double newX, double newY) {
     double x1 = Math.min(x, newX);
     double x2 = Math.max(maxX, newX);
     double y1 = Math.min(y, newY);
     double y2 = Math.max(maxY, newY);
-    return new Rectangle(x1, y1, x2 - x1, y2 - y1);
+    return new RectangleInt(x1, y1, x2 - x1, y2 - y1);
   }
 
   /**
@@ -169,12 +169,12 @@ public class Rectangle {
    * @param other
    * @return
    */
-  public Rectangle union(Rectangle other) {
+  public RectangleInt union(RectangleInt other) {
     double minX = Math.min(this.x, other.x);
     double minY = Math.min(this.y, other.y);
     double maxX = Math.max(this.maxX, other.maxX);
     double maxY = Math.max(this.maxY, other.maxY);
-    return Rectangle.of(minX, minY, maxX - minX, maxY - minY);
+    return RectangleInt.of(minX, minY, maxX - minX, maxY - minY);
   }
 
   public Dimension getSize() {
@@ -191,7 +191,7 @@ public class Rectangle {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    Rectangle rectangle = (Rectangle) o;
+    RectangleInt rectangle = (RectangleInt) o;
     return Double.compare(rectangle.x, x) == 0
         && Double.compare(rectangle.y, y) == 0
         && Double.compare(rectangle.width, width) == 0

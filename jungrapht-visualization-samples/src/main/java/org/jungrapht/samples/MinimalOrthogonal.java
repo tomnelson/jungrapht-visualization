@@ -34,8 +34,12 @@ public class MinimalOrthogonal {
     VisualizationViewer<Integer, Integer> vv =
         VisualizationViewer.builder(createGraph())
             .viewSize(new Dimension(700, 700))
-            .layoutAlgorithm(OrthogonalLayoutAlgorithm.<Integer, Integer>builder().build())
+//            .layoutAlgorithm(OrthogonalLayoutAlgorithm.<Integer, Integer>builder().build())
             .build();
+    vv.getVisualizationModel().setLayoutAlgorithm(
+            OrthogonalLayoutAlgorithm.<Integer, Integer>builder()
+                    .vertexBoundsFunction(vv.getRenderContext().getVertexBoundsFunction())
+                    .build());
 
     LayoutModel<Integer> layoutModel = vv.getVisualizationModel().getLayoutModel();
     vv.setVertexToolTipFunction(v -> v + " p:" + layoutModel.apply(v));

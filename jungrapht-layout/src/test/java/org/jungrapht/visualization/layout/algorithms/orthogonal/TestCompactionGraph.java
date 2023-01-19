@@ -3,10 +3,13 @@ package org.jungrapht.visualization.layout.algorithms.orthogonal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.layout.model.Rectangle;
+import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +44,66 @@ public class TestCompactionGraph {
     }
     log.info("compactionGraph: {}", compactionGraph);
   }
+
+  @Test
+  public void testThreeVerticesInRow() {
+    Mappings<String> mappings = new Mappings<>();
+    List<Cell<String>> cells = new ArrayList<>();
+    cells.add(Cell.of("V1", 1, 1, 1, 1));
+    cells.add(Cell.of("V2", 3, 1, 1, 1));
+    cells.add(Cell.of("V3", 6, 1, 1, 1));
+    Compaction.of(cells, Compaction.Direction.HORIZONTAL, 1, mappings::accept);
+    Assert.assertTrue(
+            mappings.vertices().containsAll(cells.stream()
+                    .map(c -> c.occupant).collect(Collectors.toList())));
+    Assert.assertTrue(
+            mappings.rectangles().containsAll(
+                    List.of(Rectangle.of(1,1,1,1),
+                            Rectangle.of(3,1,1,1),
+                            Rectangle.of(5,1,1,1))));
+    log.info("mappings: {}", mappings);
+  }
+
+  @Test
+  public void testThreeSizedVerticesInRow() {
+    Mappings<String> mappings = new Mappings<>();
+    List<Cell<String>> cells = new ArrayList<>();
+    cells.add(Cell.of("V1", 1, 1, 1, 1));
+    cells.add(Cell.of("V2", 3, 1, 1, 1));
+    cells.add(Cell.of("V3", 6, 1, 1, 1));
+    Compaction.of(cells, Compaction.Direction.HORIZONTAL, 1,
+            v -> Rectangle.of(0,0,5,5), mappings::accept);
+    Assert.assertTrue(
+            mappings.vertices().containsAll(cells.stream()
+                    .map(c -> c.occupant).collect(Collectors.toList())));
+    Assert.assertTrue(
+            mappings.rectangles().containsAll(
+                    List.of(Rectangle.of(1,1,1,1),
+                            Rectangle.of(7,1,1,1),
+                            Rectangle.of(13,1,1,1))));
+    log.info("mappings: {}", mappings);
+  }
+
+
+  @Test
+  public void testThreeVerticesInColumn() {
+    Mappings<String> mappings = new Mappings<>();
+    List<Cell<String>> cells = new ArrayList<>();
+    cells.add(Cell.of("V1", 1, 1, 1, 1));
+    cells.add(Cell.of("V2", 1, 4, 1, 1));
+    cells.add(Cell.of("V3", 1, 6, 1, 1));
+    Compaction.of(cells, Compaction.Direction.VERTICAL, 1, mappings::accept);
+    Assert.assertTrue(
+            mappings.vertices().containsAll(cells.stream()
+                    .map(c -> c.occupant).collect(Collectors.toList())));
+    Assert.assertTrue(
+            mappings.rectangles().containsAll(
+                    List.of(Rectangle.of(1,1,1,1),
+                            Rectangle.of(1,3,1,1),
+                            Rectangle.of(1,5,1,1))));
+    log.info("mappings: {}", mappings);
+  }
+
 
   boolean obstructs(Rectangle one, Rectangle two) {
     return two.y + two.height > one.y && two.y < one.y + one.height;

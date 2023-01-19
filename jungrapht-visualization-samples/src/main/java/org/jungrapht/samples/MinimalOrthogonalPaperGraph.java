@@ -8,9 +8,6 @@
  */
 package org.jungrapht.samples;
 
-import java.awt.*;
-import java.util.stream.IntStream;
-import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
@@ -22,6 +19,10 @@ import org.jungrapht.visualization.layout.algorithms.orthogonal.OrthogonalLayout
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.util.LayoutPaintable;
 
+import javax.swing.*;
+import java.awt.*;
+import java.util.stream.IntStream;
+
 /**
  * A demo that shows a minimal visualization configuration
  *
@@ -30,16 +31,18 @@ import org.jungrapht.visualization.util.LayoutPaintable;
  *
  * @author Tom Nelson
  */
-public class MinimalOrthogonal2 {
+public class MinimalOrthogonalPaperGraph {
 
-  private MinimalOrthogonal2() {
+  private MinimalOrthogonalPaperGraph() {
 
     VisualizationViewer<String, Integer> vv =
-        VisualizationViewer.builder(TestGraphs.createDirectedAcyclicGraph(9, 3, .2, 5L))
+        VisualizationViewer.builder(paperGraph())
+            //    VisualizationViewer.builder(TestGraphs.createDirectedAcyclicGraph(9, 3, .2, 5L))
             .viewSize(new Dimension(700, 700))
-//            .layoutAlgorithm(OrthogonalLayoutAlgorithm.<String, Integer>builder()
-//                    .build())
+            //            .layoutAlgorithm(OrthogonalLayoutAlgorithmThreaded.<String, Integer>builder().build())
+//            .layoutAlgorithm(OrthogonalLayoutAlgorithm.<String, Integer>builder().build())
             .build();
+
     vv.getVisualizationModel().setLayoutAlgorithm(
             OrthogonalLayoutAlgorithm.<String, Integer>builder()
                     .vertexBoundsFunction(vv.getRenderContext().getVertexBoundsFunction())
@@ -48,6 +51,8 @@ public class MinimalOrthogonal2 {
     //    vv.getRenderContext().setVertexShapeFunction(v -> new Ellipse2D.Double(-1, -1, 2, 2));
     LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
     vv.setVertexToolTipFunction(v -> v + " p:" + layoutModel.apply(v));
+    vv.getRenderContext().setVertexLabelFunction(v -> layoutModel.apply(v).toString());
+
     VisualizationServer.Paintable layoutBounds = new LayoutPaintable.LayoutBounds(vv, 1, 1);
 
     vv.addPreRenderPaintable(layoutBounds);
@@ -60,7 +65,29 @@ public class MinimalOrthogonal2 {
   }
 
   public static void main(String[] args) {
-    new MinimalOrthogonal2();
+    new MinimalOrthogonalPaperGraph();
+  }
+
+  static Graph<String, Integer> paperGraph() {
+    Graph<String, Integer> graph = GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.dag())
+            .edgeSupplier(SupplierUtil.createIntegerSupplier())
+            .buildGraph();
+    IntStream.rangeClosed(1,6).forEach(n ->
+            graph.addVertex("V" + n));
+
+    graph.addEdge("V1", "V2");
+    graph.addEdge("V1", "V6");
+    graph.addEdge("V2", "V4");
+    graph.addEdge("V2", "V3");
+    graph.addEdge("V2", "V5");
+    graph.addEdge("V2", "V6");
+    graph.addEdge("V3", "V4");
+    graph.addEdge("V3", "V5");
+    graph.addEdge("V4", "V1");
+    graph.addEdge("V4", "V6");
+    graph.addEdge("V5", "V4");
+    graph.addEdge("V6", "V5");
+    return graph;
   }
 
   private Graph<Integer, Integer> createGraph() {

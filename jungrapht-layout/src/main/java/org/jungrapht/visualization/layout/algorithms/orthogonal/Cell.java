@@ -2,6 +2,8 @@ package org.jungrapht.visualization.layout.algorithms.orthogonal;
 
 import org.jungrapht.visualization.layout.model.Rectangle;
 
+import java.util.Objects;
+
 public class Cell<V> {
 
   protected V occupant;
@@ -21,6 +23,10 @@ public class Cell<V> {
    */
   public static <V> Cell of(V v, double x, double y, double width, double height) {
     return new Cell(v, Rectangle.of(x, y, width, height));
+  }
+
+  public static <V> Cell of(V v, Rectangle r) {
+    return new Cell(v, r);
   }
 
   public static Cell of(double width, double height) {
@@ -57,6 +63,19 @@ public class Cell<V> {
 
   public double getHeight() {
     return rectangle.height;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Cell<?> cell = (Cell<?>) o;
+    return occupant.equals(cell.occupant);// && rectangle.equals(cell.rectangle);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(occupant);
   }
 
   @Override
