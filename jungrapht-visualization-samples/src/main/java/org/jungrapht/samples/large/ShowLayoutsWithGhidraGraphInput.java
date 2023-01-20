@@ -23,6 +23,7 @@ import org.jungrapht.visualization.control.DefaultGraphMouse;
 import org.jungrapht.visualization.control.DefaultLensGraphMouse;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.*;
+import org.jungrapht.visualization.layout.algorithms.orthogonal.OrthogonalLayoutAlgorithm;
 import org.jungrapht.visualization.transform.*;
 import org.jungrapht.visualization.transform.shape.HyperbolicShapeTransformer;
 import org.jungrapht.visualization.transform.shape.MagnifyShapeTransformer;
@@ -163,6 +164,11 @@ public class ShowLayoutsWithGhidraGraphInput extends JFrame {
                   if (layoutAlgorithm instanceof EdgePredicated) {
                     ((EdgePredicated<AI>) layoutAlgorithm)
                         .setEdgePredicate(new EdgePredicate(graph));
+                  }
+                  if (layoutAlgorithm instanceof OrthogonalLayoutAlgorithm) {
+                    ((OrthogonalLayoutAlgorithm)layoutAlgorithm).setVertexBoundsFunction(
+                            vv.getRenderContext().getVertexBoundsFunction()
+                    );
                   }
                   if (animateLayoutTransition.isSelected()) {
                     LayoutAlgorithmTransition.animate(vv, layoutAlgorithm);

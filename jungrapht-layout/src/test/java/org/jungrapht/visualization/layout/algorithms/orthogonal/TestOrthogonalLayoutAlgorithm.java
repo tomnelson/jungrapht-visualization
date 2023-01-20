@@ -40,8 +40,8 @@ public class TestOrthogonalLayoutAlgorithm {
     public void testMappingsToFillLayoutModel() {
         IntStream.range(0,10).forEach(n -> {
             graph.addVertex("V"+n);
-            mappings.accept("V" + n, Rectangle.of(
-                    Math.random() * 100 - 50, Math.random() * 100 - 50, 1, 1));
+            mappings.accept("V" + n, Point.of(
+                    Math.random() * 100 - 50, Math.random() * 100 - 50));
                 }
         );
         layoutAlgorithm.mappingsToFillLayoutModel(mappings, layoutModel);
@@ -100,9 +100,9 @@ public class TestOrthogonalLayoutAlgorithm {
         int initialGridSize = layoutAlgorithm.initialGridSize();
         Assert.assertEquals(8, initialGridSize);
         this.mappings = layoutAlgorithm.mappings;
-        mappings.accept("V0", Rectangle.of(Point.of(0,0),1,1));
-        mappings.accept("V1", Rectangle.of(Point.of(0,0),1,1));
-        mappings.accept("V2", Rectangle.of(Point.of(7,0),1,1));
+        mappings.accept("V0", Point.of(0,0));
+        mappings.accept("V1", Point.of(0,0));
+        mappings.accept("V2", Point.of(7,0));
 
         double sqrtVertexCount = Math.sqrt(vertexCount);
         double temperature = 2 * sqrtVertexCount;
@@ -137,12 +137,12 @@ public class TestOrthogonalLayoutAlgorithm {
     @Test
     public void testClosestFreeRectangleTo() {
         Mappings<String> mappings = layoutAlgorithm.mappings;
-        mappings.accept("A", Rectangle.of(0,0, 1, 1));
-        mappings.accept("B", Rectangle.of(0,1, 1, 1));
-        mappings.accept("C", Rectangle.of(1,0, 1, 1));
-        mappings.accept("D", Rectangle.of(1,1,1, 1));
+        mappings.accept("A", Point.of(0,0));
+        mappings.accept("B", Point.of(0,1));
+        mappings.accept("C", Point.of(1,0));
+        mappings.accept("D", Point.of(1,1));
 
-        Rectangle closestFree = layoutAlgorithm.closestFreeRectangleTo(.2, .2);
+        Point closestFree = layoutAlgorithm.closestFreeRectangleTo(.2, .2);
         log.info("closest is {}", closestFree);
 
 

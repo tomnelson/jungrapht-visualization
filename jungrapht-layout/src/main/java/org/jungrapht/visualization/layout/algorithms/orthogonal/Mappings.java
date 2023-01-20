@@ -1,6 +1,5 @@
 package org.jungrapht.visualization.layout.algorithms.orthogonal;
 
-import org.jgrapht.Graph;
 import org.jungrapht.visualization.layout.algorithms.util.PointSummaryStatistics;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
@@ -9,15 +8,15 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * a double mapping of vertex to rectangle and rectangle to vertex.
- * As each Rectangle can contain only one vertex, any update of a vertex to
- * a new Rectangle must first remove the previous rectangleToVertex mapping
+ * a double mapping of vertex to Point and Point to vertex.
+ * As each Point can locate only one vertex, any update of a vertex to
+ * a new Point must first remove the previous rectangleToVertex mapping
  * @param <V>
  */
 public class Mappings<V> {
 
-  private Map<V, Rectangle> vertexToRectangleMap = new HashMap<>();
-  private Map<Rectangle, V> rectangleToVertexMap = new HashMap<>();
+  private Map<V, Point> vertexToPointMap = new HashMap<>();
+  private Map<Point, V> pointToVertexMap = new HashMap<>();
 
 
   static <V> Mappings<V> copy(Mappings<V> mappings) {
@@ -27,114 +26,121 @@ public class Mappings<V> {
   }
   /**
    *
-   * @param v  to map to rectangle
-   * @param rectangle to map to v
+   * @param v  to map to Point
+   * @param point to map to v
    * @return true if there was a change
    */
-  public boolean accept(V v, Rectangle rectangle) {
-    return update(v, rectangle);
+  public boolean accept(V v, Point point) {
+    return update(v, point);
   }
 
-  private void confirmIntegrity() {
-    if (vertexToRectangleMap.size() != rectangleToVertexMap.size()) {
-      throw new IllegalArgumentException("sizes differ "+vertexToRectangleMap.size()+" != "+
-              rectangleToVertexMap.size());
+  void confirmIntegrity() {
+    if (vertexToPointMap.size() != pointToVertexMap.size()) {
+      throw new IllegalArgumentException("sizes differ "+ vertexToPointMap.size()+" != "+
+              pointToVertexMap.size());
     }
-    for (V v : vertexToRectangleMap.keySet()) {
-      Rectangle r = vertexToRectangleMap.get(v);
-      if (!rectangleToVertexMap.get(r).equals(v)) {
-        throw new  IllegalArgumentException("Mismatch in Mappings "+vertexToRectangleMap+" and "+rectangleToVertexMap);
+    for (V v : vertexToPointMap.keySet()) {
+      Point r = vertexToPointMap.get(v);
+      if (!pointToVertexMap.get(r).equals(v)) {
+        throw new  IllegalArgumentException("Mismatch in Mappings "+ vertexToPointMap +" and "+ pointToVertexMap);
       }
     }
   }
 
-  private boolean update(V v, Rectangle r) {
+  private boolean update(V v, Point r) {
     confirmIntegrity();
     if (!empty(r)) {
       return false; // the passed Rectangle is not empty
     }
     // clear out the old Rectangle for v
-    rectangleToVertexMap.remove(vertexToRectangleMap.get(v));
-    vertexToRectangleMap.put(v, r);
-    rectangleToVertexMap.put(r, v);
+    pointToVertexMap.remove(vertexToPointMap.get(v));
+    vertexToPointMap.put(v, r);
+    pointToVertexMap.put(r, v);
     confirmIntegrity();
     return true;
   }
 
-  private boolean forceUpdate(V v, Rectangle r) {
-//    confirmIntegrity();
-//    if (!empty(r)) {
-//      return false; // the passed Rectangle is not empty
-//    }
-    // clear out the old Rectangle for v
-    rectangleToVertexMap.remove(vertexToRectangleMap.get(v));
-    vertexToRectangleMap.put(v, r);
-    rectangleToVertexMap.put(r, v);
-//    confirmIntegrity();
+  private boolean forceUpdates(Set<Map.Entry<V, Point>> entries) {
+    vertexToPointMap.clear();
+    pointToVertexMap.clear();
+    entries.forEach(e -> accept(e.getKey(), e.getValue()));
+    confirmIntegrity();
+////    if (!empty(r)) {
+////      return false; // the passed Rectangle is not empty
+////    }
+//    // clear out the old Rectangle for v
+//    pointToVertexMap.remove(vertexToPointMap.get(v));
+//    vertexToPointMap.put(v, r);
+//    pointToVertexMap.put(r, v);
+////    confirmIntegrity();
     return true;
   }
 
 
-  public V get(Rectangle r) {
-    return rectangleToVertexMap.get(r);
+  public V get(Point r) {
+    return pointToVertexMap.get(r);
   }
 
-  public Rectangle get(V v) {
-    return vertexToRectangleMap.get(v);
+  public Point get(V v) {
+    return vertexToPointMap.get(v);
   }
 
-  public boolean empty(Rectangle r) {
-    return !rectangleToVertexMap.containsKey(r);
+  public boolean empty(Point r) {
+    return !pointToVertexMap.containsKey(r);
   }
 
-  public boolean empty(Point p) {
-    return !rectangleToVertexMap.containsKey(Rectangle.of(p, 1, 1));
-  }
+//  public boolean empty(Point p) {
+//    return !rectangleToVertexMap.containsKey(Rectangle.of(p, 1, 1));
+//  }
 
-  public Collection<Rectangle> rectangles() {
-    return rectangleToVertexMap.keySet();
+  public Collection<Point> rectangles() {
+    return pointToVertexMap.keySet();
   }
 
   public Collection<V> vertices() {
-    return vertexToRectangleMap.keySet();
+    return vertexToPointMap.keySet();
   }
 
-  public Set<Map.Entry<V, Rectangle>> entries() {
-    return vertexToRectangleMap.entrySet();
+  public Set<Map.Entry<V, Point>> entries() {
+    return vertexToPointMap.entrySet();
   }
 
-  public Map<V, Rectangle> getVertexToRectangleMap() {
-    return vertexToRectangleMap;
+  public Map<V, Point> getVertexToPointMap() {
+    return vertexToPointMap;
   }
 
   /**
    * move over so there are no negative values
    */
   protected void normalize() {
-    Collection<Point> mins = rectangles().stream().map(Rectangle::min)
+    Collection<Point> mins = rectangles().stream()//.map(Rectangle::min)
             .collect(Collectors.toSet());
     Rectangle extent = computeExtent(mins);
     double offsetX = extent.x < 0 ? -extent.x : 0;
     double offsetY = extent.y < 0 ? -extent.y : 0;
-    entries().forEach(e -> forceUpdate(e.getKey(),
-            e.getValue().offset(offsetX, offsetY)));
+    Map<V, Point> newMap = new HashMap<>();
+    entries().forEach(e -> newMap.put(e.getKey(),
+            e.getValue().add(offsetX, offsetY)));
+    forceUpdates(newMap.entrySet());
   }
   protected Rectangle computeExtent() {
     Collection<Point> points = new HashSet<>();
     rectangles().forEach(r -> {
-      points.add(r.min());
-      points.add(r.max());
+      points.add(r);
+//      points.add(r.max());
     });
     return computeExtent(points);
   }
 
   void swap(V v1, V v2) {
-    Cell<V> cell1 = Cell.of(v1, this.get(v1));
-    Cell<V> cell2 = Cell.of(v2, this.get(v2));
-    vertexToRectangleMap.put(cell1.occupant, cell2.rectangle);
-    rectangleToVertexMap.put(cell2.rectangle, cell1.occupant);
-    vertexToRectangleMap.put(cell2.occupant, cell1.rectangle);
-    rectangleToVertexMap.put(cell1.rectangle, cell2.occupant);
+    Point p1 = get(v1);
+    Point p2 = get(v2);
+//    Cell<V> cell1 = Cell.of(v1, this.get(v1));
+//    Cell<V> cell2 = Cell.of(v2, this.get(v2));
+    vertexToPointMap.put(v1, p2);
+    pointToVertexMap.put(p2, v1);
+    vertexToPointMap.put(v2, p1);
+    pointToVertexMap.put(p1, v2);
   }
 
 //  Mappings<V> createSwappedMappings(V v1, V v2) {
@@ -161,7 +167,7 @@ public class Mappings<V> {
   @Override
   public String toString() {
     return "Mappings{" +
-            "vertexToRectangleMap=" + vertexToRectangleMap +
+            "vertexToRectangleMap=" + vertexToPointMap +
             '}';
   }
 }

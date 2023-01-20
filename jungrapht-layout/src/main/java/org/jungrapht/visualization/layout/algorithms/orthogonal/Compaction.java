@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
+import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +50,7 @@ public abstract class Compaction<V> {
           Collection<Cell<V>> cells,
           Direction direction,
           double gamma,
-          BiConsumer<V, Rectangle> updateMaps) {
+          BiConsumer<V, Point> updateMaps) {
     Compaction<V> compaction =
             direction == Direction.HORIZONTAL ?
                     new Horizontal<>(gamma, v -> Rectangle.of(0, 0, 1, 1)) :
@@ -64,7 +65,7 @@ public abstract class Compaction<V> {
       Direction direction,
       double gamma,
       Function<V, Rectangle> vertexDimensionFunction,
-      BiConsumer<V, Rectangle> updateMaps) {
+      BiConsumer<V, Point> updateMaps) {
     Compaction<V> compaction =
         direction == Direction.HORIZONTAL ?
                 new Horizontal<>(gamma, vertexDimensionFunction) :
@@ -103,7 +104,7 @@ public abstract class Compaction<V> {
     return compactionGraph;
   }
 
-  void compact(Graph<Cell<V>, Integer> compactionGraph, BiConsumer<V, Rectangle> updateMaps) {
+  void compact(Graph<Cell<V>, Integer> compactionGraph, BiConsumer<V, Point> updateMaps) {
     // for every edge in the compaction graph, move the trailing (sink) vertex
     // closer to its source vertex
     // update the Rectangles in the Graph which will update the original
@@ -116,7 +117,7 @@ public abstract class Compaction<V> {
             .filter(v -> compactionGraph.inDegreeOf(v) == 0)
             .collect(Collectors.toList());
     // ensure that the initial roots are in the Mappings
-    roots.forEach(c -> updateMaps.accept(c.occupant, c.rectangle));
+    roots.forEach(c -> updateMaps.accept(c.occupant, c.rectangle.min()));
     while (roots.size() > 0) {
       for (Cell<V> root : roots) {
         // process the outgoing edges of the roots
@@ -129,7 +130,7 @@ public abstract class Compaction<V> {
           Rectangle newRectangle = movedRectangleFunction.apply(newXorY, target.getRectangle());
           //                                Rectangle.of (newX, target.getY(), target.getWidth(), target.getHeight());
           target.setRectangle(newRectangle);
-          updateMaps.accept(target.occupant, newRectangle);
+          updateMaps.accept(target.occupant, newRectangle.min());
           // move each sink closer to its source
           // remove the roots from the compactionGraph then repeat
           log.trace("length of edge {} now {}", edge, edgeLengthFunction.apply(edge));

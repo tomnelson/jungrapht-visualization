@@ -1,5 +1,6 @@
 package org.jungrapht.visualization.layout.algorithms.orthogonal;
 
+import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
 import org.junit.Assert;
 import org.junit.Test;
@@ -12,11 +13,11 @@ public class TestMappings {
 
     @Test
     public void testAddRemove() {
-        Rectangle r0011 = Rectangle.of(0,0,1,1);
-        Rectangle r0111 = Rectangle.of(0,1,1,1);
-        Rectangle r1011 = Rectangle.of(1,0,1,1);
-        Rectangle r1111 = Rectangle.of(1,1,1,1);
-        Rectangle r2211 = Rectangle.of(2,2,1,1);
+        Point r0011 = Point.of(0,0);
+        Point r0111 = Point.of(0,1);
+        Point r1011 = Point.of(1,0);
+        Point r1111 = Point.of(1,1);
+        Point r2211 = Point.of(2,2);
         // map 4 of the Rectangles
         mappings.accept("A", r0011);
         mappings.accept("B", r0111);
@@ -53,8 +54,8 @@ public class TestMappings {
         for(int i=0; i<10; i++) {
             Mappings<String> mappings = new Mappings<>();
             IntStream.range(0,10).forEach(n ->
-                    mappings.accept("V"+n, Rectangle.of(
-                            Math.random()*100-50, Math.random()*100-50, 1, 1))
+                    mappings.accept("V"+n, Point.of(
+                            Math.random()*100-50, Math.random()*100-50))
             );
             mappings.normalize();
             Assert.assertTrue(

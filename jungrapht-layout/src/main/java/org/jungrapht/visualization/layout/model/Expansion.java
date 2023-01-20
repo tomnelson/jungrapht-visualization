@@ -123,7 +123,7 @@ public class Expansion {
   public static <V, E> void expandToFillBothAxes(Rectangle layoutRectangle, Mappings<V> mappings) {
 
     // find the Rectangle that contains all mapping Rectangles
-    Rectangle mappingRectangle = Expansion.computeRectanglesExtent(mappings.rectangles());
+    Rectangle mappingRectangle = Expansion.computePointsExtent(mappings.rectangles());
     if (mappingRectangle.width > layoutRectangle.width
         || mappingRectangle.height > layoutRectangle.height) {
       layoutRectangle =
@@ -145,15 +145,13 @@ public class Expansion {
 
     // move each mapping
     for (V v : mappings.vertices().stream().collect(Collectors.toList())) {
-      Rectangle r = mappings.get(v);
-      Rectangle newr =
-          Rectangle.of(
+      Point r = mappings.get(v);
+      Point newr =
+          Point.of(
               (r.x + horizontalDelta) * horizontalExpansion,
-              (r.y + verticalDelta) * verticalExpansion,
-              r.width,
-              r.height);
+              (r.y + verticalDelta) * verticalExpansion);
       mappings.accept(v, newr);
-      log.info("updated for {} from {} to {}", v, r.min(), newr.min());
+      log.info("updated for {} from {} to {}", v);
     }
 
     //    Expansion.expandToFillBothAxes(layoutModel,

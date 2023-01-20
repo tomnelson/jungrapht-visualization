@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
+import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
 import org.junit.Assert;
 import org.junit.Test;
@@ -58,9 +59,9 @@ public class TestCompactionGraph {
                     .map(c -> c.occupant).collect(Collectors.toList())));
     Assert.assertTrue(
             mappings.rectangles().containsAll(
-                    List.of(Rectangle.of(1,1,1,1),
-                            Rectangle.of(3,1,1,1),
-                            Rectangle.of(5,1,1,1))));
+                    List.of(Point.of(1,1),
+                            Point.of(3,1),
+                            Point.of(5,1))));
     log.info("mappings: {}", mappings);
   }
 
@@ -78,9 +79,9 @@ public class TestCompactionGraph {
                     .map(c -> c.occupant).collect(Collectors.toList())));
     Assert.assertTrue(
             mappings.rectangles().containsAll(
-                    List.of(Rectangle.of(1,1,1,1),
-                            Rectangle.of(7,1,1,1),
-                            Rectangle.of(13,1,1,1))));
+                    List.of(Point.of(1,1),
+                            Point.of(7,1),
+                            Point.of(13,1))));
     log.info("mappings: {}", mappings);
   }
 
@@ -98,9 +99,9 @@ public class TestCompactionGraph {
                     .map(c -> c.occupant).collect(Collectors.toList())));
     Assert.assertTrue(
             mappings.rectangles().containsAll(
-                    List.of(Rectangle.of(1,1,1,1),
-                            Rectangle.of(1,3,1,1),
-                            Rectangle.of(1,5,1,1))));
+                    List.of(Point.of(1,1),
+                            Point.of(1,3),
+                            Point.of(1,5))));
     log.info("mappings: {}", mappings);
   }
 
