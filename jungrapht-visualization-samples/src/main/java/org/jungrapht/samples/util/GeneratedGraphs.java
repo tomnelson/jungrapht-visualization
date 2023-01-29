@@ -29,6 +29,8 @@ public class GeneratedGraphs {
           GeneratedGraphs::getWattsStrogatzGraphGeneratedGraph,
           "PruferTree",
           GeneratedGraphs::getPruferTreeGeneratedGraph,
+          "Grid",
+          GeneratedGraphs::getGridGeneratedGraph,
           "Complete",
           GeneratedGraphs::getCompleteGraphGeneratedGraph);
 
@@ -65,6 +67,10 @@ public class GeneratedGraphs {
 
   public static Graph<String, Integer> getPlantedPartitionGeneratedGraph() {
     return directed.apply(new PlantedPartitionGraphGenerator<>(4, 10, .7, .2));
+  }
+
+  public static Graph<String, Integer> getGridGeneratedGraph() {
+    return directed.apply(new GridGraphGenerator<>(10, 10));
   }
 
   public static Graph<String, Integer> getStarGraphGeneratedGraph() {

@@ -40,6 +40,8 @@ public abstract class Compaction<V> {
 
   Function<Cell<V>, Double> offsetFunction;
 
+  Function<Cell<V>, Rectangle> normalizeFunction;
+
   Graph<Cell<V>, Integer> compactionGraph;
 
   Function<Integer, Double> edgeLengthFunction;
@@ -118,6 +120,8 @@ public abstract class Compaction<V> {
             .collect(Collectors.toList());
     // ensure that the initial roots are in the Mappings
     roots.forEach(c -> updateMaps.accept(c.occupant, c.rectangle.min()));
+    // move the initial roots to 0
+    roots.forEach(cell -> cell.setRectangle(normalizeFunction.apply(cell)));
     while (roots.size() > 0) {
       for (Cell<V> root : roots) {
         // process the outgoing edges of the roots
@@ -173,6 +177,8 @@ public abstract class Compaction<V> {
       this.movedRectangleFunction = (z, r) -> Rectangle.of(z, r.y, r.width, r.height);
       this.offsetFunction = cell -> cell.getX() +
               vertexDimensionFunction.apply(cell.occupant).width + gamma;
+      this.normalizeFunction = cell ->
+              Rectangle.of(0, cell.getY(), cell.getWidth(), cell.getHeight());
       this.edgeLengthFunction =
           e -> {
             Cell<V> source = compactionGraph.getEdgeSource(e);
@@ -193,6 +199,8 @@ public abstract class Compaction<V> {
       this.offsetFunction = cell -> cell.getY() +
               vertexDimensionFunction.apply(cell.occupant).height
               + gamma;
+      this.normalizeFunction = cell ->
+              Rectangle.of(cell.getX(), 0, cell.getWidth(), cell.getHeight());
       this.edgeLengthFunction =
           e -> {
             Cell<V> source = compactionGraph.getEdgeSource(e);

@@ -13,11 +13,12 @@ import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.samples.util.LayoutGrid;
-import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
+import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.orthogonal.OrthogonalLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
+import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.util.LayoutPaintable;
 
 import javax.swing.*;
@@ -32,28 +33,32 @@ import java.util.stream.IntStream;
  *
  * @author Tom Nelson
  */
-public class MinimalOrthogonalPaperGraph {
+public class MinimalOrthogonalMeshGraph {
 
-  private MinimalOrthogonalPaperGraph() {
-
+  private MinimalOrthogonalMeshGraph() {
 
     VisualizationViewer<String, Integer> vv =
-        VisualizationViewer.builder(paperGraph())
+        VisualizationViewer.builder(meshGraph())
             //    VisualizationViewer.builder(TestGraphs.createDirectedAcyclicGraph(9, 3, .2, 5L))
             .viewSize(new Dimension(700, 700))
             //            .layoutAlgorithm(OrthogonalLayoutAlgorithmThreaded.<String, Integer>builder().build())
 //            .layoutAlgorithm(OrthogonalLayoutAlgorithm.<String, Integer>builder().build())
             .build();
+
     vv.getVisualizationModel().setLayoutAlgorithm(
+//            KKLayoutAlgorithm.<String>builder().build());
             OrthogonalLayoutAlgorithm.<String, Integer>builder()
                     .vertexBoundsFunction(vv.getRenderContext().getVertexBoundsFunction())
                     .build());
-    vv.addPreRenderPaintable(new LayoutGrid(vv, 12));
 
     //    vv.getRenderContext().setVertexShapeFunction(v -> new Ellipse2D.Double(-1, -1, 2, 2));
     LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
     vv.setVertexToolTipFunction(v -> v + " p:" + layoutModel.apply(v));
-    vv.getRenderContext().setVertexLabelFunction(v -> layoutModel.apply(v).toString());
+    vv.getRenderContext().setVertexLabelFunction(Object::toString);
+    vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.CNTR);
+    vv.getRenderContext().setVertexLabelDrawPaintFunction(v ->Color.white);
+
+    vv.addPreRenderPaintable(new LayoutGrid(vv, 15));
 
     VisualizationServer.Paintable layoutBounds = new LayoutPaintable.LayoutBounds(vv, 1, 1);
 
@@ -67,28 +72,28 @@ public class MinimalOrthogonalPaperGraph {
   }
 
   public static void main(String[] args) {
-    new MinimalOrthogonalPaperGraph();
+    new MinimalOrthogonalMeshGraph();
   }
 
-  static Graph<String, Integer> paperGraph() {
+  static Graph<String, Integer> meshGraph() {
     Graph<String, Integer> graph = GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.dag())
             .edgeSupplier(SupplierUtil.createIntegerSupplier())
             .buildGraph();
-    IntStream.rangeClosed(1,6).forEach(n ->
+    IntStream.rangeClosed(1,9).forEach(n ->
             graph.addVertex("V" + n));
 
     graph.addEdge("V1", "V2");
-    graph.addEdge("V1", "V6");
-    graph.addEdge("V2", "V4");
     graph.addEdge("V2", "V3");
+    graph.addEdge("V4", "V5");
+    graph.addEdge("V5", "V6");
+    graph.addEdge("V7", "V8");
+    graph.addEdge("V8", "V9");
+    graph.addEdge("V1", "V4");
+    graph.addEdge("V4", "V7");
     graph.addEdge("V2", "V5");
-    graph.addEdge("V2", "V6");
-    graph.addEdge("V3", "V4");
-    graph.addEdge("V3", "V5");
-    graph.addEdge("V4", "V1");
-    graph.addEdge("V4", "V6");
-    graph.addEdge("V5", "V4");
-    graph.addEdge("V6", "V5");
+    graph.addEdge("V5", "V8");
+    graph.addEdge("V3", "V6");
+    graph.addEdge("V6", "V9");
     return graph;
   }
 

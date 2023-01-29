@@ -68,6 +68,7 @@ public class L2RTreeLayoutDemo extends JPanel {
     graph = DemoTreeSupplier.createTreeOne();
 
     treeLayoutAlgorithm = new TreeLayoutAlgorithm();
+
     radialLayoutAlgorithm = new RadialTreeLayoutAlgorithm<>();
     final DefaultGraphMouse<String, Integer> graphMouse = new DefaultGraphMouse<>();
 
@@ -77,25 +78,28 @@ public class L2RTreeLayoutDemo extends JPanel {
             .graphMouse(graphMouse)
             .build();
 
+    treeLayoutAlgorithm.setAfter(new LtoR(vv.getVisualizationModel().getLayoutModel()));
+
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     // add a listener for ToolTips
     vv.setVertexToolTipFunction(Object::toString);
     vv.getRenderContext().setArrowFillPaintFunction(a -> Color.lightGray);
 
-    vv.getVisualizationModel()
-        .getLayoutModel()
-        .getLayoutStateChangeSupport()
-        .addLayoutStateChangeListener(
-            evt -> {
-              if (!evt.active) {
-                LayoutModel<String> layoutModel = evt.layoutModel;
-                layoutModel
-                    .getLocations()
-                    .forEach(
-                        (v, p) -> layoutModel.set(v, Point.of(p.y, layoutModel.getWidth() - p.x)));
-              }
-            });
+//    vv.getVisualizationModel()
+//        .getLayoutModel()
+//        .getLayoutStateChangeSupport()
+//        .addLayoutStateChangeListener(
+//            evt -> {
+//              if (!evt.active) {
+//                LayoutModel<String> layoutModel = evt.layoutModel;
+//                layoutModel
+//                    .getLocations()
+//                    .forEach(
+//                        (v, p) -> layoutModel.set(v, Point.of(
+//                                layoutModel.getHeight() - p.y,  p.x)));
+//              }
+//            });
 
     vv.getVisualizationModel().setLayoutAlgorithm(treeLayoutAlgorithm);
 
@@ -127,6 +131,23 @@ public class L2RTreeLayoutDemo extends JPanel {
     controls.add(ControlHelpers.getCenteredContainer("Layout Control", radial));
     controls.add(ControlHelpers.getCenteredContainer("Scale", ControlHelpers.getZoomControls(vv)));
     add(controls, BorderLayout.SOUTH);
+  }
+
+  class LtoR<V> implements Runnable {
+    LayoutModel<V> layoutModel;
+    LtoR(LayoutModel layoutModel) {
+      this.layoutModel = layoutModel;
+    }
+
+    @Override
+    public void run() {
+      layoutModel
+              .getLocations()
+              .forEach(
+                      (v, p) -> layoutModel.set(v, Point.of(
+                              layoutModel.getHeight() - p.y,  p.x)));
+
+    }
   }
 
   class Rings implements VisualizationServer.Paintable {

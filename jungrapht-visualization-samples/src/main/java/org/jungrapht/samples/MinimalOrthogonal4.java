@@ -50,7 +50,7 @@ public class MinimalOrthogonal4 {
             //    vv.getRenderContext().setVertexShapeFunction(v -> new Ellipse2D.Double(-1, -1, 2, 2));
     LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
     vv.setVertexToolTipFunction(v -> v + " p:" + layoutModel.apply(v));
-    vv.getRenderContext().setVertexLabelFunction(v -> layoutModel.apply(v).toString());
+//    vv.getRenderContext().setVertexLabelFunction(v -> layoutModel.apply(v).toString());
 
     VisualizationServer.Paintable layoutBounds = new LayoutPaintable.LayoutBounds(vv, 1, 1);
 

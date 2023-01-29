@@ -23,6 +23,7 @@ import org.jungrapht.visualization.layout.algorithms.SpringLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TidierRadialTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TidierTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.orthogonal.OrthogonalLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFA2Repulsion;
 
 public class LayoutFunction<V>
@@ -78,6 +79,7 @@ public class LayoutFunction<V>
           Layout.of("Tidier Radial Tree", TidierRadialTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()),
           Layout.of("EdgeAware Tree", EdgeAwareTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()),
           Layout.of("Multirow Tree", MultiRowTreeLayoutAlgorithm.<V>builder()),
+          Layout.of("Orthogonal", OrthogonalLayoutAlgorithm.<V,E>builder()),
           Layout.of(
               "EdgeAwareMultirow Tree",
               MultiRowEdgeAwareTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()),

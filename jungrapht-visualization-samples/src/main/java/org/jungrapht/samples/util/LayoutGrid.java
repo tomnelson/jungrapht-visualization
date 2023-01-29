@@ -43,11 +43,11 @@ public class LayoutGrid implements VisualizationServer.Paintable {
         path.lineTo(rectangle.x, rectangle.height);
         path.lineTo(rectangle.x, rectangle.y);
 
-        for (int i = 0; i <= rectangle.width; i += rectangle.width / 10) {
+        for (int i = 0; i <= rectangle.width; i += rectangle.width / divisions) {
             path.moveTo(rectangle.x + i, rectangle.y);
             path.lineTo(rectangle.x + i, rectangle.height);
         }
-        for (int i = 0; i <= rectangle.height; i += rectangle.height / 10) {
+        for (int i = 0; i <= rectangle.height; i += rectangle.height / divisions) {
             path.moveTo(rectangle.x, rectangle.y + i);
             path.lineTo(rectangle.width, rectangle.y + i);
         }
