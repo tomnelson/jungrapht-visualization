@@ -37,6 +37,7 @@ import org.jungrapht.visualization.layout.algorithms.TreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.PolarPoint;
+import org.jungrapht.visualization.layout.util.LeftToRight;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,25 +78,13 @@ public class L2RTreeLayoutDemo extends JPanel {
             .graphMouse(graphMouse)
             .build();
 
+    treeLayoutAlgorithm.setAfter(new LeftToRight<>(vv.getVisualizationModel().getLayoutModel()));
+
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     // add a listener for ToolTips
     vv.setVertexToolTipFunction(Object::toString);
     vv.getRenderContext().setArrowFillPaintFunction(a -> Color.lightGray);
-
-    vv.getVisualizationModel()
-        .getLayoutModel()
-        .getLayoutStateChangeSupport()
-        .addLayoutStateChangeListener(
-            evt -> {
-              if (!evt.active) {
-                LayoutModel<String> layoutModel = evt.layoutModel;
-                layoutModel
-                    .getLocations()
-                    .forEach(
-                        (v, p) -> layoutModel.set(v, Point.of(p.y, layoutModel.getWidth() - p.x)));
-              }
-            });
 
     vv.getVisualizationModel().setLayoutAlgorithm(treeLayoutAlgorithm);
 

@@ -12,6 +12,7 @@ import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
+import org.jungrapht.visualization.layout.util.LeftToRight;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.jungrapht.visualization.transform.MutableTransformer;
 import org.slf4j.Logger;
@@ -37,6 +38,7 @@ public class EiglspergerLayoutDemoLtoR extends JFrame {
         EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .postStraighten(true)
             .threaded(false)
+            .after(new LeftToRight<>(vv.getVisualizationModel().getLayoutModel()))
             .build();
     layoutAlgorithm3.setVertexBoundsFunction(vv.getRenderContext().getVertexBoundsFunction());
     vv.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm3);
@@ -47,7 +49,7 @@ public class EiglspergerLayoutDemoLtoR extends JFrame {
     add(container);
     pack();
     setVisible(true);
-    setLtoR();
+    //    setLtoR();
   }
 
   private void setLtoR() {

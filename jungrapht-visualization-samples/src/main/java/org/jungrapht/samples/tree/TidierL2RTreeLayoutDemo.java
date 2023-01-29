@@ -37,6 +37,7 @@ import org.jungrapht.visualization.layout.algorithms.TidierTreeLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.PolarPoint;
+import org.jungrapht.visualization.layout.util.LeftToRight;
 import org.jungrapht.visualization.util.LayoutPaintable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,26 +82,14 @@ public class TidierL2RTreeLayoutDemo extends JPanel {
             .layoutSize(new Dimension(600, 600))
             .graphMouse(graphMouse)
             .build();
+
+    treeLayoutAlgorithm.setAfter(new LeftToRight<>(vv.getVisualizationModel().getLayoutModel()));
     treeLayoutAlgorithm.setVertexBoundsFunction(vv.getRenderContext().getVertexBoundsFunction());
     radialLayoutAlgorithm.setVertexBoundsFunction(vv.getRenderContext().getVertexBoundsFunction());
     vv.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
     vv.setVertexToolTipFunction(Object::toString);
     vv.getRenderContext().setArrowFillPaintFunction(a -> Color.lightGray);
-
-    vv.getVisualizationModel()
-        .getLayoutModel()
-        .getLayoutStateChangeSupport()
-        .addLayoutStateChangeListener(
-            evt -> {
-              if (!evt.active) {
-                LayoutModel<String> layoutModel = evt.layoutModel;
-                layoutModel
-                    .getLocations()
-                    .forEach(
-                        (v, p) -> layoutModel.set(v, Point.of(p.y, layoutModel.getWidth() - p.x)));
-              }
-            });
 
     vv.getVisualizationModel()
         .setLayoutAlgorithm(treeLayoutAlgorithm); // after the vertexShapeFunction is set
