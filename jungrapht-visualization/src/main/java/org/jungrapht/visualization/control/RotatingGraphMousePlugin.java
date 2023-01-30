@@ -84,7 +84,16 @@ public class RotatingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
    */
   public RotatingGraphMousePlugin(Builder<V, E, ?, ?> builder) {
     this.rotatingMask = builder.rotatingMask;
+    this.cursor = createCursor();
+  }
+
+  protected Cursor createCursor() {
     Dimension cd = Toolkit.getDefaultToolkit().getBestCursorSize(16, 16);
+    if (cd.width == 0 || cd.height == 0) {
+      // custom cursors not supported
+      log.warn("Custom Cursor not supported");
+      return Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
+    }
     BufferedImage cursorImage = new BufferedImage(cd.width, cd.height, BufferedImage.TYPE_INT_ARGB);
     Graphics2D g = cursorImage.createGraphics();
     g.addRenderingHints(
@@ -130,8 +139,7 @@ public class RotatingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
 
     g.dispose();
 
-    cursor =
-        Toolkit.getDefaultToolkit().createCustomCursor(cursorImage, new Point(), "RotateCursor");
+    return Toolkit.getDefaultToolkit().createCustomCursor(cursorImage, new Point(), "RotateCursor");
   }
 
   /**
