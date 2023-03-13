@@ -37,13 +37,14 @@ public class MinimalOrthogonal2 {
     VisualizationViewer<String, Integer> vv =
         VisualizationViewer.builder(TestGraphs.createDirectedAcyclicGraph(9, 3, .2, 5L))
             .viewSize(new Dimension(700, 700))
-//            .layoutAlgorithm(OrthogonalLayoutAlgorithm.<String, Integer>builder()
-//                    .build())
+            //            .layoutAlgorithm(OrthogonalLayoutAlgorithm.<String, Integer>builder()
+            //                    .build())
             .build();
-    vv.getVisualizationModel().setLayoutAlgorithm(
+    vv.getVisualizationModel()
+        .setLayoutAlgorithm(
             OrthogonalLayoutAlgorithm.<String, Integer>builder()
-                    .vertexBoundsFunction(vv.getRenderContext().getVertexBoundsFunction())
-                    .build());
+                .vertexBoundsFunction(vv.getRenderContext().getVertexBoundsFunction())
+                .build());
 
     //    vv.getRenderContext().setVertexShapeFunction(v -> new Ellipse2D.Double(-1, -1, 2, 2));
     LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();

@@ -86,20 +86,20 @@ public class L2RTreeLayoutDemo extends JPanel {
     vv.setVertexToolTipFunction(Object::toString);
     vv.getRenderContext().setArrowFillPaintFunction(a -> Color.lightGray);
 
-//    vv.getVisualizationModel()
-//        .getLayoutModel()
-//        .getLayoutStateChangeSupport()
-//        .addLayoutStateChangeListener(
-//            evt -> {
-//              if (!evt.active) {
-//                LayoutModel<String> layoutModel = evt.layoutModel;
-//                layoutModel
-//                    .getLocations()
-//                    .forEach(
-//                        (v, p) -> layoutModel.set(v, Point.of(
-//                                layoutModel.getHeight() - p.y,  p.x)));
-//              }
-//            });
+    //    vv.getVisualizationModel()
+    //        .getLayoutModel()
+    //        .getLayoutStateChangeSupport()
+    //        .addLayoutStateChangeListener(
+    //            evt -> {
+    //              if (!evt.active) {
+    //                LayoutModel<String> layoutModel = evt.layoutModel;
+    //                layoutModel
+    //                    .getLocations()
+    //                    .forEach(
+    //                        (v, p) -> layoutModel.set(v, Point.of(
+    //                                layoutModel.getHeight() - p.y,  p.x)));
+    //              }
+    //            });
 
     vv.getVisualizationModel().setLayoutAlgorithm(treeLayoutAlgorithm);
 
@@ -135,6 +135,7 @@ public class L2RTreeLayoutDemo extends JPanel {
 
   class LtoR<V> implements Runnable {
     LayoutModel<V> layoutModel;
+
     LtoR(LayoutModel layoutModel) {
       this.layoutModel = layoutModel;
     }
@@ -142,11 +143,8 @@ public class L2RTreeLayoutDemo extends JPanel {
     @Override
     public void run() {
       layoutModel
-              .getLocations()
-              .forEach(
-                      (v, p) -> layoutModel.set(v, Point.of(
-                              layoutModel.getHeight() - p.y,  p.x)));
-
+          .getLocations()
+          .forEach((v, p) -> layoutModel.set(v, Point.of(layoutModel.getHeight() - p.y, p.x)));
     }
   }
 

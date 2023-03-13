@@ -166,9 +166,8 @@ public class ShowLayoutsWithGhidraGraphInput extends JFrame {
                         .setEdgePredicate(new EdgePredicate(graph));
                   }
                   if (layoutAlgorithm instanceof OrthogonalLayoutAlgorithm) {
-                    ((OrthogonalLayoutAlgorithm)layoutAlgorithm).setVertexBoundsFunction(
-                            vv.getRenderContext().getVertexBoundsFunction()
-                    );
+                    ((OrthogonalLayoutAlgorithm) layoutAlgorithm)
+                        .setVertexBoundsFunction(vv.getRenderContext().getVertexBoundsFunction());
                   }
                   if (animateLayoutTransition.isSelected()) {
                     LayoutAlgorithmTransition.animate(vv, layoutAlgorithm);

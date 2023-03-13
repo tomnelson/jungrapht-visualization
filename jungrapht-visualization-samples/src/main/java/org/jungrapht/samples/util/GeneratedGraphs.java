@@ -1,8 +1,11 @@
 package org.jungrapht.samples.util;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.IntStream;
 import org.jgrapht.Graph;
 import org.jgrapht.generate.*;
 import org.jgrapht.graph.DefaultGraphType;
@@ -29,8 +32,10 @@ public class GeneratedGraphs {
           GeneratedGraphs::getWattsStrogatzGraphGeneratedGraph,
           "PruferTree",
           GeneratedGraphs::getPruferTreeGeneratedGraph,
-          "Grid",
-          GeneratedGraphs::getGridGeneratedGraph,
+          //          "Grid",
+          //          GeneratedGraphs::getGridGeneratedGraph,
+          "Partial Grid",
+          GeneratedGraphs::getPartialGridGeneratedGraph,
           "Complete",
           GeneratedGraphs::getCompleteGraphGeneratedGraph);
 
@@ -71,6 +76,14 @@ public class GeneratedGraphs {
 
   public static Graph<String, Integer> getGridGeneratedGraph() {
     return directed.apply(new GridGraphGenerator<>(10, 10));
+  }
+
+  public static Graph<String, Integer> getPartialGridGeneratedGraph() {
+    Graph<String, Integer> graph = directed.apply(new GridGraphGenerator<>(10, 10));
+    java.util.List<String> vertices = new ArrayList<>(graph.vertexSet());
+    Collections.shuffle(vertices);
+    IntStream.range(0, 10).mapToObj(vertices::get).forEach(graph::removeVertex);
+    return graph;
   }
 
   public static Graph<String, Integer> getStarGraphGeneratedGraph() {

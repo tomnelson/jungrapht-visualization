@@ -8,6 +8,9 @@
  */
 package org.jungrapht.samples;
 
+import java.awt.*;
+import java.util.stream.IntStream;
+import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
@@ -15,10 +18,6 @@ import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.layout.algorithms.orthogonal.OrthogonalLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.stream.IntStream;
 
 /**
  * A demo that shows a minimal visualization configuration

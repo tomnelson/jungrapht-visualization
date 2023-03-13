@@ -1,5 +1,6 @@
 package org.jungrapht.visualization.layout.model;
 
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
@@ -167,6 +168,55 @@ public class Point {
     Point other = (Point) o;
 
     return (Double.compare(other.x, x) == 0 && Double.compare(other.y, y) == 0);
+  }
+
+  public static Point geometricMedian(Collection<Point> points) {
+    double tpoints[][] = {{-1.0, 0.0}, {1.0, 0.0}, {0.0, 1.0}, {0.0, -1.0}};
+    double lowerlimit = 0.001;
+    int n = points.size();
+    Point currentPoint = Point.centroidOf(points);
+    // sum of dist from currPoint to all points
+    double sumOfDistances = points.stream().mapToDouble(currentPoint::distance).sum();
+    for (Point p : points) {
+      double d = points.stream().mapToDouble(p::distance).sum();
+      if (d < sumOfDistances) {
+        sumOfDistances = d;
+        currentPoint = p;
+      }
+    }
+
+    double dist = 150;
+
+    while (dist > lowerlimit) {
+      int flag = 0;
+
+      for (int i = 0; i < 4; i++) {
+        Point newPoint =
+            Point.of(
+                currentPoint.x + (double) dist * tpoints[i][0],
+                currentPoint.y + (double) dist * tpoints[i][1]);
+
+        double d = points.stream().mapToDouble(newPoint::distance).sum();
+        if (d < sumOfDistances) {
+          sumOfDistances = d;
+          currentPoint = Point.of(newPoint.x, newPoint.y);
+          flag = 1;
+          break;
+        }
+      }
+
+      // If none of the 4 neighbors that are at a distance of dist from the current point
+      // reduce the mindist, the step is big and we need to reduce the step size, thereby
+      // we will reduce it by 2
+
+      if (flag == 0) {
+        dist = dist / 2;
+      }
+    }
+
+    sumOfDistances = points.stream().mapToDouble(currentPoint::distance).sum();
+
+    return currentPoint;
   }
 
   /** @return hash value of properties (x, y) */

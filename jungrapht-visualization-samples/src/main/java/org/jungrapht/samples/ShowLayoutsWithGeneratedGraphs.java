@@ -18,6 +18,7 @@ import org.jungrapht.visualization.layout.algorithms.BalloonLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.KKLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.RadialTreeLayout;
+import org.jungrapht.visualization.layout.algorithms.orthogonal.OrthogonalLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.util.InitialDimensionFunction;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.util.GraphImage;
@@ -125,6 +126,10 @@ public class ShowLayoutsWithGeneratedGraphs extends JPanel {
                     radialLayoutRings =
                         new LayoutPaintable.RadialRings(vv, (RadialTreeLayout) layoutAlgorithm);
                     vv.addPreRenderPaintable(radialLayoutRings);
+                  }
+                  if (layoutAlgorithm instanceof OrthogonalLayoutAlgorithm) {
+                    ((OrthogonalLayoutAlgorithm) layoutAlgorithm)
+                        .setVertexBoundsFunction(vv.getRenderContext().getVertexBoundsFunction());
                   }
                   layoutBounds = new LayoutPaintable.LayoutBounds(vv);
                   vv.addPreRenderPaintable(layoutBounds);

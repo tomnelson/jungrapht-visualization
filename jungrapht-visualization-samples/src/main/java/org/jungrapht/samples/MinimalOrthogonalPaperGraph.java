@@ -8,21 +8,19 @@
  */
 package org.jungrapht.samples;
 
+import java.awt.*;
+import java.util.stream.IntStream;
+import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.samples.util.LayoutGrid;
-import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationServer;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.layout.algorithms.orthogonal.OrthogonalLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.util.LayoutPaintable;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.stream.IntStream;
 
 /**
  * A demo that shows a minimal visualization configuration
@@ -36,19 +34,20 @@ public class MinimalOrthogonalPaperGraph {
 
   private MinimalOrthogonalPaperGraph() {
 
-
     VisualizationViewer<String, Integer> vv =
         VisualizationViewer.builder(paperGraph())
             //    VisualizationViewer.builder(TestGraphs.createDirectedAcyclicGraph(9, 3, .2, 5L))
             .viewSize(new Dimension(700, 700))
             //            .layoutAlgorithm(OrthogonalLayoutAlgorithmThreaded.<String, Integer>builder().build())
-//            .layoutAlgorithm(OrthogonalLayoutAlgorithm.<String, Integer>builder().build())
+            //            .layoutAlgorithm(OrthogonalLayoutAlgorithm.<String, Integer>builder().build())
             .build();
-    vv.getVisualizationModel().setLayoutAlgorithm(
+    vv.getVisualizationModel()
+        .setLayoutAlgorithm(
             OrthogonalLayoutAlgorithm.<String, Integer>builder()
-                    .vertexBoundsFunction(vv.getRenderContext().getVertexBoundsFunction())
-                    .build());
-    vv.addPreRenderPaintable(new LayoutGrid(vv, 12));
+                .vertexBoundsFunction(vv.getRenderContext().getVertexBoundsFunction())
+                .build());
+    //    vv.addPreRenderPaintable(new LayoutGrid(vv, 12));
+    vv.addPreRenderPaintable(new LayoutGrid(vv));
 
     //    vv.getRenderContext().setVertexShapeFunction(v -> new Ellipse2D.Double(-1, -1, 2, 2));
     LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
@@ -71,11 +70,11 @@ public class MinimalOrthogonalPaperGraph {
   }
 
   static Graph<String, Integer> paperGraph() {
-    Graph<String, Integer> graph = GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.dag())
+    Graph<String, Integer> graph =
+        GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.dag())
             .edgeSupplier(SupplierUtil.createIntegerSupplier())
             .buildGraph();
-    IntStream.rangeClosed(1,6).forEach(n ->
-            graph.addVertex("V" + n));
+    IntStream.rangeClosed(1, 6).forEach(n -> graph.addVertex("V" + n));
 
     graph.addEdge("V1", "V2");
     graph.addEdge("V1", "V6");

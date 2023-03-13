@@ -68,10 +68,10 @@ public class RectangleInt {
   public RectangleInt(double x, double y, double width, double height) {
     if (width < 0 || height < 0)
       throw new IllegalArgumentException("width and height must be non-negative");
-    this.x = (int)x;
-    this.y = (int)y;
-    this.width = (int)width;
-    this.height = (int)height;
+    this.x = (int) x;
+    this.y = (int) y;
+    this.width = (int) width;
+    this.height = (int) height;
     this.maxX = this.x + this.width;
     this.maxY = this.y + this.height;
   }

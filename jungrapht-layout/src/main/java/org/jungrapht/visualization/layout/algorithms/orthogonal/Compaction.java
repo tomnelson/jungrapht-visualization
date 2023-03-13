@@ -29,8 +29,7 @@ public abstract class Compaction<V> {
 
   double gamma;
 
-  public Function<V, Rectangle> IDENTITY_VERTEX_DIMENSION_FUNCTION =
-          v -> Rectangle.of(0,0,1,1);
+  public Function<V, Rectangle> IDENTITY_VERTEX_DIMENSION_FUNCTION = v -> Rectangle.of(0, 0, 1, 1);
 
   ToDoubleFunction<Cell<V>> toDoubleFunction;
 
@@ -49,16 +48,16 @@ public abstract class Compaction<V> {
   Function<V, Rectangle> vertexDimensionFunction;
 
   public static <V> Compaction<V> of(
-          Collection<Cell<V>> cells,
-          Direction direction,
-          double gamma,
-          BiConsumer<V, Point> updateMaps) {
+      Collection<Cell<V>> cells,
+      Direction direction,
+      double gamma,
+      BiConsumer<V, Point> updateMaps) {
     Compaction<V> compaction =
-            direction == Direction.HORIZONTAL ?
-                    new Horizontal<>(gamma, v -> Rectangle.of(0, 0, 1, 1)) :
-                    new Vertical<>(gamma, v -> Rectangle.of(0, 0, 1, 1));
+        direction == Direction.HORIZONTAL
+            ? new Horizontal<>(gamma, v -> Rectangle.of(0, 0, 1, 1))
+            : new Vertical<>(gamma, v -> Rectangle.of(0, 0, 1, 1));
     Graph<Cell<V>, Integer> compactionGraph = compaction.makeCompactionGraph(cells);
-    compaction.compact(compactionGraph, updateMaps);
+    //compaction.compact(compactionGraph, updateMaps);
     return compaction;
   }
 
@@ -69,9 +68,9 @@ public abstract class Compaction<V> {
       Function<V, Rectangle> vertexDimensionFunction,
       BiConsumer<V, Point> updateMaps) {
     Compaction<V> compaction =
-        direction == Direction.HORIZONTAL ?
-                new Horizontal<>(gamma, vertexDimensionFunction) :
-                new Vertical<>(gamma, vertexDimensionFunction);
+        direction == Direction.HORIZONTAL
+            ? new Horizontal<>(gamma, vertexDimensionFunction)
+            : new Vertical<>(gamma, vertexDimensionFunction);
     Graph<Cell<V>, Integer> compactionGraph = compaction.makeCompactionGraph(cells);
     compaction.compact(compactionGraph, updateMaps);
     return compaction;
@@ -111,6 +110,8 @@ public abstract class Compaction<V> {
     // closer to its source vertex
     // update the Rectangles in the Graph which will update the original
     // Collection<Cell<V>> cells
+    Set<V> allVertices = new HashSet<>();
+    compactionGraph.vertexSet().stream().map(Cell::getOccupant).forEach(allVertices::add);
     // find roots
     List<Cell<V>> roots =
         compactionGraph
@@ -118,13 +119,18 @@ public abstract class Compaction<V> {
             .stream()
             .filter(v -> compactionGraph.inDegreeOf(v) == 0)
             .collect(Collectors.toList());
-    // ensure that the initial roots are in the Mappings
-    roots.forEach(c -> updateMaps.accept(c.occupant, c.rectangle.min()));
     // move the initial roots to 0
     roots.forEach(cell -> cell.setRectangle(normalizeFunction.apply(cell)));
+    // ensure that the initial roots are in the Mappings
+    roots.forEach(c -> updateMaps.accept(c.occupant, c.rectangle.min()));
+    allVertices.removeAll(roots.stream().map(Cell::getOccupant).collect(Collectors.toSet()));
+    //    log.info("there are {} roots: {}", roots.size(), roots);
     while (roots.size() > 0) {
       for (Cell<V> root : roots) {
         // process the outgoing edges of the roots
+        //        if (compactionGraph.outgoingEdgesOf(root).isEmpty()) {
+        //          log.info("no outgoing edges for {}", root.occupant);
+        //        }
         for (Integer edge : compactionGraph.outgoingEdgesOf(root)) {
           log.trace("length of edge {} was {}", edge, edgeLengthFunction.apply(edge));
           Cell<V> target = compactionGraph.getEdgeTarget(edge);
@@ -147,7 +153,10 @@ public abstract class Compaction<V> {
               .stream()
               .filter(v -> compactionGraph.inDegreeOf(v) == 0)
               .collect(Collectors.toList());
+      allVertices.removeAll(roots.stream().map(Cell::getOccupant).collect(Collectors.toSet()));
     }
+    //    log.info("done and allVertices: {}", allVertices);
+    //    log.info("compaction graph: {}", compactionGraph.vertexSet());
   }
 
   static class Span {
@@ -164,7 +173,7 @@ public abstract class Compaction<V> {
     }
 
     public boolean overlaps(Span other) {
-      return other.max >= this.min && other.min <= this.max;
+      return other.max > this.min && other.min < this.max;
     }
   }
 
@@ -175,10 +184,10 @@ public abstract class Compaction<V> {
       this.toDoubleFunction = Cell::getX;
       this.spannerFunction = r -> Span.of(r.getY(), r.getY() + r.getHeight());
       this.movedRectangleFunction = (z, r) -> Rectangle.of(z, r.y, r.width, r.height);
-      this.offsetFunction = cell -> cell.getX() +
-              vertexDimensionFunction.apply(cell.occupant).width + gamma;
-      this.normalizeFunction = cell ->
-              Rectangle.of(0, cell.getY(), cell.getWidth(), cell.getHeight());
+      this.offsetFunction =
+          cell -> cell.getX() + vertexDimensionFunction.apply(cell.occupant).width + gamma;
+      this.normalizeFunction =
+          cell -> Rectangle.of(0, cell.getY(), cell.getWidth(), cell.getHeight());
       this.edgeLengthFunction =
           e -> {
             Cell<V> source = compactionGraph.getEdgeSource(e);
@@ -196,11 +205,10 @@ public abstract class Compaction<V> {
       this.toDoubleFunction = Cell::getY;
       this.spannerFunction = r -> Span.of(r.getX(), r.getX() + r.getWidth());
       this.movedRectangleFunction = (z, r) -> Rectangle.of(r.x, z, r.width, r.height);
-      this.offsetFunction = cell -> cell.getY() +
-              vertexDimensionFunction.apply(cell.occupant).height
-              + gamma;
-      this.normalizeFunction = cell ->
-              Rectangle.of(cell.getX(), 0, cell.getWidth(), cell.getHeight());
+      this.offsetFunction =
+          cell -> cell.getY() + vertexDimensionFunction.apply(cell.occupant).height + gamma;
+      this.normalizeFunction =
+          cell -> Rectangle.of(cell.getX(), 0, cell.getWidth(), cell.getHeight());
       this.edgeLengthFunction =
           e -> {
             Cell<V> source = compactionGraph.getEdgeSource(e);

@@ -79,7 +79,7 @@ public class LayoutFunction<V>
           Layout.of("Tidier Radial Tree", TidierRadialTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()),
           Layout.of("EdgeAware Tree", EdgeAwareTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()),
           Layout.of("Multirow Tree", MultiRowTreeLayoutAlgorithm.<V>builder()),
-          Layout.of("Orthogonal", OrthogonalLayoutAlgorithm.<V,E>builder()),
+          Layout.of("Orthogonal", OrthogonalLayoutAlgorithm.<V, E>builder()),
           Layout.of(
               "EdgeAwareMultirow Tree",
               MultiRowEdgeAwareTreeLayoutAlgorithm.<V, E>edgeAwareBuilder()),

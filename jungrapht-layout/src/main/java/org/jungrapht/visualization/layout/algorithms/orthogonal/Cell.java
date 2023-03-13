@@ -1,8 +1,7 @@
 package org.jungrapht.visualization.layout.algorithms.orthogonal;
 
-import org.jungrapht.visualization.layout.model.Rectangle;
-
 import java.util.Objects;
+import org.jungrapht.visualization.layout.model.Rectangle;
 
 public class Cell<V> {
 
@@ -70,7 +69,7 @@ public class Cell<V> {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     Cell<?> cell = (Cell<?>) o;
-    return occupant.equals(cell.occupant);// && rectangle.equals(cell.rectangle);
+    return occupant.equals(cell.occupant); // && rectangle.equals(cell.rectangle);
   }
 
   @Override
