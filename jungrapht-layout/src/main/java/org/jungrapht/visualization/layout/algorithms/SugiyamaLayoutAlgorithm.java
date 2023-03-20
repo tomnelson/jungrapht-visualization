@@ -1,5 +1,6 @@
 package org.jungrapht.visualization.layout.algorithms;
 
+import java.util.Comparator;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -99,6 +100,7 @@ public class SugiyamaLayoutAlgorithm<V, E> extends AbstractHierarchicalMinCrossL
         builder.maxLevelCrossFunction,
         builder.expandLayout,
         builder.layering,
+        builder.edgeComparator,
         builder.threaded,
         builder.executor,
         builder.separateComponents,
@@ -116,6 +118,7 @@ public class SugiyamaLayoutAlgorithm<V, E> extends AbstractHierarchicalMinCrossL
       Function<Graph<V, E>, Integer> maxLevelCrossFunction,
       boolean expandLayout,
       Layering layering,
+      Comparator<E> edgeComparator,
       boolean threaded,
       Executor executor,
       boolean separateComponents,
@@ -130,7 +133,7 @@ public class SugiyamaLayoutAlgorithm<V, E> extends AbstractHierarchicalMinCrossL
         maxLevelCrossFunction,
         expandLayout,
         layering,
-        (v1, v2) -> 0,
+        edgeComparator,
         threaded,
         executor,
         separateComponents,
@@ -151,6 +154,7 @@ public class SugiyamaLayoutAlgorithm<V, E> extends AbstractHierarchicalMinCrossL
         .transposeLimit(transposeLimit)
         .maxLevelCross(maxLevelCrossFunction.apply(layoutModel.getGraph()))
         .layering(layering)
+        .edgeComparator(edgeComparator)
         .multiComponent(componentCount > 1)
         .build();
   }

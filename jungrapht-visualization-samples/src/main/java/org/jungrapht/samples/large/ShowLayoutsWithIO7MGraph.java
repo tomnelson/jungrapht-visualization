@@ -1,5 +1,12 @@
 package org.jungrapht.samples.large;
 
+import static java.util.Map.entry;
+import static org.jungrapht.visualization.util.Attributed.*;
+
+import java.awt.*;
+import java.util.*;
+import java.util.function.Function;
+import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.alg.interfaces.VertexScoringAlgorithm;
@@ -24,17 +31,6 @@ import org.jungrapht.visualization.util.LayoutAlgorithmTransition;
 import org.jungrapht.visualization.util.LayoutPaintable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.swing.*;
-import java.awt.*;
-import java.io.File;
-import java.util.List;
-import java.util.*;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
-import static java.util.Map.entry;
-import static org.jungrapht.visualization.util.Attributed.*;
 
 /**
  * Demonstrates several of the graph layout algorithms. Allows the user to interactively select one
@@ -70,9 +66,9 @@ public class ShowLayoutsWithIO7MGraph extends JFrame {
         Color.orange
       };
 
-//  Function<String, Paint> vertexFillPaintFunction = v -> Colors.getColor(v.getAttributeMap());
+  //  Function<String, Paint> vertexFillPaintFunction = v -> Colors.getColor(v.getAttributeMap());
 
-//  Function<Integer, Paint> edgeDrawPaintFunction = e -> Colors.getColor(e.getAttributeMap());
+  //  Function<Integer, Paint> edgeDrawPaintFunction = e -> Colors.getColor(e.getAttributeMap());
 
   public ShowLayoutsWithIO7MGraph() {
 
@@ -96,9 +92,9 @@ public class ShowLayoutsWithIO7MGraph extends JFrame {
 
     populateGraph(graph);
 
-//    if (!ASAILoader.load("ghidra.json", graph)) {
-//      return;
-//    }
+    //    if (!ASAILoader.load("ghidra.json", graph)) {
+    //      return;
+    //    }
     vv.getVisualizationModel().setGraph(graph);
     setTitle(
         "Graph of "
@@ -111,14 +107,13 @@ public class ShowLayoutsWithIO7MGraph extends JFrame {
 
     vv.setVertexToolTipFunction(Object::toString);
     vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.S);
-    vv.getRenderContext()
-        .setVertexLabelFunction(Object::toString);
-//            vertex -> {
-//              Map<String, String> map = vertex.getAttributeMap();
-//              //                  vertexAttributes.getOrDefault(vertex, Collections.emptyMap());
-//              return map.getOrDefault("Name", map.getOrDefault("ID", "NONE"));
-//            });
-//    vv.setEdgeToolTipFunction(e -> e.toHtml());
+    vv.getRenderContext().setVertexLabelFunction(Object::toString);
+    //            vertex -> {
+    //              Map<String, String> map = vertex.getAttributeMap();
+    //              //                  vertexAttributes.getOrDefault(vertex, Collections.emptyMap());
+    //              return map.getOrDefault("Name", map.getOrDefault("ID", "NONE"));
+    //            });
+    //    vv.setEdgeToolTipFunction(e -> e.toHtml());
 
     Function<String, Stroke> vertexStrokeFunction =
         v ->
@@ -143,36 +138,40 @@ public class ShowLayoutsWithIO7MGraph extends JFrame {
                   vv.removePreRenderPaintable(balloonLayoutRings);
                   vv.removePreRenderPaintable(radialLayoutRings);
 
-//                  if (layoutAlgorithm instanceof EdgeSorting) {
-//
-//                    ((EdgeSorting) layoutAlgorithm)
-//                        .setEdgeComparator(
-//                            new EdgeComparator(
-//                                List.of(
-//                                    "Fall-Through",
-//                                    "Entry",
-//                                    "Conditional-Call",
-//                                    "Unconditional-Call",
-//                                    "Computed",
-//                                    "Indirection",
-//                                    "Unconditional-Jump",
-//                                    "Terminator",
-//                                    "Conditional-Return")));
-//                  }
-//                  if (layoutAlgorithm instanceof NormalizesFavoredEdge) {
-//                    ((NormalizesFavoredEdge<AI>) layoutAlgorithm)
-//                        .setFavoredEdgePredicate(favoredEdgePredicate);
-//                  }
-//                  if (layoutAlgorithm instanceof EdgePredicated) {
-//                    ((EdgePredicated<AI>) layoutAlgorithm)
-//                        .setEdgePredicate(new EdgePredicate(graph));
-//                  }
+                  //                  if (layoutAlgorithm instanceof EdgeSorting) {
+                  //
+                  //                    ((EdgeSorting) layoutAlgorithm)
+                  //                        .setEdgeComparator(
+                  //                            new EdgeComparator(
+                  //                                List.of(
+                  //                                    "Fall-Through",
+                  //                                    "Entry",
+                  //                                    "Conditional-Call",
+                  //                                    "Unconditional-Call",
+                  //                                    "Computed",
+                  //                                    "Indirection",
+                  //                                    "Unconditional-Jump",
+                  //                                    "Terminator",
+                  //                                    "Conditional-Return")));
+                  //                  }
+                  //                  if (layoutAlgorithm instanceof NormalizesFavoredEdge) {
+                  //                    ((NormalizesFavoredEdge<AI>) layoutAlgorithm)
+                  //                        .setFavoredEdgePredicate(favoredEdgePredicate);
+                  //                  }
+                  //                  if (layoutAlgorithm instanceof EdgePredicated) {
+                  //                    ((EdgePredicated<AI>) layoutAlgorithm)
+                  //                        .setEdgePredicate(new EdgePredicate(graph));
+                  //                  }
                   if (animateLayoutTransition.isSelected()) {
-                    LayoutAlgorithmTransition.animate(vv, layoutAlgorithm,
-                            new LeftToRight(vv.getVisualizationModel().getLayoutModel()));
+                    LayoutAlgorithmTransition.animate(
+                        vv,
+                        layoutAlgorithm,
+                        new LeftToRight(vv.getVisualizationModel().getLayoutModel()));
                   } else {
-                    LayoutAlgorithmTransition.apply(vv, layoutAlgorithm,
-                            new LeftToRight(vv.getVisualizationModel().getLayoutModel()));
+                    LayoutAlgorithmTransition.apply(
+                        vv,
+                        layoutAlgorithm,
+                        new LeftToRight(vv.getVisualizationModel().getLayoutModel()));
                   }
                   if (layoutAlgorithm instanceof BalloonLayoutAlgorithm) {
                     balloonLayoutRings =
@@ -494,7 +493,6 @@ public class ShowLayoutsWithIO7MGraph extends JFrame {
     graph.addEdge("AMP1", "NS1");
     graph.addEdge("NS1", "EQ1");
     graph.addEdge("EQ1", "MIX1");
-
 
     graph.addEdge("DS2", "SEND/RET 2");
     graph.addEdge("SEND/RET 2", "AMP2");

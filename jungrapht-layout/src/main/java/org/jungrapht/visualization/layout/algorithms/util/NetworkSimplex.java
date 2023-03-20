@@ -301,9 +301,7 @@ public class NetworkSimplex<V, E> {
     boolean continuation = false;
     int minSlack = Integer.MAX_VALUE;
     for (LE<V, E> f : svGraph.edgeSet()) {
-      int got = random.nextInt(2);
       int slack = slack(f);
-      //      continuation = random.nextInt(2) == 1;
       if (!edgeInTreeMap.get(f)
           && edgeSourceTargetVal(f, leavingEdge) == -1
           && (slack < minSlack || (slack == minSlack && (continuation = random.nextInt(2) == 1)))) {

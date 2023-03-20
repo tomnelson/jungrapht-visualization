@@ -301,7 +301,11 @@ public class SugiyamaRunnable<V, E> implements LayeredRunnable<E> {
         (e1, e2) -> edgeComparator.compare(e1.getEdge(), e2.getEdge());
     switch (layering) {
       case NETWORK_SIMPLEX:
-        layers = GraphLayers.networkSimplex(svGraph);
+        if (edgeComparator != Layered.noopComparator) {
+          layers = GraphLayers.networkSimplex(svGraph, svComparator);
+        } else {
+          layers = GraphLayers.networkSimplex(svGraph);
+        }
         break;
       case LONGEST_PATH:
         if (edgeComparator != Layered.noopComparator) {
@@ -311,11 +315,19 @@ public class SugiyamaRunnable<V, E> implements LayeredRunnable<E> {
         }
         break;
       case COFFMAN_GRAHAM:
-        layers = GraphLayers.coffmanGraham(svGraph, 10);
+        if (edgeComparator != Layered.noopComparator) {
+          layers = GraphLayers.coffmanGraham(svGraph, 10, svComparator);
+        } else {
+          layers = GraphLayers.coffmanGraham(svGraph, 10);
+        }
         break;
       case TOP_DOWN:
       default:
-        layers = GraphLayers.assign(svGraph);
+        if (edgeComparator != Layered.noopComparator) {
+          layers = GraphLayers.assign(svGraph, svComparator);
+        } else {
+          layers = GraphLayers.assign(svGraph);
+        }
     }
     long assignLayersTime = System.currentTimeMillis();
     log.trace("assign layers took {} ", (assignLayersTime - cycles));

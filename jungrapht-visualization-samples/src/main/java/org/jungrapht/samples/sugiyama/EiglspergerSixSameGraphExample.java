@@ -9,6 +9,7 @@ import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.decorators.EdgeShape;
 import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
+import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.renderers.Renderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,32 +43,52 @@ public class EiglspergerSixSameGraphExample extends JFrame {
     VisualizationViewer<Integer, Integer> vv6 = configureVisualizationViewer(graph6);
 
     EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm1 =
-        EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder().threaded(false).build();
+        EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+            .layering(Layering.NETWORK_SIMPLEX)
+            .threaded(true)
+            .build();
     layoutAlgorithm1.accept(vv1.getRenderContext().getVertexBoundsFunction());
     vv1.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm1);
 
+    // this one will look different because of changed edge sorting
     EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm2 =
-        EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder().threaded(false).build();
+        EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+            .layering(Layering.NETWORK_SIMPLEX)
+            .edgeComparator((e1, e2) -> -e1.compareTo(-e2))
+            .threaded(true)
+            .build();
     layoutAlgorithm2.accept(vv2.getRenderContext().getVertexBoundsFunction());
     vv2.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm2);
 
     EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm3 =
-        EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder().threaded(false).build();
+        EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+            .layering(Layering.NETWORK_SIMPLEX)
+            .threaded(true)
+            .build();
     layoutAlgorithm3.accept(vv3.getRenderContext().getVertexBoundsFunction());
     vv3.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm3);
 
     EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm4 =
-        EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder().threaded(false).build();
+        EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+            .layering(Layering.NETWORK_SIMPLEX)
+            .threaded(true)
+            .build();
     layoutAlgorithm4.accept(vv4.getRenderContext().getVertexBoundsFunction());
     vv4.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm4);
 
     EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm5 =
-        EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder().threaded(false).build();
+        EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+            .layering(Layering.NETWORK_SIMPLEX)
+            .threaded(true)
+            .build();
     layoutAlgorithm5.accept(vv5.getRenderContext().getVertexBoundsFunction());
     vv5.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm5);
 
     EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm6 =
-        EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder().threaded(false).build();
+        EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+            .layering(Layering.NETWORK_SIMPLEX)
+            .threaded(true)
+            .build();
     layoutAlgorithm6.accept(vv6.getRenderContext().getVertexBoundsFunction());
     vv6.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm6);
 

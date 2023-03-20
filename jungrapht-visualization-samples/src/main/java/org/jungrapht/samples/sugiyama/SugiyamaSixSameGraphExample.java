@@ -51,8 +51,12 @@ public class SugiyamaSixSameGraphExample extends JFrame {
     layoutAlgorithm2.accept(vv2.getRenderContext().getVertexBoundsFunction());
     vv2.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm2);
 
+    // this one will look different because of edge sorting change
     SugiyamaLayoutAlgorithm<Integer, Integer> layoutAlgorithm3 =
-        SugiyamaLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder().threaded(false).build();
+        SugiyamaLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
+            .threaded(false)
+            .edgeComparator((e1, e2) -> -e1.compareTo(-e2))
+            .build();
     layoutAlgorithm3.accept(vv3.getRenderContext().getVertexBoundsFunction());
     vv3.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm3);
 
