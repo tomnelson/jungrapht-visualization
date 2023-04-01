@@ -1,7 +1,6 @@
 ## JUNGRAPHT-VISUALIZATION: The [JUNG](http://jung.sourceforge.net) visualization and sample code modernized and ported to use [JGraphT](https://jgrapht.org) graphs and algorithms
 
 ![build workflow](https://github.com/tomnelson/jungrapht-visualization/actions/workflows/build.yml/badge.svg)
-[![Build Status](https://travis-ci.org/tomnelson/jungrapht-visualization.svg?branch=master)](https://travis-ci.org/tomnelson/jungrapht-visualization)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.tomnelson/jungrapht-visualization/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.tomnelson/jungrapht-visualization)
 [![Snapshot](https://img.shields.io/nexus/s/https/oss.sonatype.org/com.github.tomnelson/jungrapht-visualization.svg)](https://oss.sonatype.org/content/repositories/snapshots/com/github/tomnelson/jungrapht-visualization/)
 [![License](https://img.shields.io/badge/license-BSD3%202.1-blue.svg)](http://www.opensource.org/licenses/BSD-3-Clause)
