@@ -1,6 +1,7 @@
 package org.jungrapht.samples.sugiyama;
 
 import java.awt.*;
+import java.util.Comparator;
 import java.util.stream.IntStream;
 import javax.swing.*;
 import org.jgrapht.Graph;
@@ -15,8 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Shows the four HorizontalCompaction algorithms, plus the average median for
- * SugiyamaLayoutAlgorithm
+ * Shows six visualizations of the same graph using EiglspergerLayoutAlgorithm. In #2, an edge
+ * comparator is defined to reverse the default ordering of the edges. You can see that the initial
+ * ordering of the vertices within each row will affect the layout algorithm.
  *
  * @author Tom Nelson
  */
@@ -54,7 +56,7 @@ public class EiglspergerSixSameGraphExample extends JFrame {
     EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm2 =
         EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .layering(Layering.NETWORK_SIMPLEX)
-            .edgeComparator((e1, e2) -> -e1.compareTo(-e2))
+            .edgeComparator(Comparator.reverseOrder())
             .threaded(true)
             .build();
     layoutAlgorithm2.accept(vv2.getRenderContext().getVertexBoundsFunction());
@@ -94,9 +96,9 @@ public class EiglspergerSixSameGraphExample extends JFrame {
 
     container.add(vv1.getComponent());
     container.add(vv2.getComponent());
-    container.add(vv5.getComponent());
     container.add(vv3.getComponent());
     container.add(vv4.getComponent());
+    container.add(vv5.getComponent());
     container.add(vv6.getComponent());
 
     setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

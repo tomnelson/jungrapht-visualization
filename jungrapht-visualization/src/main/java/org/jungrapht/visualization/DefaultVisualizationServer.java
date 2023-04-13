@@ -315,11 +315,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
   private void connectListeners(Spatial spatial) {
     LayoutModel<V> layoutModel = visualizationModel.getLayoutModel();
     layoutModel.getLayoutStateChangeSupport().addLayoutStateChangeListener(spatial);
-    if (spatial instanceof LayoutVertexPositionChange.Listener) {
-      layoutModel
-          .getLayoutVertexPositionSupport()
-          .addLayoutVertexPositionChangeListener((LayoutVertexPositionChange.Listener) spatial);
-    }
+    layoutModel.getLayoutVertexPositionSupport().addLayoutVertexPositionChangeListener(spatial);
   }
 
   /**

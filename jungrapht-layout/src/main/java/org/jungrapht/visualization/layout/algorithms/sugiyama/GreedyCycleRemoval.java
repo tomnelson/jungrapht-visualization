@@ -117,7 +117,7 @@ public class GreedyCycleRemoval<V, E> {
         (l, r) -> {
           int leftDiff = copy.outDegreeOf(l) - copy.inDegreeOf(l);
           int rightDiff = copy.outDegreeOf(r) - copy.inDegreeOf(r);
-          return -Integer.compare(leftDiff, rightDiff);
+          return Integer.compare(rightDiff, leftDiff); // reversed order
         });
     for (V v : orderedBy) {
       Collection<E> outgoingEdges = new LinkedHashSet<>(copy.outgoingEdgesOf(v));

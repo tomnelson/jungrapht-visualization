@@ -111,7 +111,6 @@ class DefaultVisualizationModel<V, E> implements VisualizationModel<V, E> {
       this.layoutModel.stop();
       this.layoutModel.getModelChangeSupport().getModelChangeListeners().remove(this);
       this.layoutModel.getViewChangeSupport().getViewChangeListeners().remove(this);
-      this.layoutModel.getLayoutStateChangeSupport().getLayoutStateChangeListeners().remove(this);
     }
     this.layoutModel = layoutModel;
     this.layoutModel.getModelChangeSupport().addModelChangeListener(this);
