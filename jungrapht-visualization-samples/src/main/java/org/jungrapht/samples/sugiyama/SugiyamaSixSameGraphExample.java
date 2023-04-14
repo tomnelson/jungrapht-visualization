@@ -1,6 +1,7 @@
 package org.jungrapht.samples.sugiyama;
 
 import java.awt.*;
+import java.util.Comparator;
 import java.util.stream.IntStream;
 import javax.swing.*;
 import org.jgrapht.Graph;
@@ -55,7 +56,7 @@ public class SugiyamaSixSameGraphExample extends JFrame {
     SugiyamaLayoutAlgorithm<Integer, Integer> layoutAlgorithm3 =
         SugiyamaLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .threaded(false)
-            .edgeComparator((e1, e2) -> -e1.compareTo(-e2))
+            .edgeComparator(Comparator.reverseOrder())
             .build();
     layoutAlgorithm3.accept(vv3.getRenderContext().getVertexBoundsFunction());
     vv3.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm3);

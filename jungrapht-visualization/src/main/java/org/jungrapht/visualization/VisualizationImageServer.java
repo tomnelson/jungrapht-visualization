@@ -12,8 +12,6 @@ package org.jungrapht.visualization;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.util.HashMap;
-import java.util.Map;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.transform.MutableAffineTransformer;
 
@@ -52,7 +50,7 @@ public class VisualizationImageServer<V, E> extends DefaultVisualizationServer<V
     addNotify();
   }
 
-  Map<RenderingHints.Key, Object> renderingHints = new HashMap<>();
+  //  Map<RenderingHints.Key, Object> renderingHints = new HashMap<>();
 
   public Image getFullImage() {
     Dimension layoutSize = getVisualizationModel().getLayoutSize();

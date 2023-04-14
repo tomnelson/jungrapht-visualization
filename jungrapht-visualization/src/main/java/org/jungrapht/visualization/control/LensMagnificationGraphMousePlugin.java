@@ -36,7 +36,7 @@ public class LensMagnificationGraphMousePlugin extends AbstractGraphMousePlugin
   protected final float floor;
   protected final float ceiling;
   protected final float delta;
-  protected int modifiers;
+  //  protected int modifiers;
 
   /**
    * Creates an instance with modifier of CTRL_DOWN_MASK, and default min/max/delta zoom values of

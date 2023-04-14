@@ -123,9 +123,7 @@ public class KKLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorithm<V>
     if (graph == null || graph.vertexSet().isEmpty()) {
       return;
     }
-    if (graph != null) {
       this.distance = getDistances(graph);
-    }
     initialize();
   }
 

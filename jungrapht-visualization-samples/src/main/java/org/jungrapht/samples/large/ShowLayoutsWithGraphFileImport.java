@@ -110,8 +110,8 @@ public class ShowLayoutsWithGraphFileImport extends JFrame {
     vv.setEdgeToolTipFunction(Object::toString);
     vv.getRenderContext().setVertexFillPaintFunction(vertexFillPaintFunction);
 
-    Function<AS, Paint> vertexDrawPaintFunction =
-        v -> vv.getSelectedVertexState().isSelected(v) ? Color.pink : Color.black;
+    //    Function<AS, Paint> vertexDrawPaintFunction =
+    //        v -> vv.getSelectedVertexState().isSelected(v) ? Color.pink : Color.black;
     Function<AS, Stroke> vertexStrokeFunction =
         v ->
             vv.getSelectedVertexState().isSelected(v) ? new BasicStroke(8.f) : new BasicStroke(2.f);

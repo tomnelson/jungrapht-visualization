@@ -19,8 +19,6 @@ public class Unaligned {
       Function<V, Rectangle> vertexShapeFunction,
       int horizontalOffset,
       int verticalOffset) {
-    //          ,
-    //      Map<LV<V>, Point> vertexPointMap) {
 
     Map<Integer, Integer> rowWidthMap = new HashMap<>();
     Map<Integer, Integer> rowMaxHeightMap = new HashMap<>();

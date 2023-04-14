@@ -137,6 +137,8 @@ public class MagnifyShapeTransformer extends MagnifyTransformer
         case PathIterator.SEG_CLOSE:
           newPath.closePath();
           break;
+
+        default:
       }
     }
     if (log.isTraceEnabled()) {
@@ -183,6 +185,8 @@ public class MagnifyShapeTransformer extends MagnifyTransformer
         case PathIterator.SEG_CLOSE:
           newPath.closePath();
           break;
+
+        default:
       }
     }
     return newPath;
@@ -340,6 +344,8 @@ public class MagnifyShapeTransformer extends MagnifyTransformer
         case PathIterator.SEG_CLOSE:
           newPath.closePath();
           break;
+
+        default:
       }
     }
     return newPath;

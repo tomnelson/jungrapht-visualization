@@ -185,6 +185,8 @@ public class AffineTransformer implements BidirectionalTransformer, ShapeTransfo
         case PathIterator.SEG_CLOSE:
           newPath.closePath();
           break;
+
+        default:
       }
     }
     return newPath;
@@ -233,6 +235,8 @@ public class AffineTransformer implements BidirectionalTransformer, ShapeTransfo
         case PathIterator.SEG_CLOSE:
           newPath.closePath();
           break;
+
+        default:
       }
     }
     return newPath;

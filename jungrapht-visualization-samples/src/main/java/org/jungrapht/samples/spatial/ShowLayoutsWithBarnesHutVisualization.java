@@ -56,9 +56,9 @@ public class ShowLayoutsWithBarnesHutVisualization extends JPanel {
 
   private static final Logger log =
       LoggerFactory.getLogger(ShowLayoutsWithBarnesHutVisualization.class);
-  protected static Graph<String, Integer>[] g_array;
-  protected static int graph_index;
-  protected static String[] graph_names = {
+  protected Graph<String, Integer>[] g_array;
+  protected int graph_index;
+  static final String[] graph_names = {
     "Two component graph",
     //    "Random mixed-mode graph",
     "Miscellaneous multicomponent graph",

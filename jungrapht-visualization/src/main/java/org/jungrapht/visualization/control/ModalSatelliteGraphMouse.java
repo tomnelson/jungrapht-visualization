@@ -45,10 +45,10 @@ public class ModalSatelliteGraphMouse<V, E> extends DefaultModalGraphMouse<V, E>
   protected int toggleRegionSelectionMask;
   protected int regionSelectionCompleteMask;
   protected int toggleRegionSelectionCompleteMask;
-  protected int translatingMask;
-  protected int scalingMask;
-  protected int xAxisScalingMask;
-  protected int yAxisScalingMask;
+  //  protected int translatingMask;
+  //  protected int scalingMask;
+  //  protected int xAxisScalingMask;
+  //  protected int yAxisScalingMask;
 
   public ModalSatelliteGraphMouse() {
     this(new Builder<>());

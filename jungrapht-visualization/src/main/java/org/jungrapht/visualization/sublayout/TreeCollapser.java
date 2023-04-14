@@ -129,8 +129,8 @@ public class TreeCollapser<V, E> {
       if (parent != null) {
         tree.removeVertex(collapseVertex);
         TreeUtils.addSubTree(tree, subTree, parent, parentEdge);
-      } else {
-        TreeUtils.growSubTree(subTree, tree, parent);
+        //      } else {
+        //        TreeUtils.growSubTree(subTree, tree, parent); // parent is null
       }
       tree.removeVertex(collapseVertex);
     }

@@ -60,16 +60,16 @@ public class MultiViewDemo extends JPanel {
 
   Dimension preferredSize = new Dimension(400, 400);
 
-  final String messageOne =
+  static final String messageOne =
       "The mouse wheel will scale the model's layout when activated"
           + " in View 1. Since all three views share the same layout Function, all three views will"
           + " show the same scaling of the layout.";
 
-  final String messageTwo =
+  static final String messageTwo =
       "The mouse wheel will scale the view when activated in"
           + " View 2. Since all three views share the same view Function, all three views will be affected.";
 
-  final String messageThree =
+  static final String messageThree =
       "   The mouse wheel uses a 'crossover' feature in View 3."
           + " When the combined layout and view scale is greater than '1', the model's layout will be scaled."
           + " Since all three views share the same layout Function, all three views will show the same "

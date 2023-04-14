@@ -40,9 +40,9 @@ import org.jungrapht.visualization.util.LayoutPaintable;
  */
 public class ShowLayoutsWithGreedyVertexColoring extends JPanel {
 
-  protected static Graph<String, Integer>[] graphArray;
-  protected static int graphIndex;
-  protected static String[] graphNames = {
+  protected Graph<String, Integer>[] graphArray;
+  protected int graphIndex;
+  static final String[] graphNames = {
     "Two component graph",
     "Random mixed-mode graph",
     "Miscellaneous multicomponent graph",

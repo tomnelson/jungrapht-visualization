@@ -12,10 +12,8 @@ import static org.jungrapht.visualization.renderers.BiModalRenderer.HEAVYWEIGHT;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 import javax.swing.*;
 import org.jgrapht.Graph;
@@ -207,9 +205,11 @@ public class WorldMapGraphDemo extends JPanel {
     return graph;
   }
 
+  Random random = new Random();
+
   private String randomCity() {
     int m = cityList.size();
-    return cityList.get((int) (Math.random() * m));
+    return cityList.get(random.nextInt(m));
   }
 
   static class CityTransformer implements Function<String, String[]> {
@@ -241,17 +241,17 @@ public class WorldMapGraphDemo extends JPanel {
       double longitude = Integer.parseInt(lon[0]) + Integer.parseInt(lon[1]) / 60f;
       longitude *= d.width / 360f;
       if (lat[2].equals("N")) {
-        latitude = d.height / 2 - latitude;
+        latitude = d.height / 2. - latitude;
 
       } else { // assume S
-        latitude = d.height / 2 + latitude;
+        latitude = d.height / 2. + latitude;
       }
 
       if (lon[2].equals("W")) {
-        longitude = d.width / 2 - longitude;
+        longitude = d.width / 2. - longitude;
 
       } else { // assume E
-        longitude = d.width / 2 + longitude;
+        longitude = d.width / 2. + longitude;
       }
 
       return Point.of(longitude, latitude);

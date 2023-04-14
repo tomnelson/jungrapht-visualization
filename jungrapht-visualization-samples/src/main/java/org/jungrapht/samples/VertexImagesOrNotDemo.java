@@ -64,7 +64,8 @@ public class VertexImagesOrNotDemo extends JPanel {
                   new ImageIcon(VertexImagesOrNotDemo.class.getResource(name)).getImage());
           iconMap.put(vertex, icon);
         } catch (Exception ex) {
-          //System.err.println("You need slashdoticons.jar in your classpath to see the image " + name);
+          System.err.println(
+              "You need slashdoticons.jar in your classpath to see the image " + name);
         }
       }
     }

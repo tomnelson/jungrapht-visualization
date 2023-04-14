@@ -29,7 +29,7 @@ import javax.swing.border.EmptyBorder;
  */
 public class JLabelVertexLabelRenderer extends JLabel implements VertexLabelRenderer, Serializable {
 
-  protected static Border noFocusBorder = new EmptyBorder(0, 0, 0, 0);
+  protected static final Border noFocusBorder = new EmptyBorder(0, 0, 0, 0);
 
   protected Color pickedVertexLabelColor = Color.black;
 

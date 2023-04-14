@@ -28,7 +28,7 @@ public class Modifiers {
 
   public static final String NONE = "NONE";
 
-  public static Map<String, Integer> masks =
+  public static final Map<String, Integer> masks =
       Map.ofEntries(
           entry(MB1, BUTTON1_DOWN_MASK),
           entry(MB2, BUTTON2_DOWN_MASK),
@@ -45,6 +45,6 @@ public class Modifiers {
           entry(MB1_SHIFT_MENU, BUTTON1_DOWN_MASK | SHIFT_DOWN_MASK | MENU_SHORTCUT),
           entry(NONE, 0));
 
-  public static Map<Integer, String> maskStrings =
+  public static final Map<Integer, String> maskStrings =
       masks.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
 }

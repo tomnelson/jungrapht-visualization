@@ -23,7 +23,7 @@ public class Rectangle {
   public final double maxY;
 
   /** identity rectangle of zero size at origin */
-  public static Rectangle IDENTITY = new Rectangle(0, 0, 0, 0);
+  public static final Rectangle IDENTITY = new Rectangle(0, 0, 0, 0);
 
   /**
    * @param x location of upper left corner

@@ -21,7 +21,7 @@ public class AnimationLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorith
       implements LayoutAlgorithm.Builder<V, T, B> {
     protected VisualizationServer<V, ?> visualizationServer;
     protected LayoutAlgorithm<V> endLayoutAlgorithm;
-    protected Runnable after = () -> {};
+    //    protected Runnable after = () -> {};
 
     public B visualizationServer(VisualizationServer<V, ?> visualizationServer) {
       this.visualizationServer = visualizationServer;
@@ -50,12 +50,11 @@ public class AnimationLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorith
   protected boolean done = false;
   protected int count = 20;
   protected int counter = 0;
-  protected Runnable after = () -> {};
+  //  protected Runnable after = () -> {};
 
   LayoutModel<V> transitionLayoutModel;
   VisualizationServer<V, ?> visualizationServer;
   LayoutAlgorithm<V> endLayoutAlgorithm;
-  LayoutModel<V> layoutModel;
 
   public AnimationLayoutAlgorithm() {
     this(AnimationLayoutAlgorithm.builder());
@@ -65,8 +64,7 @@ public class AnimationLayoutAlgorithm<V> extends AbstractIterativeLayoutAlgorith
     super(builder);
     this.visualizationServer = builder.visualizationServer;
     this.endLayoutAlgorithm = builder.endLayoutAlgorithm;
-    this.endLayoutAlgorithm.setAfter(builder.after);
-    this.after = builder.after;
+    this.endLayoutAlgorithm.setAfter(afterRunnable);
   }
 
   public void visit(LayoutModel<V> layoutModel) {

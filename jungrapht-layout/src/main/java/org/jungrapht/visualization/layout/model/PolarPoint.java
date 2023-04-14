@@ -21,7 +21,7 @@ public class PolarPoint {
   public final double theta;
   public final double radius;
 
-  public static PolarPoint ORIGIN = new PolarPoint(0, 0);
+  public static final PolarPoint ORIGIN = new PolarPoint(0, 0);
 
   public static PolarPoint of(double theta, double radius) {
     return new PolarPoint(theta, radius);

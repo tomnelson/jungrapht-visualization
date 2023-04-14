@@ -62,24 +62,20 @@ public class LightweightEdgeRenderer<V, E> extends AbstractEdgeRenderer<V, E>
   protected void drawSimpleEdge(
       RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, E e) {
     Graphics2D g2d = renderContext.getGraphicsContext().getDelegate();
-    Stroke savedStroke = (BasicStroke) g2d.getStroke();
+    Stroke savedStroke = g2d.getStroke();
     float savedStrokeWidth = renderContext.getEdgeWidth();
     float wider = Math.max(savedStrokeWidth, (float) (1.0 / g2d.getTransform().getScaleX()));
-    if (savedStroke instanceof BasicStroke) {
-      BasicStroke basicStroke = (BasicStroke) savedStroke;
-      Stroke widerStroke =
-          new BasicStroke(
-              wider,
-              basicStroke.getEndCap(),
-              basicStroke.getLineJoin(),
-              basicStroke.getMiterLimit(),
-              basicStroke.getDashArray(),
-              basicStroke.getDashPhase());
-      // if the transform scale is small, make the stroke wider so it is still visible
-      g2d.setStroke(widerStroke);
-    } else {
-      g2d.setStroke(new BasicStroke(wider));
-    }
+    BasicStroke basicStroke = (BasicStroke) savedStroke;
+    Stroke widerStroke =
+        new BasicStroke(
+            wider,
+            basicStroke.getEndCap(),
+            basicStroke.getLineJoin(),
+            basicStroke.getMiterLimit(),
+            basicStroke.getDashArray(),
+            basicStroke.getDashPhase());
+    // if the transform scale is small, make the stroke wider so it is still visible
+    g2d.setStroke(widerStroke);
 
     int[] coords = new int[4];
     boolean[] loop = new boolean[1];

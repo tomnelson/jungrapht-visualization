@@ -214,6 +214,7 @@ public class GhidraModuleDependencyGraphDemo extends JPanel {
       graph.addVertex(target);
       graph.addEdge(source, target, edge);
     }
+    stream.close();
     return graph;
   }
 

@@ -105,8 +105,8 @@ public class TransformingGraphics extends GraphicsDecorator {
       Rectangle2D r = new Rectangle2D.Double(x, y, img.getWidth(observer), img.getHeight(observer));
       Rectangle2D s = ((ShapeTransformer) transformer).transform(r).getBounds2D();
       image = img.getScaledInstance((int) s.getWidth(), (int) s.getHeight(), Image.SCALE_SMOOTH);
-      x = (int) s.getMinX();
-      y = (int) s.getMinY();
+      //      x = (int) s.getMinX();
+      //      y = (int) s.getMinY();
       at.setToTranslation(s.getMinX(), s.getMinY());
     } else {
       image = img;

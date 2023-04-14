@@ -225,7 +225,7 @@ public class SingleSelectedVertexPaintable<V, E> implements VisualizationServer.
 
       if (graphicsDecorator instanceof TransformingGraphics) {
         // get a copy of the current transform used by g2d
-        AffineTransform savedTransform = g2d.getTransform();
+        //        AffineTransform savedTransform = g2d.getTransform();
         AffineTransform graphicsTransformCopy = new AffineTransform(g2d.getTransform());
 
         AffineTransform viewTransform =
@@ -243,10 +243,8 @@ public class SingleSelectedVertexPaintable<V, E> implements VisualizationServer.
         }
 
       } else {
-        if (selectedVertex != null) {
           ((JComponent) visualizationServer).revalidate();
           paintSingleNormal(g2d, selectedVertex);
-        }
       }
       // put back the old values
       g2d.setPaint(oldPaint);
@@ -289,7 +287,7 @@ public class SingleSelectedVertexPaintable<V, E> implements VisualizationServer.
     Point location = layoutModel.apply(vertex);
     // translate to view coords
     Point2D viewLocation = multiLayerTransformer.transform(location.x, location.y);
-    AffineTransform graphicsTransform = g2d.getTransform();
+    //    AffineTransform graphicsTransform = g2d.getTransform();
     // move the shape to the right place in the view
     Rectangle2D bounds =
         visualizationServer

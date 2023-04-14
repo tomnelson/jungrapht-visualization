@@ -26,7 +26,7 @@ class Segment<V> extends SyntheticLV<V> implements Synthetic {
 
   protected final QVertex qVertex;
 
-  int index;
+  //  int index;
 
   int pVertexRank;
   int qVertexRank;

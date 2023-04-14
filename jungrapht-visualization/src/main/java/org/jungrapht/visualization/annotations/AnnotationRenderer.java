@@ -28,7 +28,7 @@ import javax.swing.border.EmptyBorder;
 @SuppressWarnings("serial")
 public class AnnotationRenderer extends JLabel implements Serializable {
 
-  protected static Border noFocusBorder = new EmptyBorder(0, 0, 0, 0);
+  protected static final Border noFocusBorder = new EmptyBorder(0, 0, 0, 0);
 
   /** Creates a default table cell renderer. */
   public AnnotationRenderer() {

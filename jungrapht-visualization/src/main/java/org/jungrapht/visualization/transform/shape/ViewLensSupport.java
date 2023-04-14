@@ -71,7 +71,7 @@ public class ViewLensSupport<V, E, M extends LensGraphMouse> extends AbstractLen
   protected RenderContext<V, E> renderContext;
   protected GraphicsDecorator lensGraphicsDecorator;
   protected GraphicsDecorator savedGraphicsDecorator;
-  protected GraphElementAccessor<V, E> pickSupport;
+  //  protected GraphElementAccessor<V, E> pickSupport;
   protected Renderer.Edge<V, E> savedEdgeRenderer;
   protected Renderer.Edge<V, E> reshapingEdgeRenderer;
 

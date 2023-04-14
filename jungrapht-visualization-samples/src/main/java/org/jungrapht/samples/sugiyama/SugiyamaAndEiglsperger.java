@@ -51,12 +51,12 @@ public class SugiyamaAndEiglsperger extends JFrame {
     vv1.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm1);
     container.add(vv1.getComponent());
 
-    EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm4 =
+    EiglspergerLayoutAlgorithm<Integer, Integer> layoutAlgorithm2 =
         EiglspergerLayoutAlgorithm.<Integer, Integer>edgeAwareBuilder()
             .straightenEdges(true)
             .build();
-    layoutAlgorithm4.accept(vv2.getRenderContext().getVertexBoundsFunction());
-    vv2.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm4);
+    layoutAlgorithm2.accept(vv2.getRenderContext().getVertexBoundsFunction());
+    vv2.getVisualizationModel().setLayoutAlgorithm(layoutAlgorithm2);
     container.add(vv2.getComponent());
 
     setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

@@ -171,7 +171,6 @@ public class BalloonLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
    *     a root.
    */
   public Point getCenter(LayoutModel<V> layoutModel, V vertex) {
-    Graph<V, ?> graph = layoutModel.getGraph();
     V parent = neighborCache.predecessorsOf(vertex).stream().findFirst().orElse(null);
     if (parent == null) {
       return getCenter(layoutModel);

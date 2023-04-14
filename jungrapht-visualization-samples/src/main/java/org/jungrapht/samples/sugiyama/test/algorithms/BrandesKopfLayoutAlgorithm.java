@@ -272,9 +272,9 @@ public class BrandesKopfLayoutAlgorithm<V, E>
       rowMaxHeightMap.put(layerIndex, maxHeight);
       layerIndex++;
     }
-    int widestRowWidth = rowWidthMap.values().stream().mapToInt(v -> v).max().getAsInt();
-    totalWidth = widestRowWidth + horizontalOffset;
-    totalHeight = layers.size() * verticalOffset + 2 * verticalOffset;
+    //    int widestRowWidth = rowWidthMap.values().stream().mapToInt(v -> v).max().getAsInt();
+    //    totalWidth = widestRowWidth + horizontalOffset;
+    //    totalHeight = layers.size() * verticalOffset + 2 * verticalOffset;
 
     // now all the vertices in layers (best) have points associated with them
     // every vertex in vertexMap has a point value

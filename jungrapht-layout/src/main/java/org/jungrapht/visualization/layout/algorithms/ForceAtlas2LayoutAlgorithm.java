@@ -90,7 +90,6 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
     private Map<V, Double> nodeMasses = null;
     private Function<V, Point> initializer =
         v -> Point.of(random.nextDouble(), random.nextDouble());
-    //    private boolean tuneToGraphSize = true;
 
     public B repulsionContractBuilder(StandardFA2Repulsion.Builder repulsionContractBuilder) {
       this.repulsionContractBuilder = repulsionContractBuilder;

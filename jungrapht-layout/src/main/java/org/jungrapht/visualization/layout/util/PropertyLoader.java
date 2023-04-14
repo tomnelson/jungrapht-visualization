@@ -1,7 +1,6 @@
 package org.jungrapht.visualization.layout.util;
 
 import java.io.InputStream;
-import java.util.Properties;
 
 public class PropertyLoader {
 
@@ -30,7 +29,7 @@ public class PropertyLoader {
         InputStream stream = PropertyLoader.class.getResourceAsStream("/" + launchProgram);
         System.getProperties().load(stream);
 
-        Properties props = System.getProperties();
+        stream.close();
         return true;
       }
     } catch (Exception ex) {
@@ -42,6 +41,7 @@ public class PropertyLoader {
     try {
       InputStream stream = PropertyLoader.class.getResourceAsStream("/" + PROPERTIES_FILE_NAME);
       System.getProperties().load(stream);
+      stream.close();
       return true;
     } catch (Exception ex) {
     }

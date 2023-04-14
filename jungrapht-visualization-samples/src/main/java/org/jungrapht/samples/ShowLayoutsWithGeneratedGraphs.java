@@ -35,8 +35,8 @@ public class ShowLayoutsWithGeneratedGraphs extends JPanel {
 
   private static final Logger log = LoggerFactory.getLogger(ShowLayoutsWithGeneratedGraphs.class);
 
-  protected static Graph<String, Integer>[] graphArray;
-  protected static int graphIndex;
+  protected Graph<String, Integer>[] graphArray;
+  protected int graphIndex;
 
   LayoutPaintable.BalloonRings balloonLayoutRings;
   LayoutPaintable.RadialRings radialLayoutRings;

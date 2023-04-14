@@ -262,7 +262,7 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
 
     VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
     MultiLayerTransformer multiLayerTransformer = vv.getRenderContext().getMultiLayerTransformer();
-    MutableSelectedState<V> ps = vv.getSelectedVertexState();
+    //    MutableSelectedState<V> ps = vv.getSelectedVertexState();
 
     log.trace("down:{} out:{}", down, out);
     if (vertex != null && !down.equals(out)) {
@@ -319,7 +319,7 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
         double dx = graphPoint.getX() - graphDown.getX();
         double dy = graphPoint.getY() - graphDown.getY();
         log.trace("dx, dy: {},{}", dx, dy);
-        MutableSelectedState<V> ps = vv.getSelectedVertexState();
+        //        MutableSelectedState<V> ps = vv.getSelectedVertexState();
 
         for (V v : vv.getSelectedVertices()) {
           org.jungrapht.visualization.layout.model.Point vp = layoutModel.apply(v);

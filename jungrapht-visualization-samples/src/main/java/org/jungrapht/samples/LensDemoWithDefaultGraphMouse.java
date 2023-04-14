@@ -133,7 +133,7 @@ public class LensDemoWithDefaultGraphMouse extends JPanel {
 
     // create a lens to share between the two hyperbolic transformers
     LayoutModel<String> layoutModel = vv.getVisualizationModel().getLayoutModel();
-    Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
+    //    Dimension d = new Dimension(layoutModel.getWidth(), layoutModel.getHeight());
 
     hyperbolicViewSupport =
         ViewLensSupport.<String, Integer, DefaultLensGraphMouse>builder(vv)

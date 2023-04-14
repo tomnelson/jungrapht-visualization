@@ -21,7 +21,7 @@ public abstract class Colors {
   private Colors() {}
 
   /** a map of well-known 'web' color names to colors */
-  public static Map<String, Color> WEB_COLOR_MAP =
+  public static final Map<String, Color> WEB_COLOR_MAP =
       Map.ofEntries(
           entry("Black", Color.decode("0x000000")),
           entry("Navy", Color.decode("0x000080")),

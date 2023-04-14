@@ -51,9 +51,9 @@ import org.jungrapht.visualization.util.LayoutPaintable;
  */
 public class ShowLayoutsWithImageIconVertices extends JPanel {
 
-  protected static Graph<String, Integer>[] graphArray;
-  protected static int graphIndex;
-  protected static String[] graphNames = {
+  protected Graph<String, Integer>[] graphArray;
+  protected int graphIndex;
+  static final String[] graphNames = {
     "Two component graph",
     "Random mixed-mode graph",
     "Miscellaneous multicomponent graph",
@@ -64,8 +64,8 @@ public class ShowLayoutsWithImageIconVertices extends JPanel {
     "Bipartite Graph"
   };
 
-  private static int LAYOUT_PREFERRED_WIDTH = 1200;
-  private static int LAYOUT_PREFERRED_HEIGHT = 1200;
+  private static final int LAYOUT_PREFERRED_WIDTH = 1200;
+  private static final int LAYOUT_PREFERRED_HEIGHT = 1200;
 
   LayoutPaintable.BalloonRings balloonLayoutRings;
   LayoutPaintable.RadialRings radialLayoutRings;
@@ -140,7 +140,7 @@ public class ShowLayoutsWithImageIconVertices extends JPanel {
                           1.3 * labelBounds.height / shapeBounds.getHeight());
                   AffineTransform translate =
                       AffineTransform.getTranslateInstance(
-                          labelBounds.width / 2, labelBounds.height / 2);
+                          labelBounds.width / 2., labelBounds.height / 2.);
                   translate.concatenate(scale);
                   shape = translate.createTransformedShape(shape);
                   graphics.setColor(Color.pink);

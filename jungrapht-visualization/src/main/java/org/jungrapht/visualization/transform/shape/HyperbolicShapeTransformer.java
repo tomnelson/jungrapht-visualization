@@ -143,6 +143,8 @@ public class HyperbolicShapeTransformer extends HyperbolicTransformer
         case PathIterator.SEG_CLOSE:
           newPath.closePath();
           break;
+
+        default:
       }
     }
     return newPath;
@@ -186,6 +188,8 @@ public class HyperbolicShapeTransformer extends HyperbolicTransformer
         case PathIterator.SEG_CLOSE:
           newPath.closePath();
           break;
+
+        default:
       }
     }
     if (log.isTraceEnabled()) {

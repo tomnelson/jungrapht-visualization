@@ -99,9 +99,11 @@ public class BarnesHutVisualizer extends JPanel {
     JButton go = new JButton("Log all forces");
     go.addActionListener(
         e -> {
-          for (String node : elements.keySet()) {
+          for (Map.Entry<String, Point> entry : elements.entrySet()) {
+            String node = entry.getKey();
+            Point point = entry.getValue();
             ForceObject<String> nodeForceObject =
-                new ForceObject(node, elements.get(node)) {
+                new ForceObject(node, point) {
                   @Override
                   protected void addForceFrom(ForceObject other) {
 
@@ -133,13 +135,21 @@ public class BarnesHutVisualizer extends JPanel {
   }
 
   private String getVertexAt(Point2D p) {
-    for (String node : elements.keySet()) {
-      Point loc = elements.get(node);
-      if (loc.distanceSquared(p.getX(), p.getY()) < 20) {
-        return node;
-      }
-    }
-    return null;
+
+    return elements
+        .entrySet()
+        .stream()
+        .filter(e -> e.getValue().distanceSquared(p.getX(), p.getY()) < 20)
+        .findFirst()
+        .map(Map.Entry::getKey)
+        .orElse(null);
+
+    //    for (Map.Entry<String, Point> entry : elements.entrySet()) {
+    //      if (entry.getValue().distanceSquared(p.getX(), p.getY()) < 20) {
+    //        return entry.getKey();
+    //      }
+    //    }
+    //    return null;
   }
 
   private void draw(Graphics2D g, Node node) {

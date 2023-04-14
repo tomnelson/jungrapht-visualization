@@ -610,8 +610,9 @@ public class NetworkSimplex<V, E> {
 
   private void shiftLayerToZero() {
     int minLayer = Integer.MAX_VALUE;
-    for (LV<V> v : layers.keySet()) if (layers.get(v) < minLayer) minLayer = layers.get(v);
-
+    for (Map.Entry<LV<V>, Integer> entry : layers.entrySet()) {
+      if (layers.get(entry.getKey()) < minLayer) minLayer = entry.getValue();
+    }
     for (LV<V> v : svGraph.vertexSet()) {
       int newRank = layers.get(v) - minLayer;
       v.setRank(newRank);

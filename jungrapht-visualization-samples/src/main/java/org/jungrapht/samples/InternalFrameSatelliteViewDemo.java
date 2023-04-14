@@ -134,7 +134,7 @@ public class InternalFrameSatelliteViewDemo {
     desktop.add(dialog);
     content = dialog.getContentPane();
 
-    final ScalingControl scaler = new CrossoverScalingControl();
+    //    final ScalingControl scaler = new CrossoverScalingControl();
 
     JButton dismiss = new JButton("Dismiss");
     dismiss.addActionListener(e -> dialog.setVisible(false));

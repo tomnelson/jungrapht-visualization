@@ -271,14 +271,15 @@ public class CircleLayoutAlgorithm<V>
 
   @Override
   public void visit(LayoutModel<V> layoutModel) {
+    if (layoutModel == null) {
+      return;
+    }
     Graph<V, ?> graph = layoutModel.getGraph();
-    if (graph == null || graph.vertexSet().isEmpty()) {
+    if (graph.vertexSet().isEmpty()) {
       return;
     }
     this.layoutModel = layoutModel;
-    if (layoutModel != null) {
-      computeVertexOrder(layoutModel);
-    }
+    computeVertexOrder(layoutModel);
   }
 
   private void layoutVertices(LayoutModel<V> layoutModel, boolean countCrossings) {

@@ -258,9 +258,10 @@ public class AggregateLayoutModel<V> implements LayoutModel<V> {
    * @return the location of the vertex
    */
   public Point apply(V vertex) {
-    for (LayoutModel<V> layoutModel : layouts.keySet()) {
+    for (Map.Entry<LayoutModel<V>, Point> entry : layouts.entrySet()) {
+      LayoutModel<V> layoutModel = entry.getKey();
       if (layoutModel.getGraph().containsVertex(vertex)) {
-        Point center = layouts.get(layoutModel);
+        Point center = entry.getValue();
         // transform by the layout itself, but offset to the
         // center of the sublayout
         int width = layoutModel.getWidth();
@@ -269,10 +270,7 @@ public class AggregateLayoutModel<V> implements LayoutModel<V> {
         double deltaY = center.y - height / 2;
         Point vertexCenter = layoutModel.apply(vertex);
         log.trace("sublayout center is {}", vertexCenter);
-        double[] srcPoints = new double[] {vertexCenter.x, vertexCenter.y};
-        double[] destPoints = new double[2];
         Point translatedCenter = vertexCenter.add(deltaX, deltaY);
-        //        at.transform(srcPoints, 0, destPoints, 0, 1);
         return translatedCenter;
       }
     }

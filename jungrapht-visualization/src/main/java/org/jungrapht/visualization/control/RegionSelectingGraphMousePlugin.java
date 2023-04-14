@@ -193,7 +193,7 @@ public class RegionSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
       deltaDown = down;
       VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
       multiSelectionStrategy = vv.getMultiSelectionStrategySupplier().get();
-      TransformSupport<V, E> transformSupport = vv.getTransformSupport();
+      //      TransformSupport<V, E> transformSupport = vv.getTransformSupport();
       viewRectangle = multiSelectionStrategy.getInitialShape(e.getPoint());
 
       MultiLayerTransformer multiLayerTransformer =
@@ -226,7 +226,7 @@ public class RegionSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
       // don't deselect anything else
       if (down != null) {
         if (multiSelectionMayProceed(layoutTargetShape.getBounds2D())) {
-          Collection<V> picked = toggleSelectionForContainedVertices(vv, layoutTargetShape);
+          toggleSelectionForContainedVertices(vv, layoutTargetShape);
         }
       }
     } else if (e.getModifiersEx() == regionSelectionCompleteMask) {

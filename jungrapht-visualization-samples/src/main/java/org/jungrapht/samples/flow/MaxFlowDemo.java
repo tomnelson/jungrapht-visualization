@@ -99,7 +99,7 @@ public class MaxFlowDemo {
   }
 
   public static void main(String[] args) {
-    MaxFlowDemo myApp = new MaxFlowDemo();
+    new MaxFlowDemo();
   }
 
   static class MyNode {

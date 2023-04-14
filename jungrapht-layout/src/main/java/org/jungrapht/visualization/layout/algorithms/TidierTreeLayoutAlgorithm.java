@@ -125,7 +125,6 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
   protected Comparator<V> vertexComparator;
   protected Comparator<E> edgeComparator;
   protected Graph<V, E> tree;
-  protected NeighborCache<V, E> neighborCache;
   protected LayoutModel<V> layoutModel;
   private Set<V> visitedVertices = new HashSet<>(); // used only in Trace debug mode
 
@@ -515,7 +514,6 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
     super.visit(layoutModel);
     // if this is an undirected graph, create a spanning tree, lay that out and use it to
     // initialize this layout model
-    Graph<V, ?> graph = layoutModel.getGraph();
     if (layoutModel.getGraph().getType().isUndirected()
         || getRoots(layoutModel.getGraph()).size() == 0) {
       Graph<V, E> tree = TreeLayoutAlgorithm.getSpanningTree(layoutModel.getGraph());

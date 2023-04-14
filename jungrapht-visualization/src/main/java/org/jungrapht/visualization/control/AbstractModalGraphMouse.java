@@ -55,7 +55,7 @@ public abstract class AbstractModalGraphMouse extends AbstractGraphMouse
   /** listeners for mode changes */
   protected EventListenerList listenerList = new EventListenerList();
 
-  protected GraphMousePlugin translatingPlugin;
+  //  protected GraphMousePlugin translatingPlugin;
   protected GraphMousePlugin animatedPickingPlugin;
   protected GraphMousePlugin rotatingPlugin;
   protected GraphMousePlugin shearingPlugin;

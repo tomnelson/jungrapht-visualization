@@ -24,9 +24,6 @@ public class VertexImageDragGestureListener implements DragGestureListener {
 
           @Override
           public boolean isDataFlavorSupported(DataFlavor flavor) {
-            if (!isDataFlavorSupported(flavor)) {
-              return false;
-            }
             return true;
           }
 

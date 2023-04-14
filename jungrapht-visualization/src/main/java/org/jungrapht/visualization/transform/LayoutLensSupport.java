@@ -40,7 +40,7 @@ public class LayoutLensSupport<V, E, M extends LensGraphMouse> extends AbstractL
       super(vv);
     }
 
-    protected GraphElementAccessor<V, E> pickSupport;
+    //    protected GraphElementAccessor<V, E> pickSupport;
 
     @Override
     public B lensGraphMouse(M lensGraphMouse) {
@@ -65,7 +65,7 @@ public class LayoutLensSupport<V, E, M extends LensGraphMouse> extends AbstractL
   }
 
   private static final Logger log = LoggerFactory.getLogger(LayoutLensSupport.class);
-  protected GraphElementAccessor<V, E> pickSupport;
+  //  protected GraphElementAccessor<V, E> pickSupport;
 
   /**
    * Create an instance with the specified parameters.

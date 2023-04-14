@@ -192,23 +192,23 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
     layoutStateChangeSupport.fireLayoutStateChanged(this, true);
     layoutVertexPositionSupport.setFireEvents(true);
     modelChangeSupport.fireModelChanged();
-    if (layoutAlgorithm != null) {
-      layoutAlgorithm.visit(this);
+    //    if (layoutAlgorithm != null) {
+    layoutAlgorithm.visit(this);
 
-      if (graph.vertexSet().size() > 0
-          && // don't create thread for empty graph
-          createVisRunnable
-          && layoutAlgorithm instanceof IterativeLayoutAlgorithm) {
-        setRelaxing(true);
-        // don't start a visRunner if the called has set threaded to false
-        setupVisRunner((IterativeLayoutAlgorithm) layoutAlgorithm);
-        // ...the visRunner will fire the layoutStateChanged event when it finishes
+    if (graph.vertexSet().size() > 0
+        && // don't create thread for empty graph
+        createVisRunnable
+        && layoutAlgorithm instanceof IterativeLayoutAlgorithm) {
+      setRelaxing(true);
+      // don't start a visRunner if the called has set threaded to false
+      setupVisRunner((IterativeLayoutAlgorithm) layoutAlgorithm);
+      // ...the visRunner will fire the layoutStateChanged event when it finishes
 
-      } else if (!(layoutAlgorithm instanceof Threaded)
-          || !((Threaded) layoutAlgorithm).isThreaded()) {
-        layoutStateChangeSupport.fireLayoutStateChanged(this, false);
-      }
+    } else if (!(layoutAlgorithm instanceof Threaded)
+        || !((Threaded) layoutAlgorithm).isThreaded()) {
+      layoutStateChangeSupport.fireLayoutStateChanged(this, false);
     }
+    //    }
   }
 
   @Override

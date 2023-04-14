@@ -53,8 +53,6 @@ public class EdgeLabelDemo extends JPanel {
 
   EdgeLabelRenderer edgeLabelRenderer;
 
-  ScalingControl scaler = new CrossoverScalingControl();
-
   /** create an instance of a simple graph with controls to demo the label positioning features */
   @SuppressWarnings("serial")
   public EdgeLabelDemo() {

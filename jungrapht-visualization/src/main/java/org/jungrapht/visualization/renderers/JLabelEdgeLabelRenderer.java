@@ -30,7 +30,7 @@ import javax.swing.border.EmptyBorder;
 @SuppressWarnings("serial")
 public class JLabelEdgeLabelRenderer extends JLabel implements EdgeLabelRenderer, Serializable {
 
-  protected static Border noFocusBorder = new EmptyBorder(0, 0, 0, 0);
+  protected static final Border noFocusBorder = new EmptyBorder(0, 0, 0, 0);
 
   protected Color pickedEdgeLabelColor = Color.black;
   protected boolean rotateEdgeLabels;

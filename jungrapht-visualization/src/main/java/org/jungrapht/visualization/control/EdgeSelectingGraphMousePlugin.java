@@ -160,7 +160,7 @@ public class EdgeSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugi
   protected boolean singleEdgeSelection(MouseEvent e, Point2D layoutPoint, boolean addToSelection) {
     VisualizationServer<V, E> vv = (VisualizationServer<V, E>) e.getSource();
     GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
-    MutableSelectedState<V> selectedVertexState = vv.getSelectedVertexState();
+    //    MutableSelectedState<V> selectedVertexState = vv.getSelectedVertexState();
     MutableSelectedState<E> selectedEdgeState = vv.getSelectedEdgeState();
     LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
     E edge = null;
@@ -189,7 +189,7 @@ public class EdgeSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugi
   @SuppressWarnings("unchecked")
   public void mouseReleased(MouseEvent e) {
     log.trace("mouseReleased in {}", this.getClass().getName());
-    Point2D out = e.getPoint();
+    //    Point2D out = e.getPoint();
 
     VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
     down = null;

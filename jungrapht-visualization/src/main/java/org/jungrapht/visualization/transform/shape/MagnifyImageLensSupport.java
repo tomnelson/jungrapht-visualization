@@ -14,7 +14,6 @@ import java.awt.geom.Point2D;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.GraphElementAccessor;
 import org.jungrapht.visualization.control.LensGraphMouse;
 import org.jungrapht.visualization.control.LensTransformSupport;
 import org.jungrapht.visualization.control.TransformSupport;
@@ -75,7 +74,7 @@ public class MagnifyImageLensSupport<V, E, M extends LensGraphMouse>
   protected GraphicsDecorator savedGraphicsDecorator;
   protected Renderer<V, E> renderer;
   protected Renderer<V, E> transformingRenderer;
-  protected GraphElementAccessor<V, E> pickSupport;
+  //  protected GraphElementAccessor<V, E> pickSupport;
 
   static final String instructions =
       "<html><center>Mouse-Drag the Lens center to move it<p>"

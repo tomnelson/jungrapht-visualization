@@ -11,7 +11,7 @@ import org.jgrapht.util.SupplierUtil;
 
 public class GeneratedGraphs {
 
-  public static Map<String, Supplier<Graph<String, Integer>>> map =
+  public static final Map<String, Supplier<Graph<String, Integer>>> map =
       Map.of(
           "BarbarasiAlbert",
           GeneratedGraphs::getBarbarasiGeneratedGraph,

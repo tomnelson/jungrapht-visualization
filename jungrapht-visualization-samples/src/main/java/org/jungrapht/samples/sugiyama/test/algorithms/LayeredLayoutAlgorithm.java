@@ -180,7 +180,7 @@ public class LayeredLayoutAlgorithm<V, E>
     // Brandes Kopf paper
     layers = arrayToList(layersArray);
     LayeredLayoutAlgorithm.rearrangeLayers(layers);
-    layersArray = listToArray(layers);
+    //    layersArray = listToArray(layers);
 
     Map<LV<V>, LV<V>> vertexMap = new HashMap<>();
     for (List<LV<V>> layer : layers) {

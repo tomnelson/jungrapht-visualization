@@ -88,6 +88,7 @@ public class ArticulatedEdgeShapeFunctions {
             case PathIterator.SEG_LINETO:
               pathPoints.add(Point.of(coords[0], coords[1]));
               break;
+            default:
           }
         }
         // change the middle points (not end points) of the pathPoints list

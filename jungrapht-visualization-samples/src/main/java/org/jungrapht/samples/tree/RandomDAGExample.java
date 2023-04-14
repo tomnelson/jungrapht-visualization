@@ -108,7 +108,7 @@ public class RandomDAGExample extends JPanel {
                           labelBounds.height / bounds.getHeight());
                   AffineTransform translate =
                       AffineTransform.getTranslateInstance(
-                          labelBounds.width / 2, labelBounds.height / 2);
+                          labelBounds.width / 2., labelBounds.height / 2.);
                   translate.concatenate(scale);
                   shape = translate.createTransformedShape(shape);
                   graphics.setColor(color);

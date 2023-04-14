@@ -623,7 +623,7 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
         // use the fallback VertexAccessor
         return graphElementAccessor.getEdge(layoutModel, x, y);
       }
-      Node<E> root = rtree.getRoot().get();
+      //      Node<E> root = rtree.getRoot().get();
       double radius = layoutModel.getWidth() / 20;
 
       E closest = null;
@@ -661,7 +661,7 @@ public abstract class SpatialRTree<T, NT> extends AbstractSpatial<T, NT> impleme
         // use the fallback VertexAccessor
         return graphElementAccessor.getEdge(layoutModel, p);
       }
-      Node<E> root = rtree.getRoot().get();
+      //      Node<E> root = rtree.getRoot().get();
       double radius = layoutModel.getWidth() / 20;
 
       E closest = null;

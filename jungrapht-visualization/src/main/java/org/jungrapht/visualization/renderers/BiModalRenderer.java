@@ -495,7 +495,7 @@ public class BiModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeListene
       return HEAVYWEIGHT;
     }
     // its a big graph, check the scale
-    double scale = scaleSupplier.get();
+    //    double scale = scaleSupplier.get();
     if (this.scalePredicate.test(scaleSupplier)) {
       return LIGHTWEIGHT;
     } else {

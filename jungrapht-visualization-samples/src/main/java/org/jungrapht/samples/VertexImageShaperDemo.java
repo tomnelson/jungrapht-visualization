@@ -390,7 +390,7 @@ public class VertexImageShaperDemo extends JPanel {
             int width = image.getWidth(null);
             int height = image.getHeight(null);
             AffineTransform transform =
-                AffineTransform.getTranslateInstance(-width / 2, -height / 2);
+                AffineTransform.getTranslateInstance(-width / 2., -height / 2.);
             shape = transform.createTransformedShape(shape);
             shapeMap.put(image, shape);
           }
@@ -435,8 +435,8 @@ public class VertexImageShaperDemo extends JPanel {
         paintShapeForVertex(renderContext, v, s);
       }
       if (icon != null) {
-        int xLoc = (int) (x - icon.getIconWidth() / 2);
-        int yLoc = (int) (y - icon.getIconHeight() / 2);
+        int xLoc = (int) (x - icon.getIconWidth() / 2.);
+        int yLoc = (int) (y - icon.getIconHeight() / 2.);
         icon.paintIcon(renderContext.getScreenDevice(), g.getDelegate(), xLoc, yLoc);
       }
     }

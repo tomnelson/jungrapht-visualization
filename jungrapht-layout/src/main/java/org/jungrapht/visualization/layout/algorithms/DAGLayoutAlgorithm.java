@@ -48,8 +48,8 @@ public class DAGLayoutAlgorithm<V, E> extends SpringLayoutAlgorithm<V, E> {
   private Map<V, Number> minLevels = new HashMap<>();
   // Simpler than the "pair" technique.
   final Object lock = new Object();
-  static int graphHeight;
-  static int numRoots;
+  int graphHeight;
+  int numRoots;
   final double SPACEFACTOR = 1.3;
   // How much space do we allow for additional floating at the bottom.
   final double LEVELATTRACTIONRATE = 0.8;

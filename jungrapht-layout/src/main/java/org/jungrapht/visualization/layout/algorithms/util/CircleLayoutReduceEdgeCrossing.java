@@ -149,7 +149,6 @@ public class CircleLayoutReduceEdgeCrossing<V, E> {
   private void buildTable() {
     tableList.clear();
     tableMap.clear();
-    Map<SV<V>, List<SV<V>>> otherMap = new HashMap<>();
     for (SV<V> v : svGraph.vertexSet()) {
       tableList.add(v);
       tableMap.put(

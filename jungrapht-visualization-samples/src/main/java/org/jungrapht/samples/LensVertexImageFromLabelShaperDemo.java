@@ -136,7 +136,7 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
                           1.3 * labelBounds.height / shapeBounds.getHeight());
                   AffineTransform translate =
                       AffineTransform.getTranslateInstance(
-                          labelBounds.width / 2, labelBounds.height / 2);
+                          labelBounds.width / 2., labelBounds.height / 2.);
                   translate.concatenate(scale);
                   shape = translate.createTransformedShape(shape);
                   graphics.setColor(Color.pink);
@@ -167,12 +167,10 @@ public class LensVertexImageFromLabelShaperDemo extends JPanel {
     add(panel);
 
     Renderer<String, Integer> renderer = vv.getRenderer();
-    if (renderer instanceof ModalRenderer) {
-      ModalRenderer modalRenderer = (ModalRenderer) renderer;
-      LightweightVertexRenderer lightweightVertexRenderer =
-          (LightweightVertexRenderer) modalRenderer.getVertexRenderer(LIGHTWEIGHT);
-      lightweightVertexRenderer.setVertexShapeFunction(n -> new Ellipse2D.Double(-10, -10, 20, 20));
-    }
+    ModalRenderer modalRenderer = (ModalRenderer) renderer;
+    LightweightVertexRenderer lightweightVertexRenderer =
+        (LightweightVertexRenderer) modalRenderer.getVertexRenderer(LIGHTWEIGHT);
+    lightweightVertexRenderer.setVertexShapeFunction(n -> new Ellipse2D.Double(-10, -10, 20, 20));
 
     vv.scaleToLayout();
 

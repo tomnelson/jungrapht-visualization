@@ -326,8 +326,10 @@ public class SpatialGrid<V> extends AbstractSpatial<V, V>
       // remove vertex from the first (and only) wrong box it is found in
       Integer wrongBox = null;
       synchronized (map) {
-        for (Integer box : map.keySet()) {
-          if (map.get(box).size() > 0 && map.get(box).contains(vertex)) {
+        for (Map.Entry<Integer, List<V>> entry : map.entrySet()) {
+          Integer box = entry.getKey();
+          List<V> list = entry.getValue();
+          if (list.size() > 0 && list.contains(vertex)) {
             // remove it and stop, because vertex can be in only one box
             wrongBox = box;
             break;

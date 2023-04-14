@@ -278,7 +278,7 @@ public class InnerNode<T> extends RTreeNode<T> implements Node<T> {
 
   private void updateBounds(Rectangle2D r) {
     bounds = bounds.map(rectangle2D -> rectangle2D.createUnion(r)).or(() -> Optional.of(r));
-    Rectangle2D b = bounds.get();
+    //    Rectangle2D b = bounds.get();
   }
 
   /**

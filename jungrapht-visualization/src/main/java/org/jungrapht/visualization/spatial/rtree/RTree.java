@@ -105,9 +105,10 @@ public class RTree<T> {
       Node<T> got = innerVertex.add(splitterContext, element, bounds);
       if (got == null) {
         log.error("add did not work");
-      }
-      if (!got.getParent().isEmpty())
+        throw new RuntimeException("add did not work");
+      } else if (!got.getParent().isEmpty()) {
         throw new RuntimeException("return from InnerVertex add has a parent");
+      }
       return new RTree(got);
     }
   }

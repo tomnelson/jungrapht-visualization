@@ -33,9 +33,9 @@ import org.jungrapht.visualization.util.LayoutPaintable;
  */
 public class ShowLayoutsWithGuavaNetworks extends JPanel {
 
-  protected static Graph<String, Integer>[] graphArray;
-  protected static int graphIndex;
-  protected static String[] graphNames = {
+  protected Graph<String, Integer>[] graphArray;
+  protected int graphIndex;
+  static final String[] graphNames = {
     "Two component network",
     "Random mixed-mode network",
     "One component network",

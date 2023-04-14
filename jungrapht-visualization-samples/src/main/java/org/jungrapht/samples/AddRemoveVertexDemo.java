@@ -43,9 +43,11 @@ public class AddRemoveVertexDemo extends JPanel {
 
   private VisualizationViewer<Number, Number> vv;
 
-  private LayoutAlgorithm<Number> layoutAlgorithm;
+  private transient LayoutAlgorithm<Number> layoutAlgorithm;
 
   private Timer timer;
+
+  Random random = new Random();
 
   private int previousVertex = -1;
 
@@ -132,9 +134,8 @@ public class AddRemoveVertexDemo extends JPanel {
                 vv.getRenderContext().getSelectedEdgeState().select(edge);
                 graph.addEdge(previousVertex, v1, edge);
                 // connect to a random vertex
-                int rand = new Random().nextInt(v1);
                 vv.getRenderContext().getSelectedEdgeState().select(edge);
-                graph.addEdge(v1, rand, ++edge);
+                graph.addEdge(v1, random.nextInt(v1), ++edge);
                 vv.getVisualizationModel().getLayoutModel().accept(layoutAlgorithm);
                 vv.repaint();
               }

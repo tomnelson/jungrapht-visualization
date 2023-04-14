@@ -19,9 +19,7 @@ import org.jgrapht.Graph;
 import org.jungrapht.samples.util.TestGraphs;
 import org.jungrapht.visualization.VisualizationModel;
 import org.jungrapht.visualization.VisualizationViewer;
-import org.jungrapht.visualization.control.CrossoverScalingControl;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
-import org.jungrapht.visualization.control.ScalingControl;
 import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.util.RandomLocationTransformer;
@@ -48,7 +46,6 @@ public class SimpleGraphSpatialTest extends JPanel {
     Dimension layoutPreferredSize = new Dimension(600, 600);
     LayoutAlgorithm layoutAlgorithm = new FRLayoutAlgorithm<>();
 
-    ScalingControl scaler = new CrossoverScalingControl();
     VisualizationModel<String, Integer> model =
         VisualizationModel.builder(g)
             .layoutAlgorithm(layoutAlgorithm)
@@ -73,7 +70,6 @@ public class SimpleGraphSpatialTest extends JPanel {
   public static void main(String[] args) {
 
     // programmatically set the log level so that the spatial grid is drawn for this demo and the SpatialGrid logging is output
-    ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) log;
     LoggerContext ctx = (LoggerContext) LoggerFactory.getILoggerFactory();
     ctx.getLogger("org.jungrapht.visualization.layout.spatial").setLevel(Level.DEBUG);
     ctx.getLogger("org.jungrapht.visualization.DefaultVisualizationServer").setLevel(Level.TRACE);

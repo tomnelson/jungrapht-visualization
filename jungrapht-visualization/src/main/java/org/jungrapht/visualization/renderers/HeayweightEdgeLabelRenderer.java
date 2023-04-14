@@ -188,7 +188,7 @@ public class HeayweightEdgeLabelRenderer<V, E> implements Renderer.EdgeLabel<V, 
     float y1 = (float) p1.y;
     float x2 = (float) p2.x;
     float y2 = (float) p2.y;
-    Shape s2 = renderContext.getVertexShapeFunction().apply(v2);
+    //    Shape s2 = renderContext.getVertexShapeFunction().apply(v2);
     // use LINE or ArticulatedLine for lightweight edges
     Shape edgeShape;
     BiFunction<Graph<V, E>, E, Shape> edgeShapeFunction = renderContext.getEdgeShapeFunction();

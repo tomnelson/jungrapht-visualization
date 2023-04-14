@@ -35,7 +35,7 @@ public class TestGraphs {
    * edges, 10 vertices, and is formed of two connected components, one of 8 vertices, the other of
    * 2.
    */
-  public static String[][] pairs = {
+  static final String[][] pairs = {
     {"a", "b", "3"},
     {"a", "c", "4"},
     {"a", "d", "5"},
@@ -131,9 +131,10 @@ public class TestGraphs {
 
     Set<String> previousLayers = new HashSet<>();
     Set<String> inThisLayer = new HashSet<>();
+
     for (int i = 0; i < layers; i++) {
 
-      int verticesThisLayer = (int) (random.nextDouble() * maxVerticesPerLayer) + 1;
+      int verticesThisLayer = random.nextInt(maxVerticesPerLayer + 1);
       for (int j = 0; j < verticesThisLayer; j++) {
         String v = i + ":" + j;
         graph.addVertex(v);

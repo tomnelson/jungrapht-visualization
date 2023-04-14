@@ -61,7 +61,7 @@ public class BarnesHutFRRepulsion<V>
     }
   }
 
-  protected double EPSILON = 0.000001D;
+  //  protected double EPSILON = 0.000001D;
   private BarnesHutQuadTree<V> tree;
 
   public static Builder builder() {

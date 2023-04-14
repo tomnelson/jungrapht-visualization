@@ -259,7 +259,7 @@ public class SpatialLensLargeGraphDemo extends JPanel {
     g.addEdge(v1Label, v2Label);
   }
 
-  public static String[][] pairs = {
+  static final String[][] pairs = {
     {"a", "b", "3"},
     {"a", "c", "4"},
     {"a", "d", "5"},

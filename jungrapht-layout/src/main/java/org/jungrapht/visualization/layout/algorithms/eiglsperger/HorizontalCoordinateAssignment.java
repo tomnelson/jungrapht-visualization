@@ -48,7 +48,6 @@ public class HorizontalCoordinateAssignment<V, E>
     super(layers, svGraph, markedSegments, horizontalOffset, verticalOffset);
     this.horizontalBalancing = true;
     this.compactionGraph = compactionGraph;
-    Set<Integer> compactionGraphEdges = compactionGraph.edgeSet();
     isolatedCompactionGraphVertices =
         compactionGraph
             .vertexSet()

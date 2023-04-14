@@ -256,8 +256,6 @@ public class TreeLayoutAlgorithm<V> extends AbstractTreeLayoutAlgorithm<V>
    */
   protected int calculateWidth(LayoutModel<V> layoutModel, V vertex, Set<V> seen) {
     if (seen.add(vertex)) {
-      Graph<V, ?> graph = layoutModel.getGraph();
-
       int width =
           Math.max(
               0,
@@ -310,8 +308,6 @@ public class TreeLayoutAlgorithm<V> extends AbstractTreeLayoutAlgorithm<V>
    */
   protected int calculateHeight(LayoutModel<V> layoutModel, V vertex, Set<V> seen) {
     if (seen.add(vertex)) {
-      Graph<V, ?> graph = layoutModel.getGraph();
-
       int height =
           neighborCache
               .successorsOf(vertex)

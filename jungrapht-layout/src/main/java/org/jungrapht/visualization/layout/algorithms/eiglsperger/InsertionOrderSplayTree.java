@@ -369,7 +369,7 @@ public class InsertionOrderSplayTree<T> {
 
   private Node<T> find(Node<T> from, T node) {
     if (from == null) return null;
-    if (from != null && from.key.equals(node)) return from;
+    if (from.key.equals(node)) return from;
     Node<T> found = find(from.left, node);
     if (found != null) {
       return found;

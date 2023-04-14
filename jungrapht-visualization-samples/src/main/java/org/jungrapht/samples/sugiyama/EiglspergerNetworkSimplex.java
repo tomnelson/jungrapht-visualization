@@ -141,15 +141,15 @@ public class EiglspergerNetworkSimplex extends JFrame {
     dag.addVertex("g");
     dag.addVertex("h");
 
-    int ae = dag.addEdge("a", "e");
-    int af = dag.addEdge("a", "f");
-    int ab = dag.addEdge("a", "b");
-    int bc = dag.addEdge("b", "c");
-    int eg = dag.addEdge("e", "g");
-    int fg = dag.addEdge("f", "g");
-    int cd = dag.addEdge("c", "d");
-    int gh = dag.addEdge("g", "h");
-    int dh = dag.addEdge("d", "h");
+    dag.addEdge("a", "e");
+    dag.addEdge("a", "f");
+    dag.addEdge("a", "b");
+    dag.addEdge("b", "c");
+    dag.addEdge("e", "g");
+    dag.addEdge("f", "g");
+    dag.addEdge("c", "d");
+    dag.addEdge("g", "h");
+    dag.addEdge("d", "h");
 
     return dag;
   }

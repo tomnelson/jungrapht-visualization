@@ -71,7 +71,7 @@ public class AnnotatingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   /** set to true when the AnnotationPaintable has been added to the view component */
   protected boolean added = false;
 
-  protected int modifiers;
+  //  protected int modifiers;
 
   /**
    * Create an instance with defaults for primary (button 1) and secondary (button 1 + shift)

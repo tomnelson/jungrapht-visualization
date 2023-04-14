@@ -15,6 +15,7 @@ import com.google.common.graph.MutableNetwork;
 import com.google.common.graph.NetworkBuilder;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.Set;
 import java.util.function.Supplier;
 import org.jgrapht.generate.BarabasiAlbertGraphGenerator;
@@ -29,7 +30,7 @@ public class TestGuavaNetworks {
    * edges, 10 vertices, and is formed of two connected components, one of 8 vertices, the other of
    * 2.
    */
-  public static String[][] pairs = {
+  static final String[][] pairs = {
     {"a", "b"}, {"a", "c"}, {"a", "d"}, {"d", "c"}, {"d", "e"}, {"e", "f"}, {"f", "g"}, {"h", "i"}
   };
 
@@ -99,9 +100,10 @@ public class TestGuavaNetworks {
     Set<String> previousLayers = new HashSet<>();
     Set<String> inThisLayer = new HashSet<>();
     int edge = 0;
+    Random random = new Random();
     for (int i = 0; i < layers; i++) {
 
-      int verticesThisLayer = (int) (Math.random() * maxVerticesPerLayer) + 1;
+      int verticesThisLayer = random.nextInt(maxVerticesPerLayer + 1);
       for (int j = 0; j < verticesThisLayer; j++) {
         String v = i + ":" + j;
         network.addNode(v);

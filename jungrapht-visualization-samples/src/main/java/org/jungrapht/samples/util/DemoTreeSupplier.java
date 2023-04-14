@@ -26,7 +26,7 @@ public class DemoTreeSupplier {
 
     treeBuilder.addVertex("root");
 
-    Integer edgeId = 0;
+    //    Integer edgeId = 0;
     // root gets 3 children
     treeBuilder.addEdge("root", "V0");
     treeBuilder.addEdge("root", "V1");
@@ -267,7 +267,7 @@ public class DemoTreeSupplier {
             .edgeSupplier(SupplierUtil.createIntegerSupplier())
             .buildGraphBuilder();
 
-    Integer edgeId = 0;
+    //    Integer edgeId = 0;
     builder.addEdge("A0", "A1");
     builder.addEdge("A0", "A2");
 

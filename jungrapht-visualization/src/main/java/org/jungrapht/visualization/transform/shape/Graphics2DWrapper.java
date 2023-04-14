@@ -35,6 +35,7 @@ import java.awt.image.RenderedImage;
 import java.awt.image.renderable.RenderableImage;
 import java.text.AttributedCharacterIterator;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * a complete wrapping of Graphics2D, useful as a base class. Contains no additional methods, other
@@ -333,8 +334,12 @@ public class Graphics2DWrapper {
   /* (non-Javadoc)
    * @see java.lang.Object#equals(java.lang.Object)
    */
-  public boolean equals(Object obj) {
-    return delegate.equals(obj);
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Graphics2DWrapper that = (Graphics2DWrapper) o;
+    return Objects.equals(delegate, that.delegate);
   }
 
   /* (non-Javadoc)
@@ -396,9 +401,9 @@ public class Graphics2DWrapper {
   /* (non-Javadoc)
    * @see java.awt.Graphics#finalize()
    */
-  public void finalize() {
-    delegate.finalize();
-  }
+  //  public void finalize() {
+  //    delegate.finalize();
+  //  }
 
   /* (non-Javadoc)
    * @see java.awt.Graphics2D#getBackground()

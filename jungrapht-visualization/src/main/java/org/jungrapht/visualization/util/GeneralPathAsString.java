@@ -42,6 +42,8 @@ public class GeneralPathAsString {
           newPath.closePath();
           sb.append("close");
           break;
+
+        default:
       }
     }
     return sb.toString();

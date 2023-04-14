@@ -397,7 +397,7 @@ public class ShowLayoutsWithGhidraGraphTwo extends JFrame {
    * these are vertex or edge types that have defined colors (the keys are the property values for
    * the vertex/edge keys: VertexType and EdgeType)
    */
-  public static Map<String, Paint> VERTEX_TYPE_TO_COLOR_MAP =
+  public static final Map<String, Paint> VERTEX_TYPE_TO_COLOR_MAP =
       Map.ofEntries(
           entry("Body", Color.blue),
           entry("Entry", Colors.WEB_COLOR_MAP.get("DarkOrange")),
@@ -414,7 +414,7 @@ public class ShowLayoutsWithGhidraGraphTwo extends JFrame {
    * these are vertex or edge types that have defined colors (the keys are the property values for
    * the vertex/edge keys: VertexType and EdgeType)
    */
-  public static Map<String, Paint> EDGE_TYPE_TO_COLOR_MAP =
+  public static final Map<String, Paint> EDGE_TYPE_TO_COLOR_MAP =
       Map.ofEntries(
           entry("Entry", Color.gray), // white??
           entry("Fall-Through", Color.blue),
@@ -466,7 +466,7 @@ public class ShowLayoutsWithGhidraGraphTwo extends JFrame {
     return roots;
   }
 
-  class EdgePredicate implements Predicate<AI> {
+  static class EdgePredicate implements Predicate<AI> {
     Graph<AS, AI> graph;
 
     EdgePredicate(Graph<AS, AI> graph) {
