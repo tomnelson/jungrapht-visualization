@@ -25,7 +25,7 @@ public interface ShapeTransformer extends BidirectionalTransformer {
    * map a shape from graph coordinate system to the screen coordinate system
    *
    * @param shape the Shape to transform
-   * @return a GeneralPath (Shape) representing the screen points of the shape
+   * @return a Path2D(Shape) representing the screen points of the shape
    */
   Shape transform(Shape shape);
 

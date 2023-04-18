@@ -53,7 +53,7 @@ public class TreeLayoutDemoWithIsolatedVertices extends JPanel {
     int width = 20;
     int height = 20;
     Function<String, Shape> vertexShapeFunction =
-        v -> new Ellipse2D.Float(-width / 2.f, -height / 2.f, width, height);
+        v -> new Ellipse2D.Double(-width / 2.f, -height / 2.f, width, height);
 
     final DefaultGraphMouse<String, Integer> graphMouse = new DefaultGraphMouse<>();
 

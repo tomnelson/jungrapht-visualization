@@ -104,7 +104,7 @@ public class MultiViewDemo extends JPanel {
     vv3 = VisualizationViewer.builder(visualizationModel).viewSize(preferredSize).build();
 
     vv1.getRenderContext().setEdgeShapeFunction(EdgeShape.line());
-    vv2.getRenderContext().setVertexShapeFunction(n -> new Rectangle2D.Float(-6, -6, 12, 12));
+    vv2.getRenderContext().setVertexShapeFunction(n -> new Rectangle2D.Double(-6, -6, 12, 12));
 
     vv2.getRenderContext().setEdgeShapeFunction(EdgeShape.quadCurve());
 

@@ -9,7 +9,7 @@ import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 import java.util.Collections;
 import javax.swing.Icon;
 
@@ -21,7 +21,7 @@ import javax.swing.Icon;
  */
 public class Checkmark implements Icon {
 
-  GeneralPath path = new GeneralPath();
+  Path2D path = new Path2D.Double();
   AffineTransform highlight = AffineTransform.getTranslateInstance(-1, -1);
   AffineTransform lowlight = AffineTransform.getTranslateInstance(1, 1);
   AffineTransform shadow = AffineTransform.getTranslateInstance(2, 2);

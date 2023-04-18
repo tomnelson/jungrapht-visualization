@@ -11,10 +11,7 @@
 package org.jungrapht.visualization;
 
 import java.awt.Shape;
-import java.awt.geom.Area;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
+import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 
 /**
@@ -48,8 +45,7 @@ public class FourPassImageShaper {
    * @param path path to search for the point p
    * @return the last point
    */
-  private static Point2D detectLine(
-      Point2D p1, Point2D p2, Point2D p, Line2D line, GeneralPath path) {
+  private static Point2D detectLine(Point2D p1, Point2D p2, Point2D p, Line2D line, Path2D path) {
 
     // check for line
     // if p is on the line that extends thru p1 and p2
@@ -62,7 +58,7 @@ public class FourPassImageShaper {
       p2.setLocation(p);
       line.setLine(p1, p2);
       // end the ongoing path line at the new p1 (the old p2)
-      path.lineTo((float) p1.getX(), (float) p1.getY());
+      path.lineTo(p1.getX(), p1.getY());
     }
     return p2;
   }
@@ -73,18 +69,18 @@ public class FourPassImageShaper {
    * @return the Shape of the left edge of the image
    */
   private static Shape leftEdge(BufferedImage image) {
-    GeneralPath path = new GeneralPath();
+    Path2D path = new Path2D.Double();
     Point2D p1 = null;
     Point2D p2 = null;
-    Line2D line = new Line2D.Float();
-    Point2D p = new Point2D.Float();
+    Line2D line = new Line2D.Double();
+    Point2D p = new Point2D.Double();
     int foundPointY = -1;
     for (int i = 0; i < image.getHeight(); i++) {
       // go until we reach an opaque point, then stop
       for (int j = 0; j < image.getWidth(); j++) {
         if ((image.getRGB(j, i) & 0xff000000) != 0) {
           // this is a point I want
-          p = new Point2D.Float(j, i);
+          p = new Point2D.Double(j, i);
           foundPointY = i;
           break;
         }
@@ -92,9 +88,9 @@ public class FourPassImageShaper {
       if (foundPointY >= 0) {
         if (p2 == null) {
           // this is the first point found. project line to right edge
-          p1 = new Point2D.Float(image.getWidth() - 1, foundPointY);
+          p1 = new Point2D.Double(image.getWidth() - 1, foundPointY);
           path.moveTo(p1.getX(), p1.getY());
-          p2 = new Point2D.Float();
+          p2 = new Point2D.Double();
           p2.setLocation(p);
         } else {
           p2 = detectLine(p1, p2, p, line, path);
@@ -116,11 +112,11 @@ public class FourPassImageShaper {
    * @return the Shape of the bottom edge of the image
    */
   private static Shape bottomEdge(BufferedImage image) {
-    GeneralPath path = new GeneralPath();
+    Path2D path = new Path2D.Double();
     Point2D p1 = null;
     Point2D p2 = null;
-    Line2D line = new Line2D.Float();
-    Point2D p = new Point2D.Float();
+    Line2D line = new Line2D.Double();
+    Point2D p = new Point2D.Double();
     int foundPointX = -1;
     for (int i = 0; i < image.getWidth(); i++) {
       for (int j = image.getHeight() - 1; j >= 0; j--) {
@@ -134,10 +130,10 @@ public class FourPassImageShaper {
       if (foundPointX >= 0) {
         if (p2 == null) {
           // this is the first point found. project line to top edge
-          p1 = new Point2D.Float(foundPointX, 0);
+          p1 = new Point2D.Double(foundPointX, 0);
           // path starts here
           path.moveTo(p1.getX(), p1.getY());
-          p2 = new Point2D.Float();
+          p2 = new Point2D.Double();
           p2.setLocation(p);
         } else {
           p2 = detectLine(p1, p2, p, line, path);
@@ -159,11 +155,11 @@ public class FourPassImageShaper {
    * @return the Shape of the right edge
    */
   private static Shape rightEdge(BufferedImage image) {
-    GeneralPath path = new GeneralPath();
+    Path2D path = new Path2D.Double();
     Point2D p1 = null;
     Point2D p2 = null;
-    Line2D line = new Line2D.Float();
-    Point2D p = new Point2D.Float();
+    Line2D line = new Line2D.Double();
+    Point2D p = new Point2D.Double();
     int foundPointY = -1;
 
     for (int i = image.getHeight() - 1; i >= 0; i--) {
@@ -178,10 +174,10 @@ public class FourPassImageShaper {
       if (foundPointY >= 0) {
         if (p2 == null) {
           // this is the first point found. project line to top edge
-          p1 = new Point2D.Float(0, foundPointY);
+          p1 = new Point2D.Double(0, foundPointY);
           // path starts here
           path.moveTo(p1.getX(), p1.getY());
-          p2 = new Point2D.Float();
+          p2 = new Point2D.Double();
           p2.setLocation(p);
         } else {
           p2 = detectLine(p1, p2, p, line, path);
@@ -203,11 +199,11 @@ public class FourPassImageShaper {
    * @return the Shape of the top boundary
    */
   private static Shape topEdge(BufferedImage image) {
-    GeneralPath path = new GeneralPath();
+    Path2D path = new Path2D.Double();
     Point2D p1 = null;
     Point2D p2 = null;
-    Line2D line = new Line2D.Float();
-    Point2D p = new Point2D.Float();
+    Line2D line = new Line2D.Double();
+    Point2D p = new Point2D.Double();
     int foundPointX = -1;
 
     for (int i = image.getWidth() - 1; i >= 0; i--) {
@@ -222,10 +218,10 @@ public class FourPassImageShaper {
       if (foundPointX >= 0) {
         if (p2 == null) {
           // this is the first point found. project line to top edge
-          p1 = new Point2D.Float(foundPointX, image.getHeight() - 1);
+          p1 = new Point2D.Double(foundPointX, image.getHeight() - 1);
           // path starts here
           path.moveTo(p1.getX(), p1.getY());
-          p2 = new Point2D.Float();
+          p2 = new Point2D.Double();
           p2.setLocation(p);
         } else {
           p2 = detectLine(p1, p2, p, line, path);

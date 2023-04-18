@@ -33,9 +33,9 @@ public class LensMagnificationGraphMousePlugin extends AbstractGraphMousePlugin
 
   private static final Logger log =
       LoggerFactory.getLogger(LensMagnificationGraphMousePlugin.class);
-  protected final float floor;
-  protected final float ceiling;
-  protected final float delta;
+  protected final double floor;
+  protected final double ceiling;
+  protected final double delta;
   //  protected int modifiers;
 
   /**
@@ -53,7 +53,7 @@ public class LensMagnificationGraphMousePlugin extends AbstractGraphMousePlugin
    * @param ceiling the maximum zoom value
    * @param delta the change in zoom value caused by each mouse event
    */
-  public LensMagnificationGraphMousePlugin(float floor, float ceiling, float delta) {
+  public LensMagnificationGraphMousePlugin(double floor, double ceiling, double delta) {
     this(0, floor, ceiling, delta);
   }
 
@@ -75,7 +75,8 @@ public class LensMagnificationGraphMousePlugin extends AbstractGraphMousePlugin
    * @param ceiling the maximum zoom value
    * @param delta the change in zoom value caused by each mouse event
    */
-  public LensMagnificationGraphMousePlugin(int modifiers, float floor, float ceiling, float delta) {
+  public LensMagnificationGraphMousePlugin(
+      int modifiers, double floor, double ceiling, double delta) {
     this.modifiers = modifiers;
     this.floor = floor;
     this.ceiling = ceiling;
@@ -87,8 +88,8 @@ public class LensMagnificationGraphMousePlugin extends AbstractGraphMousePlugin
     return e.getModifiersEx() == modifiers;
   }
 
-  private void changeMagnification(Lens lens, float delta) {
-    float magnification = lens.getMagnification() + delta;
+  private void changeMagnification(Lens lens, double delta) {
+    double magnification = lens.getMagnification() + delta;
     magnification = Math.max(floor, magnification);
     magnification = Math.min(magnification, ceiling);
     lens.setMagnification(magnification);
@@ -97,7 +98,7 @@ public class LensMagnificationGraphMousePlugin extends AbstractGraphMousePlugin
   /** change magnification of the lens, depending on the direction of the mouse wheel motion. */
   public void mouseWheelMoved(MouseWheelEvent e) {
     boolean accepted = e.getModifiersEx() == modifiers;
-    float delta = this.delta;
+    double delta = this.delta;
     if (accepted) {
       VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
       MutableTransformer layoutTransformer =

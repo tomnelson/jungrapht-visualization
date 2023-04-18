@@ -110,17 +110,17 @@ public class HeayweightEdgeLabelRenderer<V, E> implements Renderer.EdgeLabel<V, 
             .getMultiLayerTransformer()
             .transform(MultiLayerTransformer.Layer.LAYOUT, p2.x, p2.y);
 
-    float x1 = (float) p2d1.getX();
-    float y1 = (float) p2d1.getY();
-    float x2 = (float) p2d2.getX();
-    float y2 = (float) p2d2.getY();
+    double x1 = p2d1.getX();
+    double y1 = p2d1.getY();
+    double x2 = p2d2.getX();
+    double y2 = p2d2.getY();
 
     GraphicsDecorator g = renderContext.getGraphicsContext();
-    float distX = x2 - x1;
-    float distY = y2 - y1;
+    double distX = x2 - x1;
+    double distY = y2 - y1;
     double totalLength = Math.sqrt(distX * distX + distY * distY);
 
-    float closeness = renderContext.getEdgeLabelCloseness();
+    double closeness = renderContext.getEdgeLabelCloseness();
 
     int posX = (int) (x1 + (closeness) * distX);
     int posY = (int) (y1 + (closeness) * distY);
@@ -184,10 +184,10 @@ public class HeayweightEdgeLabelRenderer<V, E> implements Renderer.EdgeLabel<V, 
 
     org.jungrapht.visualization.layout.model.Point p1 = layoutModel.apply(v1);
     Point p2 = layoutModel.apply(v2);
-    float x1 = (float) p1.x;
-    float y1 = (float) p1.y;
-    float x2 = (float) p2.x;
-    float y2 = (float) p2.y;
+    double x1 = p1.x;
+    double y1 = p1.y;
+    double x2 = p2.x;
+    double y2 = p2.y;
     //    Shape s2 = renderContext.getVertexShapeFunction().apply(v2);
     // use LINE or ArticulatedLine for lightweight edges
     Shape edgeShape;
@@ -203,11 +203,11 @@ public class HeayweightEdgeLabelRenderer<V, E> implements Renderer.EdgeLabel<V, 
     // this is a normal edge. Rotate it to the angle between
     // vertex endpoints, then scale it to the distance between
     // the vertices
-    float dx = x2 - x1;
-    float dy = y2 - y1;
-    float thetaRadians = (float) Math.atan2(dy, dx);
+    double dx = x2 - x1;
+    double dy = y2 - y1;
+    double thetaRadians = Math.atan2(dy, dx);
     xform.rotate(thetaRadians);
-    float dist = (float) Math.sqrt(dx * dx + dy * dy);
+    double dist = Math.sqrt(dx * dx + dy * dy);
     if (edgeShape instanceof ExpandXY) {
       xform.scale(dist, dist);
     } else {

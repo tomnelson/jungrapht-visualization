@@ -384,7 +384,7 @@ public class VertexImageShaperDemo extends JPanel {
           if (shapeImages) {
             shape = ImageShapeUtils.getShape(image, 30);
           } else {
-            shape = new Rectangle2D.Float(0, 0, image.getWidth(null), image.getHeight(null));
+            shape = new Rectangle2D.Double(0, 0, image.getWidth(null), image.getHeight(null));
           }
           if (shape.getBounds().getWidth() > 0 && shape.getBounds().getHeight() > 0) {
             int width = image.getWidth(null);
@@ -416,8 +416,8 @@ public class VertexImageShaperDemo extends JPanel {
 
       Point p = layoutModel.apply(v);
       Point2D p2d = renderContext.getMultiLayerTransformer().transform(Layer.LAYOUT, p.x, p.y);
-      float x = (float) p2d.getX();
-      float y = (float) p2d.getY();
+      double x = p2d.getX();
+      double y = p2d.getY();
 
       GraphicsDecorator g = renderContext.getGraphicsContext();
       boolean outlineImages = false;

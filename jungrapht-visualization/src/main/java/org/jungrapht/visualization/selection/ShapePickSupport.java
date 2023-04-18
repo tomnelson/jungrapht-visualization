@@ -214,8 +214,8 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
               multiLayerTransformer.transform(MultiLayerTransformer.Layer.LAYOUT, p.x, p.y);
           // now p is in view coordinates, ready to be further transformed by any transform in the
           // graphics context
-          float x = (float) p2d.getX();
-          float y = (float) p2d.getY();
+          double x = p2d.getX();
+          double y = p2d.getY();
           // create a transform that translates to the location of
           // the vertex to be rendered
           AffineTransform xform = AffineTransform.getTranslateInstance(x, y);
@@ -341,8 +341,8 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
       Point2D p2d = mlt.transform(MultiLayerTransformer.Layer.LAYOUT, p.x, p.y);
       // now p is in view coordinates, ready to be further transformed by any transform in the
       // graphics context
-      float x = (float) p2d.getX();
-      float y = (float) p2d.getY();
+      double x = p2d.getX();
+      double y = p2d.getY();
       // create a transform that translates to the location of
       // the vertex to be rendered
       AffineTransform xform = AffineTransform.getTranslateInstance(x, y);
@@ -715,8 +715,7 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
     }
 
     Rectangle2D pickArea =
-        new Rectangle2D.Float(
-            (float) x - pickSize / 2, (float) y - pickSize / 2, pickSize, pickSize);
+        new Rectangle2D.Double(x - pickSize / 2, y - pickSize / 2, pickSize, pickSize);
 
     // Check the (smaller) set of eligible edges
     // to return the one that contains the (x,y)
@@ -749,10 +748,10 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
    */
   private Line2D getLineFromShape(Shape shape) {
     float[] coords = new float[6];
-    float startx = 0;
-    float starty = 0;
-    float endx = 0;
-    float endy = 0;
+    double startx = 0;
+    double starty = 0;
+    double endx = 0;
+    double endy = 0;
     int segmentCount = 0;
     PathIterator pathIterator = shape.getPathIterator(new AffineTransform());
     while (!pathIterator.isDone()) {
@@ -782,9 +781,9 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
       pathIterator.next();
     }
     if (segmentCount > 1) {
-      return new Line2D.Float(startx, starty, endx, endy);
+      return new Line2D.Double(startx, starty, endx, endy);
     } else {
-      return new Line2D.Float();
+      return new Line2D.Double();
     }
   }
 
@@ -805,10 +804,10 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
     if (p1 == null || p2 == null) {
       return null;
     }
-    float x1 = (float) p1.x;
-    float y1 = (float) p1.y;
-    float x2 = (float) p2.x;
-    float y2 = (float) p2.y;
+    double x1 = p1.x;
+    double y1 = p1.y;
+    double x2 = p2.x;
+    double y2 = p2.y;
 
     // translate the edge to the starting vertex
     AffineTransform xform = AffineTransform.getTranslateInstance(x1, y1);
@@ -825,13 +824,13 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
       // move the loop so that the nadir is centered in the vertex
       xform.translate(0, -edgeShape.getBounds2D().getHeight() / 2);
     } else {
-      float dx = x2 - x1;
-      float dy = y2 - y1;
+      double dx = x2 - x1;
+      double dy = y2 - y1;
       // rotate the edge to the angle between the vertices
       double theta = Math.atan2(dy, dx);
       xform.rotate(theta);
       // stretch the edge to span the distance between the vertices
-      float dist = (float) Math.sqrt(dx * dx + dy * dy);
+      double dist = Math.sqrt(dx * dx + dy * dy);
       if (edgeShape instanceof ExpandXY) {
         xform.scale(dist, dist);
       } else {
@@ -927,7 +926,7 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
    *
    * @return the layoutSize of the edge picking area
    */
-  public float getPickSize() {
+  public double getPickSize() {
     return pickSize;
   }
 
@@ -976,10 +975,10 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
         renderContext
             .getMultiLayerTransformer()
             .transform(MultiLayerTransformer.Layer.LAYOUT, AWT.convert(targetPoint));
-    float sourcePoint2DX = (float) sourcePoint2D.getX();
-    float sourcePoint2DY = (float) sourcePoint2D.getY();
-    float targetPoint2DX = (float) targetPoint2D.getX();
-    float targetPoint2DY = (float) targetPoint2D.getY();
+    double sourcePoint2DX = sourcePoint2D.getX();
+    double sourcePoint2DY = sourcePoint2D.getY();
+    double targetPoint2DX = targetPoint2D.getX();
+    double targetPoint2DY = targetPoint2D.getY();
 
     boolean isLoop = source.equals(target);
     Shape targetShape = renderContext.getVertexShapeFunction().apply(target);
@@ -998,9 +997,9 @@ public class ShapePickSupport<V, E> implements GraphElementAccessor<V, E> {
       // this is a normal edge. Rotate it to the angle between
       // vertex endpoints, then scale it to the distance between
       // the vertices
-      float dx = targetPoint2DX - sourcePoint2DX;
-      float dy = targetPoint2DY - sourcePoint2DY;
-      float thetaRadians = (float) Math.atan2(dy, dx);
+      double dx = targetPoint2DX - sourcePoint2DX;
+      double dy = targetPoint2DY - sourcePoint2DY;
+      double thetaRadians = Math.atan2(dy, dx);
       xform.rotate(thetaRadians);
       double dist = Math.sqrt(dx * dx + dy * dy);
       if (edgeShape instanceof ExpandXY) {

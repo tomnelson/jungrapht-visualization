@@ -158,7 +158,7 @@ public class DefaultModalGraphMouse<V, E> extends AbstractModalGraphMouse
    * @param in override value for scale in
    * @param out override value for scale out
    */
-  DefaultModalGraphMouse(float in, float out, boolean vertexSelectionOnly) {
+  DefaultModalGraphMouse(double in, double out, boolean vertexSelectionOnly) {
     super(Mode.TRANSFORMING, in, out, vertexSelectionOnly);
     setModeKeyListener(new ModeKeyAdapter(this));
   }
@@ -185,8 +185,8 @@ public class DefaultModalGraphMouse<V, E> extends AbstractModalGraphMouse
 
   public DefaultModalGraphMouse(
       Mode mode,
-      float in,
-      float out,
+      double in,
+      double out,
       boolean vertexSelectionOnly,
       int singleSelectionMask,
       int toggleSingleSelectionMask,

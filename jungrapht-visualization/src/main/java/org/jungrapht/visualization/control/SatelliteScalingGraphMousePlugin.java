@@ -60,8 +60,8 @@ public class SatelliteScalingGraphMousePlugin extends ScalingGraphMousePlugin {
       int scalingMask,
       int xAxisScalingMask,
       int yAxisScalingMask,
-      float in,
-      float out) {
+      double in,
+      double out) {
     super(scaler, scalingMask, xAxisScalingMask, yAxisScalingMask, in, out);
   }
 
@@ -72,10 +72,10 @@ public class SatelliteScalingGraphMousePlugin extends ScalingGraphMousePlugin {
     boolean accepted = checkModifiers(e);
     if (accepted) {
       ScalingControl scalingControl = scaler;
-      float xin = in;
-      float yin = in;
-      float xout = out;
-      float yout = out;
+      double xin = in;
+      double yin = in;
+      double xout = out;
+      double yout = out;
       // check for single axis
       if (e.getModifiersEx() == xAxisScalingMask) {
         // only scale x axis,

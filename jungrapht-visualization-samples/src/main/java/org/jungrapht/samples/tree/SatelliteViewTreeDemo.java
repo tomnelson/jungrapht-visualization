@@ -18,7 +18,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.event.ItemEvent;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -144,7 +144,7 @@ public class SatelliteViewTreeDemo extends JPanel {
             .build();
     mainVisualizationViewer.addPreRenderPaintable(singleSelectedVertexPaintable);
 
-    mainVisualizationViewer.getRenderContext().setEdgeStrokeFunction(e -> new BasicStroke(e));
+    mainVisualizationViewer.getRenderContext().setEdgeStrokeFunction(e -> new BasicStroke());
 
     mainVisualizationViewer
         .getRenderContext()
@@ -260,7 +260,7 @@ public class SatelliteViewTreeDemo extends JPanel {
           vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
 
       Rectangle rect = master.getBounds();
-      GeneralPath path = new GeneralPath();
+      Path2D path = new Path2D.Double();
       path.moveTo(rect.x, rect.y);
       path.lineTo(rect.width, rect.y);
       path.lineTo(rect.width, rect.height);
@@ -284,11 +284,11 @@ public class SatelliteViewTreeDemo extends JPanel {
       g.setColor(Color.cyan);
       g2d.draw(lens);
 
-      path = new GeneralPath();
-      path.moveTo((float) rect.getMinX(), (float) rect.getCenterY());
-      path.lineTo((float) rect.getMaxX(), (float) rect.getCenterY());
-      path.moveTo((float) rect.getCenterX(), (float) rect.getMinY());
-      path.lineTo((float) rect.getCenterX(), (float) rect.getMaxY());
+      path = new Path2D.Double();
+      path.moveTo(rect.getMinX(), rect.getCenterY());
+      path.lineTo(rect.getMaxX(), rect.getCenterY());
+      path.moveTo(rect.getCenterX(), rect.getMinY());
+      path.lineTo(rect.getCenterX(), rect.getMaxY());
       Shape crosshairShape = path;
       crosshairShape = masterViewTransformer.inverseTransform(crosshairShape);
       crosshairShape = masterLayoutTransformer.inverseTransform(crosshairShape);

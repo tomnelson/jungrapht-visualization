@@ -91,16 +91,15 @@ public class VisualizationScrollPane extends JPanel {
 
     public void adjustmentValueChanged(AdjustmentEvent e) {
       int hval = e.getValue();
-      float dh = previous - hval;
+      double dh = previous - hval;
       previous = hval;
       if (dh != 0 && scrollBarsMayControlAdjusting) {
         // get the uniform scale of all transforms
-        float layoutScale =
-            (float)
-                vv.getRenderContext()
-                    .getMultiLayerTransformer()
-                    .getTransformer(Layer.LAYOUT)
-                    .getScale();
+        double layoutScale =
+            vv.getRenderContext()
+                .getMultiLayerTransformer()
+                .getTransformer(Layer.LAYOUT)
+                .getScale();
         dh *= layoutScale;
         AffineTransform at = AffineTransform.getTranslateInstance(dh, 0);
         vv.getRenderContext()
@@ -122,17 +121,16 @@ public class VisualizationScrollPane extends JPanel {
       JScrollBar sb = (JScrollBar) e.getSource();
       BoundedRangeModel m = sb.getModel();
       int vval = m.getValue();
-      float dv = previous - vval;
+      double dv = previous - vval;
       previous = vval;
       if (dv != 0 && scrollBarsMayControlAdjusting) {
 
         // get the uniform scale of all transforms
-        float layoutScale =
-            (float)
-                vv.getRenderContext()
-                    .getMultiLayerTransformer()
-                    .getTransformer(Layer.LAYOUT)
-                    .getScale();
+        double layoutScale =
+            vv.getRenderContext()
+                .getMultiLayerTransformer()
+                .getTransformer(Layer.LAYOUT)
+                .getScale();
         dv *= layoutScale;
         AffineTransform at = AffineTransform.getTranslateInstance(0, dv);
         vv.getRenderContext()

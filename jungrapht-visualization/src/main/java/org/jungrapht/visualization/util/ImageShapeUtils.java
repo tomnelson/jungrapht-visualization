@@ -86,8 +86,8 @@ public class ImageShapeUtils {
    * @return the Shape
    */
   public static Shape getShape(BufferedImage image, int max) {
-    float width = image.getWidth();
-    float height = image.getHeight();
+    double width = image.getWidth();
+    double height = image.getHeight();
     if (width > max || height > max) {
       BufferedImage smaller = new BufferedImage(max, max, BufferedImage.TYPE_INT_ARGB);
       Graphics2D g = smaller.createGraphics();

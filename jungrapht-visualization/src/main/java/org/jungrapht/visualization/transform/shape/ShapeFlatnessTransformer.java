@@ -26,7 +26,7 @@ public interface ShapeFlatnessTransformer extends ShapeTransformer {
    *
    * @param shape the shape to be transformed
    * @param flatness used to break the supplied shape into segments
-   * @return a GeneralPath (Shape) representing the screen points of the shape
+   * @return a Path2D(Shape) representing the screen points of the shape
    */
-  Shape transform(Shape shape, float flatness);
+  Shape transform(Shape shape, double flatness);
 }

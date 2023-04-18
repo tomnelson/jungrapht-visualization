@@ -70,8 +70,8 @@ public class GradientVertexRenderer<V, E> implements Renderer.Vertex<V, E> {
               .getMultiLayerTransformer()
               .transform(MultiLayerTransformer.Layer.LAYOUT, p.x, p.y);
 
-      float x = (float) p2d.getX();
-      float y = (float) p2d.getY();
+      double x = p2d.getX();
+      double y = p2d.getY();
 
       // create a transform that translates to the location of
       // the vertex to be rendered

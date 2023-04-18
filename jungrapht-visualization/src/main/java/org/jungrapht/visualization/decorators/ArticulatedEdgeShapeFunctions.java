@@ -2,7 +2,6 @@ package org.jungrapht.visualization.decorators;
 
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
 import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
 import java.util.ArrayList;
@@ -19,7 +18,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ArticulatedEdgeShapeFunctions {
 
-  private static Logger log = LoggerFactory.getLogger(ArticulatedEdgeShapeFunctions.class);
+  private static final Logger log = LoggerFactory.getLogger(ArticulatedEdgeShapeFunctions.class);
 
   /**
    * This is for articulated edge shapes that have intermediate articulation points. From the
@@ -31,7 +30,7 @@ public class ArticulatedEdgeShapeFunctions {
    * @return a Shape (Path2D) extending from 0,0 to 1,0
    */
   public static Shape makeUnitShape(List<Point> list) {
-    GeneralPath path = new GeneralPath();
+    Path2D path = new Path2D.Double();
     for (int i = 0; i < list.size(); i++) {
       Point pt = list.get(i);
       if (i == 0) {
@@ -77,7 +76,7 @@ public class ArticulatedEdgeShapeFunctions {
       if (shape instanceof Path2D) { // it is
         // gather the points from the path
         List<Point> pathPoints = new ArrayList<>();
-        float[] coords = new float[6];
+        double[] coords = new double[6];
         Path2D path = (Path2D) shape;
         for (PathIterator iterator = path.getPathIterator(null, 1);
             !iterator.isDone();
@@ -99,7 +98,7 @@ public class ArticulatedEdgeShapeFunctions {
           pathPoints.set(i, Point.of(x, y));
         }
         // make a new Path2D from newList
-        Path2D newPath = new GeneralPath();
+        Path2D newPath = new Path2D.Double();
         Point p = pathPoints.get(0);
         newPath.moveTo(p.x, p.y);
         for (int i = 1; i < pathPoints.size() - 1; i++) {

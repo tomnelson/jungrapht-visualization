@@ -76,7 +76,7 @@ public class VertexStyleConfiguration<V, E> {
   private VisualizationServer<V, E> vv;
   private VertexLabelAsShapeRenderer<V, E> vlasr;
   private IconShapeFunction<V> vertexImageShapeFunction =
-      new IconShapeFunction(v -> new Ellipse2D.Float(-20, -20, 40, 40));
+      new IconShapeFunction(v -> new Ellipse2D.Double(-20, -20, 40, 40));
   private Supplier<Boolean> showVertexIconSupplier;
   private Supplier<Boolean> showVertexLabelSupplier;
   private Supplier<Position> labelPositionSupplier;

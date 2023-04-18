@@ -170,8 +170,8 @@ public class ShearingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
       vv.setCursor(cursor);
       Point2D q = down;
       Point2D p = e.getPoint();
-      float dx = (float) (p.getX() - q.getX());
-      float dy = (float) (p.getY() - q.getY());
+      double dx = (p.getX() - q.getX());
+      double dy = (p.getY() - q.getY());
 
       Dimension d = vv.getSize();
       double shx = 2.f * dx / d.height;

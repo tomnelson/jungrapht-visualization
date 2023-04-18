@@ -467,7 +467,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
         log.trace("vd.getHeight() {} ld.getHeight() {} ", vd.getHeight(), ld.getHeight());
         log.trace("ratio: {}", ratio);
       }
-      scaler.scale(this, (float) ratio, (float) ratio, new Point2D.Double());
+      scaler.scale(this, ratio, ratio, new Point2D.Double());
       if (log.isTraceEnabled()) {
         log.trace("center of view is " + this.getCenter());
         log.trace(
@@ -837,7 +837,7 @@ class DefaultVisualizationServer<V, E> extends JPanel
   @Override
   public Point2D getCenter() {
     Dimension d = getSize();
-    return new Point2D.Double(d.width / 2, d.height / 2);
+    return new Point2D.Double(d.width / 2., d.height / 2.);
   }
 
   @Override

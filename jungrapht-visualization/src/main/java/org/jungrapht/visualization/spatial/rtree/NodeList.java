@@ -4,6 +4,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,5 +123,19 @@ public class NodeList<B extends Bounded> extends ArrayList<B> implements Bounded
     for (B n : this) {
       addBoundsFor(n);
     }
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    if (!super.equals(o)) return false;
+    NodeList<?> nodeList = (NodeList<?>) o;
+    return Objects.equals(bounds, nodeList.bounds);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), bounds);
   }
 }

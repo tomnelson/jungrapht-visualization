@@ -26,7 +26,7 @@ public class LightweightVertexRenderer<V, E> extends AbstractVertexRenderer<V, E
     implements Renderer.Vertex<V, E> {
 
   protected Function<V, Shape> simpleVertexShapeFunction =
-      n -> new Ellipse2D.Float(-10.f, -10.f, 20, 20);
+      n -> new Ellipse2D.Double(-10.f, -10.f, 20, 20);
 
   public void setVertexShapeFunction(Function<V, Shape> vertexShapeFunction) {
     this.simpleVertexShapeFunction = vertexShapeFunction;

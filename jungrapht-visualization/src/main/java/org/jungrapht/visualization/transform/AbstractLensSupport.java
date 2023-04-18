@@ -352,7 +352,7 @@ public abstract class AbstractLensSupport<V, E, M extends LensGraphMouse> extend
   }
 
   private static Shape[] getRectangularLensHandles(Rectangle2D lensShape) {
-    float handlePercentage =
+    double handlePercentage =
         .01f * Float.parseFloat(System.getProperty(PREFIX + "lensHandlePercentage", "3.f"));
 
     double size = Math.max(lensShape.getWidth(), lensShape.getHeight()) * handlePercentage;

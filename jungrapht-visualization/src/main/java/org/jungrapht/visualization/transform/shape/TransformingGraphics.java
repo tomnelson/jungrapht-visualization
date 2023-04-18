@@ -18,6 +18,7 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
+import java.util.Objects;
 import org.jungrapht.visualization.transform.BidirectionalTransformer;
 
 /**
@@ -57,7 +58,7 @@ public class TransformingGraphics extends GraphicsDecorator {
     delegate.draw(shape);
   }
 
-  public void draw(Shape s, float flatness) {
+  public void draw(Shape s, double flatness) {
     Shape shape = null;
     if (transformer instanceof ShapeFlatnessTransformer) {
       shape = ((ShapeFlatnessTransformer) transformer).transform(s, flatness);
@@ -73,7 +74,7 @@ public class TransformingGraphics extends GraphicsDecorator {
     delegate.fill(shape);
   }
 
-  public void fill(Shape s, float flatness) {
+  public void fill(Shape s, double flatness) {
     Shape shape = null;
     if (transformer instanceof ShapeFlatnessTransformer) {
       shape = ((ShapeFlatnessTransformer) transformer).transform(s, flatness);
@@ -126,5 +127,19 @@ public class TransformingGraphics extends GraphicsDecorator {
 
   public void dispose() {
     delegate.dispose();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    if (!super.equals(o)) return false;
+    TransformingGraphics that = (TransformingGraphics) o;
+    return Objects.equals(transformer, that.transformer);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), transformer);
   }
 }

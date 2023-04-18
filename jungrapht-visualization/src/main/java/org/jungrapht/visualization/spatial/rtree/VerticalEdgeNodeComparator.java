@@ -29,8 +29,7 @@ public class VerticalEdgeNodeComparator<T> implements Comparator<Node<T>> {
     if (left.getMinY() == right.getMinY()) {
       return Double.compare(left.getMaxY(), right.getMaxY());
     } else {
-      if (left.getMinY() < right.getMinY()) return -1;
-      return 1;
+      return Double.compare(left.getMinX(), right.getMinX());
     }
   }
 

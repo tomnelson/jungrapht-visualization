@@ -23,11 +23,11 @@ import org.jungrapht.visualization.util.EdgeIndexFunction;
  */
 public abstract class ParallelEdgeShapeFunction<V, E> implements BiFunction<Graph<V, E>, E, Shape> {
   /** Specifies the distance between control points for edges being drawn in parallel. */
-  protected float controlOffsetIncrement = 20.f;
+  protected double controlOffsetIncrement = 20.f;
 
   protected EdgeIndexFunction<V, E> edgeIndexFunction = new EdgeIndexFunction<>() {};
 
-  public void setControlOffsetIncrement(float y) {
+  public void setControlOffsetIncrement(double y) {
     controlOffsetIncrement = y;
   }
 

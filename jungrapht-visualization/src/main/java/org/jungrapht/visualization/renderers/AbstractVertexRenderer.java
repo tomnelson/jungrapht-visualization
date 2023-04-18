@@ -55,8 +55,8 @@ public abstract class AbstractVertexRenderer<V, E> implements Renderer.Vertex<V,
             .transform(MultiLayerTransformer.Layer.LAYOUT, p.x, p.y);
     // now p is in view coordinates, ready to be further transformed by any transform in the
     // graphics context
-    float x = (float) p2d.getX();
-    float y = (float) p2d.getY();
+    double x = p2d.getX();
+    double y = p2d.getY();
     // coords values are set and returned to the caller in order to place an Icon instead of Shape
     coords[0] = (int) x;
     coords[1] = (int) y;

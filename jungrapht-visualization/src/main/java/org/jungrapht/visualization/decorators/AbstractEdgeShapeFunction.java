@@ -23,10 +23,10 @@ import org.jgrapht.Graph;
 public abstract class AbstractEdgeShapeFunction<V, E> implements BiFunction<Graph<V, E>, E, Shape> {
 
   /** Specifies how far apart to place the control points for edges being drawn in parallel. */
-  protected float controlOffsetIncrement = 20.f;
+  protected double controlOffsetIncrement = 20.f;
 
   /** Sets the value of <code>control_offset_increment</code>. */
-  public void setControlOffsetIncrement(float y) {
+  public void setControlOffsetIncrement(double y) {
     controlOffsetIncrement = y;
   }
 }

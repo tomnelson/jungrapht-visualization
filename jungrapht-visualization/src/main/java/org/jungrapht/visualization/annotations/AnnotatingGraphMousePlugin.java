@@ -46,7 +46,7 @@ public class AnnotatingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
   protected int additionalModifiers;
 
   /** used to draw a Shape annotation */
-  protected RectangularShape rectangularShape = new Rectangle2D.Float();
+  protected RectangularShape rectangularShape = new Rectangle2D.Double();
 
   /** the Paintable for the Shape annotation */
   protected VisualizationServer.Paintable lensPaintable;

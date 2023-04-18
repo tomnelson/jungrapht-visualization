@@ -33,11 +33,11 @@ import org.jungrapht.visualization.util.EdgeIndexFunction;
  */
 public interface EdgeShape {
 
-  Line2D LINE = new Line2D.Float(0.0f, 0.0f, 1.0f, 0.0f);
-  QuadCurve2D QUAD_CURVE = new QuadCurve2D.Float();
-  CubicCurve2D CUBIC_CURVE = new CubicCurve2D.Float();
-  Ellipse2D ELLIPSE = new Ellipse2D.Float(-.5f, -.5f, 1, 1);
-  Rectangle2D BOX = new Rectangle2D.Float();
+  Line2D LINE = new Line2D.Double(0.0f, 0.0f, 1.0f, 0.0f);
+  QuadCurve2D QUAD_CURVE = new QuadCurve2D.Double();
+  CubicCurve2D CUBIC_CURVE = new CubicCurve2D.Double();
+  Ellipse2D ELLIPSE = new Ellipse2D.Double(-.5f, -.5f, 1, 1);
+  Rectangle2D BOX = new Rectangle2D.Double();
   Wedge WEDGE = new Wedge(10);
 
   /**
@@ -131,7 +131,7 @@ public interface EdgeShape {
 
       int index = edgeIndexFunction.apply(graph, e);
 
-      float controlY = controlOffsetIncrement + controlOffsetIncrement * index;
+      double controlY = controlOffsetIncrement + controlOffsetIncrement * index;
       QUAD_CURVE.setCurve(0.0f, 0.0f, 0.5f, controlY, 1.0f, 0.0f);
       return QUAD_CURVE;
     }
@@ -158,7 +158,7 @@ public interface EdgeShape {
 
       int index = edgeIndexFunction.apply(graph, e);
 
-      float controlY = controlOffsetIncrement + controlOffsetIncrement * index;
+      double controlY = controlOffsetIncrement + controlOffsetIncrement * index;
       CUBIC_CURVE.setCurve(0.0f, 0.0f, 0.33f, 2 * controlY, .66f, -controlY, 1.0f, 0.0f);
       return CUBIC_CURVE;
     }
@@ -177,9 +177,9 @@ public interface EdgeShape {
   }
 
   static Shape buildFrame(RectangularShape shape, int index) {
-    float x = -.5f;
-    float y = -.5f;
-    float diam = 1.f;
+    double x = -.5f;
+    double y = -.5f;
+    double diam = 1.f;
     diam += diam * index / 2;
     x += x * index / 2;
     y += y * index / 2;
@@ -206,17 +206,17 @@ public interface EdgeShape {
    * @author Joshua O'Madadhain
    */
   class Wedge<V, E> extends AbstractEdgeShapeFunction<V, E> {
-    private static GeneralPath triangle;
-    private static GeneralPath bowtie;
+    private static Path2D triangle;
+    private static Path2D bowtie;
 
     public Wedge(int width) {
       triangle = ArrowFactory.getWedgeArrow(width, 1);
       triangle.transform(AffineTransform.getTranslateInstance(1, 0));
-      bowtie = new GeneralPath(GeneralPath.WIND_EVEN_ODD);
-      bowtie.moveTo(0, width / 2);
-      bowtie.lineTo(1, -width / 2);
-      bowtie.lineTo(1, width / 2);
-      bowtie.lineTo(0, -width / 2);
+      bowtie = new Path2D.Double(GeneralPath.WIND_EVEN_ODD);
+      bowtie.moveTo(0, width / 2.);
+      bowtie.lineTo(1, -width / 2.);
+      bowtie.lineTo(1, width / 2.);
+      bowtie.lineTo(0, -width / 2.);
       bowtie.closePath();
     }
 

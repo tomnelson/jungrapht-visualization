@@ -117,7 +117,7 @@ public class RectangularLensDemo extends JPanel {
     vv.getRenderContext().setVertexLabelFunction(Object::toString);
 
     final Function<String, Shape> ovals = vv.getRenderContext().getVertexShapeFunction();
-    final Function<String, Shape> squares = n -> new Rectangle2D.Float(-10, -10, 20, 20);
+    final Function<String, Shape> squares = n -> new Rectangle2D.Double(-10, -10, 20, 20);
 
     // add a listener for ToolTips
     vv.setVertexToolTipFunction(n -> n); //Object::toString);

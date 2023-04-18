@@ -11,11 +11,7 @@
 package org.jungrapht.visualization.transform;
 
 import java.awt.Shape;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.NoninvertibleTransformException;
-import java.awt.geom.PathIterator;
-import java.awt.geom.Point2D;
+import java.awt.geom.*;
 import org.jungrapht.visualization.transform.shape.ShapeTransformer;
 
 /**
@@ -145,41 +141,35 @@ public class AffineTransformer implements BidirectionalTransformer, ShapeTransfo
   /**
    * Transform the supplied shape from graph (layout) to screen (view) coordinates.
    *
-   * @return the GeneralPath of the transformed shape
+   * @return the Path2Dof the transformed shape
    */
   public Shape transform(Shape shape) {
-    GeneralPath newPath = new GeneralPath();
-    float[] coords = new float[6];
+    Path2D newPath = new Path2D.Double();
+    double[] coords = new double[6];
     for (PathIterator iterator = shape.getPathIterator(null); !iterator.isDone(); iterator.next()) {
       int type = iterator.currentSegment(coords);
       switch (type) {
         case PathIterator.SEG_MOVETO:
           Point2D p = transform(coords[0], coords[1]);
-          newPath.moveTo((float) p.getX(), (float) p.getY());
+          newPath.moveTo(p.getX(), p.getY());
           break;
 
         case PathIterator.SEG_LINETO:
           p = transform(coords[0], coords[1]);
-          newPath.lineTo((float) p.getX(), (float) p.getY());
+          newPath.lineTo(p.getX(), p.getY());
           break;
 
         case PathIterator.SEG_QUADTO:
           p = transform(coords[0], coords[1]);
           Point2D q = transform(coords[2], coords[3]);
-          newPath.quadTo((float) p.getX(), (float) p.getY(), (float) q.getX(), (float) q.getY());
+          newPath.quadTo(p.getX(), p.getY(), q.getX(), q.getY());
           break;
 
         case PathIterator.SEG_CUBICTO:
           p = transform(coords[0], coords[1]);
           q = transform(coords[2], coords[3]);
           Point2D r = transform(coords[4], coords[5]);
-          newPath.curveTo(
-              (float) p.getX(),
-              (float) p.getY(),
-              (float) q.getX(),
-              (float) q.getY(),
-              (float) r.getX(),
-              (float) r.getY());
+          newPath.curveTo(p.getX(), p.getY(), q.getX(), q.getY(), r.getX(), r.getY());
           break;
 
         case PathIterator.SEG_CLOSE:
@@ -195,41 +185,35 @@ public class AffineTransformer implements BidirectionalTransformer, ShapeTransfo
   /**
    * Transform the supplied shape from screen (view) to graph (layout) coordinates.
    *
-   * @return the GeneralPath of the transformed shape
+   * @return the Path2Dof the transformed shape
    */
   public Shape inverseTransform(Shape shape) {
-    GeneralPath newPath = new GeneralPath();
-    float[] coords = new float[6];
+    Path2D newPath = new Path2D.Double();
+    double[] coords = new double[6];
     for (PathIterator iterator = shape.getPathIterator(null); !iterator.isDone(); iterator.next()) {
       int type = iterator.currentSegment(coords);
       switch (type) {
         case PathIterator.SEG_MOVETO:
           Point2D p = inverseTransform(coords[0], coords[1]);
-          newPath.moveTo((float) p.getX(), (float) p.getY());
+          newPath.moveTo(p.getX(), p.getY());
           break;
 
         case PathIterator.SEG_LINETO:
           p = inverseTransform(coords[0], coords[1]);
-          newPath.lineTo((float) p.getX(), (float) p.getY());
+          newPath.lineTo(p.getX(), p.getY());
           break;
 
         case PathIterator.SEG_QUADTO:
           p = inverseTransform(coords[0], coords[1]);
           Point2D q = inverseTransform(coords[2], coords[3]);
-          newPath.quadTo((float) p.getX(), (float) p.getY(), (float) q.getX(), (float) q.getY());
+          newPath.quadTo(p.getX(), p.getY(), q.getX(), q.getY());
           break;
 
         case PathIterator.SEG_CUBICTO:
           p = inverseTransform(coords[0], coords[1]);
           q = inverseTransform(coords[2], coords[3]);
           Point2D r = inverseTransform(coords[4], coords[5]);
-          newPath.curveTo(
-              (float) p.getX(),
-              (float) p.getY(),
-              (float) q.getX(),
-              (float) q.getY(),
-              (float) r.getX(),
-              (float) r.getY());
+          newPath.curveTo(p.getX(), p.getY(), q.getX(), q.getY(), r.getX(), r.getY());
           break;
 
         case PathIterator.SEG_CLOSE:

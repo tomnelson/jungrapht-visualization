@@ -161,8 +161,8 @@ public class DefaultGraphMouse<V, E> extends AbstractGraphMouse {
    * @param out override value for scale out
    */
   DefaultGraphMouse(
-      float in,
-      float out,
+      double in,
+      double out,
       boolean vertexSelectionOnly,
       int singleSelectionMask,
       int toggleSingleSelectionMask,

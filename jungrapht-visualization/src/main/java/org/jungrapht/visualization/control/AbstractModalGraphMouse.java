@@ -65,7 +65,7 @@ public abstract class AbstractModalGraphMouse extends AbstractGraphMouse
     this(builder.mode, builder.in, builder.out, builder.vertexSelectionOnly);
   }
 
-  protected AbstractModalGraphMouse(Mode mode, float in, float out, boolean vertexSelectionOnly) {
+  protected AbstractModalGraphMouse(Mode mode, double in, double out, boolean vertexSelectionOnly) {
     super(in, out, vertexSelectionOnly);
     this.mode = mode;
   }

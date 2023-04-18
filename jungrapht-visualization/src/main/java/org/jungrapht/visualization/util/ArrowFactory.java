@@ -11,7 +11,7 @@
  */
 package org.jungrapht.visualization.util;
 
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 
 /**
  * A utility class for creating arrowhead shapes.
@@ -28,8 +28,8 @@ public class ArrowFactory {
    * @param height the arrow's height
    * @return a path in the form of an isosceles triangle with dimensions {@code (base, height)}
    */
-  public static GeneralPath getWedgeArrow(float base, float height) {
-    GeneralPath arrow = new GeneralPath();
+  public static Path2D getWedgeArrow(double base, double height) {
+    Path2D arrow = new Path2D.Double();
     arrow.moveTo(0, 0);
     arrow.lineTo(-height, base / 2.0f);
     arrow.lineTo(-height, -base / 2.0f);
@@ -47,8 +47,8 @@ public class ArrowFactory {
    * @param notch_height the height of the arrow's notch
    * @return a path in the form of a notched isosceles triangle
    */
-  public static GeneralPath getNotchedArrow(float base, float height, float notch_height) {
-    GeneralPath arrow = new GeneralPath();
+  public static Path2D getNotchedArrow(double base, double height, double notch_height) {
+    Path2D arrow = new Path2D.Double();
     arrow.moveTo(0, 0);
     arrow.lineTo(-height, base / 2.0f);
     arrow.lineTo(-(height - notch_height), 0);

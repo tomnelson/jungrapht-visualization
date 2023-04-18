@@ -58,8 +58,8 @@ public class ShapeFactory<T> {
    * @return a rectangle for this input T
    */
   public Shape getRectangle(T t, double rotation) {
-    float width = sizeFunction.apply(t);
-    float height = width * aspectRatioFunction.apply(t);
+    double width = sizeFunction.apply(t);
+    double height = width * aspectRatioFunction.apply(t);
     theRectangle.setFrame(0, 0, width, height);
 
     AffineTransform at = new AffineTransform();
@@ -81,7 +81,7 @@ public class ShapeFactory<T> {
     return getRectangle(t, 0.0);
   }
 
-  private static final Ellipse2D theEllipse = new Ellipse2D.Float();
+  private static final Ellipse2D theEllipse = new Ellipse2D.Double();
 
   /**
    * Returns a <code>Ellipse2D</code> whose width and height are defined by this instance's size and
@@ -95,7 +95,7 @@ public class ShapeFactory<T> {
     return theEllipse;
   }
 
-  private static final RoundRectangle2D theRoundRectangle = new RoundRectangle2D.Float();
+  private static final RoundRectangle2D theRoundRectangle = new RoundRectangle2D.Double();
   /**
    * Returns a <code>RoundRectangle2D</code> whose width and height are defined by this instance's
    * size and aspect ratio functions. The arc layoutSize is set to be half the minimum of the height
@@ -106,7 +106,7 @@ public class ShapeFactory<T> {
    */
   public RoundRectangle2D getRoundRectangle(T t) {
     Rectangle2D frame = getRectangle(t).getBounds2D();
-    float arc_size = (float) Math.min(frame.getHeight(), frame.getWidth()) / 2;
+    double arc_size = Math.min(frame.getHeight(), frame.getWidth()) / 2;
     theRoundRectangle.setRoundRect(
         frame.getX(), frame.getY(), frame.getWidth(), frame.getHeight(), arc_size, arc_size);
     return theRoundRectangle;
@@ -121,11 +121,11 @@ public class ShapeFactory<T> {
    * @return a regular polygon for this t
    */
   public Shape getRegularPolygon(T t, int sides, double rotation) {
-    GeneralPath thePolygon = new GeneralPath();
+    Path2D thePolygon = new Path2D.Double();
     if (sides < 3) throw new IllegalArgumentException("Number of sides must be >= 3");
     Rectangle2D frame = getRectangle(t).getBounds2D();
-    float width = (float) frame.getWidth();
-    float height = (float) frame.getHeight();
+    double width = frame.getWidth();
+    double height = frame.getHeight();
 
     // generate coordinates
     double angle = 0;
@@ -135,10 +135,10 @@ public class ShapeFactory<T> {
     double theta = (2 * Math.PI) / sides;
     for (int i = 2; i < sides; i++) {
       angle -= theta;
-      float delta_x = (float) (width * Math.cos(angle));
-      float delta_y = (float) (width * Math.sin(angle));
+      double delta_x = (width * Math.cos(angle));
+      double delta_y = (width * Math.sin(angle));
       Point2D prev = thePolygon.getCurrentPoint();
-      thePolygon.lineTo((float) prev.getX() + delta_x, (float) prev.getY() + delta_y);
+      thePolygon.lineTo(prev.getX() + delta_x, prev.getY() + delta_y);
     }
     thePolygon.closePath();
 
@@ -146,8 +146,8 @@ public class ShapeFactory<T> {
     Rectangle2D r = thePolygon.getBounds2D();
     double scale_x = width / r.getWidth();
     double scale_y = height / r.getHeight();
-    float translationX = (float) (r.getMinX() + r.getWidth() / 2);
-    float translationY = (float) (r.getMinY() + r.getHeight() / 2);
+    double translationX = (r.getMinX() + r.getWidth() / 2);
+    double translationY = (r.getMinY() + r.getHeight() / 2);
 
     AffineTransform at = AffineTransform.getScaleInstance(scale_x, scale_y);
     if (rotation != 0) {
@@ -178,34 +178,33 @@ public class ShapeFactory<T> {
    * @return an star shape for this t
    */
   public Shape getRegularStar(T t, int points) {
-    GeneralPath thePolygon = new GeneralPath();
+    Path2D thePolygon = new Path2D.Double();
     if (points < 5) throw new IllegalArgumentException("Number of points must be >= 5");
     Rectangle2D frame = getRectangle(t).getBounds2D();
-    float width = (float) frame.getWidth();
-    float height = (float) frame.getHeight();
+    double width = frame.getWidth();
+    double height = frame.getHeight();
 
     // generate coordinates
     double theta = (2 * Math.PI) / points;
     double angle = -theta / 2;
     thePolygon.reset();
     thePolygon.moveTo(0, 0);
-    float deltaX = width * (float) Math.cos(angle);
-    float deltaY = width * (float) Math.sin(angle);
+    double deltaX = width * Math.cos(angle);
+    double deltaY = width * Math.sin(angle);
     Point2D currentPoint = thePolygon.getCurrentPoint();
-    thePolygon.lineTo((float) currentPoint.getX() + deltaX, (float) currentPoint.getY() + deltaY);
+    thePolygon.lineTo(currentPoint.getX() + deltaX, currentPoint.getY() + deltaY);
     for (int i = 1; i < points; i++) {
       angle += theta;
-      deltaX = width * (float) Math.cos(angle);
-      deltaY = width * (float) Math.sin(angle);
+      deltaX = width * Math.cos(angle);
+      deltaY = width * Math.sin(angle);
       currentPoint = thePolygon.getCurrentPoint();
-      thePolygon.lineTo((float) currentPoint.getX() + deltaX, (float) currentPoint.getY() + deltaY);
+      thePolygon.lineTo(currentPoint.getX() + deltaX, currentPoint.getY() + deltaY);
       angle -= theta * 2;
-      deltaX = width * (float) Math.cos(angle);
-      deltaY = width * (float) Math.sin(angle);
+      deltaX = width * Math.cos(angle);
+      deltaY = width * Math.sin(angle);
       currentPoint = thePolygon.getCurrentPoint();
       if (currentPoint != null) {
-        thePolygon.lineTo(
-            (float) currentPoint.getX() + deltaX, (float) currentPoint.getY() + deltaY);
+        thePolygon.lineTo(currentPoint.getX() + deltaX, currentPoint.getY() + deltaY);
       } else {
         log.error("somehow, currentPoint is null");
       }
@@ -217,8 +216,8 @@ public class ShapeFactory<T> {
     double scaleX = width / r.getWidth();
     double scaleY = height / r.getHeight();
 
-    float translationX = (float) (r.getMinX() + r.getWidth() / 2);
-    float translationY = (float) (r.getMinY() + r.getHeight() / 2);
+    double translationX = (r.getMinX() + r.getWidth() / 2);
+    double translationY = (r.getMinY() + r.getHeight() / 2);
 
     AffineTransform at = AffineTransform.getScaleInstance(scaleX, scaleY);
     at.translate(-translationX, -translationY);

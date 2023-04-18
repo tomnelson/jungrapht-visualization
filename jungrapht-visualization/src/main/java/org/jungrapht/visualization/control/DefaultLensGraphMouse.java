@@ -29,30 +29,30 @@ public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> impleme
     protected int lensTranslatingMask =
         Modifiers.masks.get(System.getProperty(PREFIX + "lensTranslatingMask", "MB1"));
 
-    protected float magnificationDelta = 0.05f;
+    protected double magnificationDelta = 0.05f;
     // values for hyperbolic transform lens
-    protected float magnificationFloor = 0.45f;
-    protected float magnificationCeiling = 1.0f;
+    protected double magnificationFloor = 0.45f;
+    protected double magnificationCeiling = 1.0f;
     // values for magnify transform lens
-    //    protected float magnificationFloor = 1.0f;
-    //    protected float magnificationCeiling = 4.0f;
+    //    protected double magnificationFloor = 1.0f;
+    //    protected double magnificationCeiling = 4.0f;
 
     public B lensTranslatingMask(int lensTranslatingMask) {
       this.lensTranslatingMask = lensTranslatingMask;
       return self();
     }
 
-    public B magnificationFloor(float magnificationFloor) {
+    public B magnificationFloor(double magnificationFloor) {
       this.magnificationFloor = magnificationFloor;
       return self();
     }
 
-    public B magnificationCeiling(float magnificationCeiling) {
+    public B magnificationCeiling(double magnificationCeiling) {
       this.magnificationCeiling = magnificationCeiling;
       return self();
     }
 
-    public B magnificationDelta(float magnificationDelta) {
+    public B magnificationDelta(double magnificationDelta) {
       this.magnificationDelta = magnificationDelta;
       return self();
     }
@@ -99,8 +99,8 @@ public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> impleme
   }
 
   DefaultLensGraphMouse(
-      float in,
-      float out,
+      double in,
+      double out,
       boolean vertexSelectionOnly,
       int singleSelectionMask,
       int toggleSingleSelectionMask,
@@ -113,9 +113,9 @@ public class DefaultLensGraphMouse<V, E> extends DefaultGraphMouse<V, E> impleme
       int scalingMask,
       int xAxisScalingMask,
       int yAxisScalingMask,
-      float magnificationFloor,
-      float magnificationCeiling,
-      float magnificationDelta) {
+      double magnificationFloor,
+      double magnificationCeiling,
+      double magnificationDelta) {
     super(
         in,
         out,

@@ -93,7 +93,7 @@ public class RegionSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
   protected boolean locked;
 
   /** used to draw a rectangle to contain selected vertices */
-  protected Shape viewRectangle = new Rectangle2D.Float();
+  protected Shape viewRectangle = new Rectangle2D.Double();
   // viewRectangle projected onto the layout coordinate system
   protected Shape layoutTargetShape = viewRectangle;
 

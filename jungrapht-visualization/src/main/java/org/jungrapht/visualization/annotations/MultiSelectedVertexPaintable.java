@@ -54,7 +54,7 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
             .createTransformedShape(ArrowFactory.getNotchedArrow(20, 24, 8));
     private Icon selectionIcon;
     private Paint selectionPaint = Color.getColor(PREFIX + "selectionColor", Color.red);
-    private float selectionStrokeMin =
+    private double selectionStrokeMin =
         Float.parseFloat(System.getProperty(PREFIX + "selectionStrokeMin", "10.f"));
     private boolean useBounds =
         Boolean.parseBoolean(System.getProperty(PREFIX + "selectionShapeUseBounds", "true"));
@@ -91,7 +91,7 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
       return self();
     }
 
-    public B selectionStrokeMin(float selectionStrokeMin) {
+    public B selectionStrokeMin(double selectionStrokeMin) {
       this.selectionStrokeMin = selectionStrokeMin;
       return self();
     }
@@ -159,7 +159,7 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
 
   protected boolean fillHighlight;
 
-  protected float selectionStrokeMin;
+  protected double selectionStrokeMin;
 
   protected BiModalSelectionRenderer<V, E> biModalRenderer;
 
@@ -201,7 +201,7 @@ public class MultiSelectedVertexPaintable<V, E> implements VisualizationServer.P
       boolean fillHighlight,
       Paint selectionPaint,
       Icon selectionIcon,
-      float selectionStrokeMin,
+      double selectionStrokeMin,
       Function<VisualizationServer<V, E>, Collection<V>> selectedVertexFunction) {
     this.visualizationServer = visualizationServer;
     this.selectionShape = shape;

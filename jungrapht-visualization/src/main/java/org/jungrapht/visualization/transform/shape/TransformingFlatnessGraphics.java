@@ -32,7 +32,7 @@ public class TransformingFlatnessGraphics extends TransformingGraphics {
     super(transformer, delegate);
   }
 
-  public void draw(Shape s, float flatness) {
+  public void draw(Shape s, double flatness) {
     Shape shape = null;
     if (transformer instanceof ShapeFlatnessTransformer) {
       shape = ((ShapeFlatnessTransformer) transformer).transform(s, flatness);
@@ -42,7 +42,7 @@ public class TransformingFlatnessGraphics extends TransformingGraphics {
     delegate.draw(shape);
   }
 
-  public void fill(Shape s, float flatness) {
+  public void fill(Shape s, double flatness) {
     Shape shape = null;
     if (transformer instanceof HyperbolicTransformer) {
       shape = ((HyperbolicShapeTransformer) transformer).transform(s, flatness);

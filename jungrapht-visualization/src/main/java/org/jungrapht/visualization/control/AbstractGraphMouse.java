@@ -44,8 +44,8 @@ public abstract class AbstractGraphMouse extends PluggableGraphMouse {
 
     protected boolean vertexSelectionOnly =
         Boolean.parseBoolean(System.getProperty(VERTEX_SELECTION_ONLY, "false"));
-    protected float in = 1.1f;
-    protected float out = 1 / 1.1f;
+    protected double in = 1.1f;
+    protected double out = 1 / 1.1f;
     protected int selectionMask = MouseEvent.BUTTON1_DOWN_MASK;
     protected int addToSelectionMask = MouseEvent.SHIFT_DOWN_MASK;
 
@@ -53,12 +53,12 @@ public abstract class AbstractGraphMouse extends PluggableGraphMouse {
       return (B) this;
     }
 
-    public B in(float in) {
+    public B in(double in) {
       this.in = in;
       return self();
     }
 
-    public B out(float out) {
+    public B out(double out) {
       this.out = out;
       return self();
     }
@@ -72,9 +72,9 @@ public abstract class AbstractGraphMouse extends PluggableGraphMouse {
   }
 
   /** used by the scaling plugins for zoom in */
-  protected float in;
+  protected double in;
   /** used by the scaling plugins for zoom out */
-  protected float out;
+  protected double out;
 
   protected boolean vertexSelectionOnly;
 
@@ -86,7 +86,7 @@ public abstract class AbstractGraphMouse extends PluggableGraphMouse {
 
   protected AbstractGraphMousePlugin translatingPlugin;
 
-  protected AbstractGraphMouse(float in, float out, boolean vertexSelectionOnly) {
+  protected AbstractGraphMouse(double in, double out, boolean vertexSelectionOnly) {
     this.in = in;
     this.out = out;
     this.vertexSelectionOnly = vertexSelectionOnly;

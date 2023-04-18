@@ -122,11 +122,11 @@ public class GEMLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorithm<V
 
     public int iX, iY; // impulse
 
-    public float dir; // direction
+    public double dir; // direction
 
-    public float heat; // heat
+    public double heat; // heat
 
-    public float mass; // weight = nr edges
+    public double mass; // weight = nr edges
 
     public boolean mark;
 
@@ -185,30 +185,30 @@ public class GEMLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorithm<V
 
   private long maxtemp;
 
-  private float oscillation, rotation;
+  private double oscillation, rotation;
 
   protected boolean adjustToFit;
 
   //
   // GEM Default Parameter Values
   //
-  private float i_maxtemp = 1.0f;
+  private double i_maxtemp = 1.0f;
 
-  private float a_maxtemp = 1.5f;
+  private double a_maxtemp = 1.5f;
 
-  private float o_maxtemp = 0.25f;
+  private double o_maxtemp = 0.25f;
 
-  private float i_starttemp = 0.3f;
+  private double i_starttemp = 0.3f;
 
-  private float a_starttemp = 1.0f;
+  private double a_starttemp = 1.0f;
 
-  private float o_starttemp = 1.0f;
+  private double o_starttemp = 1.0f;
 
-  private float i_finaltemp = 0.05f;
+  private double i_finaltemp = 0.05f;
 
-  private float a_finaltemp = 0.02f;
+  private double a_finaltemp = 0.02f;
 
-  private float o_finaltemp = 1.0f;
+  private double o_finaltemp = 1.0f;
 
   private int i_maxiter = 10;
 
@@ -216,29 +216,29 @@ public class GEMLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorithm<V
 
   private int o_maxiter = 3;
 
-  private float i_gravity = 0.05f;
+  private double i_gravity = 0.05f;
 
-  private float i_oscillation = 0.4f;
+  private double i_oscillation = 0.4f;
 
-  private float i_rotation = 0.5f;
+  private double i_rotation = 0.5f;
 
-  private float i_shake = 0.2f;
+  private double i_shake = 0.2f;
 
-  private float a_gravity = 0.1f;
+  private double a_gravity = 0.1f;
 
-  private float a_oscillation = 0.4f;
+  private double a_oscillation = 0.4f;
 
-  private float a_rotation = 0.9f;
+  private double a_rotation = 0.9f;
 
-  private float a_shake = 0.3f;
+  private double a_shake = 0.3f;
 
-  private float o_gravity = 0.1f;
+  private double o_gravity = 0.1f;
 
-  private float o_oscillation = 0.4f;
+  private double o_oscillation = 0.4f;
 
-  private float o_rotation = 0.9f;
+  private double o_rotation = 0.9f;
 
-  private float o_shake = 0.3f;
+  private double o_shake = 0.3f;
 
   long stop_temperature;
   long stop_iteration;
@@ -874,12 +874,12 @@ public class GEMLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorithm<V
   }
 
   /**
-   * Random function returns an random int value.
+   * Random function returns a random int value.
    *
    * @return int
    */
   private int rand() {
-    return (int) (rand.nextDouble() * Integer.MAX_VALUE);
+    return rand.nextInt(Integer.MAX_VALUE);
   }
 
   /** Layout subgraphs on separate places. */
@@ -1049,7 +1049,7 @@ public class GEMLayoutAlgorithm<V, E> extends AbstractIterativeLayoutAlgorithm<V
    *
    * @param starttemp given start temperature
    */
-  private void vertexdata_init(float starttemp) {
+  private void vertexdata_init(double starttemp) {
 
     temperature = 0;
     centerX = centerY = 0;

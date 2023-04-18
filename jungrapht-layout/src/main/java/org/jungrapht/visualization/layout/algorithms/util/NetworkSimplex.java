@@ -153,7 +153,7 @@ public class NetworkSimplex<V, E> {
     shiftLayerToZero();
 
     // any vertices that are in the wrong rank go here
-    Set<LV<V>> wrongRow = new HashSet<>();
+    List<LV<V>> wrongRow = new ArrayList<>();
 
     // iterate in reverse so i can remove ones that are in the wrong row
     // and insert them in a later step
@@ -167,10 +167,15 @@ public class NetworkSimplex<V, E> {
         }
       }
     }
+    // reverse the list so i encounter the lowest new ranks first
+    // and can add a single row to layerList for each one below
+    Collections.reverse(wrongRow);
     // put these in the correct rank
     for (LV<V> v : wrongRow) {
       int rank = v.getRank();
-      int idx = v.getIndex();
+      if (layerList.size() < rank + 1) {
+        layerList.add(new ArrayList<>());
+      }
       layerList.get(rank).add(v);
     }
     if (log.isTraceEnabled()) {

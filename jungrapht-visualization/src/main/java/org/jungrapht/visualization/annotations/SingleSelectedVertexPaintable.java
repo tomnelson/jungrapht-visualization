@@ -238,13 +238,11 @@ public class SingleSelectedVertexPaintable<V, E> implements VisualizationServer.
         // don't mutate the viewTransform!
         graphicsTransformCopy.concatenate(viewTransform);
         g2d.setTransform(graphicsTransformCopy);
-        if (selectedVertex != null) {
-          paintSingleTransformed(selectedVertex);
-        }
+        paintSingleTransformed(selectedVertex);
 
       } else {
-          ((JComponent) visualizationServer).revalidate();
-          paintSingleNormal(g2d, selectedVertex);
+        ((JComponent) visualizationServer).revalidate();
+        paintSingleNormal(g2d, selectedVertex);
       }
       // put back the old values
       g2d.setPaint(oldPaint);
@@ -338,8 +336,8 @@ public class SingleSelectedVertexPaintable<V, E> implements VisualizationServer.
             .transform(MultiLayerTransformer.Layer.LAYOUT, p.x, p.y);
     // now p is in view coordinates, ready to be further transformed by any transform in the
     // graphics context
-    float x = (float) p2d.getX();
-    float y = (float) p2d.getY();
+    double x = p2d.getX();
+    double y = p2d.getY();
     coords[0] = (int) x;
     coords[1] = (int) y;
     // create a transform that translates to the location of

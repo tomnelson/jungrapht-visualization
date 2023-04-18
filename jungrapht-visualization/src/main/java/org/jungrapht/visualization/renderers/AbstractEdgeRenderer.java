@@ -81,10 +81,10 @@ public abstract class AbstractEdgeRenderer<V, E> implements Renderer.Edge<V, E> 
             .transform(
                 MultiLayerTransformer.Layer.LAYOUT,
                 new Point2D.Double(targetPoint.x, targetPoint.y));
-    float sourcePoint2DX = (float) sourcePoint2D.getX();
-    float sourcePoint2DY = (float) sourcePoint2D.getY();
-    float targetPoint2DX = (float) targetPoint2D.getX();
-    float targetPoint2DY = (float) targetPoint2D.getY();
+    double sourcePoint2DX = sourcePoint2D.getX();
+    double sourcePoint2DY = sourcePoint2D.getY();
+    double targetPoint2DX = targetPoint2D.getX();
+    double targetPoint2DY = targetPoint2D.getY();
     coords[0] = (int) sourcePoint2DX;
     coords[1] = (int) sourcePoint2DY;
     coords[2] = (int) targetPoint2DX;
@@ -107,9 +107,9 @@ public abstract class AbstractEdgeRenderer<V, E> implements Renderer.Edge<V, E> 
       // this is a normal edge. Rotate it to the angle between
       // vertex endpoints, then scale it to the distance between
       // the vertices
-      float dx = targetPoint2DX - sourcePoint2DX;
-      float dy = targetPoint2DY - sourcePoint2DY;
-      float thetaRadians = (float) Math.atan2(dy, dx);
+      double dx = targetPoint2DX - sourcePoint2DX;
+      double dy = targetPoint2DY - sourcePoint2DY;
+      double thetaRadians = Math.atan2(dy, dx);
       xform.rotate(thetaRadians);
       double dist = Math.sqrt(dx * dx + dy * dy);
 

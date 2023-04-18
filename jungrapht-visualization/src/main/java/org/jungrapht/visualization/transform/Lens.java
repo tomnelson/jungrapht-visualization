@@ -29,7 +29,7 @@ public class Lens {
   /** builds a {@Code Lens} with a provided shape and initial magnification */
   public static class Builder {
     private RectangularShape lensShape = new Ellipse2D.Double(0, 0, 1, 1);
-    private float magnification = 0.7f;
+    private double magnification = 0.7f;
 
     private Builder(Lens.Shape lensShape) {
       setShapeFrom(lensShape);
@@ -51,7 +51,7 @@ public class Lens {
       return this;
     }
 
-    public Builder magnification(float magnification) {
+    public Builder magnification(double magnification) {
       this.magnification = magnification;
       return this;
     }
@@ -80,13 +80,13 @@ public class Lens {
   /** the area affected by the transform */
   protected RectangularShape lensShape;
 
-  protected float magnification;
+  protected double magnification;
 
-  public float getMagnification() {
+  public double getMagnification() {
     return magnification;
   }
 
-  public void setMagnification(float magnification) {
+  public void setMagnification(double magnification) {
     log.trace("setmagnification to {}", magnification);
     this.magnification = magnification;
   }

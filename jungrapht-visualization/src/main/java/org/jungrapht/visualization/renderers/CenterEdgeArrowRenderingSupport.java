@@ -10,11 +10,7 @@
 package org.jungrapht.visualization.renderers;
 
 import java.awt.Shape;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Line2D;
-import java.awt.geom.PathIterator;
-import java.awt.geom.Point2D;
+import java.awt.geom.*;
 import org.jungrapht.visualization.RenderContext;
 
 /**
@@ -25,7 +21,7 @@ public class CenterEdgeArrowRenderingSupport<V, E> implements EdgeArrowRendering
 
   public AffineTransform getArrowTransform(
       RenderContext<V, E> rc, Shape edgeShape, Shape vertexShape) {
-    GeneralPath path = new GeneralPath(edgeShape);
+    Path2D path = new Path2D.Double(edgeShape);
     float[] seg = new float[6];
     Point2D p1 = null;
     Point2D p2 = null;
@@ -43,13 +39,13 @@ public class CenterEdgeArrowRenderingSupport<V, E> implements EdgeArrowRendering
       current++;
       int ret = i.currentSegment(seg);
       if (ret == PathIterator.SEG_MOVETO) {
-        p2 = new Point2D.Float(seg[0], seg[1]);
+        p2 = new Point2D.Double(seg[0], seg[1]);
       } else if (ret == PathIterator.SEG_LINETO) {
         p1 = p2;
-        p2 = new Point2D.Float(seg[0], seg[1]);
+        p2 = new Point2D.Double(seg[0], seg[1]);
       }
       if (current > middleSegment) { // done
-        at = getArrowTransform(rc, new Line2D.Float(p1, p2), vertexShape);
+        at = getArrowTransform(rc, new Line2D.Double(p1, p2), vertexShape);
         break;
       }
     }
@@ -72,7 +68,7 @@ public class CenterEdgeArrowRenderingSupport<V, E> implements EdgeArrowRendering
    */
   public AffineTransform getReverseArrowTransform(
       RenderContext<V, E> rc, Shape edgeShape, Shape vertexShape, boolean passedGo) {
-    GeneralPath path = new GeneralPath(edgeShape);
+    Path2D path = new Path2D.Double(edgeShape);
     float[] seg = new float[6];
     Point2D p1 = null;
     Point2D p2 = null;
@@ -90,13 +86,13 @@ public class CenterEdgeArrowRenderingSupport<V, E> implements EdgeArrowRendering
       current++;
       int ret = i.currentSegment(seg);
       if (ret == PathIterator.SEG_MOVETO) {
-        p2 = new Point2D.Float(seg[0], seg[1]);
+        p2 = new Point2D.Double(seg[0], seg[1]);
       } else if (ret == PathIterator.SEG_LINETO) {
         p1 = p2;
-        p2 = new Point2D.Float(seg[0], seg[1]);
+        p2 = new Point2D.Double(seg[0], seg[1]);
       }
       if (current > middleSegment) { // done
-        at = getReverseArrowTransform(rc, new Line2D.Float(p1, p2), vertexShape);
+        at = getReverseArrowTransform(rc, new Line2D.Double(p1, p2), vertexShape);
         break;
       }
     }
@@ -107,12 +103,12 @@ public class CenterEdgeArrowRenderingSupport<V, E> implements EdgeArrowRendering
       RenderContext<V, E> rc, Line2D edgeShape, Shape vertexShape) {
 
     // find the midpoint of the edgeShape line, and use it to make the transform
-    Line2D left = new Line2D.Float();
-    Line2D right = new Line2D.Float();
+    Line2D left = new Line2D.Double();
+    Line2D right = new Line2D.Double();
     this.subdivide(edgeShape, left, right);
     edgeShape = right;
-    float dx = (float) (edgeShape.getX1() - edgeShape.getX2());
-    float dy = (float) (edgeShape.getY1() - edgeShape.getY2());
+    double dx = (edgeShape.getX1() - edgeShape.getX2());
+    double dy = (edgeShape.getY1() - edgeShape.getY2());
     double atheta = Math.atan2(dx, dy) + Math.PI / 2;
     AffineTransform at = AffineTransform.getTranslateInstance(edgeShape.getX1(), edgeShape.getY1());
     at.rotate(-atheta);
@@ -122,12 +118,12 @@ public class CenterEdgeArrowRenderingSupport<V, E> implements EdgeArrowRendering
   protected AffineTransform getReverseArrowTransform(
       RenderContext<V, E> rc, Line2D edgeShape, Shape vertexShape) {
     // find the midpoint of the edgeShape line, and use it to make the transform
-    Line2D left = new Line2D.Float();
-    Line2D right = new Line2D.Float();
+    Line2D left = new Line2D.Double();
+    Line2D right = new Line2D.Double();
     this.subdivide(edgeShape, left, right);
     edgeShape = right;
-    float dx = (float) (edgeShape.getX1() - edgeShape.getX2());
-    float dy = (float) (edgeShape.getY1() - edgeShape.getY2());
+    double dx = (edgeShape.getX1() - edgeShape.getX2());
+    double dy = (edgeShape.getY1() - edgeShape.getY2());
     // calculate the angle for the arrowhead
     double atheta = Math.atan2(dx, dy) - Math.PI / 2;
     AffineTransform at = AffineTransform.getTranslateInstance(edgeShape.getX1(), edgeShape.getY1());

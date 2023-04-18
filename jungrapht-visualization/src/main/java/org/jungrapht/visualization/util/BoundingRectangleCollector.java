@@ -45,8 +45,8 @@ public abstract class BoundingRectangleCollector<T> {
       Shape shape = new Rectangle2D.Double();
       Point p = (Point) layoutModel.apply(vertex);
 
-      float x = (float) p.x;
-      float y = (float) p.y;
+      double x = p.x;
+      double y = p.y;
       AffineTransform xform = AffineTransform.getTranslateInstance(x, y);
       Rectangle2D xfs = xform.createTransformedShape(shape).getBounds2D();
       log.trace("vertex {} with shape bounds {} is at {}", vertex, xfs, p);
@@ -67,8 +67,8 @@ public abstract class BoundingRectangleCollector<T> {
       Shape shape = vertexShapeFunction.apply(vertex);
       log.trace("vertex is at {}", p);
 
-      float x = (float) p.x;
-      float y = (float) p.y;
+      double x = p.x;
+      double y = p.y;
       AffineTransform xform = AffineTransform.getTranslateInstance(x, y);
       return xform.createTransformedShape(shape).getBounds2D();
     }
@@ -79,8 +79,8 @@ public abstract class BoundingRectangleCollector<T> {
       for (V v : vertices) {
         Shape shape = vertexShapeFunction.apply(v);
         Point p = (Point) layoutModel.apply(v);
-        float x = (float) p.x;
-        float y = (float) p.y;
+        double x = p.x;
+        double y = p.y;
         AffineTransform xform = AffineTransform.getTranslateInstance(x, y);
         shape = xform.createTransformedShape(shape);
         rectangles.add(shape.getBounds2D());
@@ -93,8 +93,8 @@ public abstract class BoundingRectangleCollector<T> {
       for (V v : graph.vertexSet()) {
         Shape shape = vertexShapeFunction.apply(v);
         Point p = (Point) layoutModel.apply(v);
-        float x = (float) p.x;
-        float y = (float) p.y;
+        double x = p.x;
+        double y = p.y;
         AffineTransform xform = AffineTransform.getTranslateInstance(x, y);
         shape = xform.createTransformedShape(shape);
         rectangles.add(shape.getBounds2D());
@@ -122,8 +122,8 @@ public abstract class BoundingRectangleCollector<T> {
       Shape shape = vertexShapeFunction.apply(vertex);
       Point p = (Point) layoutModel.apply(vertex);
 
-      float x = (float) p.x;
-      float y = (float) p.y;
+      double x = p.x;
+      double y = p.y;
       AffineTransform xform = AffineTransform.getTranslateInstance(x, y);
       Rectangle2D xfs = xform.createTransformedShape(shape).getBounds2D();
       log.trace("vertex {} with shape bounds {} is at {}", vertex, xfs, p);
@@ -144,8 +144,8 @@ public abstract class BoundingRectangleCollector<T> {
       Shape shape = vertexShapeFunction.apply(vertex);
       log.trace("vertex is at {}", p);
 
-      float x = (float) p.x;
-      float y = (float) p.y;
+      double x = p.x;
+      double y = p.y;
       AffineTransform xform = AffineTransform.getTranslateInstance(x, y);
       return xform.createTransformedShape(shape).getBounds2D();
     }
@@ -156,8 +156,8 @@ public abstract class BoundingRectangleCollector<T> {
       for (V v : vertices) {
         Shape shape = vertexShapeFunction.apply(v);
         Point p = (Point) layoutModel.apply(v);
-        float x = (float) p.x;
-        float y = (float) p.y;
+        double x = p.x;
+        double y = p.y;
         AffineTransform xform = AffineTransform.getTranslateInstance(x, y);
         shape = xform.createTransformedShape(shape);
         rectangles.add(shape.getBounds2D());
@@ -170,8 +170,8 @@ public abstract class BoundingRectangleCollector<T> {
       for (Object v : layoutModel.getGraph().vertexSet()) {
         Shape shape = vertexShapeFunction.apply((V) v);
         Point p = (Point) layoutModel.apply(v);
-        float x = (float) p.x;
-        float y = (float) p.y;
+        double x = p.x;
+        double y = p.y;
         AffineTransform xform = AffineTransform.getTranslateInstance(x, y);
         shape = xform.createTransformedShape(shape);
         rectangles.add(shape.getBounds2D());
@@ -206,10 +206,10 @@ public abstract class BoundingRectangleCollector<T> {
       V v2 = graph.getEdgeTarget(edge);
       Point p1 = (Point) layoutModel.apply(v1);
       Point p2 = (Point) layoutModel.apply(v2);
-      float x1 = (float) p1.x;
-      float y1 = (float) p1.y;
-      float x2 = (float) p2.x;
-      float y2 = (float) p2.y;
+      double x1 = p1.x;
+      double y1 = p1.y;
+      double x2 = p2.x;
+      double y2 = p2.y;
 
       boolean isLoop = v1.equals(v2);
       Shape s2 = vertexShapeFunction.apply(v2);
@@ -222,11 +222,11 @@ public abstract class BoundingRectangleCollector<T> {
         xform.scale(s2Bounds.getWidth(), s2Bounds.getHeight());
         xform.translate(0, -edgeShape.getBounds2D().getWidth() / 2);
       } else {
-        float dx = x2 - x1;
-        float dy = y2 - y1;
-        float theta = (float) Math.atan2(dy, dx);
+        double dx = x2 - x1;
+        double dy = y2 - y1;
+        double theta = Math.atan2(dy, dx);
         xform.rotate(theta);
-        float dist = (float) p1.distance(p2);
+        double dist = p1.distance(p2);
         if (edgeShape instanceof ExpandXY) {
           xform.scale(dist, dist);
         } else {
@@ -246,10 +246,10 @@ public abstract class BoundingRectangleCollector<T> {
       Graph<V, E> graph = layoutModel.getGraph();
       V v1 = graph.getEdgeSource(edge);
       V v2 = graph.getEdgeTarget(edge);
-      float x1 = (float) p1.x;
-      float y1 = (float) p1.y;
-      float x2 = (float) p2.x;
-      float y2 = (float) p2.y;
+      double x1 = p1.x;
+      double y1 = p1.y;
+      double x2 = p2.x;
+      double y2 = p2.y;
 
       boolean isLoop = v1.equals(v2);
       Shape s2 = vertexShapeFunction.apply(v2);
@@ -262,11 +262,11 @@ public abstract class BoundingRectangleCollector<T> {
         xform.scale(s2Bounds.getWidth(), s2Bounds.getHeight());
         xform.translate(0, -edgeShape.getBounds2D().getWidth() / 2);
       } else {
-        float dx = x2 - x1;
-        float dy = y2 - y1;
-        float theta = (float) Math.atan2(dy, dx);
+        double dx = x2 - x1;
+        double dy = y2 - y1;
+        double theta = Math.atan2(dy, dx);
         xform.rotate(theta);
-        float dist = (float) p1.distance(p2);
+        double dist = p1.distance(p2);
         if (edgeShape instanceof ExpandXY) {
           xform.scale(dist, dist);
         } else {
@@ -286,10 +286,10 @@ public abstract class BoundingRectangleCollector<T> {
         V v2 = graph.getEdgeTarget(e);
         Point p1 = (Point) layoutModel.apply(v1);
         Point p2 = (Point) layoutModel.apply(v2);
-        float x1 = (float) p1.x;
-        float y1 = (float) p1.y;
-        float x2 = (float) p2.x;
-        float y2 = (float) p2.y;
+        double x1 = p1.x;
+        double y1 = p1.y;
+        double x2 = p2.x;
+        double y2 = p2.y;
 
         boolean isLoop = v1.equals(v2);
         Shape s2 = vertexShapeFunction.apply(v2);
@@ -302,11 +302,11 @@ public abstract class BoundingRectangleCollector<T> {
           xform.scale(s2Bounds.getWidth(), s2Bounds.getHeight());
           xform.translate(0, -edgeShape.getBounds2D().getWidth() / 2);
         } else {
-          float dx = x2 - x1;
-          float dy = y2 - y1;
-          float theta = (float) Math.atan2(dy, dx);
+          double dx = x2 - x1;
+          double dy = y2 - y1;
+          double theta = Math.atan2(dy, dx);
           xform.rotate(theta);
-          float dist = (float) p1.distance(p2);
+          double dist = p1.distance(p2);
           if (edgeShape instanceof ExpandXY) {
             xform.scale(dist, dist);
           } else {

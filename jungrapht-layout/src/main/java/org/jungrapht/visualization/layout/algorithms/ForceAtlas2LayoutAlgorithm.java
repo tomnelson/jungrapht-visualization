@@ -559,8 +559,8 @@ public class ForceAtlas2LayoutAlgorithm<V> extends AbstractIterativeLayoutAlgori
 
     String builder =
         "ForceAtlas2 layout algorithm.\n"
-            + String.format("Gravity constant: %.2f\n", kg)
-            + String.format("Swinging tolerance: %.2f\n", tolerance);
+            + String.format("Gravity constant: %.2f%n", kg)
+            + String.format("Swinging tolerance: %.2f%n", tolerance);
     return builder;
   }
 }

@@ -66,7 +66,7 @@ public class LayoutHelperDirectedGraphs {
         "Sugiyama LongestPath", SugiyamaLayoutAlgorithm.builder().layering(Layering.LONGEST_PATH)),
     SUGIYAMANS(
         "Sugiyama NetworkSimplex",
-        SugiyamaLayoutAlgorithm.builder().layering(Layering.NETWORK_SIMPLEX)),
+        SugiyamaLayoutAlgorithm.builder().threaded(false).layering(Layering.NETWORK_SIMPLEX)),
     SUGIYAMACG(
         "Sugiyama CoffmanGraham",
         SugiyamaLayoutAlgorithm.builder().layering(Layering.COFFMAN_GRAHAM)),

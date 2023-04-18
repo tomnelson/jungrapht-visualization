@@ -94,8 +94,8 @@ public class ViewTranslatingGraphMousePlugin extends AbstractGraphMousePlugin
       try {
         Point2D q = viewTransformer.inverseTransform(down);
         Point2D p = viewTransformer.inverseTransform(e.getPoint());
-        float dx = (float) (p.getX() - q.getX());
-        float dy = (float) (p.getY() - q.getY());
+        double dx = (p.getX() - q.getX());
+        double dy = (p.getY() - q.getY());
 
         viewTransformer.translate(dx, dy);
         down.x = e.getX();

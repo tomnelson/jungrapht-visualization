@@ -32,60 +32,60 @@ public class Intersector {
   public void intersectLine(Line2D line) {
     this.line = line;
     points.clear();
-    float rx0 = (float) rectangle.getMinX();
-    float ry0 = (float) rectangle.getMinY();
-    float rx1 = (float) rectangle.getMaxX();
-    float ry1 = (float) rectangle.getMaxY();
+    double rx0 = rectangle.getMinX();
+    double ry0 = rectangle.getMinY();
+    double rx1 = rectangle.getMaxX();
+    double ry1 = rectangle.getMaxY();
 
-    float x1 = (float) line.getX1();
-    float y1 = (float) line.getY1();
-    float x2 = (float) line.getX2();
-    float y2 = (float) line.getY2();
+    double x1 = line.getX1();
+    double y1 = line.getY1();
+    double x2 = line.getX2();
+    double y2 = line.getY2();
 
-    float dy = y2 - y1;
-    float dx = x2 - x1;
+    double dy = y2 - y1;
+    double dx = x2 - x1;
 
     if (dx != 0) {
-      float m = dy / dx;
-      float b = y1 - m * x1;
+      double m = dy / dx;
+      double b = y1 - m * x1;
 
       // base of rect where y == ry0
-      float x = (ry0 - b) / m;
+      double x = (ry0 - b) / m;
 
       if (rx0 <= x && x <= rx1) {
-        points.add(new Point2D.Float(x, ry0));
+        points.add(new Point2D.Double(x, ry0));
       }
 
       // top where y == ry1
       x = (ry1 - b) / m;
       if (rx0 <= x && x <= rx1) {
-        points.add(new Point2D.Float(x, ry1));
+        points.add(new Point2D.Double(x, ry1));
       }
 
       // left side, where x == rx0
-      float y = m * rx0 + b;
+      double y = m * rx0 + b;
       if (ry0 <= y && y <= ry1) {
-        points.add(new Point2D.Float(rx0, y));
+        points.add(new Point2D.Double(rx0, y));
       }
 
       // right side, where x == rx1
       y = m * rx1 + b;
       if (ry0 <= y && y <= ry1) {
-        points.add(new Point2D.Float(rx1, y));
+        points.add(new Point2D.Double(rx1, y));
       }
 
     } else {
 
       // base, where y == ry0
-      float x = x1;
+      double x = x1;
       if (rx0 <= x && x <= rx1) {
-        points.add(new Point2D.Float(x, ry0));
+        points.add(new Point2D.Double(x, ry0));
       }
 
       // top, where y == ry1
       x = x2;
       if (rx0 <= x && x <= rx1) {
-        points.add(new Point2D.Float(x, ry1));
+        points.add(new Point2D.Double(x, ry1));
       }
     }
   }

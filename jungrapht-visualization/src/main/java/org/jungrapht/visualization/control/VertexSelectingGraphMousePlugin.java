@@ -97,7 +97,7 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
   /** controls whether the Vertices may be moved with the mouse */
   protected boolean locked;
 
-  protected Rectangle2D footprintRectangle = new Rectangle2D.Float();
+  protected Rectangle2D footprintRectangle = new Rectangle2D.Double();
   protected VisualizationViewer.Paintable pickFootprintPaintable;
 
   /** color for the picking rectangle */
@@ -192,11 +192,8 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
 
     // a rectangle in the view coordinate system.
     this.footprintRectangle =
-        new Rectangle2D.Float(
-            (float) e.getPoint().x - pickSize / 2,
-            (float) e.getPoint().y - pickSize / 2,
-            pickSize,
-            pickSize);
+        new Rectangle2D.Double(
+            e.getPoint().x - pickSize / 2, e.getPoint().y - pickSize / 2, pickSize, pickSize);
 
     if (showFootprint) {
       vv.addPostRenderPaintable(pickFootprintPaintable);

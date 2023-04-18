@@ -12,7 +12,7 @@ import org.jungrapht.visualization.util.ArrowFactory;
 
 public class CubicCurveEdgeEffects<V, E> implements EdgeEffects<V, E> {
 
-  protected CubicCurve2D rawEdge = new CubicCurve2D.Float();
+  protected CubicCurve2D rawEdge = new CubicCurve2D.Double();
   protected Shape edgeShape;
   protected Shape rawArrowShape;
   protected Shape arrowShape;
@@ -60,33 +60,33 @@ public class CubicCurveEdgeEffects<V, E> implements EdgeEffects<V, E> {
 
   /** code lifted from PluggableRenderer to move an edge shape into an arbitrary position */
   private void transformEdgeShape(Point2D down, Point2D out) {
-    float x1 = (float) down.getX();
-    float y1 = (float) down.getY();
-    float x2 = (float) out.getX();
-    float y2 = (float) out.getY();
+    double x1 = down.getX();
+    double y1 = down.getY();
+    double x2 = out.getX();
+    double y2 = out.getY();
 
     AffineTransform xform = AffineTransform.getTranslateInstance(x1, y1);
 
-    float dx = x2 - x1;
-    float dy = y2 - y1;
-    float thetaRadians = (float) Math.atan2(dy, dx);
+    double dx = x2 - x1;
+    double dy = y2 - y1;
+    double thetaRadians = Math.atan2(dy, dx);
     xform.rotate(thetaRadians);
-    float dist = (float) Math.sqrt(dx * dx + dy * dy);
+    double dist = Math.sqrt(dx * dx + dy * dy);
     xform.scale(dist / rawEdge.getBounds().getWidth(), 1.0);
     edgeShape = xform.createTransformedShape(rawEdge);
   }
 
   private void transformArrowShape(Point2D down, Point2D out) {
-    float x1 = (float) down.getX();
-    float y1 = (float) down.getY();
-    float x2 = (float) out.getX();
-    float y2 = (float) out.getY();
+    double x1 = down.getX();
+    double y1 = down.getY();
+    double x2 = out.getX();
+    double y2 = out.getY();
 
     AffineTransform xform = AffineTransform.getTranslateInstance(x2, y2);
 
-    float dx = x2 - x1;
-    float dy = y2 - y1;
-    float thetaRadians = (float) Math.atan2(dy, dx);
+    double dx = x2 - x1;
+    double dy = y2 - y1;
+    double thetaRadians = Math.atan2(dy, dx);
     xform.rotate(thetaRadians);
     arrowShape = xform.createTransformedShape(rawArrowShape);
   }

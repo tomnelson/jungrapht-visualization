@@ -71,18 +71,18 @@ public class EiglspergerStepsForward<V, E> extends EiglspergerSteps<V, E> {
               pred = segment;
             }
           } else if (v instanceof SegmentVertex) {
-//            SegmentVertex<V> segmentVertex = (SegmentVertex<V>) v;
-//            Segment<V> segment = segmentVertex.getSegment();
-//            compactionGraph.addVertex(segment);
-//            if (pred != null) {
-//              compactionGraph.addEdge(pred, segment);
-//            }
-//            pred = segment;
-            compactionGraph.addVertex(v);
+            SegmentVertex<V> segmentVertex = (SegmentVertex<V>) v;
+            Segment<V> segment = segmentVertex.getSegment();
+            compactionGraph.addVertex(segment);
             if (pred != null) {
-              compactionGraph.addEdge(pred, v);
+              compactionGraph.addEdge(pred, segment);
             }
-            pred = v;
+            pred = segment;
+            //            compactionGraph.addVertex(v);
+            //            if (pred != null) {
+            //              compactionGraph.addEdge(pred, v);
+            //            }
+            //            pred = v;
           } else {
             compactionGraph.addVertex(v);
             if (pred != null) {

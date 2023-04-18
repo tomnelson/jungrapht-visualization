@@ -61,7 +61,7 @@ public class EdgeSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugi
   /** the selected Edge, if any */
   protected E edge;
 
-  protected Rectangle2D footprintRectangle = new Rectangle2D.Float();
+  protected Rectangle2D footprintRectangle = new Rectangle2D.Double();
 
   protected VisualizationViewer.Paintable pickFootprintPaintable;
 
@@ -131,11 +131,8 @@ public class EdgeSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugi
 
     // a rectangle in the view coordinate system.
     this.footprintRectangle =
-        new Rectangle2D.Float(
-            (float) e.getPoint().x - pickSize / 2,
-            (float) e.getPoint().y - pickSize / 2,
-            pickSize,
-            pickSize);
+        new Rectangle2D.Double(
+            e.getPoint().x - pickSize / 2, e.getPoint().y - pickSize / 2, pickSize, pickSize);
 
     vv.addPostRenderPaintable(pickFootprintPaintable);
     vv.repaint();

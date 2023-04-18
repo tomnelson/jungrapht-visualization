@@ -144,8 +144,8 @@ public class HeavyweightEdgeRenderer<V, E> extends AbstractEdgeRenderer<V, E>
       g.draw(edgeShape);
     }
 
-    float scalex = (float) g.getTransform().getScaleX();
-    float scaley = (float) g.getTransform().getScaleY();
+    double scalex = g.getTransform().getScaleX();
+    double scaley = g.getTransform().getScaleY();
     // see if arrows are too small to bother drawing
     if (scalex < edgeArrowScaleThreshold || scaley < edgeArrowScaleThreshold) {
       return;

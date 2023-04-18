@@ -35,13 +35,13 @@ public class ModalLensGraphMouse<V, E> extends DefaultModalGraphMouse<V, E>
           V, E, T extends ModalLensGraphMouse<V, E>, B extends Builder<V, E, T, B>>
       extends DefaultModalGraphMouse.Builder<V, E, T, B> {
 
-    protected float magnificationDelta = 0.05f;
+    protected double magnificationDelta = 0.05f;
     // values for hyperbolic transform lens
-    protected float magnificationFloor = 0.45f;
-    protected float magnificationCeiling = 1.0f;
+    protected double magnificationFloor = 0.45f;
+    protected double magnificationCeiling = 1.0f;
     // values for magnify transform lens
-    //    protected float magnificationFloor = 1.0f;
-    //    protected float magnificationCeiling = 4.0f;
+    //    protected double magnificationFloor = 1.0f;
+    //    protected double magnificationCeiling = 4.0f;
 
     // translation mask
     protected int lensTranslatingMask =
@@ -52,17 +52,17 @@ public class ModalLensGraphMouse<V, E> extends DefaultModalGraphMouse<V, E>
       return self();
     }
 
-    public B magnificationFloor(float magnificationFloor) {
+    public B magnificationFloor(double magnificationFloor) {
       this.magnificationFloor = magnificationFloor;
       return self();
     }
 
-    public B magnificationCeiling(float magnificationCeiling) {
+    public B magnificationCeiling(double magnificationCeiling) {
       this.magnificationCeiling = magnificationCeiling;
       return self();
     }
 
-    public B magnificationDelta(float magnificationDelta) {
+    public B magnificationDelta(double magnificationDelta) {
       this.magnificationDelta = magnificationDelta;
       return self();
     }
@@ -111,8 +111,8 @@ public class ModalLensGraphMouse<V, E> extends DefaultModalGraphMouse<V, E>
 
   public ModalLensGraphMouse(
       Mode mode,
-      float in,
-      float out,
+      double in,
+      double out,
       boolean vertexSelectionOnly,
       int singleSelectionMask,
       int toggleSingleSelectionMask,
@@ -125,9 +125,9 @@ public class ModalLensGraphMouse<V, E> extends DefaultModalGraphMouse<V, E>
       int scalingMask,
       int xAxisScalingMask,
       int yAxisScalingMask,
-      float magnificationFloor,
-      float magnificationCeiling,
-      float magnificationDelta) {
+      double magnificationFloor,
+      double magnificationCeiling,
+      double magnificationDelta) {
     super(
         mode,
         in,

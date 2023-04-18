@@ -12,17 +12,13 @@ import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ItemEvent;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 import javax.swing.*;
 import org.jgrapht.Graph;
 import org.jungrapht.samples.util.ControlHelpers;
 import org.jungrapht.samples.util.TestGraphs;
+import org.jungrapht.visualization.*;
 import org.jungrapht.visualization.MultiLayerTransformer.Layer;
-import org.jungrapht.visualization.SatelliteVisualizationViewer;
-import org.jungrapht.visualization.VisualizationModel;
-import org.jungrapht.visualization.VisualizationScrollPane;
-import org.jungrapht.visualization.VisualizationServer;
-import org.jungrapht.visualization.VisualizationViewer;
 import org.jungrapht.visualization.control.DefaultModalGraphMouse;
 import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.control.ModalSatelliteGraphMouse;
@@ -243,7 +239,7 @@ public class SatelliteViewDemo extends JPanel {
           vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
 
       Rectangle rect = master.getBounds();
-      GeneralPath path = new GeneralPath();
+      Path2D path = new Path2D.Double();
       path.moveTo(rect.x, rect.y);
       path.lineTo(rect.width, rect.y);
       path.lineTo(rect.width, rect.height);
@@ -267,11 +263,11 @@ public class SatelliteViewDemo extends JPanel {
       g.setColor(Color.cyan);
       g2d.draw(lens);
 
-      path = new GeneralPath();
-      path.moveTo((float) rect.getMinX(), (float) rect.getCenterY());
-      path.lineTo((float) rect.getMaxX(), (float) rect.getCenterY());
-      path.moveTo((float) rect.getCenterX(), (float) rect.getMinY());
-      path.lineTo((float) rect.getCenterX(), (float) rect.getMaxY());
+      path = new Path2D.Double();
+      path.moveTo(rect.getMinX(), rect.getCenterY());
+      path.lineTo(rect.getMaxX(), rect.getCenterY());
+      path.moveTo(rect.getCenterX(), rect.getMinY());
+      path.lineTo(rect.getCenterX(), rect.getMaxY());
       Shape crosshairShape = path;
       crosshairShape = masterViewTransformer.inverseTransform(crosshairShape);
       crosshairShape = masterLayoutTransformer.inverseTransform(crosshairShape);

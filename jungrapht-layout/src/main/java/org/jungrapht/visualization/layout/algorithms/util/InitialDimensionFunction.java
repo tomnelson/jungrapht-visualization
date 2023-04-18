@@ -34,7 +34,7 @@ public class InitialDimensionFunction<V> implements Function<Graph<V, ?>, Pair<I
 
     protected Function<V, Rectangle> vertexShapeFunction = v -> IDENTITY_SHAPE;
 
-    protected float weight =
+    protected double weight =
         Float.parseFloat(System.getProperty(INITIAL_DIMENSION_VERTEX_DENSITY, "0.1f"));
 
     public B vertexShapeFunction(Function<V, Rectangle> vertexShapeFunction) {
@@ -42,7 +42,7 @@ public class InitialDimensionFunction<V> implements Function<Graph<V, ?>, Pair<I
       return (B) this;
     }
 
-    public B weight(float weight) {
+    public B weight(double weight) {
       this.weight = weight;
       return (B) this;
     }
@@ -62,7 +62,7 @@ public class InitialDimensionFunction<V> implements Function<Graph<V, ?>, Pair<I
 
   protected Function<V, Rectangle> vertexShapeFunction;
 
-  protected float density;
+  protected double density;
 
   public InitialDimensionFunction() {
     this(InitialDimensionFunction.builder());
@@ -72,7 +72,7 @@ public class InitialDimensionFunction<V> implements Function<Graph<V, ?>, Pair<I
     this(builder.vertexShapeFunction, builder.weight);
   }
 
-  InitialDimensionFunction(Function<V, Rectangle> vertexShapeFunction, float density) {
+  InitialDimensionFunction(Function<V, Rectangle> vertexShapeFunction, double density) {
     this.vertexShapeFunction = vertexShapeFunction;
     this.density = density;
   }
@@ -81,7 +81,7 @@ public class InitialDimensionFunction<V> implements Function<Graph<V, ?>, Pair<I
     this.vertexShapeFunction = vertexShapeFunction;
   }
 
-  public void setDensity(float density) {
+  public void setDensity(double density) {
     this.density = density;
   }
 

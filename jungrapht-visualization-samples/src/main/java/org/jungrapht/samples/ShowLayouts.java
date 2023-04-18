@@ -108,7 +108,7 @@ public class ShowLayouts extends JPanel {
                 log.error("shapeFunction {} was not in {}", v, g.vertexSet());
               }
               int size = Math.max(5, 2 * (g.containsVertex(v) ? g.degreeOf(v) : 20));
-              return new Ellipse2D.Float(-size / 2.f, -size / 2.f, size, size);
+              return new Ellipse2D.Double(-size / 2.f, -size / 2.f, size, size);
             });
 
     vv.setInitialDimensionFunction(
@@ -186,7 +186,7 @@ public class ShowLayouts extends JPanel {
                           v -> {
                             int size =
                                 Math.max(5, 2 * vv.getVisualizationModel().getGraph().degreeOf(v));
-                            return new Ellipse2D.Float(-size / 2.f, -size / 2.f, size, size);
+                            return new Ellipse2D.Double(-size / 2.f, -size / 2.f, size, size);
                           });
                 }));
 

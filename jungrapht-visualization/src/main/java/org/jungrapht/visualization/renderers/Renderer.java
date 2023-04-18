@@ -133,7 +133,7 @@ public interface Renderer<V, E> {
     }
 
     interface Positioner {
-      Position getPosition(float x, float y, Dimension d);
+      Position getPosition(double x, double y, Dimension d);
     }
   }
 

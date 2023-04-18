@@ -84,17 +84,17 @@ public class MagnifyShapeTransformer extends MagnifyTransformer
    * distorted by the magnify transform.
    *
    * @param shape a shape to transform
-   * @return a GeneralPath for the transformed shape
+   * @return a Path2Dfor the transformed shape
    */
   public Shape transform(Shape shape) {
     return transform(shape, 0);
   }
 
-  public Shape transform(Shape shape, float flatness) {
+  public Shape transform(Shape shape, double flatness) {
     if (log.isTraceEnabled()) {
       log.trace("transform {}", shape);
     }
-    GeneralPath newPath = new GeneralPath();
+    Path2D newPath = new Path2D.Double();
     float[] coords = new float[6];
     PathIterator iterator = null;
     if (flatness == 0) {
@@ -106,32 +106,26 @@ public class MagnifyShapeTransformer extends MagnifyTransformer
       int type = iterator.currentSegment(coords);
       switch (type) {
         case PathIterator.SEG_MOVETO:
-          Point2D p = _transform(new Point2D.Float(coords[0], coords[1]));
-          newPath.moveTo((float) p.getX(), (float) p.getY());
+          Point2D p = _transform(new Point2D.Double(coords[0], coords[1]));
+          newPath.moveTo(p.getX(), p.getY());
           break;
 
         case PathIterator.SEG_LINETO:
-          p = _transform(new Point2D.Float(coords[0], coords[1]));
-          newPath.lineTo((float) p.getX(), (float) p.getY());
+          p = _transform(new Point2D.Double(coords[0], coords[1]));
+          newPath.lineTo(p.getX(), p.getY());
           break;
 
         case PathIterator.SEG_QUADTO:
-          p = _transform(new Point2D.Float(coords[0], coords[1]));
-          Point2D q = _transform(new Point2D.Float(coords[2], coords[3]));
-          newPath.quadTo((float) p.getX(), (float) p.getY(), (float) q.getX(), (float) q.getY());
+          p = _transform(new Point2D.Double(coords[0], coords[1]));
+          Point2D q = _transform(new Point2D.Double(coords[2], coords[3]));
+          newPath.quadTo(p.getX(), p.getY(), q.getX(), q.getY());
           break;
 
         case PathIterator.SEG_CUBICTO:
-          p = _transform(new Point2D.Float(coords[0], coords[1]));
-          q = _transform(new Point2D.Float(coords[2], coords[3]));
-          Point2D r = _transform(new Point2D.Float(coords[4], coords[5]));
-          newPath.curveTo(
-              (float) p.getX(),
-              (float) p.getY(),
-              (float) q.getX(),
-              (float) q.getY(),
-              (float) r.getX(),
-              (float) r.getY());
+          p = _transform(new Point2D.Double(coords[0], coords[1]));
+          q = _transform(new Point2D.Double(coords[2], coords[3]));
+          Point2D r = _transform(new Point2D.Double(coords[4], coords[5]));
+          newPath.curveTo(p.getX(), p.getY(), q.getX(), q.getY(), r.getX(), r.getY());
           break;
 
         case PathIterator.SEG_CLOSE:
@@ -148,38 +142,32 @@ public class MagnifyShapeTransformer extends MagnifyTransformer
   }
 
   public Shape inverseTransform(Shape shape) {
-    GeneralPath newPath = new GeneralPath();
-    float[] coords = new float[6];
+    Path2D newPath = new Path2D.Double();
+    double[] coords = new double[6];
     for (PathIterator iterator = shape.getPathIterator(null); !iterator.isDone(); iterator.next()) {
       int type = iterator.currentSegment(coords);
       switch (type) {
         case PathIterator.SEG_MOVETO:
-          Point2D p = _inverseTransform(new Point2D.Float(coords[0], coords[1]));
-          newPath.moveTo((float) p.getX(), (float) p.getY());
+          Point2D p = _inverseTransform(new Point2D.Double(coords[0], coords[1]));
+          newPath.moveTo(p.getX(), p.getY());
           break;
 
         case PathIterator.SEG_LINETO:
-          p = _inverseTransform(new Point2D.Float(coords[0], coords[1]));
-          newPath.lineTo((float) p.getX(), (float) p.getY());
+          p = _inverseTransform(new Point2D.Double(coords[0], coords[1]));
+          newPath.lineTo(p.getX(), p.getY());
           break;
 
         case PathIterator.SEG_QUADTO:
-          p = _inverseTransform(new Point2D.Float(coords[0], coords[1]));
-          Point2D q = _inverseTransform(new Point2D.Float(coords[2], coords[3]));
-          newPath.quadTo((float) p.getX(), (float) p.getY(), (float) q.getX(), (float) q.getY());
+          p = _inverseTransform(new Point2D.Double(coords[0], coords[1]));
+          Point2D q = _inverseTransform(new Point2D.Double(coords[2], coords[3]));
+          newPath.quadTo(p.getX(), p.getY(), q.getX(), q.getY());
           break;
 
         case PathIterator.SEG_CUBICTO:
-          p = _inverseTransform(new Point2D.Float(coords[0], coords[1]));
-          q = _inverseTransform(new Point2D.Float(coords[2], coords[3]));
-          Point2D r = _inverseTransform(new Point2D.Float(coords[4], coords[5]));
-          newPath.curveTo(
-              (float) p.getX(),
-              (float) p.getY(),
-              (float) q.getX(),
-              (float) q.getY(),
-              (float) r.getX(),
-              (float) r.getY());
+          p = _inverseTransform(new Point2D.Double(coords[0], coords[1]));
+          q = _inverseTransform(new Point2D.Double(coords[2], coords[3]));
+          Point2D r = _inverseTransform(new Point2D.Double(coords[4], coords[5]));
+          newPath.curveTo(p.getX(), p.getY(), q.getX(), q.getY(), r.getX(), r.getY());
           break;
 
         case PathIterator.SEG_CLOSE:
@@ -300,9 +288,9 @@ public class MagnifyShapeTransformer extends MagnifyTransformer
     return magnify(shape, 0);
   }
 
-  public Shape magnify(Shape shape, float flatness) {
-    GeneralPath newPath = new GeneralPath();
-    float[] coords = new float[6];
+  public Shape magnify(Shape shape, double flatness) {
+    Path2D newPath = new Path2D.Double();
+    double[] coords = new double[6];
     PathIterator iterator = null;
     if (flatness == 0) {
       iterator = shape.getPathIterator(null);
@@ -313,32 +301,26 @@ public class MagnifyShapeTransformer extends MagnifyTransformer
       int type = iterator.currentSegment(coords);
       switch (type) {
         case PathIterator.SEG_MOVETO:
-          Point2D p = magnify(new Point2D.Float(coords[0], coords[1]));
-          newPath.moveTo((float) p.getX(), (float) p.getY());
+          Point2D p = magnify(new Point2D.Double(coords[0], coords[1]));
+          newPath.moveTo(p.getX(), p.getY());
           break;
 
         case PathIterator.SEG_LINETO:
-          p = magnify(new Point2D.Float(coords[0], coords[1]));
-          newPath.lineTo((float) p.getX(), (float) p.getY());
+          p = magnify(new Point2D.Double(coords[0], coords[1]));
+          newPath.lineTo(p.getX(), p.getY());
           break;
 
         case PathIterator.SEG_QUADTO:
-          p = magnify(new Point2D.Float(coords[0], coords[1]));
-          Point2D q = magnify(new Point2D.Float(coords[2], coords[3]));
-          newPath.quadTo((float) p.getX(), (float) p.getY(), (float) q.getX(), (float) q.getY());
+          p = magnify(new Point2D.Double(coords[0], coords[1]));
+          Point2D q = magnify(new Point2D.Double(coords[2], coords[3]));
+          newPath.quadTo(p.getX(), p.getY(), q.getX(), q.getY());
           break;
 
         case PathIterator.SEG_CUBICTO:
-          p = magnify(new Point2D.Float(coords[0], coords[1]));
-          q = magnify(new Point2D.Float(coords[2], coords[3]));
-          Point2D r = magnify(new Point2D.Float(coords[4], coords[5]));
-          newPath.curveTo(
-              (float) p.getX(),
-              (float) p.getY(),
-              (float) q.getX(),
-              (float) q.getY(),
-              (float) r.getX(),
-              (float) r.getY());
+          p = magnify(new Point2D.Double(coords[0], coords[1]));
+          q = magnify(new Point2D.Double(coords[2], coords[3]));
+          Point2D r = magnify(new Point2D.Double(coords[4], coords[5]));
+          newPath.curveTo(p.getX(), p.getY(), q.getX(), q.getY(), r.getX(), r.getY());
           break;
 
         case PathIterator.SEG_CLOSE:

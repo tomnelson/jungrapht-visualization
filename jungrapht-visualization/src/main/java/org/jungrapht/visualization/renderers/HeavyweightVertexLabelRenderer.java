@@ -66,8 +66,8 @@ public class HeavyweightVertexLabelRenderer<V, E> implements Renderer.VertexLabe
             .getMultiLayerTransformer()
             .transform(MultiLayerTransformer.Layer.LAYOUT, pt.x, pt.y);
 
-    float x = (float) pt2d.getX();
-    float y = (float) pt2d.getY();
+    double x = pt2d.getX();
+    double y = pt2d.getY();
 
     Component component =
         prepareRenderer(
@@ -182,7 +182,7 @@ public class HeavyweightVertexLabelRenderer<V, E> implements Renderer.VertexLabe
   }
 
   public static class InsidePositioner implements Positioner {
-    public Position getPosition(float x, float y, Dimension d) {
+    public Position getPosition(double x, double y, Dimension d) {
       int cx = d.width / 2;
       int cy = d.height / 2;
       if (x > cx && y > cy) {
@@ -199,7 +199,7 @@ public class HeavyweightVertexLabelRenderer<V, E> implements Renderer.VertexLabe
   }
 
   public static class OutsidePositioner implements Positioner {
-    public Position getPosition(float x, float y, Dimension d) {
+    public Position getPosition(double x, double y, Dimension d) {
       int cx = d.width / 2;
       int cy = d.height / 2;
       if (x > cx && y > cy) {

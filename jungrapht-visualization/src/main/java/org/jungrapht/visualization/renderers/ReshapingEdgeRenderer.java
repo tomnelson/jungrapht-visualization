@@ -11,11 +11,7 @@ package org.jungrapht.visualization.renderers;
 
 import java.awt.Paint;
 import java.awt.Shape;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.RectangularShape;
+import java.awt.geom.*;
 import org.jgrapht.Graph;
 import org.jungrapht.visualization.MultiLayerTransformer;
 import org.jungrapht.visualization.RenderContext;
@@ -59,12 +55,12 @@ public class ReshapingEdgeRenderer<V, E> extends HeavyweightEdgeRenderer<V, E>
         renderContext
             .getMultiLayerTransformer()
             .transform(MultiLayerTransformer.Layer.LAYOUT, p2.x, p2.y);
-    float x1 = (float) p12d.getX();
-    float y1 = (float) p12d.getY();
-    float x2 = (float) p22d.getX();
-    float y2 = (float) p22d.getY();
+    double x1 = p12d.getX();
+    double y1 = p12d.getY();
+    double x2 = p22d.getX();
+    double y2 = p22d.getY();
 
-    float flatness = 0;
+    double flatness = 0;
     MutableTransformer transformer =
         renderContext.getMultiLayerTransformer().getTransformer(MultiLayerTransformer.Layer.VIEW);
     if (transformer instanceof LensTransformer) {
@@ -92,11 +88,11 @@ public class ReshapingEdgeRenderer<V, E> extends HeavyweightEdgeRenderer<V, E>
       // this is a normal edge. Rotate it to the angle between
       // vertex endpoints, then scale it to the distance between
       // the vertices
-      float dx = x2 - x1;
-      float dy = y2 - y1;
-      float thetaRadians = (float) Math.atan2(dy, dx);
+      double dx = x2 - x1;
+      double dy = y2 - y1;
+      double thetaRadians = Math.atan2(dy, dx);
       xform.rotate(thetaRadians);
-      float dist = (float) Math.sqrt(dx * dx + dy * dy);
+      double dist = Math.sqrt(dx * dx + dy * dy);
       xform.scale(dist, 1.0);
     }
 
@@ -117,8 +113,8 @@ public class ReshapingEdgeRenderer<V, E> extends HeavyweightEdgeRenderer<V, E>
       g.draw(edgeShape, flatness);
     }
 
-    float scalex = (float) g.getTransform().getScaleX();
-    float scaley = (float) g.getTransform().getScaleY();
+    double scalex = g.getTransform().getScaleX();
+    double scaley = g.getTransform().getScaleY();
     // see if arrows are too small to bother drawing
     if (scalex < .3 || scaley < .3) {
       return;
@@ -133,7 +129,7 @@ public class ReshapingEdgeRenderer<V, E> extends HeavyweightEdgeRenderer<V, E>
 
       AffineTransform at =
           edgeArrowRenderingSupport.getArrowTransform(
-              renderContext, new GeneralPath(edgeShape), destVertexShape);
+              renderContext, new Path2D.Double(edgeShape), destVertexShape);
       if (at == null) {
         return;
       }
@@ -151,7 +147,7 @@ public class ReshapingEdgeRenderer<V, E> extends HeavyweightEdgeRenderer<V, E>
 
         at =
             edgeArrowRenderingSupport.getReverseArrowTransform(
-                renderContext, new GeneralPath(edgeShape), vertexShape, !isLoop);
+                renderContext, new Path2D.Double(edgeShape), vertexShape, !isLoop);
         if (at == null) {
           return;
         }

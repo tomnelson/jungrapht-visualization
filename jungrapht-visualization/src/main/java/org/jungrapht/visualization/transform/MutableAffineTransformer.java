@@ -101,10 +101,10 @@ public class MutableAffineTransformer extends AffineTransformer
    * @param ty the y value of the translation
    */
   public void setTranslate(double tx, double ty) {
-    float scalex = (float) transform.getScaleX();
-    float scaley = (float) transform.getScaleY();
-    float shearx = (float) transform.getShearX();
-    float sheary = (float) transform.getShearY();
+    double scalex = transform.getScaleX();
+    double scaley = transform.getScaleY();
+    double shearx = transform.getShearX();
+    double sheary = transform.getShearY();
     inverse = null;
     transform.setTransform(scalex, sheary, shearx, scaley, tx, ty);
     fireStateChanged();

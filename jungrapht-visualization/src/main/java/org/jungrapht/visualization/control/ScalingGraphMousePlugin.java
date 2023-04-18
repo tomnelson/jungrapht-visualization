@@ -97,9 +97,9 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
   private static String ENABLE_DOUBLE_CLICK_SCALE_RESET = PREFIX + "enableDoubleClickScaleReset";
 
   /** the amount to zoom in by */
-  protected float in = 1.1f;
+  protected double in = 1.1f;
   /** the amount to zoom out by */
-  protected float out = 1 / 1.1f;
+  protected double out = 1 / 1.1f;
 
   protected int scalingMask;
   protected int xAxisScalingMask;
@@ -141,8 +141,8 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
       int scalingMask,
       int xAxisScalingMask,
       int yAxisScalingMask,
-      float in,
-      float out) {
+      double in,
+      double out) {
     this.scaler = scaler;
     this.scalingMask = scalingMask;
     this.xAxisScalingMask = xAxisScalingMask;
@@ -166,10 +166,10 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
     boolean accepted = checkModifiers(e);
     if (accepted) {
       ScalingControl scalingControl = scaler;
-      float xin = in;
-      float yin = in;
-      float xout = out;
-      float yout = out;
+      double xin = in;
+      double yin = in;
+      double xout = out;
+      double yout = out;
       // check for single axis
       if (e.getModifiersEx() == xAxisScalingMask) {
         // only scale x axis,
@@ -204,19 +204,19 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
   }
 
   /** @return Returns the zoom in value. */
-  public float getIn() {
+  public double getIn() {
     return in;
   }
   /** @param in The zoom in value to set. */
-  public void setIn(float in) {
+  public void setIn(double in) {
     this.in = in;
   }
   /** @return Returns the zoom out value. */
-  public float getOut() {
+  public double getOut() {
     return out;
   }
   /** @param out The zoom out value to set. */
-  public void setOut(float out) {
+  public void setOut(double out) {
     this.out = out;
   }
 
@@ -256,11 +256,8 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
     TransformSupport<V, E> transformSupport = vv.getTransformSupport();
     Point2D layoutPoint = transformSupport.inverseTransform(vv, e.getPoint());
     Rectangle2D footprintRectangle =
-        new Rectangle2D.Float(
-            (float) e.getPoint().x - pickSize / 2,
-            (float) e.getPoint().y - pickSize / 2,
-            pickSize,
-            pickSize);
+        new Rectangle2D.Double(
+            e.getPoint().x - pickSize / 2, e.getPoint().y - pickSize / 2, pickSize, pickSize);
 
     V vertex;
     if (pickSupport instanceof ShapePickSupport) {
@@ -279,11 +276,8 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
     TransformSupport<V, E> transformSupport = vv.getTransformSupport();
     Point2D layoutPoint = transformSupport.inverseTransform(vv, e.getPoint());
     Rectangle2D footprintRectangle =
-        new Rectangle2D.Float(
-            (float) e.getPoint().x - pickSize / 2,
-            (float) e.getPoint().y - pickSize / 2,
-            pickSize,
-            pickSize);
+        new Rectangle2D.Double(
+            e.getPoint().x - pickSize / 2, e.getPoint().y - pickSize / 2, pickSize, pickSize);
 
     E edge;
     if (pickSupport instanceof ShapePickSupport) {

@@ -72,8 +72,8 @@ public class ModalSatelliteGraphMouse<V, E> extends DefaultModalGraphMouse<V, E>
   }
 
   ModalSatelliteGraphMouse(
-      float in,
-      float out,
+      double in,
+      double out,
       boolean vertexSelectionOnly,
       int singleSelectionMask,
       int toggleSingleSelectionMask,

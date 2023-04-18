@@ -86,7 +86,7 @@ public class VertexImagesOrNotDemo extends JPanel {
             .graphMouse(graphMouse)
             .build();
 
-    vv.getRenderContext().setVertexShapeFunction(v -> new Ellipse2D.Float(-20, -20, 40, 40));
+    vv.getRenderContext().setVertexShapeFunction(v -> new Ellipse2D.Double(-20, -20, 40, 40));
 
     vv.getRenderContext()
         .setEdgeDrawPaintFunction(
@@ -174,7 +174,7 @@ public class VertexImagesOrNotDemo extends JPanel {
         VertexStyleConfiguration.builder(vv)
             .showVertexIconSupplier(showIcons::isSelected)
             .showVertexLabelSupplier(showLabels::isSelected)
-            .vertexShapeFunction(v -> new Ellipse2D.Float(-20, -20, 40, 40))
+            .vertexShapeFunction(v -> new Ellipse2D.Double(-20, -20, 40, 40))
             .labelFunction(Object::toString)
             .labelPositionSupplier(() -> (Position) positions.getSelectedItem())
             .iconFunction(iconMap::get)

@@ -127,8 +127,8 @@ public class TranslatingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
       try {
         Point2D q = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(down);
         Point2D p = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint());
-        float dx = (float) (p.getX() - q.getX());
-        float dy = (float) (p.getY() - q.getY());
+        double dx = (p.getX() - q.getX());
+        double dy = (p.getY() - q.getY());
 
         modelTransformer.translate(dx, dy);
         down.x = e.getX();
