@@ -93,6 +93,7 @@ public class EditingPopupGraphMousePlugin<V, E> extends AbstractPopupGraphMouseP
                 graph.addVertex(newVertex);
                 Point2D p2d = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(p);
                 vv.getVisualizationModel().getLayoutModel().set(newVertex, p2d.getX(), p2d.getY());
+                vv.getVertexSpatial().recalculate();
                 vv.repaint();
               }
             });

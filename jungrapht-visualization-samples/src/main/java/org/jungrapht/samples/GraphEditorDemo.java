@@ -31,7 +31,6 @@ import org.jungrapht.visualization.control.ModalGraphMouse;
 import org.jungrapht.visualization.control.modal.ModeControls;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
-import org.jungrapht.visualization.spatial.Spatial;
 import org.jungrapht.visualization.util.ParallelEdgeIndexFunction;
 
 /**
@@ -132,9 +131,6 @@ public class GraphEditorDemo extends JPanel implements Printable {
     vv.getRenderContext()
         .setEdgeLabelFunction(
             e -> edgeLabelMap.containsKey(e) ? edgeLabelMap.get(e) : e.toString());
-
-    vv.setVertexSpatial(new Spatial.NoOp.Vertex(vv.getVisualizationModel().getLayoutModel()));
-    vv.setEdgeSpatial(new Spatial.NoOp.Edge(vv.getVisualizationModel()));
 
     vv.setVertexToolTipFunction(vv.getRenderContext().getVertexLabelFunction());
 
