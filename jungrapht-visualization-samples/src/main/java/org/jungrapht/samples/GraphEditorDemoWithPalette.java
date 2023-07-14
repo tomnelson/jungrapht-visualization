@@ -35,7 +35,6 @@ import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.JLabelEdgeLabelRenderer;
 import org.jungrapht.visualization.renderers.JLabelVertexLabelRenderer;
 import org.jungrapht.visualization.selection.MutableSelectedState;
-import org.jungrapht.visualization.spatial.Spatial;
 import org.jungrapht.visualization.util.ParallelEdgeIndexFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -203,9 +202,6 @@ public class GraphEditorDemoWithPalette extends JPanel implements Printable {
         .setEdgeLabelFunction(
             e -> edgeLabelMap.containsKey(e) ? edgeLabelMap.get(e) : e.toString());
 
-    vv.setVertexSpatial(new Spatial.NoOp.Vertex(vv.getVisualizationModel().getLayoutModel()));
-    vv.setEdgeSpatial(new Spatial.NoOp.Edge(vv.getVisualizationModel()));
-
     vv.setVertexToolTipFunction(vv.getRenderContext().getVertexLabelFunction());
 
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
@@ -216,6 +212,7 @@ public class GraphEditorDemoWithPalette extends JPanel implements Printable {
             .renderContextSupplier(vv::getRenderContext)
             .multiLayerTransformerSupplier(vv.getRenderContext()::getMultiLayerTransformer)
             .edgeFactory(graph.getEdgeSupplier())
+            .vertexFactory(graph.getVertexSupplier())
             .vertexLabelMapSupplier(this::getVertexLabelMap)
             .edgeLabelMapSupplier(this::getEdgeLabelMap)
             .build();

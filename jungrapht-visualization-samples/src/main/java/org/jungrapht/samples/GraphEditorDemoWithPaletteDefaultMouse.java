@@ -206,9 +206,6 @@ public class GraphEditorDemoWithPaletteDefaultMouse extends JPanel implements Pr
         .setEdgeLabelFunction(
             e -> edgeLabelMap.containsKey(e) ? edgeLabelMap.get(e) : e.toString());
 
-    vv.setVertexSpatial(new Spatial.NoOp.Vertex(vv.getVisualizationModel().getLayoutModel()));
-    vv.setEdgeSpatial(new Spatial.NoOp.Edge(vv.getVisualizationModel()));
-
     vv.setVertexToolTipFunction(vv.getRenderContext().getVertexLabelFunction());
 
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
@@ -219,6 +216,7 @@ public class GraphEditorDemoWithPaletteDefaultMouse extends JPanel implements Pr
             .renderContextSupplier(vv::getRenderContext)
             .multiLayerTransformerSupplier(vv.getRenderContext()::getMultiLayerTransformer)
             .edgeFactory(graph.getEdgeSupplier())
+            .vertexFactory(graph.getVertexSupplier())
             .vertexLabelMapSupplier(this::getVertexLabelMap)
             .edgeLabelMapSupplier(this::getEdgeLabelMap)
             .build();
