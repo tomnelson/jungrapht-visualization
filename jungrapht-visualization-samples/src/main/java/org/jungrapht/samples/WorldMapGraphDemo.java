@@ -30,7 +30,6 @@ import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.renderers.GradientVertexRenderer;
 import org.jungrapht.visualization.renderers.HeavyweightVertexLabelRenderer;
-import org.jungrapht.visualization.renderers.Renderer;
 
 /**
  * Shows a graph overlaid on a world map image. Scaling of the graph also scales the image
@@ -137,7 +136,6 @@ public class WorldMapGraphDemo extends JPanel {
     vv.getRenderer()
         .getVertexLabelRenderer(HEAVYWEIGHT)
         .setPositioner(new HeavyweightVertexLabelRenderer.InsidePositioner());
-    vv.getRenderContext().setVertexLabelPosition(Renderer.VertexLabel.Position.AUTO);
 
     final VisualizationScrollPane panel = new VisualizationScrollPane(vv);
     add(panel);

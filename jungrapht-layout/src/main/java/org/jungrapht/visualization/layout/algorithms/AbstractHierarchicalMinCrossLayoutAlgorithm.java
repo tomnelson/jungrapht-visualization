@@ -9,6 +9,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import org.jgrapht.Graph;
+import org.jgrapht.Graphs;
+import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.Layering;
 import org.jungrapht.visualization.layout.algorithms.util.AfterRunnable;
 import org.jungrapht.visualization.layout.algorithms.util.ComponentGrouping;
@@ -336,6 +338,14 @@ public abstract class AbstractHierarchicalMinCrossLayoutAlgorithm<V, E>
     Graph<V, E> graph = layoutModel.getGraph();
     if (graph == null || graph.vertexSet().isEmpty()) {
       return;
+    }
+    // if we were given an undirected graph, make it a directed graph
+    if (graph.getType().isUndirected()) {
+      Graph<V, E> digraph = GraphTypeBuilder.<V, E>directed().buildGraph();
+      graph.vertexSet().forEach(digraph::addVertex);
+      Graphs.addAllVertices(digraph, graph.vertexSet());
+      Graphs.addAllEdges(digraph, graph, graph.edgeSet());
+      graph = digraph;
     }
     List<Graph<V, E>> graphs;
     List<LayoutModel<V>> layoutModels = new ArrayList<>();

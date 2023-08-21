@@ -435,15 +435,13 @@ public class ShowLayoutsWithGhidraGraphInputOneComponents extends JFrame {
 
     @Override
     public boolean test(AI edge) {
-      //      Map<String, Attribute> map = edgeAttributes.get(AI);
       if ("Fall-Through".equals(edge.get("EdgeType"))) {
         return true;
       }
       AS target = graph.getEdgeTarget(edge);
       Collection<AI> incomingEdges = graph.incomingEdgesOf(target);
       for (AI e : incomingEdges) {
-        //        Map<String, Attribute> map2 = edgeAttributes.get(e);
-        if ("Fall-Through".equals(edge.get("EdgeType"))) {
+        if ("Fall-Through".equals(e.get("EdgeType"))) {
           return false;
         }
       }

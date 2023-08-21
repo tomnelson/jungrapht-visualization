@@ -35,7 +35,6 @@ import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.renderers.JLabelEdgeLabelRenderer;
 import org.jungrapht.visualization.renderers.JLabelVertexLabelRenderer;
 import org.jungrapht.visualization.selection.MutableSelectedState;
-import org.jungrapht.visualization.spatial.Spatial;
 import org.jungrapht.visualization.util.ParallelEdgeIndexFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,6 +81,7 @@ public class GraphEditorDemoWithPaletteDefaultMouse extends JPanel implements Pr
           + "<li>Mousewheel scales with a crossover value of 1.0.<p>"
           + "     - scales the graph layout when the combined scale is greater than 1<p>"
           + "     - scales the graph view when the combined scale is less than 1"
+          + "<li>Mouse1 double click on the background resets all transforms"
           + "</ul>"
           + "<h3>Editing Mode:</h3>"
           + "<ul>"
@@ -89,23 +89,20 @@ public class GraphEditorDemoWithPaletteDefaultMouse extends JPanel implements Pr
           + "<li>Left-click on a vertex and drag to another vertex to create an Undirected Edge"
           + "<li>Shift+Left-click on a vertex and drag to another vertex to create a Directed Edge"
           + "</ul>"
-          + "<h3>Picking Mode:</h3>"
+          + "<h3>Default Mode:</h3>"
+          + "<h4>Vertex/Edge Selection:</h4>"
           + "<ul>"
-          + "<li>Mouse1 on a vertex selects the vertex"
-          + "<li>Mouse1 elsewhere unselects all Vertices"
-          + "<li>Mouse1+Shift on a vertex adds/removes vertex selection"
-          + "<li>Mouse1+drag on a vertex moves all selected Vertices"
-          + "<li>Mouse1+drag elsewhere selects Vertices in a region"
-          + "<li>Mouse1+Shift+drag adds selection of Vertices in a new region"
-          + "<li>Mouse1+CTRL on a vertex selects the vertex and centers the display on it"
-          + "<li>Mouse1 double-click on a vertex or edge allows you to edit the label"
+          + "<li>Mouse1+MENU on a vertex or edge selects the vertex or edge and deselects any others"
+          + "<li>Mouse1+MENU+Shift on a vertex toggles selection of the vertex"
+          + "<li>Mouse1+MENU on a selected edge toggles selection of the edge"
+          + "<li>Mouse1+MENU+drag elsewhere selects vertices in a region"
+          + "<li>Mouse1+Shift+drag adds selection of vertices in a new region"
           + "</ul>"
-          + "<h3>Transforming Mode:</h3>"
+          + "<h4>Vertex Transformation:</h4>"
           + "<ul>"
-          + "<li>Mouse1+drag pans the graph"
-          + "<li>Mouse1+Shift+drag rotates the graph"
-          + "<li>Mouse1+CTRL(or Command)+drag shears the graph"
-          + "<li>Mouse1 double-click on a vertex or edge allows you to edit the label"
+          + "<li>Mouse1+MENU+drag on a selected vertex moves all selected Vertices"
+          + "</ul>"
+          + "Note that MENU == Command on a Mac, MENU == CTRL on a PC"
           + "</ul>"
           + "<h3>Annotation Mode:</h3>"
           + "<ul>"

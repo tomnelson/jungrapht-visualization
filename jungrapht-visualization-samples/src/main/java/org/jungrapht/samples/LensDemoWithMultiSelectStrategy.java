@@ -54,9 +54,9 @@ import org.jungrapht.visualization.util.LayoutAlgorithmTransition;
 /**
  * Demonstrates the use of <code>HyperbolicTransform</code> and <code>MagnifyTransform</code>
  * applied to either the model (graph layout) or the view (VisualizationViewer). The
- * DefaultGraphMouse is used (CTRL-click to select) and there is a toggle to switch between
- * rectangular area multiselect and free-form multiselect. The purpose of this sample was to ensure
- * that the multiselection works properly in all the lenses
+ * DefaultGraphMouse is used (click to select, CTRL-click to toggle select) and there is a toggle to
+ * switch between rectangular area multiselect and free-form multiselect. The purpose of this sample
+ * was to ensure that the multiselection works properly in all the lenses
  *
  * @author Tom Nelson
  */

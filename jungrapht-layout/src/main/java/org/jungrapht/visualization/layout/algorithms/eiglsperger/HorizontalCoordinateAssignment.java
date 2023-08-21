@@ -223,15 +223,18 @@ public class HorizontalCoordinateAssignment<V, E>
     log.trace("checking {} pVertices", pVertices.size());
     for (PVertex<V> pVertex : pVertices) {
       if (xValues.contains(pVertex.getPoint().x)) {
-        // offset the PVertex and its QVertex
-        QVertex<V> qVertex =
-            (QVertex<V>) neighborCache.successorsOf(pVertex).stream().findFirst().get();
-        // move them both
-        log.trace("got q  check {}", qVertex);
-        pVertex.setPoint(pVertex.getPoint().add(offset, 0));
-        qVertex.setPoint(qVertex.getPoint().add(offset, 0));
-        log.trace("edge ol moved {} {} for edge overlap", pVertex, qVertex);
-        moved++;
+        LV<V> neighbor = neighborCache.successorsOf(pVertex).stream().findFirst().get();
+        if (neighbor instanceof QVertex) {
+          // offset the PVertex and its QVertex
+          QVertex<V> qVertex =
+              (QVertex<V>) neighborCache.successorsOf(pVertex).stream().findFirst().get();
+          // move them both
+          log.trace("got q  check {}", qVertex);
+          pVertex.setPoint(pVertex.getPoint().add(offset, 0));
+          qVertex.setPoint(qVertex.getPoint().add(offset, 0));
+          log.trace("edge ol moved {} {} for edge overlap", pVertex, qVertex);
+          moved++;
+        }
       }
       xValues.add(pVertex.getPoint().x);
     }
