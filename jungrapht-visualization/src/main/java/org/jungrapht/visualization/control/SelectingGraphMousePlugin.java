@@ -216,8 +216,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
     MutableSelectedState<V> selectedVertexState = vv.getSelectedVertexState();
     LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
-    if (pickSupport instanceof ShapePickSupport) {
-      ShapePickSupport<V, E> shapePickSupport = (ShapePickSupport<V, E>) pickSupport;
+    if (pickSupport instanceof ShapePickSupport<V, E> shapePickSupport) {
       vertex = shapePickSupport.getVertex(layoutModel, footprintRectangle);
     } else {
       vertex = pickSupport.getVertex(layoutModel, layoutPoint.getX(), layoutPoint.getY());
@@ -249,8 +248,7 @@ public class SelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlugin
     LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
 
     E edge;
-    if (pickSupport instanceof ShapePickSupport) {
-      ShapePickSupport<V, E> shapePickSupport = (ShapePickSupport<V, E>) pickSupport;
+    if (pickSupport instanceof ShapePickSupport<V, E> shapePickSupport) {
       edge = shapePickSupport.getEdge(layoutModel, footprintRectangle);
     } else {
       edge = pickSupport.getEdge(layoutModel, layoutPoint.getX(), layoutPoint.getY());

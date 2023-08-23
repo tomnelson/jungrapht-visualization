@@ -375,9 +375,9 @@ public class VertexImageShaperDemo extends JPanel {
     public Shape apply(V v) {
       Icon icon = iconFunction.apply(v);
 
-      if (icon instanceof ImageIcon) {
+      if (icon instanceof ImageIcon imageIcon) {
 
-        Image image = ((ImageIcon) icon).getImage();
+        Image image = imageIcon.getImage();
 
         Shape shape = shapeMap.get(image);
         if (shape == null) {
@@ -423,8 +423,8 @@ public class VertexImageShaperDemo extends JPanel {
       boolean outlineImages = false;
       Function<V, Icon> vertexIconFunction = renderContext.getVertexIconFunction();
 
-      if (vertexIconFunction instanceof DemoVertexIconTransformer) {
-        outlineImages = ((DemoVertexIconTransformer<V>) vertexIconFunction).isOutlineImages();
+      if (vertexIconFunction instanceof DemoVertexIconTransformer demo) {
+        outlineImages = demo.isOutlineImages();
       }
       Icon icon = vertexIconFunction.apply(v);
       if (icon == null || outlineImages) {

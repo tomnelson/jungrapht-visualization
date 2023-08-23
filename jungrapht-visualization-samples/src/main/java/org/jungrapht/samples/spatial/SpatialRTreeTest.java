@@ -142,16 +142,16 @@ public class SpatialRTreeTest extends JPanel {
     buttons.add(modeBox);
 
     Spatial spatial = vv.getVertexSpatial();
-    if (spatial instanceof SpatialQuadTree) {
+    if (spatial instanceof SpatialQuadTree quadTree) {
       search.addActionListener(
           e ->
               testClosestVertices(
-                  vv, g, model.getLayoutModel(), (SpatialQuadTree<String>) spatial));
-    } else if (spatial instanceof SpatialRTree.Vertices) {
+                  vv, g, model.getLayoutModel(), quadTree));
+    } else if (spatial instanceof SpatialRTree.Vertices rTreeVertices) {
       search.addActionListener(
           e ->
               testClosestVertices(
-                  vv, g, model.getLayoutModel(), (SpatialRTree.Vertices<String>) spatial));
+                  vv, g, model.getLayoutModel(), rTreeVertices));
     }
 
     this.add(buttons, BorderLayout.SOUTH);

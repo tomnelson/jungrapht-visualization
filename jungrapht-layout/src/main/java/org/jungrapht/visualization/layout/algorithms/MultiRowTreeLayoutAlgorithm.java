@@ -66,8 +66,8 @@ public class MultiRowTreeLayoutAlgorithm<V> extends TreeLayoutAlgorithm<V>
       return graph.vertexSet();
     }
 
-    if (layoutModel instanceof Caching) {
-      ((Caching) layoutModel).clear();
+    if (layoutModel instanceof Caching cachingLayoutModel) {
+      cachingLayoutModel.clear();
     }
 
     this.defaultRootPredicate =

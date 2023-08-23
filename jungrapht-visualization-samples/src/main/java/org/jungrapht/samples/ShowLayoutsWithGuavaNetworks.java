@@ -110,16 +110,16 @@ public class ShowLayoutsWithGuavaNetworks extends JPanel {
                   } else {
                     LayoutAlgorithmTransition.apply(vv, layoutAlgorithm);
                   }
-                  if (layoutAlgorithm instanceof BalloonLayoutAlgorithm) {
+                  if (layoutAlgorithm instanceof BalloonLayoutAlgorithm balloon) {
                     balloonLayoutRings =
                         new LayoutPaintable.BalloonRings(
-                            vv, (BalloonLayoutAlgorithm) layoutAlgorithm);
+                            vv, balloon);
                     vv.addPreRenderPaintable(balloonLayoutRings);
                   }
-                  if (layoutAlgorithm instanceof RadialTreeLayoutAlgorithm) {
+                  if (layoutAlgorithm instanceof RadialTreeLayoutAlgorithm radial) {
                     radialLayoutRings =
                         new LayoutPaintable.RadialRings(
-                            vv, (RadialTreeLayoutAlgorithm) layoutAlgorithm);
+                            vv, radial);
                     vv.addPreRenderPaintable(radialLayoutRings);
                   }
                 }));

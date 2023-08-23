@@ -472,10 +472,8 @@ public class DefaultRenderContext<V, E> implements RenderContext<V, E> {
 
   public void setEdgeShapeFunction(BiFunction<Graph<V, E>, E, Shape> edgeShapeFunction) {
     this.edgeShapeFunction = edgeShapeFunction;
-    if (edgeShapeFunction instanceof ParallelEdgeShapeFunction) {
-      ParallelEdgeShapeFunction<V, E> function =
-          (ParallelEdgeShapeFunction<V, E>) edgeShapeFunction;
-      function.setEdgeIndexFunction(this.parallelEdgeIndexFunction);
+    if (edgeShapeFunction instanceof ParallelEdgeShapeFunction parallel) {
+      parallel.setEdgeIndexFunction(this.parallelEdgeIndexFunction);
     }
     this.renderContextStateChangeSupport.fireRenderContextStateChanged(this, true);
   }

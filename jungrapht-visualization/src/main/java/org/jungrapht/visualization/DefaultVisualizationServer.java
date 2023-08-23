@@ -655,17 +655,15 @@ class DefaultVisualizationServer<V, E> extends JPanel
       edgeShapeFunction = savedEdgeShapeFunction;
       log.trace("edgeShapeFunction got savedEdgeShapeFunction: {}", edgeShapeFunction);
       // if the edgeShapeFunction is articulated, unset the articulations
-      if (edgeShapeFunction instanceof EdgeShape.ArticulatedLine) {
-        ((EdgeShape.ArticulatedLine) edgeShapeFunction)
-            .setEdgeArticulationFunction(e -> Collections.emptyList());
+      if (edgeShapeFunction instanceof EdgeShape.ArticulatedLine articulated) {
+       articulated.setEdgeArticulationFunction(e -> Collections.emptyList());
         log.trace("unset the edge articulations in edgeShapeFunction : {}", edgeShapeFunction);
       }
       renderContext.setEdgeShapeFunction(edgeShapeFunction);
     }
 
-    if (layoutAlgorithm instanceof VertexBoundsFunctionConsumer) {
-      ((VertexBoundsFunctionConsumer) layoutAlgorithm)
-          .accept(renderContext.getVertexBoundsFunction());
+    if (layoutAlgorithm instanceof VertexBoundsFunctionConsumer vertexBoundsFunctionConsumer) {
+      vertexBoundsFunctionConsumer.accept(renderContext.getVertexBoundsFunction());
     }
   }
 

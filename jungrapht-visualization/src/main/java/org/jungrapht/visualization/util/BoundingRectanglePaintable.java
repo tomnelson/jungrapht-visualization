@@ -24,9 +24,8 @@ public class BoundingRectanglePaintable<V> implements VisualizationServer.Painta
     final BoundingRectangleCollector.Vertices<V> brc =
         new BoundingRectangleCollector.Vertices<>(rc.getVertexShapeFunction(), layoutModel);
     this.rectangles = brc.getRectangles();
-    if (layoutModel instanceof ChangeEventSupport) {
-      ((ChangeEventSupport) layoutModel)
-          .addChangeListener(
+    if (layoutModel instanceof ChangeEventSupport ces) {
+          ces.addChangeListener(
               e -> {
                 brc.compute();
                 rectangles = brc.getRectangles();

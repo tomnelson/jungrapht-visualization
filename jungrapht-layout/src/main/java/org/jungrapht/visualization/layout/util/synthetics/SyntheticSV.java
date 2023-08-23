@@ -21,8 +21,8 @@ public class SyntheticSV<V> extends SVI<V> implements Synthetic {
 
   @Override
   public boolean equals(Object o) {
-    if (o instanceof SyntheticSV) {
-      return hash == ((SyntheticSV) o).hash;
+    if (o instanceof SyntheticSV ssv) {
+      return hash == ssv.hash;
     }
     return false;
   }

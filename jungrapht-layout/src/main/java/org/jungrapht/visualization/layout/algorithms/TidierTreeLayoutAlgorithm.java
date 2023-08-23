@@ -537,8 +537,8 @@ public class TidierTreeLayoutAlgorithm<V, E> extends AbstractTreeLayoutAlgorithm
   }
 
   protected void buildTree(LayoutModel<V> layoutModel) {
-    if (layoutModel instanceof Caching) {
-      ((Caching) layoutModel).clear();
+    if (layoutModel instanceof Caching caching) {
+      caching.clear();
     }
     this.layoutModel = layoutModel;
     Graph<V, E> graph = layoutModel.getGraph();

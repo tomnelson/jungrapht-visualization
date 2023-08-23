@@ -198,10 +198,10 @@ public abstract class AbstractLayoutModel<V> implements LayoutModel<V> {
     if (graph.vertexSet().size() > 0
         && // don't create thread for empty graph
         createVisRunnable
-        && layoutAlgorithm instanceof IterativeLayoutAlgorithm) {
+        && layoutAlgorithm instanceof IterativeLayoutAlgorithm iterative) {
       setRelaxing(true);
       // don't start a visRunner if the called has set threaded to false
-      setupVisRunner((IterativeLayoutAlgorithm) layoutAlgorithm);
+      setupVisRunner(iterative);
       // ...the visRunner will fire the layoutStateChanged event when it finishes
 
     } else if (!(layoutAlgorithm instanceof Threaded)

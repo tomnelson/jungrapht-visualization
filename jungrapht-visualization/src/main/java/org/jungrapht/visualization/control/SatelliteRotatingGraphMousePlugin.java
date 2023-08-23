@@ -43,8 +43,8 @@ public class SatelliteRotatingGraphMousePlugin<V, E> extends RotatingGraphMouseP
     VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
     boolean accepted = e.getModifiersEx() == rotatingMask;
     if (accepted) {
-      if (vv instanceof SatelliteVisualizationViewer) {
-        VisualizationViewer<?, ?> vvMaster = ((SatelliteVisualizationViewer<?, ?>) vv).getMaster();
+      if (vv instanceof SatelliteVisualizationViewer satelliteVisualizationViewer) {
+        VisualizationViewer<?, ?> vvMaster = satelliteVisualizationViewer.getMaster();
 
         MutableTransformer modelTransformerMaster =
             vvMaster

@@ -363,11 +363,9 @@ public class BiModalRenderer<V, E> implements ModalRenderer<V, E>, ChangeListene
   public void renderVertex(RenderContext<V, E> renderContext, LayoutModel<V> layoutModel, V v) {
 
     GraphicsDecorator graphicsDecorator = renderContext.getGraphicsContext();
-    if (graphicsDecorator instanceof MagnifyIconGraphics) {
-      MagnifyIconGraphics magnifyIconGraphics = (MagnifyIconGraphics) graphicsDecorator;
+    if (graphicsDecorator instanceof MagnifyIconGraphics magnifyIconGraphics) {
       BidirectionalTransformer bidirectionalTransformer = magnifyIconGraphics.getTransformer();
-      if (bidirectionalTransformer instanceof MagnifyTransformer) {
-        MagnifyTransformer magnifyTransformer = (MagnifyTransformer) bidirectionalTransformer;
+      if (bidirectionalTransformer instanceof MagnifyTransformer magnifyTransformer) {
         Lens lens = magnifyTransformer.getLens();
         // layoutLocation
         Point p = layoutModel.apply(v);

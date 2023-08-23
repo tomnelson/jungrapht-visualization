@@ -137,15 +137,15 @@ public class ShowLayoutsWithGreedyVertexColoring extends JPanel {
                   } else {
                     LayoutAlgorithmTransition.apply(vv, layoutAlgorithm);
                   }
-                  if (layoutAlgorithm instanceof BalloonLayoutAlgorithm) {
+                  if (layoutAlgorithm instanceof BalloonLayoutAlgorithm balloonLayoutAlgorithm) {
                     balloonLayoutRings =
                         new LayoutPaintable.BalloonRings(
-                            vv, (BalloonLayoutAlgorithm) layoutAlgorithm);
+                            vv, balloonLayoutAlgorithm);
                     vv.addPreRenderPaintable(balloonLayoutRings);
                   }
-                  if (layoutAlgorithm instanceof RadialTreeLayout) {
+                  if (layoutAlgorithm instanceof RadialTreeLayout radialTreeLayout) {
                     radialLayoutRings =
-                        new LayoutPaintable.RadialRings(vv, (RadialTreeLayout) layoutAlgorithm);
+                        new LayoutPaintable.RadialRings(vv, radialTreeLayout);
                     vv.addPreRenderPaintable(radialLayoutRings);
                   }
                 }));

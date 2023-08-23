@@ -118,10 +118,10 @@ public class LensMagnificationGraphMousePlugin extends AbstractGraphMousePlugin
         delta = -delta;
       }
       Lens lens =
-          (layoutTransformer instanceof LensTransformer)
-              ? ((LensTransformer) layoutTransformer).getLens()
-              : (viewTransformer instanceof LensTransformer)
-                  ? ((LensTransformer) viewTransformer).getLens()
+          (layoutTransformer instanceof LensTransformer lensTransformer)
+              ? lensTransformer.getLens()
+              : (viewTransformer instanceof LensTransformer lensTransformer)
+                  ? lensTransformer.getLens()
                   : null;
 
       if (lens != null

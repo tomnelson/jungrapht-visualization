@@ -49,9 +49,9 @@ public class SatelliteAnimatedPickingGraphMousePlugin<V, E>
   public void mouseReleased(MouseEvent e) {
     if (e.getModifiersEx() == selectionModifiers) {
       final VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
-      if (vv instanceof SatelliteVisualizationViewer) {
+      if (vv instanceof SatelliteVisualizationViewer satelliteVisualizationViewer) {
         final VisualizationViewer<V, E> vvMaster =
-            ((SatelliteVisualizationViewer<V, E>) vv).getMaster();
+            satelliteVisualizationViewer.getMaster();
 
         if (vertex != null) {
           LayoutModel<V> layoutModel = vvMaster.getVisualizationModel().getLayoutModel();

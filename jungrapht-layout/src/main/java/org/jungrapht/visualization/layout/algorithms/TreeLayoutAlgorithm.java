@@ -138,8 +138,8 @@ public class TreeLayoutAlgorithm<V> extends AbstractTreeLayoutAlgorithm<V>
       correctOverlap = expandLayout = false;
       return graph.vertexSet();
     }
-    if (layoutModel instanceof Caching) {
-      ((Caching) layoutModel).clear();
+    if (layoutModel instanceof Caching caching) {
+      caching.clear();
     }
 
     // when provided, replace the horizontal and vertical spacing with twice the average

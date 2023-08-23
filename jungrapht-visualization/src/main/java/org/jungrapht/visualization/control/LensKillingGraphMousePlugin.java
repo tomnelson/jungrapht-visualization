@@ -71,9 +71,8 @@ public class LensKillingGraphMousePlugin<V, E> extends SelectingGraphMousePlugin
     MutableTransformer layoutTransformer =
         multiLayerTransformer.getTransformer(MultiLayerTransformer.Layer.LAYOUT);
     Point2D p = e.getPoint();
-    if (viewTransformer instanceof LensTransformer) {
-      //        viewTransformer = ((LensTransformer) viewTransformer).getDelegate();
-      p = ((LensTransformer) viewTransformer).getDelegate().inverseTransform(p);
+    if (viewTransformer instanceof LensTransformer lensTransformer) {
+      p = lensTransformer.getDelegate().inverseTransform(p);
     } else {
       p = viewTransformer.inverseTransform(p);
     }

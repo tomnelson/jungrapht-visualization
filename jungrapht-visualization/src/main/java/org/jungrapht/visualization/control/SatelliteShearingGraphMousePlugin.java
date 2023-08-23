@@ -43,8 +43,8 @@ public class SatelliteShearingGraphMousePlugin<V, E> extends ShearingGraphMouseP
     VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
     boolean accepted = e.getModifiersEx() == shearingMask;
     if (accepted) {
-      if (vv instanceof SatelliteVisualizationViewer) {
-        VisualizationViewer<?, ?> vvMaster = ((SatelliteVisualizationViewer<?, ?>) vv).getMaster();
+      if (vv instanceof SatelliteVisualizationViewer satelliteVisualizationViewer) {
+        VisualizationViewer<?, ?> vvMaster = satelliteVisualizationViewer.getMaster();
 
         MutableTransformer modelTransformerMaster =
             vvMaster

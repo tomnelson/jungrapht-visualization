@@ -63,8 +63,8 @@ class DefaultVisualizationViewer<V, E> extends DefaultVisualizationServer<V, E>
     addMouseListener(requestFocusListener);
     setMultiSelectionStrategySupplier(multiSelectionStrategySupplier);
     setGraphMouse(graphMouse);
-    if (graphMouse instanceof ModalGraphMouse) {
-      addKeyListener(((ModalGraphMouse) graphMouse).getModeKeyListener());
+    if (graphMouse instanceof ModalGraphMouse modal) {
+      addKeyListener(modal.getModeKeyListener());
     }
   }
 
@@ -115,8 +115,8 @@ class DefaultVisualizationViewer<V, E> extends DefaultVisualizationServer<V, E>
     addMouseListener(graphMouse);
     addMouseMotionListener(graphMouse);
     addMouseWheelListener(graphMouse);
-    if (graphMouse instanceof ModalGraphMouse) {
-      addKeyListener(((ModalGraphMouse) graphMouse).getModeKeyListener());
+    if (graphMouse instanceof ModalGraphMouse modal) {
+      addKeyListener(modal.getModeKeyListener());
     }
   }
 

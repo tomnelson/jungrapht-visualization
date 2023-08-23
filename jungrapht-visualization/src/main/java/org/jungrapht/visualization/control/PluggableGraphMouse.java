@@ -50,12 +50,12 @@ public class PluggableGraphMouse implements VisualizationViewer.GraphMouse {
       mousePluginList.add(plugin);
       mouseListeners = null;
     }
-    if (plugin instanceof MouseMotionListener) {
-      mouseMotionPluginList.add((MouseMotionListener) plugin);
+    if (plugin instanceof MouseMotionListener motion) {
+      mouseMotionPluginList.add(motion);
       mouseMotionListeners = null;
     }
-    if (plugin instanceof MouseWheelListener) {
-      mouseWheelPluginList.add((MouseWheelListener) plugin);
+    if (plugin instanceof MouseWheelListener wheel) {
+      mouseWheelPluginList.add(wheel);
       mouseWheelListeners = null;
     }
   }

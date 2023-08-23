@@ -89,8 +89,8 @@ public class SatelliteTranslatingGraphMousePlugin<V, E> extends TranslatingGraph
     VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
     boolean accepted = e.getModifiersEx() == translatingMask;
     if (accepted) {
-      if (vv instanceof SatelliteVisualizationViewer) {
-        VisualizationViewer<?, ?> vvMaster = ((SatelliteVisualizationViewer<?, ?>) vv).getMaster();
+      if (vv instanceof SatelliteVisualizationViewer satelliteVisualizationViewer) {
+        VisualizationViewer<?, ?> vvMaster = satelliteVisualizationViewer.getMaster();
 
         MutableTransformer modelTransformerMaster =
             vvMaster

@@ -238,9 +238,8 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
     log.trace("mouseClicked {} in {}", e.getClickCount(), this.getClass().getName());
 
     if (enableDoubleClickScaleReset) {
-      if (e.getClickCount() == 2 && scaler instanceof CrossoverScalingControl) {
+      if (e.getClickCount() == 2 && scaler instanceof CrossoverScalingControl crossoverScalingControl) {
         if (!singleVertexSelection(e) && !singleEdgeSelection(e)) {
-          CrossoverScalingControl crossoverScalingControl = (CrossoverScalingControl) scaler;
           crossoverScalingControl.reset((VisualizationServer) e.getSource(), e.getPoint());
           ((VisualizationViewer) e.getSource()).scaleToLayout(scaler);
           e.consume();
@@ -260,8 +259,7 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
             e.getPoint().x - pickSize / 2, e.getPoint().y - pickSize / 2, pickSize, pickSize);
 
     V vertex;
-    if (pickSupport instanceof ShapePickSupport) {
-      ShapePickSupport<V, E> shapePickSupport = (ShapePickSupport<V, E>) pickSupport;
+    if (pickSupport instanceof ShapePickSupport<V, E> shapePickSupport) {
       vertex = shapePickSupport.getVertex(layoutModel, footprintRectangle);
     } else {
       vertex = pickSupport.getVertex(layoutModel, layoutPoint.getX(), layoutPoint.getY());
@@ -280,8 +278,7 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
             e.getPoint().x - pickSize / 2, e.getPoint().y - pickSize / 2, pickSize, pickSize);
 
     E edge;
-    if (pickSupport instanceof ShapePickSupport) {
-      ShapePickSupport<V, E> shapePickSupport = (ShapePickSupport<V, E>) pickSupport;
+    if (pickSupport instanceof ShapePickSupport<V, E> shapePickSupport) {
       edge = shapePickSupport.getEdge(layoutModel, footprintRectangle);
     } else {
       edge = pickSupport.getEdge(layoutModel, layoutPoint.getX(), layoutPoint.getY());
@@ -302,8 +299,7 @@ public class ScalingGraphMousePlugin extends AbstractGraphMousePlugin
     if (enableMiddleMouseButtonScaleReset) {
       // check for middle mouse button and reset transforms
       if (e.getModifiersEx() == InputEvent.BUTTON2_DOWN_MASK
-          && scaler instanceof CrossoverScalingControl) {
-        CrossoverScalingControl crossoverScalingControl = (CrossoverScalingControl) scaler;
+          && scaler instanceof CrossoverScalingControl crossoverScalingControl) {
         crossoverScalingControl.reset((VisualizationServer) e.getSource(), e.getPoint());
         ((VisualizationViewer) e.getSource()).scaleToLayout(scaler);
         e.consume();

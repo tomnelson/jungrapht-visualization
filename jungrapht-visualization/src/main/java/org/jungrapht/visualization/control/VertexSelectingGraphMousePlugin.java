@@ -222,8 +222,7 @@ public class VertexSelectingGraphMousePlugin<V, E> extends AbstractGraphMousePlu
     GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
     MutableSelectedState<V> selectedVertexState = vv.getSelectedVertexState();
     LayoutModel<V> layoutModel = vv.getVisualizationModel().getLayoutModel();
-    if (pickSupport instanceof ShapePickSupport) {
-      ShapePickSupport<V, E> shapePickSupport = (ShapePickSupport<V, E>) pickSupport;
+    if (pickSupport instanceof ShapePickSupport<V, E> shapePickSupport) {
       vertex = shapePickSupport.getVertex(layoutModel, footprintRectangle);
     } else {
       vertex = pickSupport.getVertex(layoutModel, layoutPoint.getX(), layoutPoint.getY());

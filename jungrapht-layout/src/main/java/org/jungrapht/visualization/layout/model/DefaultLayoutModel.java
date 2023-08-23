@@ -36,8 +36,8 @@ public class DefaultLayoutModel<V> extends AbstractLayoutModel<V>
 
   private DefaultLayoutModel(LayoutModel<V> other) {
     super(other.getGraph(), other.getWidth(), other.getHeight());
-    if (other instanceof DefaultLayoutModel) {
-      this.initializer = ((DefaultLayoutModel) other).initializer;
+    if (other instanceof DefaultLayoutModel defaultModel) {
+      this.initializer = defaultModel.initializer;
     }
   }
 

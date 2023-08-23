@@ -28,11 +28,11 @@ public class SelectionIconListener<V> implements ItemListener {
 
   private void updatePickIcon(V n, int stateChange) {
     Icon icon = imager.apply(n);
-    if (icon instanceof LayeredIcon) {
+    if (icon instanceof LayeredIcon layered) {
       if (stateChange == ItemEvent.SELECTED) {
-        ((LayeredIcon) icon).add(checked);
+        layered.add(checked);
       } else {
-        ((LayeredIcon) icon).remove(checked);
+        layered.remove(checked);
       }
     }
   }

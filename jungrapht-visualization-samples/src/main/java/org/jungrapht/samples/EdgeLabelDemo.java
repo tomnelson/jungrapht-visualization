@@ -180,8 +180,8 @@ public class EdgeLabelDemo extends JPanel {
           JSlider s = (JSlider) e.getSource();
           BiFunction<Graph<Integer, Number>, Number, Shape> edgeShapeFunction =
               vv.getRenderContext().getEdgeShapeFunction();
-          if (edgeShapeFunction instanceof ParallelEdgeShapeFunction) {
-            ((ParallelEdgeShapeFunction) edgeShapeFunction).setControlOffsetIncrement(s.getValue());
+          if (edgeShapeFunction instanceof ParallelEdgeShapeFunction parallel) {
+            parallel.setControlOffsetIncrement(s.getValue());
             vv.repaint();
           }
         });

@@ -451,8 +451,8 @@ public class MultipleLayoutSelector<V, E> extends JPanel {
         item -> {
           if (item.getStateChange() == ItemEvent.SELECTED) {
             LayoutAlgorithm<V> layoutAlgotithm = vv.getVisualizationModel().getLayoutAlgorithm();
-            if (layoutAlgotithm instanceof Layered) {
-              ((Layered) layoutAlgotithm).setLayering((Layering) item.getItem());
+            if (layoutAlgotithm instanceof Layered layered) {
+              layered.setLayering((Layering) item.getItem());
               vv.getVisualizationModel().setLayoutAlgorithm(layoutAlgotithm);
             }
           }
@@ -501,9 +501,8 @@ public class MultipleLayoutSelector<V, E> extends JPanel {
     @Override
     public void itemStateChanged(ItemEvent e) {
       if (e.getStateChange() == ItemEvent.SELECTED) {
-        if (layoutAlgorithm instanceof Layered) {
-          ((Layered) layoutAlgorithm)
-              .setLayering(layeringComboBox.getItemAt(layeringComboBox.getSelectedIndex()));
+        if (layoutAlgorithm instanceof Layered layered) {
+          layered.setLayering(layeringComboBox.getItemAt(layeringComboBox.getSelectedIndex()));
         }
 
         if (animateTransition.isSelected()) {
@@ -518,16 +517,16 @@ public class MultipleLayoutSelector<V, E> extends JPanel {
           vv.removePreRenderPaintable(paintable);
           iterator.remove();
         }
-        if (layoutAlgorithm instanceof BalloonLayoutAlgorithm) {
+        if (layoutAlgorithm instanceof BalloonLayoutAlgorithm balloon) {
           paintables.add(
-              new LayoutPaintable.BalloonRings<>(vv, (BalloonLayoutAlgorithm) layoutAlgorithm));
+              new LayoutPaintable.BalloonRings<>(vv, balloon));
 
-        } else if (layoutAlgorithm instanceof RadialTreeLayout) {
-          paintables.add(new LayoutPaintable.RadialRings<>(vv, (RadialTreeLayout) layoutAlgorithm));
+        } else if (layoutAlgorithm instanceof RadialTreeLayout radial) {
+          paintables.add(new LayoutPaintable.RadialRings<>(vv, radial));
 
-        } else if (layoutAlgorithm instanceof TreeLayout) {
+        } else if (layoutAlgorithm instanceof TreeLayout tree) {
           if (log.isTraceEnabled()) {
-            Map<V, Rectangle> cellMap = ((TreeLayout) layoutAlgorithm).getBaseBounds();
+            Map<V, Rectangle> cellMap = tree.getBaseBounds();
             paintables.add(
                 new LayoutPaintable.TreeCells(
                     vv.getVisualizationModel().getLayoutModel(),

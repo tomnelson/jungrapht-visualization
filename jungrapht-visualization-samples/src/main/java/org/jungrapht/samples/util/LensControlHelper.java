@@ -120,8 +120,8 @@ public class LensControlHelper {
    */
   public <T extends JComponent> T container() {
     if (title != null) {
-      if (container instanceof AbstractButton) { // true if the container is a JMenu
-        ((AbstractButton) container).setText(title);
+      if (container instanceof AbstractButton abstractButton) { // true if the container is a JMenu
+        abstractButton.setText(title);
       } else {
         container.setBorder(new TitledBorder(title));
       }

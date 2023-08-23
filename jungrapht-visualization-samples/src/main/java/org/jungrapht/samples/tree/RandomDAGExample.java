@@ -260,8 +260,8 @@ public class RandomDAGExample extends JPanel {
         TestGraphs.createDirectedAcyclicGraph(
             layers, maxVerticesPerLayer, linkProbability, randomSeed);
     LayoutModel layoutModel = vv.getVisualizationModel().getLayoutModel();
-    if (layoutModel instanceof Caching) {
-      ((Caching) layoutModel).clear();
+    if (layoutModel instanceof Caching caching) {
+      caching.clear();
     }
     vv.getVisualizationModel().getLayoutModel().setSize(600, 600); // put back original size
     vv.getRenderContext().getMultiLayerTransformer().setToIdentity();

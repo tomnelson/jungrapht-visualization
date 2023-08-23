@@ -71,22 +71,22 @@ public class LensTranslatingGraphMousePlugin extends AbstractGraphMousePlugin
     MutableTransformer layoutTransformer =
         multiLayerTransformer.getTransformer(MultiLayerTransformer.Layer.LAYOUT);
     Point2D p = e.getPoint();
-    if (viewTransformer instanceof LensTransformer) {
-      p = ((LensTransformer) viewTransformer).getDelegate().inverseTransform(p);
+    if (viewTransformer instanceof LensTransformer lensTransformer) {
+      p = lensTransformer.getDelegate().inverseTransform(p);
     } else {
       p = viewTransformer.inverseTransform(p);
     }
     boolean accepted = e.getModifiersEx() == lensTranslatingMask;
     if (accepted) {
       vv.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
-      if (layoutTransformer instanceof LensTransformer) {
-        Lens lens = ((LensTransformer) layoutTransformer).getLens();
+      if (layoutTransformer instanceof LensTransformer lensTransformer) {
+        Lens lens = lensTransformer.getLens();
         if (testViewCenter(lens, p)) {
           e.consume();
         }
       }
-      if (viewTransformer instanceof LensTransformer) {
-        Lens lens = ((LensTransformer) viewTransformer).getLens();
+      if (viewTransformer instanceof LensTransformer lensTransformer) {
+        Lens lens = lensTransformer.getLens();
         if (testViewCenter(lens, p)) {
           e.consume();
         }
@@ -167,10 +167,10 @@ public class LensTranslatingGraphMousePlugin extends AbstractGraphMousePlugin
       MutableTransformer viewTransformer =
           multiLayerTransformer.getTransformer(MultiLayerTransformer.Layer.VIEW);
       Lens lens =
-          (layoutTransformer instanceof LensTransformer)
-              ? ((LensTransformer) layoutTransformer).getLens()
-              : (viewTransformer instanceof LensTransformer)
-                  ? ((LensTransformer) viewTransformer).getLens()
+          (layoutTransformer instanceof LensTransformer lensTransformer)
+              ? lensTransformer.getLens()
+              : (viewTransformer instanceof LensTransformer lensTransformer)
+                  ? lensTransformer.getLens()
                   : null;
       if (lens != null) {
         Point2D p = e.getPoint();

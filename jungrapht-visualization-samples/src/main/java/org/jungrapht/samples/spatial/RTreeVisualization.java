@@ -115,12 +115,10 @@ public class RTreeVisualization<V> extends JPanel {
         e -> {
           if (e.getStateChange() == ItemEvent.DESELECTED) {
             Object unpicked = e.getItem();
-            if (unpicked instanceof Collection) {
-              Collection selections = (Collection) unpicked;
+            if (unpicked instanceof Collection selections) {
               selections.forEach(
                   selection -> {
-                    if (selection instanceof Node) {
-                      Node node = (Node) selection;
+                    if (selection instanceof Node node) {
                       othervv.removePreRenderPaintable(thePaintables.get(node));
                       thePaintables.remove(node);
                     }
@@ -132,12 +130,10 @@ public class RTreeVisualization<V> extends JPanel {
           }
           if (e.getStateChange() == ItemEvent.SELECTED) {
             Object picked = e.getItem();
-            if (picked instanceof Collection) {
-              Collection selections = (Collection) picked;
+            if (picked instanceof Collection selections) {
               selections.forEach(
                   selection -> {
-                    if (selection instanceof Node) {
-                      Node node = (Node) selection;
+                    if (selection instanceof Node node) {
                       RTreePaintable paintable = new RTreePaintable(node);
                       othervv.addPreRenderPaintable(paintable);
                       thePaintables.put(node, paintable);
@@ -345,8 +341,7 @@ public class RTreeVisualization<V> extends JPanel {
         graph.addEdge(parent, kid, graph.edgeSet().size() + 1);
         addChildren(graph, kid);
       }
-    } else if (parent instanceof LeafNode) {
-      LeafNode<V> leafVertex = (LeafNode<V>) parent;
+    } else if (parent instanceof LeafNode leafVertex) {
       try {
         Method method = leafVertex.getClass().getDeclaredMethod("getKeys");
         method.setAccessible(true);
@@ -367,12 +362,11 @@ public class RTreeVisualization<V> extends JPanel {
     Container content = frame.getContentPane();
 
     Spatial spatial = vv.getVertexSpatial();
-    if (spatial instanceof SwingThreadSpatial) {
-      spatial = ((SwingThreadSpatial) spatial).getSpatial();
+    if (spatial instanceof SwingThreadSpatial swingThreadSpatial) {
+      spatial = swingThreadSpatial.getSpatial();
     }
-    if (spatial instanceof SpatialRTree.Vertices) {
+    if (spatial instanceof SpatialRTree.Vertices mySpatial) {
       try {
-        SpatialRTree mySpatial = (SpatialRTree) spatial;
         Field rtreeField = mySpatial.getClass().getSuperclass().getDeclaredField("rtree");
         rtreeField.setAccessible(true);
         RTree rtree = (RTree) rtreeField.get(spatial);

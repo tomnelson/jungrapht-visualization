@@ -200,15 +200,15 @@ public class ShowLayoutsWithImageIconVertices extends JPanel {
                   } else {
                     LayoutAlgorithmTransition.apply(vv, layoutAlgorithm);
                   }
-                  if (layoutAlgorithm instanceof BalloonLayoutAlgorithm) {
+                  if (layoutAlgorithm instanceof BalloonLayoutAlgorithm balloon) {
                     balloonLayoutRings =
                         new LayoutPaintable.BalloonRings(
-                            vv, (BalloonLayoutAlgorithm) layoutAlgorithm);
+                            vv, balloon);
                     vv.addPreRenderPaintable(balloonLayoutRings);
                   }
-                  if (layoutAlgorithm instanceof RadialTreeLayout) {
+                  if (layoutAlgorithm instanceof RadialTreeLayout radial) {
                     radialLayoutRings =
-                        new LayoutPaintable.RadialRings(vv, (RadialTreeLayout) layoutAlgorithm);
+                        new LayoutPaintable.RadialRings(vv, radial);
                     vv.addPreRenderPaintable(radialLayoutRings);
                   }
                 }));
