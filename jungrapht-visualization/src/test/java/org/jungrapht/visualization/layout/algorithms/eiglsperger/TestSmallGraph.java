@@ -1,5 +1,7 @@
 package org.jungrapht.visualization.layout.algorithms.eiglsperger;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -14,9 +16,8 @@ import org.jungrapht.visualization.layout.algorithms.sugiyama.GreedyCycleRemoval
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.TransformedGraphSupplier;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TestSmallGraph {
 
@@ -24,7 +25,7 @@ public class TestSmallGraph {
   private Graph<LV<Integer>, LE<Integer, Integer>> svGraph;
   private NeighborCache<LV<Integer>, LE<Integer, Integer>> neighborCache;
 
-  @Before
+  @BeforeEach
   public void setup() {
     graph = createInitialGraph();
   }
@@ -40,10 +41,10 @@ public class TestSmallGraph {
     Collection<LE<Integer, Integer>> feedbackArcs = greedyCycleRemoval.getFeedbackArcs();
 
     // should be no feedback arcs in this graph
-    Assert.assertEquals(0, feedbackArcs.size());
+    assertEquals(0, feedbackArcs.size());
 
     List<List<LV<Integer>>> layers = GraphLayers.assign(svGraph);
-    Assert.assertEquals(5, layers.size());
+    assertEquals(5, layers.size());
 
     Synthetics<Integer, Integer> synthetics = new Synthetics<>(svGraph);
     List<LE<Integer, Integer>> edges = new ArrayList<>(svGraph.edgeSet());
@@ -75,10 +76,10 @@ public class TestSmallGraph {
     Collection<LE<Integer, Integer>> feedbackArcs = greedyCycleRemoval.getFeedbackArcs();
 
     // should be no feedback arcs in this graph
-    Assert.assertEquals(0, feedbackArcs.size());
+    assertEquals(0, feedbackArcs.size());
 
     List<List<LV<Integer>>> layers = GraphLayers.assign(svGraph);
-    Assert.assertEquals(5, layers.size());
+    assertEquals(5, layers.size());
 
     Synthetics<Integer, Integer> synthetics = new Synthetics<>(svGraph);
     List<LE<Integer, Integer>> edges = new ArrayList<>(svGraph.edgeSet());
@@ -101,37 +102,37 @@ public class TestSmallGraph {
   }
 
   private void checkLayersArray(LV<Integer>[][] layersArray) {
-    Assert.assertEquals(5, layersArray.length);
+    assertEquals(5, layersArray.length);
     LV<Integer>[] layer = layersArray[0];
-    Assert.assertEquals(1, layer.length);
-    Assert.assertTrue(layer[0] instanceof LV);
-    Assert.assertEquals(0, (int) layer[0].getVertex());
+    assertEquals(1, layer.length);
+    assertInstanceOf(LV.class, layer[0]);
+    assertEquals(0, layer[0].getVertex());
 
     layer = layersArray[1];
-    Assert.assertEquals(2, layer.length);
-    Assert.assertTrue(layer[0] instanceof LV);
-    Assert.assertEquals(1, (int) layer[0].getVertex());
-    Assert.assertTrue(layer[1] instanceof PVertex);
+    assertEquals(2, layer.length);
+    assertInstanceOf(LV.class, layer[0]);
+    assertEquals(1, layer[0].getVertex());
+    assertInstanceOf(PVertex.class, layer[1]);
 
     layer = layersArray[2];
-    Assert.assertEquals(3, layer.length);
-    Assert.assertTrue(layer[0] instanceof LV);
-    Assert.assertEquals(2, (int) layer[0].getVertex());
-    Assert.assertTrue(layer[1] instanceof SyntheticLV);
-    Assert.assertTrue(layer[2] instanceof PVertex);
+    assertEquals(3, layer.length);
+    assertInstanceOf(LV.class, layer[0]);
+    assertEquals(2, layer[0].getVertex());
+    assertInstanceOf(SyntheticLV.class, layer[1]);
+    assertInstanceOf(PVertex.class, layer[2]);
 
     layer = layersArray[3];
-    Assert.assertEquals(4, layer.length);
-    Assert.assertTrue(layer[0] instanceof LV);
-    Assert.assertEquals(3, (int) layer[0].getVertex());
-    Assert.assertTrue(layer[1] instanceof QVertex);
-    Assert.assertTrue(layer[2] instanceof QVertex);
-    Assert.assertTrue(layer[3] instanceof SyntheticLV);
+    assertEquals(4, layer.length);
+    assertInstanceOf(LV.class, layer[0]);
+    assertEquals(3, layer[0].getVertex());
+    assertInstanceOf(QVertex.class, layer[1]);
+    assertInstanceOf(QVertex.class, layer[2]);
+    assertInstanceOf(SyntheticLV.class, layer[3]);
 
     layer = layersArray[4];
-    Assert.assertEquals(1, layer.length);
-    Assert.assertTrue(layer[0] instanceof LV);
-    Assert.assertEquals(4, (int) layer[0].getVertex());
+    assertEquals(1, layer.length);
+    assertInstanceOf(LV.class, layer[0]);
+    assertEquals(4, layer[0].getVertex());
   }
 
   private Graph<Integer, Integer> createInitialGraph() {

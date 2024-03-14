@@ -1,12 +1,13 @@
 package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.layout.util.synthetics.SingletonTransformer;
 import org.jungrapht.visualization.layout.util.synthetics.TransformingGraphView;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestTransformingGraphView {
 
@@ -42,9 +43,9 @@ public class TestTransformingGraphView {
 
     Graph<String, Integer> transformedBackGraph = transformingGraphView.build();
 
-    Assert.assertTrue(graph.vertexSet().containsAll(transformedBackGraph.vertexSet()));
-    Assert.assertTrue(graph.edgeSet().containsAll(transformedBackGraph.edgeSet()));
+    assertTrue(graph.vertexSet().containsAll(transformedBackGraph.vertexSet()));
+    assertTrue(graph.edgeSet().containsAll(transformedBackGraph.edgeSet()));
 
-    Assert.assertEquals(transformedBackGraph.getEdge("a", "b"), graph.getEdge("a", "b"));
+    assertEquals(transformedBackGraph.getEdge("a", "b"), graph.getEdge("a", "b"));
   }
 }

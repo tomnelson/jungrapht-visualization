@@ -1,13 +1,13 @@
 package org.jungrapht.visualization;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.awt.*;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DirectedPseudograph;
 import org.jungrapht.visualization.layout.algorithms.CircleLayoutAlgorithm;
 import org.jungrapht.visualization.selection.MutableSelectedState;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class VisualizationServerTest {
 

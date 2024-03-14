@@ -1,13 +1,14 @@
 package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.util.HashSet;
 import java.util.stream.IntStream;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,7 +86,7 @@ public class BrandesKopfTest {
     svGraph = new TransformedGraphSupplier<>(graph).get();
   }
 
-  @Before
+  @BeforeEach
   public void setup() {
     createInitialGraph();
   }
@@ -95,17 +96,17 @@ public class BrandesKopfTest {
     BrandesKopf brandesKopf = new BrandesKopf(graph);
     svGraph = brandesKopf.svGraph;
     LV<Integer>[][] layers = brandesKopf.layersArray;
-    Assert.assertEquals(10, layers.length);
-    Assert.assertEquals(2, layers[0].length);
-    Assert.assertEquals(5, layers[1].length);
-    Assert.assertEquals(6, layers[2].length);
-    Assert.assertEquals(6, layers[3].length);
-    Assert.assertEquals(8, layers[4].length);
-    Assert.assertEquals(9, layers[5].length);
-    Assert.assertEquals(9, layers[6].length);
-    Assert.assertEquals(7, layers[7].length);
-    Assert.assertEquals(4, layers[8].length);
-    Assert.assertEquals(1, layers[9].length);
+    assertEquals(10, layers.length);
+    assertEquals(2, layers[0].length);
+    assertEquals(5, layers[1].length);
+    assertEquals(6, layers[2].length);
+    assertEquals(6, layers[3].length);
+    assertEquals(8, layers[4].length);
+    assertEquals(9, layers[5].length);
+    assertEquals(9, layers[6].length);
+    assertEquals(7, layers[7].length);
+    assertEquals(4, layers[8].length);
+    assertEquals(1, layers[9].length);
 
     HorizontalCoordinateAssignment<Integer, Integer> horizontalCoordinateAssignment =
         new HorizontalCoordinateAssignment<>(layers, svGraph, new HashSet<>(), 20, 20);

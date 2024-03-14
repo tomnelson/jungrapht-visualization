@@ -1,13 +1,14 @@
 package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import org.jungrapht.visualization.layout.algorithms.util.InsertionSortCounter;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,7 +74,7 @@ public class AccumulatorTreeCrossCountingTest {
     Collections.shuffle(edges);
     log.info("shuffled edges: {}", edges);
     int count = crossingCount(edges);
-    Assert.assertEquals(12, count);
+    assertEquals(12, count);
   }
 
   @Test

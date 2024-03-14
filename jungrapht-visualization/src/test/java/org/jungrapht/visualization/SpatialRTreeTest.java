@@ -1,5 +1,7 @@
 package org.jungrapht.visualization;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.awt.*;
 import java.util.Collection;
 import java.util.stream.IntStream;
@@ -12,9 +14,8 @@ import org.jungrapht.visualization.layout.util.RadiusVertexAccessor;
 import org.jungrapht.visualization.layout.util.VertexAccessor;
 import org.jungrapht.visualization.spatial.Spatial;
 import org.jungrapht.visualization.spatial.rtree.TreeNode;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +33,7 @@ public class SpatialRTreeTest {
   LayoutModel<String> layoutModel;
   Spatial<String, String> tree;
 
-  @Before
+  @BeforeEach
   public void setup() {
     // generate 100 random nodes in a graph at random locations in the layoutModel
     this.graph = Pseudograph.<String, Integer>createBuilder(Integer.class).build();
@@ -62,7 +63,7 @@ public class SpatialRTreeTest {
       Collection<? extends TreeNode> pointQuadTrees =
           tree.getContainingLeafs(location.x, location.y);
       TreeNode nodeQuadTree = tree.getContainingLeaf(node);
-      Assert.assertTrue(pointQuadTrees.contains(nodeQuadTree));
+      assertTrue(pointQuadTrees.contains(nodeQuadTree));
     }
   }
 
@@ -106,7 +107,7 @@ public class SpatialRTreeTest {
         log.warn("the cell for winnerTwo {} is {}", winnerTwo, tree.getContainingLeaf(winnerTwo));
         log.warn("the cell for the search point {},{} is {}", x, y, tree.getContainingLeafs(x, y));
       }
-      Assert.assertEquals(winnerOne, winnerTwo);
+      assertEquals(winnerOne, winnerTwo);
     }
   }
 
