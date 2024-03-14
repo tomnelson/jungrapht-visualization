@@ -3,16 +3,16 @@ package org.jungrapht.visualization;
 import java.awt.Shape;
 import java.awt.geom.PathIterator;
 import java.awt.image.BufferedImage;
-import junit.framework.TestCase;
 import org.jungrapht.visualization.util.ImageShapeUtils;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class TestImageShaper extends TestCase {
+public class TestImageShaper {
 
   BufferedImage image;
 
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
+  @BeforeEach
+  public void setUp() {
     int width = 6;
     int height = 5;
     image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -31,6 +31,7 @@ public class TestImageShaper extends TestCase {
     image.setRGB(4, 3, 0xffffffff);
   }
 
+  @Test
   public void testShaper() {
     Shape shape = ImageShapeUtils.getShape(image, 30);
     //		System.err.println("complete shape = "+shape);

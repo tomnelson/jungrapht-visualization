@@ -1,5 +1,7 @@
 package org.jungrapht.visualization.spatial;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.stream.IntStream;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.Pseudograph;
@@ -8,9 +10,8 @@ import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.util.RadiusVertexAccessor;
 import org.jungrapht.visualization.layout.util.RandomLocationTransformer;
 import org.jungrapht.visualization.layout.util.VertexAccessor;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +31,7 @@ public class SpatialQuadTreeTest {
   LayoutModel<String> layoutModel;
   SpatialQuadTree<String> tree;
 
-  @Before
+  @BeforeEach
   public void setup() {
     // generate 100 random vertices in a graph at random locations in the layoutModel
     Pseudograph<String, Object> graph =
@@ -61,7 +62,7 @@ public class SpatialQuadTreeTest {
       Point location = layoutModel.apply(vertex);
       SpatialQuadTree pointQuadTree = tree.getContainingQuadTreeLeaf(location.x, location.y);
       SpatialQuadTree vertexQuadTree = (SpatialQuadTree) tree.getContainingQuadTreeLeaf(vertex);
-      Assert.assertEquals(pointQuadTree, vertexQuadTree);
+      assertEquals(pointQuadTree, vertexQuadTree);
       log.debug(
           "pointQuadTree level {} vertexQuadTree level {}",
           pointQuadTree.getLevel(),
@@ -119,7 +120,7 @@ public class SpatialQuadTreeTest {
             y,
             tree.getContainingQuadTreeLeaf(x, y));
       }
-      Assert.assertEquals(winnerOne, winnerTwo);
+      assertEquals(winnerOne, winnerTwo);
     }
   }
 

@@ -1,5 +1,7 @@
 package org.jungrapht.visualization.spatial;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -19,9 +21,8 @@ import org.jungrapht.visualization.spatial.rtree.RStarSplitter;
 import org.jungrapht.visualization.spatial.rtree.RTree;
 import org.jungrapht.visualization.spatial.rtree.SplitterContext;
 import org.jungrapht.visualization.spatial.rtree.TreeNode;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +44,7 @@ public class RTreeTest2 {
   private Rectangle2D r8;
   Map<String, Rectangle2D> linkedMap = new LinkedHashMap<>();
 
-  @Before
+  @BeforeEach
   public void before() {
     rTree = RTree.create();
     r1 = new Rectangle2D.Double(100, 100, 100, 100);
@@ -107,11 +108,11 @@ public class RTreeTest2 {
   @Test
   public void testAddOne() {
     rTree = RTree.add(rTree, splitterContext, "A", r1);
-    //    Assert.assertTrue(rTree.level == 0);
-    Assert.assertTrue(rTree.getRoot().isPresent());
+    //    assertTrue(rTree.level == 0);
+    assertTrue(rTree.getRoot().isPresent());
     Node<String> root = rTree.getRoot().get();
-    Assert.assertTrue(root instanceof LeafNode);
-    Assert.assertEquals(1, root.size());
+    assertInstanceOf(LeafNode.class, root);
+    assertEquals(1, root.size());
 
     testAreas(rTree);
   }
@@ -213,15 +214,15 @@ public class RTreeTest2 {
 
     Point2D p = new Point2D.Double(r4.getX() + r4.getWidth() / 2, r4.getY() + r4.getHeight() / 2);
     Object found = rTree.getPickedObject(p);
-    Assert.assertEquals(found, "D");
+    assertEquals(found, "D");
 
     p = new Point2D.Double(r7.getX() + r7.getWidth() / 2, r7.getY() + r7.getHeight() / 2);
     found = rTree.getPickedObject(p);
-    Assert.assertEquals(found, "H");
+    assertEquals(found, "H");
 
     p = new Point2D.Double(r1.getX() + r1.getWidth() / 2, r1.getY() + r1.getHeight() / 2);
     found = rTree.getPickedObject(p);
-    Assert.assertEquals(found, "A");
+    assertEquals(found, "A");
   }
 
   // make sure the rectangle area in rTree is the same as the union of the areas
@@ -240,10 +241,10 @@ public class RTreeTest2 {
     if (rootVertex instanceof InnerNode) {
       InnerNode innerVertex = (InnerNode) rootVertex;
       Rectangle2D unionBounds = Node.union(innerVertex.getChildren());
-      Assert.assertTrue(Math.abs(rootBounds.getMinX() - unionBounds.getMinX()) < 1.0E-3);
-      Assert.assertTrue(Math.abs(rootBounds.getMinY() - unionBounds.getMinY()) < 1.0E-3);
-      Assert.assertTrue(Math.abs(rootBounds.getMaxX() - unionBounds.getMaxX()) < 1.0E-3);
-      Assert.assertTrue(Math.abs(rootBounds.getMaxY() - unionBounds.getMaxY()) < 1.0E-3);
+      assertTrue(Math.abs(rootBounds.getMinX() - unionBounds.getMinX()) < 1.0E-3);
+      assertTrue(Math.abs(rootBounds.getMinY() - unionBounds.getMinY()) < 1.0E-3);
+      assertTrue(Math.abs(rootBounds.getMaxX() - unionBounds.getMaxX()) < 1.0E-3);
+      assertTrue(Math.abs(rootBounds.getMaxY() - unionBounds.getMaxY()) < 1.0E-3);
     }
 
     for (TreeNode rt : rootVertex.getChildren()) {

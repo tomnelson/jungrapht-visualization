@@ -8,8 +8,8 @@ import org.jungrapht.visualization.layout.algorithms.FRLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.repulsion.BarnesHutFRRepulsion;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.util.RandomLocationTransformer;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +36,7 @@ public class FRLayoutsTimingTest {
    * this runs again before each test. Build a simple graph, build a custom layout model (see below)
    * initialize the locations to be the same each time.
    */
-  @Before
+  @BeforeEach
   public void setup() {
     graph =
         GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.multigraph()).buildGraph();

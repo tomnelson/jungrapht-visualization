@@ -1,14 +1,15 @@
 package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.jungrapht.visualization.layout.algorithms.util.InsertionSortCounter;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,7 +61,7 @@ public class TestAccumulatorTree {
 
   AccumulatorTree tree;
 
-  @Before
+  @BeforeEach
   public void setup() {
     log.info("edges: {}", edges);
     Collections.shuffle(edges);
@@ -85,7 +86,7 @@ public class TestAccumulatorTree {
     int countIS = InsertionSortCounter.insertionSortCounter(targetIndices);
     log.info("countIS is :{}", countIS);
 
-    Assert.assertEquals(countIS, count);
+    assertEquals(countIS, count);
   }
 
   @Test
@@ -109,7 +110,7 @@ public class TestAccumulatorTree {
     int countIS = InsertionSortCounter.insertionSortCounter(sourceIndices);
     log.info("countIS is :{}", countIS);
 
-    Assert.assertEquals(countIS, count);
+    assertEquals(countIS, count);
 
     // swap the edge endpoints and run the count on the target indices
     edges = swapEdgeEndpoints(edges);
@@ -128,10 +129,10 @@ public class TestAccumulatorTree {
     countIS = InsertionSortCounter.insertionSortCounter(targetIndices);
     log.info("countIS is :{}", countIS);
 
-    Assert.assertEquals(countIS, count);
+    assertEquals(countIS, count);
   }
 
-  //    Assert.assertEquals(countIS, count);
+  //    assertEquals(countIS, count);
   //  }
 
   private static <V, E> List<LE<V, E>> swapEdgeEndpoints(List<LE<V, E>> list) {
@@ -168,7 +169,7 @@ public class TestAccumulatorTree {
     int countIS = InsertionSortCounter.insertionSortCounter(targetIndices);
     log.info("countIS is :{}", countIS);
 
-    Assert.assertEquals(countIS, countWeight);
+    assertEquals(countIS, countWeight);
   }
 
   @Test
@@ -184,7 +185,7 @@ public class TestAccumulatorTree {
     int countWeight = tree.crossWeight(targetIndices, i -> 2);
     log.info("countWeight is :{}", countWeight);
 
-    Assert.assertEquals(48, countWeight);
+    assertEquals(48, countWeight);
 
     int countIS = InsertionSortCounter.insertionSortCounter(targetIndices);
     log.info("countIS is :{}", countIS);

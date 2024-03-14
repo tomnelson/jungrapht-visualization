@@ -1,8 +1,9 @@
 package org.jungrapht.visualization.layout.algorithms.util.synthetics;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import org.jungrapht.visualization.layout.util.synthetics.SingletonTransformer;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test to ensure that keys return expected values, that a second transformation of the same key
@@ -19,12 +20,12 @@ public class SingletonTransformerTest {
     int got2 = singletonTransformer.apply(1);
     int got3 = singletonTransformer.apply(2);
 
-    Assert.assertEquals(2, got2);
-    Assert.assertEquals(3, got3);
+    assertEquals(2, got2);
+    assertEquals(3, got3);
 
     int gotDupe = singletonTransformer.apply(1);
-    Assert.assertTrue(gotDupe == got2);
+    assertTrue(gotDupe == got2);
 
-    Assert.assertEquals(2, singletonTransformer.getTransformedMap().size());
+    assertEquals(2, singletonTransformer.getTransformedMap().size());
   }
 }
