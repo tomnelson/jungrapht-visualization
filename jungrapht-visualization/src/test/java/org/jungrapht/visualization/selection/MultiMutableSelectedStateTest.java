@@ -1,12 +1,11 @@
 package org.jungrapht.visualization.selection;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +18,7 @@ public class MultiMutableSelectedStateTest {
 
   AtomicBoolean atomicBoolean = new AtomicBoolean(false);
 
-  @BeforeEach
+  @Before
   public void setup() {
     atomicBoolean.set(false);
     multiMutableSelectedState.clear();
@@ -34,9 +33,9 @@ public class MultiMutableSelectedStateTest {
     multiMutableSelectedState.addItemListener(
         new SelectedState.StateChangeListener<>(this::selected, this::forbidden));
     multiMutableSelectedState.select("A");
-    assertTrue(multiMutableSelectedState.getSelected().contains("A"));
-    assertEquals(Collections.singleton("A"), multiMutableSelectedState.getSelected());
-    assertTrue(atomicBoolean.get());
+    Assert.assertTrue(multiMutableSelectedState.getSelected().contains("A"));
+    Assert.assertEquals(multiMutableSelectedState.getSelected(), Collections.singleton("A"));
+    Assert.assertTrue(atomicBoolean.get());
   }
 
   /** Select 'reselection' of one item. Should not fire an event to select or deselect */
@@ -47,8 +46,8 @@ public class MultiMutableSelectedStateTest {
         new SelectedState.StateChangeListener<>(this::forbidden, this::forbidden));
     // pick the already selected item. Should not fire an event to select or deselect
     multiMutableSelectedState.select("A");
-    assertEquals(Collections.singleton("A"), multiMutableSelectedState.getSelected());
-    assertFalse(atomicBoolean.get());
+    Assert.assertEquals(multiMutableSelectedState.getSelected(), Collections.singleton("A"));
+    Assert.assertFalse(atomicBoolean.get());
   }
 
   /**
@@ -60,8 +59,8 @@ public class MultiMutableSelectedStateTest {
     multiMutableSelectedState.addItemListener(
         new SelectedState.StateChangeListener<>(this::selected, this::forbidden));
     multiMutableSelectedState.select(Set.of("A", "B", "C"));
-    assertEquals(Set.of("A", "B", "C"), multiMutableSelectedState.getSelected());
-    assertTrue(atomicBoolean.get());
+    Assert.assertEquals(multiMutableSelectedState.getSelected(), Set.of("A", "B", "C"));
+    Assert.assertTrue(atomicBoolean.get());
   }
 
   /**
@@ -74,8 +73,8 @@ public class MultiMutableSelectedStateTest {
     multiMutableSelectedState.addItemListener(
         new SelectedState.StateChangeListener<>(this::forbidden, this::forbidden));
     multiMutableSelectedState.select(Set.of("A", "B", "C"));
-    assertEquals(Set.of("A", "B", "C"), multiMutableSelectedState.getSelected());
-    assertFalse(atomicBoolean.get());
+    Assert.assertEquals(multiMutableSelectedState.getSelected(), Set.of("A", "B", "C"));
+    Assert.assertFalse(atomicBoolean.get());
   }
 
   /**
@@ -88,9 +87,9 @@ public class MultiMutableSelectedStateTest {
     multiMutableSelectedState.addItemListener(
         new SelectedState.StateChangeListener<>(this::selected, this::deselected));
     multiMutableSelectedState.select("D");
-    assertTrue(multiMutableSelectedState.getSelected().contains("D"));
-    assertEquals(Set.of("A", "B", "C", "D"), multiMutableSelectedState.getSelected());
-    assertTrue(atomicBoolean.get());
+    Assert.assertTrue(multiMutableSelectedState.getSelected().contains("D"));
+    Assert.assertEquals(multiMutableSelectedState.getSelected(), Set.of("A", "B", "C", "D"));
+    Assert.assertTrue(atomicBoolean.get());
   }
 
   private void selected(Object item) {
@@ -106,6 +105,6 @@ public class MultiMutableSelectedStateTest {
   }
 
   private void forbidden(Object item) {
-    fail("Should not have gotten " + item);
+    Assert.fail("Should not have gotten " + item);
   }
 }

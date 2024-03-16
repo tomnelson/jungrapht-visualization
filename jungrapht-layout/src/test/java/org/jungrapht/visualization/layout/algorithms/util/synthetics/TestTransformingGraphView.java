@@ -1,7 +1,5 @@
 package org.jungrapht.visualization.layout.algorithms.util.synthetics;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
@@ -10,7 +8,8 @@ import org.jungrapht.visualization.layout.util.synthetics.SV;
 import org.jungrapht.visualization.layout.util.synthetics.SVTransformedGraphSupplier;
 import org.jungrapht.visualization.layout.util.synthetics.SingletonTransformer;
 import org.jungrapht.visualization.layout.util.synthetics.TransformingGraphView;
-import org.junit.jupiter.api.Test;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class TestTransformingGraphView {
 
@@ -46,9 +45,9 @@ public class TestTransformingGraphView {
 
     Graph<String, Integer> transformedBackGraph = transformingGraphView.build();
 
-    assertTrue(graph.vertexSet().containsAll(transformedBackGraph.vertexSet()));
-    assertTrue(graph.edgeSet().containsAll(transformedBackGraph.edgeSet()));
+    Assert.assertTrue(graph.vertexSet().containsAll(transformedBackGraph.vertexSet()));
+    Assert.assertTrue(graph.edgeSet().containsAll(transformedBackGraph.edgeSet()));
 
-    assertEquals(transformedBackGraph.getEdge("a", "b"), graph.getEdge("a", "b"));
+    Assert.assertEquals(transformedBackGraph.getEdge("a", "b"), graph.getEdge("a", "b"));
   }
 }

@@ -14,8 +14,8 @@ import org.jungrapht.visualization.layout.algorithms.sugiyama.GreedyCycleRemoval
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LE;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.LV;
 import org.jungrapht.visualization.layout.algorithms.sugiyama.TransformedGraphSupplier;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +31,7 @@ public class EiglspergerTests {
   EiglspergerStepsForward<String, Integer> stepsForward;
   EiglspergerStepsBackward<String, Integer> stepsBackward;
 
-  @BeforeEach
+  @Before
   public void setup() {
     buildGraph();
     createLayers();

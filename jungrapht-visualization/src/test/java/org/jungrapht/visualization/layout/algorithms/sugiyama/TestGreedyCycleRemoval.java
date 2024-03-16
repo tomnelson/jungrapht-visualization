@@ -1,7 +1,5 @@
 package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.util.Collection;
 import java.util.Set;
 import org.jgrapht.Graph;
@@ -9,8 +7,9 @@ import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphBuilder;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +18,7 @@ public class TestGreedyCycleRemoval {
   private static final Logger log = LoggerFactory.getLogger(TestGreedyCycleRemoval.class);
   Graph<String, Integer> graph;
 
-  @BeforeEach
+  @Before
   public void setup() {
     graph =
         GraphTypeBuilder.<String, Integer>directed()
@@ -51,7 +50,7 @@ public class TestGreedyCycleRemoval {
 
     GreedyCycleRemoval<String, Integer> gcr = new GreedyCycleRemoval<>(graph);
 
-    assertTrue(gcr.getFeedbackArcs().containsAll(Set.of(8)));
+    Assert.assertTrue(gcr.getFeedbackArcs().containsAll(Set.of(8)));
   }
 
   @Test
@@ -61,7 +60,7 @@ public class TestGreedyCycleRemoval {
     GreedyCycleRemoval<String, Integer> gcr = new GreedyCycleRemoval<>(graph);
 
     log.info("reverseArcs: {}", gcr.getFeedbackArcs());
-    assertTrue(gcr.getFeedbackArcs().containsAll(Set.of(122, 109)));
+    Assert.assertTrue(gcr.getFeedbackArcs().containsAll(Set.of(122, 109)));
   }
 
   public static Graph<String, Integer> generateProgramGraph2() {
@@ -129,8 +128,8 @@ public class TestGreedyCycleRemoval {
     graph.addEdge("D", "B"); // introduces a cycle
 
     log.info("graph: {}", graph);
-    assertEquals("D", graph.getEdgeSource(3));
-    assertEquals("B", graph.getEdgeTarget(3));
+    Assert.assertEquals(graph.getEdgeSource(3), "D");
+    Assert.assertEquals(graph.getEdgeTarget(3), "B");
 
     TransformedGraphSupplier<String, Integer> transformedGraphSupplier =
         new TransformedGraphSupplier(graph);

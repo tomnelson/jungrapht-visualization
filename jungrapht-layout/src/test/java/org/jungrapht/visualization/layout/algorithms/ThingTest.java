@@ -3,7 +3,7 @@ package org.jungrapht.visualization.layout.algorithms;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 public class ThingTest {
 

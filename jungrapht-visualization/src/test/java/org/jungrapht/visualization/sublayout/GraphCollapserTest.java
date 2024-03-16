@@ -1,7 +1,5 @@
 package org.jungrapht.visualization.sublayout;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -11,7 +9,8 @@ import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.selection.MultiMutableSelectedState;
-import org.junit.jupiter.api.Test;
+import org.junit.Assert;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,10 +30,10 @@ public class GraphCollapserTest {
 
     // graph: ([A, B, C], [0={A,B}, 1={A,C}, 2={B,C}])
 
-    assertEquals(Set.of("A", "B", "C"), graph.vertexSet());
-    assertEquals(Set.of("B", "A"), endpoints(graph, 0));
-    assertEquals(Set.of("C", "A"), endpoints(graph, 1));
-    assertEquals(Set.of("B", "C"), endpoints(graph, 2));
+    Assert.assertEquals(Set.of("A", "B", "C"), graph.vertexSet());
+    Assert.assertEquals(Set.of("B", "A"), endpoints(graph, 0));
+    Assert.assertEquals(Set.of("C", "A"), endpoints(graph, 1));
+    Assert.assertEquals(Set.of("B", "C"), endpoints(graph, 2));
 
     GraphCollapser<String, Integer> collapser = new GraphCollapser(graph);
     MultiMutableSelectedState<String> picker = new MultiMutableSelectedState<>();
@@ -42,7 +41,7 @@ public class GraphCollapserTest {
     picker.select("C");
 
     Graph<String, Integer> clusterGraph = collapser.getClusterGraph(picker.getSelected());
-    assertEquals(Set.of("B", "C"), clusterGraph.vertexSet());
+    Assert.assertEquals(Set.of("B", "C"), clusterGraph.vertexSet());
 
     String collapsedVertex =
         collapser.collapse(picker.getSelected(), s -> collapsedVertexFactory.get());
@@ -51,18 +50,18 @@ public class GraphCollapserTest {
       Graph<String, Integer> collapsedGraph = collapser.collapsedGraphFunction().apply(vertex);
 
       if (collapsedGraph != null) {
-        assertEquals(Set.of(2), collapsedGraph.edgeSet());
+        Assert.assertEquals(Set.of(2), collapsedGraph.edgeSet());
       } else {
-        assertEquals("A", vertex);
+        Assert.assertEquals("A", vertex);
       }
     }
 
-    assertEquals(Set.of(0, 1), graph.edgeSet());
+    Assert.assertEquals(Set.of(0, 1), graph.edgeSet());
     for (Integer edge : graph.edgeSet()) {
-      assertEquals("A", graph.getEdgeSource(edge));
+      Assert.assertEquals("A", graph.getEdgeSource(edge));
       String target = graph.getEdgeTarget(edge);
-      assertEquals(collapsedVertex, target);
-      assertTrue(collapser.collapsedGraphFunction().apply(target) instanceof Graph);
+      Assert.assertEquals(collapsedVertex, target);
+      Assert.assertTrue(collapser.collapsedGraphFunction().apply(target) instanceof Graph);
     }
 
     log.info("collapsed graph is now: {}", graph);
@@ -81,12 +80,12 @@ public class GraphCollapserTest {
 
     // graph should be the original graph
     //
-    assertEquals(Set.of("A", "B", "C"), graph.vertexSet());
-    assertEquals(Set.of("B", "A"), endpoints(graph, 0));
-    assertEquals(Set.of("C", "A"), endpoints(graph, 1));
-    assertEquals(Set.of("B", "C"), endpoints(graph, 2));
+    Assert.assertEquals(Set.of("A", "B", "C"), graph.vertexSet());
+    Assert.assertEquals(Set.of("B", "A"), endpoints(graph, 0));
+    Assert.assertEquals(Set.of("C", "A"), endpoints(graph, 1));
+    Assert.assertEquals(Set.of("B", "C"), endpoints(graph, 2));
     log.info("expanded graph is now: {}", graph);
-    assertEquals(getDemoGraph(), graph);
+    Assert.assertEquals(getDemoGraph(), graph);
   }
 
   @Test
@@ -130,7 +129,7 @@ public class GraphCollapserTest {
     collapser.expand(clusterVertexOne);
     log.debug("graph now {}", graph);
 
-    assertEquals(getDemoGraph2(), graph);
+    Assert.assertEquals(getDemoGraph2(), graph);
   }
 
   @Test
@@ -174,7 +173,7 @@ public class GraphCollapserTest {
     collapser.expand(clusterVertexOne);
     log.info("graph is {}", graph);
 
-    assertEquals(getDemoGraph2(), graph);
+    Assert.assertEquals(getDemoGraph2(), graph);
   }
 
   private static void createEdge(Graph<String, Integer> g, String v1Label, String v2Label) {

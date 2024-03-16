@@ -1,7 +1,5 @@
 package org.jungrapht.visualization.layout.algorithms.util;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +11,8 @@ import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.graph.AbstractBaseGraph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
-import org.junit.jupiter.api.Test;
+import org.junit.Assert;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,12 +68,12 @@ public class TestNetworkSimplexOne {
     spanningTree.addEdge("d", "h", dh);
 
     Map<Integer, Integer> cutValues = getEdgeCutValues(dag, spanningTree);
-    assertEquals(-1, cutValues.get(7));
-    assertEquals(3, cutValues.get(2));
-    assertEquals(3, cutValues.get(3));
-    assertEquals(0, cutValues.get(4));
-    assertEquals(3, cutValues.get(6));
-    assertEquals(3, cutValues.get(8));
+    Assert.assertEquals(-1, (int) cutValues.get(7));
+    Assert.assertEquals(3, (int) cutValues.get(2));
+    Assert.assertEquals(3, (int) cutValues.get(3));
+    Assert.assertEquals(0, (int) cutValues.get(4));
+    Assert.assertEquals(3, (int) cutValues.get(6));
+    Assert.assertEquals(3, (int) cutValues.get(8));
     // if there is a negative value...
     List<Integer> values = new ArrayList<>(cutValues.values());
     values.sort(Integer::compareTo);
@@ -110,9 +109,9 @@ public class TestNetworkSimplexOne {
       }
     }
     log.info("bestSpanningTree: {}", spanningTree);
-    assertTrue(spanningTree.edgeSet().containsAll(List.of(0, 2, 3, 4, 5, 6, 8)));
-    assertFalse(spanningTree.containsEdge(1));
-    assertFalse(spanningTree.containsEdge(7));
+    Assert.assertTrue(spanningTree.edgeSet().containsAll(List.of(0, 2, 3, 4, 5, 6, 8)));
+    Assert.assertFalse(spanningTree.containsEdge(1));
+    Assert.assertFalse(spanningTree.containsEdge(7));
   }
 
   Map<Integer, Integer> getEdgeCutValues(

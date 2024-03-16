@@ -1,15 +1,14 @@
 package org.jungrapht.visualization.layout.algorithms;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.util.stream.IntStream;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +17,7 @@ public class TestTreeLayouts {
   private static Logger log = LoggerFactory.getLogger(TestTreeLayouts.class);
   Graph<String, Integer> graph;
 
-  @BeforeEach
+  @Before
   public void setup() {
     graph =
         GraphTypeBuilder.<String, Integer>forGraphType(DefaultGraphType.dag())
@@ -84,11 +83,11 @@ public class TestTreeLayouts {
     layoutAlgorithmOne.visit(layoutModelOne);
     layoutAlgorithmTwo.visit(layoutModelTwo);
 
-    assertEquals(layoutAlgorithmOne.getBaseBounds(), layoutAlgorithmTwo.getBaseBounds());
-    assertEquals(layoutModelOne.getLocations(), layoutModelTwo.getLocations());
+    Assert.assertEquals(layoutAlgorithmOne.getBaseBounds(), layoutAlgorithmTwo.getBaseBounds());
+    Assert.assertEquals(layoutModelOne.getLocations(), layoutModelTwo.getLocations());
 
-    assertEquals(layoutModelOne.getWidth(), layoutModelTwo.getWidth());
-    assertEquals(layoutModelOne.getHeight(), layoutModelTwo.getHeight());
+    Assert.assertEquals(layoutModelOne.getWidth(), layoutModelTwo.getWidth());
+    Assert.assertEquals(layoutModelOne.getHeight(), layoutModelTwo.getHeight());
     log.info("treeLayout bounds: {}", layoutAlgorithmOne.getBaseBounds());
     log.info("edgeSortingTreeLayoutBounds: {}", layoutAlgorithmTwo.getBaseBounds());
     log.info("positions: {}", layoutModelOne.getLocations());
@@ -105,11 +104,11 @@ public class TestTreeLayouts {
     layoutAlgorithmOne.visit(layoutModelOne);
     layoutAlgorithmTwo.visit(layoutModelTwo);
 
-    assertEquals(layoutAlgorithmOne.getBaseBounds(), layoutAlgorithmTwo.getBaseBounds());
-    assertEquals(layoutModelOne.getLocations(), layoutModelTwo.getLocations());
+    Assert.assertEquals(layoutAlgorithmOne.getBaseBounds(), layoutAlgorithmTwo.getBaseBounds());
+    Assert.assertEquals(layoutModelOne.getLocations(), layoutModelTwo.getLocations());
 
-    assertEquals(layoutModelOne.getWidth(), layoutModelTwo.getWidth());
-    assertEquals(layoutModelOne.getHeight(), layoutModelTwo.getHeight());
+    Assert.assertEquals(layoutModelOne.getWidth(), layoutModelTwo.getWidth());
+    Assert.assertEquals(layoutModelOne.getHeight(), layoutModelTwo.getHeight());
     log.info("treeLayout bounds: {}", layoutAlgorithmOne.getBaseBounds());
     log.info("edgeSortingTreeLayoutBounds: {}", layoutAlgorithmTwo.getBaseBounds());
     log.info("positions: {}", layoutModelOne.getLocations());
@@ -144,14 +143,19 @@ public class TestTreeLayouts {
   private void testPositions(LayoutModel<String> layoutModel) {
     // there should be 5 vertices in the top row, all with equal y values
     log.info("Positions: {}", layoutModel.getLocations());
-    assertEquals(layoutModel.get("I1").y, layoutModel.get("I2").y, .1, "Y values should match");
-    assertEquals(layoutModel.get("I2").y, layoutModel.get("L1").y, .1, "Y values should match");
-    assertEquals(layoutModel.get("L1").y, layoutModel.get("L2").y, .1, "Y values should match");
-    assertEquals(layoutModel.get("L2").y, layoutModel.get("R").y, .1, "Y values should match");
-    assertNotEquals(
-        layoutModel.get("R").y, layoutModel.get("C1").y, .1, "Y values should not match");
+    Assert.assertEquals(
+        "Y values should match", layoutModel.get("I1").y, layoutModel.get("I2").y, .1);
+    Assert.assertEquals(
+        "Y values should match", layoutModel.get("I2").y, layoutModel.get("L1").y, .1);
+    Assert.assertEquals(
+        "Y values should match", layoutModel.get("L1").y, layoutModel.get("L2").y, .1);
+    Assert.assertEquals(
+        "Y values should match", layoutModel.get("L2").y, layoutModel.get("R").y, .1);
+    Assert.assertNotEquals(
+        "Y values should not match", layoutModel.get("R").y, layoutModel.get("C1").y, .1);
 
     // there should be one vertex in row 2 with x value the same as "P"
-    assertEquals(layoutModel.get("R").x, layoutModel.get("C1").x, .1, "X values should match");
+    Assert.assertEquals(
+        "X values should match", layoutModel.get("R").x, layoutModel.get("C1").x, .1);
   }
 }

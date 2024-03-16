@@ -1,10 +1,9 @@
 package org.jungrapht.visualization.layout.quadtree;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.jungrapht.visualization.layout.model.Point;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +18,7 @@ public class BarnesHutQuadTreeTests {
   private static final Logger log = LoggerFactory.getLogger(BarnesHutQuadTreeTests.class);
   private BarnesHutQuadTree<String> tree;
 
-  @BeforeEach
+  @Before
   public void setup() {
     tree = BarnesHutQuadTree.builder().bounds(500, 500).build();
   }
@@ -39,7 +38,7 @@ public class BarnesHutQuadTreeTests {
 
     log.info("tree: {}", tree);
     ForceObject<String> expectedForceObject = new ForceObject("force", 10, 10, 3);
-    assertEquals(tree.getRoot().getForceObject(), expectedForceObject);
+    Assert.assertEquals(tree.getRoot().getForceObject(), expectedForceObject);
   }
 
   /** test a simple construction */
@@ -55,16 +54,16 @@ public class BarnesHutQuadTreeTests {
     tree.insert(forceObjectD);
 
     log.info("tree: {}", tree);
-    assertNotNull(tree.getRoot());
+    Assert.assertNotNull(tree.getRoot());
     Node<String> root = tree.getRoot();
-    assertFalse(root.isLeaf());
+    Assert.assertFalse(root.isLeaf());
     Node<String> NW = root.NW;
-    assertEquals(NW.forceObject, forceObjectA.add(forceObjectB).add(forceObjectC));
-    assertFalse(NW.isLeaf());
-    assertEquals(NW.NW.forceObject, forceObjectC);
-    assertEquals(NW.NE.forceObject, forceObjectA);
-    assertEquals(NW.SW.forceObject, forceObjectB);
-    assertNull(NW.SE.forceObject);
-    assertEquals(root.NE.forceObject, forceObjectD);
+    Assert.assertEquals(NW.forceObject, forceObjectA.add(forceObjectB).add(forceObjectC));
+    Assert.assertFalse(NW.isLeaf());
+    Assert.assertEquals(NW.NW.forceObject, forceObjectC);
+    Assert.assertEquals(NW.NE.forceObject, forceObjectA);
+    Assert.assertEquals(NW.SW.forceObject, forceObjectB);
+    Assert.assertNull(NW.SE.forceObject);
+    Assert.assertEquals(root.NE.forceObject, forceObjectD);
   }
 }

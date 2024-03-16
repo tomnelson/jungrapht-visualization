@@ -1,7 +1,5 @@
 package org.jungrapht.visualization.spatial;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -9,7 +7,8 @@ import org.jungrapht.visualization.layout.model.Circle;
 import org.jungrapht.visualization.layout.model.Point;
 import org.jungrapht.visualization.layout.model.Rectangle;
 import org.jungrapht.visualization.util.AWT;
-import org.junit.jupiter.api.Test;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class ShapesTest {
 
@@ -28,7 +27,7 @@ public class ShapesTest {
       Rectangle r = new Rectangle(rx, ry, w, h);
       Rectangle2D r2d = new Rectangle2D.Double(rx, ry, w, h);
 
-      assertEquals(c.intersects(r), e2d.intersects(r2d));
+      Assert.assertEquals(c.intersects(r), e2d.intersects(r2d));
     }
   }
 
@@ -46,7 +45,7 @@ public class ShapesTest {
       Rectangle r = new Rectangle(rx, ry, w, h);
       Rectangle2D r2d = AWT.convert(r);
 
-      assertEquals(p.inside(r), r2d.contains(p2d));
+      Assert.assertEquals(p.inside(r), r2d.contains(p2d));
     }
   }
 }

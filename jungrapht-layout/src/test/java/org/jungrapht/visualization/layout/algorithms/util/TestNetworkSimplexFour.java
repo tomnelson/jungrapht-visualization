@@ -1,13 +1,12 @@
 package org.jungrapht.visualization.layout.algorithms.util;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.util.List;
 import java.util.Map;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
-import org.junit.jupiter.api.Test;
+import org.junit.Assert;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,18 +30,18 @@ public class TestNetworkSimplexFour {
         Map.of(2, 3, 3, 3, 4, 0, 5, 0, 6, 3, 7, -1, 8, 3);
     // preliminary cut value map. check to make sure it matches values in the paper
     Map<Integer, Integer> cutValueMap = networkSimplexDevelopment.getEdgeCutValues(spanningTree);
-    assertEquals(expectedFirstCutValueMap, cutValueMap);
+    Assert.assertEquals(expectedFirstCutValueMap, cutValueMap);
     Graph<String, Integer> best = networkSimplexDevelopment.getTheBestSpanningTree();
     cutValueMap = networkSimplexDevelopment.getEdgeCutValues(spanningTree);
 
     Map<Integer, Integer> expectedSecondCutValueMap =
         Map.of(0, 1, 2, 2, 3, 2, 4, 1, 5, 0, 6, 2, 8, 2);
-    assertEquals(expectedSecondCutValueMap, cutValueMap);
+    Assert.assertEquals(expectedSecondCutValueMap, cutValueMap);
 
     log.info("bestSpanningTree: {}", best);
-    assertTrue(best.edgeSet().containsAll(List.of(0, 2, 3, 4, 5, 6, 8)));
-    assertFalse(best.containsEdge(1));
-    assertFalse(best.containsEdge(7));
+    Assert.assertTrue(best.edgeSet().containsAll(List.of(0, 2, 3, 4, 5, 6, 8)));
+    Assert.assertFalse(best.containsEdge(1));
+    Assert.assertFalse(best.containsEdge(7));
   }
 
   /** build the graph and the spanning tree shown in the paper */

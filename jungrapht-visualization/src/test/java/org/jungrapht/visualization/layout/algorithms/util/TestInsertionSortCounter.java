@@ -3,8 +3,8 @@ package org.jungrapht.visualization.layout.algorithms.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +16,7 @@ public class TestInsertionSortCounter {
 
   List<Integer> list = Arrays.asList(8, 2, 8, 5, 3, 7, 9, 2, 5, 4, 8, 4, 9);
 
-  @BeforeEach
+  @Before
   public void setup() {
     int size = 1000;
     array = new int[size];

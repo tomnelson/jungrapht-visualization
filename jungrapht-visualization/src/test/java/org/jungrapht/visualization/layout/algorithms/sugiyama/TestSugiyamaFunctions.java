@@ -1,7 +1,5 @@
 package org.jungrapht.visualization.layout.algorithms.sugiyama;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -14,8 +12,9 @@ import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.layout.util.synthetics.SE;
 import org.jungrapht.visualization.layout.util.synthetics.SV;
 import org.jungrapht.visualization.layout.util.synthetics.SVTransformedGraphSupplier;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +24,7 @@ public class TestSugiyamaFunctions {
 
   Graph<String, Integer> graph;
 
-  @BeforeEach
+  @Before
   public void setup() {
     // build a DAG
     graph =
@@ -57,8 +56,8 @@ public class TestSugiyamaFunctions {
         new SVTransformedGraphSupplier(graph);
     Graph<SV<String>, SE<Integer>> sgraph = svTransformedGraphSupplier.get();
 
-    assertEquals(graph.vertexSet().size(), sgraph.vertexSet().size());
-    assertEquals(graph.edgeSet().size(), sgraph.edgeSet().size());
+    Assert.assertEquals(graph.vertexSet().size(), sgraph.vertexSet().size());
+    Assert.assertEquals(graph.edgeSet().size(), sgraph.edgeSet().size());
 
     Set<String> verticesCopy = new HashSet<>(graph.vertexSet());
     Set<Integer> edgesCopy = new HashSet<>(graph.edgeSet());
@@ -66,18 +65,18 @@ public class TestSugiyamaFunctions {
         .vertexSet()
         .forEach(
             v -> {
-              assertTrue(graph.containsVertex(v.getVertex()));
+              Assert.assertTrue(graph.containsVertex(v.getVertex()));
               verticesCopy.remove(v.getVertex());
             });
-    assertTrue(verticesCopy.isEmpty());
+    Assert.assertTrue(verticesCopy.isEmpty());
     sgraph
         .edgeSet()
         .forEach(
             e -> {
-              assertTrue(graph.containsEdge(e.getEdge()));
+              Assert.assertTrue(graph.containsEdge(e.getEdge()));
               edgesCopy.remove(e.getEdge());
             });
-    assertTrue(edgesCopy.isEmpty());
+    Assert.assertTrue(edgesCopy.isEmpty());
   }
 
   @Test
@@ -89,7 +88,7 @@ public class TestSugiyamaFunctions {
 
     List<List<LV<String>>> layers = GraphLayers.assign(sgraph);
 
-    assertEquals(3, layers.size()); // this graph should have 3 layers
+    Assert.assertEquals(3, layers.size()); // this graph should have 3 layers
 
     this.checkLayers(layers);
     log.info("assign layers:");
@@ -108,7 +107,7 @@ public class TestSugiyamaFunctions {
     }
     log.info("there are {} edges ", edges.size());
     log.info("edges: {}", edges);
-    assertEquals(graph.edgeSet().size(), edges.size() - 1);
+    Assert.assertEquals(graph.edgeSet().size(), edges.size() - 1);
     checkLayers(layers);
   }
 
@@ -148,7 +147,7 @@ public class TestSugiyamaFunctions {
     log.info("edges: {}", edges);
     log.info("graph.edgeSet(): {}", graph.edgeSet());
     log.info("edges.size(): {}", edges.size());
-    assertEquals(graph.edgeSet().size(), edges.size() - 3);
+    Assert.assertEquals(graph.edgeSet().size(), edges.size() - 3);
     checkLayers(layers);
 
     log.info("outgoing dag: {}", sgraph.toString());
@@ -189,7 +188,7 @@ public class TestSugiyamaFunctions {
             .map(v -> (SyntheticLV<String>) v)
             .collect(Collectors.toList());
 
-    assertEquals(3, virtualVertices.size());
+    Assert.assertEquals(3, virtualVertices.size());
 
     synthetics.makeArticulatedEdges();
 
@@ -204,14 +203,14 @@ public class TestSugiyamaFunctions {
                         && ((ArticulatedEdge) e).getIntermediateVertices().size() == 2)
             .map(e -> (ArticulatedEdge<String, Integer>) e)
             .collect(Collectors.toList());
-    assertEquals(1, articulatedEdges.size());
+    Assert.assertEquals(1, articulatedEdges.size());
     ArticulatedEdge<String, Integer> bentEdge = articulatedEdges.get(0);
     List<Integer> ranks = new ArrayList<>();
     ranks.add(bentEdge.source.getRank());
     ranks.addAll(
         bentEdge.getIntermediateVertices().stream().map(LV::getRank).collect(Collectors.toList()));
     ranks.add(bentEdge.target.getRank());
-    assertEquals(ranks, List.of(0, 1, 2, 3));
+    Assert.assertEquals(ranks, List.of(0, 1, 2, 3));
 
     // test that one edge has 1 intermediate vertex
     articulatedEdges =
@@ -224,14 +223,14 @@ public class TestSugiyamaFunctions {
                         && ((ArticulatedEdge) e).getIntermediateVertices().size() == 1)
             .map(e -> (ArticulatedEdge<String, Integer>) e)
             .collect(Collectors.toList());
-    assertEquals(1, articulatedEdges.size());
+    Assert.assertEquals(1, articulatedEdges.size());
     bentEdge = articulatedEdges.get(0);
     ranks = new ArrayList<>();
     ranks.add(bentEdge.source.getRank());
     ranks.addAll(
         bentEdge.getIntermediateVertices().stream().map(LV::getRank).collect(Collectors.toList()));
     ranks.add(bentEdge.target.getRank());
-    assertEquals(ranks, List.of(0, 1, 2));
+    Assert.assertEquals(ranks, List.of(0, 1, 2));
 
     log.info("dag vertices: {}", sgraph.vertexSet());
     log.info("dag edges: {}", sgraph.edgeSet());
@@ -265,15 +264,15 @@ public class TestSugiyamaFunctions {
       for (int j = 0; j < layer.size(); j++) {
         LV<String> LV = layer.get(j);
         log.info("sv {},{}: {}", i, j, LV);
-        assertEquals(i, LV.getRank());
-        assertEquals(j, LV.getIndex());
+        Assert.assertEquals(i, LV.getRank());
+        Assert.assertEquals(j, LV.getIndex());
       }
     }
   }
 
   private void testConsecutive(int[] array) {
     for (int i = 0; i < array.length - 1; i++) {
-      assertEquals(array[i] + 1, array[i + 1]);
+      Assert.assertEquals(array[i] + 1, array[i + 1]);
     }
   }
 
@@ -296,37 +295,37 @@ public class TestSugiyamaFunctions {
     int[] array = new int[] {0, 1, 2, 3, 4, 5};
     int count = insertionSortCounter(array);
     log.info("count is {}", count);
-    assertEquals(0, count);
+    Assert.assertEquals(0, count);
 
     array = new int[] {0, 1, 2, 0, 3, 4, 0, 2, 3, 2, 4};
     count = insertionSortCounter(array);
     log.info("count is {}", count);
-    assertEquals(12, count);
+    Assert.assertEquals(12, count);
 
     array = new int[] {0, 1, 3, 1, 2};
     count = insertionSortCounter(array);
     log.info("count is {}", count);
-    assertEquals(2, count);
+    Assert.assertEquals(2, count);
 
     array = new int[] {1, 2, 0, 1, 3};
     count = insertionSortCounter(array);
     log.info("count is {}", count);
-    assertEquals(3, count);
+    Assert.assertEquals(3, count);
 
     List<Integer> list = Arrays.asList(0, 1, 2, 0, 3, 4, 0, 2, 3, 2, 4);
     count = insertionSortCounter(list);
     log.info("count is {}", count);
-    assertEquals(12, count);
+    Assert.assertEquals(12, count);
 
     list = Arrays.asList(0, 1, 3, 1, 2);
     count = insertionSortCounter(list);
     log.info("count is {}", count);
-    assertEquals(2, count);
+    Assert.assertEquals(2, count);
 
     list = Arrays.asList(1, 2, 0, 1, 3);
     count = insertionSortCounter(list);
     log.info("count is {}", count);
-    assertEquals(3, count);
+    Assert.assertEquals(3, count);
   }
 
   private int insertionSortCounter(List<Integer> list) {
@@ -378,6 +377,6 @@ public class TestSugiyamaFunctions {
     graph.removeEdge("20", "10");
     graph.removeEdge("21", "11");
     graph.removeEdge("20", "00");
-    assertEquals(graph, dag);
+    Assert.assertEquals(graph, dag);
   }
 }

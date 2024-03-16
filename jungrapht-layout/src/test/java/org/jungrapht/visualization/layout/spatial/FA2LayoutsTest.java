@@ -1,7 +1,5 @@
 package org.jungrapht.visualization.layout.spatial;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.util.HashMap;
 import java.util.Map;
 import org.jgrapht.Graph;
@@ -15,9 +13,10 @@ import org.jungrapht.visualization.layout.algorithms.repulsion.StandardFA2Repuls
 import org.jungrapht.visualization.layout.model.DefaultLayoutModel;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Point;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +56,7 @@ public class FA2LayoutsTest {
    * this runs again before each test. Build a simple graph, build a custom layout model (see below)
    * initialize the locations to be the same each time.
    */
-  @BeforeEach
+  @Before
   public void setup() {
     int i = 0;
     graph =
@@ -129,20 +128,20 @@ public class FA2LayoutsTest {
    * check to see if mapTwo and mapThree (the ones that used the BarnesHut optimization) returned
    * similar results
    */
-  @AfterAll
+  @AfterClass
   public static void check() {
     log.debug("mapOne:{}", mapOne);
     log.debug("mapThree:{}", mapThree);
     log.debug("mapFour:{}", mapFour);
 
-    assertEquals(mapOne.keySet(), mapFour.keySet());
+    Assert.assertEquals(mapOne.keySet(), mapFour.keySet());
     for (String key : mapOne.keySet()) {
       Point p2 = mapOne.get(key);
       Point p3 = mapFour.get(key);
       log.info("p2.x:{} p3.x:{}", p2.x, p3.x);
       log.info("p2.y:{} p3.y:{}", p2.y, p3.y);
-      assertTrue(Math.abs(p2.x - p3.x) < 1.0E-3);
-      assertTrue(Math.abs(p2.y - p3.y) < 1.0E-3);
+      Assert.assertTrue(Math.abs(p2.x - p3.x) < 1.0E-3);
+      Assert.assertTrue(Math.abs(p2.y - p3.y) < 1.0E-3);
     }
   }
 

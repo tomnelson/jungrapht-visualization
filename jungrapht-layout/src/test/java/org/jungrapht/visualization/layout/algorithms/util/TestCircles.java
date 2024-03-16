@@ -1,7 +1,5 @@
 package org.jungrapht.visualization.layout.algorithms.util;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.util.List;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
@@ -9,8 +7,9 @@ import org.jgrapht.util.SupplierUtil;
 import org.jungrapht.visualization.layout.util.synthetics.SE;
 import org.jungrapht.visualization.layout.util.synthetics.SV;
 import org.jungrapht.visualization.layout.util.synthetics.SVTransformedGraphSupplier;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +20,7 @@ public class TestCircles {
   Graph<Integer, Integer> graph;
   Graph<SV<Integer>, SE<Integer>> svGraph;
 
-  @BeforeEach
+  @Before
   public void before() {
     graph =
         GraphTypeBuilder.<Integer, Integer>undirected()
@@ -66,7 +65,7 @@ public class TestCircles {
     List<Integer> vertexList = List.of(1, 10, 9, 7, 8, 6, 5, 4, 2, 3);
     int count =
         CircleLayoutReduceEdgeCrossing.countCrossings(graph, vertexList.toArray(new Integer[0]));
-    assertEquals(7, count);
+    Assert.assertEquals(7, count);
   }
 
   @Test
@@ -76,7 +75,7 @@ public class TestCircles {
     int count =
         CircleLayoutReduceEdgeCrossing.countCrossings(
             graph, circleLayouts.getVertexOrderedList().toArray(new Integer[0]));
-    assertEquals(0, count);
+    Assert.assertEquals(0, count);
 
     /*
 

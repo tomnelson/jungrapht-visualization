@@ -6,7 +6,7 @@ import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.StaticLayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 public class LayoutAlgorithmTransitionTest {
 

@@ -8,8 +8,8 @@ import org.jungrapht.visualization.layout.algorithms.EiglspergerLayoutAlgorithm;
 import org.jungrapht.visualization.layout.algorithms.LayoutAlgorithm;
 import org.jungrapht.visualization.layout.model.LayoutModel;
 import org.jungrapht.visualization.layout.model.Rectangle;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +76,7 @@ public class LayoutTests {
   LayoutModel<Integer> layoutModel;
   LayoutAlgorithm<Integer> layoutAlgorithm;
 
-  @BeforeEach
+  @Before
   public void setup() {
 
     layoutAlgorithm =
