@@ -30,9 +30,6 @@
             <timezone>-5</timezone>
         </developer>
     </developers>
-    <prerequisites>
-        <maven>3.1.1</maven>
-    </prerequisites>
     <modules>
         <module>jungrapht-visualization</module>
         <module>jungrapht-layout</module>
