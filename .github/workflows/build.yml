@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - main
+      - pr27
 
 jobs:
   build:
