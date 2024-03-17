@@ -17,10 +17,13 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: 'maven'
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots package
   publish:
     runs-on: ubuntu-latest
+    needs: build
+    if: github.repository == 'tomnelson/jungrapht-visualization'
     steps:
       - uses: actions/checkout@v3
       - name: Set up Maven Snapshot Repository
