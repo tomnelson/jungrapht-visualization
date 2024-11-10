@@ -47,11 +47,13 @@ public class MouseListenerTranslator<V, E> extends MouseAdapter {
    * @return
    */
   private V getVertex(Point2D point) {
-    // adjust for scale and offset in the VisualizationViewer
     GraphElementAccessor<V, E> pickSupport = visualizationViewer.getPickSupport();
-    LayoutModel<V> layoutModel = visualizationViewer.getVisualizationModel().getLayoutModel();
     V v = null;
     if (pickSupport != null) {
+      // adjust for scale and offset in the VisualizationViewer
+      point =
+          visualizationViewer.getRenderContext().getMultiLayerTransformer().inverseTransform(point);
+      LayoutModel<V> layoutModel = visualizationViewer.getVisualizationModel().getLayoutModel();
       v = pickSupport.getVertex(layoutModel, point.getX(), point.getY());
     }
     return v;
