@@ -19,7 +19,7 @@ In the **ShowLayoutsWithJGraptIO** demonstration program, the lightweight render
 
 Many rendering features may be set via java properties (see [sample.jungrapht.properties](https://github.com/tomnelson/jungrapht-visualization/blob/master/jungrapht-visualization/src/main/resources/sample.jungrapht.properties) for keys and default values). 
 
-JUNGRAPHT-VISUALIZATION includes the jungrapht-layout module, which is independent of any java.awt imports (so that it may be more easily used by JavaFX or other rendering systems). Jungrapht-layout includes improved layout algorithms for directed graphs and Trees, including the 
+JUNGRAPHT-VISUALIZATION includes the jungrapht-layout module, which is independent of any java.awt imports, so that it may be more easily used by JavaFX or other rendering systems. Jungrapht-layout includes improved layout algorithms for directed graphs and Trees, including the 
 TidierTreeLayoutAlgorithm and the SugiyamaLayoutAlgorithm. All TreeLayoutAlgorithms will make a best attempt to draw any directed graph 
 (by ignoring cycles and reversing feedback edges) for which one or more Root vertices can be determined. 
 Any TreeLayoutAlgorithm, when given an undirected graph, will create a SpanningTree in order to use the TreeLayoutAlgorithm.
