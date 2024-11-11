@@ -20,6 +20,7 @@ import java.awt.event.MouseEvent;
  * @author danyelf
  * @param <V> vertex type
  */
+@Deprecated
 public interface GraphMouseListener<V> {
 
   void graphClicked(V v, MouseEvent me);
