@@ -19,7 +19,7 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import javax.swing.JComponent;
 import org.jungrapht.visualization.MultiLayerTransformer;
@@ -37,7 +37,7 @@ import org.jungrapht.visualization.transform.MutableTransformer;
 public class AnnotationPaintable implements VisualizationServer.Paintable {
 
   @SuppressWarnings("rawtypes")
-  protected Set<Annotation> annotations = new HashSet<>();
+  protected Set<Annotation> annotations = new LinkedHashSet<>();
 
   protected AnnotationRenderer annotationRenderer;
 
