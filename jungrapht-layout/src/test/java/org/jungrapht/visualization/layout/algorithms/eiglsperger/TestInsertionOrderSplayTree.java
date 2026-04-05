@@ -1,5 +1,7 @@
 package org.jungrapht.visualization.layout.algorithms.eiglsperger;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -20,7 +22,6 @@ public class TestInsertionOrderSplayTree {
 
   @Test
   public void testSmallContainer() {
-    // make a Container and add all the nodes
     tree = InsertionOrderSplayTree.create();
     tree.append("A");
     System.err.println(tree.printTree("Appended A"));
@@ -121,13 +122,8 @@ public class TestInsertionOrderSplayTree {
     tree.validate();
   }
 
-  /**
-   * create a tree of 26 upper-case characters randomly split and join the tree at different
-   * locations validate the split and re-joined tree
-   */
   @Test
   public void testSplits() {
-
     tree = InsertionOrderSplayTree.create();
     for (char c = 'A'; c <= 'Z'; c++) {
       tree.append("" + c);
@@ -156,7 +152,6 @@ public class TestInsertionOrderSplayTree {
 
   @Test
   public void testStaticSplits() {
-
     tree = InsertionOrderSplayTree.create();
     for (char c = 'A'; c <= 'Z'; c++) {
       tree.append("" + c);
@@ -190,7 +185,6 @@ public class TestInsertionOrderSplayTree {
 
   @Test
   public void testStaticSplitAtZero() {
-
     tree = InsertionOrderSplayTree.create();
     for (char c = 'A'; c <= 'Z'; c++) {
       tree.append("" + c);
@@ -219,7 +213,6 @@ public class TestInsertionOrderSplayTree {
 
   @Test
   public void testStaticSplitAtTop() {
-
     tree = InsertionOrderSplayTree.create();
     for (char c = 'A'; c <= 'Z'; c++) {
       tree.append("" + c);
@@ -248,7 +241,6 @@ public class TestInsertionOrderSplayTree {
 
   @Test
   public void testStaticSplitAtOverTop() {
-
     tree = InsertionOrderSplayTree.create();
     for (char c = 'A'; c <= 'Z'; c++) {
       tree.append("" + c);
@@ -257,7 +249,7 @@ public class TestInsertionOrderSplayTree {
 
     Pair<InsertionOrderSplayTree<String>> pair =
         InsertionOrderSplayTree.split(tree, tree.size() + 10);
-    System.err.println("split at " + tree.size() + 10);
+    System.err.println("split at " + (tree.size() + 10));
 
     InsertionOrderSplayTree<String> left = pair.first;
     InsertionOrderSplayTree<String> right = pair.second;
@@ -278,7 +270,6 @@ public class TestInsertionOrderSplayTree {
 
   @Test
   public void testStaticSplitAtNegative() {
-
     tree = InsertionOrderSplayTree.create();
     for (char c = 'A'; c <= 'Z'; c++) {
       tree.append("" + c);
@@ -313,7 +304,6 @@ public class TestInsertionOrderSplayTree {
       chars.add(s);
     }
     for (String key : new String[] {"V", "A", "G", "Z"}) {
-
       tree = InsertionOrderSplayTree.create();
       chars.forEach(tree::append);
       System.err.println(tree.printTree("starting tree"));
@@ -346,12 +336,73 @@ public class TestInsertionOrderSplayTree {
     System.err.println(tree.printTree());
   }
 
+  @Test
+  public void testSizeAfterRotations() {
+    tree = InsertionOrderSplayTree.create();
+    tree.append("A");
+    tree.append("B");
+    tree.append("C");
+    tree.splay("B");
+    assertEquals(3, tree.size(), "Tree size should be 3 after appends and splay");
+    assertEquals(3, tree.root.count(), "Root count should match size");
+    InsertionOrderSplayTree.Node<String> node = tree.find("B");
+    assertEquals(3, node.size, "Node B size should be 3 after splay");
+    tree.validate();
+  }
+
+  @Test
+  public void testAppendSizeConsistency() {
+    tree = InsertionOrderSplayTree.create();
+    for (char c = 'A'; c <= 'E'; c++) {
+      tree.append("" + c);
+      assertEquals(c - 'A' + 1, tree.size(), "Tree size should be " + (c - 'A' + 1));
+      assertEquals(tree.size(), tree.root.count(), "Root count should match size");
+    }
+    tree.validate();
+  }
+
+  @Test
+  public void testSplitNonExistentKey() {
+    tree = InsertionOrderSplayTree.create();
+    for (char c = 'A'; c <= 'E'; c++) {
+      tree.append("" + c);
+    }
+    int originalSize = tree.size();
+    Pair<InsertionOrderSplayTree<String>> pair = InsertionOrderSplayTree.split(tree, "X");
+    assertEquals(originalSize, tree.size(), "Original tree size should remain unchanged");
+    assertEquals(0, pair.second.size(), "Right tree should be empty");
+    assertNull(pair.second.root, "Right tree root should be null");
+    tree.validate();
+    pair.second.validate();
+  }
+
+  @Test
+  public void testEmptyTreeOperations() {
+    tree = InsertionOrderSplayTree.create();
+    assertEquals(0, tree.size(), "Empty tree should have size 0");
+    assertNull(tree.root, "Empty tree root should be null");
+
+    tree.splay("A");
+    assertEquals(0, tree.size(), "Splay on empty tree should not change size");
+    tree.validate();
+
+    Pair<InsertionOrderSplayTree<String>> pair = InsertionOrderSplayTree.split(tree, "A");
+    assertEquals(0, pair.first.size(), "Left tree should be empty after split");
+    assertEquals(0, pair.second.size(), "Right tree should be empty after split");
+    pair.first.validate();
+    pair.second.validate();
+
+    InsertionOrderSplayTree<String> joiner = InsertionOrderSplayTree.create();
+    tree.join(joiner);
+    assertEquals(0, tree.size(), "Joining empty trees should result in empty tree");
+    tree.validate();
+  }
+
   // Implementing Fisher–Yates shuffle
   static void shuffleArray(int[] ar) {
     Random rnd = ThreadLocalRandom.current();
     for (int i = ar.length - 1; i > 0; i--) {
       int index = rnd.nextInt(i + 1);
-      // Simple swap
       int a = ar[index];
       ar[index] = ar[i];
       ar[i] = a;

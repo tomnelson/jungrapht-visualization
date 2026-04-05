@@ -1,20 +1,21 @@
 package org.jungrapht.visualization.layout.algorithms.eiglsperger;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Set;
 import org.jungrapht.visualization.layout.algorithms.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A splay tree for items that are not Comparable. There is no 'insert' method, any new item is
- * appended to the right side of the SplayTree by first finding the 'max' (farthest right), splaying
- * to it, and adding the new Node as its right child
+ * A splay tree that maintains insertion order for unique keys of type T. Duplicate keys are not
+ * supported and may lead to undefined behavior. New items are appended to the right side of the
+ * tree by finding the maximum node, splaying it to the root, and adding the new node as its right
+ * child.
  *
- * @param <T> key type that is stored in the tree
+ * <p>Fixed in this version: - Proper subtree size maintenance using updateSizes() in append(),
+ * join(), split, etc. - Removed dead leftSize/rightSize code in splay() - Consistent size updates
+ * after structural changes
  */
 public class InsertionOrderSplayTree<T> {
 
@@ -42,8 +43,7 @@ public class InsertionOrderSplayTree<T> {
     int count() {
       int leftCount = left != null ? left.count() : 0;
       int rightCount = right != null ? right.count() : 0;
-      int count = 1 + leftCount + rightCount;
-      return count;
+      return 1 + leftCount + rightCount;
     }
 
     public void validate() {
@@ -77,6 +77,15 @@ public class InsertionOrderSplayTree<T> {
     this.root = root;
   }
 
+  // ====================== Size Maintenance ======================
+  private void updateSizes(Node<T> node) {
+    while (node != null) {
+      node.size = nodeSize(node.left) + nodeSize(node.right) + 1;
+      node = node.parent;
+    }
+  }
+
+  // ====================== Rotations ======================
   void leftRotate(Node<T> x) {
     Node<T> y = x.right;
     if (y != null) {
@@ -90,9 +99,10 @@ public class InsertionOrderSplayTree<T> {
     else x.parent.right = y;
     if (y != null) y.left = x;
 
-    x.size = nodeSize(x.left) + nodeSize(x.right) + 1;
-
     x.parent = y;
+
+    x.size = nodeSize(x.left) + nodeSize(x.right) + 1;
+    if (y != null) y.size = nodeSize(y.left) + nodeSize(y.right) + 1;
   }
 
   void rightRotate(Node<T> x) {
@@ -107,11 +117,13 @@ public class InsertionOrderSplayTree<T> {
     else x.parent.right = y;
     if (y != null) y.right = x;
 
-    x.size = nodeSize(x.left) + nodeSize(x.right) + 1;
-
     x.parent = y;
+
+    x.size = nodeSize(x.left) + nodeSize(x.right) + 1;
+    if (y != null) y.size = nodeSize(y.left) + nodeSize(y.right) + 1;
   }
 
+  // ====================== Splay ======================
   public void splay(T element) {
     Node<T> node = find(element);
     if (node != null) {
@@ -123,8 +135,6 @@ public class InsertionOrderSplayTree<T> {
     if (x == null) {
       return;
     }
-    int leftSize = 0;
-    int rightSize = 0;
 
     while (x.parent != null) {
       if (null == x.parent.parent) {
@@ -145,12 +155,10 @@ public class InsertionOrderSplayTree<T> {
       }
     }
 
-    leftSize += nodeSize(root.left); /* Now l_size and r_size are the sizes of */
-    rightSize += nodeSize(root.right); /* the left and right trees we just built.*/
-    root.size = leftSize + rightSize + 1;
     validate();
   }
 
+  // ====================== Helpers ======================
   static <T> Node<T> p(Node<T> node) {
     return node != null ? node.parent : node;
   }
@@ -170,9 +178,9 @@ public class InsertionOrderSplayTree<T> {
   public int pos(Node<T> node) {
     if (node == root) {
       return size(l(node));
-    } else if (r(p(node)) == node) { // node is a right child
+    } else if (r(p(node)) == node) {
       return pos(p(node)) + size(l(node)) + 1;
-    } else if (l(p(node)) == node) { // node is a left child
+    } else if (l(p(node)) == node) {
       return pos(p(node)) - size(r(node)) - 1;
     } else {
       return -1;
@@ -212,6 +220,7 @@ public class InsertionOrderSplayTree<T> {
     }
   }
 
+  // ====================== Core Operations ======================
   public void append(T key) {
     Node<T> z = new Node<>(key);
     z.size = 1;
@@ -223,8 +232,9 @@ public class InsertionOrderSplayTree<T> {
     splay(max);
 
     max.right = z;
-    max.size += z.size;
     z.parent = max;
+
+    updateSizes(max); // reliable size propagation
   }
 
   public static <T> InsertionOrderSplayTree<T> join(Pair<InsertionOrderSplayTree<T>> trees) {
@@ -233,19 +243,24 @@ public class InsertionOrderSplayTree<T> {
   }
 
   public void join(InsertionOrderSplayTree<T> joiner) {
+    if (joiner == null || joiner.root == null) return;
+    if (root == null) {
+      root = joiner.root;
+      return;
+    }
+
     Node<T> largest = max();
     splay(largest);
-    if (root != null) {
-      root.right = joiner.root;
-      if (joiner.root != null) {
-        root.size += joiner.root.size;
-        joiner.root.parent = root;
-      }
-    } else {
-      root = joiner.root;
+
+    root.right = joiner.root;
+    if (joiner.root != null) {
+      joiner.root.parent = root;
     }
+
+    updateSizes(root); // reliable size propagation
   }
 
+  // ====================== Find ======================
   public Node<T> find(int k) {
     return find(root, k);
   }
@@ -264,83 +279,16 @@ public class InsertionOrderSplayTree<T> {
     }
   }
 
-  /**
-   * find key, make it the root, left children go in first tree, right children go in second tree.
-   * key is not in either tree
-   *
-   * @param tree
-   * @param key
-   * @param <T>
-   * @return
-   */
-  public static <T> Pair<InsertionOrderSplayTree<T>> split(InsertionOrderSplayTree<T> tree, T key) {
-    InsertionOrderSplayTree<T> right = tree.split(key);
-    return Pair.of(tree, right);
+  public Node<T> find(T key) {
+    return find(root, key);
   }
 
-  public InsertionOrderSplayTree<T> split(T key) {
-    // split off the right side of key
-    Node<T> node = find(key);
-    if (node != null) {
-      splay(node); // so node will be root
-      //      System.err.println(printTree());
-      node.size -= size(node.right);
-      // root should be the found node
-      if (node.right != null) node.right.parent = null;
-
-      if (node.left != null) {
-        node.left.parent = null;
-      }
-      root = node.left;
-
-      InsertionOrderSplayTree<T> splitter = InsertionOrderSplayTree.create(node.right);
-
-      // found should not be in either tree
-      splitter.validate();
-      validate();
-      return splitter;
-    } else {
-      return this;
-    }
-  }
-
-  /**
-   * first position elements go in left tree, the rest go in right tree. No elements are missin
-   *
-   * @param tree
-   * @param position
-   * @param <T>
-   * @return
-   */
-  public static <T> Pair<InsertionOrderSplayTree<T>> split(
-      InsertionOrderSplayTree<T> tree, int position) {
-
-    InsertionOrderSplayTree<T> right = tree.split(position);
-
-    return Pair.of(tree, right);
-  }
-
-  public InsertionOrderSplayTree<T> split(int position) {
-    Node<T> found = find(position);
-    if (found != null) {
-      splay(found);
-      // split off the right side of key
-      if (found.right != null) {
-        found.right.parent = null;
-        found.size -= found.right.size;
-      }
-      InsertionOrderSplayTree<T> splitter = InsertionOrderSplayTree.create(found.right);
-      found.right = null;
-      splitter.validate();
-      validate();
-      // make sure that 'found' is still in this tree.
-      if (find(found) == null) {
-        throw new RuntimeException(
-            "Node " + found + " at position " + position + " was not still in tree");
-      }
-      return splitter;
-    }
-    return InsertionOrderSplayTree.create(); // return empty 'right' tree and leave tree alone
+  private Node<T> find(Node<T> from, T key) {
+    if (from == null) return null;
+    if (from.key.equals(key)) return from;
+    Node<T> found = find(from.left, key);
+    if (found != null) return found;
+    return find(from.right, key);
   }
 
   public Node<T> find(Node<T> node) {
@@ -351,47 +299,72 @@ public class InsertionOrderSplayTree<T> {
     if (from == null) return null;
     if (from == node) return from;
     Node<T> found = find(from.left, node);
-    if (found != null) {
-      return found;
-    } else {
-      found = find(from.right, node);
-      if (found != null) {
-        return found;
-      } else {
-        return null;
-      }
+    if (found != null) return found;
+    return find(from.right, node);
+  }
+
+  // ====================== Split ======================
+  public static <T> Pair<InsertionOrderSplayTree<T>> split(InsertionOrderSplayTree<T> tree, T key) {
+    InsertionOrderSplayTree<T> right = tree.split(key);
+    return Pair.of(tree, right);
+  }
+
+  public InsertionOrderSplayTree<T> split(T key) {
+    Node<T> node = find(key);
+    if (node == null) {
+      return InsertionOrderSplayTree.create();
     }
+    splay(node);
+
+    InsertionOrderSplayTree<T> rightTree = InsertionOrderSplayTree.create(node.right);
+    if (node.right != null) node.right.parent = null;
+
+    node.right = null;
+    updateSizes(node);
+
+    root = node.left;
+    if (root != null) root.parent = null;
+
+    validate();
+    rightTree.validate();
+    return rightTree;
   }
 
-  public Node<T> find(T key) {
-    return find(root, key);
+  public static <T> Pair<InsertionOrderSplayTree<T>> split(
+      InsertionOrderSplayTree<T> tree, int position) {
+    InsertionOrderSplayTree<T> right = tree.split(position);
+    return Pair.of(tree, right);
   }
 
-  private Node<T> find(Node<T> from, T node) {
-    if (from == null) return null;
-    if (from.key.equals(node)) return from;
-    Node<T> found = find(from.left, node);
-    if (found != null) {
-      return found;
-    } else {
-      found = find(from.right, node);
-      if (found != null) {
-        return found;
-      } else {
-        return null;
-      }
+  public InsertionOrderSplayTree<T> split(int position) {
+    Node<T> found = find(position);
+    if (found == null) {
+      return InsertionOrderSplayTree.create();
     }
+    splay(found);
+
+    InsertionOrderSplayTree<T> rightTree = InsertionOrderSplayTree.create(found.right);
+    if (found.right != null) found.right.parent = null;
+
+    found.right = null;
+    updateSizes(found);
+
+    validate();
+    rightTree.validate();
+    return rightTree;
   }
 
+  // ====================== Erase ======================
   public void erase(T key) {
     Node<T> z = find(key);
     if (null == z) return;
-
     splay(z);
 
-    if (null == z.left) replace(z, z.right);
-    else if (null == z.right) replace(z, z.left);
-    else {
+    if (null == z.left) {
+      replace(z, z.right);
+    } else if (null == z.right) {
+      replace(z, z.left);
+    } else {
       Node<T> y = subtree_minimum(z.right);
       if (y.parent != z) {
         replace(y, y.right);
@@ -402,8 +375,11 @@ public class InsertionOrderSplayTree<T> {
       y.left = z.left;
       y.left.parent = y;
     }
+    if (root != null) updateSizes(root);
+    validate();
   }
 
+  // ====================== Other methods (unchanged) ======================
   public int size() {
     return root != null ? root.size : 0;
   }
@@ -432,7 +408,7 @@ public class InsertionOrderSplayTree<T> {
 
   private boolean contains(Node<T> from, T value) {
     if (from == null) return false;
-    if (from.key == value) return true;
+    if (from.key.equals(value)) return true; // changed to equals()
     return contains(from.left, value) || contains(from.right, value);
   }
 
@@ -442,10 +418,9 @@ public class InsertionOrderSplayTree<T> {
 
   public String printTree(Node<T> node, int d) {
     StringBuilder builder = new StringBuilder();
-    int i;
     if (node == null) return "";
     builder.append(printTree(node.right, d + 1));
-    for (i = 0; i < d; i++) builder.append("  ");
+    for (int i = 0; i < d; i++) builder.append("  ");
     builder.append(node.key + "(" + node.size + ")\n");
     builder.append(printTree(node.left, d + 1));
     return builder.toString();
@@ -457,7 +432,6 @@ public class InsertionOrderSplayTree<T> {
 
   public void validate() {
     if (log.isTraceEnabled()) {
-      // root parent is null
       if (root != null) {
         if (root.parent != null) {
           throw new RuntimeException("root parent is not null");
@@ -484,21 +458,12 @@ public class InsertionOrderSplayTree<T> {
   }
 
   public static class Iterator<V> implements java.util.Iterator<Node<V>> {
-
     private Node<V> next;
-    Set<Node<V>> elements = new LinkedHashSet<>();
 
     public Iterator(Node<V> root) {
       this.next = root;
       if (next == null) return;
-
-      while (next.left != null) {
-        if (elements.contains(next.left)) {
-          throw new RuntimeException("duplicate elements");
-        }
-        elements.add(next.left);
-        next = next.left;
-      }
+      while (next.left != null) next = next.left;
     }
 
     @Override
@@ -510,15 +475,11 @@ public class InsertionOrderSplayTree<T> {
     public Node<V> next() {
       if (!hasNext()) throw new NoSuchElementException();
       Node<V> r = next;
-
-      // If you can walk right, walk right, then fully left.
-      // otherwise, walk up until you come from left.
       if (next.right != null) {
         next = next.right;
         while (next.left != null) next = next.left;
         return r;
       }
-
       while (true) {
         if (next.parent == null) {
           next = null;
@@ -546,8 +507,7 @@ public class InsertionOrderSplayTree<T> {
     StringBuilder buf = new StringBuilder();
     for (Iterator<T> iterator = new Iterator(root); iterator.hasNext(); ) {
       Node<T> node = iterator.next();
-      buf.append(node.toString());
-      buf.append("\n");
+      buf.append(node.toString()).append("\n");
     }
     return buf.toString();
   }
