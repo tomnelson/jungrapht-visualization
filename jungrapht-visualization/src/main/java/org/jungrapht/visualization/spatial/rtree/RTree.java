@@ -57,6 +57,11 @@ public class RTree<T> {
     return new RTree();
   }
 
+  // Add this method inside RTree.java
+  static <T> RTree<T> withRoot(Node<T> root) {
+    return new RTree<>(root);
+  }
+
   public static <T> RTree<T> addAll(
       RTree<T> rtree,
       SplitterContext<T> splitterContext,
