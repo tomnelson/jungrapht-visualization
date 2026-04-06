@@ -259,21 +259,40 @@ public class RTree<T> {
    * @param element
    * @return
    */
-  public static <T> RTree<T> remove(RTree<T> rtree, T element) {
-    log.trace("want to remove {} from tree size {}", element, rtree.count());
-    if (rtree.root.isEmpty()) {
-      // this tree is empty
-      return new RTree();
-    }
-    Node<T> rootVertex = rtree.root.get();
-    Node<T> newRoot = rootVertex.remove(element);
+  //  public static <T> RTree<T> remove(RTree<T> rtree, T element) {
+  //    log.trace("want to remove {} from tree size {}", element, rtree.count());
+  //    if (rtree.root.isEmpty()) {
+  //      // this tree is empty
+  //      return new RTree();
+  //    }
+  //    Node<T> rootVertex = rtree.root.get();
+  //    Node<T> newRoot = rootVertex.remove(element);
+  //
+  //    // if the newRoot is empty, return a new empty RTree, otherwise, return this
+  //    if (newRoot.count() == 0) {
+  //      return RTree.create();
+  //    } else {
+  //      return rtree;
+  //    }
+  //  }
 
-    // if the newRoot is empty, return a new empty RTree, otherwise, return this
-    if (newRoot.count() == 0) {
-      return RTree.create();
-    } else {
+  /**
+   * Remove an element from the RTree. Fixed version: always returns a fresh RTree with the updated
+   * root.
+   */
+  public static <T> RTree<T> remove(RTree<T> rtree, T element) {
+    if (rtree.root.isEmpty()) {
       return rtree;
     }
+
+    Node<T> newRoot = rtree.root.get().remove(element);
+
+    if (newRoot == null || newRoot.count() == 0) {
+      return create();
+    }
+
+    // Always return a new RTree wrapper with the updated root
+    return new RTree<>(newRoot);
   }
 
   /**
