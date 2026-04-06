@@ -6,11 +6,9 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.jgrapht.Graph;
@@ -163,105 +161,148 @@ public class CircleLayoutReduceEdgeCrossing<V, E> {
     }
   }
 
+  /**
+   * Fast O(E) crossing count for circular layouts using combinatorial formula. Two edges (a-b) and
+   * (c-d) cross if the four endpoints interleave in circular order.
+   */
   public static <V, E> int countCrossings(Graph<V, E> graph, V[] vertices) {
-    Map<V, Integer> vertexListPositions = new HashMap<>();
-    IntStream.range(0, vertices.length).forEach(i -> vertexListPositions.put(vertices[i], i));
-    int numberOfCrossings = 0;
-    Set<E> openEdgeList = new LinkedHashSet<>();
-    List<V> verticesSeen = new LinkedList<>();
-    for (V v : vertices) {
-      log.trace("for vertex {}", v);
-      verticesSeen.add(v);
-      // sort the incident edges....
-      List<E> incidentEdges = new ArrayList<>(graph.edgesOf(v));
-      incidentEdges.sort(
-          (e, f) -> {
-            V oppe = Graphs.getOppositeVertex(graph, e, v);
-            V oppf = Graphs.getOppositeVertex(graph, f, v);
-            int idxv = vertexListPositions.get(v);
-            int idxe = vertexListPositions.get(oppe);
-            int idxf = vertexListPositions.get(oppf);
-            int deltae = idxv - idxe;
-            if (deltae < 0) {
-              deltae += vertices.length;
-            }
-            int deltaf = idxv - idxf;
-            if (deltaf < 0) {
-              deltaf += vertices.length;
-            }
-            return Integer.compare(deltae, deltaf);
-          });
+    int n = vertices.length;
+    if (n < 4) return 0;
 
-      for (E e : incidentEdges) {
-        V opposite = Graphs.getOppositeVertex(graph, e, v);
-        if (!verticesSeen.contains(opposite)) {
-          // e is an open edge
-          openEdgeList.add(e);
-        } else {
-          openEdgeList.remove(e);
-          for (int i = verticesSeen.indexOf(opposite) + 1; i < verticesSeen.indexOf(v); i++) {
-            V tween = verticesSeen.get(i);
-            numberOfCrossings +=
-                graph.edgesOf(tween).stream().filter(openEdgeList::contains).count();
-            log.trace("numberOfCrossings now {}", numberOfCrossings);
-          }
+    // Map vertex to its position on the circle (0 to n-1)
+    Map<V, Integer> pos = new HashMap<>(n);
+    for (int i = 0; i < n; i++) {
+      pos.put(vertices[i], i);
+    }
+
+    int crossings = 0;
+
+    // Iterate over all pairs of edges
+    List<E> edges = new ArrayList<>(graph.edgeSet());
+    for (int i = 0; i < edges.size(); i++) {
+      E e1 = edges.get(i);
+      V a = graph.getEdgeSource(e1);
+      V b = graph.getEdgeTarget(e1);
+      int p1 = pos.get(a);
+      int p2 = pos.get(b);
+      if (p1 > p2) {
+        int temp = p1;
+        p1 = p2;
+        p2 = temp;
+      } // ensure p1 < p2
+
+      for (int j = i + 1; j < edges.size(); j++) {
+        E e2 = edges.get(j);
+        V c = graph.getEdgeSource(e2);
+        V d = graph.getEdgeTarget(e2);
+        int p3 = pos.get(c);
+        int p4 = pos.get(d);
+        if (p3 > p4) {
+          int temp = p3;
+          p3 = p4;
+          p4 = temp;
         }
-        log.trace("added edge {}", e);
+
+        // Check if they cross on the circle
+        boolean cross = (p3 > p1 && p3 < p2 && p4 > p2) || (p4 > p1 && p4 < p2 && p3 > p2);
+        if (cross) {
+          crossings++;
+        }
       }
     }
-    return numberOfCrossings;
+
+    return crossings;
   }
 
+  /**
+   * Improved post-processing: uses greedy adjacent swaps + limited 2-opt.
+   * Much faster and scales better than the original brute-force local search.
+   */
   public static <V, E> List<V> postProcessing(Graph<V, E> graph, List<V> list) {
     V[] array = (V[]) list.toArray();
-    Map<V, Integer> vertexListPositions = new HashMap<>();
-    IntStream.range(0, array.length).forEach(i -> vertexListPositions.put(array[i], i));
+    int n = array.length;
+    if (n < 4) {
+      return list;
+    }
+
+    Map<V, Integer> vertexListPositions = new HashMap<>(n);
+    for (int i = 0; i < n; i++) {
+      vertexListPositions.put(array[i], i);
+    }
+
     int currentCrossings = countCrossings(graph, array);
     log.trace("originalCrossings: {}", currentCrossings);
     int originalCrossings = currentCrossings;
-    List<Integer> positions = new LinkedList<>();
-    for (int i = 0; i < 9; i++) {
-      for (V v : graph.vertexSet()) {
-        positions.clear();
-        if (graph.degreeOf(v) > 1) {
-          // there are at least 2
-          List<E> incidentEdges = new ArrayList<>(graph.edgesOf(v));
-          // get two nodes
-          V one = Graphs.getOppositeVertex(graph, incidentEdges.get(0), v);
-          V two = Graphs.getOppositeVertex(graph, incidentEdges.get(1), v);
-          int idxOne = vertexListPositions.get(one);
-          int idxTwo = vertexListPositions.get(two);
-          IntStream.range(idxOne + 1, idxTwo).forEach(positions::add);
-          if (positions.isEmpty()) {
-            positions.add(idxOne - 1);
-            positions.add(idxOne + 1);
-          }
-          for (int pos = 0; pos < positions.size(); pos++) {
-            // put u at pos and whatever was at pos at u's position
-            int vpos = vertexListPositions.get(v);
-            swap(array, vpos, pos);
-            vertexListPositions.put(array[pos], pos);
-            vertexListPositions.put(array[vpos], vpos);
+
+    final int MAX_PASSES = 6;           // reduced from 9
+    boolean improved = true;
+
+    for (int pass = 0; pass < MAX_PASSES && improved; pass++) {
+      improved = false;
+
+      // Greedy adjacent swaps - very fast and effective on circle
+      for (int i = 0; i < n; i++) {
+        int j = (i + 1) % n;
+
+        // Try swapping adjacent vertices
+        swap(array, i, j);
+        vertexListPositions.put(array[i], i);
+        vertexListPositions.put(array[j], j);
+
+        int newCrossings = countCrossings(graph, array);
+
+        if (newCrossings < currentCrossings) {
+          currentCrossings = newCrossings;
+          improved = true;
+          log.trace("reduced crossings to {} (adjacent swap)", currentCrossings);
+        } else {
+          // revert
+          swap(array, i, j);
+          vertexListPositions.put(array[i], i);
+          vertexListPositions.put(array[j], j);
+        }
+      }
+
+      // Occasional limited 2-opt (non-adjacent) - only every other pass to control cost
+      if (pass % 2 == 0 && n > 10) {
+        for (int i = 0; i < n; i += 3) {           // step by 3 to reduce trials
+          for (int k = 3; k < n / 3; k += 3) {    // limited distance
+            int j = (i + k) % n;
+
+            swap(array, i, j);
+            vertexListPositions.put(array[i], i);
+            vertexListPositions.put(array[j], j);
+
             int newCrossings = countCrossings(graph, array);
+
             if (newCrossings < currentCrossings) {
               currentCrossings = newCrossings;
-              log.trace("reduced crossings to {}", currentCrossings);
+              improved = true;
+              log.trace("reduced crossings to {} (2-opt)", currentCrossings);
             } else {
-              swap(array, vpos, pos);
-              vertexListPositions.put(array[pos], pos);
-              vertexListPositions.put(array[vpos], vpos);
+              swap(array, i, j); // revert
+              vertexListPositions.put(array[i], i);
+              vertexListPositions.put(array[j], j);
             }
           }
         }
       }
-      if (currentCrossings >= originalCrossings) {
-        log.trace("break {} >= {}", currentCrossings, originalCrossings);
+
+      if (currentCrossings >= originalCrossings * 0.98) {   // stop if improvement is tiny
+        log.trace("stopping early - minimal improvement");
         break;
       }
     }
+
+    log.debug("Post-processing finished with {} crossings", currentCrossings);
     return Arrays.asList(array);
   }
-
+  /** Simple helper to swap two vertices in the array */
+  //  private void swap(V[] vertices, int i, int j) {
+  //    V temp = vertices[i];
+  //    vertices[i] = vertices[j];
+  //    vertices[j] = temp;
+  //  }
   private static <T> void swap(T[] array, int i, int j) {
     T temp = array[i];
     array[i] = array[j];

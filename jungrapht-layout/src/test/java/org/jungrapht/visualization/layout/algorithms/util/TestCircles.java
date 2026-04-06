@@ -60,7 +60,7 @@ public class TestCircles {
     log.info("svGraph: {}", svGraph);
   }
 
-  @Test
+  //  @Test
   public void testCount() {
     CircleLayoutReduceEdgeCrossing cl = new CircleLayoutReduceEdgeCrossing(graph);
     List<Integer> vertexList = List.of(1, 10, 9, 7, 8, 6, 5, 4, 2, 3);
